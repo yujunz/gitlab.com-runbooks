@@ -32,7 +32,7 @@
   * [Azure Link](https://portal.azure.com/#resource/subscriptions/c802e1f4-573f-4049-8645-4f735e6411b3/resourceGroups/backend4-cluster-gitlab-com/providers/Microsoft.ClassicCompute/virtualMachines/backend4-cluster-gitlab-com)
   * Hit "Restart"
   * NOTE: the azure portal will show the host as down and will recommend stopping it completely, ignore Azure recommendations.
-  * This will take roughly
+  * This will take roughly 15 minutes, be patient.
 * Once it starts replying (you could ssh to test) mount the NFS in all the workers
   * `bundle exec knife ssh -a ipaddress role:gitlab-cluster-worker 'sudo mount /var/opt/gitlab/git-data'`
 
