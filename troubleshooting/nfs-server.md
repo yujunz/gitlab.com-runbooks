@@ -24,7 +24,7 @@
 * SSHing into the NFS server does not provide a prompt due to the load.
   * `ssh 104.209.211.54`
 * Workers will show that the git NFS drive is not mounted (empty result)
-  * bundle exec knife ssh -a ipaddress name:worker1.cluster.gitlab.com 'mount | grep /var/opt/gitlab/git-data'
+  * `bundle exec knife ssh -a ipaddress name:worker1.cluster.gitlab.com 'mount | grep /var/opt/gitlab/git-data'`
 
 ## Resolution
 
