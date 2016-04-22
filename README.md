@@ -2,6 +2,10 @@
 
 The aim of this project is to have a quick guide of what to do when an emergency arrives
 
+## What to do when
+
+* [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
+
 ## General guidelines in an emergency
 
 * Join the `#alerts` channel
@@ -13,10 +17,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * Fix first, ask questions later.
 * Gather information when the outage is done - logs, samples of graphs, whatever could help figuring out what happened
 * Open an issue
-
-## What to do when
-
-* [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
 
 ## Adding runbooks rules
 
