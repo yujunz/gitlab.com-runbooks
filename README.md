@@ -4,7 +4,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## What to do when
 
-* [The NFS server `backend4` is gone](toubleshooting/nfs-server.md)
+* [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
 
 ## Adding runbooks rules
 
