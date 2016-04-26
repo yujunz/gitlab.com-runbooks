@@ -1,4 +1,4 @@
-# Blocking things in HAProxy load balancer
+# Blocking and disabling things in the HAProxy load balancers
 
 ## First and foremost
 
@@ -28,14 +28,14 @@ The value to change is "https_custom_config", be careful to respect spaces and t
         "chef_vault": "gitlab-cluster-lb",
         "worker_chef_query": "role:gitlab-cluster-worker",
         "server_timeout": "1h",
-        "https_custom_config": "  acl mash2k3_uri path_beg -i /mash2k3/mash2k3-repository/raw/\n  http-request deny if mash2k3_uri\n  acl kexuejin_raw_uri pat
+        "https_custom_config": "  acl mash2k3_uri path_beg -i /mash2k3/mash2k3-repository/raw/\n  http-request deny if mash2k3_uri\n"
       }
     }
 ```
 
-### Samples of configurations:
+#### Samples of configurations:
 
-#### Deny a path with the DELETE http method
+##### Deny a path with the DELETE http method
 
 ```
 acl is_stop_impersonation  path_beg         /admin/users/stop_impersonation
@@ -43,7 +43,32 @@ acl is_delete method DELETE
 http-request deny if is_delete is_stop_impersonation
 ```
 
-### Once the changes are applied
+#### Once the changes are applied
 
 Remember to run the chef-client in all the LBs
-`knife ssh -p2222 -aipaddress role:gitlab-cluster-lb  'sudo chef-client'`
+`knife ssh -p2222 -C 1 -aipaddress role:gitlab-cluster-lb  'sudo chef-client'`
+
+Note the port 2222 for ssh as the 22 is the one forwarded to git. Also note the `-C 1`
+this is to reduce concurrency and only reload 1 LB at a time
+
+### Disable a whole service in a load balancer
+
+A service is a host and port, this is useful when we want to isolate a given worker and get it out of the load balancing rotation.
+
+To do so we will need to run one chef command:
+
+```
+knife ssh -p2222 -aipaddress role:gitlab-cluster-lb  '
+echo "disable server gitlab_443/worker1.cluster.gitlab.com" | sudo socat stdio /run/haproxy/admin.sock'
+```
+
+This will issue a `disable server` to the HAProxy administration socket commanding to put the service down for the given server.
+
+#### Enable the service back up
+
+The same technique, but enable instead of disable:
+
+```
+knife ssh -p2222 -aipaddress role:gitlab-cluster-lb  '
+echo "enable server gitlab_443/worker1.cluster.gitlab.com" | sudo socat stdio /run/haproxy/admin.sock'
+```
