@@ -2,7 +2,7 @@
 
 ## First and foremost
 
-* Don't Panic*
+*Don't Panic*
 
 ## How do I
 
