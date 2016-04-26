@@ -6,6 +6,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
 
+## How do I
+
+* [Block things in the load balancers](how-to/block-things-in-haproxy.md)
+
 ## General guidelines in an emergency
 
 * Join the `#alerts` channel
@@ -28,6 +32,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
   * Resolution - what do I have to do to fix it
   * Post-checks - how can I be 100% sure that it is solved
   * Rollback - optional, how can I undo my fix
+
 
 # But always remember!
 
