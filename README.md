@@ -8,8 +8,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## How do I
 
-* [Deny a path in the load balancers](how-to/block-things-in-haproxy.md#deny-a-path-with-the-delete-http-method)
-* [Isolate a worker by disabling the service in the LBs](how-to/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
+* [Deny a path in the load balancers](howto/block-things-in-haproxy.md#deny-a-path-with-the-delete-http-method)
+* [Isolate a worker by disabling the service in the LBs](howto/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
 
 ## General guidelines in an emergency
 
