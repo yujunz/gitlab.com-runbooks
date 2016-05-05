@@ -62,6 +62,6 @@ In the alerts channel there may be messages like _Check_MK: db4.cluster.gitlab.c
 
 This is a side effect of failing over to the other database server, the original one will not be replying to status queries.
 
-It is not critical, but it is a great source or noise.
+It is not critical, but it is a great source of noise.
 
 The way to fix this is to log into CheckMK and force the reload of the host metrics.
