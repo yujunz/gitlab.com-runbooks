@@ -11,7 +11,8 @@
 
 ## Possible checks
 
-1. ssh into the database host and check that the host is the actual replication slave using crm
+* ssh into the database host and check that the host is the actual replication slave using crm
+
 ```
 # crm status
 Last updated: Thu May  5 14:07:28 2016
@@ -27,15 +28,19 @@ Online: [ db4.cluster.gitlab.com db5.cluster.gitlab.com ]
 
  gitlab_pgsql (ocf::pacemaker:gitlab_pgsql):  Started db5.cluster.gitlab.com
 ```
-  * In this case the active host is db5 (Current DC)
-1. Double check by assessing that there is no replication port open in this host
+
+In this case the active host is db5 (Current DC)
+
+* Double check by assessing that there is no replication port open in this host
+
 ```
 # iptables -t nat -L PREROUTING
 Chain PREROUTING (policy ACCEPT)
 target     prot opt source               destination
 #
 ```
-  * Not having any iptable routes means that this host is acting as the slave host, in this case this is DB means that this host is acting as the slave host, in this case this is DB4.
+
+Not having any iptable routes means that this host is acting as the slave host, in this case this is DB means that this host is acting as the slave host, in this case this is DB4.
 
 ## Resolution
 
@@ -45,7 +50,9 @@ and that master node is currently marked as active by pacemaker (crm).
 * This script will ask about an *ip of primary postgresql server* and a *password for gitlab_replicator user*.
   * Get the ip by SSHing in the active database server
   * Get the password from the DevOps vault searching by _gitlab_replicator_
-* Sample output ```
+* Sample output
+
+```
 Enter ip of primary postgresql server
 X.X.X.X
 Enter password for gitlab_replicator@X.X.X.X
@@ -62,7 +69,8 @@ transaction log start point: 2C7/DE4DB588
 transaction log end point: 2C9/984BED28
 pg_basebackup: base backup completed
 ```
-  * This means that the replication is recovered, expect to see some alerts triggering until it gets in OK state.
+
+* This means that the replication is recovered, expect to see some alerts triggering until it gets in OK state.
 
 ### Troubleshooting
 
