@@ -54,7 +54,7 @@ If the service or the server has been bounced, we will need to recover the repli
 
 ### Recover replication from slave server
 
-Refer to _[Postgresql replication is lagging or dropped](troubleshooting/postgresql_replication.md) runbook
+Refer to [Postgresql replication is lagging or dropped](troubleshooting/postgresql_replication.md) runbook
 
 ### Cleanup in Checkmk
 
