@@ -15,6 +15,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Restart unicorn with a zero downtime](howto/manage-workers.md#restart-unicorn-with-a-zero-downtime)
 * [Gracefully restart sidekiq jobs](howto/manage-workers.md#gracefully-restart-sidekiq-jobs)
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
+* [Create users, rotate or remove keys from chef](howto/manage-chef.md)
 
 ## General guidelines in an emergency
 
