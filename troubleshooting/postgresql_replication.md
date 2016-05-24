@@ -68,9 +68,42 @@ transaction log start point: 2C7/DE4DB588
 0/99073646 kB (0%), 1/1 tablespace
 transaction log end point: 2C9/984BED28
 pg_basebackup: base backup completed
+Writing recovery.conf file
+Restore postgresql.conf
+Starting PostgreSQL
+ok: run: logrotate: (pid 26118) 1s
+ok: run: postgresql: (pid 26124) 0s, normally down
+ok: run: remote-syslog: (pid 26126) 1s
 ```
 
-* This means that the replication is recovered, expect to see some alerts triggering until it gets in OK state.
+#### Check that replication is working fine
+
+``` bash
+$ sudo tail /var/log/gitlab/postgresql/current
+2016-05-24_13:57:35.53345 db5 postgresql: FATAL:  the database system is starting up
+2016-05-24_13:57:35.54546 db5 postgresql: FATAL:  the database system is starting up
+2016-05-24_13:57:45.93765 db5 postgresql: LOG:  entering standby mode
+2016-05-24_13:57:45.95297 db5 postgresql: LOG:  redo starts at 37A/BA51300
+2016-05-24_13:57:47.44878 db5 postgresql: LOG:  consistent recovery state reached at 37A/15A68E30
+2016-05-24_13:57:47.45690 db5 postgresql: LOG:  streaming replication successfully connected to primary
+2016-05-24_13:59:32.22901 db5 postgresql: FATAL:  the database system is starting up
+2016-05-24_13:59:32.24605 db5 postgresql: FATAL:  the database system is starting up
+2016-05-24_13:59:32.26526 db5 postgresql: FATAL:  the database system is starting up
+```
+
+The message "the database system is starting up" means that the slave database is waiting to become master.
+This means that the replication is recovered, expect to see some alerts triggering until it gets in OK state.
+
+#### How does it look when replication is not working?
+
+This can happen even when the script runs just fine, replication goes off just a bit after so it is not declared on screen.
+
+``` bash
+$ sudo tail /var/log/gitlab/postgresql/current
+2016-05-24_13:44:53.08845 db5 postgresql: LOG:  streaming replication successfully connected to primary
+2016-05-24_13:44:53.08853 db5 postgresql: FATAL:  could not receive data from WAL stream: FATAL:  requested WAL segment 0000000400000379000000B1 has alre
+ady been removed
+```
 
 ### Troubleshooting
 
