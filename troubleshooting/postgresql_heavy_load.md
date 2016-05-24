@@ -20,12 +20,12 @@
   * Login into the database
     * `sudo su - gitlab-psql`
     * `psql -h /var/opt/gitlab/postgresql gitlabhq_production`
-  * Sample queries that are active and taking a lot of time - keep this sample
-    * `select pid, extract(epoch from now()) - extract(epoch from query_start) as run_time, substring(query, 0, 160) from pg_stat_activity where state = "active" and now() > query_start order by run_time desc limit 10;`
+  * Sample queries that are active and taking a lot of time (over 1 second) - keep this sample
+    * `select pid, state, query_start, (now() - query_start) as duration, substring(query, 0, 120) from pg_stat_activity where state = 'active' and (now() - query_start) > '1 seconds'::interval order by duration limit 15;`
   * Measure queries activity for a bit to see if there is any change, usually there are circa 600 records in activity, so don't be scared for such number
     * `psql -h /var/opt/gitlab/postgresql gitlabhq_production -c 'SELECT count(*) FROM pg_stat_activity;'`
 
-### Gather data!
+### Please gather data!
 
 Since this is still an unsolved problem, we will need to gather all the data we can, to do so, run the following commands to gather as much data as possible
 
@@ -33,6 +33,8 @@ Since this is still an unsolved problem, we will need to gather all the data we 
   * `sudo cp /var/log/gitlab/postgresql/current ~`
 * Get a sample of virtual memory usage - this is useful to see if the host is suffering from memory usage/[thrashing](https://en.wikipedia.org/wiki/Thrashing_\(computer_science\))
   * `vmstat -S M 1 10`
+* Get a sample of server load
+  * `watch  uptime`
 * Get as sample of processes executing:
   * `ps auxf`
 * Keep a copy of the sample queries from the pre-checks
@@ -42,6 +44,8 @@ Since this is still an unsolved problem, we will need to gather all the data we 
 * The simplest/least intrusive resolution is killing queries that are causing the load
   * `SELECT pg_cancel_backend(PID)` - will return True if succeeds, use the next one if it is not enough
   * `SELECT pg_terminate_backend(PID)`
+* This can also be done killing all the queries that are taking too long (30 seconds)
+  * `select pg_cancel_backend(pid) from pg_stat_activity where state = 'active' and (now() - query_start) > '30 seconds'::interval;`
 * The next step if it is not recovering is to bounce the service, this will prevent having a failover
   * `sudo gitlab-ctl postgresql restart`
 * If this is not working, bounce the whole server - this will trigger a set of failures in CheckMK and will drop replication. Check post actions.
