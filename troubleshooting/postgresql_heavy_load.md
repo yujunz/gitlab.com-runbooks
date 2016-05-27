@@ -34,18 +34,26 @@ Since this is still an unsolved problem, we will need to gather all the data we 
 * Get a sample of virtual memory usage - this is useful to see if the host is suffering from memory usage/[thrashing](https://en.wikipedia.org/wiki/Thrashing_\(computer_science\))
   * `vmstat -S M 1 10`
 * Get a sample of server load
-  * `watch  uptime`
+  * `while sleep 5; do uptime; done`
 * Get as sample of processes executing:
   * `ps auxf`
 * Keep a copy of the sample queries from the pre-checks
+  * turn into root `sudo su -`
+  * run the queries script `./get_all_queries.sh > queries.log`
 
 ## Resolution
 
-* The simplest/least intrusive resolution is killing queries that are causing the load
-  * `SELECT pg_cancel_backend(PID)` - will return True if succeeds, use the next one if it is not enough
-  * `SELECT pg_terminate_backend(PID)`
+* The simplest/least intrusive resolution that has worked really well was to raise the downtime page from your chef repo
+  * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl deploy-page up'`
+  * monitor load, after it goes down to roughly 15 take the page down
+  * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl deploy-page down'`
+* Killing queries that are causing the load
+  * gentle kill
+    * `select pg_cancel_backend(pid) from pg_stat_activity where state = 'active' and (now() - query_start) > '30 seconds'::interval;` - will return True if succeeds, use the next one if it is not enough
+  * hard kill
+    * `select pg_terminate_backend(pid) from pg_stat_activity where state = 'active' and (now() - query_start) > '30 seconds'::interval;`
 * This can also be done killing all the queries that are taking too long (30 seconds)
-  * `select pg_cancel_backend(pid) from pg_stat_activity where state = 'active' and (now() - query_start) > '30 seconds'::interval;`
+  * ``
 * The next step if it is not recovering is to bounce the service, this will prevent having a failover
   * `sudo gitlab-ctl postgresql restart`
 * If this is not working, bounce the whole server - this will trigger a set of failures in CheckMK and will drop replication. Check post actions.
@@ -69,3 +77,39 @@ This is a side effect of failing over to the other database server, the original
 It is not critical, but it is a great source of noise.
 
 The way to fix this is to log into CheckMK and force the reload of the host metrics.
+
+### Sample queries scripts
+
+* get_all_queries.sh
+``` bash
+#!/bin/bash
+su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
+\x on ;
+SELECT pid, state, age(clock_timestamp(), query_start) as duration, query
+FROM pg_stat_activity
+WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle'
+ORDER BY age(clock_timestamp(), query_start) DESC;
+EOF"
+```
+
+* get_slow_queries.sh
+```
+#!/bin/bash
+su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
+\x on ;
+SELECT pid, state, age(clock_timestamp(), query_start) as duration, query
+FROM pg_stat_activity
+WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:01:00'
+ORDER BY age(clock_timestamp(), query_start) DESC;
+EOF"
+```
+
+* terminate_slow_queries.sh
+```
+#!/bin/bash
+su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
+SELECT pg_terminate_backend (pid)
+FROM pg_stat_activity
+WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:04:00';
+EOF"
+```
