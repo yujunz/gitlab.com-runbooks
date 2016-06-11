@@ -7,7 +7,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
 * [The DB server `db[45]` is under heavy load](troubleshooting/postgresql_heavy_load.md)
 * [The DB replication has stopped](troubleshooting/postgresql_replication.md)
-* [The Redis replication lag](troubleshooting/redis_replication.md)
+* [Redis replication has stopped](troubleshooting/redis_replication.md)
+* [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
 
 ## How do I
 
