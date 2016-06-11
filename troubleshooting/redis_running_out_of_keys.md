@@ -8,6 +8,12 @@ You see an alert like
 @channel redis3.cluster.gitlab.com service Redis_keys is UNKNOWN
 ```
 
+Or you find this error message in the logs
+
+```
+unexpected error occurred in writing to Redis: ERR max number of clients reached
+```
+
 This is actually not so, the problem is that the redis server run out of connections and the applications cannot generate new ones
 
 ## Possible checks
