@@ -2,15 +2,15 @@
 
 ## Symptoms
 
-1. You see an alert like
+* You see an alert like
 
 ```
 db4.cluster.gitlab.com service POSTGRES_LONGEST_QUERY is OK with some DML query (UPDATE, DELETE, INSERT)
 ```
 
-2. Or there will be a lot of items in the queues on page https://gitlab.com/admin/sidekiq/queues
+* Or there will be a lot of items in the queues on page https://gitlab.com/admin/sidekiq/queues
 
-3. Or there will be stopping near sidekiq processes
+* Or there will be stopping near sidekiq processes
 
 ```
 $  bundle exec knife ssh -a ipaddress role:gitlab-cluster-worker 'ps -U git -o args | grep sidekiq'
@@ -48,6 +48,7 @@ FROM pg_locks JOIN pg_class ON pg_locks.relation = pg_class.oid
 WHERE relname !~ '^pg_' and relname <> 'active_locks' and page is not null order by pid;
 ```
 
+
 ## Resolution
 
 * go to PostgreSQL console
@@ -68,6 +69,7 @@ take its pid and run following SQL query
 select pg_cancel_backend(:pid);
 ```
 
+
 ## Post checks
 
 * Result for the following query must be empty
@@ -80,4 +82,3 @@ WHERE relname !~ '^pg_' and relname <> 'active_locks' and page is not null order
 ```
 
 * `$  bundle exec knife ssh -a ipaddress role:gitlab-cluster-worker 'ps -U git -o args | grep sidekiq'` must be without `stopping` word
-
