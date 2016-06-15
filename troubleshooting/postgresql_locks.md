@@ -10,30 +10,10 @@ db4.cluster.gitlab.com service POSTGRES_LONGEST_QUERY is OK with some DML query 
 
 * Or there will be a lot of items in the queues on page https://gitlab.com/admin/sidekiq/queues
 
-* Or there will be stopping near sidekiq processes
+* Or there will be non empty result from the following command (stopping queries)
 
 ```
-$  bundle exec knife ssh -a ipaddress role:gitlab-cluster-worker 'ps -U git -o args | grep sidekiq'
-40.84.0.225     sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-13.68.20.218    sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-40.84.31.149    sidekiq 4.1.2 gitlab-rails [23 of 25 busy]
-40.84.63.177    sidekiq 4.1.2 gitlab-rails [24 of 25 busy]
-40.84.6.191     sidekiq 4.1.2 gitlab-rails [24 of 25 busy]
-40.84.62.218    sidekiq 4.1.2 gitlab-rails [24 of 25 busy]
-40.84.62.244    sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-40.79.46.26     sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-13.68.21.26     sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-40.84.58.172    sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-40.84.59.249    sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-40.84.58.110    sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-40.79.46.123    sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-40.84.3.129     sidekiq 4.1.2 gitlab-rails [23 of 25 busy] stopping
-104.208.241.215 sidekiq 4.1.2 gitlab-rails [17 of 25 busy]
-104.208.242.23  sidekiq 4.1.2 gitlab-rails [24 of 25 busy]
-104.208.241.47  sidekiq 4.1.2 gitlab-rails [19 of 25 busy]
-40.79.42.83     sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
-40.79.45.48     sidekiq 4.1.2 gitlab-rails [25 of 25 busy] stopping
-40.79.75.98     sidekiq 4.1.2 gitlab-rails [25 of 25 busy]
+$  bundle exec knife ssh -a ipaddress role:gitlab-cluster-worker 'ps -U git -o args | grep sidekiq' | grep stopping
 ```
 
 ## Possible checks
@@ -81,4 +61,4 @@ FROM pg_locks JOIN pg_class ON pg_locks.relation = pg_class.oid
 WHERE relname !~ '^pg_' and relname <> 'active_locks' and page is not null order by pid;
 ```
 
-* `$  bundle exec knife ssh -a ipaddress role:gitlab-cluster-worker 'ps -U git -o args | grep sidekiq'` must be without `stopping` word
+* `$  bundle exec knife ssh -a ipaddress role:gitlab-cluster-worker 'ps -U git -o args | grep sidekiq' | grep stopping` must be empty
