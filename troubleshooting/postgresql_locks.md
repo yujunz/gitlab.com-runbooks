@@ -28,13 +28,18 @@ FROM pg_locks JOIN pg_class ON pg_locks.relation = pg_class.oid
 WHERE relname !~ '^pg_' and relname <> 'active_locks' and page is not null order by pid;
 ```
 
+## Please gather data!
+
+* Capture which queries are being executed right now please
+  * turn into root `sudo su -`
+  * run the queries script `./get_all_queries.sh > queries.log`
 
 ## Resolution
 
 * go to PostgreSQL console
 * run following query
 ```
-SELECT pg_cancel_backend(pg_locks.pid) FROM pg_locks JOIN pg_class ON pg_locks.relation = pg_class.oid WHERE relname !~ '^pg_' and relname <> 'active_locks' and page is not null order by pid;
+SELECT pg_terminate_backend(pg_locks.pid) FROM pg_locks JOIN pg_class ON pg_locks.relation = pg_class.oid WHERE relname !~ '^pg_' and relname <> 'active_locks' and page is not null order by pid;
 ```
 
 * there also can be long running DML query in `pg_stat_activity`
