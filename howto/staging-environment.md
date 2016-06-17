@@ -2,7 +2,8 @@
 
 We now have the GitLab staging environment.
 
-This environment keeps a copy of the whole production database, ~~annonymised~~, and ~~automatically updated every weekend~~
+This environment keeps a copy of the whole production database, ~~anonymised~~, and ~~automatically updated every weekend~~
+
 This environment also contains a copy of the GitLab groups repos accessible through NFS to provide a similar experience to what we actually have in production.
 
 ## What is this for?
