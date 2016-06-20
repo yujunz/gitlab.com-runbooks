@@ -14,6 +14,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ## How do I
 
 * [Deploy GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md)
+* [Rollback GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md#rolling-back-gitlabcom)
 * [Deploy staging.GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/staging.md)
 * [Start a rails console in the staging environment](howto/staging-environment.md#run-a-rails-console-in-staging-environment)
 * [Deny a path in the load balancers](howto/block-things-in-haproxy.md#deny-a-path-with-the-delete-http-method)
