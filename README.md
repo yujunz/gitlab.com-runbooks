@@ -24,6 +24,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
 * [Create users, rotate or remove keys from chef](howto/manage-chef.md)
 * [Create VMs in Azure, add disks, etc](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
+* [Update packages manually for a given role](howto/manage-workers.md#update-packages-fleet-wide)
 
 ## General guidelines in an emergency
 
