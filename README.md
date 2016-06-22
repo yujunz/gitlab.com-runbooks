@@ -23,6 +23,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Gracefully restart sidekiq jobs](howto/manage-workers.md#gracefully-restart-sidekiq-jobs)
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
 * [Create users, rotate or remove keys from chef](howto/manage-chef.md)
+* [Create VMs in Azure, add disks, etc](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
 
 ## General guidelines in an emergency
 
