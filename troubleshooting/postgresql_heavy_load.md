@@ -21,8 +21,14 @@
     * `sudo su - gitlab-psql`
     * `psql -h /var/opt/gitlab/postgresql gitlabhq_production`
   * Sample first 15 queries that are active and taking a lot of time (over 1 second) sorted by duration in descending order, note that only first 120 symbols or query are shown - keep this sample
-    * `select pid, application_name, state, query_start, (now() - query_start) as duration, substring(query, 0, 120) from pg_stat_activity where state = 'active' and (now() - query_start) > '1 seconds'::interval order by duration desc limit 15;`
-  * Measure queries activity for a bit to see if there is any change, usually there are circa 600 records in activity, so don't be scared for such number
+    
+        ```
+        select pid, application_name, state, query_start, (now() - query_start) as duration, substring(query, 0, 120) 
+        from pg_stat_activity where state = 'active' and (now() - query_start) > '1 seconds'::interval 
+        order by duration desc limit 15;
+        ```
+    
+    * Measure queries activity for a bit to see if there is any change, usually there are circa 600 records in activity, so don't be scared for such number
     * `psql -h /var/opt/gitlab/postgresql gitlabhq_production -c 'SELECT count(*) FROM pg_stat_activity;'`
 
 ### Please gather data!
