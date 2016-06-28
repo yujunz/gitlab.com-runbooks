@@ -60,6 +60,19 @@ if the _public\_key_ field is missing it means that the key will not be found by
 
 * run `chef-server-ctl delete-user-key USERNAME default`
 
+## Upgrade the chef-client version across the fleet
+
+The chef-client version installed is managed through the Chef omnibus package and as such we will be controlling
+it using the [omnibus_updater](https://supermarket.chef.io/cookbooks/omnibus_updater) cookbook.
+The versions chef-client are currently managed via an environment override.
+```
+override_attributes(
+  :omnibus_updater => {
+    :version => '12.5.1'
+  }
+)
+```
+
 ## Troubleshoot chef weirdness
 
 Some times you need to understand why a `knife` command fails with ruby errors.
