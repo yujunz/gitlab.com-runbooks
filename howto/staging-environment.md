@@ -11,14 +11,23 @@ This environment also contains a copy of the GitLab groups repos accessible thro
 The main goal of this environment is to reduce the feedback loop between development and production, and to have a playground where we can deploy RCs without compromising production as a whole.
 If you have any idea on how to improve such feedback loop or you are missing any particular thing that you would like
 
+## Getting access
+* You will need developer ssh access, to get it register an issue with your posix username and your ssh key in the [infrastructure issue tracker](https://gitlab.com/gitlab-com/infrastructure/issues)
+
 ## Run a rails console in staging environment
 
-* You will need developer ssh access, to get it register an issue with your posix username and your ssh key in the [infrastructure issue tracker](https://gitlab.com/gitlab-com/infrastructure/issues)
-* wait for confirmation on the access
 * ssh into any of the staging workers
   * `ssh 191.237.42.73` # worker1
   * `ssh 13.92.88.118` # worker2
 * start a rails console issuing the command `sudo gitlab-rails console`
+
+## Run a redis console in staging environment
+
+* ssh into the redis host
+  * `ssh 40.117.159.113` # redis1.staging.gitlab.com
+* get redis password with `sudo grep requirepass /var/opt/gitlab/redis/redis.conf`
+* start redis-cli `/opt/gitlab/embedded/bin/redis-cli`
+* authenticate `auth PASSWORD` - replace "PASSWORD" with the retrieved password
 
 ## Deploy to staging
 
