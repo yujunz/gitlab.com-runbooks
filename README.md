@@ -27,6 +27,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Create VMs in Azure, add disks, etc](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
 * [Bootstrap a new VM](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/new-vps.md)
 * [Update packages manually for a given role](howto/manage-workers.md#update-packages-fleet-wide)
+* [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
 
 ## General guidelines in an emergency
 
