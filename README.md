@@ -5,7 +5,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## IMPORTANT
 
-* Spend one minute and put notes about time, type of outage and taken actions in following [document](https://docs.google.com/document/d/1F9E6sTlWdKmbI8TisWEFoWdx3iZOMaUrrZKYPZTx3tc/edit)
+* Spend one minute and create issue for outage, don't forget about `outage` label as specified in [handbook](https://about.gitlab.com/handbook/infrastructure/).
 
 
 ## What to do when
@@ -46,7 +46,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * Be sure to be in sync - if you are going to reboot a service, say so: _I'm bouncing server X_
 * Fix first, ask questions later.
 * Gather information when the outage is done - logs, samples of graphs, whatever could help figuring out what happened
-* Open an issue and put notes in [document](https://docs.google.com/document/d/1F9E6sTlWdKmbI8TisWEFoWdx3iZOMaUrrZKYPZTx3tc/edit)
+* Open an issue and put `monitoring` label on it, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
 
 ## Adding runbooks rules
 
