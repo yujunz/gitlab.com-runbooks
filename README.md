@@ -28,6 +28,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Bootstrap a new VM](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/new-vps.md)
 * [Update packages manually for a given role](howto/manage-workers.md#update-packages-fleet-wide)
 * [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
+* [Working with Kibana (logs view)](howto/kibana.md)
 
 ## General guidelines in an emergency
 
