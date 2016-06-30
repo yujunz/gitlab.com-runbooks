@@ -18,8 +18,11 @@
   * ![Heavy load on postgresql](img/postgresql-heavy-load.png)
 * If the host is responsive
   * Login into the database
-    * `sudo su - gitlab-psql`
-    * `psql -h /var/opt/gitlab/postgresql gitlabhq_production`
+  
+        ```
+        sudo -u gitlab-psql -H sh -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql gitlabhq_production"
+        ```
+    
   * Sample first 15 queries that are active and taking a lot of time (over 1 second) sorted by duration in descending order, note that only first 120 symbols or query are shown - keep this sample
     
         ```
@@ -29,8 +32,10 @@
         ```
     
     * Measure queries activity for a bit to see if there is any change, usually there are circa 600 records in activity, so don't be scared for such number
-    * `psql -h /var/opt/gitlab/postgresql gitlabhq_production -c 'SELECT count(*) FROM pg_stat_activity;'`
-
+       ```
+       sudo -u gitlab-psql -H sh -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql gitlabhq_production -c 'SELECT count(*) FROM pg_stat_activity;'"
+       ```
+    
 ### Please gather data!
 
 Since this is still an unsolved problem, we will need to gather all the data we can, to do so, run the following commands to gather as much data as possible
