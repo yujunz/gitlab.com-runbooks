@@ -12,7 +12,7 @@ In Kibana `program` stands for application and `hostname` for machine where it r
 Queries can be constructed via constructor, but there is only top 5 values to select for each parameter for specified amount of time. By default it is last 15 minutes.
 
 
-## Adding new logs to parse
+## Adding new log patterns to parse
 
 By modifying file `files/default/logstash-gitlab.conf` in `gitlab-elk` cookbook you can add/remove/modify parsing of logstash file parsing.
 
