@@ -29,7 +29,7 @@ Online: [ db4.cluster.gitlab.com db5.cluster.gitlab.com ]
  gitlab_pgsql (ocf::pacemaker:gitlab_pgsql):  Started db5.cluster.gitlab.com
 ```
 
-In this case the active host is db5 (Current DC)
+In this case the active host is db5 (ocf::pacemaker:gitlab_pgsql)
 
 * Double check by assessing that there is no replication port open in this host
 
@@ -40,7 +40,29 @@ target     prot opt source               destination
 #
 ```
 
-Not having any iptable routes means that this host is acting as the slave host, in this case this is DB means that this host is acting as the slave host, in this case this is DB4.
+The master host should have iptables routes setup such as:
+
+```
+$ sudo iptables -t nat -L PREROUTING
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination
+DNAT       tcp  --  --                   anywhere             tcp dpt:5433 to::5432
+```
+
+This is so the slave can connect to it to read the replication log.
+
+* Triple check by counting active postgresql connections
+
+```
+db4:~$ netstat -at | tail -n +3 | awk '{ print $4 }'| grep ':postgresql' | grep -v '^\*' | wc -l
+0
+
+db5:~$ netstat -at | tail -n +3 | awk '{ print $4 }'| grep ':postgresql' | grep -v '^\*' | wc -l
+728
+```
+
+The slave should have 0 connections, the master should have more than 1
+
 
 ## Resolution
 
