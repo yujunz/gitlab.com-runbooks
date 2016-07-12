@@ -28,7 +28,7 @@ Online: [ redis3.cluster.gitlab.com redis4.cluster.gitlab.com ]
  gitlab_redis (ocf::pacemaker:gitlab_redis):  Started redis3.cluster.gitlab.com
 ```
 
-In this case the master is redis3 => `Current DC: redis3.cluster.gitlab.com (167837722) - partition with quorum`
+In this case the master is redis3 => `gitlab_redis (ocf::pacemaker:gitlab_redis):  Started redis3.cluster.gitlab.com`
 
 ## Resolution
 
