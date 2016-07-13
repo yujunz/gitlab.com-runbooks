@@ -4,6 +4,8 @@
 
 *Don't Panic*
 
+This is not a critical emergency, it's important, yes, but not critical.
+
 ## Symptoms
 
 * Message in alerts channel _Check_MK: db4.cluster.gitlab.com service PostgreSQL\_replication\_lag is CRITICAL_

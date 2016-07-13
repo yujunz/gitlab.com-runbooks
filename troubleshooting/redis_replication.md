@@ -1,5 +1,11 @@
 # Redis replication is lagging or has stopped
 
+## First and foremost
+
+*Don't Panic*
+
+This is not a critical emergency, it's important, yes, but not critical.
+
 ## Symptoms
 
 You see alerts like
