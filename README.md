@@ -39,12 +39,14 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## General guidelines in an emergency
 
+* Confirm that it is actually an emergency, challenge this: are we loosing data? is GitLab.com not working?
 * Join the `#alerts` channel
 * Organize
   * open a hangout if it will save time: https://plus.google.com/hangouts/_/gitlab.com?authuser=1
   * share the link in the alerts channel
 * If you need someone to do something, give a direct command: _@someone: please run `this` command_
 * Be sure to be in sync - if you are going to reboot a service, say so: _I'm bouncing server X_
+* If you have conflicting information, **stop and think**, bounce ideas, escalate
 * Fix first, ask questions later.
 * Gather information when the outage is done - logs, samples of graphs, whatever could help figuring out what happened
 * Open an issue and put `monitoring` label on it, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
