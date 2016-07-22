@@ -26,7 +26,7 @@ When we have issues with any production operation we should always tweet:
 
 > We'll be deploying GitLab <version> shortly. No downtime is expected but you may see intermittent errors during this time.
 
-> We'll be deploying GitLab <version> at <time> UTC. We will be offline for <time> minutes. Sorry for the inconvenience.
+> We'll be deploying GitLab <version> at <time> UTC. We will be offline for <time> minutes. Thanks for your patience.
 
 > GitLab.com is now running <version>
 
