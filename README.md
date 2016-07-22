@@ -43,6 +43,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ## General guidelines in an emergency
 
 * Confirm that it is actually an emergency, challenge this: are we loosing data? is GitLab.com not working?
+* [Tweet](howto/tweeting-guidelines.md) in a reasuring but informative way to let the people know what's going on
 * Join the `#alerts` channel
 * Organize
   * open a hangout if it will save time: https://plus.google.com/hangouts/_/gitlab.com?authuser=1
@@ -53,6 +54,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * Fix first, ask questions later.
 * Gather information when the outage is done - logs, samples of graphs, whatever could help figuring out what happened
 * Open an issue and put `monitoring` label on it, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
+
+## Guidelines
+
+* [Tweeting Guidelines](howto/tweeting-guidelines.md)
 
 ## Adding runbooks rules
 
