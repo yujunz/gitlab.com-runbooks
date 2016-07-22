@@ -21,7 +21,7 @@ instead of 'there is a problem with the database'
 
 ### General "we are investigating an issue"
 
-> We're investigating an issue with GitLab.com Thanks for your patience.
+> We're investigating an issue with GitLab.com. Thanks for your patience.
 
 > GitLab.com is back up. Thanks for your patience.
 

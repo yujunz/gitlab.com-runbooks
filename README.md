@@ -42,8 +42,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## General guidelines in an emergency
 
-* Confirm that it is actually an emergency, challenge this: are we loosing data? is GitLab.com not working?
-* [Tweet](howto/tweeting-guidelines.md) in a reasuring but informative way to let the people know what's going on
+* Confirm that it is actually an emergency, challenge this: are we loosing data? Is GitLab.com not working?
+* [Tweet](howto/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
 * Join the `#alerts` channel
 * Organize
   * open a hangout if it will save time: https://plus.google.com/hangouts/_/gitlab.com?authuser=1
