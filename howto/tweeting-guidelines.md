@@ -6,12 +6,15 @@ We should always be tweeting from @gitlabstatus in an informative but reassuring
 
 Avoid using ambiguous messages, but if we don't know what is going on yet just state that we are investigating.
 
-When we have issues with any production operation we should always tweet:
+When we have issues with any production operation we should always tweet opening and closing the incident:
 
 - As soon as we realize that there is an incident going on.
 - Tweet frequently: when we have findings that are relevant, or roughly every 10 minutes if we are still investigating.
 - Closing with the resolution and a brief explanation of the root cause.
 - Then adding a link to the post-mortem issue in infrastructure.
+
+Closing tweets should be as detailed as possible, for example: 'we have a failing database migration of a column name'
+instead of 'there is a problem with the database'
 
 
 ## Canned messages to avoid thinking
