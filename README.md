@@ -37,6 +37,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
 * [Work with Kibana (logs view)](howto/kibana.md)
 * [Force a failover with postgres or redis](howto/manage-pacemaker.md#force-a-failover)
+* [Work with Check_MK](howto/checkmk.md)
 
 
 ## General guidelines in an emergency
