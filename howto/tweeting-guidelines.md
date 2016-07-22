@@ -9,7 +9,7 @@ Avoid using ambiguous messages, but if we don't know what is going on yet just s
 When we have issues with any production operation we should always tweet:
 
 - As soon as we realize that there is an incident going on.
-- Periodically when we have findings that are relevant.
+- Tweet frequently: when we have findings that are relevant, or roughly every 10 minutes if we are still investigating.
 - Closing with the resolution and a brief explanation of the root cause.
 - Then adding a link to the post-mortem issue in infrastructure.
 
