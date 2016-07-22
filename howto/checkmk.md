@@ -16,10 +16,23 @@ Every host that is monitored by checkmk has the `gitlab-checkmk-client` applied.
 ## Overview
 
 Check_MK can be a bit overwhelming when you look at it first time, you actually only need to focus on the unhandled problems:
-- [Click in the upper left conner (Tactical Overview box) on the `Unhandled` link](https://checkmk.gitlap.com/gitlab/check_mk/view.py?view_name=svcproblems&is_service_acknowledged=0)
+- [Click in the upper left conner (Tactical Overview box) on the `Unhandled` link](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fcheck_mk%2Fview.py%3Fview_name%3Dsvcproblems%26is_service_acknowledged%3D0)
 
 If you want to see all problems even the handled ones (a handled problem is an acknowledged problem):
-- [Click in the upper left conner (Tactical Overview box) on the `Problems` link](https://checkmk.gitlap.com/gitlab/check_mk/view.py?view_name=svcproblems)
+- [Click in the upper left conner (Tactical Overview box) on the `Problems` link](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fcheck_mk%2Fview.py%3Fview_name%3Dsvcproblems)
+
+## Service problems
+
+There are two types of service problems namely handled and unhandled.
+Unhandled service problems are bad! It means that nobody is working on this service problem.
+
+### Handle unhandled service problems:
+- Create a new issue for it at: https://gitlab.com/gitlab-com/infrastructure/issues/new
+- Acknowledge this problem with the issue link as comment:
+    - Click on the service link
+    - Click on the hammer icon
+    - Fill in the Acknowledge box (most top box) the comment field with the link to the issue and click on the acknowledge button. 
+
 
 ## Managing users
 
