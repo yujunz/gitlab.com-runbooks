@@ -13,6 +13,14 @@ This host is controlled by chef and has the `gitlab-checkmk-server` role applied
 Every host that is monitored by checkmk has the `gitlab-checkmk-client` applied.
 
 
+## Overview
+
+Check_MK can be a bit overwhelming when you look at it first time, you actually only need to focus on the unhandled problems:
+- [Click in the upper left conner (Tactical Overview box) on the `Unhandled` link](https://checkmk.gitlap.com/gitlab/check_mk/view.py?view_name=svcproblems&is_service_acknowledged=0)
+
+If you want to see all problems even the handled ones (a handled problem is an acknowledged problem):
+- [Click in the upper left conner (Tactical Overview box) on the `Problems` link](https://checkmk.gitlap.com/gitlab/check_mk/view.py?view_name=svcproblems)
+
 ## Managing users
 
 Users are automatically created by Check_MK based on OAuth with role Administrator.
@@ -63,11 +71,15 @@ This will handle SSH-ing into the checkmk server and updating the checks.
 
 ## Troubleshooting
 
-From time to time it can happen that checkmk looses track of the host it is tracking, this can be shown with an
-error message like `UNKNOWN - Database not found`
+- UNKNOWN - Check output not found in local checks
 
-To force checkmk to update and reload the configuration you will need to issue this command:
-`sudo su - gitlab; cmk -II db5.cluster.gitlab.com && cmk -O`
+    Existing agent data is out of sync for that host, do a re-inventory of that host and reload Check_MK:
+    
+    ```sudo su - gitlab; cmk -II <hostname> && cmk -O```
 
-Where db5.cluster.gitlab.com is the host we want to reload.
+- UNKNOWN - Database not found
+
+    Existing agent data is out of sync for that host, do a re-inventory of that host and reload Check_MK:
+    
+    ```sudo su - gitlab; cmk -II <hostname> && cmk -O```
 
