@@ -33,6 +33,17 @@ Unhandled service problems are bad! It means that nobody is working on this serv
     - Click on the hammer icon
     - Fill in the Acknowledge box (most top box) the comment field with the link to the issue and click on the acknowledge button. 
 
+## Notifications
+
+We use Slack and Pagerduty for notifications.
+
+### Modify notifications
+
+Whenever you need to add/delete a service from notifications follow these steps:
+- Go to [Users](https://checkmk.gitlap.com/gitlab/check_mk/wato.py?mode=users)
+- Edit the user [notifications](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fcheck_mk%2Fwato.py%3Fmode%3Dedit_user%26edit%3Dnotifications%26folder%3D)
+- Scroll down to the notifications section and you will see the Slack and the Pagerduty notification settings
+- If i.e. you like to add a service to PagerDuty just add that service in the `Limit to the following services` box under the PagerDuty notifications settings.
 
 ## Managing users
 
