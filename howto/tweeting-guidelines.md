@@ -33,7 +33,7 @@ instead of 'there is a problem with the database'
 
 > GitLab.com is now running <version>
 
-> We expect that the migrations for <version> to take only a few minutes, but some users may experience some downtime.
+> We expect the migrations for <version> to take only a few minutes, but some users may experience some downtime.
 
 > We are experiencing issues during deploy, we are working on resolving the problem.
 
