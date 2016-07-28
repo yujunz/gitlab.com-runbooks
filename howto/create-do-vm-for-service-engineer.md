@@ -9,5 +9,6 @@ The request from the team member should include a posix username, the DO datacen
 1. Create a new user with the requester's desired posix username `useradd -G sudo -m <username>`.
 1. Put the requester's key in `/home/<username>/.ssh/authorized_keys`. Be sure to chown `.ssh/` and `.ssh/authorized_keys` to be owned by the correct user.
 1. Create a [DNS record](https://console.aws.amazon.com/route53/home?region=eu-central-1#resource-record-sets:Z29MRIL9NUDAU8) in the gitlap.com zone with the same name as the server, e.g. `alex-hanselka.gitlap.com`, that points to the proper IP address.
+1. Create a CNAME record with the content of `*.<server-name>.gitlap.com` with a target of `<server-name>.gitlap.com` so that the user can create unlimited subdomains with no fuss.
 1. Reply to the requester's issue with the IP address and DNS name of the new server. Be sure to remind them to keep the server patched and up to date!
 1. Close the issue!
