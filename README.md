@@ -39,6 +39,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Force a failover with postgres or redis](howto/manage-pacemaker.md#force-a-failover)
 * [Work with Check_MK (Notifications, scheduled downtime, acknowledge problems)](howto/checkmk.md)
 * [Rename a node already in Chef](howto/rename-nodes.md)
+* [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
 
 ## General guidelines in an emergency
 
