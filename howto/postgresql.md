@@ -31,10 +31,12 @@ ORDER BY age(clock_timestamp(), query_start) DESC;
 
 ## Get a list of slow queries (more than 1 second)
 
+```
 SELECT pid, state, age(clock_timestamp(), query_start) as duration, query
 FROM pg_stat_activity
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:01:00'
 ORDER BY age(clock_timestamp(), query_start) DESC;
+```
 
 ## Get a list of queries that are waiting
 
