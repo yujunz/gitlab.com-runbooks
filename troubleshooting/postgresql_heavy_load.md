@@ -51,6 +51,8 @@ Since this is still an unsolved problem, we will need to gather all the data we 
 * Keep a copy of the sample queries from the pre-checks
   * turn into root `sudo su -`
   * run the queries script `./get_all_queries.sh > queries.log`
+  * run the waiting queries script `./get_waiting_queries.sh > waiting-queries.log`
+  * run the locked queries script `./get_locked_queries.sh > locked-queries.log`
 
 ## Resolution
 
@@ -142,6 +144,7 @@ JOIN pg_catalog.pg_locks blockingl ON(blockingl.relation=blockedl.relation
   AND blockingl.locktype=blockedl.locktype AND blockedl.pid != blockingl.pid)
 JOIN pg_stat_activity blockinga ON blockingl.pid = blockinga.pid
 WHERE NOT blockedl.granted;
+EOF
 ```
 
 * terminate_slow_queries.sh
