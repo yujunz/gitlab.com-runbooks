@@ -52,8 +52,10 @@ ORDER BY age(clock_timestamp(), query_start) DESC;
 SELECT blockingl.relation::regclass,
   blockeda.pid AS blocked_pid, blockeda.query as blocked_query,
   blockedl.mode as blocked_mode,
+  age(clock_timestamp(), blockeda.query_start) as blocked_query_duration,
   blockinga.pid AS blocking_pid, blockinga.query as blocking_query,
-  blockingl.mode as blocking_mode
+  blockingl.mode as blocking_mode,
+  age(clock_timestamp(), blockinga.query_start) as blocking_query_duration
 FROM pg_catalog.pg_locks blockedl
 JOIN pg_stat_activity blockeda ON blockedl.pid = blockeda.pid
 JOIN pg_catalog.pg_locks blockingl ON(blockingl.relation=blockedl.relation
