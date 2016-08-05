@@ -40,8 +40,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Work with Check_MK (Notifications, scheduled downtime, acknowledge problems)](howto/checkmk.md)
 * [Rename a node already in Chef](howto/rename-nodes.md)
 * [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
-* [Get a list of waiting queries in postgresql](howto/postgres.md#get-a-list-of-queries-that-are-waiting)
-* [Get a list of locked queries in postgresql](howto/postgres.md#get-a-list-of-locked-queries-with-the-query-that-is-blocking-it)
+* [Get a list of waiting queries in postgresql](howto/postgresql.md#get-a-list-of-queries-that-are-waiting)
+* [Get a list of locked queries in postgresql](howto/postgresql.md#get-a-list-of-locked-queries-with-the-query-that-is-blocking-it)
 
 ## General guidelines in an emergency
 
