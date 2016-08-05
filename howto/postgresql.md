@@ -41,7 +41,7 @@ ORDER BY age(clock_timestamp(), query_start) DESC;
 ## Get a list of queries that are waiting
 
 ```
-SELECT pid, query, age(clock_timestamp(), query_start) AS waiting_duration
+SELECT pid, query, age(clock_timestamp(), query_start) AS query_duration
 FROM pg_catalog.pg_stat_activity WHERE  waiting
 ORDER BY age(clock_timestamp(), query_start) DESC;
 ```
