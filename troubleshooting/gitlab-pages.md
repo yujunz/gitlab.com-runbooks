@@ -62,7 +62,7 @@ only apparent to some users but not others.
 
     If there is a problem, you will see a 404:
 
-    ```
+    ```sh
     * Rebuilt URL to: https://127.0.0.1:1443/
     *   Trying ::1...
     * 127
@@ -94,13 +94,13 @@ only apparent to some users but not others.
 
 1. If you are seeing a 404, scan the logs to see when gitlab-pages last updated its domain list:
 
-    ```
+    ```sh
     sudo grep Updated /var/log/gitlab/gitlab-pages/current
     ```
 
 1. If you see no entries, you may have to scan the older logs in gzip format. For example:
 
-    ```
+    ```sh
     # sudo ls -lt /var/log/gitlab-pages/current
     total 34800
     -rw-r--r-- 1 root root 1915178 Aug  7 13:42 current
@@ -121,12 +121,12 @@ only apparent to some users but not others.
 
 1. Gather some strace information for a few minutes before restarting gitlab-pages:
 
-    ```
+    ```sh
     $ sudo strace -f -p `pidof gitlab-pages >& /tmp/gitlab-pages-debug.txt`
     ```
 
 1. Restart gitlab-pages:
 
-    ```
+    ```sh
     $ sudo gitlab-ctl restart gitlab-pages
     ```
