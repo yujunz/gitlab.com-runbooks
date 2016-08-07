@@ -40,12 +40,17 @@ only apparent to some users but not others.
     ssh worker1-cluster-gitlab-com.cloudapp.net -D localhost:5000
     ```
 
-1. Find out which port gitlab-pages is running:
+1. Find out on which port gitlab-pages is running:
 
     ```
     $ ps -ef | grep gitlab-pages | grep listen
     root     31269  3496  0 03:32 ?        00:00:00 /opt/gitlab/embedded/bin/gitlab-pages -listen-http 0.0.0.0:1080 -listen-https 0.0.0.0:1443 -root-cert /etc/gitlab/ssl/pages.crt -root-key /etc/gitlab/ssl/pages.key -daemon-uid 1100 -daemon-gid 1100 -pages-domain gitlab.io -pages-root /var/opt/gitlab/gitlab-rails/shared/pages -redirect-http false -use-http2 true
     ```
+
+    In this example, gitlab-pages is listening for:
+
+    * HTTPS on port 1443
+    * HTTP on port 1080
 
 1. Now attempt to run `curl` by proxying through this SOCKS host with a custom
   `Host` header and SSL verification disabled:
