@@ -125,6 +125,8 @@ only apparent to some users but not others.
     $ sudo strace -f -p `pidof gitlab-pages >& /tmp/gitlab-pages-debug.txt`
     ```
 
+## Resolution
+
 1. Restart gitlab-pages:
 
     ```sh
