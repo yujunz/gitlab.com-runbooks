@@ -27,7 +27,7 @@ only apparent to some users but not others.
 
     Note that the AND must be all caps and the quotes are necessary around the word `gitlab-pages`.
 
-1. This will help isolate which worker is having an issue. You can also use Kibana to look for patterns :
+1. This will help isolate which worker is having an issue. You can also use Kibana to look for patterns:
 
     ```
     "gitlab-pages" AND 404 AND "https://pages.gitlab.io"
