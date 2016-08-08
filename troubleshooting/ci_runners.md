@@ -5,7 +5,10 @@
 * Check MK links
     1. [shared-runners-manager-1.gitlab.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3F%26host%3Dshared-runners-manager-1.gitlab.com%26srv%3DDocker_machine%26source%3D1%26theme%3Dmultisite%26baseurl%3D%2Fgitlab%2Fcheck_mk%2F)
     2. [shared-runners-manager-2.gitlab.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3F%26host%3Dshared-runners-manager-2.gitlab.com%26srv%3DDocker_machine%26source%3D0%26theme%3Dmultisite%26baseurl%3D%2Fgitlab%2Fcheck_mk%2F)
-* ![Sample High Errors on runner machines](img/ci-runner-manager-errors.png)
+* Increase in docker_machine errors. Over 30. 
+![Sample High Errors on runner machines](img/ci-runner-manager-errors.png)
+
+* Message in alerts channel: _shared-runners-manager-[1-2].gitlab.com service Docker_machine is CRITICAL_
 
 ## Possible checks
 
