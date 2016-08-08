@@ -17,6 +17,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
 * [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
 * [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
+* [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
 
 ## How do I
 
