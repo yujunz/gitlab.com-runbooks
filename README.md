@@ -51,6 +51,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Tweet](howto/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
 * Join the `#alerts` channel
 * Organize
+  * Establish who is taking point on the emergency issue in the channel: "I'm taking point" and pin the message for the duration of the emergency.
   * open a hangout if it will save time: https://plus.google.com/hangouts/_/gitlab.com?authuser=1
   * share the link in the alerts channel
 * If you need someone to do something, give a direct command: _@someone: please run `this` command_
