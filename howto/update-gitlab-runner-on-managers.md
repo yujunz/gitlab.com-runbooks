@@ -196,5 +196,6 @@ You can do all of that much faster:
 
     echo Verify the new version...
     gitlab-runner --version
+    EOF
     ```
 
