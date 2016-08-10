@@ -171,7 +171,7 @@ You can do all of that much faster:
     $ rake edit_role_secrets[omnibus-builder-runners-manager,_default]
     ```
 
-3. Execute this on each node:
+3. Execute this on each node (probably we can have a dedicate script for that):
 
     ```
     cat <<EOF | ssh myusername@shared-runners-manager-1.gitlab.com
