@@ -83,119 +83,28 @@ To upgrade runners on managers you need to:
     If you want to install a Stable version of the Runner, you should set the `repository` value to
     `gitlab-ci-multi-runner` (which is a default if the key doesn't exists in configuration).
 
-1. **Shutdown GitLab Runner service**
-
-    SSH to the host - e.g. `$ ssh docker-ci-1.gitlap.com` and paste this in terminal
-
-        ```bash
-        echo manual | sudo tee /etc/init/gitlab-runner.override
-        sudo killall -SIGQUIT gitlab-ci-multi-runner
-        while gitlab-runner status; do sleep 1s; done
-        ```
-
-    The above script disables auto start of service after its exit. We are sending SIGQUIT to signal a Runner that it should not process a new builds, but finish existing ones and exit. You will have to wait till this script finishes, but when it finished it means that Runner did finish processing of all builds and you are free to start a chef client.
-
-1. **Start `chef-client` process on a node**
-
-    If old process finished all builds (and was restarted by upstart) you can restart `chef-client` on the node.
-
-    ```bash
-    $ sudo service chef-client start
-    ```
-
-    Now remove the manual override for process startup:
-
-    ```bash
-    $ sudo rm /etc/init/gitlab-runner.override
-    ```
-
-    You can check if the process is runing by:
-
-    ```bash
-    $ service chef-client status; ps aux | grep chef-client
-    ```
-
-    Chef-client in next half of hour should update all configuration. After this time you can check if the runner
-    was updated:
-
-    ```bash
-    $ gitlab-runner --version
-    Version:      1.4.0~beta.77.g0ac09d5
-    Git revision: 0ac09d5
-    Git branch:   master
-    GO version:   go1.6.3
-    Built:        Wed, 20 Jul 2016 14:44:37 +0000
-    OS/Arch:      linux/amd64
-    ```
-
-    If you don't want to wait for chef-client process to update configuration, you can run chef-client by hand
-    **after you've started the process**, by executing:
-
-    ```bash
-    $ sudo chef-client
-    ```
-
-1. **Repeat procedure for other nodes**
-
-    If you are updating few nodes (e.g. docker-ci-X.gitlap.com) you should repeat points 3., 4. for each
-    next node. There is no need to repeat 1. (you've stopped `chef-client` process on all nodes at once) and no need
-    to repeat 4. (you need to update role configuration only once).
-
-## TL;DR
-
-You can do all of that much faster:
-
-1. Stop Chef Client as in **1.**:
+1. **Upgrade all GitLab Runners**
 
     ```
     # For docker-ci-X.gitlap.com
-    $ knife ssh -aipaddress 'role:gitlab-private-runners' -- sudo service chef-client stop
+    $ knife ssh -aipaddress 'role:gitlab-private-runners' -- sudo /root/runner_upgrade.sh
 
     # For shared-runners-manager-X.gitlab.com
-    $ knife ssh -aipaddress 'role:gitlab-shared-runners' -- sudo service chef-client stop
+    $ knife ssh -aipaddress 'role:gitlab-shared-runners' -- sudo /root/runner_upgrade.sh
 
     # For Omnibus builders
-    $ knife ssh -aipaddress 'role:omnibus-builder-runners-manager' -- sudo service chef-client stop
+    $ knife ssh -aipaddress 'role:omnibus-builder-runners-manager' -- sudo /root/runner_upgrade.sh
     ```
 
-2. Update Chef Cookbooks as in **2.**
+1. **Verify the version of GitLab Runner**
 
-    ```bash
+    ```
     # For docker-ci-X.gitlap.com
-    $ rake edit_role[gitlab-private-runners]
+    $ knife ssh -aipaddress 'role:gitlab-private-runners' -- gitlab-runner --version
 
     # For shared-runners-manager-X.gitlab.com
-    $ rake edit_role[gitlab-shared-runners]
+    $ knife ssh -aipaddress 'role:gitlab-shared-runners' -- gitlab-runner --version
 
     # For Omnibus builders
-    $ rake edit_role_secrets[omnibus-builder-runners-manager,_default]
+    $ knife ssh -aipaddress 'role:omnibus-builder-runners-manager' -- gitlab-runner --version
     ```
-
-3. Execute this on each node (probably we can have a dedicate script for that):
-
-    ```
-    cat <<EOF | ssh myusername@shared-runners-manager-1.gitlab.com
-
-    echo Disabling GitLab Runner autostart...
-    echo manual | sudo tee /etc/init/gitlab-runner.override
-
-    echo Signal stop of build processing...
-    sudo killall -SIGQUIT gitlab-ci-multi-runner
-
-    echo Waiting for GitLab Runner to finish...
-    while gitlab-runner status; do sleep 1s; done
-
-    echo Starting chef-client...
-    sudo service chef-client start
-
-    echo Waiting for GitLab Runner to start
-    while ! gitlab-runner status; do sleep 1s; done
-
-    echo Enabling autostart...
-    sudo rm /etc/init/gitlab-runner.override
-
-    echo Verify the new version...
-    gitlab-runner --version
-    EOF
-    ```
-
