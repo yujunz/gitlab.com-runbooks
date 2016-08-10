@@ -143,9 +143,9 @@ To upgrade runners on managers you need to:
 
 ## TL;DR
 
-    You can do all of that much faster:
+You can do all of that much faster:
 
-    1. Stop Chef Client as in **1.**:
+1. Stop Chef Client as in **1.**:
 
     ```
     # For docker-ci-X.gitlap.com
@@ -158,7 +158,7 @@ To upgrade runners on managers you need to:
     $ knife ssh -aipaddress 'role:omnibus-builder-runners-manager' -- sudo service chef-client stop
     ```
 
-    2. Update Chef Cookbooks as in **2.**
+2. Update Chef Cookbooks as in **2.**
 
     ```bash
     # For docker-ci-X.gitlap.com
@@ -171,7 +171,7 @@ To upgrade runners on managers you need to:
     $ rake edit_role_secrets[omnibus-builder-runners-manager,_default]
     ```
 
-    3. Execute this on each node:
+3. Execute this on each node:
 
     ```
     cat <<EOF | ssh myusername@shared-runners-manager-1.gitlab.com
