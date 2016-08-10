@@ -44,73 +44,6 @@ To upgrade runners on managers you need to:
     $ knife ssh -aipaddress 'role:gitlab-private-runners' -- "service chef-client status; ps aux | grep chef"
     ```
 
-1. **Pause first runner in GitLab instance (or instances)**
-
-   _If you have admin access_
-
-   - go to admin/runners page, e.g. https://gitlab.com/admin/runners
-   - enter runner's name **or** runner's token in search field and click `Search` button,
-   - find your runner on the list and click `Pause` button.
-
-   _If you don't have admin access and it's a specific runner_
-
-   - go to the project's runners page, e.g. https://gitlab.com/gitlab-org/gitlab-ce/runners
-   - find a runner you want to pause and click the _edit_ button
-   - unmark `active` checkbox and save changes
-   - go again to the project's runners page and check runner's status. Icon on the left should
-     change to a red circle and it should show _'Runner is paused, ...'_ title on mouseover.
-
-     ![Paused runner status](../img/paused-runner.png)
-
-   _If you don't have admin access and it's a shared runner_
-
-   You have a little problem. To pause shared runner you need to be a GitLab admin. You should ask
-   someone to give you admin access **OR** find someone with admin access who can pause the runner
-   for you.
-
-   Remember that the runner will be unpaused at the end of the procedure. If you are asking someone
-   to pause runner for you, make sure that someone will be available to unpause it later.
-
-1. **Send `SIGQUIT` to Runner's process on first node**
-
-    - ssh do the host - e.g. `$ ssh docker-ci-1.gitlap.com`,
-    - find the PID of the process
-
-        ```bash
-        $ ps aux | grep gitlab
-        root     13748 16.9  3.1 219344 111976 ?       Ssl  Jul18 502:44 /usr/bin/gitlab-ci-multi-runner run --working-directory /home/gitlab-runner --config /etc/gitlab-runner/config.toml --service gitlab-runner --syslog --user gitlab-runner
-        ```
-    - send `SIGQUIT` signall
-
-        ```bash
-        $ sudo kill -SIGQUIT 13748
-        ```
-    - look on logs to see when process will be restarted
-
-        ```bash
-        $ sudo tail -f /var/log/upstart/gitlab-runner.log -n 100
-        ```
-
-        You should see a line like `WARN[177812] Requested quit, waiting for builds to finish  builds=6`. This
-        means that runner received `SIGQUIT` signall and from now on it's not handling new builds, it's letting
-        running builds to be finished and after this it will be finished.
-
-        Upstart will automatically restart the process so we are waiting to a log output like (this may take a long
-        while):
-
-        ```
-        INFO[183600] All workers stopped. Can exit now             builds=0
-        INFO[0000] Starting multi-runner from /etc/gitlab-runner/config.toml ...  builds=0
-        INFO[0000] Running in system-mode.
-        INFO[0000]
-        INFO[0000] Config loaded: concurrent: 200
-        checkinterval: 4
-        (...)
-          builds=0
-        ```
-
-    > **Notice:** While waiting you can go to the next point.
-
 1. **Update chef role (or roles)**
 
     > **Notice:** This needs to be done only onece if you are updating few nodes using the same role.
@@ -150,12 +83,30 @@ To upgrade runners on managers you need to:
     If you want to install a Stable version of the Runner, you should set the `repository` value to
     `gitlab-ci-multi-runner` (which is a default if the key doesn't exists in configuration).
 
+1. **Shutdown GitLab Runner service**
+
+    SSH to the host - e.g. `$ ssh docker-ci-1.gitlap.com` and paste this in terminal
+
+        ```bash
+        echo manual | sudo tee /etc/init/gitlab-runner.override
+        sudo killall -SIGQUIT gitlab-ci-multi-runner
+        while gitlab-runner status; do sleep 1s; done
+        ```
+
+    The above script disables auto start of service after its exit. We are sending SIGQUIT to signal a Runner that it should not process a new builds, but finish existing ones and exit. You will have to wait till this script finishes, but when it finished it means that Runner did finish processing of all builds and you are free to start a chef client.
+
 1. **Start `chef-client` process on a node**
 
     If old process finished all builds (and was restarted by upstart) you can restart `chef-client` on the node.
 
     ```bash
     $ sudo service chef-client start
+    ```
+
+    Now remove the manual override for process startup:
+
+    ```bash
+    $ sudo rm /etc/init/gitlab-runner.override
     ```
 
     You can check if the process is runing by:
@@ -184,15 +135,66 @@ To upgrade runners on managers you need to:
     $ sudo chef-client
     ```
 
-1. **Unpause runner in GitLab instance (instances)**
-
-    Regarding which type of access do you have:
-    - unpause runner using `admin/runners` page and `Unpause` button,
-    - unpause runner using project's runners page -> edit -> _active_ checkbox (should be makred to activate),
-    - ask someone with admin access to gitlab to unpause the runner.
-
 1. **Repeat procedure for other nodes**
 
-    If you are updating few nodes (e.g. docker-ci-X.gitlap.com) you should repeat points 2., 3., 5., 6. for each
+    If you are updating few nodes (e.g. docker-ci-X.gitlap.com) you should repeat points 3., 4. for each
     next node. There is no need to repeat 1. (you've stopped `chef-client` process on all nodes at once) and no need
     to repeat 4. (you need to update role configuration only once).
+
+## TL;DR
+
+    You can do all of that much faster:
+
+    1. Stop Chef Client as in **1.**:
+
+    ```
+    # For docker-ci-X.gitlap.com
+    $ knife ssh -aipaddress 'role:gitlab-private-runners' -- sudo service chef-client stop
+
+    # For shared-runners-manager-X.gitlab.com
+    $ knife ssh -aipaddress 'role:gitlab-shared-runners' -- sudo service chef-client stop
+
+    # For Omnibus builders
+    $ knife ssh -aipaddress 'role:omnibus-builder-runners-manager' -- sudo service chef-client stop
+    ```
+
+    2. Update Chef Cookbooks as in **2.**
+
+    ```bash
+    # For docker-ci-X.gitlap.com
+    $ rake edit_role[gitlab-private-runners]
+
+    # For shared-runners-manager-X.gitlab.com
+    $ rake edit_role[gitlab-shared-runners]
+
+    # For Omnibus builders
+    $ rake edit_role_secrets[omnibus-builder-runners-manager,_default]
+    ```
+
+    3. Execute this on each node:
+
+    ```
+    cat <<EOF | ssh myusername@shared-runners-manager-1.gitlab.com
+
+    echo Disabling GitLab Runner autostart...
+    echo manual | sudo tee /etc/init/gitlab-runner.override
+
+    echo Signal stop of build processing...
+    sudo killall -SIGQUIT gitlab-ci-multi-runner
+
+    echo Waiting for GitLab Runner to finish...
+    while gitlab-runner status; do sleep 1s; done
+
+    echo Starting chef-client...
+    sudo service chef-client start
+
+    echo Waiting for GitLab Runner to start
+    while ! gitlab-runner status; do sleep 1s; done
+
+    echo Enabling autostart...
+    sudo rm /etc/init/gitlab-runner.override
+
+    echo Verify the new version...
+    gitlab-runner --version
+    ```
+
