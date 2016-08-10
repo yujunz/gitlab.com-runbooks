@@ -4,7 +4,7 @@
 
 *Don't Panic*
 
-This is not a critical emergency, it's important, yes, but not critical.
+*This is a critical emergency, it's important to fix the replication right away before a failover is triggered to the running behind slave*
 
 ## Symptoms
 

@@ -18,24 +18,24 @@
   * ![Heavy load on postgresql](img/postgresql-heavy-load.png)
 * If the host is responsive
   * Login into the database
-  
+
         ```
         sudo -u gitlab-psql -H sh -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql gitlabhq_production"
         ```
-    
+
   * Sample first 15 queries that are active and taking a lot of time (over 1 second) sorted by duration in descending order, note that only first 120 symbols or query are shown - keep this sample
-    
+
         ```
-        select pid, application_name, state, query_start, (now() - query_start) as duration, substring(query, 0, 120) 
-        from pg_stat_activity where state = 'active' and (now() - query_start) > '1 seconds'::interval 
+        select pid, application_name, state, query_start, (now() - query_start) as duration, substring(query, 0, 120)
+        from pg_stat_activity where state = 'active' and (now() - query_start) > '1 seconds'::interval
         order by duration desc limit 15;
         ```
-    
+
     * Measure queries activity for a bit to see if there is any change, usually there are circa 600 records in activity, so don't be scared for such number
        ```
        sudo -u gitlab-psql -H sh -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql gitlabhq_production -c 'SELECT count(*) FROM pg_stat_activity;'"
        ```
-    
+
 ### Please gather data!
 
 Since this is still an unsolved problem, we will need to gather all the data we can, to do so, run the following commands to gather as much data as possible
@@ -51,12 +51,16 @@ Since this is still an unsolved problem, we will need to gather all the data we 
 * Keep a copy of the sample queries from the pre-checks
   * turn into root `sudo su -`
   * run the queries script `./get_all_queries.sh > queries.log`
+  * run the waiting queries script `./get_waiting_queries.sh > waiting-queries.log`
+  * run the locked queries script `./get_locked_queries.sh > locked-queries.log`
 
 ## Resolution
 
-* The simplest/least intrusive resolution that has worked really well was to raise the downtime page from your chef repo
+* The simplest/least intrusive resolution that has worked really well was to raise the deploy page from your chef repo. To prevent API calls also stop unicorn.
   * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl deploy-page up'`
-  * monitor load, after it goes down to roughly 15 take the page down
+  * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl stop unicorn'`
+  * monitor load, after it goes down to roughly 15 take the deploy page down
+  * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl start unicorn'`
   * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl deploy-page down'`
 * Killing queries that are causing the load
   * gentle kill
@@ -95,7 +99,7 @@ The way to fix this is to log into CheckMK and force the reload of the host metr
 ``` bash
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
-\x on ;
+\x on
 SELECT pid, state, age(clock_timestamp(), query_start) as duration, query
 FROM pg_stat_activity
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle'
@@ -107,7 +111,7 @@ EOF"
 ```
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
-\x on ;
+\x on
 SELECT pid, state, age(clock_timestamp(), query_start) as duration, query
 FROM pg_stat_activity
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:01:00'
@@ -115,10 +119,43 @@ ORDER BY age(clock_timestamp(), query_start) DESC;
 EOF"
 ```
 
+* get_waiting_queries.sh
+```
+#!/bin/bash
+su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
+\x on
+SELECT pid, query, age(clock_timestamp(), query_start) AS waiting_duration
+FROM pg_catalog.pg_stat_activity WHERE  waiting
+ORDER BY age(clock_timestamp(), query_start) DESC;
+EOF"
+```
+
+* get_locked_queries.sh
+```
+#!/bin/bash
+su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
+\x on
+SELECT blockingl.relation::regclass,
+  blockeda.pid AS blocked_pid, blockeda.query as blocked_query,
+  blockedl.mode as blocked_mode,
+  age(clock_timestamp(), blockeda.query_start) as blocked_query_duration,
+  blockinga.pid AS blocking_pid, blockinga.query as blocking_query,
+  blockingl.mode as blocking_mode,
+  age(clock_timestamp(), blockinga.query_start) as blocking_query_duration
+FROM pg_catalog.pg_locks blockedl
+JOIN pg_stat_activity blockeda ON blockedl.pid = blockeda.pid
+JOIN pg_catalog.pg_locks blockingl ON(blockingl.relation=blockedl.relation
+  AND blockingl.locktype=blockedl.locktype AND blockedl.pid != blockingl.pid)
+JOIN pg_stat_activity blockinga ON blockingl.pid = blockinga.pid
+WHERE NOT blockedl.granted;
+EOF"
+```
+
 * terminate_slow_queries.sh
 ```
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
+\x on
 SELECT pg_terminate_backend (pid)
 FROM pg_stat_activity
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:04:00';

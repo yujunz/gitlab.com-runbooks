@@ -18,7 +18,7 @@ $  bundle exec knife ssh -a ipaddress role:gitlab-cluster-worker 'ps -U git -o a
 
 ## Possible checks
 
-* Go to PostgreSQL and if result for the following query is not empty
+* Go to PostgreSQL and if result for the following query is not empty to check that tables are not locked
 
 ```
 SELECT clock_timestamp(), pg_class.relname, pg_locks.locktype, pg_locks.database,
@@ -33,6 +33,7 @@ WHERE relname !~ '^pg_' and relname <> 'active_locks' and page is not null order
 * Capture which queries are being executed right now please
   * turn into root `sudo su -`
   * run the queries script `./get_all_queries.sh > queries.log`
+  * run the locked queries script `./get_locked_queries.sh > locked-queries.log`
 
 ## Resolution
 

@@ -13,9 +13,11 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
 * [The DB server `db[45]` is under heavy load](troubleshooting/postgresql_heavy_load.md)
 * [The DB replication has stopped](troubleshooting/postgresql_replication.md)
+* [The CI shared runner machines report a high number of errors](troubleshooting/ci_runners.md)
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
 * [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
 * [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
+* [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
 
 ## How do I
 
@@ -38,21 +40,31 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Work with Kibana (logs view)](howto/kibana.md)
 * [Force a failover with postgres or redis](howto/manage-pacemaker.md#force-a-failover)
 * [Update GitLab Runner on runners managers](howto/update-gitlab-runner-on-managers.md)
-
+* [Work with Check_MK (Notifications, scheduled downtime, acknowledge problems)](howto/checkmk.md)
+* [Rename a node already in Chef](howto/rename-nodes.md)
+* [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
+* [Get a list of waiting queries in postgresql](howto/postgresql.md#get-a-list-of-queries-that-are-waiting)
+* [Get a list of locked queries in postgresql](howto/postgresql.md#get-a-list-of-locked-queries-with-the-query-that-is-blocking-it)
 
 ## General guidelines in an emergency
 
-* Confirm that it is actually an emergency, challenge this: are we loosing data? is GitLab.com not working?
+* Confirm that it is actually an emergency, challenge this: are we loosing data? Is GitLab.com not working?
+* [Tweet](howto/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
 * Join the `#alerts` channel
 * Organize
+  * Establish who is taking point on the emergency issue in the `#alerts` channel: "I'm taking point" and pin the message for the duration of the emergency.
   * open a hangout if it will save time: https://plus.google.com/hangouts/_/gitlab.com?authuser=1
   * share the link in the alerts channel
-* If you need someone to do something, give a direct command: _@someone: please run `this` command_
+* If the point person needs someone to do something, give a direct command: _@someone: please run `this` command_
 * Be sure to be in sync - if you are going to reboot a service, say so: _I'm bouncing server X_
 * If you have conflicting information, **stop and think**, bounce ideas, escalate
 * Fix first, ask questions later.
 * Gather information when the outage is done - logs, samples of graphs, whatever could help figuring out what happened
 * Open an issue and put `monitoring` label on it, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
+
+## Guidelines
+
+* [Tweeting Guidelines](howto/tweeting-guidelines.md)
 
 ## Adding runbooks rules
 
