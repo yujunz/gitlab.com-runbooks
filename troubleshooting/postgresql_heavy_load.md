@@ -56,9 +56,11 @@ Since this is still an unsolved problem, we will need to gather all the data we 
 
 ## Resolution
 
-* The simplest/least intrusive resolution that has worked really well was to raise the downtime page from your chef repo
+* The simplest/least intrusive resolution that has worked really well was to raise the deploy page from your chef repo. To prevent API calls also stop unicorn.
   * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl deploy-page up'`
-  * monitor load, after it goes down to roughly 15 take the page down
+  * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl stop unicorn'`
+  * monitor load, after it goes down to roughly 15 take the deploy page down
+  * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl start unicorn'`
   * `bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo gitlab-ctl deploy-page down'`
 * Killing queries that are causing the load
   * gentle kill
