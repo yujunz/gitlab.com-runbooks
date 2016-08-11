@@ -107,7 +107,7 @@ The way to fix this is to log into CheckMK and force the reload of the host metr
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
 \x on
-SELECT pid, application_name, state, age(clock_timestamp(), query_start) as duration, query
+SELECT pid, application_name, client_addr, state, age(clock_timestamp(), query_start) as duration, query
 FROM pg_stat_activity
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle'
 ORDER BY age(clock_timestamp(), query_start) DESC;
@@ -119,7 +119,7 @@ EOF"
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
 \x on
-SELECT pid, application_name, state, age(clock_timestamp(), query_start) as duration, query
+SELECT pid, application_name, client_addr, state, age(clock_timestamp(), query_start) as duration, query
 FROM pg_stat_activity
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:01:00'
 ORDER BY age(clock_timestamp(), query_start) DESC;
@@ -131,7 +131,7 @@ EOF"
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
 \x on
-SELECT pid, application_name, query, age(clock_timestamp(), query_start) AS waiting_duration
+SELECT pid, application_name, client_addr, query, age(clock_timestamp(), query_start) AS waiting_duration
 FROM pg_catalog.pg_stat_activity WHERE  waiting
 ORDER BY age(clock_timestamp(), query_start) DESC;
 EOF"
