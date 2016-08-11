@@ -23,10 +23,17 @@
         sudo -u gitlab-psql -H sh -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql gitlabhq_production"
         ```
 
+  * Disable pagination and use extended mode
+
+        ```
+        \pset pager off
+        \x
+        ```
+
   * Sample first 15 queries that are active and taking a lot of time (over 1 second) sorted by duration in descending order, note that only first 120 symbols or query are shown - keep this sample
 
         ```
-        select pid, application_name, state, query_start, (now() - query_start) as duration, substring(query, 0, 120)
+        select pid, application_name, state, query_start, (now() - query_start) as duration, query
         from pg_stat_activity where state = 'active' and (now() - query_start) > '1 seconds'::interval
         order by duration desc limit 15;
         ```
@@ -100,7 +107,7 @@ The way to fix this is to log into CheckMK and force the reload of the host metr
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
 \x on
-SELECT pid, state, age(clock_timestamp(), query_start) as duration, query
+SELECT pid, application_name, state, age(clock_timestamp(), query_start) as duration, query
 FROM pg_stat_activity
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle'
 ORDER BY age(clock_timestamp(), query_start) DESC;
@@ -112,7 +119,7 @@ EOF"
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
 \x on
-SELECT pid, state, age(clock_timestamp(), query_start) as duration, query
+SELECT pid, application_name, state, age(clock_timestamp(), query_start) as duration, query
 FROM pg_stat_activity
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:01:00'
 ORDER BY age(clock_timestamp(), query_start) DESC;
@@ -124,7 +131,7 @@ EOF"
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
 \x on
-SELECT pid, query, age(clock_timestamp(), query_start) AS waiting_duration
+SELECT pid, application_name, query, age(clock_timestamp(), query_start) AS waiting_duration
 FROM pg_catalog.pg_stat_activity WHERE  waiting
 ORDER BY age(clock_timestamp(), query_start) DESC;
 EOF"
