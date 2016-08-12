@@ -45,6 +45,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
 * [Get a list of waiting queries in postgresql](howto/postgresql.md#get-a-list-of-queries-that-are-waiting)
 * [Get a list of locked queries in postgresql](howto/postgresql.md#get-a-list-of-locked-queries-with-the-query-that-is-blocking-it)
+* [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
 
 ## General guidelines in an emergency
 
