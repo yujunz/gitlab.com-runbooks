@@ -39,6 +39,7 @@ In this case the master is redis3 => `gitlab_redis (ocf::pacemaker:gitlab_redis)
 ## Resolution
 
 * Get the ip of the redis master server
+* Next commands must be exucuted on slave host
 * Get redis password with `grep requirepass /var/opt/gitlab/redis/redis.conf`
 * Turn into root
 * Run `/root/gitlab_redis_recovery.sh` and provide the required info
