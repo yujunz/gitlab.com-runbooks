@@ -33,6 +33,19 @@ Unhandled service problems are bad! It means that nobody is working on this serv
     - Click on the hammer icon
     - Fill in the Acknowledge box (most top box) the comment field with the link to the issue and click on the acknowledge button.
 
+### Modify service thresholds
+
+As example we will use service 'Number of threads'.
+
+Since Ceph OSD nodes are using way more threads then an average server we want to higher the thresholds for this service but only specific for the Ceph OSD nodes.
+You can do this by clicking on ['Host & Service Parameters'](https://checkmk.gitlap.com/gitlab/check_mk/wato.py?mode=ruleeditor) and then on ['Parameters for discovered services'](https://checkmk.gitlap.com/gitlab/check_mk/wato.py?mode=rulesets&group=checkparams&host=&local=&folder=).
+You will get a list of all tunable parameters for all services currently available.
+
+In our example we will look for the ['Number of threads'](https://checkmk.gitlap.com/gitlab/check_mk/wato.py?mode=edit_ruleset&varname=checkgroup_parameters%3Athreads&folder=) parameter and click on it. It will show all rules for this parameter, normally there are no rules and you should create one by clicking the 'Create rule in folder' button.
+But since there is already a rule we can change that by clicking on the [pensil icon](https://checkmk.gitlap.com/gitlab/check_mk/wato.py?mode=edit_rule&varname=checkgroup_parameters%3Athreads&rulenr=0&host=&item=e30%3D&rule_folder=&folder=).
+
+As you can see you can change the thresholds and hosts for which this apply. After the change make sure you save the new settings and activate the changes!
+
 ## Notifications
 
 We use Slack and Pagerduty for notifications.
