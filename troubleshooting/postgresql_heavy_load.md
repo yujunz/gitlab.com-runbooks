@@ -106,4 +106,5 @@ The way to fix this is to log into CheckMK and force the reload of the host metr
 * [get_waiting_queries.sh](db_scripts/get_waiting_queries.sh)
 * [get_locked_queries.sh](db_scripts/get_locked_queries.sh)
 * [terminate_slow_queries.sh](db_scripts/terminate_slow_queries.sh)
+* [get_vacuum_candidates.sh](db_scripts/get_vacuum_candidates.sh)
 
