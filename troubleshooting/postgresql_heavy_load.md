@@ -101,70 +101,9 @@ It is not critical, but it is a great source of noise.
 The way to fix this is to log into CheckMK and force the reload of the host metrics.
 
 ### Sample queries scripts
+* [get_all_queries.sh](db_scripts/get_all_queries.sh)
+* [get_slow_queries.sh](db_scripts/get_slow_queries.sh)
+* [get_waiting_queries.sh](db_scripts/get_waiting_queries.sh)
+* [get_locked_queries.sh](db_scripts/get_locked_queries.sh)
+* [terminate_slow_queries.sh](db_scripts/terminate_slow_queries.sh)
 
-* get_all_queries.sh
-``` bash
-#!/bin/bash
-su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
-\x on
-SELECT pid, application_name, client_addr, state, age(clock_timestamp(), query_start) as duration, query
-FROM pg_stat_activity
-WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle'
-ORDER BY age(clock_timestamp(), query_start) DESC;
-EOF"
-```
-
-* get_slow_queries.sh
-```
-#!/bin/bash
-su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
-\x on
-SELECT pid, application_name, client_addr, state, age(clock_timestamp(), query_start) as duration, query
-FROM pg_stat_activity
-WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:01:00'
-ORDER BY age(clock_timestamp(), query_start) DESC;
-EOF"
-```
-
-* get_waiting_queries.sh
-```
-#!/bin/bash
-su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
-\x on
-SELECT pid, application_name, client_addr, query, age(clock_timestamp(), query_start) AS waiting_duration
-FROM pg_catalog.pg_stat_activity WHERE  waiting
-ORDER BY age(clock_timestamp(), query_start) DESC;
-EOF"
-```
-
-* get_locked_queries.sh
-```
-#!/bin/bash
-su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
-\x on
-SELECT blockingl.relation::regclass,
-  blockeda.pid AS blocked_pid, blockeda.query as blocked_query,
-  blockedl.mode as blocked_mode,
-  age(clock_timestamp(), blockeda.query_start) as blocked_query_duration,
-  blockinga.pid AS blocking_pid, blockinga.query as blocking_query,
-  blockingl.mode as blocking_mode,
-  age(clock_timestamp(), blockinga.query_start) as blocking_query_duration
-FROM pg_catalog.pg_locks blockedl
-JOIN pg_stat_activity blockeda ON blockedl.pid = blockeda.pid
-JOIN pg_catalog.pg_locks blockingl ON(blockingl.relation=blockedl.relation
-  AND blockingl.locktype=blockedl.locktype AND blockedl.pid != blockingl.pid)
-JOIN pg_stat_activity blockinga ON blockingl.pid = blockinga.pid
-WHERE NOT blockedl.granted;
-EOF"
-```
-
-* terminate_slow_queries.sh
-```
-#!/bin/bash
-su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
-\x on
-SELECT pg_terminate_backend (pid)
-FROM pg_stat_activity
-WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' AND state != 'idle' AND age(clock_timestamp(), query_start) > '00:04:00';
-EOF"
-```
