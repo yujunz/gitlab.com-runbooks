@@ -88,6 +88,30 @@ Once the disk is prepared you can add the disk to the CephFS Cluster
 
 `ceph-deploy osd create **new-osd-server:/dev/sda1** /dev/sdaa`
 
+### Rebalancing the Placement Groups
+
+Ceph uses 'placement groups' to determine how data is written to the OSD drives
+in the cluster.  The formula for determing what the 'pg_num' value should be is
+as follows:
+
+Total PGs = ( OSD Drives * 100 ) / Replication Factor
+
+This number is then raised to the next highest power of 2.  Our current 'pg_num'
+value is 8192. We arrive at this the following way:
+
+240 * 100 / 3 = 8000, the next highest power of two available is 8192.  In order to
+set and rebalance the OSD's and CephFS service perform the following command:
+
+`ceph osd pool set git_data pg_num 8192`
+
+Once this is done the data will begin to be writeen to the new space, but data
+replication will not happen until you adjust the gpg_num assocaited withi the OSD
+target.  To perform that action issue the following command:
+
+`ceph osd pool set git_data gpg_num 8192`
+
+The pg_num and gpg_num should always track with each other in lock-step.
+
 ### Adding Disks to an OSD Server
 
 Don't - Each OSD server should be created with 24 1TB disk targets for storage, 
