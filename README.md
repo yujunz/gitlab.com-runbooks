@@ -18,7 +18,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
 * [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
 * [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
-* [Load Balancer Outage](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#creating-a-ticket-for-pro-direct-support-in-azure)
+* [Load Balancer Outage](troubleshooting/load-balancer-outage.md)
 * [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
 
 ## How do I
