@@ -19,6 +19,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
 * [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
 * [Load Balancer Outage](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#creating-a-ticket-for-pro-direct-support-in-azure)
+* [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
 
 ## How do I
 
