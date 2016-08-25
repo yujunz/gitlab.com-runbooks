@@ -31,3 +31,19 @@ server.
 If some of the workers CAN reach postgres but others CANNOT, this is likely a Microsoft issue. 
 You will need to [contact Microsoft support](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#creating-a-ticket-for-pro-direct-support-in-azure)
 as soon as possible. They should reply within the hour.
+
+## Workaround
+
+In the event of an actual load balancer outage causing postgres connectivity issues, we can 
+work around the issue by changing the workers to connect directly to the current primary database.
+
+In chef-repo, run `bundle exec rake 'edit_role[gitlab-cluster-worker]'` and change the DB IP to 
+the primary DB server's IP.
+
+Then run chef-client on all the workers:
+
+```
+bundle exec knife ssh -a ipaddress 'role:gitlab-cluster-worker' 'sudo chef-client'
+```
+
+This will solve the immediate connectivity issue.
