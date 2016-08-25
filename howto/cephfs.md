@@ -31,6 +31,21 @@ the OSD targets.
 
 ### Checking the Health of the Service
 
+From any of the monitor (ceph-mon) servers or osd servers (ceph-osd) issue the
+following command to view the health:
+
+`ceph health`
+
+This will tell you the simple and immediate status of the cluster.  For a more
+in depth look at the health of the cluster issue:
+
+`ceph status`
+
+For a detailed look at the status of every disk within the Ceph cluster issue
+the following:
+
+`ceph osd tree`
+
 ### Adding a Worker Client
 
 Add the role `gitlab-ceph-client` to the worker node. This will install the cephfs
@@ -57,11 +72,23 @@ Once the node is built and communicating on the network, it is ready to be
 added to the cluster.  This task is done as the 'ceph-deploy' user on ceph-mon1
 with configuration and keys located in the `/home/ceph-deploy/ceph-cluster directory.
 
-From within the ceph-deploy directory issue the following commands at the target
+From within the ceph-cluster directory issue the following commands at the target
 OSD that you wish to enroll:
+
+`ceph-deploy install **new-osd-server`
+
+This establishes the osd node as a member of the cephfs cluster and distributes
+the keys needed to be an active member of the cluster for file and data transfer.
+
+In order to add the disks to the CephFS cluster you need to prepare the disk:
+
 `ceph-deploy disk prepare **new-osd-server:/dev/sda1**`
+
+Once the disk is prepared you can add the disk to the CephFS Cluster
+
+`ceph-deploy osd create **new-osd-server:/dev/sda1** /dev/sdaa`
 
 ### Adding Disks to an OSD Server
 
 Don't - Each OSD server should be created with 24 1TB disk targets for storage, 
-when that is approaching full spin up another OSD server with disk allocaiton.
+when that is approaching full spin up another OSD server with another 24 1TB disks.
