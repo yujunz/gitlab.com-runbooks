@@ -2,6 +2,7 @@
 
 We utilize Azure load balancers to deal with failover of our postgres database.
 Occasionally there will be an outage of the load balancer that will cause disruption.
+For more information on our load balanced Postgres setup, visit the [docs section of chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/tree/postgres-docs/doc)
 
 ## Determine if the outage is the vendor or us
 
