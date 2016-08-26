@@ -19,6 +19,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
 * [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
 * [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
+* [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
 
 ## How do I
 
