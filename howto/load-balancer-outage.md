@@ -32,7 +32,7 @@ If some of the workers CAN reach postgres but others CANNOT, this is likely a Mi
 You will need to [contact Microsoft support](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#creating-a-ticket-for-pro-direct-support-in-azure)
 as soon as possible. They should reply within the hour.
 
-## Workaround
+## Workaround for Postgres
 
 In the event of an actual load balancer outage causing postgres connectivity issues, we can 
 work around the issue by changing the workers to connect directly to the current primary database.
