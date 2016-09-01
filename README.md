@@ -20,6 +20,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
 * [Load Balancer Outage](troubleshooting/load-balancer-outage.md)
 * [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
+* [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
 
 ## How do I
 
