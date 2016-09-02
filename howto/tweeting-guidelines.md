@@ -5,8 +5,8 @@
 We should always be tweeting from @gitlabstatus in an informative but reassuring way.
 
 Avoid using ambiguous messages, but if we don't know what is going on yet just state that we are investigating.
-If you are tweeting about a problem Container Registry, do not use the "Docker" as that is a trademark. It should always
-be referred to as the "container registry".
+If you are tweeting about a problem with the Container Registry service, avoid using the trademarked name "Docker" as it is not ours to use. Our service should always
+be referred to as the "GitLab container registry".
 
 When we have issues with any production operation we should always tweet opening and closing the incident:
 
