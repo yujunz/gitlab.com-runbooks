@@ -21,6 +21,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Load Balancer Outage](troubleshooting/load-balancer-outage.md)
 * [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
 * [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
+* [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
 
 ## How do I
 
