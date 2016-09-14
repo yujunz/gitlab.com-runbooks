@@ -49,6 +49,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Get a list of waiting queries in postgresql](howto/postgresql.md#get-a-list-of-queries-that-are-waiting)
 * [Get a list of locked queries in postgresql](howto/postgresql.md#get-a-list-of-locked-queries-with-the-query-that-is-blocking-it)
 * [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
+* [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
 
 ## General guidelines in an emergency
 
