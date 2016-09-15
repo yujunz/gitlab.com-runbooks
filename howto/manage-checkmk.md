@@ -69,7 +69,7 @@ CheckMK supports adding plugins both official and home cooked
 ### Official plugins
 
 We use chef to manage which official plugins are activated, to find a sample you can check
-(how we enable the postgres plugin)[https://dev.gitlab.org/cookbooks/gitlab-checkmk/blob/master/recipes/plugin-postgres.rb]
+[how we enable the postgres plugin](https://dev.gitlab.org/cookbooks/gitlab-checkmk/blob/master/recipes/plugin-postgres.rb)
 in our checkmk cookbook.
 
 A list of the available plugins can be found here: http://mathias-kettner.com/checkmk_check_catalogue.html
