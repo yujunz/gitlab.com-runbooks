@@ -22,7 +22,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
 * [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
 * [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
-* [CephFS wans "failing to respond to cache pressure"](troubleshooting/cephfs.md)
+* [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
 
 ## How do I
 
