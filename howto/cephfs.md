@@ -1,10 +1,14 @@
-# CephFS Runguide
+# Managing CephFS
 
 ## CephFS Overview
 
 CephFS is a distributed file system that is build on top of the Ceph block
-storage system. CephFS operates by presenting a posix layer to client systems
-that mount the storage.  This is accomplished by a native kernel driver extension
+storage system.
+
+CephFS operates by presenting a posix layer to client systems
+that mount the storage.
+
+This is accomplished by a native kernel driver extension
 for the client (there is also a FUSE driver, but we do not use this).
 
 ### CephFS Server Roles
@@ -12,20 +16,25 @@ for the client (there is also a FUSE driver, but we do not use this).
 Ceph and CephFS have three main components:
 
 1. Clients that mount the storage via Kernel or FUSE mounts.
-2. Monitoring and meta-data servers that tell the clients where to access files.
-3. Back-end storage servers that have large amounts of disk space attached.
+1. Monitoring and meta-data servers that tell the clients where to access files.
+1. Back-end storage servers that have large amounts of disk space attached.
 
 
-## CephFS Implimentation
+## CephFS Implementation
 
-All 20 of the worker nodes mount `/var/opt/gitlab/git-data-ceph` from the CephFS
-servers.  The CephFS farm has three monitoring and metadata servers
+All the worker nodes mount `/var/opt/gitlab/git-data-ceph` from the CephFS
+servers.
+
+The CephFS farm has three monitoring and metadata servers
 (ceph-mon1, ceph-mon2, and ceph-mon3) and 10 back-end data storage servers
-(ceph-osd[1-10]).  In CephFS speak the back in servers are 'osd'
+(ceph-osd[1-10]).
+
+In CephFS speak the back in servers are 'osd'
 Object Storage Daemons while the front-end servers are labeled `mon` for
-monitoring and also serve the MDS (Meta Data Service) function. The MDS function
-is what keeps a catalog of where all the file objects are written across
-the OSD targets.
+monitoring and also serve the MDS (Meta Data Service) function.
+
+The MDS function is what keeps a catalog of where all the file objects are
+written across the OSD targets.
 
 ## Common Tasks and Functions
 
@@ -46,27 +55,48 @@ the following:
 
 `ceph osd tree`
 
+Cephfs also offers tools that behave like standard unix tools, for example:
+
+`ceph df`
+
+Will print a storage usage report. This report can be turned into a json output
+by adding `-f json`, such as:
+
+`ceph df -f json`
+
+
 ### Adding a Worker Client
 
-Add the role `gitlab-ceph-client` to the worker node. This will install the cephfs
-kernel drivers, add the secret keys for mounting our ceph cluster, and mount the
-git-data-ceph volume up on the client and create an fstab entry.
+Add the role `gitlab-ceph-client` to the worker node. This will
+
+* install the cephfs kernel drivers
+* add the secret keys for mounting our ceph cluster
+* mount the git-data-ceph volume up on the client
+* create an fstab entry.
 
 ## Growth and Expansion Tasks
 
 ### Adding an OSD Server
 
 The Azure machine for the build must be of type `Standard_DS14` and located in
-the ARM resource side of the `eastus2` data center.  It should belong to the
-Resource Group `Ceph-Prod` and have two NICS associated with it.  The first NIC
-should be in the `CephFrontEnd` subnet with the second NIC being in the `CephReplication`
-subnet as well as the `NSG-CephReplication` Network Security Group.  The primary NIC
-will have an IP address in the 10.42.1.0/24 network while the secondary NIC will have
-an IP address in the 10.42.5.0/24 network. It is important to note that the 10.42.5.0/24
-network is for Ceph replication only and is not reachable from the Azure "Classic"
-infrastructure resources.  Each OSD server should also have attached to it 25 1TB
-SSD disks.  24 of these disks will be user for data storage while one disk will
+the ARM resource side of the `eastus2` data center.
+
+It should belong to the Resource Group `Ceph-Prod` and have two NICS associated with it.
+
+The first NIC should be in the `CephFrontEnd` subnet with the second NIC being in the
+`CephReplication` subnet as well as the `NSG-CephReplication` Network Security Group.
+
+The primary NIC will have an IP address in the 10.42.1.0/24 network while the secondary
+NIC will have an IP address in the 10.42.5.0/24 network.
+
+It is important to note that the 10.42.5.0/24 network is for Ceph replication only and
+is not reachable from the Azure "Classic" infrastructure resources.
+
+Each OSD server should also have attached to it 25 1TB SSD disks.
+
+24 of these disks will be user for data storage while one disk will
 be used for Ceph Journaling (this disk is /dev/sdaa).
+
 
 Once the node is built and communicating on the network, it is ready to be
 added to the cluster.  This task is done as the 'ceph-deploy' user on ceph-mon1
@@ -114,5 +144,5 @@ The pg_num and gpg_num should always track with each other in lock-step.
 
 ### Adding Disks to an OSD Server
 
-Don't - Each OSD server should be created with 24 1TB disk targets for storage, 
+Don't - Each OSD server should be created with 24 1TB disk targets for storage,
 when that is approaching full spin up another OSD server with another 24 1TB disks.
