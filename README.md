@@ -14,6 +14,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [The DB server `db[45]` is under heavy load](troubleshooting/postgresql_heavy_load.md)
 * [The DB replication has stopped](troubleshooting/postgresql_replication.md)
 * [The CI runner manager report a high DO Token Rate Limit usage](troubleshooting/ci_runner_manager_do_limits.md)
+* [The CI runner manager report a high number of errors](troubleshooting/ci_runner_manager_errors.md)
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
 * [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
 * [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
