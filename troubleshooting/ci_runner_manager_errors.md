@@ -1,4 +1,4 @@
-# CI runnner manager report a high number of errors
+# CI runner manager report a high number of errors
 
 ## Symptoms
 
