@@ -13,13 +13,17 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
 * [The DB server `db[45]` is under heavy load](troubleshooting/postgresql_heavy_load.md)
 * [The DB replication has stopped](troubleshooting/postgresql_replication.md)
-* [The CI runner manager report a high number of errors](troubleshooting/ci_runner_manager_errors.md)
+* [The CI shared runner machines report a high number of errors](troubleshooting/ci_runners.md)
+* [The CI runner manager report a high DO Token Rate Limit usage](troubleshooting/ci_runner_manager_do_limits.md)
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
 * [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
 * [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
 * [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
+* [Load Balancer Outage](troubleshooting/load-balancer-outage.md)
 * [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
 * [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
+* [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
+* [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
 
 ## How do I
 
@@ -48,6 +52,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Get a list of waiting queries in postgresql](howto/postgresql.md#get-a-list-of-queries-that-are-waiting)
 * [Get a list of locked queries in postgresql](howto/postgresql.md#get-a-list-of-locked-queries-with-the-query-that-is-blocking-it)
 * [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
+* [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
+* [Administer and Maintain CephFS](howto/cephfs.md)
 
 ## General guidelines in an emergency
 
