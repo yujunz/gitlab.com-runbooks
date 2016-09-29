@@ -54,6 +54,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
 * [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
 * [Administer and Maintain CephFS](howto/cephfs.md)
+* [Migrate a project to CephFS](howto/migrate-to-cephfs.md)
 
 ## General guidelines in an emergency
 
