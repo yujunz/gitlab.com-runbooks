@@ -24,6 +24,9 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
 * [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
 * [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
+* [HAProxy is missing workers](troubleshooting/chef.md)
+* [Nodes are missing chef roles](troubleshooting/chef.md)
+* [Knife ssh does not work](troubleshooting/chef.md)
 
 ## How do I
 
