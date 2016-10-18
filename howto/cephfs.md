@@ -34,9 +34,29 @@ Object Storage Daemons while the front-end servers are labeled `mon` for
 monitoring and also serve the MDS (Meta Data Service) function.
 
 The MDS function is what keeps a catalog of where all the file objects are
-written across the OSD targets.
+written across the OSD targets for CephFS.
 
 ## Common Tasks and Functions
+
+### Warnings and Alerts
+
+CephFS works by assigning CephFS clients resources called "inodes"
+for file handling purposes. The current configuration allows for
+2,000,000 inodes to be used by the entire cluster. From time to time
+during heavy file activity a warning will be generated like:
+
+`ceph-mon2.stor.gitlab.com CEPH_INODES is WARN - inodes - 1799207 of 2000000`
+
+This is a standard process as when this occurs the Ceph MDS nodes request
+resources back from the clients. This warning though should be an indicator
+for you to check the logs on `log.gitlap.com` and check for `[WRN]` messages
+on the ceph-mds[1-3] nodes. A warning message indicating that you need to take
+action would look like:
+
+`client.1844098 isn't responding to mclientcaps(revoke)`
+
+When this happens look for open processes on the worker machines that would
+be holding open resources against the CephFS file system (`/var/gitlab/git-data-ceph`).
 
 ### Checking the Health of the Service
 
@@ -100,7 +120,7 @@ be used for Ceph Journaling (this disk is /dev/sdaa).
 
 Once the node is built and communicating on the network, it is ready to be
 added to the cluster. This task is done as the 'ceph-deploy' user on ceph-mon1
-with configuration and keys located in the `/home/ceph-deploy/ceph-cluster directory.
+with configuration and keys located in the `/home/ceph-deploy/ceph-cluster directory`.
 
 From within the ceph-cluster directory issue the following commands at the target
 OSD that you wish to enroll:
