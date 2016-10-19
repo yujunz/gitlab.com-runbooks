@@ -7,10 +7,28 @@ the resolution below.
 
 ## Resolution
 
-For now, the fix is to restart all the sidekiq workers. This is 
-not the ideal solution, but for now it is the best we have.
+Run the following command in order to get Sidekiq to output debug info to the log
+
+```
+kill -TTIN <sidekiq_pid>
+```
+
+Check in `/var/log/gitlab/sidekiq/current` for the output. Check for blocking 
+queries when backtraces above show that many threads are stuck in the database adapter.
+
+If `kill -TTIN` fails to work due to high CPU usage, gather statistics from `perf`. 
+
+```
+sudo perf record -p <sidekiq_pid>
+```
+
+Let that run for around 30 seconds and then check the report `sudo perf report`
+
+If nothing else works, try restarting Sidekiq with `gitlab-ctl sidekiq restart`. If it 
+does not respond to that, forcibly restart them.
 
 ## References
 
 https://gitlab.com/gitlab-com/infrastructure/issues/606
 https://gitlab.com/gitlab-com/infrastructure/issues/584
+https://docs.gitlab.com/ee/administration/troubleshooting/sidekiq.html
