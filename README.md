@@ -27,6 +27,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [HAProxy is missing workers](troubleshooting/chef.md)
 * [Nodes are missing chef roles](troubleshooting/chef.md)
 * [Knife ssh does not work](troubleshooting/chef.md)
+* [Sidekiq Queues are out of control](troubleshooting/large-sidekiq-queue.md)
 
 ## How do I
 
