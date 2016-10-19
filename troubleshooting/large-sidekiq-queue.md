@@ -27,6 +27,10 @@ Let that run for around 30 seconds and then check the report `sudo perf report`
 If nothing else works, try restarting Sidekiq with `gitlab-ctl sidekiq restart`. If it 
 does not respond to that, forcibly restart them.
 
+```
+sudo gitlab-ctl kill sidekiq
+```
+
 ## References
 
 https://gitlab.com/gitlab-com/infrastructure/issues/606
