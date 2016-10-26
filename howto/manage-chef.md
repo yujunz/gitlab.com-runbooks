@@ -90,3 +90,9 @@ grep '"janedoe"' /var/log/opscode/nginx/access.log
 ```
 
 Then look for POST or PUT methods to sample changes.
+
+## Problem with `<role>/<vault> is not encrypted with your public key.  Contact an administrator of the vault item to encrypt for you!`
+
+This can happen when you are trying to add role (`role with vault`) with vaults to new node (`new node`). If node or role does not have them, following error can occur.
+
+In this case you have to execute command - `rake add_node_secrets[<new node fqdn>, <role with vault>]`.
