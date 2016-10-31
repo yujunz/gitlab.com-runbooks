@@ -29,6 +29,11 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Knife ssh does not work](troubleshooting/chef.md)
 * [Sidekiq Queues are out of control](troubleshooting/large-sidekiq-queue.md)
 
+## Alerting
+
+# [Alert creating manual](alerts/manual.md)
+# [Alerts list](alerts/README.md)
+
 ## How do I
 
 * [Deploy GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md)
