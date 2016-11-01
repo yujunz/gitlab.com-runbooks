@@ -4,8 +4,8 @@
 
 ### GitLab.com related
 
-* [Registry is down]()
-* [PostgreSQL is down]()
+* Registry is down (TBD)
+* PostgreSQL is down (TBD)
 
 ### GitLab Runners related
 
@@ -14,4 +14,4 @@
 
 ### Infrastructure related
 
-* [Kibana is down](kibana_is_down.md)
+* Kibana is down (TBD)
