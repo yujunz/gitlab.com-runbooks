@@ -31,7 +31,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## Alerting
 
-* [Alert creating manual](alerts/manual.md)
+* [Alert creating manual](alerts/alerts_manual.md)
 * [Alerts list](alerts/README.md)
 
 ## How do I
