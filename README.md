@@ -29,10 +29,13 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Knife ssh does not work](troubleshooting/chef.md)
 * [Sidekiq Queues are out of control](troubleshooting/large-sidekiq-queue.md)
 
-## Alerting
+## Alerting and monitoring
 
 * [Alert creating manual](alerts/alerts_manual.md)
 * [Alerts list](alerts/README.md)
+* [Working with Grafana](monitoring/grafana.md)
+* [Working with Prometheus](monitoring/prometheus.md)
+
 
 ## How do I
 
