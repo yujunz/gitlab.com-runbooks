@@ -54,6 +54,8 @@ sudo -u git PATH=/opt/gitlab/bin:/opt/gitlab/embedded/bin:/bin:/usr/bin LD_PRELO
 Replace the queue name with the offending one, take it from the
 [queue size graph](http://performance.gitlab.net/dashboard/db/sidekiq-stats?panelId=3&fullscreen)
 
+You can add more than 1 queue by adding `-q <queue_name>` multiple times to this command line.
+
 In the most recent incident (gitlab-com/infrastructure#677), we spun up 2 threads on all
 of the workers, resulting in around 25 processes across the fleet.
 
