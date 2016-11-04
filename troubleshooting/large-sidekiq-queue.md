@@ -81,6 +81,12 @@ knife ssh 'role:<cluster-role>' 'tmux list-sessions'
 knife ssh -aipaddress 'role:<cluster-role>' 'tmux send-key C-c -t sq_<queue>'
 ```
 
+### If tmux disagrees with you
+
+```
+knife ssh -aipaddress 'role:<cluster-role>' 'tmux kill-session -t sq_<queue>'
+```
+
 ## References
 
 https://gitlab.com/gitlab-com/infrastructure/issues/677
