@@ -59,6 +59,28 @@ You can add more than 1 queue by adding `-q <queue_name>` multiple times to this
 In the most recent incident (gitlab-com/infrastructure#677), we spun up 2 threads on all
 of the workers, resulting in around 25 processes across the fleet.
 
+## If you are lazy like me
+
+You will use chef to spawn many processes, I've been doing it today like this
+
+### Spawn a tmux session in the whole cluster with a given queue
+
+```
+knife ssh 'role:<cluster-role>' 'tmux new -d -s sq_<queue> "sudo -u git PATH=/opt/gitlab/bin:/opt/gitlab/embedded/bin:/bin:/usr/bin LD_PRELOAD=/opt/gitlab/embedded/lib/libjemalloc.so BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec sidekiq -q <queue> -t 3 -c 1 -r /opt/gitlab/embedded/service/gitlab-rails -e production"'
+```
+
+### Get a list of running tmux sessions
+
+```
+knife ssh 'role:<cluster-role>' 'tmux list-sessions'
+```
+
+### Gracefully kill sidekiq workers inside tmux sessions
+
+```
+knife ssh -aipaddress 'role:<cluster-role>' 'tmux send-key C-c -t sq_<queue>'
+```
+
 ## References
 
 https://gitlab.com/gitlab-com/infrastructure/issues/677
