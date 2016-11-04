@@ -30,12 +30,18 @@ It is possible that docker not correctly reloaded/restarted between chef runs.
    runner-8a2f473d-machine-1478200003-5a3c359d-digital-ocean-4gb   -        digitalocean   Running    tcp://107.170.30.60:2376            v1.11.2   
    ```
    
-   You can then login via `docker-machine ssh` and pull an image. If everything is working, you should see something like:
+   You can then:
+   
+   1. Login via `docker-machine ssh <runner>`
+   2. Run `docker pull ruby:2.1`.
+    
+   If everything is working, you should see something like:
    
    ```sh
    root@shared-runners-manager-1:~# docker-machine ssh runner-8a2f473d-machine-1478160175-c4b230b1-digital-ocean-4gb 
    Last login: Thu Nov  3 08:03:36 UTC 2016 from 192.241.182.179 on ssh
    CoreOS stable (1185.3.0)
+   core@runner-8a2f473d-machine-1478160175-c4b230b1-digital-ocean-4gb ~ $ docker pull ruby:2.1
    2.1: Pulling from library/ruby
    43c265008fae: Already exists 
    af36d2c7a148: Downloading [===================================>               ] 13.21 MB/18.53 MB
@@ -45,6 +51,22 @@ It is possible that docker not correctly reloaded/restarted between chef runs.
    4ff3dfece345: Waiting 
    2a8e581336d3: Waiting 
    7cdf27133962: Waiting 
+   ```
+   
+   A failure may look like:
+   
+   ```
+   core@runner-8a2f473d-machine-1478199487-7fa9607f-digital-ocean-4gb ~ $ docker pull ruby:2.1
+   2.1: Pulling from library/ruby
+   43c265008fae: Already exists 
+   af36d2c7a148: Already exists 
+   143e9d501644: Pulling fs layer 
+   df720fc8e4f1: Pulling fs layer 
+   3da50f5b595a: Pulling fs layer 
+   4ff3dfece345: Waiting 
+   2a8e581336d3: Waiting 
+   7cdf27133962: Waiting 
+   error pulling image configuration: unexpected EOF
    ```
 
 ## Fix
