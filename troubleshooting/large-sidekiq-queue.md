@@ -48,7 +48,7 @@ with fewer threads that specifically deal with troublesome queues. Often, this i
 The command we use to do that is:
 
 ```
-sudo -u git PATH=/opt/gitlab/bin:/opt/gitlab/embedded/bin:/bin:/usr/bin LD_PRELOAD=/opt/gitlab/embedded/lib/libjemalloc.so BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec sidekiq -q <queue_name> -t 2 -c 1 -r /opt/gitlab/embedded/service/gitlab-rails -e production
+sudo -u git PATH=/opt/gitlab/bin:/opt/gitlab/embedded/bin:/bin:/usr/bin LD_PRELOAD=/opt/gitlab/embedded/lib/libjemalloc.so BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile SIDEKIQ_MEMORY_KILLER_MAX_RSS=1000000 SIDEKIQ_MEMORY_KILLER_SHUTDOWN_SIGNAL=SIGKILL GIT_TERMINAL_PROMPT=0 /opt/gitlab/embedded/bin/bundle exec sidekiq -q <queue> -t 3 -c 1 -r /opt/gitlab/embedded/service/gitlab-rails -e production
 ```
 
 Replace the queue name with the offending one, take it from the
@@ -66,7 +66,7 @@ You will use chef to spawn many processes, I've been doing it today like this
 ### Spawn a tmux session in the whole cluster with a given queue
 
 ```
-knife ssh 'role:<cluster-role>' 'tmux new -d -s sq_<queue> "sudo -u git PATH=/opt/gitlab/bin:/opt/gitlab/embedded/bin:/bin:/usr/bin LD_PRELOAD=/opt/gitlab/embedded/lib/libjemalloc.so BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec sidekiq -q <queue> -t 3 -c 1 -r /opt/gitlab/embedded/service/gitlab-rails -e production"'
+knife ssh 'role:<cluster-role>' 'tmux new -d -s sq_<queue> "sudo -u git PATH=/opt/gitlab/bin:/opt/gitlab/embedded/bin:/bin:/usr/bin LD_PRELOAD=/opt/gitlab/embedded/lib/libjemalloc.so BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile SIDEKIQ_MEMORY_KILLER_MAX_RSS=1000000 SIDEKIQ_MEMORY_KILLER_SHUTDOWN_SIGNAL=SIGKILL GIT_TERMINAL_PROMPT=0 /opt/gitlab/embedded/bin/bundle exec sidekiq -q <queue> -t 3 -c 1 -r /opt/gitlab/embedded/service/gitlab-rails -e production"'
 ```
 
 ### Get a list of running tmux sessions
@@ -89,7 +89,7 @@ knife ssh -aipaddress 'role:<cluster-role>' 'tmux kill-session -t sq_<queue>'
 
 ## References
 
-https://gitlab.com/gitlab-com/infrastructure/issues/677
-https://gitlab.com/gitlab-com/infrastructure/issues/606
-https://gitlab.com/gitlab-com/infrastructure/issues/584
-https://docs.gitlab.com/ee/administration/troubleshooting/sidekiq.html
+* https://gitlab.com/gitlab-com/infrastructure/issues/677
+* https://gitlab.com/gitlab-com/infrastructure/issues/606
+* https://gitlab.com/gitlab-com/infrastructure/issues/584
+* https://docs.gitlab.com/ee/administration/troubleshooting/sidekiq.html
