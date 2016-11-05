@@ -2,33 +2,37 @@
 
 The aim of this project is to have a quick guide of what to do when an emergency arrives
 
-
-## IMPORTANT
+## CRITICAL
 
 * Spend one minute and create issue for outage, don't forget about `outage` label as specified in [handbook](https://about.gitlab.com/handbook/infrastructure/).
 
-
 ## What to do when
 
-* [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
-* [The DB server `db[45]` is under heavy load](troubleshooting/postgresql_heavy_load.md)
-* [The DB replication has stopped](troubleshooting/postgresql_replication.md)
-* [The CI runner manager report a high DO Token Rate Limit usage](troubleshooting/ci_runner_manager_do_limits.md)
-* [The CI runner manager report a high number of errors](troubleshooting/ci_runner_manager_errors.md)
-* [Redis replication has stopped](troubleshooting/redis_replication.md)
-* [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
-* [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
-* [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
-* [Load Balancer Outage](troubleshooting/load-balancer-outage.md)
-* [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
-* [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
-* [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
-* [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
-* [HAProxy is missing workers](troubleshooting/chef.md)
-* [Nodes are missing chef roles](troubleshooting/chef.md)
-* [Knife ssh does not work](troubleshooting/chef.md)
 * [Sidekiq Queues are out of control](troubleshooting/large-sidekiq-queue.md)
 * [Workers have huge load because of cat-files](troubleshooting/workers-high-load.md)
+* [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
+* [HAProxy is missing workers](troubleshooting/chef.md)
+* [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
+* [Azure Load Balancers Misbehave](troubleshooting/load-balancer-outage.md)
+
+### Replication fails
+
+* [The DB replication has stopped](troubleshooting/postgresql_replication.md)
+* [Redis replication has stopped](troubleshooting/redis_replication.md)
+
+### Chef/Knife
+
+* [Nodes are missing chef roles](troubleshooting/chef.md)
+* [Knife ssh does not work](troubleshooting/chef.md)
+
+### CI
+
+* [The CI runner manager report a high DO Token Rate Limit usage](troubleshooting/ci_runner_manager_do_limits.md)
+* [The CI runner manager report a high number of errors](troubleshooting/ci_runner_manager_errors.md)
+
+### CephFS
+
+* [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
 
 ## Alerting and monitoring
 
@@ -37,39 +41,69 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
 
+### Oudated
+
+* [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
+* [The DB server `db[45]` is under heavy load](troubleshooting/postgresql_heavy_load.md)
+* [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
+* [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
+* [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
+* [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
 
 ## How do I
 
+### Deploy
+
+* [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
 * [Deploy GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md)
 * [Rollback GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md#rolling-back-gitlabcom)
 * [Deploy staging.GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/staging.md)
 * [Refresh data on staging.gitlab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/staging.md)
-* [Start a rails console in the staging environment](howto/staging-environment.md#run-a-rails-console-in-staging-environment)
-* [Start a redis console in the staging environment](howto/staging-environment.md#run-a-redis-console-in-staging-environment)
-* [Deny a path in the load balancers](howto/block-things-in-haproxy.md#deny-a-path-with-the-delete-http-method)
-* [Isolate a worker by disabling the service in the LBs](howto/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
+
+### Work with the fleet and the rails app
+
 * [Restart unicorn with a zero downtime](howto/manage-workers.md#restart-unicorn-with-a-zero-downtime)
 * [Gracefully restart sidekiq jobs](howto/manage-workers.md#gracefully-restart-sidekiq-jobs)
+* [Start a rails console in the staging environment](howto/staging-environment.md#run-a-rails-console-in-staging-environment)
+* [Start a redis console in the staging environment](howto/staging-environment.md#run-a-redis-console-in-staging-environment)
+* [Force a failover with postgres or redis](howto/manage-pacemaker.md#force-a-failover)
+* [Use aptly](howto/aptly.md)
+
+### Work with storage
+
+* [Migrate a project to CephFS or any other shard](howto/migrate-to-cephfs.md)
+* [Administer and Maintain CephFS](howto/cephfs.md)
+
+### Mangle front end load balancers
+
+* [Isolate a worker by disabling the service in the LBs](howto/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
+* [Deny a path in the load balancers](howto/block-things-in-haproxy.md#deny-a-path-with-the-delete-http-method)
+
+### Work with Chef
+
 * [Create users, rotate or remove keys from chef](howto/manage-chef.md)
+* [Update packages manually for a given role](howto/manage-workers.md#update-packages-fleet-wide)
+* [Rename a node already in Chef](howto/rename-nodes.md)
+* [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
+* [Retrieve old values in a Chef vault](howto/retrieve-old-chef-vault-values.md)
+
+### Work with CI Infrastructure
+
+* [Update GitLab Runner on runners managers](howto/update-gitlab-runner-on-managers.md)
+
+### Work with Infrastructure Providers (VMs)
+
+* [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
 * [Create VMs in Azure, add disks, etc](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
 * [Bootstrap a new VM](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/new-vps.md)
-* [Update packages manually for a given role](howto/manage-workers.md#update-packages-fleet-wide)
-* [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
+
+### Debug and monitor
+
+* [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
 * [Work with Kibana (logs view)](howto/kibana.md)
-* [Force a failover with postgres or redis](howto/manage-pacemaker.md#force-a-failover)
-* [Update GitLab Runner on runners managers](howto/update-gitlab-runner-on-managers.md)
 * [Work with Check_MK (Notifications, scheduled downtime, acknowledge problems)](howto/manage-checkmk.md)
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
-* [Rename a node already in Chef](howto/rename-nodes.md)
-* [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
-* [Get a list of waiting queries in postgresql](howto/postgresql.md#get-a-list-of-queries-that-are-waiting)
-* [Get a list of locked queries in postgresql](howto/postgresql.md#get-a-list-of-locked-queries-with-the-query-that-is-blocking-it)
-* [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
-* [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
-* [Administer and Maintain CephFS](howto/cephfs.md)
-* [Migrate a project to CephFS](howto/migrate-to-cephfs.md)
-* [Use aptly](howto/aptly.md)
-* [Retrieve old values in a Chef vault](howto/retrieve-old-chef-vault-values.md)
+
 
 ## General guidelines in an emergency
 
