@@ -15,4 +15,5 @@
 
 ### Infrastructure related
 
-* Kibana is down (TBD)
+* [Kibana is down](kibana_is_down.md)
+
