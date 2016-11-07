@@ -1,6 +1,10 @@
 ## Manual
 
-### General rules
+Generally speaking alerts are triggered by prometheus, and then deduped by the alert manager.
+
+### General guidelines
+
+In order to create new alerts they have to be included in the gitlab-prometheus cookbook and they need to be pushed to the prometheus instance.
 
 1. Create alert rules file in [gitlab-prometheus](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/) repository.
 1. Add it to alert rules files list of prometheus - `attributes/prometheus.rb` file, `default[:prometheus][:rules]` array.
