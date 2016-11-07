@@ -68,6 +68,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
 * [Administer and Maintain CephFS](howto/cephfs.md)
 * [Migrate a project to CephFS](howto/migrate-to-cephfs.md)
+* [Use aptly](howto/aptly.md)
 
 ## General guidelines in an emergency
 
