@@ -1,12 +1,12 @@
-## Manual
+## How to create alerts in prometheus
 
 Generally speaking alerts are triggered by prometheus, and then grouped, prioritized and deduped by the alert manager.
 
 ### General guidelines
 
-In order to create new alerts they have to be included in the gitlab-prometheus cookbook and they need to be pushed to the prometheus instance.
+In order to create new alerts they have to be included in the [gitlab-prometheus cookbook](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/) and they need to be pushed to the prometheus instance by chef.
 
-The common path is as follows:
+The common procedure is as follows:
 
 1. Create or reuse an alert rules file in [gitlab-prometheus](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/) repository as an erb template.
 1. If it's not there already, add the filename to alert rules files list in `attributes/prometheus.rb` file, inside `default[:prometheus][:rules]` array.
@@ -25,13 +25,24 @@ ALERT runners_cache_is_down
   FOR 10s
   LABELS {severity="critical, pager="slack", pager="pagerduty"}
   ANNOTATIONS {
-    summary="Runners cache has been down for the past 10 seconds"
-    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
+    title="Runners cache has been down for the past 10 seconds"
+    DESCRIPTION="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
   }
 ```
 
 This will result in a critical alert posted both to slack and pagerduty with a link to https://dev.gitlab.com/cookbooks/runbooks/blob/master/alerts/runners_cache_is_down.md and providing the command to run from the infrastructure channel to manage outside communications out of the box - don't make me think.
 
+### What if I want to add more data?
+
+You can use prometheus labels data by adding them into the text like this:
+
+```
+...
+    DESCRIPTION="Current response time is {{$value}} seconds for host {{$labels.instance}}"
+...
+```
+
+That way you provide much more context in a single message.
 
 ### Alert routing
 
