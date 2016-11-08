@@ -29,13 +29,13 @@ instead of 'there is a problem with the database'
 
 ### During deployments
 
-> We'll be deploying GitLab <version> shortly. No downtime is expected but you may see intermittent errors during this time.
+> We'll be deploying GitLab [version] shortly. No downtime is expected but you may see intermittent errors during this time.
 
-> We'll be deploying GitLab <version> at <time> UTC. We will be offline for <time> minutes. Thanks for your patience.
+> We'll be deploying GitLab [version] at [time] UTC. We will be offline for [time] minutes. Thanks for your patience.
 
-> GitLab.com is now running <version>
+> GitLab.com is now running [version]
 
-> We expect the migrations for <version> to take only a few minutes, but some users may experience some downtime.
+> We expect the migrations for [version] to take only a few minutes, but some users may experience some downtime.
 
 > We are experiencing issues during deploy, we are working on resolving the problem.
 
