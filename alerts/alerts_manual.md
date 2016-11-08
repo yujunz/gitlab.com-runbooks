@@ -38,7 +38,7 @@ You can use prometheus labels data by adding them into the text like this:
 
 ```
 ...
-    DESCRIPTION="Current response time is {{$value}} seconds for host {{$labels.instance}}"
+    description="Current response time is {{$value}} seconds for host {{$labels.instance}}"
 ...
 ```
 
