@@ -59,6 +59,11 @@ instead of 'there is a problem with the database'
 
 > The system metrics appear stable for now. We will continue to monitor PostgreSQL.
 
+### Sidekiq high load
+
+> We are adding more capacity to flush background job queues, apologies for the
+> inconvenience.
+
 ### Forcing a failover
 
 > In a couple of minutes from now we will failover our Redis instance, this "should" not cause any downtime for GitLab.com
