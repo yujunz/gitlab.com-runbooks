@@ -23,14 +23,14 @@ The common procedure is as follows:
 ALERT runners_cache_is_down
   IF probe_success{job="runners-cache", instance="localhost:9100"} == 0
   FOR 10s
-  LABELS {severity="critical, pager="slack", pager="pagerduty"}
+  LABELS {severity="critical", channel="infrastructure", pager="pagerduty"}
   ANNOTATIONS {
-    title="Runners cache has been down for the past 10 seconds"
-    DESCRIPTION="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
+    title="Runners cache has been down for the past 10 seconds",
+    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
   }
 ```
 
-This will result in a critical alert posted both to slack and pagerduty with a link to https://dev.gitlab.com/cookbooks/runbooks/blob/master/alerts/runners_cache_is_down.md and providing the command to run from the infrastructure channel to manage outside communications out of the box - don't make me think.
+This will result in a critical alert posted in slack channes `#prometheus-alerts` and `#infrastructure`, pagerduty with a link to https://dev.gitlab.com/cookbooks/runbooks/blob/master/alerts/runners_cache_is_down.md. Runbook will provide information how to manage situation alerted. Main principle of the runbook should be - `don't make me think`.
 
 ### What if I want to add more data?
 
@@ -46,19 +46,23 @@ That way you provide much more context in a single message.
 
 ### Alert routing
 
-Alerts can be routed to none, one or many pagers. Currently we have at least 2 pagers: slack and pagerdury, both have different meaning and behavior.
+All alerts are routed to slack and additionally can be paged to PagerDuty.
 
 ### Sending to the Slack Pager
 
-1. In order to get alert in slack, labels `pager=slack` and `severity=critical` should be applied during alert activation.
-1. Message will be triggered in `#prometheus-alerts` channel. It is red colored message with `.title` and link to corresponding runbook.
-1. When the alert is  resolved, a green colored message with same title will be placed in channel.
+1. Since all alerts sended to slack, you can control only type of alert.
+1. All alerts will be shown in `#prometheus-alerts` channel.
+1. Additionally you can send alerts to `#ci`, `#infrastructure` channels. This part controlled with the label `channel=ci` and `channel=infrastrcture`.
+1. Alerts with `severity=critical` are red colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
+1. Alerts with `severity=info` are green colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
+1. When the critical alert is resolved, a green colored message with same title will be placed in channel. Prefix will be `[RESOLVED]`.
 
 ### Sending to the Pagerduty Pager
 
-1. In order to get alerts in pagerduty, labels `pager=pagerduty` should be applied during alert activation, no need to add _critical_ to it.
+1. In order to get alerts in pagerduty, label `pager=pagerduty` should be applied during alert activation.
 1. Pagerduty will receive message with description from `.title` and runbook link.
 1. Pagerduty will then page whoever is on call at that time.
+1. Alertmanager takes care of resolving issue in PagerDuty if alert is resolved.
 
 ### Email rules
 
@@ -68,3 +72,6 @@ Currently we are not using email alerting rules.
 
 1. Alerts which are routed by default route will be sent to `#prometheus-alerts` channel in slack.
 1. These alerts will prepend the text `following alert not processed`.
+1. If you see such alerts, it means that there is problem with the routes in alertmanager config or severity label is not applied to alert.
+
+![Unknown alert](../img/default_routed_alert.png)
