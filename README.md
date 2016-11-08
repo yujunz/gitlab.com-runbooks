@@ -69,6 +69,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Administer and Maintain CephFS](howto/cephfs.md)
 * [Migrate a project to CephFS](howto/migrate-to-cephfs.md)
 * [Use aptly](howto/aptly.md)
+* [Retrieve old values in a Chef vault](howto/retrieve-old-chef-vault-values.md)
 
 ## General guidelines in an emergency
 
