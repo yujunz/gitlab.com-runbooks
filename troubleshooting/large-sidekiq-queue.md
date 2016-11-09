@@ -87,6 +87,37 @@ knife ssh -aipaddress 'role:<cluster-role>' 'tmux send-key C-c -t sq_<queue>'
 knife ssh -aipaddress 'role:<cluster-role>' 'tmux kill-session -t sq_<queue>'
 ```
 
+## Viewing and killing jobs from the queue
+
+[sq](https://gitlab.com/stanhu/sq) is a command-line tool that you can run to
+assist you in viewing the state of Sidekiq and killing certain workers. To use it,
+first download a copy:
+
+    ```
+    curl -o sq.rb https://gitlab.com/stanhu/sq/raw/master/sq.rb
+    ```
+
+1. To display a breakdown of all the workers, run:
+
+    ```
+    BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb -h <REDIS HOSTNAME> -a <REDIS PASSWORD> show | more
+    ```
+
+    If you forget the Redis hostname or password, just check in `/etc/gitlab/gitlab.rb`:
+
+    ```
+    sudo grep redis /etc/gitlab/gitlab.rb
+    ```
+
+### Killing jobs
+
+Suppose you see a lot of `RepositoryMirrorUpdateWorker` instances that you want to kill.
+You can kill by worker:
+
+    ```
+    BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb -h <REDIS HOSTNAME> -a <REDIS PASSWORD> kill <WORKER NAME>
+    ```
+
 ## References
 
 * https://gitlab.com/gitlab-com/infrastructure/issues/677
