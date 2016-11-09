@@ -100,23 +100,27 @@ first download a copy:
 1. To display a breakdown of all the workers, run:
 
     ```
-    BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb --hostname <REDIS HOSTNAME> -a <REDIS PASSWORD> show | more
+    sudo gitlab-rails runner /full_pathname_to_file/sq.rb
     ```
 
-    If you forget the Redis hostname or password, just check in `/etc/gitlab/gitlab.rb`:
-
-    ```
-    sudo grep redis /etc/gitlab/gitlab.rb
-    ```
 
 ### Killing jobs
 
 Suppose you see a lot of `RepositoryMirrorUpdateWorker` instances that you want to kill.
-You can kill by worker:
+BE CAREFUL WITH THIS COMMAND! You can see how many jobs would be killed using the --dry-run
+parameter:
 
     ```
-    BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb --hostname <REDIS HOSTNAME> -a <REDIS PASSWORD> kill <WORKER NAME>
+    sudo gitlab-rails runner /full_pathname_to_file/sq.rb kill <WORKER NAME> --dry-run
     ```
+
+    For example:
+
+    ```
+    sudo gitlab-rails runner /full_pathname_to_file/sq.rb kill RepositoryMirrorUpdateWorker --dry-run
+    ```
+
+    You can omit the `--dry-run` option if you want to kill the jobs.
 
 ## References
 
