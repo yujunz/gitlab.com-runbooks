@@ -23,6 +23,8 @@ Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef se
 
 ## Chef spec and test kitchen
 
+## Test cookbook on local server
+
 ## Update cookbook and deploy to production
 
 When it comes time to edit a cookbook, you first need to clone it from its repo, most likely
