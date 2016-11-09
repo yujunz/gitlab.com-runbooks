@@ -4,13 +4,13 @@
 
 Firstly, create the repo for your new cookbook. You will need to create two, one on dev and one on GitLab.com.
 Currently these are stored in the `gitlab-cookbooks/cookbookname` on GitLab.com and `cookbooks/cookbookname`
-on dev.
+on dev. You will need to set up mirroring to the matching dev repo.
 
 To create a new cookbook locally, run the command `chef generate cookbook <cookbookname>`.
 This will create a new cookbook in the current directory with the cookbook name chosen.
 
-At this time you can initialize the git repo in your cookbook and set it origin to point
-to GitLab.com. You will need to set up mirroring to the matching dev repo.
+At this time you can initialize the git repo in your cookbook and set origin to point
+to GitLab.com.
 
 You should then edit `cookbook/metadata.rb` to have an accurate description. This
 is also where you will place any dependencies you need. 
