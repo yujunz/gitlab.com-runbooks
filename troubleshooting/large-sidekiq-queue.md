@@ -100,7 +100,7 @@ first download a copy:
 1. To display a breakdown of all the workers, run:
 
     ```
-    BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb -h <REDIS HOSTNAME> -a <REDIS PASSWORD> show | more
+    BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb --hostname <REDIS HOSTNAME> -a <REDIS PASSWORD> show | more
     ```
 
     If you forget the Redis hostname or password, just check in `/etc/gitlab/gitlab.rb`:
@@ -115,7 +115,7 @@ Suppose you see a lot of `RepositoryMirrorUpdateWorker` instances that you want 
 You can kill by worker:
 
     ```
-    BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb -h <REDIS HOSTNAME> -a <REDIS PASSWORD> kill <WORKER NAME>
+    BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb --hostname <REDIS HOSTNAME> -a <REDIS PASSWORD> kill <WORKER NAME>
     ```
 
 ## References
