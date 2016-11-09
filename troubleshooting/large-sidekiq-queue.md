@@ -89,20 +89,19 @@ knife ssh -aipaddress 'role:<cluster-role>' 'tmux kill-session -t sq_<queue>'
 
 ## Viewing and killing jobs from the queue
 
-[sq](https://gitlab.com/stanhu/sq) is a command-line tool that you can run to
+[sq](https://gitlab.com/gitlab-com/runbooks/raw/master/troubleshooting/db_scripts/sq.rb) is a command-line tool that you can run to
 assist you in viewing the state of Sidekiq and killing certain workers. To use it,
 first download a copy:
 
     ```
-    curl -o sq.rb https://gitlab.com/stanhu/sq/raw/master/sq.rb
+    curl -o sq.rb https://gitlab.com/gitlab-com/runbooks/raw/master/troubleshooting/db_scripts/sq.rb
     ```
 
 1. To display a breakdown of all the workers, run:
 
     ```
-    sudo gitlab-rails runner /full_pathname_to_file/sq.rb
+    sudo gitlab-rails runner $PWD/sq.rb
     ```
-
 
 ### Killing jobs
 
@@ -111,13 +110,13 @@ BE CAREFUL WITH THIS COMMAND! You can see how many jobs would be killed using th
 parameter:
 
     ```
-    sudo gitlab-rails runner /full_pathname_to_file/sq.rb kill <WORKER NAME> --dry-run
+    sudo gitlab-rails runner $PWD/sq.rb kill <WORKER NAME> --dry-run
     ```
 
     For example:
 
     ```
-    sudo gitlab-rails runner /full_pathname_to_file/sq.rb kill RepositoryMirrorUpdateWorker --dry-run
+    sudo gitlab-rails runner $PWD/sq.rb kill RepositoryMirrorUpdateWorker --dry-run
     ```
 
     You can omit the `--dry-run` option if you want to kill the jobs.
