@@ -21,7 +21,84 @@ Berksfile to add the new cookbook. Be sure that you add version pinning and poin
 dev repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
 Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef server.
 
-## Chef spec and test kitchen
+## ChefSpec and test kitchen
+
+### ChefSpec
+
+ChefSpec and test kitchen are two ways that you can test your cookbook before you
+commit/deploy it. From the documentation:
+
+> ChefSpec is a framework that tests resources and recipes as part of a simulated chef-client run. 
+> ChefSpec tests execute very quickly. When used as part of the cookbook authoring workflow, 
+> ChefSpec tests are often the first indicator of problems that may exist within a cookbook.
+
+To get started with ChefSpec you write tests in ruby to describe what you want. An example is:
+
+```ruby
+file '/tmp/explicit_action' do
+  action :delete
+end
+
+file '/tmp/with_attributes' do
+  user 'user'
+  group 'group'
+  backup false
+  action :delete
+end
+
+file 'specifying the identity attribute' do
+  path   '/tmp/identity_attribute'
+ action :delete
+end
+```
+
+There are many great resources for ChefSpec examples such as the [ChefSpec documentation](https://docs.chef.io/chefspec.html)
+and the [ChefSpec examples on GitHub](https://github.com/sethvargo/chefspec/tree/master/examples).
+
+### Test Kitchen/KitchenCI
+
+[Test Kitchen/KitchenCI](http://kitchen.ci/) is a integration testing method that can spawn a VM
+and run your cookbook inside of that VM. This lets you do somewhat more than just ChefSpec
+and can be an extremely useful testing tool.
+
+To begin with the KitchenCI, you will need to install the test-kitchen Gem `gem install test-kitchen`.
+It would be wise to add this to your cookbook's Gemfile.
+
+Next, you'll want to create the Kitchen's config file in your cookbook directiry called `.kitchen.yml`.
+This file contains the information that KitchenCI needs to actually run your cookbook. An example and explanation
+is provided below.
+
+```yaml
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-7.1
+  - name: ubuntu-14.04
+  - name: windows-2012r2
+
+suites:
+  - name: client
+    run_list:
+      - recipe[postgresql::client]
+  - name: server
+    run_list:
+      - recipe[postgresql::server]
+```
+
+This file is probably self explanitory. It will use VirtualBox to build a VM and use `chef_zero` as the 
+method to converge your cookbook. It will run tests on 3 different OSes, CentOS, Ubuntu, and Windows 2012 R2.
+Finally, it will run the recipes listed below based on the suite. The above config file will generate
+6 VMs, 3 for the `client` suite and 3 for the `server` suite. You can customize this however you wish. While
+our current chef-repo is not set up this way, it would be possible to use KitchenCI for an entire chef-repo, but 
+it is far more common to use it only on one cookbook at a time.
+
+As always, there are many resources such as the [KitchenCI getting started guide](http://kitchen.ci/docs/getting-started/)
+and the [test-kitchen repo](https://github.com/test-kitchen/test-kitchen).
 
 ## Test cookbook on local server
 
@@ -48,3 +125,10 @@ you can always go run `chef-client` manually on whichever host needs the updates
 
 ## Rollback cookbook
 
+
+## Referrences
+  - [GitLab's chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/)
+  - [ChefSpec documentation](https://docs.chef.io/chefspec.html)
+  - [ChefSpec examples on GitHub](https://github.com/sethvargo/chefspec/tree/master/examples)
+  - [KitchenCI getting started guide](http://kitchen.ci/docs/getting-started/)
+  - [test-kitchen repo](https://github.com/test-kitchen/test-kitchen)
