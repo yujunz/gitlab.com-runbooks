@@ -100,7 +100,25 @@ it is far more common to use it only on one cookbook at a time.
 As always, there are many resources such as the [KitchenCI getting started guide](http://kitchen.ci/docs/getting-started/)
 and the [test-kitchen repo](https://github.com/test-kitchen/test-kitchen).
 
-## Test cookbook on local server
+## Test cookbook on a local server
+
+If you wish to test a cookbook on your local server versus KitchenCI, this is totally possible.
+
+The following example is a way to run our GitLab prometheus cookbook locally.
+
+```
+mkdir -p ~/chef/cookbooks
+cd ~/chef/cookbooks
+git clone git@gitlab.com:gitlab-cookbooks/gitlab-prometheus.git
+berks vendor ..
+cd ..
+chef-client -z -o 'recipe[gitlab-prometheus::prometheus]'
+```
+
+The `chef-client -z -o` in the above example will tell the client to run in local mode and
+to only run the runlist provided. 
+You can substitute any cookbook you wish, including your own. Do keep in mind however that
+this may still freak out when a chef-vault is involved. 
 
 ## Update cookbook and deploy to production
 
