@@ -93,9 +93,9 @@ suites:
 This file is probably self explanitory. It will use VirtualBox to build a VM and use `chef_zero` as the 
 method to converge your cookbook. It will run tests on 3 different OSes, CentOS, Ubuntu, and Windows 2012 R2.
 Finally, it will run the recipes listed below based on the suite. The above config file will generate
-6 VMs, 3 for the `client` suite and 3 for the `server` suite. You can customize this however you wish. While
-our current chef-repo is not set up this way, it would be possible to use KitchenCI for an entire chef-repo, but 
-it is far more common to use it only on one cookbook at a time.
+6 VMs, 3 for the `client` suite and 3 for the `server` suite. You can customize this however you wish. 
+It is possible to run KitchenCI for an entire deployment, however I don't think our chef-repo is set up
+in such a way.
 
 As always, there are many resources such as the [KitchenCI getting started guide](http://kitchen.ci/docs/getting-started/)
 and the [test-kitchen repo](https://github.com/test-kitchen/test-kitchen).
