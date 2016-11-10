@@ -29,11 +29,14 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Knife ssh does not work](troubleshooting/chef.md)
 * [Sidekiq Queues are out of control](troubleshooting/large-sidekiq-queue.md)
 * [Workers have huge load because of cat-files](troubleshooting/workers-high-load.md)
+* [Runners cache is down](troubleshooting/runners_cache_is_down.md)
+* [Runners registry is down](troubleshooting/runners_registry_is_down.md)
+* [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
+* [Kibana is down](troubleshooting/kibana_is_down.md)
 
 ## Alerting and monitoring
 
-* [Alert creating manual](alerts/alerts_manual.md)
-* [Alerts list](alerts/README.md)
+* [Alert creating manual](howto/alerts_manual.md)
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
 
