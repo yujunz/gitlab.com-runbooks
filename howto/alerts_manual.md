@@ -8,7 +8,7 @@ In order to create new alerts they have to be included in the [gitlab-prometheus
 
 The common procedure is as follows:
 
-1. Create or reuse an alert rules file in [gitlab-prometheus alerts directory](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/tree/master/files/default/alerts).
+1. Create or reuse an alert rules file in [runbooks alerts directory](https://gitlab.com/gitlab-com/runbooks/tree/master/alerts).
 1. Consider creating a runbook for the alert in the [runbooks project](https://gitlab.com/gitlab-com/runbooks). After mirroring runbook should appear in `https://dev.gitlab.com/cookbooks/runbooks` project. All urls will be constructed with the prefix - `https://dev.gitlab.com/cookbooks/runbooks/blob/master/`. Remain part should be annotated in `runbook` value.
 1. Make sure that the alert title/summary is clear and actionable. Avoid alerting for "Worker load is critical" because that does not provide any action or enough information to know where to look, rather alert on "High load on worker due to increased IOWait" or "High number of queued jobs in sidekiq"
 1. Consider adding a description to the alert with some context, you could also point to relevant graphs or provide quick actions.
