@@ -50,9 +50,9 @@ All alerts are routed to slack and additionally can be paged to PagerDuty.
 
 ### Sending to the Slack Pager
 
-1. Since all alerts sended to slack, you can control only type of alert.
+1. Since all alerts sended to slack, you can control only the type of alert.
 1. All alerts will be shown in `#prometheus-alerts` channel.
-1. Additionally you can send alerts to `#ci`, `#infrastructure` channels. This part controlled with the label `channel=ci` and `channel=infrastrcture`.
+1. Additionally you can send alerts to `#ci`, `#infrastructure` channels. This part controlled with the label `channel='ci'` and `channel='infrastructure'`.
 1. Alerts with `severity=critical` are red colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
 1. Alerts with `severity=info` are green colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
 1. When the critical alert is resolved, a green colored message with same title will be placed in channel. Prefix will be `[RESOLVED]`.
