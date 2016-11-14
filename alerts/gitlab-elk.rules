@@ -5,5 +5,5 @@ ALERT kibana_is_down
   LABELS {severity="critical", pager="slack", pager="pagerduty"}
   ANNOTATIONS {
     title="Kibana is down",
-    runbook="alerts/kibana_is_down.md"
+    runbook="troubleshooting/kibana_is_down.md"
   }

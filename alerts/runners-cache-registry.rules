@@ -5,7 +5,7 @@ ALERT runners_cache_is_down
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Runners cache is down",
-    runbook="alerts/runners_cache_is_down.md",
+    runbook="troubleshooting/runners_cache_is_down.md",
     description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
   }
 
@@ -16,7 +16,7 @@ ALERT runners_registry_is_down
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Runners registry is down",
-    runbook="alerts/runners_registry_is_down.md",
+    runbook="troubleshooting/runners_registry_is_down.md",
     description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners registry being down at GitLab.com, we are investigating the root cause'"
   }
 
@@ -27,6 +27,6 @@ ALERT runners_cache_disk_space
   LABELS { severity = "critical" }
   ANNOTATIONS {
     title = "There is less than 20% of free disk space left on runners cache",
-    runbook = "alerts/runners_cache_disk_space.md",
+    runbook = "troubleshooting/runners_cache_disk_space.md",
     description = 'More detailed message will be added here, but now take care of space'
   }
