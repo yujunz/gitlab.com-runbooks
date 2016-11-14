@@ -33,6 +33,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Runners registry is down](troubleshooting/runners_registry_is_down.md)
 * [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
 * [Kibana is down](troubleshooting/kibana_is_down.md)
+* [SSL certificate expires](troubleshooting/ssl_cert.md)
 
 ## Alerting and monitoring
 
