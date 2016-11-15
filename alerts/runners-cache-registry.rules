@@ -22,9 +22,9 @@ ALERT runners_registry_is_down
 
 ## RUNNERS CACHE FREE DISK SPACE IS LESS THAN 20%
 ALERT runners_cache_disk_space
-  IF node_filesystem_avail{device="/dev/vda1",instance="runners-cache-1"} / node_filesystem_size{device="/dev/vda1",instance="runners-cache-1"} < 0.20
+  IF node_filesystem_avail{device="/dev/vda1",instance="runners-cache-1"} / node_filesystem_size{device="/dev/vda1",instance="runners-cache-1"} < 0.50
   FOR 1m
-  LABELS { severity = "critical" }
+  LABELS {severity="critical"}
   ANNOTATIONS {
     title = "There is less than 20% of free disk space left on runners cache",
     runbook = "troubleshooting/runners_cache_disk_space.md",
