@@ -34,7 +34,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Runners cache is down](troubleshooting/runners_cache_is_down.md)
 * [Runners registry is down](troubleshooting/runners_registry_is_down.md)
 * [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
-* 
+
 ### CephFS
 
 * [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
