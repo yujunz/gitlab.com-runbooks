@@ -14,6 +14,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [HAProxy is missing workers](troubleshooting/chef.md)
 * [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
 * [Azure Load Balancers Misbehave](troubleshooting/load-balancer-outage.md)
+* [Kibana is down](troubleshooting/kibana_is_down.md)
+* [SSL certificate expires](troubleshooting/ssl_cert.md)
 
 ### Replication fails
 
@@ -29,15 +31,17 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [The CI runner manager report a high DO Token Rate Limit usage](troubleshooting/ci_runner_manager_do_limits.md)
 * [The CI runner manager report a high number of errors](troubleshooting/ci_runner_manager_errors.md)
-
+* [Runners cache is down](troubleshooting/runners_cache_is_down.md)
+* [Runners registry is down](troubleshooting/runners_registry_is_down.md)
+* [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
+* 
 ### CephFS
 
 * [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
 
 ## Alerting and monitoring
 
-* [Alert creating manual](alerts/alerts_manual.md)
-* [Alerts list](alerts/README.md)
+* [Alert creating manual](howto/alerts_manual.md)
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
 

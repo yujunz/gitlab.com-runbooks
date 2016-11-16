@@ -1,0 +1,32 @@
+## RUNNERS CACHE
+ALERT runners_cache_is_down
+  IF probe_success{job="runners-cache",instance="127.0.0.1:9000"} == 0
+  FOR 10s
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Runners cache is down",
+    runbook="troubleshooting/runners_cache_is_down.md",
+    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
+  }
+
+## RUNNERS REGISTRY
+ALERT runners_registry_is_down
+  IF probe_success{job="runners-cache",instance="127.0.0.1:5000"} == 0
+  FOR 10s
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Runners registry is down",
+    runbook="troubleshooting/runners_registry_is_down.md",
+    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners registry being down at GitLab.com, we are investigating the root cause'"
+  }
+
+## RUNNERS CACHE FREE DISK SPACE IS LESS THAN 10%
+ALERT runners_cache_disk_space
+  IF node_filesystem_avail{device="/dev/vda1",instance="runners-cache-1"} / node_filesystem_size{device="/dev/vda1",instance="runners-cache-1"} < 0.10
+  FOR 1m
+  LABELS {severity="critical", channel="infrastructure"}
+  ANNOTATIONS {
+    title = "There is less than 10% of free disk space left on runners cache",
+    runbook = "troubleshooting/runners_cache_disk_space.md",
+    description = 'More detailed message will be added here, but now take care of space'
+  }
