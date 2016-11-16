@@ -45,7 +45,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
 
-### Oudated
+### Outdated
 
 * [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
 * [The DB server `db[45]` is under heavy load](troubleshooting/postgresql_heavy_load.md)
