@@ -64,7 +64,7 @@ and can be an extremely useful testing tool.
 To begin with the KitchenCI, you will need to install the test-kitchen Gem `gem install test-kitchen`.
 It would be wise to add this to your cookbook's Gemfile.
 
-Next, you'll want to create the Kitchen's config file in your cookbook directiry called `.kitchen.yml`.
+Next, you'll want to create the Kitchen's config file in your cookbook directory called `.kitchen.yml`.
 This file contains the information that KitchenCI needs to actually run your cookbook. An example and explanation
 is provided below.
 
@@ -90,7 +90,7 @@ suites:
       - recipe[postgresql::server]
 ```
 
-This file is probably self explanitory. It will use VirtualBox to build a VM and use `chef_zero` as the 
+This file is probably self-explanatory. It will use VirtualBox to build a VM and use `chef_zero` as the 
 method to converge your cookbook. It will run tests on 3 different OSes, CentOS, Ubuntu, and Windows 2012 R2.
 Finally, it will run the recipes listed below based on the suite. The above config file will generate
 6 VMs, 3 for the `client` suite and 3 for the `server` suite. You can customize this however you wish. 
@@ -110,6 +110,7 @@ The following example is a way to run our GitLab prometheus cookbook locally.
 mkdir -p ~/chef/cookbooks
 cd ~/chef/cookbooks
 git clone git@gitlab.com:gitlab-cookbooks/gitlab-prometheus.git
+cd gitlab-prometheus
 berks vendor ..
 cd ..
 chef-client -z -o 'recipe[gitlab-prometheus::prometheus]'
@@ -153,7 +154,7 @@ To delete a specific cookbook version run the following in your `chef-repo` dire
 knife cookbook delete COOKBOOK_NAME [COOKBOOK_VERSION]
 ```
 
-## Referrences
+## References
   - [GitLab's chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/)
   - [ChefSpec documentation](https://docs.chef.io/chefspec.html)
   - [ChefSpec examples on GitHub](https://github.com/sethvargo/chefspec/tree/master/examples)
