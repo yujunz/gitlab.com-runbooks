@@ -143,6 +143,15 @@ you can always go run `chef-client` manually on whichever host needs the updates
 
 ## Rollback cookbook
 
+The most expedient way to roll back a cookbook is to simply delete the newest version 
+off of the Chef server. Since we do not pin to specific versions, once the new version is 
+deleted, the old cookbook will run.
+
+To delete a specific cookbook version run the following in your `chef-repo` directory:
+
+```
+knife cookbook delete COOKBOOK_NAME [COOKBOOK_VERSION]
+```
 
 ## Referrences
   - [GitLab's chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/)
