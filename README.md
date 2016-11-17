@@ -95,6 +95,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ### Work with CI Infrastructure
 
 * [Update GitLab Runner on runners managers](howto/update-gitlab-runner-on-managers.md)
+* [Investigate Abuse Reports](howto/ci-investigate-abuse.md)
 
 ### Work with Infrastructure Providers (VMs)
 
