@@ -1,0 +1,10 @@
+## monitor.gitlab.net
+ALERT monitor_gitlab_net_is_down
+  IF up{job="public-prometheus"} == 0
+  FOR 10s
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    title="monitor.gitlab.net is down",
+    description="public prometheus instance for monitor.gitlab.net is down",
+    runbook="troubleshooting/public-prometheus.md"
+  }
