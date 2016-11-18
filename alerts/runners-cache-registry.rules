@@ -20,13 +20,13 @@ ALERT runners_registry_is_down
     description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners registry being down at GitLab.com, we are investigating the root cause'"
   }
 
-## RUNNERS CACHE FREE DISK SPACE IS LESS THAN 10%
+## RUNNERS CACHE FREE DISK SPACE IS LESS THAN 7%
 ALERT runners_cache_disk_space
-  IF node_filesystem_avail{device="/dev/vda1",instance="runners-cache-1"} / node_filesystem_size{device="/dev/vda1",instance="runners-cache-1"} < 0.10
+  IF node_filesystem_avail{device="/dev/vda1",instance="runners-cache-1"} / node_filesystem_size{device="/dev/vda1",instance="runners-cache-1"} < 0.07
   FOR 1m
   LABELS {severity="critical", channel="infrastructure"}
   ANNOTATIONS {
-    title = "There is less than 10% of free disk space left on runners cache",
+    title = "There is less than 7% of free disk space left on runners cache",
     runbook = "troubleshooting/runners_cache_disk_space.md",
-    description = 'More detailed message will be added here, but now take care of space'
+    description = "This could block CI execution when the runners can't pull new images. This can be a flapping alert, so just check first"
   }
