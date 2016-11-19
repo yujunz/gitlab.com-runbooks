@@ -91,4 +91,5 @@ This needs to be determined.
 
 ## Resolving with Digital Ocean
 
-This needs to be documented.
+These results are initiated by Digital Ocean. Thus, to resolve them we simply reply to the
+DO ticket and close it. 
