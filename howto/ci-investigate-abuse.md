@@ -87,7 +87,9 @@ most likely not us.
 
 ## What if it is our fault?
 
-This needs to be determined.
+If the node in question happens to still be on, shut it down. It is likely inactive anyway.
+We should look into the source code of the job if malicious activity is actually traced back
+to a job and project.
 
 ## Resolving with Digital Ocean
 
