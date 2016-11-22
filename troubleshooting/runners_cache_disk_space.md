@@ -34,7 +34,7 @@ sudo docker stop registry
 then remove everything in `/opt/registry`
 
 ```
-sudo rm -r /opt/registry/docker/*
+sudo rm -r /opt/registry/*
 ```
 
 and finally start the registry container again
