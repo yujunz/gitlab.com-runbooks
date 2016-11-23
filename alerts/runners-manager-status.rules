@@ -1,0 +1,10 @@
+## RUNNERS MANAGER STATUS
+ALERT runners_manager_is_down
+  IF up{job=~"shared-runners|private-runners"} == 0
+  FOR 10s
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Runners manager is down",
+    runbook="troubleshooting/runners_manager_is_down.md",
+    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners shared manager being down at GitLab.com, we are investigating the root cause'. Hosts impacted - {{ range .Alerts }}{{ .Labels.instance }} {{ end }}"
+  }
