@@ -1,0 +1,10 @@
+## Exporter is down
+ALERT exporter_is_down
+  IF up == 0
+  FOR 1m
+  LABELS {severity="critical", pager="slack", channel="infrastructure"}
+  ANNOTATIONS {
+    title="Some of the exporters is down from the following jobs: {{ range .Alerts }}{{ .Labels.job }} {{ end }}",
+    description="Check prometheus exporters for the following jobs: {{ range .Alerts }}{{ .Labels.job }} {{ end }}",
+    runbook="https://prometheus.gitlab.com/targets"
+  }
