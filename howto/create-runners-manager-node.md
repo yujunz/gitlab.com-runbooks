@@ -1,18 +1,18 @@
 # Creating runners manager node
 
+## Prerequisites
 
-## Requirements
+1. Digital Ocean API [token](https://www.digitalocean.com/community/tutorials/how-to-use-the-digitalocean-api-v2).
+1. [Registration Token](https://gitlab.com/admin/runners) from GitLab.com, tags for gitlab runner registration.
+1. If cache used, cache url, access and secret key. For NYC1 DC - registry url is `http://runners-cache-2-internal.gitlab.com:444`, for NYC2 - `http://runners-cache-1-internal.gitlab.com:444`. Access and secret keys can be obtained in the vaults for `gitlab-ce-ee-runners` and `gitlab-shared-runners` roles.
+1. If registry proxy is used, specify proxy url. For NYC1 DC - registry url is `http://runners-cache-2-internal.gitlab.com:1444`, for NYC2 - `http://runners-cache-1-internal.gitlab.com:1444`.
+1. If manager being created not in DO, then you should use following addresses - `https://runners-cache-2.gitlab.com` for cache and `https://runners-cache-2.gitlab.com:1443` for registry.
 
-1. Digital Ocean API token
-1. Token from GitLab.com, tags for gitlab runner registration
-1. If cache used, cache url, access and secret key
-1. If registry proxy is used, proxy url
+## Steps to create runners manager node for GitLab.com
 
-## Steps to create node
+### Prepare node
 
-### Create and bootstrap node
-
-Create node and bootstrap it with chef
+Prepare droplet in `GitLab prod team` on DO and chose corresponding DC. Prefer NYC1 or NYC3 over NYC2. Runners cache and registry are limited in disk space on NYC2. [Bootstrap](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/new-vps.md) droplet with chef.
 
 ### Create role and secrets
 
@@ -57,7 +57,9 @@ cookbook-gitlab-runner:
           engine-registry-mirror=<registry url>
 ```
 
-after creating role and secrets run `chef-client`
+after creating and applying role and secrets run `chef-client`.
+
+### 
 
 ### Register runner
 

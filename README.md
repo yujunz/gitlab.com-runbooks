@@ -96,7 +96,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [Update GitLab Runner on runners managers](howto/update-gitlab-runner-on-managers.md)
 * [Investigate Abuse Reports](howto/ci-investigate-abuse.md)
-* [Create runners manager for GitLab.com](howto/creating-runners-manager-node.md)
+* [Create runners manager for GitLab.com](howto/create-runners-manager-node.md)
 
 ### Work with Infrastructure Providers (VMs)
 
