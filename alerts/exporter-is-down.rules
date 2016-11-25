@@ -1,6 +1,6 @@
 ## Exporter is down
 ALERT exporter_is_down
-  IF up == 0
+  IF up{instance!~"ebs|license|lb1|dev|aptly|packages|version|backend1"} == 0
   FOR 1m
   LABELS {severity="critical", pager="slack", channel="infrastructure"}
   ANNOTATIONS {
