@@ -1,0 +1,10 @@
+## Sidekiq Queues
+ALERT sidekiq_queues_are_too_high
+  IF sum(max(sidekiq_enqueued_jobs_count{name!="ActiveJob.*"}) by (name)) > 4000
+  FOR 1m
+  LABELS {severity="critical", pager="slack", channel="infrastructure"}
+  ANNOTATIONS {
+    title="Large amount of Sidekiq Queued jobs: {{$value}}",
+    description="Sidekiq jobs are piling up for the last minute, this may be under control, but I'm just letting you know that this is going on, check http://performance.gitlab.net/dashboard/db/sidekiq-stats",
+    runbook="troubleshooting/large-sidekiq-queue.md"
+  }
