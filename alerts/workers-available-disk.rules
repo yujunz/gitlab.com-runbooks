@@ -1,19 +1,19 @@
 ALERT worker_20_disk
-  IF (node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) < 0.20 AND (node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) > 0.10
+  IF ((node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) * 100) < 20 AND ((node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) * 100) > 10
   FOR 1m
   LABELS { severity = "critical", pager="slack" }
   ANNOTATIONS {
-    title = "Low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ $value }}",
-    description = "Consider jumping into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
+    title = "Low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ $value | humanize }}%",
+    description = "Consider sshing into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
     runbook="troubleshooting/filesystem_alerts.md"
   }
 
 ALERT worker_10_disk
-  IF (node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) <= 0.10
+  IF ((node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) * 100) <= 10
   FOR 1m
   LABELS { severity = "critical", pager="slack" }
   ANNOTATIONS {
-    title = "Really low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ $value }}%",
-    description = "Consider jumping into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
+    title = "Really low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ $value | humanize }}%",
+    description = "Consider sshing into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
     runbook="troubleshooting/filesystem_alerts.md"
   }
