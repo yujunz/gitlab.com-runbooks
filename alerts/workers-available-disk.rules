@@ -5,6 +5,7 @@ ALERT worker_20_disk
   ANNOTATIONS {
     title = "Low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"} * 100 }}%",
     description = "Consider jumping into the instance and removing old logs: cd /var/log/gitlab; find ./ -mtime +5 -exec rm {} \;",
+    runbook="http://performance.gitlab.net/dashboard/db/fleet-overview"
   }
 
 ALERT worker_10_disk
@@ -14,4 +15,5 @@ ALERT worker_10_disk
   ANNOTATIONS {
     title = "Really low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"} * 100 }}%",
     description = "Consider jumping into the instance and removing old logs: cd /var/log/gitlab; find ./ -mtime +5 -exec rm {} \;",
+    runbook="http://performance.gitlab.net/dashboard/db/fleet-overview"
   }
