@@ -4,7 +4,7 @@ Generally speaking alerts are triggered by prometheus, and then grouped, priorit
 
 ### General guidelines
 
-In order to create new alerts they have to be included in the [gitlab-prometheus cookbook](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/) and they need to be pushed to the prometheus instance by chef.
+In order to create new alerts they have to be included in the alerts folder in this repository.
 
 The common procedure is as follows:
 
@@ -75,3 +75,8 @@ Currently we are not using email alerting rules.
 1. If you see such alerts, it means that there is problem with the routes in alertmanager config or severity label is not applied to alert.
 
 ![Unknown alert](../img/default_routed_alert.png)
+
+## References
+
+* [Prometheus template source code](https://github.com/prometheus/prometheus/blob/master/template/template.go#L115)
+* [Prometheus default alert manager expansion template)(https://github.com/prometheus/alertmanager/blob/master/template/default.tmpl)
