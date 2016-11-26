@@ -4,8 +4,8 @@ ALERT worker_20_disk
   LABELS { severity = "warn", pager="slack" }
   ANNOTATIONS {
     title = "Low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ $value * 100 }}%",
-    description = "Consider jumping into the instance and removing old logs: cd /var/log/gitlab; find ./ -mtime +5 -exec rm {} \;",
-    runbook="http://performance.gitlab.net/dashboard/db/fleet-overview"
+    description = "Consider jumping into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
+    runbook="troubleshooting/filesystem_alerts.md"
   }
 
 ALERT worker_10_disk
@@ -14,6 +14,6 @@ ALERT worker_10_disk
   LABELS { severity = "critical", pager="slack" }
   ANNOTATIONS {
     title = "Really low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ $value * 100 }}%",
-    description = "Consider jumping into the instance and removing old logs: cd /var/log/gitlab; find ./ -mtime +5 -exec rm {} \;",
-    runbook="http://performance.gitlab.net/dashboard/db/fleet-overview"
+    description = "Consider jumping into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
+    runbook="troubleshooting/filesystem_alerts.md"
   }
