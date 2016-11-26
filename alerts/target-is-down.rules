@@ -1,0 +1,10 @@
+## Target is down
+ALERT target_is_down
+  IF up{instance!~"ebs|license|lb1|dev|aptly|packages|version|backend1"} == 0
+  FOR 1m
+  LABELS {severity="critical", pager="slack", channel="infrastructure"}
+  ANNOTATIONS {
+    title="{{ .Alerts.Firing | len }} targets failed being scrapped for the last minute",
+    description="Check prometheus target for the following job/instances: {{ if eq (len .Alerts.Firing) 1 }}{{ $labels.job }}/{{ $labels.instance }}{{ end }}{{ if gt (len .Alerts.Firing) 1 }}{{ range .Alerts }}{{ .Labels.job }}/{{ .Labels.instance }}, {{ end }}{{ end }} You can check details on the https://prometheus.gitlab.com/targets page",
+    runbook="https://prometheus.gitlab.com/targets"
+  }
