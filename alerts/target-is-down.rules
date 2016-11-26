@@ -4,7 +4,7 @@ ALERT target_is_down
   FOR 1m
   LABELS {severity="critical", pager="slack", channel="infrastructure"}
   ANNOTATIONS {
-    title="{{ .Alerts.Firing | len }} targets failed being scrapped for the last minute",
-    description="Check prometheus target for the following job/instances: {{ if eq (len .Alerts.Firing) 1 }}{{ $labels.job }}/{{ $labels.instance }}{{ end }}{{ if gt (len .Alerts.Firing) 1 }}{{ range .Alerts }}{{ .Labels.job }}/{{ .Labels.instance }}, {{ end }}{{ end }} You can check details on the https://prometheus.gitlab.com/targets page",
+    title="{{ $labels.instance }}/{{ $labels.job }} failed to be scrapped for the last minute",
+    description="Check prometheus targets on the https://prometheus.gitlab.com/targets page to undestand which targets are down",
     runbook="https://prometheus.gitlab.com/targets"
   }
