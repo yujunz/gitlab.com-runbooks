@@ -5,6 +5,6 @@ ALERT gitlab_com_is_down
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="GitLab.com is down for 5 minutes",
-    description="GitLab.com is down for 5 minutes! Consider !tweet 'We\'re investigating an issue with GitLab.com. Thanks for your patience.' if there is problems.",
+    description="GitLab.com is down for 5 minutes! Consider !tweet \"We're investigating an issue with GitLab.com. Thanks for your patience.\" if there is problems.",
     runbook="troubleshooting/gitlab-com-is-down.md"
   }
