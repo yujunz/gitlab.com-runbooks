@@ -14,5 +14,11 @@
 the alerts and run the following to delete all logs older than 5 days:
 
 ```
-$ sudo find /var/log/gitlab -mtime +5 -exec rm {} \;
+$ sudo find /var/log/gitlab -mtime +2 -exec rm {} \;
+```
+
+* Another option is to also remove temporary files
+
+```
+$ sudo find /tmp -type f -mtime +2 -delete
 ```
