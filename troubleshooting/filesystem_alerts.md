@@ -11,7 +11,7 @@
 ## Resolution
 
 * Most likely there are old accumulated log files. ssh into the worker giving
-the alerts and run the following to delete all logs older than 5 days:
+the alerts and run the following to delete all logs older than 2 days:
 
 ```
 $ sudo find /var/log/gitlab -mtime +2 -exec rm {} \;
