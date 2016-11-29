@@ -1,10 +1,10 @@
 ## gitlab.com
 ALERT gitlab_com_is_down
   IF probe_http_status_code{instance="gitlab.com",job="blackbox"} != 200
-  FOR 5m
+  FOR 1m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
-    title="GitLab.com is down for 5 minutes",
-    description="GitLab.com is down for 5 minutes! Consider !tweet \"We're investigating an issue with GitLab.com. Thanks for your patience.\" if there is problems.",
+    title="GitLab.com is down for 1 minute",
+    description="GitLab.com is down for more than 1 minute! Consider !tweet 'GitLab.com is currently down, we are investigating the root cause, apologies for the inconvenience' if there is problems.",
     runbook="troubleshooting/gitlab-com-is-down.md"
   }
