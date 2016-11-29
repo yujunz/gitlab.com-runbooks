@@ -79,4 +79,4 @@ Currently we are not using email alerting rules.
 ## References
 
 * [Prometheus template source code](https://github.com/prometheus/prometheus/blob/master/template/template.go#L115)
-* [Prometheus default alert manager expansion template)(https://github.com/prometheus/alertmanager/blob/master/template/default.tmpl)
+* [Prometheus default alert manager expansion template](https://github.com/prometheus/alertmanager/blob/master/template/default.tmpl)

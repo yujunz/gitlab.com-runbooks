@@ -41,7 +41,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## Alerting and monitoring
 
-* [Alert creating manual](howto/alerts_manual.md)
+* [How to add alerts: Alerts manual](howto/alerts_manual.md)
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
 
