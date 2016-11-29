@@ -4,7 +4,7 @@ ALERT ssl_certificate_is_about_to_expire
   FOR 1h
   LABELS {severity="critical", channel="infrastructure"}
   ANNOTATIONS {
-    title="{{ with .CommonLabels.Remove .GroupLabels.Names }}{{ .Values | join " " }}{{ end }} SSL certificate expires is about to expire",
+    title="{{ with .CommonLabels.Remove .GroupLabels.Names }}{{ .Values | join \" \" }}{{ end }} SSL certificate expires is about to expire",
     description="Check SSL for specified nodes and consider reissuing certificate",
     runbook="troubleshooting/ssl_cert.md"
   }
