@@ -1,7 +1,7 @@
 ALERT worker_20_disk
   IF ((node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) * 100) < 20 AND ((node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) * 100) > 10
   FOR 1m
-  LABELS { severity = "critical", pager="slack" }
+  LABELS { severity = "critical" }
   ANNOTATIONS {
     title = "Low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ $value | humanize }}%",
     description = "Consider sshing into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
@@ -11,7 +11,7 @@ ALERT worker_20_disk
 ALERT worker_10_disk
   IF ((node_filesystem_avail{instance=~"worker.*", mountpoint="/"} / node_filesystem_size{instance=~"worker.*", mountpoint="/"}) * 100) <= 10
   FOR 1m
-  LABELS { severity = "critical", pager="slack" }
+  LABELS { severity = "critical" }
   ANNOTATIONS {
     title = "Really low disk space left on {{ $labels.mountpoint }} on worker {{ $labels.instance }}: {{ $value | humanize }}%",
     description = "Consider sshing into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",

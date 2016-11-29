@@ -2,7 +2,7 @@
 ALERT cephfs_is_down
   IF node_load1{instance=~"ceph-mon.*"} > 400
   FOR 10s
-  LABELS {severity="critical", pager="slack", pager="pagerduty"}
+  LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="CephFS monitors are under heavy load",
     runbook="troubleshooting/cephfs.md",
