@@ -5,6 +5,5 @@ ALERT target_is_down
   LABELS {severity="critical", pager="slack"}
   ANNOTATIONS {
     title="{{ $labels.job }}/{{ $labels.instance }} failed to be scraped for the last minute",
-    description="Check prometheus targets on the https://prometheus.gitlab.com/targets page to undestand which targets are down",
-    runbook="https://prometheus.gitlab.com/targets"
+    description="Check prometheus alerts at https://prometheus.gitlab.com/alerts and investigate targets at https://prometheus.gitlab.com/targets page to undestand which hosts or exporters could not be scraped",
   }
