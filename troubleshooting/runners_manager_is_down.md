@@ -6,8 +6,8 @@ Builds are not processed because of runners manager is down.
 
 ## Possible checks
 
-1. Try to login to problem node and run `sudo gitlab-runner status`. If gitlab-runner is not running, consider restart.
+1. Try to login to problem node and run `sudo gitlab-runner status`. If gitlab-runner is not running (output is `gitlab-runner: Service is not running!`).
 
 ## Resolution
 
-1. Restart runners manager by running `sudo service gitlab-runner restart`
+1. Consider restart runners manager by running `sudo service gitlab-runner restart`.
