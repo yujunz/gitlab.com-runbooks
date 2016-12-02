@@ -16,6 +16,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Azure Load Balancers Misbehave](troubleshooting/load-balancer-outage.md)
 * [Kibana is down](troubleshooting/kibana_is_down.md)
 * [SSL certificate expires](troubleshooting/ssl_cert.md)
+* [GitLab registry is down](troubleshooting/gitlab-registry.md)
 
 ### Replication fails
 
