@@ -2,7 +2,7 @@
 ALERT runners_cache_is_down
   IF probe_http_status_code{job="runners-cache-registry",instance=~"https://runners-cache.*minio.*"} != 200
   FOR 1m
-  LABELS {severity="warn"}
+  LABELS {severity="critical", channel="ci", pager="pagerduty"}
   ANNOTATIONS {
     title='Runners cache on {{ reReplaceAll "/minio/login" "" (reReplaceAll "https://" "" .Labels.instance) }} is down',
     runbook="troubleshooting/runners_cache_is_down.md",
@@ -13,7 +13,7 @@ ALERT runners_cache_is_down
 ALERT runners_registry_is_down
   IF probe_http_status_code{job="runners-cache-registry",instance=~"https://runners-cache.*1443.*"} != 200
   FOR 1m
-  LABELS {severity="critical", pager="pagerduty"}
+  LABELS {severity="critical", channel="ci", pager="pagerduty"}
   ANNOTATIONS {
     title='Runners registry on {{ reReplaceAll ":1443/v2" "" (reReplaceAll "https://" "" .Labels.instance) }} is down',
     runbook="troubleshooting/runners_registry_is_down.md",
