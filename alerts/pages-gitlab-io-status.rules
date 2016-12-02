@@ -1,6 +1,6 @@
 ## gitlab-examples.gitlab.io
 ALERT gitlab_pages_is_down
-  IF max(probe_success{instance=~"^pages.gitlab.io$", job="blackbox"}) != 1
+  IF probe_http_status_code{instance="gitlab-examples.gitlab.io",job="blackbox"} != 200
   FOR 1m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
