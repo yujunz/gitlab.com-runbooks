@@ -5,6 +5,6 @@ ALERT gitlab_pages_is_down
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="GitLab pages is down for 1 minute",
-    description="GitLab pages is down for 5 minutes! Consider !tweet 'GitLab pages are not responding, we are investigating the root cause.' if problem exists.",
+    description="GitLab pages is down for 1 minutes! Consider !tweet 'GitLab pages are not responding, we are investigating the root cause.' if problem exists.",
     runbook="troubleshooting/gitlab-pages.md"
   }
