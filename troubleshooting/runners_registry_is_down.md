@@ -6,6 +6,7 @@ It is possible that docker not correctly reloaded/restarted between chef runs.
 
 1. In the case of `runners-cache-1.gitlab.com`. Replace hostname in the following text with your hostname if the case.
 1. Try to open https://runners-cache-1.gitlab.com:1443/v2, if you receive 502 error, then registry is down
+1. If you are not receiving anything, then check nginx, by login to `runners-cache-1.gitlab.com` and `sudo service nginx status` and if it is `Active: inactive` state, then start it by `sudo service nginx start`.
 1. Login to `runners-cache-1.gitlab.com` and if `sudo docker ps | grep registry` has no output, then registry is down 
 1. Try to pull an image from the cache. The easiest way is to login to an existing shared runner:
  
