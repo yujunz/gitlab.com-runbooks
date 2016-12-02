@@ -60,7 +60,7 @@ All alerts are routed to slack and additionally can be paged to PagerDuty.
 
 ### Sending to the Pagerduty Pager
 
-1. In order to get alerts in pagerduty, label `pager=pagerduty` should be applied during alert activation.
+1. In order to get alerts in pagerduty, label `pager=pagerduty` should be applied during alert activation. You also can append label `priority=low` to pagerduty for the service with low priority.
 1. Pagerduty will receive message with description from `.title` and runbook link.
 1. Pagerduty will then page whoever is on call at that time.
 1. Alertmanager takes care of resolving issue in PagerDuty if alert is resolved.
