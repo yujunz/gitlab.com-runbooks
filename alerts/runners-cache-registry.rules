@@ -1,6 +1,36 @@
 ## RUNNERS CACHE
-ALERT runners_cache_is_down
-  IF probe_http_status_code{job="runners-cache-registry",instance=~"https://runners-cache.*minio.*"} != 200
+ALERT runners_registry_cache_nginx_status
+  IF
+label_replace(
+  drop_common_labels(
+    probe_http_status_code{instance=~"runners-cache-.*:5000/v2"}==bool 200
+  ),
+  "grouping",
+  "$1",
+  "instance",
+  "(.*):5000/v2"
+)*100
++ ignoring(instance)
+label_replace(
+  drop_common_labels(
+    probe_http_status_code{instance=~"runners-cache-.*:9000/minio/login"}==bool 200
+  ),
+  "grouping",
+  "$1",
+  "instance",
+  "(.*):9000/minio/login"
+)*10
++ ignoring(instance)
+label_replace(
+  drop_common_labels(
+    node_systemd_unit_state{instance=~"runners-cache.*",name=~"nginx.service",state="active"}
+  ),
+  "grouping",
+  "$1.gitlab.com",
+  "instance",
+  "(.*)"
+)
+!= 111
   FOR 1m
   LABELS {severity="critical", channel="ci", pager="pagerduty"}
   ANNOTATIONS {
@@ -9,24 +39,12 @@ ALERT runners_cache_is_down
     description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
   }
 
-## RUNNERS REGISTRY
-ALERT runners_registry_is_down
-  IF probe_http_status_code{job="runners-cache-registry",instance=~"https://runners-cache.*1443.*"} != 200
+ALERT runners_cache_nginx_is_down
+  IF probe_http_status_code{job="runners-cache-registry",instance=~"https://runners-cache.*minio.*"} != 200 and 
   FOR 1m
   LABELS {severity="critical", channel="ci", pager="pagerduty"}
   ANNOTATIONS {
-    title='Runners registry on {{ reReplaceAll ":1443/v2" "" (reReplaceAll "https://" "" .Labels.instance) }} is down',
-    runbook="troubleshooting/runners_registry_is_down.md",
-    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners registry being down at GitLab.com, we are investigating the root cause'"
-  }
-
-## RUNNERS CACHE FREE DISK SPACE IS LESS THAN 7%
-ALERT runners_cache_disk_space
-  IF node_filesystem_avail{device="/dev/vda1",instance="runners-cache-1"} / node_filesystem_size{device="/dev/vda1",instance="runners-cache-1"} < 0.07
-  FOR 1m
-  LABELS {severity="critical", channel="infrastructure"}
-  ANNOTATIONS {
-    title = "There is less than 7% of free disk space left on runners cache",
-    runbook = "troubleshooting/runners_cache_disk_space.md",
-    description = "This could block CI execution when the runners can't pull new images. This can be a flapping alert, so just check first"
+    title='Runners cache on {{ reReplaceAll "/minio/login" "" (reReplaceAll "https://" "" .Labels.instance) }} is down',
+    runbook="troubleshooting/runners_cache_is_down.md",
+    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
   }
