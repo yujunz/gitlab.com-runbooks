@@ -1,50 +1,53 @@
-## RUNNERS CACHE
-ALERT runners_registry_cache_nginx_status
-  IF
-label_replace(
+## RUNNERS NGINX,DOCKER,REGISTRY,CACHE
+gitlab:runners_cache_registry_docker_service = label_replace(
   drop_common_labels(
-    probe_http_status_code{instance=~"runners-cache-.*:5000/v2"}==bool 200
+    node_systemd_unit_state{instance=~"runners-cache.*",name="docker.service",state="active"}
   ),
-  "grouping",
-  "$1",
-  "instance",
-  "(.*):5000/v2"
-)*100
-+ ignoring(instance)
-label_replace(
-  drop_common_labels(
-    probe_http_status_code{instance=~"runners-cache-.*:9000/minio/login"}==bool 200
-  ),
-  "grouping",
-  "$1",
-  "instance",
-  "(.*):9000/minio/login"
-)*10
-+ ignoring(instance)
-label_replace(
-  drop_common_labels(
-    node_systemd_unit_state{instance=~"runners-cache.*",name=~"nginx.service",state="active"}
-  ),
-  "grouping",
+  "hostname",
   "$1.gitlab.com",
   "instance",
   "(.*)"
 )
-!= 111
-  FOR 1m
-  LABELS {severity="critical", channel="ci", pager="pagerduty"}
-  ANNOTATIONS {
-    title='Runners cache on {{ reReplaceAll "/minio/login" "" (reReplaceAll "https://" "" .Labels.instance) }} is down',
-    runbook="troubleshooting/runners_cache_is_down.md",
-    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
-  }
 
-ALERT runners_cache_nginx_is_down
-  IF probe_http_status_code{job="runners-cache-registry",instance=~"https://runners-cache.*minio.*"} != 200 and 
+gitlab:runners_cache_registry_nginx_service = label_replace(
+  drop_common_labels(
+    node_systemd_unit_state{instance=~"runners-cache.*",name="nginx.service",state="active"}
+  ),
+  "hostname",
+  "$1.gitlab.com",
+  "instance",
+  "(.*)"
+)
+
+gitlab:runners_registry = label_replace(
+  drop_common_labels(
+    probe_http_status_code{instance=~"runners-cache.*:5000/v2"}==bool 200
+  ),
+  "hostname",
+  "$1",
+  "instance",
+  "(.*):5000/v2"
+)
+
+gitlab:runners_cache = label_replace(
+  drop_common_labels(
+    probe_http_status_code{instance=~"runners-cache.*:9000/minio/login"}==bool 200
+  ),
+  "hostname",
+  "$1",
+  "instance",
+  "(.*):9000/minio/login"
+)
+
+gitlab:runners_nginx_docker_registry_cache_status = gitlab:runners_cache_registry_nginx_service*1000 + ignoring(instance) gitlab:runners_cache_registry_nginx_service*100 + ignoring(instance) gitlab:runners_registry*10 + ignoring(instance) 
+gitlab:runners_cache
+
+ALERT runners_nginx_docker_registry_cache_status
+  IF gitlab:runners_nginx_docker_registry_cache_status != 1111
   FOR 1m
-  LABELS {severity="critical", channel="ci", pager="pagerduty"}
+  LABELS {severity="critical"}
   ANNOTATIONS {
-    title='Runners cache on {{ reReplaceAll "/minio/login" "" (reReplaceAll "https://" "" .Labels.instance) }} is down',
+    title='Runners cache services on {{ .Labels.hostname }}: {{ range printf "gitlab:runners_cache_registry_nginx_service{hostname=\'%s\'}" .Labels.hostname | query }} nginx {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end }}, {{ range printf "gitlab:runners_cache_registry_docker_service{hostname=\'%s\'}" .Labels.hostname | query }} docker {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}, {{ range printf "gitlab:runners_registry{hostname=\'%s\'}" .Labels.hostname | query }} registry {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}, {{ range printf "gitlab:runners_cache{hostname=\'%s\'}" .Labels.hostname | query }} minio {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}.',
     runbook="troubleshooting/runners_cache_is_down.md",
     description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
   }
