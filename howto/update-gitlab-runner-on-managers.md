@@ -108,3 +108,10 @@ To upgrade runners on managers you need to:
     # For Omnibus builders
     $ knife ssh -aipaddress 'role:omnibus-builder-runners-manager' -- gitlab-runner --version
     ```
+
+1. **Update GitLab.com's configuration description**
+
+    If you are updating shared runners used by GitLab.com, please create a merge request in
+    https://gitlab.com/gitlab-com/www-gitlab-com project to update Runner's version and/or any other changed
+    configuration values which are specified at
+    https://gitlab.com/gitlab-com/www-gitlab-com/blob/master/source/gitlab-com/settings/index.html.md#shared-runners.
