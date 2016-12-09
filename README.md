@@ -43,6 +43,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ## Alerting and monitoring
 
 * [How to add alerts: Alerts manual](howto/alerts_manual.md)
+* [How to silence alerts](howto/silence-alerts.md)
 * [Alert for SSL certificate expiration](howto/alert-for-ssl-certificate-expiration.md)
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
