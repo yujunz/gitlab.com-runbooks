@@ -38,7 +38,7 @@ In this case we are missing slave3 since we have 4 slaves.
 
 ## Resolution
 
-* Just wait, every slave should restart it's replication when it drops out
+* Just wait, every slave should automatically restart it's replication when it drops out
 * If it takes longer then expected check /var/log/gitlab/redis/current on the mailfunctioning slave for any indications why it won't restart replication
 
 
