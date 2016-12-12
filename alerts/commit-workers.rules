@@ -1,0 +1,10 @@
+## ProcessCommitWorkers too high for more than 10m
+ALERT process_commit_workers_too_high
+  IF sum(max(sidekiq_enqueued_jobs_count{name="ProcessCommitWorker"})) > 300000
+  FOR 10m
+  LABELS {severity="critical", channel="infrastructure"}
+  ANNOTATIONS {
+    title="Large amount of ProcessCommitWorker queued jobs: {{$value}}",
+    description="ProcessCommitWorker sidekiq jobs are piling up for the last minute, this may be under control, but I'm just letting you know that this is going on, check http://performance.gitlab.net/dashboard/db/sidekiq-stats. Note that it is the alert only for ProcessCommitWorker",
+    runbook="troubleshooting/large-sidekiq-queue.md"
+  }
