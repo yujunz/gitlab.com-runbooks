@@ -1,6 +1,6 @@
 ## Target is down
 ALERT target_is_down
-  IF up{instance!~"ebs|license|lb1|dev|aptly|packages|version|backend1", job!~"blackbox"} == 0
+  IF up{job!~"blackbox"} == 0
   FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
