@@ -17,6 +17,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Kibana is down](troubleshooting/kibana_is_down.md)
 * [SSL certificate expires](troubleshooting/ssl_cert.md)
 * [GitLab registry is down](troubleshooting/gitlab-registry.md)
+* [Sidekiq stats no longer showing](troubleshooting/sidekiq_stats_no_longer_showing.md)
 
 ### Replication fails
 
@@ -43,9 +44,11 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ## Alerting and monitoring
 
 * [How to add alerts: Alerts manual](howto/alerts_manual.md)
+* [How to silence alerts](howto/silence-alerts.md)
 * [Alert for SSL certificate expiration](howto/alert-for-ssl-certificate-expiration.md)
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
+* [Upgrade Prometheus and exporters](howto/update-prometheus-and-exporters.md)
 
 ### Outdated
 

@@ -4,45 +4,42 @@
 
 *Don't Panic*
 
-*This is a critical emergency, it's important to fix the replication right away before a failover is triggered to the running behind slave*
-
 ## Symptoms
 
 You see alerts like
 
 ```
-@channel redis[34].cluster.gitlab.com service Redis_replication_lag is CRITICAL
+@channel redis[34567].cluster.gitlab.com service Redis_replication_lag is CRITICAL
 ```
 
 ## Possible checks
 
-* ssh into the redis host and check that it is the actual replication slave
+* ssh into the redis host which generated the alert and check the actual replication status
 
 ```
-# sudo crm status
-Last updated: Sat Jun 11 16:14:07 2016
-Last change: Wed Apr  6 06:37:16 2016 via crmd on redis3.cluster.gitlab.com
-Stack: corosync
-Current DC: redis3.cluster.gitlab.com (167837722) - partition with quorum
-Version: 1.1.10-42f2063
-2 Nodes configured
-1 Resources configured
-
-
-Online: [ redis3.cluster.gitlab.com redis4.cluster.gitlab.com ]
-
- gitlab_redis (ocf::pacemaker:gitlab_redis):  Started redis3.cluster.gitlab.com
+root@redis7:~# /opt/gitlab/embedded/bin/redis-cli 
+127.0.0.1:6379> auth PASSWORD
+OK
+127.0.0.1:6379> info replication
+# Replication
+role:master
+connected_slaves:4
+slave0:ip=10.45.2.8,port=6379,state=online,offset=208856216927,lag=0
+slave1:ip=10.45.2.7,port=6379,state=online,offset=208856050552,lag=1
+slave2:ip=10.45.2.9,port=6379,state=online,offset=208856088958,lag=1
+master_repl_offset:208856228130
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:208855179555
+repl_backlog_histlen:1048576
 ```
 
-In this case the master is redis3 => `gitlab_redis (ocf::pacemaker:gitlab_redis):  Started redis3.cluster.gitlab.com`
+In this case we are missing slave3 since we have 4 slaves.
 
 ## Resolution
 
-* Get the ip of the redis master server
-* Next commands must be exucuted on slave host
-* Get redis password with `grep requirepass /var/opt/gitlab/redis/redis.conf`
-* Turn into root
-* Run `/root/gitlab_redis_recovery.sh` and provide the required info
+* Just wait, every slave should automatically restart it's replication when it drops out
+* If it takes longer then expected check /var/log/gitlab/redis/current on the mailfunctioning slave for any indications why it won't restart replication
 
 
 
