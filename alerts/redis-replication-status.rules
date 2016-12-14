@@ -1,6 +1,6 @@
 ## redis replication
 ALERT redis_replication_is_down
-  IF sum(redis_connected_slaves) == 0
+  IF count(redis_connected_slaves)-sum(redis_connected_slaves) != 1
   FOR 1m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
