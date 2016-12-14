@@ -23,6 +23,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [The DB replication has stopped](troubleshooting/postgresql_replication.md)
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
+* [CRM has failed](troubleshooting/crm-failed.md)
 
 ### Chef/Knife
 
