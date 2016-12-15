@@ -1,10 +1,13 @@
 ## redis replication
+gitlab:redis_disconnected_slaves = count(redis_connected_slaves)-sum(redis_connected_slaves)-1
+gitlab:redis_master = topk(1,redis_connected_slaves)
+
 ALERT redis_replication_is_down
-  IF count(redis_connected_slaves)-sum(redis_connected_slaves) != 1
-  FOR 1m
+  IF gitlab:redis_disconnected_slaves > 1
+  FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
-    title="Redis replication is down 1 minute",
-    description="Redis replication is down for more than 1 minute! Consider review redis replication status",
+    title="Redis replication not working for {{ .Value }} slaves. Master is {{ range query \"gitlab:redis_master\" }}{{.Labels.fqdn}}{{ end }}.",
+    description="Redis not replicating for all slaves for more than 5 minutes! Consider review redis replication status",
     runbook="troubleshooting/redis_replication.md"
   }
