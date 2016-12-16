@@ -1,6 +1,6 @@
 ## Sidekiq Queues
 ALERT sidekiq_queues_are_too_high
-  IF sum(max(sidekiq_enqueued_jobs_count{name!~"(ActiveJob.*|ProcessCommitWorker)"}) by (name)) > 10000
+  IF sum(max(sidekiq_queue_size{name!~"process_commit"})) > 10000
   FOR 1m
   LABELS {severity="critical", channel="infrastructure"}
   ANNOTATIONS {
