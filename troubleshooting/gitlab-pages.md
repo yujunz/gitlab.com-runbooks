@@ -122,7 +122,7 @@ only apparent to some users but not others.
 1. Gather some strace information for a few minutes before restarting gitlab-pages:
 
     ```sh
-    $ sudo strace -f -p `pidof gitlab-pages >& /tmp/gitlab-pages-debug.txt`
+    $ sudo strace -f -p `pidof gitlab-pages` >& /tmp/gitlab-pages-debug.txt
     ```
 
 ## Resolution
