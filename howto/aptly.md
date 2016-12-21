@@ -108,7 +108,7 @@ Aptly can only publish one snapshot, so all snapshots to be published must be me
 
 ```
 # Find the currently published snapshot
-root@aptly# aptly snapshot list
+user@aptly:~$ sudo aptly snapshot list
 List of snapshots:
  * [mirror-snapshot-20161107]: Snapshot from mirror [mirror]: https://download.example.com/debian/ xenial
  * [mirror-gitlab-utils-20161221]: Merged from sources: 'mirror-snapshot-20161107', 'gitlab-utils-stable-20161107'
@@ -118,7 +118,7 @@ List of snapshots:
 To get more information about snapshot, run `aptly snapshot show <name>`.
 
 # Merge your new snapshot with the snapshots that are not being updated (mirrors)
-root@aptly# sudo aptly snapshot merge mirror-gitlab-utils-20161221 mirror-snapshot-20161107 gitlab-utils-stable-20161221 
+user@aptly:~$ sudo aptly snapshot merge mirror-gitlab-utils-20161221 mirror-snapshot-20161107 gitlab-utils-stable-20161221 
 
 Snapshot mirror-gitlab-utils-20161221 successfully created.
 You can run 'aptly publish snapshot mirror-gitlab-utils-2016122102' to publish snapshot as Debian repository.
@@ -129,7 +129,7 @@ Now we must replace the currently published snapshot with the newly created snap
 
 ```
 # This action requires the GPG Repo Passphrase from the devops vault.
-root@aptly# aptly publish switch xenial mirror-gitlab-utils-20161221
+user@aptly:~$ sudo aptly publish switch xenial mirror-gitlab-utils-20161221
 Loading packages...
 Generating metadata files and linking package files...
 Finalizing metadata files...
