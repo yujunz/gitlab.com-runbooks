@@ -22,3 +22,9 @@ $ sudo find /var/log/gitlab -mtime +2 -exec rm {} \;
 ```
 $ sudo find /tmp -type f -mtime +2 -delete
 ```
+
+* If commands above do not free enough space, as an option you can try to delete everything older than 10 minutes.
+
+```
+sudo find /var/log/gitlab -mmin +10 -exec rm {} \;
+```
