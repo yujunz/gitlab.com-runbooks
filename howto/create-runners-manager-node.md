@@ -2,6 +2,10 @@
 
 ## Prerequisites
 
+1. If you are moving a node from one location to another and using the same token, please follow the below steps first. Otherwise, there will be a split brain situation and VMs will not be deleted properly.
+  * Stop the gitlab-runner
+  * Cleanup old docker-machines `/root/machines-operation.sh remove-all`
+  * Start gitlab-runner on new server
 1. Digital Ocean API [token](https://www.digitalocean.com/community/tutorials/how-to-use-the-digitalocean-api-v2).
 1. [Registration Token](https://gitlab.com/admin/runners) from GitLab.com, tags for gitlab runner registration.
 1. If cache used, cache url, access and secret key. For NYC1 DC - registry url is `http://runners-cache-2-internal.gitlab.com:444`, for NYC2 - `http://runners-cache-1-internal.gitlab.com:444`. Access and secret keys can be obtained in the vaults for `gitlab-ce-ee-runners` and `gitlab-shared-runners` roles.
