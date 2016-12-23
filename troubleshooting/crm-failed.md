@@ -1,4 +1,4 @@
-# Redis replication is lagging or has stopped
+# CRM has failed
 
 ## First and foremost
 
@@ -41,6 +41,7 @@ In this case we are crm resource must be cleanup.
 
 * Run `crm resource cleanup gitlab_pgsql`
 * After completion, please check status with `crm status`. Output should be:
+
 ```
 Last updated: Wed Dec 14 08:51:20 2016        Last change: Wed Dec 14 08:51:11 2016 by hacluster via crmd on db1.cluster.gitlab.com
 Stack: corosync
