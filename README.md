@@ -130,6 +130,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Ban a single IP using Redis and Rack Attack](howto/ban-an-IP-with-redis.md)
 * [Ban a netblock on HAProxy](howto/ban-netblocks-on-haproxy.md)
 
+### Manage Marvin, our infra bot
+
+* [Manage cog](howto/manage-cog.md)
+
 ### Debug and monitor
 
 * [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
