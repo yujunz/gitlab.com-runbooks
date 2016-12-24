@@ -13,10 +13,10 @@ At this time you can initialize the git repo in your cookbook and set origin to 
 to GitLab.com.
 
 You should then edit `cookbook/metadata.rb` to have an accurate description. This
-is also where you will place any dependencies you need. 
+is also where you will place any dependencies you need.
 
 After you've created the cookbook, be sure that it is pushed to both GitLab.com and dev.
-Go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and edit the 
+Go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and edit the
 Berksfile to add the new cookbook. Be sure that you add version pinning and point it to the
 dev repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
 Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef server.
@@ -28,8 +28,8 @@ Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef se
 ChefSpec and test kitchen are two ways that you can test your cookbook before you
 commit/deploy it. From the documentation:
 
-> ChefSpec is a framework that tests resources and recipes as part of a simulated chef-client run. 
-> ChefSpec tests execute very quickly. When used as part of the cookbook authoring workflow, 
+> ChefSpec is a framework that tests resources and recipes as part of a simulated chef-client run.
+> ChefSpec tests execute very quickly. When used as part of the cookbook authoring workflow,
 > ChefSpec tests are often the first indicator of problems that may exist within a cookbook.
 
 To get started with ChefSpec you write tests in ruby to describe what you want. An example is:
@@ -90,10 +90,10 @@ suites:
       - recipe[postgresql::server]
 ```
 
-This file is probably self-explanatory. It will use VirtualBox to build a VM and use `chef_zero` as the 
+This file is probably self-explanatory. It will use VirtualBox to build a VM and use `chef_zero` as the
 method to converge your cookbook. It will run tests on 3 different OSes, CentOS, Ubuntu, and Windows 2012 R2.
 Finally, it will run the recipes listed below based on the suite. The above config file will generate
-6 VMs, 3 for the `client` suite and 3 for the `server` suite. You can customize this however you wish. 
+6 VMs, 3 for the `client` suite and 3 for the `server` suite. You can customize this however you wish.
 It is possible to run KitchenCI for an entire deployment, however I don't think our chef-repo is set up
 in such a way.
 
@@ -117,25 +117,25 @@ chef-client -z -o 'recipe[gitlab-prometheus::prometheus]'
 ```
 
 The `chef-client -z -o` in the above example will tell the client to run in local mode and
-to only run the runlist provided. 
+to only run the runlist provided.
 You can substitute any cookbook you wish, including your own. Do keep in mind however that
-this may still freak out when a chef-vault is involved. 
+this may still freak out when a chef-vault is involved.
 
 ## Update cookbook and deploy to production
 
 When it comes time to edit a cookbook, you first need to clone it from its repo, most likely
-in https://gitlab.com/gitlab-cookbooks/. 
+in https://gitlab.com/gitlab-cookbooks/.
 
-Once you make your changes to a cookbook, you will want to be sure to bump the version 
+Once you make your changes to a cookbook, you will want to be sure to bump the version
 number in metadata.rb as we have versioning requirements in place so Chef will not accept
-a cookbook with the same version, even if it has changed. Commit these changes and submit a 
+a cookbook with the same version, even if it has changed. Commit these changes and submit a
 merge request to merge your changes.
 
 Once your changes are merged, you will need to actually upload the cookbook to the server.
 To do this, go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and run
 `berks update <cookbookname>`. This will download the newest version of your cookbook.
 Commit the changes that will be recorded in `Berksfile.lock` and push them. After the
-cookbook is merged, you can use `berks upload <cookbookname>` to upload the cookbook 
+cookbook is merged, you can use `berks upload <cookbookname>` to upload the cookbook
 to the server.
 
 Once the cookbook is uploaded to the Chef server, the updates will be applied on the next
@@ -144,8 +144,8 @@ you can always go run `chef-client` manually on whichever host needs the updates
 
 ## Rollback cookbook
 
-The most expedient way to roll back a cookbook is to simply delete the newest version 
-off of the Chef server. Since we do not pin to specific versions, once the new version is 
+The most expedient way to roll back a cookbook is to simply delete the newest version
+off of the Chef server. Since we do not pin to specific versions, once the new version is
 deleted, the old cookbook will run.
 
 To delete a specific cookbook version run the following in your `chef-repo` directory:
@@ -153,6 +153,24 @@ To delete a specific cookbook version run the following in your `chef-repo` dire
 ```
 knife cookbook delete COOKBOOK_NAME [COOKBOOK_VERSION]
 ```
+
+## Run chef client in interactive mode
+
+Really useful to troubleshoot.
+
+Starting from the chef-repo folder run the following command:
+
+```
+$ chef-shell -z -c .chef/knife.rb
+```
+
+In here you can type `help` to get really useful help, but then for instance you can do this
+
+```
+> nodes.search('name:node-name-in-chef')
+```
+
+And then examine this node from chef's perspective
 
 ## References
   - [GitLab's chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/)
