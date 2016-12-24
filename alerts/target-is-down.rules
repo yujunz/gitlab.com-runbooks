@@ -4,6 +4,6 @@ ALERT target_is_down
   FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
-    title="{{ $labels.job }}/{{ $labels.fqdm }} failed to be scraped for the last minute ",
+    title="{{ $labels.job }}/{{ $labels.fqdn }} failed to be scraped for the last minute ",
     description="Check prometheus alerts at https://prometheus.gitlab.com/alerts and investigate targets at https://prometheus.gitlab.com/targets page to undestand which hosts or exporters could not be scraped",
   }
