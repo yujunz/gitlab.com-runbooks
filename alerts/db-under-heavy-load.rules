@@ -3,7 +3,7 @@ ALERT db_heavy_load
   FOR 1m
   LABELS {severity="critical", channel="infrastructure"}
   ANNOTATIONS {
-    title="High load in database {{ $labels.instance }}: {{$value}}",
+    title="High load in database {{ $labels.fqdm }}: {{$value}}",
     description="Really high load in the batabase for the last minute, there are {{ query \"sum(pg_slow_queries_total)\" }} slow queries, {{ query \"sum(pg_blocked_queries_total)\" }} and {{ query \"sum(pg_locks_count{datname='gitlabhq_production'})\" }} locks. Check http://performance.gitlab.net/dashboard/db/postgres-stats and http://performance.gitlab.net/dashboard/db/postgres-queries to get more data.",
     runbook="troubleshooting/postgresql_heavy_load.md"
   }
