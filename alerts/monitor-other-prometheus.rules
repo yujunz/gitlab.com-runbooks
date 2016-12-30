@@ -1,0 +1,9 @@
+## Target is down
+ALERT other_prometheus_is_down
+  IF up{job="prometheus-other-instance"} == 0
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    title="One of the prometheus instances is down! It is failed to be scraped for the last minute",
+    description="If https://prometheus.gitlab.com is not accessible then main prometheus on prometheus.gitlab.com is down, otherwise check prometheus targets at https://prometheus.gitlab.com/targets#job-prometheus-other-instance for the prometheus-2.gitlab.com instance",
+  }
