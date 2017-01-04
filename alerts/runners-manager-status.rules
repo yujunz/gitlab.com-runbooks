@@ -1,7 +1,7 @@
 ## RUNNERS MANAGER STATUS
 ALERT runners_manager_is_down
   IF up{job=~"shared-runners|private-runners"} == 0
-  FOR 1m
+  FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Runners manager is down on {{ .Labels.instance }}",
