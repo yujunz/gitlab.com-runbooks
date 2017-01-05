@@ -14,6 +14,7 @@ The common procedure is as follows:
 1. Consider adding a description to the alert with some context, you could also point to relevant graphs or provide quick actions.
 1. Point the runbook link to dev.gitlab.org and make sure that it is available there, when GitLab.com is down you will not be able to get the runbook from there.
 1. If the alert will be triggered throught Slack, consider adding `@channel` to the message to bring attention.
+1. You can create [recording rules](https://prometheus.io/docs/querying/rules/#recording-rules) in your alerting rules files in order to simplify queries and conditions. For [example](https://gitlab.com/gitlab-com/runbooks/blob/master/alerts/available-disk.rules#L1).
 
 ### Sample alert
 
