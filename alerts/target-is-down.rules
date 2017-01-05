@@ -1,6 +1,6 @@
 ## Target is down
 ALERT target_is_down
-  IF up{job!~"blackbox"} == 0
+  IF up{job!~"(blackbox|blackbox-ssl)"} == 0
   FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
