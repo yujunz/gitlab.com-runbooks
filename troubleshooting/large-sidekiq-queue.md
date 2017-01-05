@@ -41,50 +41,56 @@ Let that run for around 30 seconds and then check the report `sudo perf report`
 
 ## Resolution
 
-The best way to deal with the large queue is to spin up more sidekiq worker processes
-with fewer threads that specifically deal with troublesome queues. Often, this is the
-`pipelines` and `project_cache` queues.
+The best way to deal with the large queue is to spin up more sidekiq worker
+processes with fewer threads that specifically deal with troublesome queues.
+Often, this is the `pipelines` and `project_cache` queues.
 
-The command we use to do that is:
+For this we use
+[sidekiq-cluster](http://docs.gitlab.com/ee/administration/operations/extra_sidekiq_processes.html),
+a command introduced in GitLab 8.15. This command can be used to start extra
+Sidekiq processes that consume only a limited number of Sidekiq queues.
 
-```
-sudo -u git PATH=/opt/gitlab/bin:/opt/gitlab/embedded/bin:/bin:/usr/bin LD_PRELOAD=/opt/gitlab/embedded/lib/libjemalloc.so BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile SIDEKIQ_MEMORY_KILLER_MAX_RSS=1000000 SIDEKIQ_MEMORY_KILLER_SHUTDOWN_SIGNAL=SIGKILL GIT_TERMINAL_PROMPT=0 /opt/gitlab/embedded/bin/bundle exec sidekiq -q <queue> -t 3 -c 1 -r /opt/gitlab/embedded/service/gitlab-rails -e production
-```
+sidekiq-cluster is configured via Omnibus/Chef just like any other service. The
+service is configured to run on all nodes with role `gitlab-cluster-worker`. The
+setting name used in the role's JSON is called `sidekiq-cluster`.
 
-Replace the queue name with the offending one, take it from the
-[queue size graph](http://performance.gitlab.net/dashboard/db/sidekiq-stats?panelId=3&fullscreen)
+The option you're most likely interested in is called `queue_groups`. This
+array specifies how many processes to start, and which queues they should
+consume. For example, say you want to start two processes that consume
+`process_commit` and `post_receive` respectively. In this case you'd use the
+following settings:
 
-You can add more than 1 queue by adding `-q <queue_name>` multiple times to this command line.
-
-In the most recent incident (gitlab-com/infrastructure#677), we spun up 2 threads on all
-of the workers, resulting in around 25 processes across the fleet.
-
-## If you are lazy like me
-
-You will use chef to spawn many processes, I've been doing it today like this
-
-### Spawn a tmux session in the whole cluster with a given queue
-
-```
-knife ssh 'role:<cluster-role>' 'tmux new -d -s sq_<queue> "sudo -u git PATH=/opt/gitlab/bin:/opt/gitlab/embedded/bin:/bin:/usr/bin LD_PRELOAD=/opt/gitlab/embedded/lib/libjemalloc.so BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile SIDEKIQ_MEMORY_KILLER_MAX_RSS=1000000 SIDEKIQ_MEMORY_KILLER_SHUTDOWN_SIGNAL=SIGKILL GIT_TERMINAL_PROMPT=0 /opt/gitlab/embedded/bin/bundle exec sidekiq -q <queue> -t 3 -c 1 -r /opt/gitlab/embedded/service/gitlab-rails -e production"'
-```
-
-### Get a list of running tmux sessions
-
-```
-knife ssh 'role:<cluster-role>' 'tmux list-sessions'
+```json
+"sidekiq-cluster": {
+  "enable": true,
+  "queue_groups": [
+    "process_commit",
+    "post_receive"
+  ]
+}
 ```
 
-### Gracefully kill sidekiq workers inside tmux sessions
+If a process should consume multiple queues you will have to separate them by a
+comma. For example:
+
+```json
+"sidekiq-cluster": {
+  "enable": true,
+  "queue_groups": [
+    "process_commit,post_receive"
+  ]
+}
+```
+
+This will start 1 process that consumes _both_ `process_commit` and
+`post_receive`.
+
+Once the settings have been applied you'll need to run `sudo chef-client` on all
+the workers. The easiest way of doing this is to use `knife` in the Chef
+repository:
 
 ```
-knife ssh -aipaddress 'role:<cluster-role>' 'tmux send-key C-c -t sq_<queue>'
-```
-
-### If tmux disagrees with you
-
-```
-knife ssh -aipaddress 'role:<cluster-role>' 'tmux kill-session -t sq_<queue>'
+bundle exec knife ssh -aipaddress 'role:gitlab-cluster-worker' 'sudo chef-client'
 ```
 
 ## Viewing and killing jobs from the queue
