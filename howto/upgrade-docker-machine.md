@@ -12,8 +12,8 @@ in the works.
 The first step is to update the attributes that control what version and checksum
 are used to download and verify the docker-machine binary. The attributes may
 be stored only in the role secrets OR the split between the role definition itself
-and `chef-vault`. Currently, `omnibus-builder-runners-manager` is using the 
-only the secrets and `gitlab-shared-runners` is using the both the role definition
+and `chef-vault`. Currently, `omnibus-builder-runners-manager` is using 
+only the secrets and `gitlab-shared-runners` is using both the role definition
 and secrets. 
 
 To view the secrets, run the rake task to show secrets. Please replace 
