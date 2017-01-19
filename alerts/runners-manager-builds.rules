@@ -2,7 +2,7 @@
 ALERT no_builds_on_shared_runners
   IF max(sum(rate(ci_runner_builds{job="shared-runners"}[1m]))) == 0
   FOR 5m
-  LABELS {severity="critical", channel="infrastructure"}
+  LABELS {severity="critical", channel="ci"}
   ANNOTATIONS {
     title="Number of builds running on shared runners is too low: {{$value}}",
     description="Number of builds running on shared runners for the last 5 minutes is 0. This may suggest problems with auto-scaling provider or Runner stability. You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci.",
