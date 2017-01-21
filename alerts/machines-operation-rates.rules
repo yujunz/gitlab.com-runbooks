@@ -2,7 +2,7 @@
 ALERT machines_creations_rate_is_too_high
   IF max(sum(rate(ci_docker_machines{type="created"}[1m])) by (job,type)) > 5
   FOR 20m
-  LABELS {severity="critical", channel="ci"}
+  LABELS {channel="ci"}
   ANNOTATIONS {
     title="Machines creation rate for runners is too high: {{$value | humanize}}",
     description="Machines creation rate for the last 20 minutes is over 5. This may by a symptom of problems with auto-scaling provider. Check http://performance.gitlab.net/dashboard/db/ci.",
@@ -12,7 +12,7 @@ ALERT machines_creations_rate_is_too_high
 ALERT machines_creation_rate_for_shared_runners_is_too_small
   IF max(sum(rate(ci_docker_machines{type="created",job="shared-runners"}[1m]))) < 0.1
   FOR 5m
-  LABELS {severity="critical", channel="ci"}
+  LABELS {channel="ci"}
   ANNOTATIONS {
     title="Machines creation rate for shared runners is too low: {{$value | humanize}}",
     description="Machines creation rate for shared runners for the last 5 minutes is less than 0.1. This may suggest problems with auto-scaling provider. Check http://performance.gitlab.net/dashboard/db/ci.",
@@ -22,7 +22,7 @@ ALERT machines_creation_rate_for_shared_runners_is_too_small
 ALERT machines_usage_rate_for_shared_runners_is_too_small
   IF max(sum(rate(ci_docker_machines{type="used",job="shared-runners"}[1m]))) < 0.1
   FOR 5m
-  LABELS {severity="critical", channel="ci"}
+  LABELS {channel="ci"}
   ANNOTATIONS {
     title="Machines usage rate for shared runners is too low: {{$value | humanize}}",
     description="Machines usage rate for shared runners for the last 5 minutes is less than 0.1. This may suggest problems with auto-scaling provider. Check http://performance.gitlab.net/dashboard/db/ci.",

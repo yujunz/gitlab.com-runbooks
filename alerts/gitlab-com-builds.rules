@@ -2,7 +2,7 @@
 ALERT number_of_pending_builds_for_project_with_shared_runners_is_too_high
   IF max(rate(ci_builds_total{shared_runners_enabled_projects="1",status="pending",fqdn="db1.cluster.gitlab.com"}[2h])) > 5
   FOR 30m
-  LABELS {severity="critical", channel="ci"}
+  LABELS {channel="ci"}
   ANNOTATIONS {
     title="Rate of pending builds for projects with shared runners is too high: {{$value | humanize}}",
     description="Rate of pending builds for projects with shared runners is increasing and is very high for more than 30 minutes. This may suggest problems with auto-scaling provider or Runner stability. You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci.",
