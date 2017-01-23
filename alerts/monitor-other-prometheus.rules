@@ -4,7 +4,7 @@ ALERT other_prometheus_is_down
   FOR 2m
   LABELS {severity="critical",pager="pagerduty"}
   ANNOTATIONS {
-    title="Prometheus server on {{ if .Labels.server eq \"prometheus.gitlab.com\" }}prometheus2.gitlab.com{{ else }}prometheus.gitlab.com{{ end }} is down!",
+    title="Prometheus server is down!",
     description="This is very critical alert, please check corresponding prometheus instance according to runbook. Grafana obtaining data from two instances of prometheus servers, wrong or missing data in one of the instances can result in wrong representation and/or interpretation of collected metrics.",
     runbook="troubleshooting/prometheus-is-down.md"
   }
