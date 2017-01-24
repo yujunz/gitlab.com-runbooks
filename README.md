@@ -140,6 +140,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [Tweeting Guidelines](howto/tweeting-guidelines.md)
 
+## Other Servers and Services
+
+* [GitHost / GitLab Hosted](howto/githost.md)
+
 ## Adding runbooks rules
 
 * Make it quick - add links for checks
