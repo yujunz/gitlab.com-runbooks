@@ -1,7 +1,7 @@
 ## Target is down
 ALERT target_is_down
   IF up{job!~"(blackbox|blackbox-ssl)"} == 0
-  FOR 1m
+  FOR 2m
   LABELS {severity="critical"}
   ANNOTATIONS {
     title="{{ $labels.job }}/{{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }} failed to be scraped for the last minute. Scraping prometheus instance - {{ $labels.server }}.",
