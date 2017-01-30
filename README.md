@@ -77,6 +77,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Gracefully restart sidekiq jobs](howto/manage-workers.md#gracefully-restart-sidekiq-jobs)
 * [Start a rails console in the staging environment](howto/staging-environment.md#run-a-rails-console-in-staging-environment)
 * [Start a redis console in the staging environment](howto/staging-environment.md#run-a-redis-console-in-staging-environment)
+* [Start a psql console in the staging environment](howto/staging-environment.md#run-a-psql-console-in-staging-environment)
 * [Force a failover with postgres or redis](howto/manage-pacemaker.md#force-a-failover)
 * [Use aptly](howto/aptly.md)
 

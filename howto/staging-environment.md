@@ -29,6 +29,18 @@ If you have any idea on how to improve such feedback loop or you are missing any
 * start redis-cli `/opt/gitlab/embedded/bin/redis-cli`
 * authenticate `auth PASSWORD` - replace "PASSWORD" with the retrieved password
 
+## Run a psql console in staging environment
+
+* ssh into the primary database host:
+  * `ssh db1.staging.gitlab.com`
+* start `gitlab-psql` with the following command:
+
+    ```
+    sudo -u gitlab-psql -H sh \
+      -c "/opt/gitlab/embedded/bin/psql \
+      -h /var/opt/gitlab/postgresql gitlabhq_production"
+    ```
+
 ## Deploy to staging
 
 Follow the instructions [from the chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/staging.md)
