@@ -114,6 +114,11 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Create VMs in Azure, add disks, etc](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
 * [Bootstrap a new VM](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/new-vps.md)
 
+### Manually ban an IP or netblock
+
+* [Ban a single IP using Redis and Rack Attack](howto/ban-an-IP-with-redis.md)
+* [Ban a netblock using HAProxy](howto/ban-netblocks-with-haproxy.md)
+
 ### Debug and monitor
 
 * [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
