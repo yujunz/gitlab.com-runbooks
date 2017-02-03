@@ -30,7 +30,7 @@ thor$ knife ssh -p 2222 -a ipaddress -C 2 'role:gitlab-cluster-lb' 'sudo ip rout
 
 This will produce a count and listing of all the IP addresses in the blackhole state on all of the HA Proxies.  The count should equal the number of HA Proxies in production.
 
-### Add an IP address to the blackhole
+### Add a netblock to the blackhole
 
 Just like Santa Clause, you want to check your list twice before you sort the naughties into the blackhole.
 
@@ -38,7 +38,7 @@ Just like Santa Clause, you want to check your list twice before you sort the na
 thor$ knife ssh -p 2222 -a ipaddress -C 2 'role:gitlab-cluster-lb' 'sudo ip route add blackhole 192.168.1.0/24'
 ```
 
-### Remove an IP address from the blackhole
+### Remove a netblock from the blackhole
 
 More often than not, the source for the block is a transient to the network that it originates from and should be removed after the incident is over.
 
