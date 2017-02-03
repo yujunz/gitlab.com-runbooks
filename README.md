@@ -117,7 +117,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ### Manually ban an IP or netblock
 
 * [Ban a single IP using Redis and Rack Attack](howto/ban-an-IP-with-redis.md)
-* [Ban a netblock using HAProxy](howto/ban-netblocks-with-haproxy.md)
+* [Ban a netblock on HAProxy](howto/ban-netblocks-on-haproxy.md)
 
 ### Debug and monitor
 
