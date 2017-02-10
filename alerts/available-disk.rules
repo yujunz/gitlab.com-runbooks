@@ -5,7 +5,7 @@ ALERT worker_10_disk
   FOR 1m
   LABELS { severity = "critical" }
   ANNOTATIONS {
-    title = "Really low disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | humanize }}%",
+    title = "Really low disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | printf \"%.2f\" }}%",
     description = "Consider sshing into the instance and removing old logs following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
     runbook="troubleshooting/filesystem_alerts.md"
   }

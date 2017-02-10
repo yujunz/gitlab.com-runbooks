@@ -4,6 +4,6 @@ ALERT number_of_pending_builds_for_project_with_shared_runners_is_too_high
   FOR 30m
   LABELS {channel="ci"}
   ANNOTATIONS {
-    title="Rate of pending builds for projects with shared runners is too high: {{$value | humanize}}",
+    title="Rate of pending builds for projects with shared runners is too high: {{$value | printf \"%.2f\" }}",
     description="Rate of pending builds for projects with shared runners is increasing and is very high for more than 30 minutes. This may suggest problems with auto-scaling provider or Runner stability. You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci.",
   }
