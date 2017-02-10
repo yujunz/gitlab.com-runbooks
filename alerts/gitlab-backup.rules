@@ -5,7 +5,7 @@ ALERT gitlab_com_backup_too_old
   FOR 30s
   LABELS { severity = "critical" }
   ANNOTATIONS {
-    title = "Regular backup for GitLab.com was taken more than {{ .Value | humanizeDuration }} hours ago. Please take the actions or in case of accident we could lose data.",
+    title = "Regular backup for GitLab.com was taken more than {{ .Value | humanizeDuration }} ago. Please take the actions or in case of accident we could lose data.",
     description = "Regular backups for GitLab.com are not taken on time. Please follow the runbook to review the problem.",
     runbook="troubleshooting/gitlab_com_backups.md"
   }
