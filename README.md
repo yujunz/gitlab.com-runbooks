@@ -125,6 +125,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Work with Kibana (logs view)](howto/kibana.md)
 * [Work with Check_MK (Notifications, scheduled downtime, acknowledge problems)](howto/manage-checkmk.md)
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
+* [Run pgbadger to analyze queries](howto/postgresql.md#run-pgbadger-in-the-primary-database-server)
 
 ## General guidelines in an emergency
 

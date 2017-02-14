@@ -64,4 +64,7 @@ JOIN pg_stat_activity blockinga ON blockingl.pid = blockinga.pid
 WHERE NOT blockedl.granted;
 ```
 
+## Run pgbadger in the primary database server
 
+* sudo up
+* `pgbadger | /usr/bin/pgbadger -o output.txt -`
