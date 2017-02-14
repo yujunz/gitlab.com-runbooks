@@ -1,0 +1,2 @@
+# Query for frontend HAProxy metrics fleet overview
+backend_code:haproxy_server_http_responses_total:irate1m = sum(irate(haproxy_server_http_responses_total[1m])) by (code,backend)
