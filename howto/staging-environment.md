@@ -17,14 +17,14 @@ If you have any idea on how to improve such feedback loop or you are missing any
 ## Run a rails console in staging environment
 
 * ssh into any of the staging workers
-  * `ssh 191.237.42.73` # worker1
-  * `ssh 13.92.88.118` # worker2
+  * `ssh worker1.staging.gitlab.com`
+  * `ssh worker2.staging.gitlab.com`
 * start a rails console issuing the command `sudo gitlab-rails console`
 
 ## Run a redis console in staging environment
 
 * ssh into the redis host
-  * `ssh 40.117.159.113` # redis1.staging.gitlab.com
+  * `ssh redis1.staging.gitlab.com`
 * get redis password with `sudo grep requirepass /var/opt/gitlab/redis/redis.conf`
 * start redis-cli `/opt/gitlab/embedded/bin/redis-cli`
 * authenticate `auth PASSWORD` - replace "PASSWORD" with the retrieved password
