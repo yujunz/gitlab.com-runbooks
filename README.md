@@ -136,21 +136,22 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * Confirm that it is actually an emergency, challenge this: are we losing data? Is GitLab.com not working?
 * [Tweet](howto/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
-* Join the `#alerts` channel
-* Organize
-  * Establish who is taking point on the emergency issue in the `#alerts` channel: "I'm taking point" and pin the message for the duration of the emergency.
-  * open a hangout if it will save time: https://plus.google.com/hangouts/_/gitlab.com?authuser=1
-  * share the link in the alerts channel
-* If the point person needs someone to do something, give a direct command: _@someone: please run `this` command_
+* Join the `#infrastructure` channel
+* Define a _point person_ or _incident owner_, this is the person that will gather all the data and coordinate the efforts.
+* Organize:
+  * Establish who is the point person on the incident in the `#infrastructure` channel: "I'm taking point" and pin the message for the duration of the emergency.
+  * Start a war room using zoom if it will save time
+  * Share the link in the #infrastructure channel
+  * If the _point person_ needs someone to do something, give a direct command: _@someone: please run `this` command_
 * Be sure to be in sync - if you are going to reboot a service, say so: _I'm bouncing server X_
 * If you have conflicting information, **stop and think**, bounce ideas, escalate
-* Fix first, ask questions later.
-* Gather information when the outage is done - logs, samples of graphs, whatever could help figuring out what happened
-* Open an issue and put `monitoring` label on it, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
+* Gather information when the incident is done - logs, samples of graphs, whatever could help figuring out what happened
+* If we lack monitoring or alerting Open an issue and label as `monitoring`, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
 
 ## Guidelines
 
 * [Tweeting Guidelines](howto/tweeting-guidelines.md)
+* [Production Incident Communication Strategy](howto/manage-production-incidents.md)
 
 ## Other Servers and Services
 
