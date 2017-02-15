@@ -6,3 +6,10 @@ instance_cpu:node_cpu_not_idle:rate5m = sum(rate(node_cpu{mode!="idle"}[5m])) wi
 
 # CPU in use by mode.
 instance_mode:node_cpu:rate5m = sum(rate(node_cpu[5m])) without (cpu)
+
+# Filesystem available percent for "real" filesystems.
+instance:node_filesystem_avail:percent = node_filesystem_avail{device=~"/dev/.+"} / node_filesystem_size{device=~"/dev/.+"}
+
+# Disk IO rates
+instance:node_disk_writes_completed:irate1m = sum(irate(node_disk_writes_completed{device=~"sd.*"}[1m])) without (device)
+instance:node_disk_reads_completed:irate1m = sum(irate(node_disk_reads_completed{device=~"sd.*"}[1m])) without (device)
