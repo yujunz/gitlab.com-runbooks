@@ -84,3 +84,43 @@ sudo -u gitlab-psql touch /tmp/gitlab_replicator.trigger
 ```
 
 This will promote the host these commands were executed on to the primary.
+
+## Setting up Secondaries
+
+Currently setting up a secondary requires some manual steps. First of all, make
+sure that the replica has the following Chef roles assigned:
+
+* `gitlab-cluster-base`
+* `gitlab-cluster-db`
+* `gitlab-cluster-db-replication`
+
+These roles will take care of enabling hot stanby mode and the other settings
+needed to get replication going.
+
+Next, SSH into the secondary and run the following:
+
+```bash
+sudo gitlab-ctl start postgresql
+sudo gitlab-ctl pg-upgrade
+```
+
+This is necessary because currently Omnibus defaults to PostgreSQL 9.2, and we
+need 9.6.
+
+Once this process is done you should run the following:
+
+```bash
+sudo /root/gitlab_pgsql_replicator.sh
+```
+
+This script will ask you to enter the primary's IP address (be sure to use the
+internal/local IP) and the password to use for the recovery account. The
+password can be found in the DevOps vault in 1Password, under the name "postgres
+gitlab_replicator".
+
+It may take a while for the above script to finish. As such it's best to run
+this script using `tmux` or `screen` and check back in an hour or so.
+
+Once done this script will generate a recovery file that PostgreSQL will use for
+the replication process. This file can be found at
+`/var/opt/gitlab/postgresql/data/recovery.conf`.
