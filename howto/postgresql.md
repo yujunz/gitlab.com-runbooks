@@ -68,3 +68,19 @@ WHERE NOT blockedl.granted;
 
 * sudo up
 * `pgbadger | /usr/bin/pgbadger -o output.txt -`
+
+## Triggering a Failover
+
+To trigger a failover, run the following command on a **secondary**:
+
+```bash
+sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_ctl -D /var/opt/gitlab/postgresql/data promote
+```
+
+Alternatively you can also run the following:
+
+```bash
+sudo -u gitlab-psql touch /tmp/gitlab_replicator.trigger
+```
+
+This will promote the host these commands were executed on to the primary.
