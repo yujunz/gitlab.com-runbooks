@@ -14,9 +14,9 @@ It's worth noting that if the incident is critical or too urgent, delgate a pers
 
 * Production:
   * Start a war room on Zoom immediately to have high a bandwidth communication channel.
-  * Open a google doc and make it public using the _file publish_ function to make it viewable for all.
+  * Open a google doc and make it GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitGlab_.
+    * Publish the document using the _File_, _Publish to web..._ function.
     * Use this document to write the timeline of events as they are known and complete the facts with data as it is found.
-    * Give edit rights to the whole company.
     * It's fine to write partial findings or guessing, we just need to validate our assumptions as we go.
     * Redact the names to remove the blame.
     * Tweet a link to this document to make the community aware.
