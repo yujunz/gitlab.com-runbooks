@@ -13,7 +13,7 @@ It's worth noting that if the incident is critical or too urgent, delgate a pers
 ## Communication Strategy
 
 * Production:
-  * Start a war room on Zoom immediately to have high a bandwidth communication channel.
+  * Start a war room on Zoom immediately to have high a bandwidth communication channel, make sure you are on a paid account so the meeting is not time limited.
   * Open a [Google Doc](https://docs.google.com) and make it GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitGlab_.
       * Publish the document using the _File_, _Publish to web..._ function.
       * Use this document to write the timeline of events as they are known and complete the facts with data as it is found.
@@ -24,7 +24,7 @@ It's worth noting that if the incident is critical or too urgent, delgate a pers
   * Keep updating the doc with new findings.
   * When the incident is done and we recovered the service, turn the doc into an issue that will be labeled as `outage`. Decide with marketing if in turn this should be a further blog post. In any case open the issue with the timeline to keep a track record in the infrastructure issue tracker.
 * Marketing:
-  * Make the war room live by default, unless it interferes with solving the incident, or it impacts security or privacy of either a GitLab employee or a customer. Ask the lead that declared the major incident in the war room if any of these circumstances apply.
+  * Make the war room live by default by following this [Zoom guide](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live) (for this you will need to have access to the GitLab Youtube account, ask someone from People Ops to grant you so), unless it interferes with solving the incident, or it impacts security or privacy of either a GitLab employee or a customer. Ask the lead that declared the major incident in the war room if any of these circumstances apply.
   * Edit the doc to provide context wherever is needed. Include data on how is this incident impacting customers, and specifically which customers are being impacted. Be really clear on how this is affecting on-premises, GitHost and GitLab.com customers.
   * Handle communications with the community including the devrel team so they can also handle the customers expectations.
 
