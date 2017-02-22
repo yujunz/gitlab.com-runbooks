@@ -60,6 +60,14 @@ if the _public\_key_ field is missing it means that the key will not be found by
 
 * run `chef-server-ctl delete-user-key USERNAME default`
 
+## Create a staging user
+
+For this example we'll use the username "keysersoze".
+
+* Create a data bag in `data_bags/users` called `keysersoze.json` by copying an existing one. Make sure `gitlab-staging` is in the roles.
+* Run `knife data bag from file users keysersoze.json`. The lack of path before the json file is intended. If the command is successful it'll output a message like this: `Updated data_bag_item[users::keysersoze]`
+* Run `knife ssh -aipaddress 'roles:gitlab-staging-base' 'sudo chef-client'` to create the keysersoze user on staging.
+
 ## Upgrade the chef-client version across the fleet
 
 The chef-client version installed is managed through the Chef omnibus package and as such we will be controlling
@@ -96,4 +104,3 @@ Then look for POST or PUT methods to sample changes.
 Following error can occur `<role>/<vault> is not encrypted with your public key.  Contact an administrator of the vault item to encrypt for you!` when you are trying to add role (`role with vault`) with vaults to new node (`new node`). If node or role does not have them, following error can occur.
 
 In this case you have to execute command - `rake add_node_secrets[<new node fqdn>, <role with vault>]`.
-

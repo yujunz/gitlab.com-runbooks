@@ -12,7 +12,7 @@ The main goal of this environment is to reduce the feedback loop between develop
 If you have any idea on how to improve such feedback loop or you are missing any particular thing that you would like
 
 ## Getting access
-* You will need developer ssh access, to get it register an issue with your posix username and your ssh key in the [infrastructure issue tracker](https://gitlab.com/gitlab-com/infrastructure/issues)
+* You will need developer ssh access, to get it register an issue with your posix username and your ssh key in the [infrastructure issue tracker](https://gitlab.com/gitlab-com/infrastructure/issues). The production engineers will then follow [these instructions](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-chef.md#create-a-staging-user) to create your user.
 
 ## Run a rails console in staging environment
 
