@@ -74,7 +74,9 @@ Before we start, take a deep breath and don't panic.
 
 1. Create the `/var/opt/gitlab/postgresql/data/recovery.conf` file with the following contents:
  > restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
+ > 
  > recovery_target_time = '2017-02-01 02:12:00'
+ >  
  > pause_at_recovery_target = 'false'
  Where the `recovery_target_time` is to your liking.
 
