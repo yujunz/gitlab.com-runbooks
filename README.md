@@ -81,6 +81,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Force a failover with postgres or redis](howto/manage-pacemaker.md#force-a-failover)
 * [Use aptly](howto/aptly.md)
 
+### Work with the Database
+
+* [Database Backups and Replication with Wal-E](howto/using-wale.md)
+
 ### Work with storage
 
 * [Migrate a project to CephFS or any other shard](howto/migrate-to-cephfs.md)
