@@ -14,7 +14,7 @@ It's worth noting that if the incident is critical or too urgent, delgate a pers
 
 * Production:
   * Start a war room on Zoom immediately to have high a bandwidth communication channel, make sure you are on a paid account so the meeting is not time limited.
-  * Open a [Google Doc](https://docs.google.com) and make it GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitGlab_.
+  * Open a [Google Doc](https://docs.google.com) and make it GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitLab_.
       * Publish the document using the _File_, _Publish to web..._ function.
       * Use this document to write the timeline of events as they are known and complete the facts with data as it is found.
       * It's fine to write partial findings or guessing, we just need to validate our assumptions as we go.
