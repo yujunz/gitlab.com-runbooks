@@ -10,3 +10,6 @@ job_backend:haproxy_backend_response_errors_total:irate1m = sum(irate(haproxy_ba
 
 # Total redis operations by command.
 cmd:redis_command_call_duration_seconds_count:irate1m = sum(irate(redis_command_call_duration_seconds_count[1m])) by (cmd)
+
+# GitLab Pages responses by code
+gitlab_pages:pages_http_responses_total:irate5m = sum(label_replace(irate(gitlab_pages_http_requests_total{job="gitlab-pages"}[5m]),"status_class","${1}xx","code","(.)..")) by (status_class)
