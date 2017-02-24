@@ -1,32 +1,53 @@
 # Production Incidents
 
-Second level escalation or above can only declare a major incident. This means the Production Lead, the Director of Infrastructure, or finally the VP of Engineering.
+## Roles
 
-In the case we find ourselves in such a situation, escalate to these persons via Slack if they are available, phone call, or just by paging in the provided order and explain why this is a major incident.
+During an incident there are at least 2 roles, and one more optional
 
-During a major outage it's critical to manage communications in a reassuring manner to show the customers that we are handling the issue in a timely and effective manner.
+* Engineer: the person in charge to actually solve the technical problem.
+* Point person: the person that is coordinating the resolution of the problem at the technical level.
+* Communications manager: the person who manages external communication (setting up the live stream, etc)
+* Marketing representative: someone from marketing will need to be involved to review the outage document.
 
-For this, we designed this set of guidelines to communicate properly and to provide a transparent view into what's going on to the community, allowing them to help us.
+## Definition of a major outage
 
-It's worth noting that if the incident is critical or too urgent, delgate a person who will follow this guideline while you work on solving the issue.
+A major outage is any outage that has a ETA of more than 1h and is disruption the service.
 
-## Communication Strategy
+## Minor and major outages management
 
-* Production:
-  * Start a war room on Zoom immediately to have high a bandwidth communication channel, make sure you are on a paid account so the meeting is not time limited.
-  * Open a [Google Doc](https://docs.google.com) and make it GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitLab_.
-      * Publish the document using the _File_, _Publish to web..._ function.
-      * Use this document to write the timeline of events as they are known and complete the facts with data as it is found.
-      * It's fine to write partial findings or guessing, we just need to validate our assumptions as we go.
-      * Redact the names to remove the blame.
-      * Tweet a link to this document to make the community aware.
-  * Involve the Marketing team by calling @channel in the `#marketing` channel via Slack so they can start working on how to communicate this incident to broader audience while you work on solving the incident.
-  * Keep updating the doc with new findings.
-  * When the incident is done and we recovered the service, turn the doc into an issue that will be labeled as `outage`. Decide with marketing if in turn this should be a further blog post. In any case open the issue with the timeline to keep a track record in the infrastructure issue tracker.
-* Marketing:
-  * Make the war room live by default by following this [Zoom guide](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live) (for this you will need to have access to the GitLab Youtube account, ask someone from People Ops to grant you so), unless it interferes with solving the incident, or it impacts security or privacy of either a GitLab employee or a customer. Ask the lead that declared the major incident in the war room if any of these circumstances apply.
-  * Edit the doc to provide context wherever is needed. Include data on how is this incident impacting customers, and specifically which customers are being impacted. Be really clear on how this is affecting on-premises, GitHost and GitLab.com customers.
-  * Handle communications with the community including the devrel team so they can also handle the customers expectations.
+During a minor outage all the communications will be handled through twitter using the @gitlabstatus account.
+
+During a major outage the work will be distributed in the following way:
+
+* Production engineers will
+  * Open a war room on Zoom immediately to have high a bandwidth communication channel.
+  * Create a [Google Doc](https://docs.google.com) to gather the timeline of events.
+  * Publish this document using the _File_, _Publish to web..._ function.
+  * Make this document GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitLab_.
+  * Tweet a link to this document to make the community aware.
+  * Redact the names to remove the blame.
+  * Document partial findings or guessing as we learn.
+  * Write a post mortem issue when the incident is solved, and label it with `outage`
+
+* The point person will
+  * Handle updating the @gitlabstatus account explaining what is going on in a simple yet reassuring way.
+  * Synchronize efforts accross the production engineering team
+  * Pull other people in when consultation is needed.
+  * Declare a major outage when we are meeting the definition.
+  * Post `@channel, we have a major outage and need help creating a live streaming war room, refer to [runbooks-production-incident]` into the #general slack channel.
+  * Post `@channel, we have a major outage and need help reviewing public documents` into the #marketing slack channel.
+  * Post `@channel, we have a major outage and are working to solve it, you can find the public doc <here>` into the #devrel slack channel.
+  * Move the war room to a paid account so the meeting is not time limited.
+
+* The communications manager will
+  * Setup a not time limited Zoom war room and provide it to the point person to move all the production engineers there.
+  * Setup Youtube Live Streaming int the war room following [this Zoom guide](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live) (for this you will need to have access to the GitLab Youtube account, ask someone from People Ops to grant you so)
+
+* The Marketing representative will
+  * Review the Google Doc to provide proper context when needed.
+  * Include a note about how is this outage impacting customers in the document.
+  * Decide how to handle further communications when the outage is already handled.
+
 
 ## Blameless Post Mortems
 
