@@ -139,7 +139,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * Join the `#infrastructure` channel
 * Define a _point person_ or _incident owner_, this is the person that will gather all the data and coordinate the efforts.
 * Organize:
-  * Establish who is the point person on the incident in the `#infrastructure` channel: "I'm taking point" and pin the message for the duration of the emergency.
+  * Establish who is the point person on the incident in the `#infrastructure` channel: "@here I'm taking point" and pin the message for the duration of the emergency.
   * Start a war room using zoom if it will save time
   * Share the link in the #infrastructure channel
   * If the _point person_ needs someone to do something, give a direct command: _@someone: please run `this` command_
