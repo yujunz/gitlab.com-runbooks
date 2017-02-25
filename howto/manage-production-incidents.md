@@ -24,8 +24,8 @@ During a major outage the work will be distributed in the following way:
   * Create a [Google Doc](https://docs.google.com) to gather the timeline of events.
   * Publish this document using the _File_, _Publish to web..._ function.
   * Make this document GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitLab_.
-  * Tweet a link to this document to make the community aware.
-  * Redact the names to remove the blame.
+  * Tweet `GitLab.com is having a major outage, we're working on resolving it in a Google Doc LINK` with a link to this document to make the community aware.
+  * Redact the names to remove the blame. Only use team-member-1, -2, -3, etc.
   * Document partial findings or guessing as we learn.
   * Write a post mortem issue when the incident is solved, and label it with `outage`
 
