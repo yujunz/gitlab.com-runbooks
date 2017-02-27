@@ -28,3 +28,15 @@ $ sudo find /tmp -type f -mtime +2 -delete
 ```
 sudo find /var/log/gitlab -mmin +10 -exec rm {} \;
 ```
+
+* Also you can try to remove cached temp files by restarting services
+
+On workers it is usually `nginx`:
+```
+sudo gitlab-ctl restart nginx
+```
+
+On performance.gitlab.net it is `influxdb`:
+```
+sudo service influxdb restart
+```
