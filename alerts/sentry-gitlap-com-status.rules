@@ -1,0 +1,10 @@
+## sentry.gitlap.com
+ALERT sentry_is_down
+  IF probe_http_status_code{instance="sentry.gitlap.com", job="blackbox-ssl"} != 200
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    title="sentry.gitlap.com is down",
+    description="GitLab sentry has been down for 1 minute!",
+    runbook="troubleshooting/sentry-is-down.md"
+}
