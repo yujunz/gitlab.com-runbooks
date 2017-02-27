@@ -18,6 +18,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [SSL certificate expires](troubleshooting/ssl_cert.md)
 * [GitLab registry is down](troubleshooting/gitlab-registry.md)
 * [Sidekiq stats no longer showing](troubleshooting/sidekiq_stats_no_longer_showing.md)
+* [Sentry is down](troubleshooting/sentry-is-down.md)
 
 ### Replication fails
 
