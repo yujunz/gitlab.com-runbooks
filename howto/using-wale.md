@@ -83,7 +83,7 @@ Before we start, take a deep breath and don't panic.
 1. Start the PostgreSQL database server:
  `root@db2:~# gitlab-ctl start postgresql`
 
-1. When the restore is finished the dabbase server will come online with the data.
+1. When the restore is finished the database server will come online with the data.
 
 
 
