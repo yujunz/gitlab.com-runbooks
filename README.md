@@ -81,6 +81,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Start a psql console in the staging environment](howto/staging-environment.md#run-a-psql-console-in-staging-environment)
 * [Force a failover with postgres or redis](howto/manage-pacemaker.md#force-a-failover)
 * [Use aptly](howto/aptly.md)
+* [Disable PackageCloud](howto/stop-or-start-packagecloud.md)
 
 ### Work with the Database
 
