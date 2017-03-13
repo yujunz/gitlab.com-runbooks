@@ -40,7 +40,7 @@
 1. If number of machines in `FAILING` state is higher than normal - remove them.
    For this fallow [this runbook](./ci_runner_manager_errors.md#resolution)
 
-1. If the problem needs to be handled by DigitalOcean consider to pause the runenrs:
+1. If the problem needs to be handled by DigitalOcean consider to pause the runners:
 
     > **Notice:**
     > You will need GitLab Admin access for this!
