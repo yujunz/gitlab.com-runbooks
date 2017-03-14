@@ -17,7 +17,7 @@ We do this by routing the requesting traffic into a 'blackhole' on the HA Proxy 
 On your workstation with a properly configured GitLab chef client, perform the following:
 
 ```
-thor$ knife ssh -p 2222 -a ipaddress -C 2 'role:gitlab-cluster-lb' 'sudo ip route show| grep blackhole'
+thor$ knife ssh -p 2222 -a ipaddress -C 2 'roles:gitlab-fe-lb' 'sudo ip route show| grep blackhole'
 ```
 
 This will produce a listing of all of the blackhole IP addresses listed once per HA-Proxy node.
@@ -25,7 +25,7 @@ This will produce a listing of all of the blackhole IP addresses listed once per
 For a more concise listing you can run a command that massages the data:
 
 ```
-thor$ knife ssh -p 2222 -a ipaddress -C 2 'role:gitlab-cluster-lb' 'sudo ip route show| grep blackhole' | tr -s ' ' | cut -d ' ' -f3 | sort -n | uniq -c 
+thor$ knife ssh -p 2222 -a ipaddress -C 2 'roles:gitlab-fe-lb' 'sudo ip route show| grep blackhole' | tr -s ' ' | cut -d ' ' -f3 | sort -n | uniq -c 
 ```
 
 This will produce a count and listing of all the IP addresses in the blackhole state on all of the HA Proxies.  The count should equal the number of HA Proxies in production.
@@ -35,7 +35,7 @@ This will produce a count and listing of all the IP addresses in the blackhole s
 Just like Santa Clause, you want to check your list twice before you sort the naughties into the blackhole.
 
 ```
-thor$ knife ssh -p 2222 -a ipaddress -C 2 'role:gitlab-cluster-lb' 'sudo ip route add blackhole 192.168.1.0/24'
+thor$ knife ssh -p 2222 -a ipaddress -C 2 'roles:gitlab-fe-lb' 'sudo ip route add blackhole 192.168.1.0/24'
 ```
 
 ### Remove a netblock from the blackhole
@@ -43,7 +43,7 @@ thor$ knife ssh -p 2222 -a ipaddress -C 2 'role:gitlab-cluster-lb' 'sudo ip rout
 More often than not, the source for the block is a transient to the network that it originates from and should be removed after the incident is over.
 
 ```
-thor$ knife ssh -p 2222 -a ipaddress -C 2 'role:gitlab-cluster-lb' 'sudo ip route del blackhole 192.168.1.0/24'
+thor$ knife ssh -p 2222 -a ipaddress -C 2 'roles:gitlab-fe-lb' 'sudo ip route del blackhole 192.168.1.0/24'
 ```
 
 ## CLEAN UP
