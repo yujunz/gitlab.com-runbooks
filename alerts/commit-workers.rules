@@ -1,6 +1,6 @@
 ## ProcessCommitWorkers too high for more than 10m
-ALERT process_commit_workers_too_high
-  IF sum(max(sidekiq_queue_size{name=~"process_commit"})) > 300000
+ALERT ProcessCommitWorkersTooHigh
+  IF sidekiq_queue_size{name="process_commit"} > 5000
   FOR 10m
   LABELS {severity="critical", channel="infrastructure"}
   ANNOTATIONS {

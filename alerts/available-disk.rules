@@ -1,7 +1,9 @@
-gitlab:disk_available=node_filesystem_avail{job="base-debian", fstype=~"(nfs.*|xfs)"} / node_filesystem_size{job="base-debian", fstype=~"(nfs.*|xfs)"} * 100
-
-ALERT worker_10_disk
-  IF gitlab:disk_available <= 10
+ALERT LowDiskSpace
+  IF
+      node_filesystem_avail{job="base-debian", fstype=~"(nfs.*|xfs)"}
+    /
+      node_filesystem_size{job="base-debian", fstype=~"(nfs.*|xfs)"}
+    <= 0.1
   FOR 1m
   LABELS { severity = "critical" }
   ANNOTATIONS {

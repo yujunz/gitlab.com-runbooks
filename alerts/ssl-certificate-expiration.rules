@@ -1,10 +1,10 @@
 ## SSL certificate is about to expire
-ALERT ssl_certificate_is_about_to_expire
+ALERT SSLCertExpiresSoon
   IF probe_ssl_earliest_cert_expiry{job="blackbox-ssl"} - time() < 30*60*60*24
   FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
-    title="SSL certificate for {{ .Labels.instance }} expires in {{ .Value | humanizeDuration }}",
+    title="SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration }}",
     description="Check SSL for specified nodes and consider reissuing certificate.",
     runbook="troubleshooting/ssl_cert.md"
   }

@@ -1,16 +1,16 @@
 ## monitor.gitlab.net
 
-ALERT monitor_gitlab_net_prometheus_is_down
+ALERT MonitorGitlabNetPrometheusDown
   IF up{job="public-prometheus"} == 0
   FOR 30s
   LABELS {severity="critical"}
   ANNOTATIONS {
-    title="prometheus on monitor.gitlab.net is down",
-    description="Prometheus instance for monitor.gitlab.net is down. Please check prometheus service.",
+    title="Prometheus on monitor.gitlab.net is down",
+    description="Prometheus instance for monitor.gitlab.net is down. Please check the Prometheus service.",
     runbook="troubleshooting/monitor-gitlab-net-prometheus.md"
   }
 
-ALERT monitor_gitlab_net_not_accessible
+ALERT MonitorGitlabNetNotAccessible
   IF probe_success{instance="monitor.gitlab.net"} == 0
   FOR 30s
   LABELS {severity="critical"}

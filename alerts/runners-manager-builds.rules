@@ -1,6 +1,6 @@
 ## Runners manager builds
-ALERT no_builds_on_shared_runners
-  IF max(sum(rate(ci_runner_builds{job="shared-runners"}[1m]))) == 0
+ALERT NoBuildsOnSharedRunners
+  IF sum by(job) (ci_runner_builds{job="shared-runners"}) == 0
   FOR 5m
   LABELS {channel="ci"}
   ANNOTATIONS {

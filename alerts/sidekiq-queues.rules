@@ -1,6 +1,6 @@
 ## Sidekiq Queues
-ALERT sidekiq_queues_are_too_high
-  IF sum(max(sidekiq_queue_size{name!~"process_commit"})) > 10000
+ALERT SidekiqQueuesTooLong
+  IF topk(1, sidekiq_queue_size{name!~"process_commit"}) > 10000
   FOR 20m
   LABELS {severity="critical"}
   ANNOTATIONS {

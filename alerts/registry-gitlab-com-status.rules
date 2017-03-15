@@ -1,5 +1,5 @@
 ## registry.gitlab.com
-ALERT registry_is_down
+ALERT RegistryDown
   IF probe_http_status_code{instance="registry.gitlab.com", job="blackbox-ssl"} != 200
   FOR 1m
   LABELS {severity="critical", pager="pagerduty"}

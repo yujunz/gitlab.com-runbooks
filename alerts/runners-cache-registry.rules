@@ -41,7 +41,7 @@ gitlab:runners_cache = label_replace(
 
 gitlab:runners_nginx_docker_registry_cache_status = gitlab:runners_cache_registry_nginx_service*1000 + ignoring(instance) gitlab:runners_cache_registry_nginx_service*100 + ignoring(instance,fqdn) gitlab:runners_registry*10 + ignoring(instance) gitlab:runners_cache
 
-ALERT runners_nginx_docker_registry_cache_status
+ALERT RunnersNginxDockerRegistryCacheDown
   IF gitlab:runners_nginx_docker_registry_cache_status != 1111
   FOR 1m
   LABELS {severity="critical"}

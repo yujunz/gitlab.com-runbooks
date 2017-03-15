@@ -1,5 +1,5 @@
 ## gitlab.com
-ALERT gitlab_com_is_down
+ALERT GitlabComDown
   IF probe_http_status_code{instance="gitlab.com",job="blackbox"} != 200
   FOR 1m
   LABELS {severity="critical", pager="pagerduty"}

@@ -1,4 +1,4 @@
-ALERT db_heavy_load
+ALERT DBHeavyLoad
   IF node_load1{instance=~"db.*"} > 200
   FOR 1m
   LABELS {severity="critical", channel="infrastructure"}
