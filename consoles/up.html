@@ -1,0 +1,18 @@
+<html><body>
+<h2>Down exporters</h2>
+<table border="1">
+<tr>
+<th>job</th>
+<th>instance</th>
+<th>fqdn</th>
+</tr>
+{{ range query "up == 0" | sortByLabel "instance" | sortByLabel "job" }}
+<tr>
+  <td>{{ .Labels.job }}</td>
+  <td>{{ .Labels.instance }}</td>
+  <td>{{ .Labels.fqdn }}</td>
+
+</tr>
+{{ end }}
+</table></body></html>
+
