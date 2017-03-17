@@ -63,8 +63,7 @@ db5:~$ netstat -at | tail -n +3 | awk '{ print $4 }'| grep ':postgresql' | grep 
 728
 ```
 
-The slave should have 0 connections, the master should have more than 1
-
+The master should have more than 1 connection.
 
 ## Resolution
 
