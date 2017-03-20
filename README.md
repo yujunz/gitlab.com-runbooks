@@ -34,6 +34,9 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ### CI
 
+* [Introduction to Shared Runners](troubleshooting/ci_introduction.md)
+* [Understand CI graphs](troubleshooting/ci_graphs.md)
+* [Large number of CI pending builds](troubleshooting/ci_pending_builds.md)
 * [The CI runner manager report a high DO Token Rate Limit usage](troubleshooting/ci_runner_manager_do_limits.md)
 * [The CI runner manager report a high number of errors](troubleshooting/ci_runner_manager_errors.md)
 * [Runners cache is down](troubleshooting/runners_cache_is_down.md)
