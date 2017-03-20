@@ -1,7 +1,7 @@
-gitlab:disk_usage=node_filesystem_avail{job="base-debian", mountpoint="/"} / node_filesystem_size{job="base-debian", mountpoint="/"} * 100
+gitlab:disk_available=node_filesystem_avail{job="base-debian", fstype=~"(nfs.*|xfs)"} / node_filesystem_size{job="base-debian", fstype=~"(nfs.*|xfs)"} * 100
 
 ALERT worker_10_disk
-  IF gitlab:disk_usage <= 10
+  IF gitlab:disk_available <= 10
   FOR 1m
   LABELS { severity = "critical" }
   ANNOTATIONS {
