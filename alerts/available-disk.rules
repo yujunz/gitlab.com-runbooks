@@ -1,9 +1,9 @@
 ALERT LowDiskSpace
   IF
-      node_filesystem_avail{job="base-debian", fstype=~"(nfs.*|xfs)"}
+      node_filesystem_avail{job="base-debian", fstype=~"(ext.|xfs)"}
     /
-      node_filesystem_size{job="base-debian", fstype=~"(nfs.*|xfs)"}
-    <= 0.1
+      node_filesystem_size{job="base-debian", fstype=~"(ext.|xfs)"}
+    * 100 <= 10
   FOR 1m
   LABELS { severity = "critical" }
   ANNOTATIONS {
