@@ -1,4 +1,4 @@
-gitaly:grpc_server_handled_total:error_max_rate1m = max(sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (grpc_method))
+gitaly:grpc_server_handled_total:error_max_rate1m = max(gitaly:grpc_server_handled_total:error_rate1m)
 
 ## Gitaly error rate
 ALERT gitaly_error_rate_too_high
