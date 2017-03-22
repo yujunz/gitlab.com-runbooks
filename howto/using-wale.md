@@ -98,7 +98,8 @@ Before we start, take a deep breath and don't panic.
     /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data base_0000000200000DCA000000D7_09026584
     ```
 
-1. Create the `/var/opt/gitlab/postgresql/data/recovery.conf` file with the following contents:
+1. Create the `/var/opt/gitlab/postgresql/data/recovery.conf` file with the following contents.
+Please be sure that the file is owned by the postgres user (gitlab-psql in prod or postgres otherwise)
  > restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
  > 
  > recovery_target_time = '2017-02-01 02:12:00'
