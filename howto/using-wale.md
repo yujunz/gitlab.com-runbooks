@@ -70,8 +70,7 @@ root@db1:~#
 
 Before we start, take a deep breath and don't panic.
 
-1. Stop the PostgreSQL database server:
- `root@db2:~# gitlab-ctl stop postgresql`
+1. Stop the PostgreSQL database server: `root@db2:~# gitlab-ctl stop postgresql`
 
 1. If you are restoring from nothing you must restore a base backup first.
 
@@ -94,7 +93,10 @@ Before we start, take a deep breath and don't panic.
     ```
 
   1. Begin a restore of the base backup.
-    `/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data base_0000000200000DCA000000D7_09026584`
+
+    ```
+    /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data base_0000000200000DCA000000D7_09026584
+    ```
 
 1. Create the `/var/opt/gitlab/postgresql/data/recovery.conf` file with the following contents:
  > restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
