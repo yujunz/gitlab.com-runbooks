@@ -77,7 +77,7 @@ Before we start, take a deep breath and don't panic.
   1. Get the name of the backup you need to restore to.
 
     ```
-    root@db1:~# /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
+    root@db2:~# /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
     wal_e.main   INFO     MSG: starting WAL-E
         DETAIL: The subcommand is "backup-list".
         STRUCTURED: time=2017-03-22T22:22:31.375375-00 pid=50745
