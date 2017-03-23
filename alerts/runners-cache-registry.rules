@@ -43,7 +43,7 @@ gitlab:runners_nginx_docker_registry_cache_status = gitlab:runners_cache_registr
 
 ALERT RunnersNginxDockerRegistryCacheDown
   IF gitlab:runners_nginx_docker_registry_cache_status != 1111
-  FOR 1m
+  FOR 5m
   LABELS {severity="critical"}
   ANNOTATIONS {
     title='Runners cache services on {{ .Labels.hostname }}: {{ range printf "gitlab:runners_cache_registry_nginx_service{hostname=\'%s\'}" .Labels.hostname | query }} nginx {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end }}, {{ range printf "gitlab:runners_cache_registry_docker_service{hostname=\'%s\'}" .Labels.hostname | query }} docker {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}, {{ range printf "gitlab:runners_registry{hostname=\'%s\'}" .Labels.hostname | query }} registry {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}, {{ range printf "gitlab:runners_cache{hostname=\'%s\'}" .Labels.hostname | query }} minio {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}.',

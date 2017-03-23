@@ -1,7 +1,7 @@
 ## Target is down
 ALERT OtherPrometheusDown
   IF up{job="prometheus-other-instance"} == 0
-  FOR 2m
+  FOR 5m
   LABELS {severity="critical",pager="pagerduty"}
   ANNOTATIONS {
     title="Prometheus server is down!",

@@ -4,7 +4,7 @@ ALERT LowDiskSpace
     /
       node_filesystem_size{job="base-debian", fstype=~"(ext.|xfs)"}
     * 100 <= 10
-  FOR 1m
+  FOR 15m
   LABELS { severity = "critical" }
   ANNOTATIONS {
     title = "Really low disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | printf \"%.2f\" }}%",

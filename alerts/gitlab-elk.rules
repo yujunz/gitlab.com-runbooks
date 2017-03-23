@@ -1,7 +1,7 @@
 ## KIBANA IS DOWN
 ALERT KibanaDown
   IF node_systemd_unit_state{name="kibana.service",state="active"} == 0
-  FOR 10s
+  FOR 5m
   LABELS {severity="critical"}
   ANNOTATIONS {
     title="Kibana is down",

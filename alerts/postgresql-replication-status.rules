@@ -3,7 +3,7 @@ ALERT PostgreSQLReplicationStopped
   # By floating point rules, NaN != NaN, so we can't just apply "== NaN" as a filter,
   # so we use "x != x" instead to get all elements that are NaN.
   IF pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"}
-  FOR 1m
+  FOR 5m
   LABELS {severity="critical", channel="infrastructure", pager="pagerduty"}
   ANNOTATIONS {
     title="PostgreSQL replication has stopped",

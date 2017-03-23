@@ -1,7 +1,7 @@
 ## gitlab-examples.gitlab.io
 ALERT GitlabPagesDown
   IF probe_http_status_code{instance="gitlab-examples.gitlab.io",job="blackbox"} != 200
-  FOR 1m
+  FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="GitLab pages is down for 1 minute",
