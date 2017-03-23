@@ -1,10 +1,10 @@
 ## gitlab-examples.gitlab.io
-ALERT gitlab_pages_is_down
+ALERT GitlabPagesDown
   IF probe_http_status_code{instance="gitlab-examples.gitlab.io",job="blackbox"} != 200
-  FOR 1m
+  FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="GitLab pages is down for 1 minute",
-    description="GitLab pages is down for 1 minutes! Consider !tweet 'GitLab pages are not responding, we are investigating the root cause.' if problem exists.",
+    description="GitLab pages is down for 1 minute! Consider !tweet 'GitLab pages are not responding, we are investigating the root cause.' if problem exists.",
     runbook="troubleshooting/gitlab-pages.md"
   }

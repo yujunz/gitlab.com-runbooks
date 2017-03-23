@@ -1,6 +1,6 @@
-ALERT db_heavy_load
+ALERT DBHeavyLoad
   IF node_load1{instance=~"db.*"} > 200
-  FOR 1m
+  FOR 5m
   LABELS {severity="critical", channel="production"}
   ANNOTATIONS {
     title="High load in database {{ $labels.fqdn }}: {{$value}}",

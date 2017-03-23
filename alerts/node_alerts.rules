@@ -1,8 +1,10 @@
-gitlab:disk_usage=node_filesystem_avail{job="base-debian", mountpoint="/"} / node_filesystem_size{job="base-debian", mountpoint="/"} * 100
-
-ALERT worker_10_disk
-  IF gitlab:disk_usage <= 10
-  FOR 1m
+ALERT LowDiskSpace
+  IF
+      node_filesystem_avail{job="base-debian", fstype=~"(ext.|xfs)"}
+    /
+      node_filesystem_size{job="base-debian", fstype=~"(ext.|xfs)"}
+    * 100 <= 10
+  FOR 15m
   LABELS { severity = "critical" }
   ANNOTATIONS {
     title = "Really low disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | printf \"%.2f\" }}%",

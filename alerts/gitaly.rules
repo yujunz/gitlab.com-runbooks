@@ -1,0 +1,12 @@
+gitaly:grpc_server_handled_total:error_max_rate1m = max(gitaly:grpc_server_handled_total:error_rate1m)
+
+## Gitaly error rate
+ALERT gitaly_error_rate_too_high
+  IF gitaly:grpc_server_handled_total:error_max_rate1m > 5
+  FOR 5m
+  LABELS {severity="critical", channel="gitaly-alerts"}
+  ANNOTATIONS {
+    title="Gitaly error rate is too high: {{$value | printf \"%.2f\" }}",
+    description="Gitaly error rate for the last 20 minutes is over 5. Check Gitaly logs and consider disabling it.",
+    runbook="troubleshooting/gitaly_error_rate.md"
+  }

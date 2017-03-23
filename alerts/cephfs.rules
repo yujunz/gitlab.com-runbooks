@@ -1,7 +1,6 @@
 ## CEPHFS MDS IS DOWN
-ALERT cephfs_is_down
+ALERT CephFSHighLoad
   IF node_load1{instance=~"ceph-mon.*"} > 400
-  FOR 10s
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="CephFS monitors are under heavy load",

@@ -1,4 +1,4 @@
-ALERT sidekiq_stats_are_not_scraped
+ALERT SidekiqStatsNotScraped
   IF absent(sidekiq_queue_size)
   FOR 1m
   LABELS {severity="warning"}
