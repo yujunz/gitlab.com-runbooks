@@ -18,12 +18,12 @@ Look at the graph with number of CI builds:
 
 To understand what can be wrong, you need to find a cause.
 
-1. Check runner auto-scaling: (CI auto-scaling graphs)[ci_graphs.md#Runners-Manager-Auto-scaling],
+1. Check runner auto-scaling: [CI auto-scaling graphs](ci_graphs.md#runners-manager-auto-scaling),
    and look for the `Idle` number,
-2. Verify jobs queues: (CI auto-scaling graphs)[ci_graphs.md#Jobs-queue].
+2. Verify jobs queues: [CI auto-scaling graphs](ci_graphs.md#jobs-queue).
    If you see a single namespace with a lot of builds, verify what projects are in that namespace and whether this is the abuser.
 3. Verify long polling behavior (we are not yet aware of potential problems as of now),
-4. Verify workhorse queueing: (Workhorse queueing graphs)[ci_graphs.md#Workhorse-queueing].
+4. Verify workhorse queueing: [Workhorse queueing graphs](ci_graphs.md#workhorse-queueing).
    If you see a large number of requests ending up in the queue it may indicate that CI API is degraded.
    Verify the performance of `builds/register` endpoint: https://performance.gitlab.net/dashboard/db/grape-endpoints?var-action=Grape%23POST%20%2Fbuilds%2Fregister&var-database=Production,
 5. Verify runners uptime. If you see that runners uptime is varying it does indicate that most likely Runners Manager does die, because of the crash. It will be shown in runners manager logs: `grep panic /var/log/messages`.

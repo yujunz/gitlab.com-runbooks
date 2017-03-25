@@ -7,3 +7,14 @@ ALERT TooManyPendingBuildsOnSharedRunnerProject
     title="The number of pending builds for projects with shared runners will be too high in 1h: {{$value | printf \"%.2f\" }}",
     description="The number of pending builds for projects with shared runners is increasing and will be too high in 1h ({{$value}}). This may suggest problems with auto-scaling provider or Runner stability. You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci.",
   }
+
+## Pending jobs per namespace over limit
+ALERT TooManyPendingJobsPerNamespace
+  IF max(ci_pending_builds{shared_runners="yes",namespace!=""}) > 500
+  FOR 1m
+  LABELS {channel="production"}
+  ANNOTATIONS {
+    title="Number of pending jobs per namespace too high: {{$value}}",
+    description="Number of pending jobs per namespace for projects with shared runners enabled is too high ({{$value}}). Check https://performance.gitlab.net/dashboard/db/ci?panelId=33&fullscreen",
+    runbook="troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd"
+  }
