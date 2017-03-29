@@ -130,6 +130,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Ban a single IP using Redis and Rack Attack](howto/ban-an-IP-with-redis.md)
 * [Ban a netblock on HAProxy](howto/ban-netblocks-on-haproxy.md)
 
+### Dealing with Spam
+
+* [General procedures for fighting spam in snippets, issues, projects, and comments](https://docs.google.com/document/d/1V0X2aYiNTZE1npzeqDvq-dhNFZsEPsL__FqKOMXOjE8)
+
 ### Manage Marvin, our infra bot
 
 * [Manage cog](howto/manage-cog.md)
