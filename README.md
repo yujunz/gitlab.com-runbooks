@@ -138,6 +138,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [Manage cog](howto/manage-cog.md)
 
+### Elasticsearch
+
+* [How to work with ES](howto/elasticsearch.md)
+
 ### Debug and monitor
 
 * [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
