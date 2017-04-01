@@ -44,4 +44,6 @@ curl 'http://localhost:9200/_cat/thread_pool?v'
 
 ### Current logstash template
 
-```curl http://localhost:9200/_template/logstash?pretty```
+```
+curl http://localhost:9200/_template/logstash?pretty
+```
