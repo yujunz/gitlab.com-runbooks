@@ -68,6 +68,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## How do I
 
+### On Call
+
+* [Common tasks to perform while on-call](howto/oncall.md)
+
 ### Deploy
 
 * [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
