@@ -22,3 +22,12 @@ Start by checking how many alerts are in flight right now, to do this:
 ### Nodes status
 
 Go to your chef repo and run `knife status`, if you see hosts that are red it means that chef hasn't been running there for a long time. Check in the oncall log if they are disabled for any particular reason, if they are not, and there is no mention of any ongoing issue in the on-call log, consider jumping in to check why chef has not been running there.
+
+### Prometheus targets down
+
+Check how many targets are not scraped at the moment. alerts are in flight right now, to do this:
+
+- go to the [fleet overview dashboard](https://performance.gitlab.net/dashboard/db/fleet-overview) and check the number of Targets down. It should be 0. If it is not 0
+  - go to the [targets down list](https://prometheus.gitlab.com/consoles/up.html) and check what is.
+  - try to figure out why there is scraping problems and try to fix it. Note that sometimes there can be temporary scraping problems because of exporter errors.
+  - be sure to create an issue, particularly to declare toil so we can work on it and suppress it.
