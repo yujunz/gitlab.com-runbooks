@@ -6,11 +6,11 @@
 #
 # If you need to run this on a Omnibus GitLab machine, run:
 #
-# sudo gitlab-rails runner /full_pathname/sq.rb [kill|show] <worker name>
+# sudo gitlab-rails runner /full_pathname/sq.rb [kill|show|kill_jid] <worker name or Job ID>
 #
 # Or:
 #
-# BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb -h <hostname> -a <password> [kill|show] <worker name>
+# BUNDLE_GEMFILE=/opt/gitlab/embedded/service/gitlab-rails/Gemfile /opt/gitlab/embedded/bin/bundle exec /opt/gitlab/embedded/bin/ruby sq.rb -h <hostname> -a <password> [kill|show|kill_jid] <worker name or Job ID>
 #
 require 'optparse'
 require 'sidekiq/api'
@@ -20,14 +20,14 @@ Options = Struct.new(
   :dry_run,
   :hostname,
   :password,
-  :socket,
+  :socket
 )
 
 def parse_options(argv)
   options = Options.new
 
   opt_parser = OptionParser.new do |opt|
-    opt.banner = "Usage: #{__FILE__} [options] [kill|show] <worker name>"
+    opt.banner = "Usage: #{__FILE__} [options] [kill|show|kill_jid] <worker name or job ID>"
 
     opt.on('-a', '--auth PASSWORD', 'Redis password') do |password|
       options.password = password
@@ -111,6 +111,21 @@ def kill_jobs_by_worker_name(options, worker_name)
   count
 end
 
+def kill_job_by_id(options, job_id)
+  queue = Sidekiq::Queue.all
+
+  queue.each do |q|
+    q.each do |job|
+      next unless job.jid == job_id
+
+      job.delete unless options.dry_run
+      return true
+    end
+  end
+
+  false
+end
+
 def pretty_print(data)
   data = data.sort_by { |_key, value| value }.reverse
 
@@ -119,27 +134,40 @@ def pretty_print(data)
   end
 end
 
-def show_sidekiq_data(options)
-    queue_data, job_data = load_sidekiq_queue_data
-    puts '-----------'
-    puts 'Queue size:'
-    puts '-----------'
-    pretty_print(queue_data)
-    puts '------------------------------'
-    puts 'Top job counts with arguments:'
-    puts '------------------------------'
-    pretty_print(job_data)
+def show_sidekiq_data
+  queue_data, job_data = load_sidekiq_queue_data
+  puts '-----------'
+  puts 'Queue size:'
+  puts '-----------'
+  pretty_print(queue_data)
+  puts '------------------------------'
+  puts 'Top job counts with arguments:'
+  puts '------------------------------'
+  pretty_print(job_data)
 end
 
 if $PROGRAM_NAME == __FILE__
   options = parse_options(ARGV)
   configure_sidekiq(options)
 
-  show_sidekiq_data(options) unless options.command.length > 0
+  show_sidekiq_data unless options.command.length > 0
 
   case options.command[0]
   when 'show'
     show_sidekiq_data(options)
+  when 'kill_jid'
+    if options.command.length != 2
+      puts 'Specify a Job ID to kill'
+      exit
+    end
+
+    jid = options.command[1]
+    result = kill_job_by_id(options, jid)
+    if result
+      puts "Killed job ID #{jid}"
+    else
+      puts "Unable to find job ID #{jid}"
+    end
   when 'kill'
     if options.command.length != 2
       puts 'Specify a worker (e.g. RepositoryUpdateMirrorWorker)'
