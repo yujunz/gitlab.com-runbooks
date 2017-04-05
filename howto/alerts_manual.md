@@ -23,7 +23,7 @@ The common procedure is as follows:
 ALERT runners_cache_is_down
   IF probe_success{job="runners-cache", instance="localhost:9100"} == 0
   FOR 10s
-  LABELS {severity="critical", channel="infrastructure", pager="pagerduty"}
+  LABELS {severity="critical", channel="production", pager="pagerduty"}
   ANNOTATIONS {
     title="Runners cache has been down for the past 10 seconds",
     runbook="howto/howto/manage-cehpfs.md"
@@ -31,7 +31,7 @@ ALERT runners_cache_is_down
   }
 ```
 
-This will result in a critical alert posted in slack channes `#prometheus-alerts` and `#infrastructure`, pagerduty with a link to https://dev.gitlab.com/cookbooks/runbooks/blob/master/howto/manage-cehpfs.md. Important part is the end or url - `howto/manage-cehpfs.md`. It is taken from annotation `runbook`. Runbook will provide information how to manage situation alerted. Main principle of the runbook should be - `don't make me think`.
+This will result in a critical alert posted in slack channes `#prometheus-alerts` and `#production`, pagerduty with a link to https://dev.gitlab.com/cookbooks/runbooks/blob/master/howto/manage-cehpfs.md. Important part is the end or url - `howto/manage-cehpfs.md`. It is taken from annotation `runbook`. Runbook will provide information how to manage situation alerted. Main principle of the runbook should be - `don't make me think`. For channel you can use `#production`, `#ci`, `#gitaly` values.
 
 ### What if I want to add more data?
 
