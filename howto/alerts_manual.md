@@ -70,6 +70,30 @@ All alerts are routed to slack and additionally can be paged to PagerDuty.
 
 Currently we are not using email alerting rules.
 
+### Add more slack channels to alerts
+
+1. In routes section of [alertmanager.yml template](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/blob/master/templates/default/alertmanager.yml.erb) add following:
+```
+  - match:
+      channel: gitaly
+    receiver: slack_gitaly
+    continue: true
+```
+1. In receivers section [alertmanager.yml template](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/blob/master/templates/default/alertmanager.yml.erb) add following. Note that `send_resolved`, `icon_emoji`, etc values must be taken from `slack_production` receiver:
+```
+- name: slack_gitaly
+  slack_configs:
+  - api_url: '<%= @conf['slack']['api_url'] %>'
+    channel: '#gitaly'
+    send_resolved: true
+    icon_emoji: ...
+    title: ...
+    title_link: ...
+    text: ...
+    fallback: ...
+```
+
+
 ### Note about alerts which not fit in any routes
 
 1. Alerts which are routed by default route will be sent to `#prometheus-alerts` channel in slack.
