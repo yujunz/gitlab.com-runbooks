@@ -47,3 +47,16 @@ curl 'http://localhost:9200/_cat/thread_pool?v'
 ```
 curl http://localhost:9200/_template/logstash?pretty
 ```
+
+### Create new index
+
+```
+curl -XPUT localhost:9200/gitlab -d '{
+  "settings": {
+    "index" : {
+      "number_of_shards" : 120,
+      "number_of_replicas": 1
+    }
+  }
+}'
+```

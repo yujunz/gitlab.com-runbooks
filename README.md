@@ -68,6 +68,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## How do I
 
+### On Call
+
+* [Common tasks to perform while on-call](howto/oncall.md)
+
 ### Deploy
 
 * [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
@@ -87,9 +91,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Use aptly](howto/aptly.md)
 * [Disable PackageCloud](howto/stop-or-start-packagecloud.md)
 
-### Work with the Database
+### Restore Backups
 
 * [Database Backups and Replication with Wal-E](howto/using-wale.md)
+* [LVM and Azure snapshots](howto/manage-snapshot-backups.md)
 
 ### Work with storage
 

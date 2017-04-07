@@ -23,7 +23,7 @@ The common procedure is as follows:
 ALERT runners_cache_is_down
   IF probe_success{job="runners-cache", instance="localhost:9100"} == 0
   FOR 10s
-  LABELS {severity="critical", channel="infrastructure", pager="pagerduty"}
+  LABELS {severity="critical", channel="production", pager="pagerduty"}
   ANNOTATIONS {
     title="Runners cache has been down for the past 10 seconds",
     runbook="howto/howto/manage-cehpfs.md"
@@ -31,7 +31,7 @@ ALERT runners_cache_is_down
   }
 ```
 
-This will result in a critical alert posted in slack channes `#prometheus-alerts` and `#infrastructure`, pagerduty with a link to https://dev.gitlab.com/cookbooks/runbooks/blob/master/howto/manage-cehpfs.md. Important part is the end or url - `howto/manage-cehpfs.md`. It is taken from annotation `runbook`. Runbook will provide information how to manage situation alerted. Main principle of the runbook should be - `don't make me think`.
+This will result in a critical alert posted in slack channes `#prometheus-alerts` and `#production`, pagerduty with a link to https://dev.gitlab.com/cookbooks/runbooks/blob/master/howto/manage-cehpfs.md. Important part is the end or url - `howto/manage-cehpfs.md`. It is taken from annotation `runbook`. Runbook will provide information how to manage situation alerted. Main principle of the runbook should be - `don't make me think`. For channel you can use `#production`, `#ci`, `#gitaly` values.
 
 ### What if I want to add more data?
 
@@ -53,7 +53,7 @@ All alerts are routed to slack and additionally can be paged to PagerDuty.
 
 1. Since all alerts sended to slack, you can control only the type of alert.
 1. All alerts will be shown in `#prometheus-alerts` channel.
-1. Additionally you can send alerts to `#ci`, `#infrastructure` channels. This part controlled with the label `channel='ci'` and `channel='infrastructure'`.
+1. Additionally you can send alerts to `#ci`, `#gitaly`, `#production` channels. This part controlled with the label `channel='ci'` for example.
 1. Alerts with `severity=critical` are red colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
 1. Alerts with `severity=warn` are yellow colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
 1. Alerts with `severity=info` are green colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
@@ -69,6 +69,30 @@ All alerts are routed to slack and additionally can be paged to PagerDuty.
 ### Email rules
 
 Currently we are not using email alerting rules.
+
+### Add more slack channels to alerts
+
+1. In routes section of [alertmanager.yml template](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/blob/master/templates/default/alertmanager.yml.erb) add following:
+```
+  - match:
+      channel: gitaly
+    receiver: slack_gitaly
+    continue: true
+```
+1. In receivers section [alertmanager.yml template](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/blob/master/templates/default/alertmanager.yml.erb) add following. Note that `send_resolved`, `icon_emoji`, etc values must be taken from `slack_production` receiver:
+```
+- name: slack_gitaly
+  slack_configs:
+  - api_url: '<%= @conf['slack']['api_url'] %>'
+    channel: '#gitaly'
+    send_resolved: true
+    icon_emoji: ...
+    title: ...
+    title_link: ...
+    text: ...
+    fallback: ...
+```
+
 
 ### Note about alerts which not fit in any routes
 
