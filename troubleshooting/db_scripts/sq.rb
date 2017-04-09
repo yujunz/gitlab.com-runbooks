@@ -154,7 +154,7 @@ if $PROGRAM_NAME == __FILE__
 
   case options.command[0]
   when 'show'
-    show_sidekiq_data(options)
+    show_sidekiq_data
   when 'kill_jid'
     if options.command.length != 2
       puts 'Specify a Job ID to kill'
