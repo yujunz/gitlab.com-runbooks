@@ -1,0 +1,110 @@
+## Pending jobs for projects with shared runners enabled
+ALERT TooManyPendingBuildsOnSharedRunnerProject
+  IF topk(1, predict_linear(ci_pending_builds{shared_runners="yes"}[30m], 3600)) > 1000
+  FOR 5m
+  LABELS {severity="warn", channel="ci-cd"}
+  ANNOTATIONS {
+    title="The number of pending builds for projects with shared runners will be too high in 1h: {{$value | printf \"%.2f\" }}",
+    description="The number of pending builds for projects with shared runners is increasing and will be too high in 1h ({{$value}}). This may suggest problems with auto-scaling provider or Runner stability. You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci.",
+  }
+
+
+## Pending jobs per namespace over limit
+ALERT TooManyPendingJobsPerNamespace
+  IF max(ci_pending_builds{shared_runners="yes",namespace!=""}) > 500
+  FOR 1m
+  LABELS {severity="warn", channel="production"}
+  ANNOTATIONS {
+    title="Number of pending jobs per namespace too high: {{$value}}",
+    description="Number of pending jobs per namespace for projects with shared runners enabled is too high ({{$value}}). Check https://performance.gitlab.net/dashboard/db/ci?panelId=33&fullscreen",
+    runbook="troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd"
+  }
+
+
+## Runners manager jobs
+ALERT NoJobsOnSharedRunners
+  IF sum(ci_runner_builds{job="shared-runners"}) == 0
+  FOR 5m
+  LABELS {severity="warn", channel="ci-cd"}
+  ANNOTATIONS {
+    title="Number of builds running on shared runners is too low: {{$value}}",
+    description="Number of builds running on shared runners for the last 5 minutes is 0. This may suggest problems with auto-scaling provider or Runner stability. You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci.",
+  }
+
+
+## Runners manager status
+ALERT RunnersManagerDown
+  IF up{job=~"shared-runners|shared-runners-gitlab-org|private-runners"} == 0
+  FOR 5m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Runners manager is down on {{ $labels.instance }}",
+    runbook="troubleshooting/runners_manager_is_down.md",
+    description="This impacts CI execution builds, consider tweeting: !tweet 'Builds are being delayed due to our shared runners manager being non responsive. We are restarting it to restore the service and then investigating the root cause'. Hosts impacted - {{ $labels.instance }}"
+  }
+
+
+## Machine operations rate
+ALERT RunnerMachineCreationRateHigh
+  IF sum(ci_docker_machines_provider{state="creating"}) / (sum(ci_docker_machines_provider{state="idle"}) + 1) > 100
+  FOR 1m
+  LABELS {severity="warn", channel="production"}
+  ANNOTATIONS {
+    title="Machine creation rate for runners is too high: {{$value | printf \"%.2f\" }}",
+    description="Machine creation rate for the last 1 minute is at least {{$value}} times greater than machines idle rate. This may by a symptom of problems with the auto-scaling provider. Check http://performance.gitlab.net/dashboard/db/ci.",
+    runbook="troubleshooting/ci_graphs.md#runners-manager-auto-scaling"
+  }
+
+
+## RUNNERS NGINX,DOCKER,REGISTRY,CACHE
+gitlab:runners_cache_registry_docker_service = label_replace(
+  drop_common_labels(
+    node_systemd_unit_state{instance=~"runners-cache.*",name="docker.service",state="active"}
+  ),
+  "hostname",
+  "$1.gitlab.com",
+  "instance",
+  "(.*)"
+)
+
+gitlab:runners_cache_registry_nginx_service = label_replace(
+  drop_common_labels(
+    node_systemd_unit_state{instance=~"runners-cache.*",name="nginx.service",state="active"}
+  ),
+  "hostname",
+  "$1.gitlab.com",
+  "instance",
+  "(.*)"
+)
+
+gitlab:runners_registry = label_replace(
+  drop_common_labels(
+    probe_http_status_code{instance=~"runners-cache.*:5000/v2"}==bool 200
+  ),
+  "hostname",
+  "$1",
+  "instance",
+  "(.*):5000/v2"
+)
+
+gitlab:runners_cache = label_replace(
+  drop_common_labels(
+    probe_http_status_code{instance=~"runners-cache.*:9000/minio/login"}==bool 200
+  ),
+  "hostname",
+  "$1",
+  "instance",
+  "(.*):9000/minio/login"
+)
+
+gitlab:runners_nginx_docker_registry_cache_status = gitlab:runners_cache_registry_nginx_service*1000 + ignoring(instance) gitlab:runners_cache_registry_nginx_service*100 + ignoring(instance,fqdn) gitlab:runners_registry*10 + ignoring(instance) gitlab:runners_cache
+
+ALERT RunnersNginxDockerRegistryCacheDown
+  IF gitlab:runners_nginx_docker_registry_cache_status != 1111
+  FOR 5m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    title='Runners cache services on {{ .Labels.hostname }}: {{ range printf "gitlab:runners_cache_registry_nginx_service{hostname=\'%s\'}" .Labels.hostname | query }} nginx {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end }}, {{ range printf "gitlab:runners_cache_registry_docker_service{hostname=\'%s\'}" .Labels.hostname | query }} docker {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}, {{ range printf "gitlab:runners_registry{hostname=\'%s\'}" .Labels.hostname | query }} registry {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}, {{ range printf "gitlab:runners_cache{hostname=\'%s\'}" .Labels.hostname | query }} minio {{ if eq (.Value | humanize) "1" }}up{{else}}down{{ end }}{{ end}}.',
+    runbook="troubleshooting/runners_cache_is_down.md",
+    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
+  }
