@@ -48,8 +48,18 @@ To convert the multi-line key and certificate files to a single-line string
 suitable for the vault, use this command:
 
 ```
-awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' the_key_file.key
+awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' [domain].key
+
+awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' [domain].chained.crt
 ```
+
+**Note:** You _must_ use the `[domain].chained.crt` certificate file, _not_ the
+`[domain].crt` file!
+
+### Verify the certificate
+
+Use a tool such as <https://www.sslshopper.com/ssl-checker.html> to verify that
+the certificate is live, working, and fully valid.
 
 ## Notes
 
