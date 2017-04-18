@@ -1,0 +1,10 @@
+## gitlab.com
+ALERT NFSServerDown
+  IF up{fqdn=~"nfs-file[0-9]+.stor.gitlab.com"}
+  FOR 2m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="NFS Server {{$labels.instance}} is down",
+    description="One of git NFS servers is down, this locks the whole application and causes downtime",
+    runbook="troubleshooting/nfs-server.md"
+  }
