@@ -1,6 +1,6 @@
 ## gitlab.com
 ALERT NFSServerDown
-  IF up{fqdn=~"nfs-file[0-9]+.stor.gitlab.com"}
+  IF up{fqdn=~"nfs-file[0-9]+.stor.gitlab.com"} == 0
   FOR 2m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
