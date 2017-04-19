@@ -1,10 +1,19 @@
-## gitlab.com
-ALERT NFSServerDown
-  IF up{fqdn=~"nfs-file[0-9]+.stor.gitlab.com"} == 0
+ALERT GitNFSServerDown
+  IF min(up{fqdn=~"nfs-file[0-9]+.stor.gitlab.com"}) without (job) == 0
   FOR 2m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
-    title="NFS Server {{$labels.instance}} is down",
+    title="Git NFS Server {{$labels.instance}} is down",
     description="One of git NFS servers is down, this locks the whole application and causes downtime",
+    runbook="troubleshooting/nfs-server.md"
+  }
+
+ALERT FileNFSServerDown
+  IF min(up{fqdn=~"nfs-(uploads|share|lfs|artifacts)[0-9]+.stor.gitlab.com"}) without (job) == 0
+  FOR 2m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="File NFS Server {{$labels.instance}} is down",
+    description="File NFS server is down, this locks the whole application and causes downtime",
     runbook="troubleshooting/nfs-server.md"
   }
