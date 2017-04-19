@@ -1,0 +1,9 @@
+ALERT ReplicationLagTooLarge
+  IF max(pg_replication_lag{fqdn=~".+cluster.gitlab.com"}) by (fqdn) > 120
+  FOR 1m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Replication lag in server {{$labels.instance}} is over 2 minutes",
+    description="A high replication lag means that we are getting inconsistent results from queries in GitLab.com, generating confusion. Generally this is linked to high IO and table bloat. Investigate possible root causes in the postgres queries dashboard and consider disabling load balancing",
+    runbook="troubleshooting/postgresql_replication.md"
+  }
