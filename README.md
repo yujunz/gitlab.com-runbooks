@@ -47,6 +47,11 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
 
+### PostgreSQL
+
+* [PgBouncer](howto/pgbouncer.md)
+* [Load Balancing](howto/load-balancing.md)
+
 ## Alerting and monitoring
 
 * [GitLab monitoring overview](howto/monitoring-overview.md)
