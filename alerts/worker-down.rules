@@ -1,5 +1,5 @@
 ALERT FrontEndWorkerDown
-  IF min(up{fqdn=~"worker-(web|ssh|api|kiq)[0-9]+.fe.gitlab.com"}) without (job) == 0
+  IF min(up{fqdn=~"worker-(web|ssh|api|kiq)[0-9]+.fe.gitlab.com", job!~".*mtail"}) without (job) == 0
   FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
