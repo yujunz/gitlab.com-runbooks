@@ -48,7 +48,7 @@ ALERT RunnersManagerDown
 
 ## Machine operations rate
 ALERT RunnerMachineCreationRateHigh
-  IF sum(ci_docker_machines_provider{state="creating"}) / (sum(ci_docker_machines_provider{state="idle"}) + 1) > 100
+  IF sum(ci_docker_machines_provider_machine_states{state="creating"}) / (sum(ci_docker_machines_provider_machine_states{state="idle"}) + 1) > 100
   FOR 1m
   LABELS {severity="warn", channel="ci-cd"}
   ANNOTATIONS {
