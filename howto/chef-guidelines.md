@@ -10,7 +10,7 @@ The purpose of this page should be to document how we at GitLab use chef, write 
 Keep a node simple - single purpose driven role applied on a node. 
 For example, a front end web server should have a single role on it: 
 
-```json
+```ruby
 "run_list": [
   "role[frontend-web-server]"
 ]
@@ -18,7 +18,7 @@ For example, a front end web server should have a single role on it:
 
 rather than:
 
-```json
+```ruby
 "run_list": [
   "role[base]",
   "role[do-droplet]",
@@ -40,7 +40,7 @@ Do we have to build a cookbook or is there a well maintained one we can use (e.g
 
 Including these cookbooks can be done in different ways by using so called wrapper cookbooks.
 
-####Wrapper Pattern
+#### Wrapper Pattern
 The Chef Cookbook Wrapper Pattern is based upon a design convention where you customize an existing "library" cookbook by using:
 
 ##### Libraries
@@ -76,7 +76,7 @@ Example:
 
 [REDISIO cookbook with attributes and includes](https://github.com/brianbianco/redisio#role-file-examples)
 
-```json
+```ruby
 run_list *%w[
   recipe[redisio]
   recipe[redisio::enable]
@@ -120,12 +120,12 @@ Attributes are your friends:
     - nested under a common, understandable hash e.g. 
 
     *sshd settings*
-    ```json
+    ```ruby
     node['openssh']['sshd']['port']
     node['openssh']['sshd']['address_family']
     ```
     vs. *unreadable settings*:
-    ```json
+    ```ruby
     node['openssh_port']
     node['address_family']
     ```
