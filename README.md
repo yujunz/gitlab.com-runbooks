@@ -119,7 +119,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
 * [Retrieve old values in a Chef vault](howto/retrieve-old-chef-vault-values.md)
 * [Manage Chef Cookbooks](howto/chef-documentation.md)
-* [Best practices and tips](howto/chef-best-practices.md)
+* [Best practices](howto/chef-best-practices.md)
+* [Tips](howto/chef-tips.md)
 
 ### Work with CI Infrastructure
 
