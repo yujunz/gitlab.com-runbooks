@@ -35,8 +35,8 @@ See cookbooks below.
 
 ## Cookbooks
 
-### Buy vs. Build 
-Do we have to build a cookbook or is there a well maintained one we can use (e.g. via wrappers/lwrps)? This should be the first question to ask yourself and it merits a few hours of research to determine if a cookbook is already out there to satisfy our needs. 
+### Supermarket Cookbooks
+Do we have to build a cookbook or is there a well maintained one we can use (e.g. via wrappers/lwrps)? The [Chef Supermarket](https://supermarket.chef.io/) is excellent place to find cookbooks and should be the first place you look when thinking about creating a new cookbook. In many cases it is well worth spending time searching through these, rather than writing our own.
 
 Including these cookbooks can be done in different ways by using so called wrapper cookbooks.
 
@@ -95,20 +95,6 @@ By setting attributes on e.g. the role, we don't have to make any programmatic c
 It is important to note that a wrapper cookbook does not extend functionality, only configures and includes the library cookbook!
 
 
-
-##### Abstract Pattern
-This pattern utilizes the flexibility of chef by implementing resources in a general (abstract) cookbook, and then coding the provider with the concrete implementation in the derived cookbook.
-
-Example
-
-[Abstract cookbook](https://github.com/rightscale/rightscale_cookbooks/tree/master/cookbooks/db/)
-
-vs.
-
-[Concrete cookbook](https://github.com/rightscale/rightscale_cookbooks/tree/master/cookbooks/db_mysql)
-
-
-
 ### Declarative
 Each chef run should **ALWAYS** describe the node in the same way.
 Avoid [if statements](https://gitlab.com/gitlab-cookbooks/gitlab-nfs-cluster/commit/f772209475bdc4dac1a530f80666dda6c3e6ec93#16f5421f9f20b9e5d3af7fc7cdd6ff9b7de716cc_23_15) which would cause chef resources to appear and disappear. Instead, make use of [guards](https://docs.chef.io/resource_common.html#guards) to skip over resources such as [here](https://gitlab.com/gitlab-cookbooks/gitlab-nfs-cluster/commit/c78108caffcdfd2e37cf2ba59759fbb93f77db4a#16f5421f9f20b9e5d3af7fc7cdd6ff9b7de716cc_29_22). This ensures that we **DECLARE** what our infrastructure should look the same way every time chef-client runs.
@@ -132,7 +118,7 @@ Attributes are your friends:
   - Kept in the respective cookbook. 
      Roles are the place where you can change settings, not in unrelated cookbooks. e.g. the haproxy cookbook is not the place for [openssh settings](https://gitlab.com/gitlab-cookbooks/gitlab-haproxy/commit/f8aaa5d3ec344fba38bd15948d04854317e9e3ce#20875b27e096b4a4356a90b6ae97d03a1dbf877a_35_32).
 
-  - Come with sane defaults. This plays into the testability of  a cookbook. Never assume that attributes will be set elsewhere: set defaults of fail.
+  - Come with sane defaults. This plays into the testability of a cookbook. Never assume that attributes will be set elsewhere: either **set defaults** or **fail**.
 * Try to avoid setting attributes via cookbooks e.g. `node.default['openssh']['sshd']['port'] = 23` this becomes hard to follow, when you are searching for the cause of issues.
 
 ### Documentation
