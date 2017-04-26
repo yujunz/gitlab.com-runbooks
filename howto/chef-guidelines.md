@@ -36,7 +36,7 @@ See cookbooks below.
 ## Cookbooks
 
 ### Supermarket Cookbooks
-Do we have to build a cookbook or is there a well maintained one we can use (e.g. via wrappers/lwrps)? The [Chef Supermarket](https://supermarket.chef.io/) is excellent place to find cookbooks and should be the first place you look when thinking about creating a new cookbook. In many cases it is well worth spending time searching through these, rather than writing our own.
+Do we have to build a cookbook or is there a well maintained one in the [Chef Supermarket](https://supermarket.chef.io/) we can use (e.g. via wrappers/lwrps)? The supermarket is excellent place to find cookbooks and should be the first place you look when thinking about creating a new cookbook. In many cases it is well worth spending time searching through these, rather than writing our own.
 
 Including these cookbooks can be done in different ways by using so called wrapper cookbooks.
 
@@ -122,7 +122,7 @@ Attributes are your friends:
 * Try to avoid setting attributes via cookbooks e.g. `node.default['openssh']['sshd']['port'] = 23` this becomes hard to follow, when you are searching for the cause of issues.
 
 ### Documentation
-Unless you are writing an actual food related cookbook, [bacon](https://gitlab.com/gitlab-cookbooks/gitlab-nfs-cluster/blob/37399ec3bc3a8525e7950755f09d38a79dbbf919/README.md) should **NOT** be part of your README.md 
+The default [README.md](https://gitlab.com/gitlab-cookbooks/gitlab-nfs-cluster/blob/37399ec3bc3a8525e7950755f09d38a79dbbf919/README.md) is **NOT** acceptable documentation.
 
 A cookbook should not be considered **DONE** unless the following is documented:
 
