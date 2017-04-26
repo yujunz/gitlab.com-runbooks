@@ -99,6 +99,24 @@ It is important to note that a wrapper cookbook does not extend functionality, o
 Each chef run should **ALWAYS** describe the node in the same way.
 Avoid [if statements](https://gitlab.com/gitlab-cookbooks/gitlab-nfs-cluster/commit/f772209475bdc4dac1a530f80666dda6c3e6ec93#16f5421f9f20b9e5d3af7fc7cdd6ff9b7de716cc_23_15) which would cause chef resources to appear and disappear. Instead, make use of [guards](https://docs.chef.io/resource_common.html#guards) to skip over resources such as [here](https://gitlab.com/gitlab-cookbooks/gitlab-nfs-cluster/commit/c78108caffcdfd2e37cf2ba59759fbb93f77db4a#16f5421f9f20b9e5d3af7fc7cdd6ff9b7de716cc_29_22). This ensures that we **DECLARE** what our infrastructure should look the same way every time chef-client runs.
 
+Example of a guard in practice:
+
+```ruby
+template '/etc/gitlab/gitlab.rb' do
+  mode '0600'
+  variables(gitlab_rb: gitlab_rb)
+  helper(:single_quote) { |value| value.nil? ? nil : "'#{value}'" }
+  notifies :run, 'execute[reload-gitlab]'
+end
+
+execute 'reload-gitlab' do
+  command "gitlab-ctl reconfigure"
+  action :nothing
+  not_if '${PROD?}'
+end
+```
+This snippet would guard against `gitlab-ctl reconfigure` being called if the environment variable `PROD` is set. 
+
 ### Cookbook Attributes
 Attributes are your friends:
 
