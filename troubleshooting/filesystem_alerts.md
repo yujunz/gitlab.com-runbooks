@@ -6,37 +6,67 @@
 
 ## Symptoms
 
-* Message in alerts channel _Check_MK: service fs_/ is CRITICAL_
+You're likely here because you saw a message saying "Really low disk space left on _path_ on _host_: _very low number_%".
+
+Not a big deal (well, usually). There are two possible causes:
+1. A volume got full and we need to figure out how to make some space.
+1. A process is leaking file handlers.
+
+The latter is a little trickier. Check out [how to fix file handler leaks](#file-handler-leaks) later in this page.
+There are many instances where the solution is well known and it only takes a single command to fix. Keep reading.
 
 ## Resolution
 
-* Most likely there are old accumulated log files. ssh into the worker giving
-the alerts and run the following to delete all logs older than 2 days:
+First, check out if the host you're working on is one of the following:
+
+### Well known hosts
+
+#### performance.gitlab.net
+
+This alerts triggered on `/var/lib/influxdb/data` and `influxdb` is likely to be the culprit. Apparently there is a file handler leak somewhere and this happens regularly.
+
+Take a look at [how to fix file handler leaks](#file-handler-leaks) later in this page. You can restart influxdb with `sudo service influxdb restart`.
+
+#### worker*.gitlab.com
+
+It's probably nginx leaking file handlers.
+
+Take a look at [how to fix file handler leaks](#file-handler-leaks) later in this page. You can restart nginx with `sudo gitlab-ctl restart nginx`.
+
+### Anything else
+
+Check out if kernel sources have been installed and remove them:
+```
+sudo apt-get purge linux-headers-*
+```
+
+You can also run an autoremove:
+```
+sudo apt-get autoremove
+```
+
+Next thing to remove to free up space is old log files. Run the following to delete all logs older than 2 days:
 
 ```
-$ sudo find /var/log/gitlab -mtime +2 -exec rm {} \;
+sudo find /var/log/gitlab -mtime +2 -exec rm {} \;
 ```
 
-* Another option is to also remove temporary files
+If that didn't work you can also remove temporary files:
 
 ```
 $ sudo find /tmp -type f -mtime +2 -delete
 ```
 
-* If commands above do not free enough space, as an option you can try to delete everything older than 10 minutes.
+If you're still short of free space you can try to delete everything older than 10 minutes.
 
 ```
 sudo find /var/log/gitlab -mmin +10 -exec rm {} \;
 ```
 
-* Also you can try to remove cached temp files by restarting services
+Finally you can try to remove cached temp files by restarting services.
 
-On workers it is usually `nginx`:
-```
-sudo gitlab-ctl restart nginx
-```
+### File handler leaks
 
-On performance.gitlab.net it is `influxdb`:
-```
-sudo service influxdb restart
-```
+This happens when a process deletes a file but doesn't close the file handler on it. The kernel then can't see that space as free as it's still been held by the process.
+
+You easily can check this with `sudo lsof | grep deleted`. If you see many deleted file handlers held by the same process you can fix this by restarting it.
