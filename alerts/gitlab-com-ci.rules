@@ -13,7 +13,7 @@ ALERT TooManyPendingBuildsOnSharedRunnerProject
 ALERT TooManyPendingJobsPerNamespace
   IF max(ci_pending_builds{shared_runners="yes",namespace!=""}) > 500
   FOR 1m
-  LABELS {severity="warn", channel="production"}
+  LABELS {severity="warn", channel="ci-cd"}
   ANNOTATIONS {
     title="Number of pending jobs per namespace too high: {{$value}}",
     description="Number of pending jobs per namespace for projects with shared runners enabled is too high ({{$value}}). Check https://performance.gitlab.net/dashboard/db/ci?panelId=33&fullscreen",
@@ -36,7 +36,7 @@ ALERT NoJobsOnSharedRunners
 ALERT RunnersManagerDown
   IF up{job=~"shared-runners|shared-runners-gitlab-org|private-runners"} == 0
   FOR 5m
-  LABELS {severity="critical", pager="pagerduty"}
+  LABELS {severity="critical", pager="ci-cd"}
   ANNOTATIONS {
     title="Runners manager is down on {{ $labels.instance }}",
     runbook="troubleshooting/runners_manager_is_down.md",
@@ -48,7 +48,7 @@ ALERT RunnersManagerDown
 ALERT RunnerMachineCreationRateHigh
   IF sum(ci_docker_machines_provider{state="creating"}) / (sum(ci_docker_machines_provider{state="idle"}) + 1) > 100
   FOR 1m
-  LABELS {severity="warn", channel="production"}
+  LABELS {severity="warn", channel="ci-cd"}
   ANNOTATIONS {
     title="Machine creation rate for runners is too high: {{$value | printf \"%.2f\" }}",
     description="Machine creation rate for the last 1 minute is at least {{$value}} times greater than machines idle rate. This may by a symptom of problems with the auto-scaling provider. Check http://performance.gitlab.net/dashboard/db/ci.",
