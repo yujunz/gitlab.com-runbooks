@@ -1,6 +1,8 @@
 ## Pending jobs for projects with shared runners enabled
 ALERT TooManyPendingBuildsOnSharedRunnerProject
-  IF topk(1, predict_linear(ci_pending_builds{shared_runners="yes"}[30m], 3600)) > 1000
+  IF (ci_pending_builds{shared_runners="yes"} > 500)
+    and
+     (topk(1, predict_linear(ci_pending_builds{shared_runners="yes"}[15m], 3600)) > 1000)
   FOR 5m
   LABELS {severity="warn", channel="ci-cd"}
   ANNOTATIONS {
