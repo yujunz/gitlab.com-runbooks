@@ -70,52 +70,50 @@ root@db1:~#
 
 Before we start, take a deep breath and don't panic.
 
-1. Stop the PostgreSQL database server: `root@db2:~# gitlab-ctl stop postgresql`
+1. Stop the PostgreSQL database server: `gitlab-ctl stop postgresql`
 
 1. If you are restoring from nothing you must restore a base backup first.
 
   1. Get the name of the backup you need to restore to.
 
-    ```
-    root@db2:~# /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
-    wal_e.main   INFO     MSG: starting WAL-E
-        DETAIL: The subcommand is "backup-list".
-        STRUCTURED: time=2017-03-22T22:22:31.375375-00 pid=50745
-    name	last_modified	expanded_size_bytes	wal_segment_backup_start	wal_segment_offset_backup_start	wal_segment_backup_stop	wal_segment_offset_backup_stop
-    base_0000000200000C9B00000000_08600896	2017-03-08T03:44:45.000Z		0000000200000C9B00000000	08600896
-    base_0000000200000CD900000018_01153720	2017-03-12T03:36:49.000Z		0000000200000CD900000018	01153720
-    base_0000000200000CF000000062_00006728	2017-03-14T03:40:32.000Z		0000000200000CF000000062	00006728
-    base_0000000200000D3F000000DF_05843488	2017-03-17T03:45:14.000Z		0000000200000D3F000000DF	05843488
-    base_0000000200000D5C00000069_00029088	2017-03-18T03:38:03.000Z		0000000200000D5C00000069	00029088
-    base_0000000200000D6D000000C5_09408544	2017-03-19T03:45:06.000Z		0000000200000D6D000000C5	09408544
-    base_0000000200000D7D00000060_00000080	2017-03-20T03:47:02.000Z		0000000200000D7D00000060	00000080
-    base_0000000200000DCA000000D7_09026584	2017-03-22T03:43:53.000Z		0000000200000DCA000000D7	09026584
-    ```
+        ```
+        root@db2:~# /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
+        wal_e.main   INFO     MSG: starting WAL-E
+            DETAIL: The subcommand is "backup-list".
+            STRUCTURED: time=2017-03-22T22:22:31.375375-00 pid=50745
+        name	last_modified	expanded_size_bytes	wal_segment_backup_start	wal_segment_offset_backup_start	wal_segment_backup_stop	wal_segment_offset_backup_stop
+        base_0000000200000C9B00000000_08600896	2017-03-08T03:44:45.000Z		0000000200000C9B00000000	08600896
+        base_0000000200000CD900000018_01153720	2017-03-12T03:36:49.000Z		0000000200000CD900000018	01153720
+        base_0000000200000CF000000062_00006728	2017-03-14T03:40:32.000Z		0000000200000CF000000062	00006728
+        base_0000000200000D3F000000DF_05843488	2017-03-17T03:45:14.000Z		0000000200000D3F000000DF	05843488
+        base_0000000200000D5C00000069_00029088	2017-03-18T03:38:03.000Z		0000000200000D5C00000069	00029088
+        base_0000000200000D6D000000C5_09408544	2017-03-19T03:45:06.000Z		0000000200000D6D000000C5	09408544
+        base_0000000200000D7D00000060_00000080	2017-03-20T03:47:02.000Z		0000000200000D7D00000060	00000080
+        base_0000000200000DCA000000D7_09026584	2017-03-22T03:43:53.000Z		0000000200000DCA000000D7	09026584
+        ```
 
   1. Begin a restore of the base backup.
 
-    ```
-    /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data base_0000000200000DCA000000D7_09026584
-    ```
+        ```
+        /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data base_0000000200000DCA000000D7_09026584
+        ```
 
-1. Create the `/var/opt/gitlab/postgresql/data/recovery.conf` file with the following contents.
-Please be sure that the file is owned by the postgres user (gitlab-psql in prod or postgres otherwise)
- > restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
- > 
- > recovery_target_time = '2017-02-01 02:12:00'
- >  
- > pause_at_recovery_target = 'false'
- Where the `recovery_target_time` is to your liking.
+1. Create the `/var/opt/gitlab/postgresql/data/recovery.conf` file with the
+   following contents. Please be sure that the file is owned by the postgres
+   user (`gitlab-psql` in production or `postgres` otherwise)
 
-1. Start the PostgreSQL database server:
- `root@db2:~# gitlab-ctl start postgresql`
+        ```
+        restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
+        recovery_target_time = '2017-02-01 02:12:00'
+        recover_target_action = 'promote'
+        ```
+
+    Where the `recovery_target_time` is to your liking.
+
+1. Start the PostgreSQL database server: `gitlab-ctl start postgresql`
 
 1. When the restore is finished the database server will come online with the data.
-
-
 
 [Wal-E]: https://github.com/wal-e/wal-e
 [PSQL_Archiving]: https://www.postgresql.org/docs/9.6/static/continuous-archiving.html
 [PSQL_WAL]: https://www.postgresql.org/docs/current/static/wal-intro.html
-
-
