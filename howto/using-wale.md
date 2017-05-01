@@ -99,8 +99,7 @@ Before we start, take a deep breath and don't panic.
         ```
 
 1. Create the `/var/opt/gitlab/postgresql/data/recovery.conf` file with the
-   following contents. Please be sure that the file is owned by the postgres
-   user (`gitlab-psql` in production or `postgres` otherwise)
+   following contents:
 
       ```
       restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
@@ -109,6 +108,9 @@ Before we start, take a deep breath and don't panic.
       ```
 
     Where the `recovery_target_time` is to your liking.
+
+1. Be sure that the file is owned by the postgres user (`gitlab-psql` in
+   production or `postgres` otherwise)
 
 1. Start the PostgreSQL database server: `gitlab-ctl start postgresql`
 
