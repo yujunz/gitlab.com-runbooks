@@ -102,11 +102,11 @@ Before we start, take a deep breath and don't panic.
    following contents. Please be sure that the file is owned by the postgres
    user (`gitlab-psql` in production or `postgres` otherwise)
 
-        ```
-        restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
-        recovery_target_time = '2017-02-01 02:12:00'
-        recover_target_action = 'promote'
-        ```
+      ```
+      restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
+      recovery_target_time = '2017-02-01 02:12:00'
+      recovery_target_action = 'promote'
+      ```
 
     Where the `recovery_target_time` is to your liking.
 
