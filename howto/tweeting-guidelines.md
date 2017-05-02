@@ -2,7 +2,10 @@
 
 ## General Guidelines
 
-We should always be tweeting from @gitlabstatus in an informative but reassuring way.
+We should always be tweeting from `@gitlabstatus` in an informative but
+reassuring way. We don't tweet directly from Twitter, but via `@marvin`,
+a Cog app on Slack. See [How to tweet](#how-to-tweet) for the commands
+we're using.
 
 Avoid using ambiguous messages, but if we don't know what is going on yet just state that we are investigating.
 If you are tweeting about a problem with the Container Registry service, avoid using the trademarked name "Docker" as it is not ours to use. Our service should always
@@ -18,6 +21,23 @@ When we have issues with any production operation we should always tweet opening
 Closing tweets should be as detailed as possible, for example: 'we have a failing database migration of a column name'
 instead of 'there is a problem with the database'
 
+## How to tweet
+
+The one who commands `@marvin` on Slack should get a Cog user. Then we send
+a message begins with `!tweet` on **#production** channel in order to tell
+`@marvin` to tweet, like:
+
+    !tweet "We will be deploying GitLab EE 9.1.2 shortly, no downtime is expected"
+
+We could also use `!broadcast` to broadcast on GitLab.com, like:
+
+    !broadcast "We will be deploying GitLab EE 9.1.2 shortly, no downtime is expected"
+
+There are some options which could be used along with commands. To see how to
+use them, check with:
+
+    !help tweet
+    !help broadcast
 
 ## Canned messages to avoid thinking
 
