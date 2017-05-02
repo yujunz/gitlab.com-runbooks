@@ -4,7 +4,7 @@
 
 We should always be tweeting from `@gitlabstatus` in an informative but
 reassuring way. We don't tweet directly from Twitter, but via `@marvin`,
-a Cog app on Slack. See [How to tweet](#how-to-tweet) for the commands
+a [Cog][] app on Slack. See [How to tweet](#how-to-tweet) for the commands
 we're using.
 
 Avoid using ambiguous messages, but if we don't know what is going on yet just state that we are investigating.
@@ -20,6 +20,8 @@ When we have issues with any production operation we should always tweet opening
 
 Closing tweets should be as detailed as possible, for example: 'we have a failing database migration of a column name'
 instead of 'there is a problem with the database'
+
+[Cog]: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-cog.md
 
 ## How to tweet
 
