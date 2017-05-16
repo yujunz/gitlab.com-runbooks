@@ -18,6 +18,17 @@ identify the instance with a high error rate.
 sudo less /var/log/gitlab/gitaly/current
 ```
 
-## 2. Disable Gitaly
+## 2. Disable the Gitaly operation causing trouble
 
-- Update the relevant role for the problematic instance on chef-repo and change the gitaly override to `enable: false` (under override_attributes -> omnibus-gitlab -> gitlab_rb -> gitaly)
+- Go to https://performance.gitlab.net/dashboard/db/gitaly-features?orgId=1 and identify the feature with a high error rate.
+- Update the relevant role for the problematic instance on chef-repo and remove the environment variable for the relevant operation (under `default_attributes -> omnibus-gitlab -> gitlab_rb -> gitlab-rails -> env`). The mapping of environment variables to gRPC calls is as follows:
+
+
+| Env variable        | gRPC call             |
+|---------------------|-----------------------|
+| GITALY_ROOT_REF     | FindDefaultBranchName |
+| GITALY_BRANCH_NAMES | FindAllBranchNames    |
+| GITALY_TAG_NAMES    | FindAllTagNames       |
+
+
+- If that doesn't solve the issue you can disable Gitaly entirely by changing the Gitaly override to `enable: false` (under `override_attributes -> omnibus-gitlab -> gitlab_rb -> gitaly`)
