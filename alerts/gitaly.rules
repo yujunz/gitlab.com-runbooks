@@ -1,12 +1,24 @@
 gitaly:grpc_server_handled_total:error_max_rate1m = max(gitaly:grpc_server_handled_total:error_rate1m)
+gitaly:grpc_server_handled_total:instance_error_max_rate1m = max(gitaly:grpc_server_handled_total:instance_error_rate1m)
 
-## Gitaly error rate
+## Gitaly error rate per method
 ALERT gitaly_error_rate_too_high
-  IF gitaly:grpc_server_handled_total:error_max_rate1m > 5
+  IF gitaly:grpc_server_handled_total:error_max_rate1m > 2
   FOR 5m
   LABELS {severity="critical", channel="gitaly"}
   ANNOTATIONS {
     title="Gitaly error rate is too high: {{$value | printf \"%.2f\" }}",
-    description="Gitaly error rate for the last 20 minutes is over 5. Check Gitaly logs and consider disabling it.",
-    runbook="troubleshooting/gitaly_error_rate.md"
+    description="Gitaly error rate for the last 20 minutes is over 2 for {{$labels.grpc_method}}. Check Gitaly logs and consider disabling that method.",
+    runbook="troubleshooting/gitaly-error-rate.md"
+  }
+
+## Gitaly error rate per instance
+ALERT gitaly_error_rate_too_high
+  IF gitaly:grpc_server_handled_total:instance_error_max_rate1m > 2
+  FOR 5m
+  LABELS {severity="critical", channel="gitaly"}
+  ANNOTATIONS {
+    title="Gitaly error rate is too high: {{$value | printf \"%.2f\" }}",
+    description="Gitaly error rate for the last 20 minutes is over 2 on {{$labels.instance}}. Check Gitaly logs and consider disabling it on that host.",
+    runbook="troubleshooting/gitaly-error-rate.md"
   }
