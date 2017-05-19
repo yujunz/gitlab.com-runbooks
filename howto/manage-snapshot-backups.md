@@ -1,3 +1,5 @@
+# Information contained within is NO LONGER ACCURATE for Azure or Database backups. Please look at the [database restore](howto/using-wale.md) and [Azure snapshot](howto/azure-snapshots.md) documentation for accurate info.
+
 # Backups and restore
 We currenty have multiple backup solutions:
 - AWS snapshots by `ebs.gitlap.com`

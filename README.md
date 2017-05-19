@@ -74,6 +74,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
 * [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
 * [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
+* [LVM and Azure snapshots](howto/manage-snapshot-backups.md)
 
 ## How do I
 
@@ -103,7 +104,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ### Restore Backups
 
 * [Database Backups and Replication with Wal-E](howto/using-wale.md)
-* [LVM and Azure snapshots](howto/manage-snapshot-backups.md)
+* [Work with Azure Snapshots](howto/azure-snapshots.md)
 
 ### Work with storage
 
