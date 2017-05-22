@@ -78,7 +78,7 @@ created in step 1. You can do this via a bash one-liner with the Azure CLI.
 
     ```
     root@azure-snapshot-restore-file-08:~# mount /dev/gitlab_vg/gitlab_var /path/to/mountpoint
-    <note to self, find the actual error message to paste here>
+    mount: Structure needs cleaning
     ```
 
 ### IF the mount command gives an error 
