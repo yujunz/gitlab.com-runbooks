@@ -8,7 +8,7 @@ ALERT gitaly_error_rate_too_high
   LABELS {severity="critical", channel="gitaly"}
   ANNOTATIONS {
     title="Gitaly error rate is too high: {{$value | printf \"%.2f\" }}",
-    description="Gitaly error rate for the last 20 minutes is over 2 for {{$labels.grpc_method}}. Check Gitaly logs and consider disabling that method.",
+    description="Gitaly error rate for the last 5 minutes is over 2 for {{$labels.grpc_method}}. Check Gitaly logs and consider disabling that method.",
     runbook="troubleshooting/gitaly-error-rate.md"
   }
 
@@ -19,6 +19,6 @@ ALERT gitaly_error_rate_too_high
   LABELS {severity="critical", channel="gitaly"}
   ANNOTATIONS {
     title="Gitaly error rate is too high: {{$value | printf \"%.2f\" }}",
-    description="Gitaly error rate for the last 20 minutes is over 2 on {{$labels.instance}}. Check Gitaly logs and consider disabling it on that host.",
+    description="Gitaly error rate for the last 5 minutes is over 2 on {{$labels.instance}}. Check Gitaly logs and consider disabling it on that host.",
     runbook="troubleshooting/gitaly-error-rate.md"
   }
