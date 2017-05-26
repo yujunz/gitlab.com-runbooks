@@ -2,7 +2,9 @@
 
 This document will cover how our packagecloud infrastructure works, how
 backups are taken, and how to restore said backups. `packages.gitlab.com`
-is hosted in AWS us-west-1 (N. California).
+is hosted in AWS us-west-1 (N. California). There are also 
+[PackageCloud docs](https://packagecloud.atlassian.net/wiki/display/ENTERPRISE/Backups)
+on the entire backup process.
 
 ## How Does PackageCloud Work?
 
@@ -66,8 +68,11 @@ rebuild and will thus begin with building and configuring the server.
   * Root Disk Size: 1TG (gp2)
   * Data Disk Size: 16TB (gp2), xfs, mounted on /var/opt/packagecloud
   * OS: Ubuntu 14.04 LTS
-  * Security Groups With Ports:
-    * <do we want to put ports here? I do, nmap will give it all away anyway>
+  * Security Groups With Inbound Ports:
+    * 80
+    * 443
+    * 22
+    * Standard monitoring ports, available only to prometheus servers
 1. Add it to [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo) with the
    the current `packages.gitlab.com` node as a template.
 1. Once you run chef-client on the new server, it will automatically set the config
