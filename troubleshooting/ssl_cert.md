@@ -19,7 +19,7 @@ Check with browser if this is really the case.
 ## Resolution
 
 We use [SSLMate] for ordering SSL certificates. Get the commandline tool via
-https://sslmate.com/help/install.
+https://sslmate.com/help/install. If you're using Homebrew you can install it with `brew install sslmate`.
 
 Credentials are in 1Password.
 
@@ -30,7 +30,7 @@ sslmate buy about.gitlab.com
 ```
 
 When asked to prove authorization, select **Add a DNS record**, and add the
-provided `CNAME` entry via Route 53.
+provided `CNAME` entry via Route 53. You can leave this `CNAME` record in the zone.
 
 The `sslmate` client will download the key and certificate to the directory in
 which the command was executed.
