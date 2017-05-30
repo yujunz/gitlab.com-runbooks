@@ -11,7 +11,7 @@ ALERT MonitorGitlabNetPrometheusDown
   }
 
 ALERT MonitorGitlabNetNotAccessible
-  IF probe_success{instance="monitor.gitlab.net"} == 0
+  IF probe_success{instance="monitor.gitlab.net/dashboard/db/fleet-overview?refresh=5m"} == 0
   FOR 30s
   LABELS {severity="critical"}
   ANNOTATIONS {
