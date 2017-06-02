@@ -24,7 +24,7 @@ automated way of restoring soon. The below guide assumes that you must create a 
 created in step 1. You can do this via a bash one-liner with the Azure CLI.
 
     ```
-    for i in {0..15}; do az disk create -g azure-snapshot-restore-file-08 -n file-08-restore-$i --source /subscriptions/c802e1f4-573f-4049-8645-4f735e6411b3/resourceGroups/STORAGEPROD/providers/Microsoft.Compute/snapshots/file-08-datadisk-$i-snap-2017-05-03; done
+    for i in {0..15}; do az disk create -g azure-snapshot-restore-file-08 -n file-08-restore-$i --source /subscriptions/c802e1f4-573f-4049-8645-4f735e6411b3/resourceGroups/snapshots-2017-05-03/providers/Microsoft.Compute/snapshots/file-08-datadisk-$i-snap-2017-05-03; done
     ```
 
 1. Attach those disks to the new server
