@@ -112,6 +112,12 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Migrate a project to CephFS or any other shard](howto/migrate-to-cephfs.md)
 * [Administer and Maintain CephFS](howto/cephfs.md)
 
+### Work with Terraform
+
+* [Set up the Terraform environment](https://gitlab.com/gitlab-com/gitlab-com-infrastructure#how-can-i-use-this)
+* [Working with cattle](howto/terraform/working-with-cattle.md)
+* [Create a new staging environment](https://drive.google.com/open?id=0BzamLYNnSQa_cjN5NGtaRnpyRXc) (video - internal only)<br>Watch this for a complete overview of how to work with Terraform.
+
 ### Mangle front end load balancers
 
 * [Isolate a worker by disabling the service in the LBs](howto/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
