@@ -4,20 +4,20 @@
 
 [Wal-E][Wal-E] was designed by Heroku to solve their PostgreSQL
 backup issues. It is a python based application that is invoked by the PostgreSQL process
-via the 'archive_command' as part of PostgreSQLs 
+via the 'archive_command' as part of PostgreSQLs
 [continuous archiving][PSQL_Archiving] setup.
 
 It works by taking [Write-Ahead Logging][PSQL_WAL]
-files, compressing them, and then archiving them off to a storage target in near realtime. 
+files, compressing them, and then archiving them off to a storage target in near realtime.
 On a nightly schedule Wal-E also pushes a full backup to the storage target, referred to
-as a 'base backup'. A restore then is a combination of a 'base backup' and all of the 
+as a 'base backup'. A restore then is a combination of a 'base backup' and all of the
 WAL transaction files since the backup to recover the database to a given point in time.
 
 ## Backing Our Data Up
 
 ### Where is Our Data Going
 
-Currently our production data is being streamed to Amazon S3 into a bucket labeled `gitlab-dbprod-backups`. Our secondary databases (version, customers, sentry, etc) 
+Currently our production data is being streamed to Amazon S3 into a bucket labeled `gitlab-dbprod-backups`. Our secondary databases (version, customers, sentry, etc)
 are in a bucket labeled `gitlab-secondarydb-backups`.
 
 ### How Does it Get There?
@@ -119,3 +119,25 @@ Before we start, take a deep breath and don't panic.
 [Wal-E]: https://github.com/wal-e/wal-e
 [PSQL_Archiving]: https://www.postgresql.org/docs/9.6/static/continuous-archiving.html
 [PSQL_WAL]: https://www.postgresql.org/docs/current/static/wal-intro.html
+
+## Creating servers for testing backups
+
+ 1. For testing of primary database restore, create on Azure:
+   1. Resource group, say, `backup-may-2017`
+   1. Create GS5 server, Ubuntu 16.04, managed disks, add 1TB disk to be formatted as ext4 later.
+ 1. For testing of secondary database restore, simple DO instance with 512MB of ram would do. Just use the same Ubuntu version, as they have different postgresql versions, and backup from 9.5 won't install on 9.3.
+ 1. Prepare the server (common steps for both scenarios):
+   1. Install necessary software:
+```
+apt-get update
+apt-get install pv daemontools lzop gcc make python3 virtualenv python3-dev libssl-dev
+virtualenv --python=python3 /opt/wal-e
+/opt/wal-e/bin/pip3 install boto azure wal-e
+```
+   1. `mkdir /etc/wal-e.d/env -p` and populate files `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `WALE_S3_PREFIX`
+ 1. In case of primary:
+   1. Create partition on `/dev/sdc`, format it as ext4 and mount on `/var/opt/gitlab`.
+   1. Install gitlab-ee and proceed with recovery procedures, running in tmux/screen (runtime ~90 minutes)
+ 1. In case of secondary, install postgresql and proceed with recovery procedures.
+
+ 1. Don't forget to clean up the resource group after tests are complete.

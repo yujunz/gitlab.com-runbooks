@@ -2,7 +2,7 @@
 
 This document will cover how our packagecloud infrastructure works, how
 backups are taken, and how to restore said backups. `packages.gitlab.com`
-is hosted in AWS us-west-1 (N. California). There are also 
+is hosted in AWS us-west-1 (N. California). There are also
 [PackageCloud docs](https://packagecloud.atlassian.net/wiki/display/ENTERPRISE/Backups)
 on the entire backup process.
 
@@ -10,7 +10,7 @@ on the entire backup process.
 
 PackageCloud is provided as an omnibus package, just like GitLab. This
 package includes everything that one would need to begin using PackageCloud.
-We install and configure PackageCloud via the [gitlab-packagecloud](https://gitlab.com/gitlab-cookbooks/gitlab-packagecloud) chef cookbook. The 
+We install and configure PackageCloud via the [gitlab-packagecloud](https://gitlab.com/gitlab-cookbooks/gitlab-packagecloud) chef cookbook. The
 omnibus package contains:
 
 * mysql
@@ -48,9 +48,9 @@ be a [large scale S3 outage](https://aws.amazon.com/message/41926/).
 
 ## How Is the DB Backed Up?
 
-The native PackageCloud backups use [innobackupex](https://www.percona.com/doc/percona-xtrabackup/2.4/innobackupex/creating_a_backup_ibk.html). 
-This creates a full backup of the MySQL data without locking the database for the 
-entire backup. Additionally, the backup/restore of the database is also much faster 
+The native PackageCloud backups use [innobackupex](https://www.percona.com/doc/percona-xtrabackup/2.4/innobackupex/creating_a_backup_ibk.html).
+This creates a full backup of the MySQL data without locking the database for the
+entire backup. Additionally, the backup/restore of the database is also much faster
 than a normal mysqldump/SQL file import.
 You can read more about how innobackupex works in Percona's [innobackupex documentation](https://www.percona.com/doc/percona-xtrabackup/2.4/innobackupex/how_innobackupex_works.html).
 As of this writing, the database is over 600GB in size and takes multiple hours to back
@@ -65,8 +65,8 @@ rebuild and will thus begin with building and configuring the server.
 
 1. Build a new server! The current specs are listed below.
   * Instance Size: c4.2xlarge
-  * Root Disk Size: 1TG (gp2)
-  * Data Disk Size: 16TB (gp2), xfs, mounted on /var/opt/packagecloud
+  * Root Disk Size: 8GB (gp2)
+  * Data Disk Size: 2TB (gp2), xfs, mounted on /var/opt/packagecloud
   * OS: Ubuntu 14.04 LTS
   * Security Groups With Inbound Ports:
     * 80
@@ -79,8 +79,8 @@ rebuild and will thus begin with building and configuring the server.
    up for you.
 1. Install s3cmd and use the credentials in the `packagecloud.rb` file for the credentials.
 1. Download the most recent backup from `s3://gitlab-packagecloud-db-backups/uploaded-backups` and place it in `/var/opt/packagecloud/backups/`.
-1. Run the restore command `packagecloud-ctl backup-database-restore /var/opt/packagecloud/backups/<name of tgz file>` 
-This step will take around 2 hours. As the database grows, so too will this time. 
+1. Run the restore command `packagecloud-ctl backup-database-restore /var/opt/packagecloud/backups/<name of tgz file>`
+This step will take around 2 hours. As the database grows, so too will this time.
 Be certain to run this step in `screen` or `tmux`!
 1. At this point, everything should be ready to go. If the elastic IP is unable to
 be used for some reason, you will need to update DNS.
