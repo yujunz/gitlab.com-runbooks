@@ -71,13 +71,39 @@ WHERE NOT blockedl.granted;
 
 ## Triggering a Failover
 
-To trigger a failover, run the following command on a **secondary**:
+A failover at the moment has numerous manual steps at the moment:
+
+In general, we have an azure lb which executes a healthcheck on all the nodes in
+its load balancing set. This healthcheck **ONLY** verifies that a port is open on
+a host, regardless of the hosts, state. Currently, only one host is in the load 
+balancing set: the current master (**db1**).
+
+The failover proceedure is as follows:
+
+1. stop postgres on primary (if the node is reachable)
+
+2. promote secondary
+run the following command on a **secondary**:
 
 ```bash
 sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_ctl -D /var/opt/gitlab/postgresql/data promote
 ```
 
 This will promote the host these commands were executed on to the primary.
+
+3. update azure lb set
+add the host which is now primary to the `Backend pools` for the load balancer.
+
+* login to azure
+* choose `all resources`
+* search for `DBProdLB`
+* click on `Backend pools`
+* click on the `DBProd` pool
+* click on `Add a target network IP configuration`
+* From the `Target Virtual Machine` drop down, choose the new master
+* click on the trash can to remove the old master
+
+Note: so a machine can show up in the drop down, it has to be associated with the resource group and availibility set of the load balancer (in our case both are called `DBProd`).
 
 ## Setting up Secondaries
 
