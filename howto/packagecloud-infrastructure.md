@@ -76,7 +76,12 @@ rebuild and will thus begin with building and configuring the server.
 1. Add the newly created server to [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo) with the
    the current `packages.gitlab.com` node as a template.
 1. Once you run chef-client on the new server, it will automatically set the config
-   up for you.
+   up for you. Alternatively, you can manually install packagecloud by:
+  * getting the deb repo url from `/etc/apt/sources.list.d/computology_packagecloud-enterprise_.list` on `packages.gitlab.com`
+  * installing it via `apt-get update && apt-get install packagecloud`
+  * copying the `/etc/packagecloud/packagecloud.rb` file from `packages.gitlab.com`. Currently we are only testing restore,
+    therefore you can comment out the `ssl` and `backups` settings.
+  * running `packagecloud-ctl reconfigure`
 1. Install s3cmd and use the credentials in the `packagecloud.rb` file for the credentials.
 1. Download the most recent backup from `s3://gitlab-packagecloud-db-backups/uploaded-backups` and place it in `/var/opt/packagecloud/backups/`.
 1. Run the restore command `packagecloud-ctl backup-database-restore /var/opt/packagecloud/backups/<name of tgz file>`
