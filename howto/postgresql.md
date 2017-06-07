@@ -83,14 +83,14 @@ The failover proceedure is as follows:
 1. stop postgres on primary (if the node is reachable)
 
 2. promote secondary
-run the following command on a **secondary**:
-
-```bash
-sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_ctl -D /var/opt/gitlab/postgresql/data promote
-```
-
-This will promote the host these commands were executed on to the primary.
-
+    run the following command on a **secondary**:
+    
+    ```bash
+    sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_ctl -D /var/opt/gitlab/postgresql/data promote
+    ```
+    
+    This will promote the host these commands were executed on to the primary.
+    
 3. update azure lb set
 add the host which is now primary to the `Backend pools` for the load balancer.
 
