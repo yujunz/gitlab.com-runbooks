@@ -8,3 +8,13 @@ ALERT SidekiqQueuesTooLong
     description="Sidekiq jobs are piling up for the last minute, this may be under control, but I'm just letting you know that this is going on, check http://performance.gitlab.net/dashboard/db/sidekiq-stats. Note that ProcessCommitWorker is excluded from job count.",
     runbook="troubleshooting/large-sidekiq-queue.md"
   }
+
+ALERT SidekiqQueuesTooLargeHourly
+  IF topk(1, sidekiq_queue_size{name!~"process_commit"}) > 2000
+  FOR 60m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    title="Large amount of Sidekiq Queued jobs: {{$value}}",
+    description="There have been over queued 2000 Sidekiq jobs for the last hour. Check http://performance.gitlab.net/dashboard/db/sidekiq-stats. Note that ProcessCommitWorker is excluded from job count.",
+    runbook="troubleshooting/large-sidekiq-queue.md"
+  }
