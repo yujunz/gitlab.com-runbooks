@@ -1,6 +1,7 @@
 # Purpose of this repo
 
-This repo aims to gather all the tools we use to manage GitLab, from a simple ssh change that allows to move faster to full blown tools that make our life easier for some reason.
+This folder aims to gather all the tools we use to manage GitLab, from a simple ssh change that allows to move faster to full blown tools that make our life easier for some reason.
+
 
 ## Bash setup
 
@@ -20,3 +21,9 @@ export GITLAB_COOKBOOKS_DIR="${HOME}/Documents/Gitlab/cookbooks"
 
 source $HOME/src/gitlab.com/gl-infra/tools/bash_gitlab.sh
 ```
+
+### Local Environment
+
+You can create files inside the toolbelt/.env folder that will be sourced before sourcing the rest of the files.
+
+Use this to add any function or environment varilable that is needed by the rest of the scripts.
