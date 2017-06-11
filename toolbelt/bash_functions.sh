@@ -68,7 +68,7 @@ function gssh {
   ip=$1
   shift
   [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] || ip=$(gip $ip)
-  [ -z $ip ] && echo "Invalid ip or hostname" && exit 1
+  [ -z $ip ] && echo "Invalid ip or hostname" && return
   ssh -i ${GITLAB_SSH_KEY} ${GITLAB_SSH_USER}@$ip $@
 }
 
@@ -90,7 +90,7 @@ function gitlab-nodes-with-ips {
 function rm_merged_branches {
   if [[ ! -d .git ]]; then
     echo "Not a git repo" 
-    return 1
+    return
   fi
   for branch in `git branch --merged | grep -v master`
   do 
