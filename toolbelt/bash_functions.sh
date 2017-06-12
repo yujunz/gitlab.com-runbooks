@@ -11,39 +11,6 @@
 [ -z "${GITLAB_SSH_USER}" ] && echo "GITLAB_SSH_USER is not defined" && return 1
 [ -z "${GITLAB_SSH_KEY}" ] && echo "GITLAB_SSH_KEY is not defined" && return 1
 
-## Terraform
-function gitlab-terraform {
-  case $1 in
-    staging)
-      export CONSUL_HTTP_ADDR=""
-      export CONSUL_HTTP_TOKEN=""
-      export TF_VAR_arm_subscription_id=""
-      export TF_VAR_arm_tenant_id=""
-      export TF_VAR_arm_client_id=""
-      export TF_VAR_arm_client_secret=""
-      export TF_VAR_first_user_username=""
-      export TF_VAR_first_user_password=""
-      ;;
-    environments)
-      export CONSUL_HTTP_ADDR=""
-      export CONSUL_HTTP_TOKEN=""
-      export TF_VAR_do_dev_token=""
-      ;;
-    disable)
-      unset CONSUL_HTTP_ADDR \
-            CONSUL_HTTP_TOKEN \
-            TF_VAR_arm_subscription_id \
-            TF_VAR_arm_tenant_id \
-            TF_VAR_arm_client_id \
-            TF_VAR_arm_client_secret \
-            TF_VAR_first_user_username \
-            TF_VAR_first_user_password
-      ;;
-    *) echo "Usage: gitlab-terraform <staging|environments|disable>"
-      ;;
-  esac
-}
-
 ## Chef
 
 function cookbook {
