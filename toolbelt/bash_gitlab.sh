@@ -13,3 +13,4 @@ done
 
 source "${DIR}/bash_aliases.sh"
 source "${DIR}/bash_functions.sh"
+source "${DIR}/dynamic_cd_path.sh"

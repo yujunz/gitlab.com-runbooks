@@ -12,6 +12,7 @@ Optionally, declare any of the following environment vars:
 - GITLAB_COOKBOOKS_DIR
 - GITLAB_SSH_USER
 - GITLAB_SSH_KEY
+- GITLAB_CDPATH_ROOT
 
 For example:
 
@@ -27,3 +28,11 @@ source $HOME/src/gitlab.com/gl-infra/tools/bash_gitlab.sh
 You can create files inside the toolbelt/.env folder that will be sourced before sourcing the rest of the files.
 
 Use this to add any function or environment varilable that is needed by the rest of the scripts.
+
+### Dynamic CD PATH
+
+To enable dynamic generation of CDPATH export the GITLAB_CDPATH_ROOT array variable before sourcing
+the toolbelt
+
+Ex:
+ export GITLAB_CDPATH_ROOT=("${HOME}/src/gitlab.com" "${HOME}/src/dev.gitlab.org")
