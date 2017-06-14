@@ -129,9 +129,9 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Update packages manually for a given role](howto/manage-workers.md#update-packages-fleet-wide)
 * [Rename a node already in Chef](howto/rename-nodes.md)
 * [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
-* [Retrieve old values in a Chef vault](howto/retrieve-old-chef-vault-values.md)
 * [Manage Chef Cookbooks](howto/chef-documentation.md)
 * [Chef Guidelines](howto/chef-guidelines.md)
+* [Chef Vault](howto/chef-vault.md)
 
 ### Work with CI Infrastructure
 
