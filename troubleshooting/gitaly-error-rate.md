@@ -21,14 +21,20 @@ sudo less /var/log/gitlab/gitaly/current
 ## 2. Disable the Gitaly operation causing trouble
 
 - Go to https://performance.gitlab.net/dashboard/db/gitaly-features?orgId=1 and identify the feature with a high error rate.
-- Update the relevant role for the problematic instance on chef-repo and remove the environment variable for the relevant operation (under `default_attributes -> omnibus-gitlab -> gitlab_rb -> gitlab-rails -> env`). The mapping of environment variables to gRPC calls is as follows:
+- Disable the relevant feature flag by running `!feature-set <flag_name> false`
+on Slack's #production channel. The mapping of flag names to gRPC calls is as follows:
 
 
-| Env variable        | gRPC call             |
-|---------------------|-----------------------|
-| GITALY_ROOT_REF     | FindDefaultBranchName |
-| GITALY_BRANCH_NAMES | FindAllBranchNames    |
-| GITALY_TAG_NAMES    | FindAllTagNames       |
+| Flag name             | gRPC call             |
+|-----------------------|-----------------------|
+| gitaly_root_ref       | FindDefaultBranchName |
+| gitaly_branch_names   | FindAllBranchNames    |
+| gitaly_tag_names      | FindAllTagNames       |
+| gitaly_local_branches | FindLocalBranches     |
+| gitaly_is_ancestor    | CommitIsAncestor      |
+| gitaly_find_ref_name  | FindRefName           |
 
 
-- If that doesn't solve the issue you can disable Gitaly entirely by changing the Gitaly override to `enable: false` (under `override_attributes -> omnibus-gitlab -> gitlab_rb -> gitaly`)
+- If that doesn't solve the issue you can disable Gitaly entirely by updating
+the relevant role(s) on chef-repo and changing the Gitaly override to
+`enable: false` (under `override_attributes -> omnibus-gitlab -> gitlab_rb -> gitaly`)
