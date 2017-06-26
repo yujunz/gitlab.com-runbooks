@@ -15,3 +15,4 @@ cmd:redis_command_call_duration_seconds_count:irate1m = sum(irate(redis_command_
 gitaly:grpc_server_handled_total:rate1m = sum(rate(grpc_server_handled_total[1m])) by (job, grpc_method)
 gitaly:grpc_server_handled_total:error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, grpc_method)
 gitaly:grpc_server_handled_total:instance_error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, instance)
+gitaly:grpc_server_handling_seconds_bucket:rate1m = sum(rate(grpc_server_handling_seconds_bucket[1m])) by (le,fqdn,job,grpc_method)
