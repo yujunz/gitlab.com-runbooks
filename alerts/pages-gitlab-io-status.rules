@@ -8,3 +8,12 @@ ALERT GitlabPagesDown
     description="GitLab pages is down for 1 minute! Consider !tweet 'GitLab pages are not responding, we are investigating the root cause.' if problem exists.",
     runbook="troubleshooting/gitlab-pages.md"
   }
+
+ALERT GitLabPagesNotScraped
+  IF absent(gitlab_pages_http_requests_total)
+  FOR 5m
+  LABELS {severity="warn", channel="production"}
+  ANNOTATIONS {
+    title="GitLab Pages has not be scraped for 5 minutes",
+  }
+  
