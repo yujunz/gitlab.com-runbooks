@@ -42,6 +42,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Runners cache is down](troubleshooting/runners_cache_is_down.md)
 * [Runners registry is down](troubleshooting/runners_registry_is_down.md)
 * [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
+* [Too many connections on Runner's cache server](troubleshooting/ci_too_many_connections_on_runners_cache_server.md)
 
 ### Git Processes
 
