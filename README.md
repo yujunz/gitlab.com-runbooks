@@ -109,7 +109,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ### Work with storage
 
-* [Migrate a project to CephFS or any other shard](howto/migrate-to-cephfs.md)
+* [Understanding GitLab Storage Shards](howto/sharding.md)
 * [Administer and Maintain CephFS](howto/cephfs.md)
 
 ### Work with Terraform
