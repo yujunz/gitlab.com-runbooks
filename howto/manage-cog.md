@@ -27,6 +27,9 @@ cefd144ca3be        postgres:9.5.4          "/docker-entrypoin..."   4 weeks ago
 
 ### Add a user
 
+Adding a user can be done from slack by having the user talk to `@marvin`. They can then be added to a group by an admin with `!group-member-add <group-name> <user-handle>`.
+Alternatively a user can be added from the console with the following:
+
 * Follow the _Run cogctl_ instructions to get yourself into a bash inside cog
 * Run the following command `cogctl user create <username> --first-name <first name> --last-name <last name> --email <email> --password <generated password>`
 * Add a handle to the user `cogctl chat-handle create $username slack $username < /dev/null``
