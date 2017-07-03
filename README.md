@@ -187,6 +187,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * If you have conflicting information, **stop and think**, bounce ideas, escalate
 * Gather information when the incident is done - logs, samples of graphs, whatever could help figuring out what happened
 * If we lack monitoring or alerting Open an issue and label as `monitoring`, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
+* Keep in mind [GitLab's data breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) and work with the security team to determine if a user data breach has occured and if notification needs to be provided.
 
 ## Guidelines
 
