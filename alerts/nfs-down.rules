@@ -1,5 +1,5 @@
 ALERT GitNFSServerDown
-  IF up{fqdn=~"nfs-file-[0-9]+.stor.gitlab.com"} == 0
+  IF up{fqdn=~"nfs-file-.*", job="base-debian"} == 0
   FOR 2m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
@@ -9,7 +9,7 @@ ALERT GitNFSServerDown
   }
 
 ALERT FileNFSServerDown
-  IF up{fqdn=~"nfs-(uploads|share|lfs|artifacts)-[0-9]+.stor.gitlab.com"} == 0
+  IF up{fqdn=~"nfs-(uploads|share|lfs|artifacts)-.*", job="base-debian"} == 0
   FOR 2m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
