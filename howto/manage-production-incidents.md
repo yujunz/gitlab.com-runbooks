@@ -38,6 +38,7 @@ During a major outage the work will be distributed in the following way:
   * Post `@channel, we have a major outage and need help reviewing public documents` into the #marketing slack channel.
   * Post `@channel, we have a major outage and are working to solve it, you can find the public doc <here>` into the #devrel slack channel.
   * Move the war room to a paid account so the meeting is not time limited.
+  * Coordinate with the security team and the communications manager and use the [breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) to determine if a breach of user data has occurred and notify any affected users.
 
 * The communications manager will
   * Setup a not time limited Zoom war room and provide it to the point person to move all the production engineers there.
