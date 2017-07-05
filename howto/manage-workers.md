@@ -12,7 +12,7 @@ Issue the following command from the chef repo:
 
 `bundle exec knife ssh -aipaddress role:gitlab-cluster-worker 'sudo gitlab-ctl hup unicorn'`
 
-### Rolling restart unicorn with zero downtime
+### How to perform zero downtime frontend host reboot
 
 For some specific cases, your only option will be restarting the `unicorn` process (for example change the `listen` directive). In this case, a restart will induce 5XX HTTP codes, and that's bad.
 

@@ -92,7 +92,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ### Work with the fleet and the rails app
 
-* [Restart unicorn with a zero downtime](howto/manage-workers.md#restart-unicorn-with-a-zero-downtime)
+* [Reload unicorn with zero downtime](howto/manage-workers.md#reload-unicorn-with-zero-downtime)
+* [How to perform zero downtime frontend host reboot](howto/manage-workers.md#how-to-perform-zero-downtime-frontend-host-reboot)
 * [Gracefully restart sidekiq jobs](howto/manage-workers.md#gracefully-restart-sidekiq-jobs)
 * [Start a rails console in the staging environment](howto/staging-environment.md#run-a-rails-console-in-staging-environment)
 * [Start a redis console in the staging environment](howto/staging-environment.md#run-a-redis-console-in-staging-environment)
