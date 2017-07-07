@@ -8,7 +8,7 @@ If you see no stats in the [Sidekiq dashboard](http://performance.gitlab.net/das
 
 ## 1. Identify the Redis master
 
-On any of the redis nodes run:
+On any of the redis nodes `redis0X.db.gitlab.com` run:
 
 ```
 /opt/gitlab/embedded/bin/redis-cli -p 26379
@@ -26,15 +26,15 @@ you should see output like this:
  1) "name"
  2) "gitlab-redis"
  3) "ip"
- 4) "10.90.80.70"
+ 4) "10.66.2.103"
  5) "port"
  6) "6379"
  ```
 
-the master is the node with private IP of `10.90.80.70`, to get the actual node run the following on your machine:
+the master is the node with private IP of `10.66.2.103`, to get the actual node run the following on your machine:
 
  ```
-knife ssh -aipaddress "role:gitlab-cluster-redis*" "ifconfig | grep '10.45.2.6'"
+knife ssh 'roles:gitlab-base-db-redis' "ifconfig | grep '10.66.2.103'"
 ```
 
 the first column of the output is IP you should ssh to.
