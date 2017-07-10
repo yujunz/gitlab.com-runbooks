@@ -121,6 +121,21 @@ Before we start, take a deep breath and don't panic.
 [PSQL_WAL]: https://www.postgresql.org/docs/current/static/wal-intro.html
 
 ## Creating servers for testing backups
+The semi-automated procedure (production db):
+ 1. `mkdir ./bad && cd ./bad`
+ 1. grab backup_scripts/01-prod-db.sh
+ 1. `time bash 01-prod-db.sh`
+ 1. continue from customizing wal-e access keys and selecting time to restore.
+    (Make sure the cloud-init finished: `tail -f /var/log/cloud-init-output.log`
+
+The semi-automated procedure (secondary db):
+ 1. `mkdir ./bad && cd ./bad`
+ 1. grab backup_scripts/02-secondary-db.sh, edit variables
+ 1. `time bash 02-secondary-db.sh`
+ 1. continue from customizing wal-e access keys and selecting time to restore.
+    (Make sure the cloud-init finished: `tail -f /var/log/cloud-init-output.log`
+
+The Manual procedure:
 
  1. For testing of primary database restore, create on Azure:
    1. Resource group, say, `backup-may-2017`

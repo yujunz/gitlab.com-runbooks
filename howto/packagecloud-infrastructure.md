@@ -63,6 +63,16 @@ the problems with uploading to S3 automatically and the giant database. The foll
 guide assumes that there has been a catastrophic event that will require a complete
 rebuild and will thus begin with building and configuring the server.
 
+Semi-automated way:
+1. Make sure your `aws` cli is working (`aws ec2 describe-vpcs` as test cmd)
+1. `mkdir ./bad && cd ./bad`
+1. grab backup_scripts/04-packagecloud.sh
+1. `time bash 04-packagecloud.sh`
+1. As soon as cloud-init is done (`tail -f /var/log/cloud-init-output.log`),
+   you can proceed with configuring secrets for packagecloud.
+
+Manual way:
+
 1. Build a new server! The current specs are listed below.
   * Instance Size: c4.2xlarge
   * Root Disk Size: 8GB (gp2)
