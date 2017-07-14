@@ -21,7 +21,7 @@ If sentry.gitlap.com returns HTTP 500 status code.
     ```
 
 1. If one of the processes is not running, check `/var/log/supervisor/supervisord.log`. More
-   detailed logs may also be in `/var/log/syslog`.
+   detailed logs may also be in `/var/log/supervisor`.
 
 1. To start one of the services that is down (e.g. sentry-web):
 
