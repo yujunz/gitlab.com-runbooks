@@ -36,7 +36,7 @@ ALERT NoJobsOnSharedRunners
 
 ## Runners manager status
 ALERT RunnersManagerDown
-  IF up{job=~"shared-runners|shared-runners-gitlab-org|private-runners"} == 0
+  IF up{job=~"shared-runners|shared-runners-gitlab-org|private-runners|omnibus-runners"} == 0
   FOR 5m
   LABELS {severity="critical", pager="ci-cd"}
   ANNOTATIONS {
