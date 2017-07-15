@@ -15,6 +15,8 @@ Gitlab::Redis.with do |redis|
     removed += keys.length
 
     break if cursor == '0'
+    print '.' # for feedback
+    sleep 0.1 # to leave room to redis to do something else
   end
 end
 
