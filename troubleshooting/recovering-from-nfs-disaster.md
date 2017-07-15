@@ -19,5 +19,5 @@ and the repository exists.
 
 ## Resolution
 
-Run the script in toolbelt/flush_exists_cache.rb on a production node, there may be
+Run the script in scripts/flush_exists_cache.rb on a production node, there may be
 a load increase on the primary DB, it should fade away in a few minutes.
