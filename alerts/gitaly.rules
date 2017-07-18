@@ -22,3 +22,15 @@ ALERT gitaly_error_rate_too_high
     description="Gitaly error rate for the last 5 minutes is over 2 on {{$labels.instance}}. Check Gitaly logs and consider disabling it on that host.",
     runbook="troubleshooting/gitaly-error-rate.md"
   }
+
+
+## Gitaly Down
+ALERT GitalyFileServerDown
+  IF up{job="gitaly-production", tier="stor"} == 0
+  FOR 1m
+  LABELS {severity="critical", channel="gitaly"}
+  ANNOTATIONS {
+    title="Gitaly is down on {{ $labels.fqdn }}",
+    description="Gitaly has been marked as down for the past minute on {{$labels.instance}}. Check Gitaly logs and restart the process if neccessary",
+    runbook="troubleshooting/gitaly-down.md"
+  }
