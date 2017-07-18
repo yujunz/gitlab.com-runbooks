@@ -20,7 +20,7 @@ PostgreSQL is configured to archive to WAL-E upon some conditions, as specified 
 ```
 
 ### I got an alert but WAL-E is working
-The problem might me `mtail`.
+The problem might be `mtail`.
 
 1. Check `mtail` is working with `sudo sv status mtail`
 1. If `mtail` is up, check `/var/log/mtail` for errors under `/var/log/mtail.ERROR`.
