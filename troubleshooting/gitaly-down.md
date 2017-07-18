@@ -22,4 +22,4 @@
 
 - Can you see the process in `ps aux | grep gitaly`?
 - Is the prometheus port responding: Does `curl https://localhost:9236/metrics` respond?
-- Attempt to restart gitaly service.
+- Attempt to restart gitaly service: `sudo gitlab-ctl restart gitaly`
