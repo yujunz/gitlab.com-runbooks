@@ -14,12 +14,12 @@
 
 ## 2. Check the Gitaly Logs
 
-- Check Sentry for unusual errors: https://sentry.gitlap.com/gitlab/gitaly-production/
-- Check Kibana for increased error rates: https://log.gitlap.com/goto/5347dee91b984026567bfa48f30c38fb
+- Check [Sentry](https://sentry.gitlap.com/gitlab/gitaly-production/) for unusual errors
+- Check [Kibana](https://log.gitlap.com/goto/5347dee91b984026567bfa48f30c38fb) for increased error rates
 - Check the Gitaly service logs on the affected host
 
 ## 3. Ensure that the Gitaly server process is running
 
 - Can you see the process in `ps aux | grep gitaly`?
 - Is the prometheus port responding: Does `curl https://localhost:9236/metrics` respond?
-- Attempt to restart gitaly service. TODO: preferred method for starting a GitLab service in production.
+- Attempt to restart gitaly service.
