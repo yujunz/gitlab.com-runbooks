@@ -1,4 +1,4 @@
-gitlab_com:last_wale_backup_age_in_seconds=(time()-wale_backup_last_completed_time_seconds)
+gitlab_com:last_wale_backup_age_in_seconds=(time()-wale_backup_last_completed_time_seconds{instance="db1.cluster.gitlab.com:3903"})
 
 ALERT WALEBackupDelayed
   IF gitlab_com:last_wale_backup_age_in_seconds >= 60*60
