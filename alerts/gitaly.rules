@@ -34,3 +34,14 @@ ALERT GitalyFileServerDown
     description="Gitaly has been marked as down for the past minute on {{$labels.instance}}. Check Gitaly logs and restart the process if neccessary",
     runbook="troubleshooting/gitaly-down.md"
   }
+
+## Gitaly File Server CPU Usage
+ALERT GitalyFileServerCPUUsage
+  IF process_cpu_seconds_total:rate1m{job="gitaly-production", tier="stor"} >= 0.5
+  FOR 30s
+  LABELS {severity="critical", channel="gitaly"}
+  ANNOTATIONS {
+    title="Gitaly: High CPU usage on {{ $labels.fqdn }}",
+    description="Gitaly has been using more than 50% CPU on {{$labels.instance}} for the past 30 seconds. This may affect the stability of the NFS server.",
+    runbook="troubleshooting/gitaly-high-cpu.md"
+  }
