@@ -85,6 +85,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ### Deploy
 
+* [Announce a deployment](https://gitlab.com/gitlab-org/takeoff/blob/master/doc/announce-a-deployment.md)
 * [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
 * [Deploy GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md)
 * [Rollback GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md#rolling-back-gitlabcom)
