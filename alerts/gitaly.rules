@@ -38,10 +38,10 @@ ALERT GitalyFileServerDown
 ## Gitaly File Server CPU Usage
 ALERT GitalyFileServerCPUUsage
   IF process_cpu_seconds_total:rate1m{job="gitaly-production", tier="stor"} >= 0.5
-  FOR 30s
+  FOR 5m
   LABELS {severity="critical", channel="gitaly"}
   ANNOTATIONS {
     title="Gitaly: High CPU usage on {{ $labels.fqdn }}",
-    description="Gitaly has been using more than 50% CPU on {{$labels.instance}} for the past 30 seconds. This may affect the stability of the NFS server.",
+    description="Gitaly has been using more than 50% CPU on {{$labels.fqdn}} for the past 5 minutes. This may affect the stability of the NFS server. Visit this dashboard: https://performance.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?refresh=30s&orgId=1&var-fqdn={{$labels.fqdn}}&from=now-1h&to=now",
     runbook="troubleshooting/gitaly-high-cpu.md"
   }
