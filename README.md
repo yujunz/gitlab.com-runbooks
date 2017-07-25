@@ -166,6 +166,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [How to work with ES](howto/elasticsearch.md)
 
+### Internal DNS
+
+* [Managing internal DNS](howto/internal_dns.md)
+
 ### Debug and monitor
 
 * [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
