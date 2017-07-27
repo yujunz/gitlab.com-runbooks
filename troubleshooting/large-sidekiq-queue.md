@@ -130,7 +130,7 @@ Sidekiq queue. If you do not want to drop the entire queue and only specific
 types of workers, you can do this via a command-line tool.
 
 Suppose you see a lot of `RepositoryMirrorUpdateWorker` instances that you want to kill.
-BE CAREFUL WITH THIS COMMAND! You can see how many jobs would be killed using the --dry-run
+BE CAREFUL WITH THIS COMMAND! You can see how many jobs would be killed using the `--dry-run`
 parameter:
 
 ```
