@@ -26,7 +26,7 @@ ALERT gitaly_error_rate_too_high
 
 ## Gitaly Down
 ALERT GitalyFileServerDown
-  IF up{job="gitaly-production", tier="stor"} == 0
+  IF up{job="gitaly-production", tier="stor-nfs"} == 0
   FOR 1m
   LABELS {severity="critical", channel="gitaly"}
   ANNOTATIONS {
@@ -37,7 +37,7 @@ ALERT GitalyFileServerDown
 
 ## Gitaly File Server CPU Usage
 ALERT GitalyFileServerCPUUsage
-  IF process_cpu_seconds_total:rate1m{job="gitaly-production", tier="stor"} >= 0.5
+  IF process_cpu_seconds_total:rate1m{job="gitaly-production", tier="stor-nfs"} >= 0.5
   FOR 5m
   LABELS {severity="critical", channel="gitaly"}
   ANNOTATIONS {
