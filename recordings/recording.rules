@@ -1,12 +1,12 @@
 # HAProxy responses by backend and code.
-backend_code:haproxy_server_http_responses_total:irate1m = sum(irate(haproxy_server_http_responses_total[1m])) by (backend, code)
+backend_code:haproxy_server_http_responses_total:irate1m = sum(irate(haproxy_server_http_responses_total[1m])) without (fqdn, instance)
 
 # HAProxy frontend traffic bandwidth.
-job_frontend:haproxy_frontend_bytes_in_total:irate1m = sum(irate(haproxy_frontend_bytes_in_total[1m])) by (job, frontend)
+job_frontend:haproxy_frontend_bytes_in_total:irate1m = sum(irate(haproxy_frontend_bytes_in_total[1m])) without (fqdn, instance)
 
 # HAProxy error rates.
-job_frontend:haproxy_frontend_request_errors_total:irate1m = sum(irate(haproxy_frontend_request_errors_total[1m])) by (job,frontend)
-job_backend:haproxy_backend_response_errors_total:irate1m = sum(irate(haproxy_backend_response_errors_total[1m])) by (job, backend)
+job_frontend:haproxy_frontend_request_errors_total:irate1m = sum(irate(haproxy_frontend_request_errors_total[1m])) without (fqdn, instance)
+job_backend:haproxy_backend_response_errors_total:irate1m = sum(irate(haproxy_backend_response_errors_total[1m])) without (fqdn, instance)
 
 # Total redis operations by command.
 cmd:redis_command_call_duration_seconds_count:irate1m = sum(irate(redis_command_call_duration_seconds_count[1m])) by (cmd)
