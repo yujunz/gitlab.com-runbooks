@@ -1,8 +1,8 @@
 ## Pending jobs for projects with shared runners enabled
 ALERT TooManyPendingBuildsOnSharedRunnerProject
-  IF (ci_pending_builds{shared_runners="yes"} > 500)
+  IF (ci_pending_builds{shared_runners="yes",has_minutes="yes"} > 500)
     and
-     (topk(1, predict_linear(ci_pending_builds{shared_runners="yes"}[15m], 3600)) > 1000)
+     (topk(1, predict_linear(ci_pending_builds{shared_runners="yes",has_minutes="yes"}[15m], 3600)) > 1000)
   FOR 5m
   LABELS {severity="warn", channel="ci-cd"}
   ANNOTATIONS {
@@ -13,7 +13,7 @@ ALERT TooManyPendingBuildsOnSharedRunnerProject
 
 ## Pending jobs per namespace over limit
 ALERT TooManyPendingJobsPerNamespace
-  IF max(ci_pending_builds{shared_runners="yes",namespace!=""}) > 500
+  IF max(ci_pending_builds{shared_runners="yes",namespace!="",has_minutes="yes"}) > 500
   FOR 1m
   LABELS {severity="warn", channel="ci-cd"}
   ANNOTATIONS {
