@@ -66,4 +66,16 @@ the certificate is live, working, and fully valid.
 * For dev.gitlab.org we use the same certificate for registry so make sure you
   update the normal and registry certificates with the same one.
 
+* SSLMate is configured to email the Production Engineering team 30 days prior
+  to a certificate expiring and again at regular intervals until the cert is
+  replaced or expired.
+
+* SSLMate is configured to monitor the following domains for certificates that 
+  are issued outside of SSLMate control and alert Production Engineering:
+  * gitlab.com
+  * gitlab.org
+  * gitlab.net
+  * gitlab.io
+  * gitlap.com
+
 [SSLMate]: https://sslmate.com/
