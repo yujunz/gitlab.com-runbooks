@@ -180,13 +180,17 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
 * [Run pgbadger to analyze queries](howto/postgresql.md#run-pgbadger-in-the-primary-database-server)
 
-## General guidelines in an emergency
+## General guidelines in for production incidents.
 
 * Confirm that it is actually an emergency, challenge this: are we losing data? Is GitLab.com not working?
 * [Tweet](howto/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
 * Join the `#production` channel
 * Define a _point person_ or _incident owner_, this is the person that will gather all the data and coordinate the efforts.
 * Organize:
+  * If intervention is required (i.e. a non self-healing service)  
+	  * Create a Google Doc to gather the timeline of events.
+	  * Publish this document using the File, Publish to web... function.
+	  * Make this document GitLab editable by clicking on the Share icon and selecting Advanced, Change, then On - GitLab.
   * Establish who is the point person on the incident in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the emergency.
   * Start a war room using zoom if it will save time
   * Share the link in the #production channel
@@ -194,8 +198,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * Be sure to be in sync - if you are going to reboot a service, say so: _I'm bouncing server X_
 * If you have conflicting information, **stop and think**, bounce ideas, escalate
 * Gather information when the incident is done - logs, samples of graphs, whatever could help figuring out what happened
+* Update the[Production Oncall Log](https://docs.google.com/document/d/1nWDqjzBwzYecn9Dcl4hy1s4MLng_uMq-8yGRMxtgK6M/edit#heading=h.nmt24c52ggf5)
 * If we lack monitoring or alerting Open an issue and label as `monitoring`, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
 * Keep in mind [GitLab's data breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) and work with the security team to determine if a user data breach has occurred and if notification needs to be provided.
+* Once the emergency is over, [Tweet](howto/tweeting-guidelines.md)  an update and let users know the problems are fixed. 
 
 ## Guidelines
 
