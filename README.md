@@ -182,7 +182,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ## General guidelines for production incidents.
 
-* Is this an emergency issue?
+* Is this an emergency incident?
 	* are we losing data? 
 	* Is GitLab.com not working or offline?
 	* has the incident affected users for greater than 1 hour?
@@ -191,13 +191,15 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * Define a _point person_ or _incident owner_, this is the person that will gather all the data and coordinate the efforts.
 * For emergency incidents define [Roles](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-production-incidents.md)
 	* Point person
+        * in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the emergency.
 	* Communications manager
 	* Marketing representative.
 	* Start a war room using zoom 
 	* Share the link in the #production channel
 	* Stream the zoom call live.  [Streaming a Webinar on YouTube Live – Zoom Help Center](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live)
 * For non-emergency incidents.  
-	* Establish who is the point person on the incident in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the emergency.
+	* Establish who is the point person on the incident. 
+	    * in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the incident.
 	* Start a war room using zoom if it will save time
 	* Share the link in the #production channel
 * Organize:
