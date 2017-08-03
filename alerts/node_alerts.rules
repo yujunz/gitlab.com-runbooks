@@ -11,3 +11,17 @@ ALERT LowDiskSpace
     description = "Consider sshing into the instance and removing old logs or clean temp files following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
     runbook="troubleshooting/filesystem_alerts.md"
   }
+
+ALERT HighInodeUsage
+  IF
+      node_filesystem_files_free{job="base-debian", fstype=~"(ext.|xfs)"}
+    /
+      node_filesystem_files{job="base-debian", fstype=~"(ext.|xfs)"}
+    * 100 <= 20
+  FOR 15m
+  LABELS { severity = "critical" }
+  ANNOTATIONS {
+    title = "Free inodes on {{ $labels.fqdn }} on mountpoint {{ $labels.mountpoint }} is at {{ $value | printf \"%.2f\" }}%",
+    description = "Consider ssh'ing into the instance and removing files or clean temp files following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
+    runbook="troubleshooting/filesystem_alerts_inodes.md"
+  }
