@@ -4,20 +4,6 @@
 
 During an incident there are at least 2 roles, and one more optional
 
-* Engineer: the person in charge to actually solve the technical problem.
-* Point person: the person that is coordinating the resolution of the problem at the technical level.
-* Communications manager: the person who manages external communication (setting up the live stream, etc)
-* Marketing representative: someone from marketing will need to be involved to review the outage document.
-
-## Definition of a major outage
-
-A major outage is any outage that has a ETA of more than 1h and is disruption the service.
-
-## Minor and major outages management
-
-During a minor outage all the communications will be handled through twitter using the @gitlabstatus account.
-
-During a major outage the work will be distributed in the following way:
 
 * Production engineers will
   * Open a war room on Zoom immediately to have high a bandwidth communication channel.
@@ -48,8 +34,3 @@ During a major outage the work will be distributed in the following way:
   * Review the Google Doc to provide proper context when needed.
   * Include a note about how is this outage impacting customers in the document.
   * Decide how to handle further communications when the outage is already handled.
-
-
-## Blameless Post Mortems
-
-Refer to the [infrastructure section](https://about.gitlab.com/handbook/infrastructure/) in the handbook for a description on how to write a good post mortem.
