@@ -81,10 +81,10 @@ case we are only concerned with blacklisting a single IP `192.168.0.1`.
 ```
 worker$ /opt/gitlab/embedded/bin/redis-cli -h 10.0.0.1
 10.0.0.1:6379> auth <password>
-10.0.0.1:6379> setex cache:gitlab:rack::attack:allow2ban:ban:192.168.0.1 68400 "1"
+10.0.0.1:6379> setex cache:gitlab:rack::attack:allow2ban:ban:192.168.0.1 86400 "1"
 ```
 
-This will ban the IP for 24 hours (68400 seconds) by storing the value "1" in the listed
+This will ban the IP for 24 hours (86400 seconds) by storing the value "1" in the listed
 key. Since this isn't a preferred method to blacklist a host it's best not to use a longer TTL.
 
 ### Should a block need to be removed
