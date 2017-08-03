@@ -197,9 +197,9 @@ The aim of this project is to have a quick guide of what to do when an emergency
 	* Share the link in the #production channel
 	* Stream the zoom call live.  [Streaming a Webinar on YouTube Live – Zoom Help Center](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live)
 * For non-emergency incidents.  
-	* * Establish who is the point person on the incident in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the emergency.
-	 * Start a war room using zoom if it will save time
-	 * Share the link in the #production channel
+	* Establish who is the point person on the incident in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the emergency.
+	* Start a war room using zoom if it will save time
+	* Share the link in the #production channel
 * Organize:
 * If intervention is required (i.e. a non self-healing service)  
 	  * Create a Google Doc to gather the timeline of events.
