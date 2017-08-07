@@ -1,6 +1,6 @@
 # When the lead is away
 
-Sometimes the lead of the production team may not be available to do its job.
+Sometimes the lead of the production team may not be available to do their job.
 
 When this happens, someone else from the team should take the position and
 behave as such to allow the rest of the team to work effectively.
@@ -19,7 +19,7 @@ GitLab.com
   and escalate to the team when necessary.
 - Act as an umbrella to avoid team randomization.
 - Have a laser focus on availability and performance of GitLab.com.
-- Keep the team aligned in the WoW (short term) in regard to the log term
+- Keep the team aligned in the WoW (short term) in regard to the long term
   (~meta ~goal issues) sharing the knowledge when matters
 - Fill the role of any other production engineer if the need arises.
 - Unblock others
@@ -29,7 +29,7 @@ GitLab.com
 People from within and outside of the company requests actions from the
 production team.
 
-These actions may be urgent or they may could be delayed due to the nature of
+These actions may be urgent or they could be delayed due to the nature of
 the issue or the already ongoing efforts of the team.
 
 It is the lead job to go through the issue tracker to triage newly created
@@ -60,7 +60,7 @@ from being randomized by any form of events.
 
 Triaging and batching are the best tools to make this happen.
 
-The goal here is to empower the team to work async so everyone can set its own
+The goal here is to empower the team to work async so everyone can set their own
 schedule and manage to get in _the zone_ and stay there for as long as
 possible.
 
