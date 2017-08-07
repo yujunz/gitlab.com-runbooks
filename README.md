@@ -237,6 +237,9 @@ The aim of this project is to have a quick guide of what to do when an emergency
   * Post-checks - how can I be 100% sure that it is solved
   * Rollback - optional, how can I undo my fix
 
+## When the lead is away
+
+[What is at play](howto/lead-away.md)
 
 # But always remember!
 
