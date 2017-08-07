@@ -99,6 +99,22 @@ Additionally, the lead will need to share the context with the team for when
 adjustments happen so everyone is on the same page and understand the reasoning
 behind the direction adjustment.
 
+#### Scheduling tasks
+
+Every Wednesday morning UTC, the acting lead will perform housekeeping of the
+current WoW by moving all the issues that are still open to the next one and
+adding ~"moved X" labels to issues that were goals and were not delivered
+during the WoW time.  Then rename and close the old WoW as _WoW ended <date>_,
+rename the _Next WoW_ to _WoW_ and then create a new _Next WoW_ for future
+planning.
+
+Before starting the new WoW the lead will also check that the ~goal issues are
+aligned with the longer term ~meta ~goal issues and properly scoped given what
+the team can actually do in a single WoW.  As a rule of thumb we should be only
+adding a 20% of planned work to a WoW because there will be a hidden 30% that
+will pop up from the scheduled work due to the nature of fast iteration, and a
+50% unscheduled work that will just happen.
+
 ### Unblock others
 
 We should try to keep the rest of the company unblocked as much as possible.
@@ -115,4 +131,3 @@ batching of requests.
 ### Fill the role of any other Production Engineer
 
 We are all in this together.
-
