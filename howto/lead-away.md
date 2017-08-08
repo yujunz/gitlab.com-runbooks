@@ -32,8 +32,8 @@ production team.
 These actions may be urgent or they could be delayed due to the nature of
 the issue or the already ongoing efforts of the team.
 
-It is the lead job to go through the issue tracker to triage newly created
-issues and complete them with labels so they get automatically sorted by
+It is the lead's job to go through the issue tracker to triage newly created
+issues and complete them with labels to ensure they get automatically sorted by
 priority.
 
 It is also part of this job to ask questions in the issues if they are not
@@ -46,8 +46,8 @@ issues that turn into scope creeps or keep moving the goal post.
 A similar thing happens with people making requests in Slack or similar means,
 people need things and they will try to get unblocked as soon as possible. This
 just happens because we are humans. The job of the lead in this case is to
-stand between the people who tries to reach the team directly with direct
-requests. What the lead has to do in this case is gently directing people to
+stand between the people who try to reach the team directly with direct
+requests. What the lead has to do in this case is to gently direct people to
 the issue tracker, if other people don't have the time to do it, then the lead
 should simply open an issue for them and again gently direct the conversation
 to the issue tracker.
@@ -120,7 +120,7 @@ will pop up from the scheduled work due to the nature of fast iteration, and a
 We should try to keep the rest of the company unblocked as much as possible.
 
 In reality, this goes hand in hand with being an umbrella for interruption and
-long term planning, meaning that people will request things, we should do our
+long term planning, meaning that when people will request things, we should do our
 best to batch them and deliver in the best possible time and form, without
 interrupting the current work flow or randomizing the team.
 
