@@ -132,6 +132,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Create users, rotate or remove keys from chef](howto/manage-chef.md)
 * [Update packages manually for a given role](howto/manage-workers.md#update-packages-fleet-wide)
 * [Rename a node already in Chef](howto/rename-nodes.md)
+* [Reprovisioning nodes](howto/reprovisioning-nodes.md)
 * [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
 * [Manage Chef Cookbooks](howto/chef-documentation.md)
 * [Chef Guidelines](howto/chef-guidelines.md)
