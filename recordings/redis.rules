@@ -5,3 +5,12 @@ cmd:redis_command_call_duration_seconds_count:irate1m = sum(irate(redis_command_
 # Keyspace hits & misses percentage
 redis:keyspace_hits:irate1m = irate(redis_keyspace_hits_total[1m])
 redis:keyspace_misses:irate1m = irate(redis_keyspace_misses_total[1m])
+
+# Networking rate
+redis:net_input_bytes:irate1m = irate(redis_net_input_bytes_total[1m])
+redis:net_output_bytes:irate1m = irate(redis_net_output_bytes_total[1m])
+
+# DB Keys
+redis:db_keys:irate1m = irate(redis_db_keys[1m])
+redis:db_keys_expiring:irate1m = irate(redis_db_keys_expiring[1m])
+redis:commands_processed:irate1m = irate(redis_commands_processed_total[1m])
