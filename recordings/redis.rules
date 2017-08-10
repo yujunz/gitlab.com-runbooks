@@ -1,0 +1,7 @@
+
+# Total redis operations by command.
+cmd:redis_command_call_duration_seconds_count:irate1m = sum(irate(redis_command_call_duration_seconds_count[1m])) by (cmd, environment)
+
+# Keyspace hits & misses percentage
+redis:keyspace_hits:irate1m = irate(redis_keyspace_hits_total[1m])
+redis:keyspace_misses:irate1m = irate(redis_keyspace_misses_total[1m])
