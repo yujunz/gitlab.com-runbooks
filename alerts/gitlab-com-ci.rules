@@ -113,7 +113,7 @@ ALERT RunnersNginxDockerRegistryCacheDown
 
 ALERT RunnersCacheServerHasTooManyConnections
   IF node_netstat_Tcp_CurrEstab{fqdn=~"runners-cache-.*.gitlab.com"} > 500
-  FOR 5m
+  FOR 20m
   LABELS {severity="critical", pager="ci-cd"}
   ANNOTATIONS {
     title="Number of established connections for {{ $labels.instance }} is too high",
