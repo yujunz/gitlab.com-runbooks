@@ -18,7 +18,8 @@ WAL transaction files since the backup to recover the database to a given point 
 ### Where is Our Data Going
 
 Currently our production data is being streamed to Amazon S3 into a bucket labeled `gitlab-dbprod-backups`. Our secondary databases (version, customers, sentry, etc)
-are in a bucket labeled `gitlab-secondarydb-backups`.
+are in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. 
+The key can be found in the Production vault of 1Password.
 
 ### How Does it Get There?
 
