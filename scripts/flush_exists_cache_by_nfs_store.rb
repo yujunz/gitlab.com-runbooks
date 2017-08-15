@@ -4,7 +4,7 @@ STORAGE = 'nfs-file02' # Change this to the right storage
 
 projects = Project.select("CONCAT('cache:gitlab:exists?:', namespaces.path, '/', projects.path, ':', projects.id) AS cache_key").joins(:namespace).where(repository_storage: STORAGE)
 
-Gitlab::Redis.with do |redis|
+Gitlab::Redis::Cache.with do |redis|
   removed = 0
   projects.in_batches do |relation|
     keys = relation.map { |row| row[:cache_key] }
@@ -19,7 +19,7 @@ end
 # Next expire subgroups individually
 projects = Project.select("projects.id, namespaces.path, projects.path").joins(:namespace).where(repository_storage: STORAGE)
 
-Gitlab::Redis.with do |redis|
+Gitlab::Redis::Cache.with do |redis|
   removed = 0
   projects.find_each do |project|
     begin
