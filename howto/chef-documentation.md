@@ -2,26 +2,78 @@
 
 ## Create New Cookbook
 
-Firstly, create the repo for your new cookbook. You will need to create two, one on dev and one on GitLab.com.
-Currently these are stored in the `gitlab-cookbooks/cookbookname` on GitLab.com and `cookbooks/cookbookname`
-on dev. You will need to set up mirroring to the matching dev repo.
+Creating new cookbook consists of several steps:
 
-To create a new cookbook locally, run the command `chef generate cookbook <cookbookname>`.
-This will create a new cookbook in the current directory with the cookbook name chosen.
+1. We have cookbook [template](https://gitlab.com/gitlab-cookbooks/template)
+   which have all the necessary bits to speed up cookbook creation. To init
+   new cookbook from template, do the following:
+   1. Clone the template into new cookbook directory:
+      ```
+      git clone git@gitlab.com:gitlab-cookbooks/template.git gitlab_newcookbook
+      ```
+      Please use the `gitlab_` prefix for new cookbooks names.
+   1. Replace the `template` with `gitlab_newcookbook` everywhere:
+      ```
+      find * -type f | xargs -n1 sed -i 's/template/gitlab_newcookbook/g'
+      ls .kitchen*yml | xargs -n1 sed -i 's/template/gitlab_newcookbook/g'
+      ```
+      This will also update badges in README.md, attributes, and recipes.
+   1. At this point, you have a fully functional initial commit with passing
+      tests (see the Testing section in cookbooks README.md for details), and
+      you can rewrite git commit history from template to you cookbook:
+      ```
+      git checkout --orphan latest && \
+      git add -A && \
+      git commit -am 'Initial commit'
+      ```
+      :point_up: the above may ask for GPG password if you sign your commits,
+      so its separated from the branch switch below :point_down:
+      ```
+      git branch -D master && \
+      git branch -m master && \
+      sed -i 's/template/gitlab_newcookbook/' .git/config
+      ```
+1. Now its time to create two repos for your new cookbook. The main one, on
+   `gitlab.com`, is used for everyday work, and template points to .com by
+   default. The mirror cookbook on `dev.gitlab.org` is used by chef-server
+   when gitlab.com is down, and should never be pushed directly to.
+   1. Create a [new project](https://gitlab.com/projects/new?namespace_id=650153)
+      in `gitlab-cookbooks` namespace (please use `gitlab_` prefix)
+   1. Navigate to Settings->Pipelines of the newly created cookbook and add
+      the `DIGITALOCEAN_ACCESS_TOKEN` environment variable to enable integration
+      tests on DO in CI. Currently, we use the toke from Gitlab Dev account, get
+      it from 1password or from another cookbook. We should use ephemeral ones
+      for this (this is ongoing effort in Vault project)
+   1. Navigate to Settings->Repository and expand "Push to a remote repository"
+      group. You will need to add `dev.gitlab.org` mirror repository there. See
+      the existing cookbooks for the example, and tick "Remote mirror repository".
+   1. Create a [new project](https://dev.gitlab.org/projects/new?namespace_id=36)
+      in `cookbooks` namespace on `dev.gitlab.org` with the same name. You can
+      also add the `DIGITALOCEAN_ACCESS_TOKEN` there too, but since mirroring
+      takes place after merge anyways, its not necessary.
 
-At this time you can initialize the git repo in your cookbook and set origin to point
-to GitLab.com.
+1. Do a `git push origin master` and verify that the reposiory is mirrored to
+   dev in few minutes.
 
-You should then edit `cookbook/metadata.rb` to have an accurate description. This
-is also where you will place any dependencies you need.
+1. Last step: tighten up push/merge rules to enforce some consistency of the
+   cookbook. Since `dev.gitlab.org` is only mirror, and should never be used
+   directly, the following is done only cookbook located on `gitlab.com`:
+   1. Set some description in Settings -> General.
+   1. Check "Merge request approvals" and add `@gl-infra` group to approvers under Settings -> General.
+   1. Allow merge only with green pipelines and resolved discussions there too.
+   1. Set "Check whether author is a GitLab user" and "Prevent committing secrets
+      to Git" under Settings -> Repository. Make sure `master` branch is protected
+      there too.
+   1. Uncheck the "Public pipelines" under Settings -> Pipelines.
 
-After you've created the cookbook, be sure that it is pushed to both GitLab.com and dev.
 Go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and edit the
 Berksfile to add the new cookbook. Be sure that you add version pinning and point it to the
 dev repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
 Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef server.
 
 ## ChefSpec and test kitchen
+
+For cookbooks with Makefiles in them, see the README.md for testing instructions.
 
 ### ChefSpec
 
