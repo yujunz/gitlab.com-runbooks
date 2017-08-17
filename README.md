@@ -67,16 +67,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Working with Prometheus](monitoring/prometheus.md)
 * [Upgrade Prometheus and exporters](howto/update-prometheus-and-exporters.md)
 
-### Outdated
-
-* [The NFS server `backend4` is gone](troubleshooting/nfs-server.md)
-* [The DB server `db[45]` is under heavy load](troubleshooting/postgresql_heavy_load.md)
-* [Redis keys state UNKNOWN](troubleshooting/redis_running_out_of_keys.md)
-* [Locks in PostgreSQL or Stuck Sidekiq workers](troubleshooting/postgresql_locks.md)
-* [Postfix queue is stale/growing](troubleshooting/postfix_queue.md)
-* [Errors are reported in LOG files](troubleshooting/logwatch_alerts.md)
-* [LVM and Azure snapshots](howto/manage-snapshot-backups.md)
-
 ## How do I
 
 ### On Call
