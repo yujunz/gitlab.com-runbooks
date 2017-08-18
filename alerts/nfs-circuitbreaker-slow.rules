@@ -1,0 +1,8 @@
+ALERT NfsCircuitBreakerSlow
+  IF filesystem_circuitbreaker_latency_seconds{environment="prd"} > 5
+  FOR 5m
+  LABELS {severity="warn", channel="production"}
+  ANNOTATIONS {
+    title = "Access to {{ $labels.shard }} slow on {{ $labels.fqdn }}.",
+    description = "This could indicate a failing NFS mount."
+  }

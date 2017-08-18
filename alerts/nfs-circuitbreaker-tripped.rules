@@ -1,0 +1,8 @@
+ALERT NfsCircuitBreakerTripped
+  IF filesystem_circuitbreaker{environment='prd'} != 1
+  FOR 2m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title = "Circuit breaker for {{ $labels.shard }} tripped on {{ $labels.fqdn }}.",
+    description = "Make sure the node has access to the FS and reset the circuitbreaker on http://gitlab.com/admin/health_check"
+  }
