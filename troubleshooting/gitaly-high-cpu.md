@@ -18,22 +18,28 @@
 - Use top to check whether or not Gitaly is using very high levels of CPU
 - As a last resort, restart the gitaly service: `sudo gitlab-ctl restart gitaly`. **This has service impact.**
 
-### Long running or orphan `git-receive-pack` processes
+### Long running or orphan `git` processes
 
-It is possible for there to be orphan git processes that can cause heavy I/O and increase the load on the server.
-This can happen when a large amount of data is being pushed to a git repository.
-First follow the "Possible checks" above, especially the load average and run `iotop` on the server.
-Look for processes matching `git-receive-pack path/to/some/repo.git`.
+If a user or CI is overloading an NFS server with multiple intensive concurrent git operations, 
+it's better to kill the processes than have the whole server -- or even just the Gitaly process -- fail.
 
-Normally, `git-receive-pack` be a child of `gitlab-shell` with a short run-time, for example:
-```
-git      57746 57732  0 14:56 ?        00:00:00 sh -c /opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell key-1313921
-git      57747 57746  9 14:56 ?        00:00:00 git-receive-pack /path/to/repo.git
-```
+Almost all git processes are safe to kill without the risk of corrupting the repository.
 
-There may be long running git-receive-pack processes that are orphan, you can do a basic search for orphan processes belonging to git using the following command:
+#### Selecting the best `git` processes to terminate
 
-```
-pgrep -a -u git -P 1
-```
-If you see long running `git-receive-pack` orphan processes they can be killed.
+Prioritise the termination of `git` processes in the following order:
+
+* **Orphaned Git Processes**: `git` chains together deep process heirachies in order to perform some tasks. If the parent has died, the child may continue to run. 
+  Gitaly uses process groups to manage these, but orphaned git child processes can always be terminated immediately.
+    * Check for git orphans: `pgrep -a -u git -P 1`. If you have `pstree` use ```for i in `pgrep -P 1 -u git git`; do pstree -l -a -p $i; done``` 
+    * When terminating orphan processes, ensure that any new orphans are also terminated by repeating the process several times.
+    
+* **Long Running GC and Repack Processes**: 
+  * `pgrep -f -a -u git -P 1 'gc|repack'`
+  * These are low-priority tasks but can be resource intensive. Sometimes multiple GCs and repacks can occur on the same repo concurrently, which is a huge waste of resources as they will contend and only
+    the first to complete will persist it's results.
+
+* **Other Long Running Git Processes**:
+  * ``` pgrep -u git git | xargs ps -o pcpu,pid,ppid,args,etime --sort -etime -p``` 
+  * This may also help: ```ps -u git -o pcpu,pid,ppid,args,etime --sort -etime --forest```
+  
