@@ -1,5 +1,5 @@
 ALERT ReplicationLagTooLarge
-  IF max(pg_replication_lag{fqdn=~".+cluster.gitlab.com"}) by (fqdn) > 120
+  IF max(pg_replication_lag{fqdn=~"postgres-.*"}) by (fqdn) > 120
   FOR 1m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
