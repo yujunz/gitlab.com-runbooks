@@ -1,9 +1,0 @@
-## CEPHFS MDS IS DOWN
-ALERT CephFSHighLoad
-  IF node_load1{instance=~"ceph-mon.*"} > 400
-  LABELS {severity="critical", pager="pagerduty"}
-  ANNOTATIONS {
-    title="CephFS monitors are under heavy load",
-    runbook="troubleshooting/cephfs.md",
-    description="CephFS monitor {{$labels.instance}} is under extreme load ({{$value}}), this is usually related to failures in the MDS server"
-  }
