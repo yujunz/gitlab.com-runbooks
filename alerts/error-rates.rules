@@ -4,6 +4,6 @@ ALERT HighWebErrorRate
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="High Error Rate on Front End Web",
-    description="We are having more 5xx returns than any other reply. Web traffic is being impacted and the service is probably down. Have you thought about turning it off and on again?"
+    description="We are having more 5xx returns than any other reply. Web traffic is being impacted and the service is probably down. Have you thought about turning it off and on again?",
     runbook="troubleshooting/gitlab-com-is-down.md"
   }
