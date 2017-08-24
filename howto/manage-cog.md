@@ -36,4 +36,8 @@ Alternatively a user can be added from the console with the following:
 
 ### Install a bundle
 
+### Know how secure our cog instance is
+
+Please refer to <https://gitlab.com/gitlab-com/infrastructure/issues/2451>.
+
 ...
