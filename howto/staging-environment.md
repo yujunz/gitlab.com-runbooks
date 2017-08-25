@@ -21,8 +21,8 @@ If you have any idea on how to improve such feedback loop or you are missing any
 * One Elasticsearch node: `es1.staging.gitlab.com`
 * One storage node: `nfs5.staging.gitlab.com`
 
-## Getting access
-* You will need developer ssh access, to get it register an issue with your posix username and your ssh key in the [infrastructure issue tracker](https://gitlab.com/gitlab-com/infrastructure/issues). The production engineers will then follow [these instructions](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-chef.md#create-a-staging-user) to create your user.
+Access to staging environment is treated the same as production as per
+[handbook](https://about.gitlab.com/handbook/infrastructure/#production-and-staging-access).
 
 ## Run a rails console in staging environment
 
