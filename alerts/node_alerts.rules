@@ -7,8 +7,22 @@ ALERT LowDiskSpace
   FOR 15m
   LABELS { severity = "critical" }
   ANNOTATIONS {
-    title = "Really low disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | printf \"%.2f\" }}%",
+    title = "Really low disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | humanize }}%",
     description = "Consider sshing into the instance and removing old logs or clean temp files following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
+    runbook="troubleshooting/filesystem_alerts.md"
+  }
+
+ALERT NoDiskSpace
+  IF
+      node_filesystem_avail{job="base-debian", fstype=~"(ext.|xfs)"}
+    /
+      node_filesystem_size{job="base-debian", fstype=~"(ext.|xfs)"}
+    * 100 <= 1
+  FOR 15m
+  LABELS { severity = "critical", pager="pagerduty" }
+  ANNOTATIONS {
+    title = "No disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | humanize }}%",
+    description = "There's only 1% disk space left on host {{ $labels.fqdn }}",
     runbook="troubleshooting/filesystem_alerts.md"
   }
 
