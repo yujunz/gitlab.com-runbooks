@@ -111,6 +111,24 @@ sudo gitlab-rails runner $PWD/sq.rb
 
 ### Killing jobs
 
+There are two ways of killing jobs:
+
+    1. Via the Sidekiq admin page: https://gitlab.com/admin/sidekiq/queues
+    2. Via the command-line
+
+## Dropping an entire queue
+
+If you need to drop an entire queue (e.g. `expire_build_instance_artifacts`):
+
+    1. Visit https://gitlab.com/admin/sidekiq/queues
+    2. Find the queue you want to drop and click "Delete"
+
+## Dropping specific workers in the queue
+
+In GitLab, it's possible that there are multiple workers that share the same
+Sidekiq queue. If you do not want to drop the entire queue and only specific
+types of workers, you can do this via a command-line tool.
+
 Suppose you see a lot of `RepositoryMirrorUpdateWorker` instances that you want to kill.
 BE CAREFUL WITH THIS COMMAND! You can see how many jobs would be killed using the --dry-run
 parameter:
