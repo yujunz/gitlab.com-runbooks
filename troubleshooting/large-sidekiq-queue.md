@@ -134,16 +134,19 @@ BE CAREFUL WITH THIS COMMAND! You can see how many jobs would be killed using th
 parameter:
 
 ```
-sudo gitlab-rails runner $PWD/sq.rb kill <WORKER NAME> --dry-run
+sudo gitlab-rails runner /tmp/sq.rb kill <WORKER NAME> --dry-run
 ```
 
 For example:
 
 ```
-sudo gitlab-rails runner $PWD/sq.rb kill RepositoryMirrorUpdateWorker --dry-run
+sudo gitlab-rails runner /tmp/sq.rb kill RepositoryMirrorUpdateWorker --dry-run
 ```
 
 You can omit the `--dry-run` option if you want to kill the jobs.
+Putting script in `/tmp` is one way of making sure its readable by `git` user
+with default umask setting. Otherwise rails console will treat the path as
+Ruby string and [most likely err](https://github.com/rails/rails/blob/v4.2.8/railties/lib/rails/commands/runner.rb#L58-L63).
 
 ## References
 
