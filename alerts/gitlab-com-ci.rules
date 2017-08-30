@@ -120,3 +120,14 @@ ALERT RunnersCacheServerHasTooManyConnections
     runbook="troubleshooting/ci_too_many_connections_on_runners_cache_server.md",
     description="This impacts CI execution builds, consider tweeting: !tweet 'CI jobs are being delayed due to issues with Shared Runners cache server. We are restarting it to restore the service.'. Hosts impacted - {{ $labels.instance }}"
   }
+
+
+## Too many used FDs
+ALERT TooManyUsedFDs
+  IF process_open_fds{job=~"(omnibus-runners|private-runners|shared-runners|shared-runners-(gitlab-org|high-cpu))"} / process_max_fds{job=~"(omnibus-runners|private-runners|shared-runners|shared-runners-(gitlab-org|high-cpu))"} > 0.8
+  FOR 10m
+  LABELS {severity="warn", channel="ci-cd"}
+  ANNOTATIONS {
+    title="Number of used file descriptors on {{ $labels.instance }} is too high",
+    description="{{ $labels.instance }} is using more than 80% of available FDs since 10 minutes. This may affect Runner's stability. Please look at https://performance.gitlab.net/dashboard/db/ci for more data."
+  }
