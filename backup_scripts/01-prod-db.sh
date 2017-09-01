@@ -2,13 +2,19 @@
 # vim: ai:ts=8:sw=8:noet
 # This script automates the creation of VM on Azure to test production DB backup
 set -eufo pipefail
+
+# Debugging options... uncomment below
+AZDEBUG=--verbose
+#AZDEBUG="--debug --verbose"
+#set -x -v
+
 IFS=$'\t\n'
 
 # Command requirements
 command -v az >/dev/null 2>/dev/null || { echo 'Please install az utility'; exit 1; }
 
 # Variables to change always
-RG_NAME='BADJune2017-proddb'	# Name of the resource group
+RG_NAME="BAD-$(date --iso-8601)-${USER}-proddb" # Name of the resource group
 
 # Variables to change only if you know what you are doing
 RG_LOC='eastus2'	# Location to create restoration resource group in
@@ -24,8 +30,8 @@ test -f "./${RG_NAME}_rsa4096" || \
 		-N '' \
 		-b 4096
 
-echo "Creating separate resource group for restoration:"
-az group create --verbose \
+echo "Creating separate resource group $RG_NAME for restoration:"
+az group create $AZDEBUG \
 	--location "${RG_LOC}" \
 	--name "${RG_NAME}"
 
@@ -75,7 +81,7 @@ chown gitlab-psql:gitlab-psql /var/opt/gitlab/postgresql/data/recovery.conf
 EOF
 )
 
-VM_IP=$(az vm create --verbose \
+az vm create $AZDEBUG \
 	--resource-group "${RG_NAME}" \
 	--location "${RG_LOC}" \
 	--name "${VM_NAME}" \
@@ -85,7 +91,12 @@ VM_IP=$(az vm create --verbose \
 	--ssh-key-value "./${RG_NAME}_rsa4096.pub" \
 	--size "Standard_DS3_v2" \
 	--data-disk-sizes-gb 1024 \
-	--custom-data "${CUSTOM_DATA}" | jq ".publicIpAddress")
+	--custom-data "${CUSTOM_DATA}"
+
+# We can't use the ip address from the vm create because, at least in
+# one version of az cli, it produces bogus json with single quotes 
+VM_IP=$(az vm list-ip-addresses $AZDEBUG --resource-group ${RG_NAME} -o json | \
+			jq -r '.[0].virtualMachine.network.publicIpAddresses[0].ipAddress')
 
 echo "All done, please proceed (see tail -f /var/log/cloud-init-output.log):"
 echo ssh "${VM_USERNAME}@${VM_IP}" -i "./${RG_NAME}_rsa4096" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
