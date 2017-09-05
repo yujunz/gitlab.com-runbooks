@@ -4,6 +4,12 @@ It is possible that docker hasn't correctly reloaded/restarted between chef runs
 
 ## Background
 
+There are several services required to operate the runners cache.
+
+The blackbox prober instances look like this:
+* Docker registry: `runners-cache-X.gitlab.com:5000/v2`
+* Minio object storage: `runners-cache-X.gitlab.com:9000/minio/login`
+
 Nginx acts as a proxy for the registry, which is backed by minio.
 
 Both registry and minio run as containers: run `sudo docker ps -a` to check out their status.
