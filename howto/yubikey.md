@@ -133,7 +133,7 @@ Please select what kind of key you want:
 Your selection? 8
 
 Possible actions for a RSA key: Sign Certify Encrypt Authenticate
-Current allowed actions: Certify
+Current allowed actions: Sign Certify Encrypt
 
    (S) Toggle the sign capability
    (E) Toggle the encrypt capability
@@ -318,4 +318,23 @@ sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
 ```
 > gpgkey2ssh FAEFD83E
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABA ... COMMENT
+```
+
+## Import Public Key to Regular Keychain
+
+Open up the GPG Keychain app and import the public key that you just created
+into your regular keychain. Set the Ownertrust to Ultimate on the public key
+you've imported.
+
+## Ensure proper options are set in gpg-agent.conf
+
+Your `gpg-agent.conf` should look something like 
+
+```
+$ cat ~/.gnupg/gpg-agent.conf
+default-cache-ttl 600
+max-cache-ttl 7200
+pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac
+enable-ssh-support
+write-env-file
 ```
