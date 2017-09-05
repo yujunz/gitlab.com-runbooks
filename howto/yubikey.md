@@ -338,3 +338,35 @@ pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pine
 enable-ssh-support
 write-env-file
 ```
+
+## Script to Reset gpg-agent and ssh-agent
+
+This script will reset gpg-agent and ssh-agent after you make the
+above updates to gpg-agent.conf.
+
+```
+#!/bin/bash
+
+echo "kill gpg-agent"
+code=0
+while [ 1 -ne $code ]; do
+    killall gpg-agent
+    code=$?
+    sleep 1
+done
+
+echo "kill ssh"
+    killall ssh
+
+echo "kill ssh muxers"
+    for pid in `ps -ef | grep ssh | grep -v grep | awk '{print $2}'`; do
+    kill $pid
+done
+
+echo "restart gpg-agent"
+    eval $(gpg-agent --daemon)
+
+echo
+echo "All done. Now unplug / replug the NEO token."
+echo
+```
