@@ -341,8 +341,8 @@ write-env-file
 
 ## Script to Reset gpg-agent and ssh-agent
 
-This script will reset gpg-agent and ssh-agent after you make the
-above updates to gpg-agent.conf.
+This script will reset `gpg-agent` and `ssh-agent` after you make the
+above updates to `gpg-agent.conf`.
 
 ```
 #!/bin/bash
