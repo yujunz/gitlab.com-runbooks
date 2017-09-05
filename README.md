@@ -48,10 +48,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [Troubleshoot git stuck processes](troubleshooting/git-stuck-processes.md)
 
-### CephFS
-
-* [CephFS warns "failing to respond to cache pressure"](troubleshooting/cephfs.md)
-
 ### PostgreSQL
 
 * [PgBouncer](howto/pgbouncer.md)
@@ -104,7 +100,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ### Work with storage
 
 * [Understanding GitLab Storage Shards](howto/sharding.md)
-* [Administer and Maintain CephFS](howto/cephfs.md)
 
 ### Work with Terraform
 
@@ -174,7 +169,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ## General guidelines for production incidents.
 
 * Is this an emergency incident?
-	* are we losing data? 
+	* are we losing data?
 	* Is GitLab.com not working or offline?
 	* has the incident affected users for greater than 1 hour?
 * [Tweet](howto/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
@@ -185,16 +180,16 @@ The aim of this project is to have a quick guide of what to do when an emergency
         * in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the emergency.
 	* Communications manager
 	* Marketing representative.
-	* Start a war room using zoom 
+	* Start a war room using zoom
 	* Share the link in the #production channel
 	* Stream the zoom call live.  [Streaming a Webinar on YouTube Live – Zoom Help Center](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live)
-* For non-emergency incidents.  
-	* Establish who is the point person on the incident. 
+* For non-emergency incidents.
+	* Establish who is the point person on the incident.
 	    * in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the incident.
 	* Start a war room using zoom if it will save time
 	* Share the link in the #production channel
 * Organize:
-* If intervention is required (i.e. a non self-healing service)  
+* If intervention is required (i.e. a non self-healing service)
 	  * Create a Google Doc to gather the timeline of events.
 	  * Publish this document using the File, Publish to web... function.
 	  * Make this document GitLab editable by clicking on the Share icon and selecting Advanced, Change, then On - GitLab.
@@ -205,7 +200,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * Update the [Production Oncall Log](https://docs.google.com/document/d/1nWDqjzBwzYecn9Dcl4hy1s4MLng_uMq-8yGRMxtgK6M/edit#heading=h.nmt24c52ggf5)
 * If we lack monitoring or alerting Open an issue and label as `monitoring`, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
 * Keep in mind [GitLab's data breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) and work with the security team to determine if a user data breach has occurred and if notification needs to be provided.
-* Once the incident is resolved, [Tweet](howto/tweeting-guidelines.md)  an update and let users know the issue is resolved. 
+* Once the incident is resolved, [Tweet](howto/tweeting-guidelines.md)  an update and let users know the issue is resolved.
 
 ## Guidelines
 
