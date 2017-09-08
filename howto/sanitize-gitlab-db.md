@@ -39,3 +39,12 @@ DELETE FROM ci_variables where ci_variables.project_id IN (select projects.id FR
 ```
 UPDATE users SET email = 'ops-contact+TESTBED-' || id || '@gitlab.com' WHERE email NOT LIKE '%@gitlab.com';
 ```
+
+## Remote mirrors
+
+You will likely want to disable all remote mirroring.
+
+```
+UPDATE remote_mirrors SET enabled = 'f';
+```
+
