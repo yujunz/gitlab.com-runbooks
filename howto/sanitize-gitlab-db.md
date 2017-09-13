@@ -112,17 +112,20 @@ TRUNCATE TABLE ci_runners;
 Erase all confidential issues, and their comments.
 
 ```sql
-UPDATE notes n
-  SET note = '!!! CONFIDENTIAL NOTE - REDACTED !!!'
-  FROM (
-    SELECT id
+UPDATE notes
+  SET note = '!!! CONFIDENTIAL NOTE - REDACTED !!!',
+      note_html = '!!! CONFIDENTIAL NOTE - REDACTED !!!'
+  WHERE EXISTS (
+    SELECT true
     FROM issues
-    WHERE issues.confidential = 't') c
-  WHERE n.noteable_id = c.id
-    AND n.noteable_type = 'Issue';
+    WHERE issues.confidential = 't'
+    AND notes.noteable_type = 'Issue'
+    AND notes.noteable_id = issues.id);
 
-UPDATE issues i
-  SET title = 'CONFIDENTIAL ISSUE', description = '!!! CONFIDENTIAL ISSUE - REDACTED !!!'
-  FROM issues
-  WHERE issues.confidential = 't';
+UPDATE issues
+  SET title = CONCAT('CONFIDENTIAL ISSUE ', id),
+      title_html = CONCAT('CONFIDENTIAL ISSUE ', id),
+      description = '!!! CONFIDENTIAL ISSUE - REDACTED !!!',
+      description_html = '!!! CONFIDENTIAL ISSUE - REDACTED !!!'
+  WHERE confidential = 't';
 ```
