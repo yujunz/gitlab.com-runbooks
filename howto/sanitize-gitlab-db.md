@@ -37,29 +37,39 @@ as it is on production.
 * Access tokens
 
     ```sql
-    DELETE FROM personal_access_tokens
-      WHERE user_id IN (SELECT id FROM users WHERE email NOT LIKE '%gitlab.com');
+    DELETE
+      FROM personal_access_tokens
+      USING users
+      WHERE personal_access_tokens.user_id = users.id
+        AND users.email NOT LIKE '%gitlab.com';
     ```
 
 * OAuth applications
 
     ```sql
-    DELETE FROM oauth_applications
-      WHERE id IN (SELECT application_id FROM oauth_access_tokens
-                   WHERE resource_owner_id IN (SELECT id FROM users WHERE email NOT LIKE '%gitlab.com'));
+    DELETE
+      FROM oauth_applications
+      USING oauth_access_tokens, users
+      WHERE oauth_applications.id = oauth_access_tokens.application_id
+        AND oauth_access_tokens.resource_owner_id = users.id
+        AND users.email NOT LIKE '%gitlab.com';
 
-    DELETE FROM oauth_access_tokens
-      WHERE resource_owner_id IN (SELECT id FROM users WHERE email NOT LIKE '%gitlab.com');
+    DELETE
+      FROM oauth_access_tokens
+      USING users
+      WHERE oauth_access_tokens.resource_owner_id = users.id
+        AND users.email NOT LIKE '%gitlab.com';
     ```
 
 * CI variables
 
     ```sql
-    DELETE FROM ci_variables
-      WHERE ci_variables.project_id IN (
-        SELECT projects.id
-        FROM projects, users
-        WHERE projects.creator_id = users.id AND users.email NOT LIKE '%@gitlab.com');
+    DELETE
+      FROM ci_variables
+      USING projects, users
+      WHERE ci_variables.project_id = projects.id
+        AND projects.creator_id = users.id
+        AND users.email NOT LIKE '%@gitlab.com';
     ```
 
 * Project import data
@@ -102,11 +112,17 @@ TRUNCATE TABLE ci_runners;
 Erase all confidential issues, and their comments.
 
 ```sql
-DELETE FROM notes
-  WHERE noteable_type = 'Issue' AND noteable_id IN (
-    SELECT id FROM issues
-    WHERE confidential = 't');
+UPDATE notes n
+  SET note = '!!! CONFIDENTIAL NOTE - REDACTED !!!'
+  FROM (
+    SELECT id
+    FROM issues
+    WHERE issues.confidential = 't') c
+  WHERE n.noteable_id = c.id
+    AND n.noteable_type = 'Issue';
 
-DELETE FROM issues
-  WHERE confidential = 't';
+UPDATE issues i
+  SET title = 'CONFIDENTIAL ISSUE', description = '!!! CONFIDENTIAL ISSUE - REDACTED !!!'
+  FROM issues
+  WHERE issues.confidential = 't';
 ```
