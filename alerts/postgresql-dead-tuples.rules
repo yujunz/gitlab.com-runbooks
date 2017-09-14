@@ -6,5 +6,5 @@ ALERT PostgreSQLTooManyDeadTuples
   ANNOTATIONS {
     title="PostgreSQL dead tuples is too large",
     description="PostgreSQL has way too many dead tuples, no real action can be done ¯\_(ツ)_/¯",
-    runbook=""
+    runbook="",
   }
