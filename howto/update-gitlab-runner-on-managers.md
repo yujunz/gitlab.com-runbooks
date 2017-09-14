@@ -160,7 +160,7 @@ If you want to upgrade all Runners of GitLab.com fleet at the same time, then yo
 
 ```bash
 # Stop chef-client
-knife ssh -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-shared-runners OR roles:gitlab-ce-ee-runners OR roles:gitlab-gce-*-runners-* OR roles:omnibus-builder-runners-manager OR roles:gitlab-runner-builder' -- sudo service chef-client stop
+knife ssh -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-shared-runners OR roles:gitlab-ce-ee-runners OR roles:gitlab-high-cpu-runners OR roles:gitlab-gce-*-runners-* OR roles:omnibus-builder-runners-manager OR roles:gitlab-runner-builder' -- sudo service chef-client stop
 
 # Update configuration in roles definition and secrets
 rake edit_role[gitlab-private-runners]
