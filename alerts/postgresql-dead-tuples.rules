@@ -5,6 +5,6 @@ ALERT PostgreSQLTooManyDeadTuples
   LABELS {severity="critical", channel="production"}
   ANNOTATIONS {
     title="PostgreSQL dead tuples is too large",
-    description="PostgreSQL has way too many dead tuples, no real action can be done ¯\_(ツ)_/¯",
-    runbook="",
+    description="PostgreSQL has way too many dead tuples, check which table is not being vacuumed properly and adjust settings",
+    runbook="troubleshooting/postgresql.md",
   }

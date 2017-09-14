@@ -21,12 +21,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Sentry is down](troubleshooting/sentry-is-down.md)
 * [Gitaly error rate is too high](troubleshooting/gitaly-error-rate.md)
 
-### Replication fails
-
-* [The DB replication has stopped](troubleshooting/postgresql_replication.md)
-* [Redis replication has stopped](troubleshooting/redis_replication.md)
-* [CRM has failed](troubleshooting/crm-failed.md)
-
 ### Chef/Knife
 
 * [Nodes are missing chef roles](troubleshooting/chef.md)
@@ -52,6 +46,11 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [PgBouncer](howto/pgbouncer.md)
 * [Load Balancing](howto/load-balancing.md)
+* [The DB replication has stopped](troubleshooting/postgresql.md)
+
+### Redis
+
+* [Redis replication has stopped](troubleshooting/redis_replication.md)
 
 ## Alerting and monitoring
 
@@ -164,7 +163,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Work with Kibana (logs view)](howto/kibana.md)
 * [Work with Check_MK (Notifications, scheduled downtime, acknowledge problems)](howto/manage-checkmk.md)
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
-* [Run pgbadger to analyze queries](howto/postgresql.md#run-pgbadger-in-the-primary-database-server)
 
 ## General guidelines for production incidents.
 
