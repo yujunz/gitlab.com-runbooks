@@ -164,6 +164,14 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Work with Check_MK (Notifications, scheduled downtime, acknowledge problems)](howto/manage-checkmk.md)
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
 
+## Manage Package Signing Keys
+
+* [Manage Package Signing Keys](howto/manage-package-signing-keys.md)
+
+## Manage Package Signing Keys
+
+* [Manage Package Signing Keys](howto/manage-package-signing-keys.md)
+
 ## General guidelines for production incidents.
 
 * Is this an emergency incident?
