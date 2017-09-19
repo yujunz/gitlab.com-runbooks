@@ -232,6 +232,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 [What is at play](howto/lead-away.md)
 
+## Contributing
+
+Please see the [contribution guidelines](CONTRIBUTING.md)
+
 # But always remember!
 
 ![Dont Panic](img/dont_panic_towel.jpg)
