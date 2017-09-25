@@ -339,6 +339,13 @@ enable-ssh-support
 write-env-file
 ```
 
+## Ensure your environment knows how to authenticate SSH
+
+```
+$ cat ~/.zshrc
+export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
+```
+
 ## Script to Reset gpg-agent and ssh-agent
 
 This script will reset `gpg-agent` and `ssh-agent` after you make the
