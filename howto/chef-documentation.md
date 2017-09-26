@@ -39,7 +39,7 @@ Creating new cookbook consists of several steps:
    when gitlab.com is down, and should never be pushed directly to.
    1. Create a [new project](https://gitlab.com/projects/new?namespace_id=650153)
       in `gitlab-cookbooks` namespace (please use `gitlab_` prefix)
-   1. Navigate to Settings->Pipelines of the newly created cookbook and add
+   1. Navigate to Settings->CI/CD of the newly created cookbook and add
       the `DIGITALOCEAN_ACCESS_TOKEN` environment variable to enable integration
       tests on DO in CI. Currently, we use the toke from Gitlab Dev account, get
       it from 1password or from another cookbook. We should use ephemeral ones

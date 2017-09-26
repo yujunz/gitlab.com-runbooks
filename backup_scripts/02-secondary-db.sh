@@ -8,7 +8,7 @@ IFS=$'\t\n'
 command -v doctl >/dev/null 2>/dev/null || { echo 'Please install doctl utility'; exit 1; }
 
 # Variables to change always
-RESTORE='customers'
+RESTORE='version'
 
 # Variables to change only if you know what you are doing
 DO_REGION='nyc3'	# Location to create restoration resource group in
@@ -20,7 +20,7 @@ if [[ ! "${RESTORE}" =~ ^(license|version|customers)$ ]]; then
 	echo "Box to test restore should be one of: license, version, customers"
 	exit 1
 else
-	RESTORE_IMAGE='ubuntu-14-05-x64'
+	RESTORE_IMAGE='ubuntu-14-04-x64'
 	RESTORE_PG_VER='9.3'
 	if [[ "${RESTORE}" == 'customers' ]]; then
 		RESTORE_IMAGE='ubuntu-16-04-x64'
