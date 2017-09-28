@@ -1,6 +1,7 @@
 # GPG Keys for Package Signing
 
-GitLab, Inc. intends to sign all packages starting with the release of `9.5`, and all packages on stable trees from that point forward as well (e.g. `9.3.x` as of August 22, 2017). The package signing keys will be managed by the [Security Team](https://about.gitlab.com/handbook/engineering/security/), and not by the [Build Team](https://about.gitlab.com/handbook/build/) to ensure separation of concerns.
+As described in the [omnibus project for GitLab](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/package-information/signed_packages.md),
+GitLab, Inc. provides signed packages starting with the release of `9.5`, and all packages on stable trees from that point forward as well (e.g. `9.3.x` as of August 22, 2017). The package signing keys are managed by the [Security Team](https://about.gitlab.com/handbook/engineering/security/), and not by the [Build Team](https://about.gitlab.com/handbook/build/) to ensure separation of concerns.
 
 The notes contained here are intended to provide documentation on how keys are generated, maintained, revoked, and used in combination with the Omnibus GitLab CI & PackageCloud.
 
@@ -17,25 +18,31 @@ For a complete implementation, the following will be done:
 
 ## Securing Keys
 
-The private keys should follow Least Priviledged Access best practices, and be highly restricted in terms of who has access to the storage location and passphrase itself. These two items _should never_ be stored together.
+Managing private keys follows the best practice of Least Privileged Access, and
+access to the storage location and passphrase itself is highly restricted. These
+two items _should never_ be stored together.
 
 * There is a private, highly restricted location for the key itself to be stored.
 * There is a private, highly restricted vault for the key's passphrase to be stored.
-* **Security** team should perform the actual maintenance tasks related to the key(s) to ensure separation of concerns and LPA.
+* **Security** team does the actual maintenance tasks related to the key(s) to ensure separation of concerns and LPA.
 * The related variables in the `dev.gitlab.com` CI jobs should be marked as private, protected, and **never** be replicated.
 
-## GPG Keys
+## Generating the GPG Keys Pair
 
-First off, we'll need to discuss the GPG key system. In brief, you'll generate a key pair, Public and Private. The public key will be posted to [packages.gitlab.com](https://packages.gitlab.com), and possibly [pgp.mit.edu](https://pgp.mit.edu) or another public key server.
+In the GPG key system, you generate a key pair, Public and Private. The public key will be posted to [packages.gitlab.com](https://packages.gitlab.com), and [pgp.mit.edu](https://pgp.mit.edu) or another public key server.
 
-The private key content will be kept secret, with restricted access. The passphrase for this key will be kept separately, and maintained in a Vault with restricted access.
+The private key content should be kept secret, with restricted access. The passphrase for this key should be kept separately, and maintained in a Vault with restricted access.
+
+The following sections explain how to create and manage the keys.
+
 
 ### Ensuring Entropy
+
 To properly secure they key generation process, one should do their best to provide extensive amounts entropy on their system. We'll cover how to do so on `Linux`.
 
 - We're **requiring** physical hardware. **Absolutely** *No virtualized instances.*
 - Check for access to a hardware random number generator (`hwrng`), `ls /dev/hwrng`
-  - Check loaded kerel modules for `rng` or random number generator. `lsmod | grep rng`. This should output something akin to the following:
+  - Check loaded kernel modules for `rng` or random number generator. `lsmod | grep rng`. This should output something akin to the following:
 
   ```
 tpm_rng                16384  0
@@ -53,8 +60,9 @@ tpm                    40960  5 tpm_tis,trusted,tpm_crb,tpm_rng,tpm_tis_core
     - `dd if=/dev/<largedisk> of=/dev/null bs=1M` will generate extensive amounts of disk read IO, while not impacting any other subsystems.
     - `iperf` command can be used to create network load.
 
-### Generate Keys
-To generate a key pair, a user will need [GnuPG](https://www.gnupg.org), preferrably but not required to be version `2.1` or greater.
+### Generate the keys
+
+To generate a key pair, a user will need [GnuPG](https://www.gnupg.org), preferably but not required to be version `2.1` or greater.
 
 The following information will need to be provided when generating a key.
 - `kind of key you want`, which will be `(1) RSA and RSA`
@@ -77,8 +85,9 @@ sub   rsa2048 2017-07-26 [E] [expires: 2022-07-26]
 
 _Note: the key id is masked here, as `0000000000000000000000000000000000000000`_
 
-### Exporting the Keys
-Once they key has been generated, you will need to create a public key for
+### Export the Keys
+
+Once the keys have been generated, you will need to create a public key for
 publishing, and in PackageCloud. This is completed simply via:
 
 `gpg --armor --export 0000000000000000000000000000000000000000 > package-sig.gpg`
@@ -89,7 +98,8 @@ Next, we'll to export the entire secret key:
 
 This key should be uploaded to the secure storage location.
 
-### Extending Keys
+### Extending Key Expiration
+
 By "extending" keys, we're actually referring to extending the `expire` field into the future, thus extending the useful lifespan of the key(s). To extend the signing key pair, one needs access to the original private key and passphrase.
 
 The steps to extend are as follows:
@@ -115,6 +125,7 @@ Citing from [gpg-announce in 2009'Q1](http://lists.gnupg.org/pipermail/gnupg-ann
 signatures on the key so that any trust you've built up by others signing your key remains."
 
 ### Purging local copies!
+
 Once one has completed any step here, and have **_safely uploaded to secure
 storage_**, it is **very important** that they then **purge** the signing keys off their system.
 
