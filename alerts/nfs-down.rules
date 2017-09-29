@@ -9,7 +9,7 @@ ALERT GitNFSServerDown
   }
 
 ALERT FileNFSServerDown
-  IF up{tier="stor", job="base-debian", environment="prd", type!="gitaly"} == 0
+  IF up{tier="stor", job="base-debian", environment="prd", type!="gitaly", fqdn!="file-storage1.cluster.gitlab.com"} == 0
   FOR 2m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
