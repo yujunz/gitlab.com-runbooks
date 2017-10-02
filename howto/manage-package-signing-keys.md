@@ -1,7 +1,7 @@
 # GPG Keys for Package Signing
 
 As described in the [omnibus project for GitLab](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/package-information/signed_packages.md),
-GitLab, Inc. provides signed packages starting with the release of `9.5`, and all packages on stable trees from that point forward as well (e.g. `9.3.x` as of August 22, 2017). The package signing keys are managed by the [Security Team](https://about.gitlab.com/handbook/engineering/security/), and not by the [Build Team](https://about.gitlab.com/handbook/build/) to ensure separation of concerns.
+GitLab, Inc. provides signed packages starting with the release of `9.5`, and all packages on stable trees from that point forward as well (e.g. `9.3.x` as of August 22, 2017). The package signing keys are managed by the [Security Team](https://about.gitlab.com/handbook/engineering/security/#package-signing), and not by the [Build Team](https://about.gitlab.com/handbook/build/) to ensure separation of concerns.
 
 The notes contained here are intended to provide documentation on how keys are generated, maintained, revoked, and used in combination with the Omnibus GitLab CI & PackageCloud.
 
