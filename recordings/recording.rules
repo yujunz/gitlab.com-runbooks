@@ -11,6 +11,8 @@ job_backend:haproxy_backend_response_errors_total:irate1m = sum(irate(haproxy_ba
 # GRPC calls handled by Gitaly
 gitaly:grpc_server_handled_total:rate1m = sum(rate(grpc_server_handled_total[1m])) by (job, grpc_method, environment)
 gitaly:grpc_server_handled_total:error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, grpc_method, environment)
+gitaly:grpc_server_handled_total:error_avg_rate12h = avg(rate(grpc_server_handled_total{grpc_code!="OK"}[12h])) by (job, grpc_method, environment)
+gitaly:grpc_server_handled_total:error_stddev_rate12h  = stddev(rate(grpc_server_handled_total{grpc_code!="OK"}[12h])) by (job, grpc_method, environment)
 gitaly:grpc_server_handled_total:instance_error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, instance, environment)
 gitaly:grpc_server_handling_seconds_bucket:rate1m = sum(rate(grpc_server_handling_seconds_bucket[1m])) by (le,fqdn,job,grpc_method, environment)
 gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m = sum(irate(grpc_server_handled_total[1m])) without (grpc_service, grpc_type, environment)
