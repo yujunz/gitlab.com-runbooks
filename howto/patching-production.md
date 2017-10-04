@@ -11,25 +11,24 @@ This is step that has to be done by the proposing team.
 
 * Create a working branch in gitlab-ee
 * Make your code changes
-* Run the command `git --no-pager diff --color=never master.. -- app lib >
-  path/to/patch.patch`
-* Clone or Update the repo [post deployment patches]
+* Run the command `git --no-pager diff --color=never master.. -- app lib > path/to/patch.patch`
+* Clone or Update the repo [post deployment patches][pdp]
 * Create one MR for the correct version of the application following [post
-  deployment patches] README instructions.
+  deployment patches][pdp] README instructions.
   * Be sure to provide chef roles for prod, pre-prod and staging environments.
     If you don't know which should they be, just ask in the #production channel
 * Submit the patch for review to someone from the production team and someone
   from the development team to sign off the changes.
 * Create an issue to apply the patch in the infrastructure issue tracker, label
-  it as ~change and ~"on call"
+  it as `~change` and `~"on call"`
 
 ## Applying a hot patch to production
 
 This step has to be done by someone with production and knife access,
 preferably by the current on-call for full awareness.
 
-* Get or update [gitlab patcher]
-* Clone or update [post deployment patches]
+* Get or update [gitlab patcher][gp]
+* Clone or update [post deployment patches][pdp]
 * Connect to VPN (else connections will fail)
 * Run `gitlab-patcher <version> <environment>` to test a dry run, watch for
   possible errors.
@@ -40,7 +39,7 @@ preferably by the current on-call for full awareness.
 
 ## Rolling back a patch
 
-Using the previous example, just use the rollback mode of [gitlab patcher]
+Using the previous example, just use the rollback mode of [gitlab patcher][gp]
 
 `gitlab-patcher -mode rollback <version> <environment>`
 
@@ -103,5 +102,5 @@ bundle exec knife ssh -C 1 -a ipaddress "roles:$role" "sudo gitlab-ctl hup unico
 ```
 
 
-[post deployment patches](https://dev.gitlab.org/gitlab/post-deployment-patches)
-[gitlab patcher](https://gitlab.com/gl-infra/gitlab-patcher)
+[pdp]: https://dev.gitlab.org/gitlab/post-deployment-patches
+[gp]: https://gitlab.com/gl-infra/gitlab-patcher
