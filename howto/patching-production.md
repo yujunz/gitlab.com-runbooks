@@ -1,21 +1,70 @@
-# Summary
-This howto is for deploying
-a patch or hotpatch to the production servers outside the
-normal deploy cycle. This should only be done for critical fixes
-or in cases where there is an outage and a change needs to be rolled
-out quickly to restore access to the site.
+# Hot patching production
+
+This howto is for deploying a patch or hotpatch to the production servers
+outside the normal deploy cycle. This should only be done for critical fixes or
+in cases where there is an outage and a change needs to be rolled out quickly
+to restore access to the site.
+
+## Submitting a patch
+
+This is step that has to be done by the proposing team.
+
+* Create a working branch in gitlab-ee
+* Make your code changes
+* Run the command `git --no-pager diff --color=never master.. -- app lib >
+  path/to/patch.patch`
+* Clone or Update the repo [post deployment patches]
+* Create one MR for the correct version of the application following [post
+  deployment patches] README instructions.
+  * Be sure to provide chef roles for prod, pre-prod and staging environments.
+    If you don't know which should they be, just ask in the #production channel
+* Submit the patch for review to someone from the production team and someone
+  from the development team to sign off the changes.
+* Create an issue to apply the patch in the infrastructure issue tracker, label
+  it as ~change and ~"on call"
+
+## Applying a hot patch to production
+
+This step has to be done by someone with production and knife access,
+preferably by the current on-call for full awareness.
+
+* Get or update [gitlab patcher]
+* Clone or update [post deployment patches]
+* Connect to VPN (else connections will fail)
+* Run `gitlab-patcher <version> <environment>` to test a dry run, watch for
+  possible errors.
+* Attach the output of the dry run to the patching issue (or share it somehow,
+  depending on production being up)
+* Get approval to apply the patch from escalation
+* Run `gitlab-patcher -mode patch <version> <environment>`
+
+## Rolling back a patch
+
+Using the previous example, just use the rollback mode of [gitlab patcher]
+
+`gitlab-patcher -mode rollback <version> <environment>`
 
 
-* Create or find the issue for the hot patch on the infrastructure board,
-if one does not already exist [open a new one](https://gitlab.com/gitlab-com/infrastructure/issues/new).
-* Ensure that on the issue the following criteria are met, if they are not comment
-on the issue explaining why:
+
+# Old manual (deprecated) method
+
+This part of the runbook is kept as a sample of the way of performing a
+hotpatch manually in case the automated tool fails.
+
+* Create or find the issue for the hot patch on the infrastructure board, if
+  one does not already exist [open a new
+  one](https://gitlab.com/gitlab-com/infrastructure/issues/new).
+* Ensure that on the issue the following criteria are met, if they are not
+  comment on the issue explaining why:
     * Reason for the patch including links to related issues.
-    * Customer impact, what pain will the customer be in without applying the patch.
+    * Customer impact, what pain will the customer be in without applying the
+      patch.
     * Timeline for fixing the issue with a build in the normal deploy cycle.
-    * A patch file including what servers the patch should be scoped to in the production fleet.
+    * A patch file including what servers the patch should be scoped to in the
+      production fleet.
 * If possible, see if the issue can be reproduced on https://staging.gitlab.com
-* For production patches you should do your best to adhere to a 2-prod-engineer rule, open a zoom meeting during the process.
+* For production patches you should do your best to adhere to a 2-prod-engineer
+  rule, open a zoom meeting during the process.
 * Apply the patch on staging, confirm that the patch has been applied.
 * Apply the patch on production, confirm that the patch has been applied.
 
@@ -52,3 +101,7 @@ bundle exec knife ssh -C 1 -a ipaddress "roles:$role" "cd $dir && sudo patch -R 
 # For updates to rails, HUP unicorn
 bundle exec knife ssh -C 1 -a ipaddress "roles:$role" "sudo gitlab-ctl hup unicorn"
 ```
+
+
+[post deployment patches](https://dev.gitlab.org/gitlab/post-deployment-patches)
+[gitlab patcher](https://gitlab.com/gl-infra/gitlab-patcher)
