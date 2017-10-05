@@ -1,5 +1,5 @@
 ALERT GitNFSServerDown
-  IF up{fqdn=~"nfs-file-.*", job="base-debian"} == 0
+  IF up{fqdn=~"nfs-file-.*", job="node"} == 0
   FOR 2m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
@@ -9,7 +9,7 @@ ALERT GitNFSServerDown
   }
 
 ALERT FileNFSServerDown
-  IF up{tier="stor", job="base-debian", environment="prd", type!="gitaly", fqdn!="file-storage1.cluster.gitlab.com"} == 0
+  IF up{tier="stor", job="node", environment="prd", type!="gitaly", fqdn!="file-storage1.cluster.gitlab.com"} == 0
   FOR 2m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {

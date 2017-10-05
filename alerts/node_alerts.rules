@@ -1,8 +1,8 @@
 ALERT LowDiskSpace
   IF
-      node_filesystem_avail{job="base-debian", fstype=~"(ext.|xfs)"}
+      node_filesystem_avail{job="node", fstype=~"(ext.|xfs)"}
     /
-      node_filesystem_size{job="base-debian", fstype=~"(ext.|xfs)"}
+      node_filesystem_size{job="node", fstype=~"(ext.|xfs)"}
     * 100 <= 10
   FOR 15m
   LABELS { severity = "critical" }
@@ -14,9 +14,9 @@ ALERT LowDiskSpace
 
 ALERT NoDiskSpace
   IF
-      node_filesystem_avail{job="base-debian", fstype=~"(ext.|xfs)"}
+      node_filesystem_avail{job="node", fstype=~"(ext.|xfs)"}
     /
-      node_filesystem_size{job="base-debian", fstype=~"(ext.|xfs)"}
+      node_filesystem_size{job="node", fstype=~"(ext.|xfs)"}
     * 100 <= 1
   FOR 15m
   LABELS { severity = "critical", pager="pagerduty" }
@@ -28,9 +28,9 @@ ALERT NoDiskSpace
 
 ALERT HighInodeUsage
   IF
-      node_filesystem_files_free{job="base-debian", fstype=~"(ext.|xfs)"}
+      node_filesystem_files_free{job="node", fstype=~"(ext.|xfs)"}
     /
-      node_filesystem_files{job="base-debian", fstype=~"(ext.|xfs)"}
+      node_filesystem_files{job="node", fstype=~"(ext.|xfs)"}
     * 100 <= 20
   FOR 15m
   LABELS { severity = "critical" }
