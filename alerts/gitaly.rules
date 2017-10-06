@@ -46,6 +46,32 @@ ALERT GitalyFileServerCPUUsage
     runbook="troubleshooting/gitaly-high-cpu.md"
   }
 
+
+## Alert if the number of distinct versions of Gitaly in production is two for more than 30 minutes
+## 30 minutes being the maximum time for the Gitaly deployment
+ALERT GitalyVersionMismatch
+  IF count(sum(gitlab_build_info{job="gitaly-production"}) by (version) > 0) == 2
+  FOR 30m
+  LABELS {severity="critical", channel="gitaly"}
+  ANNOTATIONS {
+    title="Gitaly: two versions of Gitaly have been running alongside one another in production for more than 30 minutes",
+    description="During a deployment, two distinct versions of Gitaly may be running alongside one another, but this should not be the case for more than 30m. Visit https://performance.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-job=gitaly-production for details of versions deployed across the fleet.",
+    runbook="troubleshooting/gitaly-version-mismatch.md"
+  }
+
+## Alert if the number of distinct versions of Gitaly in production exceeds 2 for more than a minute
+## If this is the case, something is seriously wrong and operators should know immediately
+ALERT GitalyVersionMismatchSevere
+  IF count(sum(gitlab_build_info{job="gitaly-production"}) by (version) > 0) > 2
+  FOR 1m
+  LABELS {severity="critical", channel="gitaly"}
+  ANNOTATIONS {
+    title="Gitaly: multiple versions of Gitaly are currently running in production",
+    description="Three of more versions of Gitaly are currently running alongside one another in production. This should never occur and indicates serious deployment failures. Visit https://performance.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-job=gitaly-production for details of versions deployed across the fleet.",
+    runbook="troubleshooting/gitaly-version-mismatch.md"
+  }
+
+
 ## Gitaly Method Error Rate compared with 12 hour average
 ALERT GitalyMethodErrorRateOutlier
   IF
