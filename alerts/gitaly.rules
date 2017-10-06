@@ -56,7 +56,7 @@ ALERT GitalyMethodErrorRateOutlier
       + 2 * gitaly:grpc_server_handled_total:error_stddev_rate12h{environment="prd", job="gitaly-production"}
       )
   FOR 5m
-  LABELS {severity="low", channel="gitaly"}
+  LABELS {severity="warn", channel="gitaly"}
   ANNOTATIONS {
     title="Gitaly: Error rate on {{ $labels.grpc_method }} is unusually high compared with a 12 hour average",
     description="The error rate on the {{ $labels.grpc_method }} is outside normal values over a 12 hour period (95% confidence). Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{ $labels.grpc_method }}&var-job=gitaly-production&refresh=5m",
@@ -67,7 +67,7 @@ ALERT GitalyMethodUnderSLA
   IF
     (1 - gitaly:grpc_server_handled_total:error_rate1m{environment="prd"} / gitaly:grpc_server_handled_total:rate1m) < 0.999
   FOR 5m
-  LABELS {severity="low", channel="gitaly"}
+  LABELS {severity="warn", channel="gitaly"}
   ANNOTATIONS {
     title="Gitaly: Endpoint {{ $labels.grpc_method }} is under SLA rate of 99.9%",
     description="The error rate on the {{ $labels.grpc_method }} endpoint exceeds SLA maximum rate. Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{ $labels.grpc_method }}&var-job=gitaly-production&refresh=5m",
