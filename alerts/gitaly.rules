@@ -79,7 +79,7 @@ ALERT GitalyMethodErrorRateOutlier
     > on (job, grpc_method, environment) group_left()
       (
       gitaly:grpc_server_handled_total:error_avg_rate12h{environment="prd", job="gitaly-production"}
-      + 2 * gitaly:grpc_server_handled_total:error_stddev_rate12h{environment="prd", job="gitaly-production"}
+      + 2 * gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h{environment="prd", job="gitaly-production"}
       )
   FOR 5m
   LABELS {severity="warn", channel="gitaly"}
