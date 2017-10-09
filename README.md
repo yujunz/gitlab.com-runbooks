@@ -91,7 +91,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ### Restore Backups
 
-* [Database Backups and Replication with WAL-E](howto/using-wale.md)
 * [Database Backups and Replication with Encrypted WAL-E](howto/using-wale-gpg.md)
 * [Work with Azure Snapshots](howto/azure-snapshots.md)
 * [PackageCloud Infrastructure And Recovery](howto/packagecloud-infrastructure.md)
