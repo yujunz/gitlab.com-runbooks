@@ -99,3 +99,14 @@ ALERT TooManyUsedFDs
     title="Number of used file descriptors on {{ $labels.instance }} is too high",
     description="{{ $labels.instance }} is using more than 80% of available FDs since 10 minutes. This may affect Runner's stability. Please look at https://performance.gitlab.net/dashboard/db/ci for more data."
   }
+
+
+## CI Consul+Prometheus cluster
+ALERT DegradatedCIConsulPrometheusCluster
+  IF up{fqdn=~"(prometheus|consul)-.*(nyc1|us-east1-(c|d)).*"} == 0
+  FOR 5m
+  LABELS {severity="warn", channel="ci-cd"}
+  ANNOTATIONS {
+    title="CI Consul+Prometheus cluster is degradated, {{ $labels.instance }} is down",
+    description="One or more of hosts from CI Consul+Prometheus cluster is down: {{ $labels.instance }}."
+  }
