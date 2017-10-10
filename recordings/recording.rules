@@ -17,5 +17,10 @@ gitaly:grpc_server_handled_total:instance_error_rate1m = sum(rate(grpc_server_ha
 gitaly:grpc_server_handling_seconds_bucket:rate1m = sum(rate(grpc_server_handling_seconds_bucket[1m])) by (le,fqdn,job,grpc_method, environment)
 gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m = sum(irate(grpc_server_handled_total[1m])) without (grpc_service, grpc_type, environment)
 
+# GRPC average latency rules. Used in latency anomaly detection
+gitaly:grpc_server_handling_seconds:avg5m = avg(rate(grpc_server_handling_seconds_sum[5m]) / rate(grpc_server_handling_seconds_count[5m]) > 0) by (fqdn, job, grpc_method, environment)
+gitaly:grpc_server_handling_seconds:avg24h = avg(rate(grpc_server_handling_seconds_sum[24h]) / rate(grpc_server_handling_seconds_count[24h]) > 0) by (fqdn, job, grpc_method, environment)
+gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h = stddev_over_time(gitaly:grpc_server_handling_seconds:avg5m[24h])
+
 # process_cpu_seconds_rate
 process_cpu_seconds_total:rate1m = rate(process_cpu_seconds_total[1m])
