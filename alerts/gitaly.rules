@@ -71,7 +71,6 @@ ALERT GitalyVersionMismatchSevere
     runbook="troubleshooting/gitaly-version-mismatch.md"
   }
 
-
 ## Gitaly Method Error Rate compared with 12 hour average
 ALERT GitalyMethodErrorRateOutlier
   IF
@@ -89,13 +88,20 @@ ALERT GitalyMethodErrorRateOutlier
     runbook="troubleshooting/gitaly-error-rate.md"
   }
 
-ALERT GitalyMethodUnderSLA
+## Gitaly method average latency outlier detection
+## If an endpoint suddenly becomes much slower than it's historical average, raise an alert
+ALERT GitalyLatencyOutlier
   IF
-    (1 - gitaly:grpc_server_handled_total:error_rate1m{environment="prd"} / gitaly:grpc_server_handled_total:rate1m) < 0.999
+    avg(gitaly:grpc_server_handling_seconds:avg5m{environment="prd", job="gitaly-production"}) by (grpc_method)
+    > on (grpc_method) group_left()
+      (
+      avg(gitaly:grpc_server_handling_seconds:avg24h{environment="prd", job="gitaly-production"}) by (grpc_method)
+      + 2 * avg(gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h) by (grpc_method)
+      )
   FOR 5m
   LABELS {severity="warn", channel="gitaly"}
   ANNOTATIONS {
-    title="Gitaly: Endpoint {{ $labels.grpc_method }} is under SLA rate of 99.9%",
-    description="The error rate on the {{ $labels.grpc_method }} endpoint exceeds SLA maximum rate. Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{ $labels.grpc_method }}&var-job=gitaly-production&refresh=5m",
+    title="Gitaly: Latency on the Gitaly {{ $labels.grpc_method }} is unusually high compared with a 24 hour average",
+    description="The error rate on the {{ $labels.grpc_method }} endpoint is outside normal values over a 12 hour period (95% confidence). Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{ $labels.grpc_method }}&var-job=gitaly-production&refresh=5m",
     runbook="troubleshooting/gitaly-error-rate.md"
   }
