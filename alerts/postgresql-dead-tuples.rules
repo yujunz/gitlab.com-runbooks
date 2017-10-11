@@ -1,10 +1,10 @@
 ## PostgreSQL dead tuples
 ALERT PostgreSQLTooManyDeadTuples
-  IF max(pg_stat_table_n_dead_tup{environment="prd"}) > 50000
+  IF pg_stat_table_n_dead_tup{environment="prd"} > 50000 unless on (instance) (pg_replication_is_replica == 1.0)
   FOR 1h
   LABELS {severity="critical", channel="production"}
   ANNOTATIONS {
     title="PostgreSQL dead tuples is too large",
-    description="PostgreSQL has way too many dead tuples, check which table is not being vacuumed properly and adjust settings",
-    runbook="troubleshooting/postgresql.md",
+    description="PostgreSQL table {{$labels.table_name}} has {{$value}} dead tuples on {{$labels.instance}}",
+    runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples"
   }
