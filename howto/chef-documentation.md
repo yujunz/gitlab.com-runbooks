@@ -208,7 +208,7 @@ By utilizing environments in chef we are able to roll out our cookbooks to a sub
 of our infrastructure. As an [environment](https://docs.chef.io/environments.html) we
 divide up our infrastructure the same way was in terraform:
 
-* [stg](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/stg.json)(staging)
+* [stg](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/stg.json) (staging)
 * [pre](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/pre.json) (pre production)
 * [cny](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/cny.json) (canary)
 * [prd](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/prd.json) (production)
@@ -232,7 +232,7 @@ Each environment has a locked version for each GitLab cookbook which looks like 
 
 The pattern matching follows the same syntax as [gem or berks version operators](http://guides.rubygems.org/patterns/#declaring-dependencies)
 (ie. <, >, <=, >=, ~>, =). This allows us to roll out a cookbook one environment at a time.
-The workflow for this would look as follows:
+The workflow for this would look as follows.
 
 We begin by uploading the cookbook as usual:
 1. `berks update cookbook-name` and `berks upload cookbook-name` as usual
