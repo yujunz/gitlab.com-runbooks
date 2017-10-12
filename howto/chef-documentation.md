@@ -71,7 +71,7 @@ Berksfile to add the new cookbook. Be sure that you add version pinning and poin
 dev repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
 Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef server.
 
-To apply this uploaded cookbook to a new environment follow the steps [bellow](#Chef-Environments-and-Cookbooks)
+To apply this uploaded cookbook to a new environment follow the steps [bellow](#chef-environments-and-cookbooks)
 
 ## ChefSpec and test kitchen
 
@@ -192,7 +192,7 @@ Commit the changes that will be recorded in `Berksfile.lock` and push them. Afte
 cookbook is merged, you can use `berks upload <cookbookname>` to upload the cookbook
 to the server.
 
-To apply this uploaded version to a new environment follow the steps [bellow](#Chef-Environments-and-Cookbooks)
+To apply this uploaded version to a new environment follow the steps [bellow](#chef-environments-and-cookbooks)
 
 ## Rollback cookbook
 
