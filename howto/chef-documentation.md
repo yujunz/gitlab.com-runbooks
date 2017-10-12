@@ -71,6 +71,8 @@ Berksfile to add the new cookbook. Be sure that you add version pinning and poin
 dev repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
 Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef server.
 
+To apply this uploaded cookbook to a new environment follow the steps [bellow](#Chef-Environments-and-Cookbooks)
+
 ## ChefSpec and test kitchen
 
 For cookbooks with Makefiles in them, see the README.md for testing instructions.
@@ -190,21 +192,66 @@ Commit the changes that will be recorded in `Berksfile.lock` and push them. Afte
 cookbook is merged, you can use `berks upload <cookbookname>` to upload the cookbook
 to the server.
 
-Once the cookbook is uploaded to the Chef server, the updates will be applied on the next
-run of `chef-client`. On GitLab.com, this is about every 30 minutes. Alternatively,
-you can always go run `chef-client` manually on whichever host needs the updates.
+To apply this uploaded version to a new environment follow the steps [bellow](#Chef-Environments-and-Cookbooks)
 
 ## Rollback cookbook
 
-The most expedient way to roll back a cookbook is to simply delete the newest version
-off of the Chef server. Since we do not pin to specific versions, once the new version is
-deleted, the old cookbook will run.
+With the advent of environment pinned versions, rolling back a cookbook is as simple as
+changing the version number back to the previous one in the respective environment file.
 
-To delete a specific cookbook version run the following in your `chef-repo` directory:
+There is no need to delete the version, we can roll forward and upload a corrected 
+version in its place.
+
+## Chef Environments and Cookbooks
+
+By utilizing environments in chef we are able to roll out our cookbooks to a subset
+of our infrastructure. As an [environment](https://docs.chef.io/environments.html) we
+divide up our infrastructure the same way was in terraform:
+
+* [stg](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/stg.json)(staging)
+* [pre](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/pre.json) (pre production)
+* [cny](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/cny.json) (canary)
+* [prd](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/prd.json) (production)
+
+with the addition of the chef default environment:
+
+
+* [\_default](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/_default.json)
+
+Each environment has a locked version for each GitLab cookbook which looks like this:
 
 ```
-knife cookbook delete COOKBOOK_NAME [COOKBOOK_VERSION]
+"gitlab-common": "= 0.2.0"
 ```
+
+The pattern matching follows the same syntax as [gem or berks version operators](http://guides.rubygems.org/patterns/#declaring-dependencies)
+(ie. <, >, <=, >=, ~>, =). This allows us to roll out a cookbook one environment at a time.
+The workflow for this would look as follows:
+
+We begin by uploading the cookbook as usual:
+1. `berks update cookbook-name` and `berks upload cookbook-name` as usual
+
+Now the version is on the chef server, but is only actively being applied to nodes in the `_default`
+environment, since `_default` has no version constraints. The next steps are the same as
+for any omnibus deploy:
+
+1. deploy and test in staging
+  1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/stg.json)
+  1. upload the environment file `knife environment from file path/to/stg.json`
+  1. verify changes (e.g. run `chef-client` on a server)
+1. deploy and test in pre-production
+  1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/pre.json)
+  1. upload the environment file `knife environment from file path/to/pre.json`
+  1. verify changes (e.g. run `chef-client` on a server)
+1. deploy and test in canary
+  1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/cny.json)
+  1. upload the environment file `knife environment from file path/to/cny.json`
+  1. verify changes (e.g. run `chef-client` on a server)
+1. deploy and test in production
+  1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/prd.json)
+  1. upload the environment file `knife environment from file path/to/prd.json`
+  1. verify changes (e.g. run `chef-client` on a server)
+
 
 ## Run chef client in interactive mode
 
