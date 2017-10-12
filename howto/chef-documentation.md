@@ -218,6 +218,12 @@ with the addition of the chef default environment:
 
 * [\_default](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/_default.json)
 
+To see the nodes in an environment use a knife search command such as:
+
+```
+knife search node 'chef_environment:stg'|grep Name|sort
+```
+
 Each environment has a locked version for each GitLab cookbook which looks like this:
 
 ```
@@ -252,6 +258,11 @@ for any omnibus deploy:
   1. upload the environment file `knife environment from file path/to/prd.json`
   1. verify changes (e.g. run `chef-client` on a server)
 
+This method does come with inherent risks: if this is done sloppily, it is possible that 
+cookbook version can *fall under the table* and never be applied to an environment. We have
+need a check in place to ensure that this does not happen. (e.g. compare the latest version 
+on the chef server with the version in each environment, as well as the environments with 
+each other).
 
 ## Run chef client in interactive mode
 
