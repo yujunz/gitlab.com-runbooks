@@ -253,7 +253,7 @@ for any omnibus deploy:
   1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/cny.json)
   1. upload the environment file `knife environment from file path/to/cny.json`
   1. verify changes (e.g. run `chef-client` on a server)
-1. deploy and test in production
+1. deploy and run in production
   1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/prd.json)
   1. upload the environment file `knife environment from file path/to/prd.json`
   1. verify changes (e.g. run `chef-client` on a server)
