@@ -9,9 +9,12 @@ to restore access to the site.
 
 This is step that has to be done by the proposing team.
 
-* Create a working branch in gitlab-ee
+* Create a working branch in gitlab-ee from the current version running on
+  production (visit https://gitlab.com/help to find out what this is)
 * Make your code changes
-* Run the command `git --no-pager diff --color=never master.. -- app lib > path/to/patch.patch`
+* Run the command `git --no-pager diff --color=never master.. -- app ee lib > path/to/patch.patch`
+  * **Note**: this is an example - if you have changed non-spec files in other
+    directories, be sure to include those 
 * Clone or Update the repo [post deployment patches][pdp]
 * Create one MR for the correct version of the application following [post
   deployment patches][pdp] README instructions.
