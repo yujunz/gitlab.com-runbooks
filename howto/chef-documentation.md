@@ -71,7 +71,7 @@ Berksfile to add the new cookbook. Be sure that you add version pinning and poin
 dev repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
 Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef server.
 
-To apply this uploaded cookbook to a new environment follow the steps [bellow](#chef-environments-and-cookbooks)
+To apply this uploaded cookbook to a new environment follow the steps [below](#chef-environments-and-cookbooks)
 
 ## ChefSpec and test kitchen
 
