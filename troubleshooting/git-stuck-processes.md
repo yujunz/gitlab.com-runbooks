@@ -1,4 +1,4 @@
-# Git Stuch Processes
+# Git Stuck Processes
 
 ## First and foremost
 
