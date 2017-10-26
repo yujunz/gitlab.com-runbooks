@@ -10,7 +10,6 @@ command -v aws >/dev/null 2>/dev/null || { echo 'Please install aws utility'; ex
 # Variables to change only if you know what you are doing
 AWS_REGION='us-east-1'	# Location to create restoration resource group in
 VM_NAME='restorepkgc'	# How the VM should be named
-VM_USERNAME='restore'	# How the first user should be named
 
 # Main flow
 # Generate rsa keypair in current dir if not existent
@@ -30,7 +29,7 @@ AWS_AMI="$(aws ec2 describe-images \
 		  "Name=virtualization-type,Values=hvm" \
 	--query 'sort_by(Images, &Name)[-1].ImageId' \
 	--output text)"
-echo ${AWS_AMI}
+echo "${AWS_AMI}"
 
 # Use playground subnet for that
 echo -n "Will use 'playground' subnet, id: "
@@ -39,7 +38,7 @@ AWS_SUBNET="$(aws ec2 describe-subnets \
 	--filters "Name=tag:Name,Values=playground" \
 	--query "Subnets[0].SubnetId" \
 	--output text)"
-echo ${AWS_SUBNET}
+echo "${AWS_SUBNET}"
 
 # Use some old security group with ssh in and tcp out for now
 AWS_SG="sg-9bf638fc"
@@ -71,7 +70,7 @@ AWS_IID="$(aws ec2 run-instances \
 	--security-group-ids "${AWS_SG}" \
 	--image-id "${AWS_AMI}" \
 	--user-data "${CUSTOM_DATA}" \
-	--block-device-mappings "DeviceName=/dev/sdf,Ebs={VolumeSize=2048,VolumeType=gp2,DeleteOnTermination=true}" \
+	--block-device-mappings "DeviceName=/dev/sdf,Ebs={VolumeSize=3072,VolumeType=gp2,DeleteOnTermination=true}" \
 	--tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${VM_NAME}}]" \
 	--query "Instances[0].InstanceId" \
 	--output text)"

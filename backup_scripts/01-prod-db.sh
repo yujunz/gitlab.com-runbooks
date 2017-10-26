@@ -94,8 +94,8 @@ az vm create $AZDEBUG \
 	--custom-data "${CUSTOM_DATA}"
 
 # We can't use the ip address from the vm create because, at least in
-# one version of az cli, it produces bogus json with single quotes 
-VM_IP=$(az vm list-ip-addresses $AZDEBUG --resource-group ${RG_NAME} -o json | \
+# one version of az cli, it produces bogus json with single quotes
+VM_IP=$(az vm list-ip-addresses $AZDEBUG --resource-group "${RG_NAME}" -o json | \
 			jq -r '.[0].virtualMachine.network.publicIpAddresses[0].ipAddress')
 
 echo "All done, please proceed (see tail -f /var/log/cloud-init-output.log):"
