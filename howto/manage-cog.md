@@ -1,6 +1,6 @@
 # COG
 
-[Cog](http://operable.io/) is a chatops bot that lurks in our slack, it replies to the name of [@marvin](https://en.wikipedia.org/wiki/Marvin_\(character\))
+[Cog](https://github.com/operable/cog/) is a chatops bot that lurks in our slack, it replies to the name of [@marvin](https://en.wikipedia.org/wiki/Marvin_\(character\))
 
 ## How to
 
