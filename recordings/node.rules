@@ -9,12 +9,13 @@ instance_mode:node_cpu:rate5m = sum(rate(node_cpu[5m])) without (cpu)
 instance_mode:node_cpu:rate1h = sum(rate(node_cpu[1h])) without (cpu)
 
 # CPU in use total
-instance_mode:node_cpu_in_use:rate5m = sum(rate(node_cpu{mode!="idle"}[5m])) without (cpu, mode)
-instance_mode:node_cpu_in_use:rate1h = sum(rate(node_cpu{mode!="idle"}[1h])) without (cpu, mode)
+instance:node_cpu_in_use:rate5m = sum(rate(node_cpu{mode!="idle"}[5m])) without (cpu, mode)
+instance:node_cpu_in_use:rate1h = sum(rate(node_cpu{mode!="idle"}[1h])) without (cpu, mode)
 
 # CPU % in use by node
-instance_cpu:node_cpu_in_use:percent5m: = instance_cpu:node_cpu_in_use:rate5m / instance:node_cpus:count
-instance_cpu:node_cpu_in_use:percent1h: = instance_cpu:node_cpu_in_use:rate1h / instance:node_cpus:count
+instance:node_cpu_in_use:percent5m = instance:node_cpu_in_use:rate5m / instance:node_cpus:count
+instance:node_cpu_in_use:percent1h = instance:node_cpu_in_use:rate1h / instance:node_cpus:count
+instance:node_cpu_in_use:percent_stddev_over_time1h = stddev_over_time(instance:node_cpu_in_use:rate5m[1h])
 
 # Filesystem available ratio for "real" filesystems.
 instance:node_filesystem_avail:ratio = node_filesystem_avail{device=~"/dev/.+"} / node_filesystem_size{device=~"/dev/.+"}
