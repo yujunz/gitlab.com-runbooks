@@ -41,15 +41,15 @@ ALERT HighInodeUsage
   }
 
 ALERT CPUOutlierDetectionOnPrd
-  IF instance_mode:node_cpu_in_use:rate5m{environment=~"prd|cny"}
-    > on (job, fqdn, environment) group_left()
+  IF instance:node_cpu_in_use:percent5m{environment=~"prd|cny"} 
+    >= on (job, fqdn, environment) group_left()
     (
-      instance_mode:node_cpu_in_use:rate1h + 3 * instance_mode:node_cpu_in_use:rate1h
+      clamp_max(instance:node_cpu_in_use:percent1h + 2 * instance:node_cpu_in_use:percent_stddev_over_time1h, 1)
     )
   FOR 5m
   LABELS {severity="warn"}
   ANNOTATIONS {
-  title="CPU use on {{ $labels.fqdn }} is unusually high compared with the rate of the last hour",
+  title="CPU use percent is unusually high compared with the rate of the last hour",
   description="The CPU usage on {{ $labels.fqdn }} is outside normal values over a 1h period",
   runbook="troubleshooting"
   }
