@@ -41,7 +41,7 @@ ALERT HighInodeUsage
   }
 
 ALERT CPUOutlierDetectionOnPrd
-  IF instance_mode:node_cpu_in_use:rate5m{environment=~"prd|cny"} > 
+  IF instance_mode:node_cpu_in_use:rate5m{environment=~"prd|cny"}
     > on (job, fqdn, environment) group_left()
     (
       instance_mode:node_cpu_in_use:rate1h + 3 * instance_mode:node_cpu_in_use:rate1h
