@@ -1,0 +1,9 @@
+ALERT ChefClientErrorInPrd
+  IF chef_client_error{environment="prd"} == 1
+  FOR 2h
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Chef client failed for more than 2hs",
+    description="Check failed chef executions in https://prometheus.gitlab.com/graph?g0.range_input=8w&g0.expr=chef_client_error+%3D%3D+1&g0.tab=1",
+  }
+
