@@ -39,3 +39,17 @@ ALERT HighInodeUsage
     description = "Consider ssh'ing into the instance and removing files or clean temp files following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
     runbook="troubleshooting/filesystem_alerts_inodes.md"
   }
+
+ALERT CPUOutlierDetectionOnPrd
+  IF instance_mode:node_cpu_in_use:rate5m{environment=~"prd|cny"} > 
+    > on (job, fqdn, environment) group_left()
+    (
+      instance_mode:node_cpu_in_use:rate1h + 3 * instance_mode:node_cpu_in_use:rate1h
+    )
+  FOR 5m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+  title="CPU use on {{ $labels.fqdn }} is unusually high compared with the rate of the last hour",
+  description="The CPU usage on {{ $labels.fqdn }} is outside normal values over a 1h period",
+  runbook="troubleshooting"
+  }
