@@ -2,7 +2,7 @@
 
 ## Symptoms
 
-Many jobs are being triggered from the same project, such as bitcoin mining to give an example.
+When many jobs are being triggered from the same project.
 
 ## Possible checks
 
