@@ -127,6 +127,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Investigate Abuse Reports](howto/ci-investigate-abuse.md)
 * [Create runners manager for GitLab.com](howto/create-runners-manager-node.md)
 * [Update docker-machine](howto/upgrade-docker-machine.md)
+* [CI project namespace check](howto/ci-project-namespace-check.md)
 
 ### Work with Infrastructure Providers (VMs)
 
