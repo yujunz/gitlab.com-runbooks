@@ -46,7 +46,7 @@ ALERT CPUOutlierDetectionOnPrd
     (
       clamp_max(instance:node_cpu_in_use:percent1h + 2 * instance:node_cpu_in_use:percent_stddev_over_time1h, 1)
     )
-  FOR 5m
+  FOR 10m
   LABELS {severity="warn"}
   ANNOTATIONS {
   title="CPU use percent is unusually high compared with the rate of the last hour",
