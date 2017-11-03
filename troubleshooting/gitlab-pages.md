@@ -132,3 +132,8 @@ only apparent to some users but not others.
     ```sh
     $ sudo gitlab-ctl restart gitlab-pages
     ```
+
+## Post Checks
+
+Make sure that `docs.gitlab.com` is returning the right certificate by running
+the script `scripts/check-pages-certs` in this very repo

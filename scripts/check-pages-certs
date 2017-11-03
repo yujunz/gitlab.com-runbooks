@@ -1,0 +1,4 @@
+#!/bin/bash
+
+seq -w 1 11 | xargs -n1 -I{} curl -v --resolve 'docs.gitlab.com:1443:10.69.8.1{}' https://docs.gitlab.com:1443/ 2>&1 | grep subject:
+
