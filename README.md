@@ -21,6 +21,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Sentry is down](troubleshooting/sentry-is-down.md)
 * [Gitaly error rate is too high](troubleshooting/gitaly-error-rate.md)
 
+## Git
+
+* [Test pushing through all the git nodes](troubleshooting/git.md)
+
 ### Chef/Knife
 
 * [Nodes are missing chef roles](troubleshooting/chef.md)
