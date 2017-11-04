@@ -65,6 +65,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
 * [Upgrade Prometheus and exporters](howto/update-prometheus-and-exporters.md)
+* [Use mtail to capture metrics from logs](howto/mtail.md)
 
 ## How do I
 
