@@ -52,8 +52,9 @@ information.
 
 Almost all settings of PgBouncer can be adjusted by just reloading the
 configuration file instead of restarting PgBouncer. Right now this means having
-to adjust the configuration file manually, followed by running `sudo systemctl
-reload pgbouncer`.
+to adjust the configuration file manually, followed by running 
+
+`sudo systemctl reload pgbouncer`.
 
 ## Statistics
 
@@ -96,6 +97,35 @@ pgbouncer=# show databases;
 ```
 
 Where the `host` field has the same value as the `databases.ini`.
+
+If the `databases.ini` file does NOT have a valid hostname, verify that the postgresql 
+**service** in consul has one (and only one) host in an `up` state.
+
+If this is the case, verify that the consul service received the last configuration change. 
+To do this, check the log file: `/var/log/consul/failover_pgbouncer.log`. 
+
+If this contains a line such as this:
+
+```
+I, [2017-10-31T15:54:14.777364 #43594]  INFO -- : Running: gitlab-ctl pgb-notify --newhost db.gitlab.com --user pgbouncer --hostuser gitlab-consul
+```
+
+the notification should have been sent to the `databases.ini` file. It is possible to
+re-run the command manually from the log message:
+
+    gitlab-ctl pgb-notify --newhost db.gitlab.com --user pgbouncer --hostuser gitlab-consul
+
+Restarting the consul service will also trigger a reconfiguration:
+
+    gitlab-ctl restart consul
+
+after which you should have entries in the `databases.ini`.
+
+To propagate these changes to pgbouncer (if they have not already been refreshed via the 
+`gitlab-ctl pgb-notify`, the pgbouncer can re-read its configuration in two ways:
+
+* restart pgbouncer (`gitlab-ctl restart pgbouncer`)
+* running `RELOAD;` from the pgbouncer console.
 
 ### Applications can not log into pgbouncer.
 
