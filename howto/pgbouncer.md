@@ -40,7 +40,7 @@ possibly leading to application errors.
 
 It is also possible to connect directly to PgBouncer:
 
-* `sudo gitlab-ctl pgb console`
+* `sudo gitlab-ctl pgb-console`
 
 This will prompt for the pgbouncer password (can be found in *1password*)
 
@@ -65,7 +65,7 @@ PgBouncer database:
 
 or
 
-    sudo gitlab-ctl pgb console
+    sudo gitlab-ctl pgb-console
 
 This will ask for a password, which you currently can find in *1password*. 
 Once connected you can run various commands to
