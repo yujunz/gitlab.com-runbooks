@@ -36,7 +36,51 @@ user/password of servers which connect to it.
 [config options](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template#L1638)
 
 Omnibus creates the **repmgr** database and user, which is used to track primary/secondary 
-servers. (by default `sudo gitlab-psql gitlab_repmgr`).
+servers. (by default `sudo gitlab-psql gitlab_repmgr`) Looking at the table `repmgr_gitlab_cluster.repl_nodes` 
+will tell use about the cluster setup:
+
+```
+gitlab_repmgr=# select * from repmgr_gitlab_cluster.repl_nodes ;
+    id     |  type   | upstream_node_id |    cluster     |             name              |                                       conninfo                                       |       slot_name       | priority |
+ active 
+-----------+---------+------------------+----------------+-------------------------------+--------------------------------------------------------------------------------------+-----------------------+----------+
+--------
+ 926049637 | master  |                  | gitlab_cluster | db.gitlab.com                 | host=db.gitlab.com port=5432 user=gitlab_repmgr dbname=gitlab_repmgr                 | repmgr_slot_926049637 |      100 |
+ t
+ 808870195 | standby |        926049637 | gitlab_cluster | postgres-01.gitlab.com        | host=postgres-01.gitlab.com port=5432 user=gitlab_repmgr dbname=gitlab_repmgr        | repmgr_slot_808870195 |      100 |
+ t
+ 842491233 | standby |        926049637 | gitlab_cluster | postgres-02..gitlab.com       | host=postgres-02.gitlab.com port=5432 user=gitlab_repmgr dbname=gitlab_repmgr        | repmgr_slot_842491233 |      100 |
+ t
+```
+This includes the topology (who is a slave of whom), the replication slot names (which repmgrd will use to configure slots on the new master), the conninfo (which repmgr uses to communicate to the respective host). 
+
+    sudo gitlab-ctl repmgr cluster show
+
+Will also show a quick overview of this information. 
+
+repmgr keeps track of these things while repmgrd is responsible for ensuring the master is availible. 
+If it detects a failure, it will cause an internal election, promote one of the standby nodes, and
+reconfigure the other nodes to follow the new master. On the new master, it will setup the 
+replication slots in accordance with the `slot_name` column above:
+
+```
+select * from pg_replication_slots ;
+       slot_name       | plugin | slot_type | datoid | database | active | active_pid | xmin | catalog_xmin |  restart_lsn  | confirmed_flush_lsn 
+-----------------------+--------+-----------+--------+----------+--------+------------+------+--------------+---------------+---------------------
+ repmgr_slot_912536887 |        | physical  |        |          | t      |      44401 |      |              | 2858/33000060 | 
+
+```
+
+As well as configure the new standby to follow the master in the `/var/opt/gitlab/postgresql/data/recovery.conf`, 
+by creating the entry accordingly:
+
+```
+standby_mode = 'on'
+primary_conninfo = 'user=gitlab_repmgr port=5432 sslmode=prefer sslcompression=1 host=postgres01.gitlab.com application_name=postgres02.gitlab.com password=XXX'
+recovery_target_timeline = 'latest'
+primary_slot_name = repmgr_slot_912536887
+```
+
 
 ## identifying current master
 
