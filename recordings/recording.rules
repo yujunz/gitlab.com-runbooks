@@ -8,6 +8,12 @@ job_frontend:haproxy_frontend_bytes_in_total:irate1m = sum(irate(haproxy_fronten
 job_frontend:haproxy_frontend_request_errors_total:irate1m = sum(irate(haproxy_frontend_request_errors_total[1m])) without (fqdn, instance)
 job_backend:haproxy_backend_response_errors_total:irate1m = sum(irate(haproxy_backend_response_errors_total[1m])) without (fqdn, instance)
 
+# Postgres rates for uptime SLA calculation  
+postgres:pg_stat_database_xact_commit:rate1m = sum(rate(pg_stat_database_xact_commit[1m])) without (datname,datid)
+postgres:pg_stat_database_xact_rollback:rate1m = sum(rate(pg_stat_database_xact_rollback[1m])) without (datname,datid)
+postgres:pg_xlog_bytes_per_second:rate1m = rate(pg_xlog_position_bytes[1m])
+postgres:pg_txid_per_second:rate1m = rate(pg_txid_current[1m])
+
 # GRPC calls handled by Gitaly
 gitaly:grpc_server_handled_total:rate1m = sum(rate(grpc_server_handled_total[1m])) by (job, grpc_method, environment)
 gitaly:grpc_server_handled_total:error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, grpc_method, environment)
