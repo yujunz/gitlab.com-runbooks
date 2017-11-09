@@ -200,6 +200,16 @@ sudo gitlab-ctl write-pgpass --host 127.0.0.1 --database pgbouncer --user pgboun
 
 This file can be found here: `/var/opt/gitlab/consul/.pgpass`
 
+Since the watcher is triggered anytime the consul service changes, it is possible that certain errors can
+occure when there are short network outages. Consul recongnizes these as changes in the service, so it 
+triggers a reconfiguration. In such cases we use `exit status 4` to signify *no master found* and dont actually
+let anything get triggered:
+
+```
+2017-11-09_02:36:10.00165     2017/11/09 02:36:10 [ERR] agent: Failed to invoke watch handler '/var/opt/gitlab/consul/scripts/failover_pgbouncer': exit status 4
+```
+
+
 ### pgbouncer
 
 Pgbouncer includes the consul controlled ini file (`/var/opt/gitlab/consul/database.ini`) in its configuration, 
