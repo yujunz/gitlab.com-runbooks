@@ -17,7 +17,7 @@ postgres:pg_txid_per_second:rate1m = rate(pg_txid_current[5m])
 # GRPC calls handled by Gitaly
 gitaly:grpc_server_handled_total:rate1m = sum(rate(grpc_server_handled_total[1m])) by (job, grpc_method, environment)
 gitaly:grpc_server_handled_total:error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, grpc_method, environment)
-gitaly:grpc_server_handled_total:error_avg_rate12h = avg(rate(grpc_server_handled_total{grpc_code!="OK"}[12h])) by (job, grpc_method, environment)
+gitaly:grpc_server_handled_total:error_avg_rate12h = avg_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
 gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h = stddev_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
 gitaly:grpc_server_handled_total:instance_error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, instance, environment)
 gitaly:grpc_server_handling_seconds_bucket:rate1m = sum(rate(grpc_server_handling_seconds_bucket[1m])) by (le,fqdn,job,grpc_method, environment)
@@ -25,7 +25,7 @@ gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m = sum(irate(g
 
 # GRPC average latency rules. Used in latency anomaly detection
 gitaly:grpc_server_handling_seconds:avg5m = avg(rate(grpc_server_handling_seconds_sum[5m]) / rate(grpc_server_handling_seconds_count[5m]) > 0) by (fqdn, job, grpc_method, environment)
-gitaly:grpc_server_handling_seconds:avg24h = avg(rate(grpc_server_handling_seconds_sum[24h]) / rate(grpc_server_handling_seconds_count[24h]) > 0) by (fqdn, job, grpc_method, environment)
+gitaly:grpc_server_handling_seconds:avg24h = avg_over_time(gitaly:grpc_server_handling_seconds:avg5m[24h])
 gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h = stddev_over_time(gitaly:grpc_server_handling_seconds:avg5m[24h])
 
 # process_cpu_seconds_rate
