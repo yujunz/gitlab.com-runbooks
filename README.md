@@ -173,6 +173,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [Setup oauth2-proxy protection for web based application](howto/setup-oauth2-proxy-protected-application.md)
 
+## Gitter
+
+* [MongoDB operations](howto/gitter/mongodb-operations.md)
+
 ## Manage Package Signing Keys
 
 * [Manage Package Signing Keys](howto/manage-package-signing-keys.md)
