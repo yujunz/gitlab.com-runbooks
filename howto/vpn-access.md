@@ -4,7 +4,7 @@ Until we have a generalized VPN solution there may be cases where
 we need to grant vpn access to gitlab team members who are not in
 the production team.
 
-## For non-production engineers
+## Instructions for users requesting access
 
 * Submit an issue to the infrastructure issue tracker to request access using the `production_access` template.
 * In the issue include the reason for why it is being requested.
@@ -12,6 +12,23 @@ the production team.
 * Scan the authenticator code using the google authenticator app.
 * Load the profile into your openvpn client.
 * Connect to the vpn using your username and the google authenticator code as a password.
+
+### Troubleshooting
+
+* You may want to using [viscosity](https://www.sparklabs.com/viscosity/) which has been reported to work better than [tunnelblick](https://tunnelblick.net/) on OSX
+* If you are using tunnelblick on OSX sometimes (frequently, actually) re-connections will fail, to work around this you can drop the routes with the following script
+```
+#!/bin/bash
+echo -n "Removing all routes"
+while [[ -n $(sudo route -n flush 2>/dev/null) ]]; do
+    echo -n "."
+    sleep .1
+done
+echo ""
+echo "Restarting wifi"
+sudo ifconfig en0 down
+sudo ifconfig en0 up
+```
 
 ## For production engineers
 
