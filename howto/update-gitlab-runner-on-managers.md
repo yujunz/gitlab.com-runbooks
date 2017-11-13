@@ -17,9 +17,6 @@ This runbook describes procedure of upgrading GitLab Runner on our runner manage
 - `gitlab-ce-ee-runners`
     - gitlab-shared-runners-manager-1.gitlab.com
     - gitlab-shared-runners-manager-2.gitlab.com
-- `gitlab-high-cpu-runners`
-    - hc-shared-runners-manager-1.gitlab.com
-    - hc-shared-runners-manager-2.gitlab.com
 - `gitlab-gce-ce-ee-runners-east-d`
     - gitlab-shared-runners-manager-3.gitlab.com
 - `gitlab-gce-ce-ee-runners-east-c`
@@ -160,7 +157,7 @@ If you want to upgrade all Runners of GitLab.com fleet at the same time, then yo
 
 ```bash
 # Stop chef-client
-knife ssh -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-shared-runners OR roles:gitlab-ce-ee-runners OR roles:gitlab-high-cpu-runners OR roles:gitlab-gce-*-runners-* OR roles:omnibus-builder-runners-manager OR roles:gitlab-runner-builder' -- sudo service chef-client stop
+knife ssh -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-shared-runners OR roles:gitlab-ce-ee-runners OR roles:gitlab-gce-*-runners-* OR roles:omnibus-builder-runners-manager OR roles:gitlab-runner-builder' -- sudo service chef-client stop
 
 # Update configuration in roles definition and secrets
 rake edit_role[gitlab-private-runners]
@@ -169,8 +166,6 @@ rake edit_role[gitlab-shared-runners]
 rake edit_role_secrets[gitlab-shared-runners,_default]
 rake edit_role[gitlab-ce-ee-runners]
 rake edit_role_secrets[gitlab-ce-ee-runners,_default]
-rake edit_role[gitlab-high-cpu-runners]
-rake edit_role_secrets[gitlab-high-cpu-runners,_default]
 rake edit_role[gitlab-gce-shared-runners-east-d]
 rake edit_role_secrets[gitlab-gce-shared-runners-east-d,_default]
 rake edit_role[gitlab-gce-shared-runners-east-c]
@@ -188,7 +183,6 @@ rake edit_role_secrets[gitlab-runner-builder,_default]
 knife ssh -C1 -aipaddress roles:gitlab-private-runners -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -aipaddress roles:gitlab-shared-runners -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -aipaddress roles:gitlab-ce-ee-runners -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:gitlab-high-cpu-runners -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -aipaddress roles:gitlab-gce-shared-runners-east-d -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -aipaddress roles:gitlab-gce-shared-runners-east-c -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -aipaddress roles:gitlab-gce-ce-ee-runners-east-d -- sudo /root/runner_upgrade.sh &
