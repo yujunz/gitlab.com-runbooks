@@ -40,6 +40,26 @@ ALERT HighInodeUsage
     runbook="troubleshooting/filesystem_alerts_inodes.md"
   }
 
+ALERT ExtremelyHighCPU
+  IF max(instance_cpu:node_cpu_not_idle:rate5m{environment=~"prd|cny"}) > .95
+  FOR 120m
+  LABELS { severity = "critical", pager="pagerduty" }
+  ANNOTATIONS {
+  title="CPU use percent is extremely high on {{ $labels.fqdn }} for the past 2 hours.",
+  description="CPU use percent is extremely high on {{ $labels.fqdn }} for the past 2 hours.",
+  runbook="troubleshooting"
+  }
+
+ALERT HighCPU
+  IF max(instance_cpu:node_cpu_not_idle:rate5m{environment=~"prd|cny"}) > .80
+  FOR 120m
+  LABELS { severity = "critical" }
+  ANNOTATIONS {
+  title="CPU use percent is high on {{ $labels.fqdn }} for the past 2 hours.",
+  description="CPU use percent is extremely high on {{ $labels.fqdn }} for the past 2 hours.",
+  runbook="troubleshooting"
+  }
+
 ALERT CPUOutlierDetectionOnPrd
   IF instance:node_cpu_in_use:percent5m{environment=~"prd|cny"} 
     >= on (job, fqdn, environment) group_left()
