@@ -1,11 +1,31 @@
 
 
 ALERT HighWebErrorRate
-  IF (sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd", backend="web", code="5xx"}) - sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd", backend="web", code!="5xx"})) > 0
+  IF sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd", backend="web", code="5xx"}) - sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd", backend="web", code!="5xx"}) > 0
   FOR 15s
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="High Error Rate on Front End Web",
     description="We are having more 5xx returns than any other reply. Web traffic is being impacted and the service is probably down. Have you thought about turning it off and on again?",
     runbook="troubleshooting/gitlab-com-is-down.md"
+  }
+
+ALERT High4xxApiRateLimit
+  IF sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd", code="4xx", backend="api_rate_limit"}) / sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd"}) > .1
+  FOR 5m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="High 4xx Error Rate on Front End Web on backend api_rate_limit",
+    description="We are seeing an increase of 4xx errors on the load balancing api rate limiting backend, more than 10% of http requests for at least 5 minutes.",
+    runbook="troubleshooting"
+  }
+
+ALERT High4xxRateLimit
+  IF sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd", code="4xx"}) / sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd"}) > .25
+  FOR 5m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="High 4xx Error Rate on Front End Web",
+    description="We are seeing an increase of 4xx errors on the load balancing across all backends, more than 25% of http requests for at least 5 minutes.",
+    runbook="troubleshooting"
   }
