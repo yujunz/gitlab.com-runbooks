@@ -10,7 +10,7 @@ ALERT KibanaDown
 
 ## Use linear_predict function to try to avoid logstash root partition filling up
 ALERT LogstashRootPartition
-  IF predict_linear(node_filesystem_free{fqdn="logstash.gitlap.com",mountpoint="/"}[1h], 3600 * 6) < 0
+  IF predict_linear(node_filesystem_free{fqdn="logstash.gitlap.com",mountpoint="/"}[15m], 3600 * 6) < 0
   FOR 5m
   LABELS {severity="warn"}
   ANNOTATIONS {
