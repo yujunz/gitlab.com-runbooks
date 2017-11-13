@@ -1,4 +1,4 @@
-## KIBANA IS DOWN
+## Kibana is down
 ALERT KibanaDown
   IF (probe_success{job="elk-kibana"} == 0) or (up{job="elk-kibana"} == 0)
   FOR 5m
@@ -6,4 +6,15 @@ ALERT KibanaDown
   ANNOTATIONS {
     title="Kibana is down",
     runbook="troubleshooting/kibana_is_down.md"
+  }
+
+## Use linear_predict function to try to avoid logstash root partition filling up
+ALERT LogstashRootPartition
+  IF predict_linear(node_filesystem_free{fqdn="logstash.gitlap.com",mountpoint="/"}[1h], 3600 * 6) < 0
+  FOR 5m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Logstash root partition running out of space in 6 hours",
+    description="The root partition in {{ $labels.fqdn }} is filling up in 6 hours, this might indicate problems with parsing /cc @vlopez",
+    runbook="troubleshooting"
   }
