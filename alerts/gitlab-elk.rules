@@ -14,7 +14,7 @@ ALERT LogstashRootPartition
   FOR 5m
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="Logstash root partition running out of space in 6 hours",
-    description="The root partition in {{ $labels.fqdn }} is filling up in 6 hours, this might indicate problems with parsing /cc @vlopez",
+    title="Logstash root partition will be running out of space in less than 6 hours",
+    description="This might indicate problems with logstash parsing",
     runbook="troubleshooting"
   }
