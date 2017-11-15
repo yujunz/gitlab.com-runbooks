@@ -12,7 +12,7 @@ First thing you should do is -unsurprisingly- [renew the certificate](https://gi
 
 ## ELBs and CloudFront
 
-1. Upload the certificate to AWS. **Important:** do NOT use the pop-up dialog on the ELB page: it will add the cert to / and CloudFront won't be able to see it. Use this command instead (change the name of course):
+1. Upload the certificate to AWS using [awscli](https://aws.amazon.com/cli/). **Important:** do NOT use the pop-up dialog on the ELB page: it will add the cert to / and CloudFront won't be able to see it. Use this command instead (change the name of course):
 ```
 aws iam upload-server-certificate \
   --server-certificate-name STAR.gitter.im_2017-11-15 \
@@ -36,7 +36,7 @@ done
 
 ## Websockets servers
 
-1. Set a maintenance on Pagerduty for the `monit-prod-critical` service.
+1. Set a maintenance on [Pagerduty](https://gitter.pagerduty.com/services/P16ONUD) for the `monit-prod-critical` service.
 
 1. Update the MD5 fingerprint in the monit checks. You can find them by running `grep -r certmd5 *` in the ansible directory. You can compute the new fingerprint with the following command:
 ```
