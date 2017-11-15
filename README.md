@@ -176,6 +176,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ## Gitter
 
 * [MongoDB operations](howto/gitter/mongodb-operations.md)
+* [Renew the Gitter TLS certificate](howto/gitter/renew-certificates.md)
 
 ## Manage Package Signing Keys
 
