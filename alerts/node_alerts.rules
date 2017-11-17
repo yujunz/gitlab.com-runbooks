@@ -7,7 +7,7 @@ ALERT LowDiskSpace
   FOR 15m
   LABELS { severity = "critical" }
   ANNOTATIONS {
-    title = "Really low disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | humanize }}%",
+    title = "Really low disk space left on {{ $labels.mountpoint }} on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }}: {{ $value | humanize }}%",
     description = "Consider sshing into the instance and removing old logs or clean temp files following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
     runbook="troubleshooting/filesystem_alerts.md"
   }
@@ -21,8 +21,8 @@ ALERT NoDiskSpace
   FOR 15m
   LABELS { severity = "critical", pager="pagerduty" }
   ANNOTATIONS {
-    title = "No disk space left on {{ $labels.mountpoint }} on {{ $labels.fqdn }}: {{ $value | humanize }}%",
-    description = "There's only 1% disk space left on host {{ $labels.fqdn }}",
+    title = "No disk space left on {{ $labels.mountpoint }} on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }}: {{ $value | humanize }}%",
+    description = "There's only 1% disk space left on host {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }}",
     runbook="troubleshooting/filesystem_alerts.md"
   }
 
@@ -35,7 +35,7 @@ ALERT HighInodeUsage
   FOR 15m
   LABELS { severity = "critical" }
   ANNOTATIONS {
-    title = "Free inodes on {{ $labels.fqdn }} on mountpoint {{ $labels.mountpoint }} is at {{ $value | printf \"%.2f\" }}%",
+    title = "Free inodes on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }} on mountpoint {{ $labels.mountpoint }} is at {{ $value | printf \"%.2f\" }}%",
     description = "Consider ssh'ing into the instance and removing files or clean temp files following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview",
     runbook="troubleshooting/filesystem_alerts_inodes.md"
   }
@@ -45,8 +45,8 @@ ALERT ExtremelyHighCPU
   FOR 120m
   LABELS { severity = "critical", pager="pagerduty" }
   ANNOTATIONS {
-  title="CPU use percent is extremely high on {{ $labels.fqdn }} for the past 2 hours.",
-  description="CPU use percent is extremely high on {{ $labels.fqdn }} for the past 2 hours.",
+  title="CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.",
+  description="CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.",
   runbook="troubleshooting"
   }
 
@@ -55,8 +55,8 @@ ALERT HighCPU
   FOR 120m
   LABELS { severity = "critical" }
   ANNOTATIONS {
-  title="CPU use percent is high on {{ $labels.fqdn }} for the past 2 hours.",
-  description="CPU use percent is extremely high on {{ $labels.fqdn }} for the past 2 hours.",
+  title="CPU use percent is high on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.",
+  description="CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.",
   runbook="troubleshooting"
   }
 
@@ -70,6 +70,6 @@ ALERT CPUOutlierDetectionOnPrd
   LABELS {severity="warn"}
   ANNOTATIONS {
   title="CPU use percent is unusually high compared with the rate of the last hour",
-  description="The CPU usage on {{ $labels.fqdn }} is outside normal values over a 1h period",
+  description="The CPU usage on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }} is outside normal values over a 1h period",
   runbook="troubleshooting"
   }
