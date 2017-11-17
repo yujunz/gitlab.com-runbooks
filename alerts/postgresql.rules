@@ -1,0 +1,143 @@
+## Minimum activity to be considered "available"
+
+ALERT XIDConsumptionTooLow
+  IF rate(pg_txid_current{environment="prd"}[1m]) < 5
+  FOR 1m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Postgres seems to be consuming transaction IDs very slowly",
+	description="TXID/s is {{$value}} on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
+    runbook="troubleshooting/postgresql.md#availability"
+  }
+  
+ALERT XLOGConsumptionTooLow
+  IF rate(pg_xlog_position_bytes{environment="prd"}[1m]) < 200000
+  FOR 2m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Postgres seems to be consuming XLOG very slowly",
+	description="XLOG bytes/s is {{$value}} on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
+    runbook="troubleshooting/postgresql.md#availability"
+  }
+
+ALERT CommitRateTooLow
+  IF rate(pg_stat_database_xact_commit{environment="prd",datname="gitlabhq_production"}[1m]) < 1000
+  FOR 2m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Postgres seems to be processing very few transactions",
+	description="Commits/s on {{$labels.instance}} database {{$labels.datname}} is {{$value} which is implausibly low. Perhaps the application is unable to connect",
+    runbook="troubleshooting/postgresql.md#availability"
+  }
+
+## Transaction error rate
+
+ALERT RollbackRateTooHigh
+  IF rate(pg_stat_database_xact_rollback{environment="prd",datname="gitlabhq_production"}[1m])
+     / on (instance,datname)
+	 rate(pg_stat_database_xact_commit{environment="prd",datname="gitlabhq_production"}[1m])
+	 > 0.01
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Postgres transaction rollback rate is high",
+	description="Ratio of transactions being aborted compared to committed is {{$value}} on {{$labels.instance}}",
+    runbook="troubleshooting/postgresql.md#errors"
+  }
+
+## Replication Status
+
+ALERT PostgreSQLReplicationStopped
+  # By floating point rules, NaN != NaN, so we can't just apply "== NaN" as a filter,
+  # so we use "x != x" instead to get all elements that are NaN.
+  IF pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"}
+  FOR 5m
+  LABELS {severity="critical", channel="production", pager="pagerduty"}
+  ANNOTATIONS {
+    title="PostgreSQL replication has stopped",
+    description="PostgreSQL replication has stopped on {{$labels.instance}}.",
+    runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
+  }
+
+# This measure dependso on the replica to report the lag based on the
+# data the primary has fed to it.
+
+ALERT ReplicationLagTooLarge
+  IF (pg_replication_lag{environment="prd"} > 120) and on (instance) (pg_replication_is_replica == 1.0)
+  FOR 5m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Postgres Replication lag is over 2 minutes",
+    description="Replication lag on server {{$labels.instance}} is currently {{$value}}s",
+    runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
+  }
+
+# This measure does not depend on the replica having up-to-date info
+# from the primary. It compares the Prometheus metrics for xlog
+# position from the primary and the replica.
+
+ALERT ReplicationLagBytesTooLarge
+  IF (pg_xlog_position_bytes and pg_replication_is_replica == 0.0)
+     - on (environment) group_right(instance)
+     (pg_xlog_position_bytes and pg_replication_is_replica == 1.0)
+     > 200000000
+  FOR 5m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Postgres Replication lag is over 200MB",
+	description="Replication lag on server {{$labels.instance} is currently {{$value}} bytes",
+	runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
+  }
+
+ALERT XLOGConsumptionTooHigh
+  IF rate(pg_xlog_position_bytes{environment="prd"}[1m]) > 12000000 and on (instance) (pg_replication_is_replica == 0.0)
+  FOR 5m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Postgres is generating XLOG too fast, expect this to cause replication lag",
+	description="XLOG is being generated at a rate of {{$value}} bytes/s on {{$labels.instance}}",
+	runbook="troubleshooting/postgres.md#xlog-consumption-is-very-high"
+  }
+
+# Group these by database host
+ALERT UnusedReplicationSlot
+  IF pg_replication_slots_active == 0.0
+  FOR 30m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Unused Replication Slots for {{$labels.fqdn}}",
+  	description="Unused {{$labels.replication}} slot {{$labels.slot_name}} on {{$labels.fqdn}}",
+ 	runbook="troubleshooting/postgres.md#replication_slots"
+  }
+
+## Miscellaneous Database Alerts
+
+ALERT PostgresTooManyRowExclusiveLocks
+  IF sum(pg_locks_count{mode="rowexclusivelock"}) > 100
+  FOR 30m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    title="Too many row exclusive locks: {{ $value }}",
+    description="Huge amounts of ROW EXCLUSIVE locks (used by SQL UPDATEs for example) can result in GitLab.com being unresponsive. See http://performance.gitlab.net/dashboard/db/postgres-stats for more information.",
+    runbook="troubleshooting/postgres.md#locks"
+  }
+
+ALERT DBHeavyLoad
+  IF node_load1{environment="prd",type="postgres"} > 200
+  FOR 5m
+  LABELS {severity="critical", channel="production"}
+  ANNOTATIONS {
+    title="High load in database {{ $labels.fqdn }}: {{$value}}",
+    description="Really high load in the batabase for the last minute, there are {{ query \"sum(pg_slow_queries_total)\" }} slow queries, {{ query \"sum(pg_blocked_queries_total)\" }} and {{ query \"sum(pg_locks_count{datname='gitlabhq_production'})\" }} locks. Check http://performance.gitlab.net/dashboard/db/postgres-stats and http://performance.gitlab.net/dashboard/db/postgres-queries to get more data.",
+    runbook="troubleshooting/postgres.md#load"
+  }
+
+## PostgreSQL dead tuples
+ALERT PostgreSQLTooManyDeadTuples
+  IF pg_stat_table_n_dead_tup{environment="prd"} > 50000 unless on (instance) (pg_replication_is_replica == 1.0)
+  FOR 1h
+  LABELS {severity="critical", channel="production"}
+  ANNOTATIONS {
+    title="PostgreSQL dead tuples is too large",
+    description="PostgreSQL table {{$labels.table_name}} has {{$value}} dead tuples on {{$labels.instance}}",
+    runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples"
+  }

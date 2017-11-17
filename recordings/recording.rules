@@ -20,6 +20,7 @@ postgres:pg_stat_database_xact_rollback:rate5m = sum(rate(pg_stat_database_xact_
 postgres:pg_xlog_bytes_per_second:rate5m = rate(pg_xlog_position_bytes[5m])
 postgres:pg_txid_per_second:rate5m = rate(pg_txid_current[5m])
 
+postgres:pg_replication_lag_bytes = (pg_xlog_position_bytes and pg_replication_is_replica == 0.0) - on (environment) group_right(instance)  (pg_xlog_position_bytes and pg_replication_is_replica == 1.0)
 
 # process_cpu_seconds_rate
 process_cpu_seconds_total:rate1m = rate(process_cpu_seconds_total[1m])
