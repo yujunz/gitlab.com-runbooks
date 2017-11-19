@@ -7,3 +7,6 @@ priority:sidekiq_jobs_completion_time_seconds:p99 = histogram_quantile(0.99, sum
 worker:sidekiq_jobs_completion_time_seconds:p50 = histogram_quantile(0.5, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m])) without (fqdn, instance, priority))
 worker:sidekiq_jobs_completion_time_seconds:p95 = histogram_quantile(0.95, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m])) without (fqdn, instance, priority))
 worker:sidekiq_jobs_completion_time_seconds:p99 = histogram_quantile(0.99, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m])) without (fqdn, instance, priority))
+
+worker:sidekiq_jobs_completion:rate1m = sum(rate(sidekiq_jobs_completion_time_seconds_count{environment="prd"}[1m])) without (fqdn, instance, priority)
+worker:sidekiq_jobs_failed:rate1m = sum(rate(sidekiq_jobs_failed_total{environment="prd"}[1m])) without (fqdn, instance, priority)
