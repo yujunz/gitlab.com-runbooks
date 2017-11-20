@@ -16,3 +16,6 @@ instance:node_filesystem_avail:ratio = node_filesystem_avail{device=~"/dev/.+"} 
 # Disk IO rates
 instance:node_disk_writes_completed:irate1m = sum(irate(node_disk_writes_completed{device=~"sd.*"}[1m])) without (device)
 instance:node_disk_reads_completed:irate1m = sum(irate(node_disk_reads_completed{device=~"sd.*"}[1m])) without (device)
+
+# Number of instances up per fleet
+instance:up:count = count(up{job="node", type!=""}) without (instance, fqdn)
