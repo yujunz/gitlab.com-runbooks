@@ -11,3 +11,6 @@ status:rails_requests_completed_milliseconds:p99 = histogram_quantile(0.99, sum(
 instance:rails_requests_completed_milliseconds:p50 = histogram_quantile(0.5, sum(rate(rails_requests_completed_milliseconds_bucket[1m])) without (status))
 instance:rails_requests_completed_milliseconds:p95 = histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket[1m])) without (status))
 instance:rails_requests_completed_milliseconds:p99 = histogram_quantile(0.99, sum(rate(rails_requests_completed_milliseconds_bucket[1m])) without (status))
+
+type:rails_requests_started:rate1m = sum(rate(rails_requests_started{environment="prd"}[1m])) without (instance, fqdn, verb)
+type:rails_requests_completed_milliseconds:p95 = histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket{environment="prd"}[1m])) without (instance, fqdn, status))
