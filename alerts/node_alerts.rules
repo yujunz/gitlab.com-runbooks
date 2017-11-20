@@ -75,7 +75,7 @@ ALERT CPUOutlierDetectionOnPrd
   }
 
 ALERT FleetSizeChanged
-  IF changes(instance:up:count{environment="prd"}[5m])
+  IF changes(instance:up:count{environment="prd"}[5m]) >= 1
   FOR 5m
   LABELS { severity = "warn", channel="production" }
   ANNOTATIONS {
