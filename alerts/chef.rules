@@ -9,9 +9,9 @@ ALERT ChefClientErrorInPrd
 
 
 ALERT ChefClientStale
-  IF (time() - chef_client_last_run_timestamp_seconds{environment="prd"})/60/60 > 5
+  IF (time()/60/60 - ceil(chef_client_last_run_timestamp_seconds{environment="prd"}/60/60)) > 5
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Chef client hasn't run for longer than expected",
-	description="Last Chef run for {{ $labels.fqdn }} was {{ $value }} hours ago"
+	description="Last Chef run for {{ $labels.fqdn }} was over {{ $value }} hours ago"
   }
