@@ -105,7 +105,7 @@ ALERT UnusedReplicationSlot
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Unused Replication Slots for {{$labels.fqdn}}",
-  	description="Unused {{$labels.replication}} slot {{$labels.slot_name}} on {{$labels.fqdn}}",
+  	description="Unused {{$labels.slot_type}} slot \"{{$labels.slot_name}}\" on {{$labels.fqdn}}",
  	runbook="troubleshooting/postgres.md#replication_slots"
   }
 
