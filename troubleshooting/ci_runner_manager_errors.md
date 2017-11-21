@@ -9,7 +9,7 @@
     4. [docker-ci-2.gitlap.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3Fhost%3Ddocker-ci-2.gitlap.com%26srv%3DDocker_machine%26theme%3Dmultisite%26baseurl%3D..%2Fcheck_mk%2F)
 * Increase in docker_machine errors over 30.
 
-    ![Sample High Errors on runner machines](img/ci-runner-manager-errors.png)
+    ![Sample High Errors on runner machines](../img/ci-runner-manager-errors.png)
 
 * Message in alerts channel:
     * *shared-runners-manager-[1-2].gitlab.com service Docker_machine is CRITICAL*

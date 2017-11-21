@@ -33,7 +33,7 @@ someone closing runner, runner crashing, etc.
 
 ## Runner-view of Jobs
 
-![](../img/ci/runner/details.png)
+![](../img/ci/runner_details.png)
 
 These graphs represent data that are exported out of Runner Manager with Prometheus Exporter.
 
@@ -51,7 +51,7 @@ This name indicates that job is currently on preparation phase: download docker 
 
 ## Runners Manager: Auto-scaling
 
-![](../img/ci/runner/auto_scaling_details.png)
+![](../img/ci/auto_scaling_details.png)
 
 This is a very important graph as it represents the health of auto-scaling.
 You can read more about auto-scaling of Docker in this document:  https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/blob/master/docs/configuration/autoscale.md#autoscaling-algorithm-and-parameters.
