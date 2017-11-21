@@ -162,3 +162,30 @@ Adjust the vacuum settings for the given table to match the other tables, like t
   "autovacuum_analyze_threshold": 10000
 },
 ```
+## Connections
+
+This could indicate a problem with the pgbouncer setup as it's our
+primary mechanism for concentrating connections. It should be
+configured to use a limited number of connections.
+
+Also check `pg_stat_activity` to look for old console sessions or
+non-pgbouncer clients such as migrations or deploy scripts. Look in
+particular for `idle` or `idle in transaction` sessions or sessions
+running very long-lived queries.
+
+e.g.:
+```SQL
+SELECT pid,
+       age(backend_start) AS backend_age, 
+	   age(xact_start) AS xact_age, 
+	   age(query_start) AS query_age, 
+	   state,
+	   query
+  FROM pg_stat_activity 
+ WHERE pid <> pg_backend_pid()
+```
+
+Also, FYI "prepared transactions" and replication connections both
+contribute to connection counts. There should be zero prepared
+transactions on gitlab.com and only a small number of replication
+connections (2 currently).

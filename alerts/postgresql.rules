@@ -30,6 +30,17 @@ ALERT CommitRateTooLow
     runbook="troubleshooting/postgresql.md#availability"
   }
 
+## High number of connections
+
+ALERT ConnectionsTooHigh
+  IF sum by (fqdn) (pg_stat_activity_count) > on (fqdn) pg_settings_max_connections * 0.75
+  FOR 10m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Postgres has {{$value}} connections on {{$labels.fqdn}} which is close to the maximum",
+	runbook="troubleshooting/postgresql.md#connections"
+  }
+
 ## Transaction error rate
 
 ALERT RollbackRateTooHigh
