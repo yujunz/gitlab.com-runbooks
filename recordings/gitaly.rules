@@ -1,0 +1,18 @@
+
+# GRPC calls handled by Gitaly
+gitaly:grpc_server_handled_total:rate1m = sum(rate(grpc_server_handled_total[1m])) by (job, grpc_method, environment)
+gitaly:grpc_server_handled_total:error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, grpc_method, environment)
+gitaly:grpc_server_handled_total:error_avg_rate12h = avg_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
+gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h = stddev_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
+gitaly:grpc_server_handled_total:instance_error_rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) by (job, instance, environment)
+gitaly:grpc_server_handling_seconds_bucket:rate1m = sum(rate(grpc_server_handling_seconds_bucket[1m])) by (le,fqdn,job,grpc_method, environment)
+gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m = sum(irate(grpc_server_handled_total[1m])) without (grpc_service, grpc_type, environment)
+
+# GRPC average latency rules. Used in latency anomaly detection
+gitaly:grpc_server_handling_seconds:avg5m = avg(rate(grpc_server_handling_seconds_sum[5m]) / rate(grpc_server_handling_seconds_count[5m]) > 0) by (fqdn, job, grpc_method, environment)
+gitaly:grpc_server_handling_seconds:avg24h = avg_over_time(gitaly:grpc_server_handling_seconds:avg5m[24h])
+gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h = stddev_over_time(gitaly:grpc_server_handling_seconds:avg5m[24h])
+
+# GRPC p50 & p95 latencies
+gitaly:grpc_server_handling_seconds:p95 = histogram_quantile(0.95, sum(rate(grpc_server_handling_seconds_bucket[1m])) without (grpc_method,grpc_service,grpc_type))
+gitaly:grpc_server_handling_seconds:p50 = histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket[1m])) without (grpc_method,grpc_service,grpc_type))

@@ -102,6 +102,28 @@ Currently we are not using email alerting rules.
 
 ![Unknown alert](../img/default_routed_alert.png)
 
+### Alert silencing
+
+In some cases you need to silence an alert for an expected condition. This should be done when
+there is something alarming that is understood and will eventually be fixed.
+
+Silencing alerts is helpful to reduce the broken window effect, critical alarms should always
+be actionable and if they aren't we should ideally change the alert or if it something temporary
+silence them.
+
+* Go to https://alerts.gitlab.com/#/silences and select "New Silence"
+* Add matchers for the conditions to target the specific alert, for example:
+
+```
+Name                    Value
+-----                   ------
+
+alertname               LowDiskSpace
+fqdn                    sync.geo.gitlab.com
+mountpoint              /var/opt/gitlab
+```
+* Set a duration and a comment for the silence
+
 ## References
 
 * [Prometheus template source code](https://github.com/prometheus/prometheus/blob/master/template/template.go#L115)
