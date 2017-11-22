@@ -1,6 +1,6 @@
 
 ALERT IncreasedErrorRate
-  IF (sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd", code="5xx"}) by (code,backend)) > 2 
+  IF (sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb", environment="prd", code="5xx"}) by (code,backend)) > 5
   FOR 15s
   LABELS {severity="critical"}
   ANNOTATIONS {
