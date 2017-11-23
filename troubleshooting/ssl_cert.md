@@ -16,6 +16,18 @@ You see alerts like
 
 Check with browser if this is really the case.
 
+From your terminal, you can display additional details for a certificate using:
+
+```
+echo | openssl s_client -showcerts -servername my.hostname.com -connect my.hostname.com:443 2>/dev/null | openssl x509 -inform pem -noout -text
+```
+
+If you are only interested in the expiration date, you can use:
+
+```
+echo | openssl s_client -showcerts -servername my.hostname.com -connect my.hostname.com:443 2>/dev/null | openssl x509 -inform pem -noout -text | grep -A2 Validity
+```
+
 ## Resolution
 
 We use [SSLMate] for ordering SSL certificates. Get the commandline tool via
@@ -62,6 +74,9 @@ Use a tool such as <https://www.sslshopper.com/ssl-checker.html> to verify that
 the certificate is live, working, and fully valid.
 
 ## Notes
+
+* Certificates that were setup via DNS approval now have their renewal automated
+  after configuring [Route53 integration with SSLMate](https://sslmate.com/account/integrations/add/aws)
 
 * For dev.gitlab.org we use the same certificate for registry so make sure you
   update the normal and registry certificates with the same one.
