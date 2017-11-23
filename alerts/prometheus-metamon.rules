@@ -4,6 +4,7 @@ ALERT PrometheusUnreachable
   LABELS {
     service = "prometheus",
     severity = "critical",
+    pager = "pagerduty",
   }
   ANNOTATIONS {
     title = "{{$labels.job}} is unreachable",
@@ -17,6 +18,7 @@ ALERT PrometheusManyRestarts
   LABELS {
     service = "prometheus",
     severity = "critical",
+    pager = "pagerduty",
   }
   ANNOTATIONS {
     title = "{{$labels.job}} is restarting frequently",
@@ -120,6 +122,7 @@ ALERT PrometheusNotificationsBacklog
   LABELS {
     service = "prometheus",
     severity = "critical",
+    pager = "pagerduty",
   }
   ANNOTATIONS {
     title = "{{$labels.job}} is backlogging on the notifications queue",
@@ -212,6 +215,7 @@ ALERT PrometheusInvalidConfigFile
   LABELS {
     service = "prometheus",
     severity = "critical",
+    pager = "pagerduty",
   }
   ANNOTATIONS {
     title = "{{$labels.job}} has an invalid config",
