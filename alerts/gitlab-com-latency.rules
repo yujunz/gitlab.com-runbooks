@@ -12,7 +12,7 @@ ALERT GitLabComLatencyWeb
   FOR 1m
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="Web latency on GitLab.com has been over {{$value}} ms during the last 1m"
+    title="Web latency on GitLab.com has been over {{$value}} ms during the last 1m",
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
   }
 
@@ -21,6 +21,6 @@ ALERT GitLabComLatencyAPI
   FOR 1m
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="API latency on GitLab.com has been over {{$value}} ms during the last 1m"
+    title="API latency on GitLab.com has been over {{$value}} ms during the last 1m",
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
   }
