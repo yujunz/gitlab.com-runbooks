@@ -8,19 +8,5 @@ job_frontend:haproxy_frontend_bytes_in_total:irate1m = sum(irate(haproxy_fronten
 job_frontend:haproxy_frontend_request_errors_total:irate1m = sum(irate(haproxy_frontend_request_errors_total[1m])) without (fqdn, instance)
 job_backend:haproxy_backend_response_errors_total:irate1m = sum(irate(haproxy_backend_response_errors_total[1m])) without (fqdn, instance)
 
-# Postgres transaction rates and xlog rates for alerting and uptime calculation
-
-postgres:pg_stat_database_xact_commit:rate1m = sum(rate(pg_stat_database_xact_commit[1m])) without (datname,datid)
-postgres:pg_stat_database_xact_rollback:rate1m = sum(rate(pg_stat_database_xact_rollback[1m])) without (datname,datid)
-postgres:pg_xlog_bytes_per_second:rate1m = rate(pg_xlog_position_bytes[1m])
-postgres:pg_txid_per_second:rate1m = rate(pg_txid_current[1m])
-
-postgres:pg_stat_database_xact_commit:rate5m = sum(rate(pg_stat_database_xact_commit[5m])) without (datname,datid)
-postgres:pg_stat_database_xact_rollback:rate5m = sum(rate(pg_stat_database_xact_rollback[5m])) without (datname,datid)
-postgres:pg_xlog_bytes_per_second:rate5m = rate(pg_xlog_position_bytes[5m])
-postgres:pg_txid_per_second:rate5m = rate(pg_txid_current[5m])
-
-postgres:pg_replication_lag_bytes = (pg_xlog_position_bytes and pg_replication_is_replica == 0.0) - on (environment) group_right(instance)  (pg_xlog_position_bytes and pg_replication_is_replica == 1.0)
-
 # process_cpu_seconds_rate
 process_cpu_seconds_total:rate1m = rate(process_cpu_seconds_total[1m])
