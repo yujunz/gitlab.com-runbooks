@@ -16,6 +16,15 @@ ALERT GitLabComLatencyWeb
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
   }
 
+ALERT GitLabComLatencyWebCritical
+  IF type:rails_requests_completed_milliseconds:p95{environment="prd",type="web"} > 3000
+  FOR 5m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Web latency on GitLab.com has been over {{$value}} ms during the last 5m",
+    description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
+  }
+
 ALERT GitLabComLatencyAPI
   IF type:rails_requests_completed_milliseconds:p95{environment="prd",type="api"} > 120
   FOR 1m
