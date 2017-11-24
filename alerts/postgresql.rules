@@ -156,6 +156,22 @@ ALERT PostgreSQL_TooManyDeadTuples
 
 ## Meta Monitoring
 
+ALERT PostgreSQL_FleetSizeChange
+  IF postgres:databases and changes(postgres:databases[1m]) > 0
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Number of PostgreSQL Databases in {{$labels.environment}} has changed in the past minute",
+	description="There are now {{$value}} databases in environment \"{{$labels.environment}}\"",
+  }
+
+ALERT PostgreSQL_RoleChange
+  IF pg_replication_is_replica and changes(pg_replication_is_replica[1m]) > 0
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Postgres Database replica promotion occurred in environment \"{{$labels.environment}}\"",
+	description="Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}} *replica* {{else}} *primary* {{end}}",
+  }
+
 ALERT PostgreSQL_TooFewPrometheusScrapes
   IF rate(pg_exporter_scrapes_total[1m]) < 1/60
   FOR 5m
