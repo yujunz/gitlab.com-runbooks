@@ -158,7 +158,7 @@ ALERT PostgreSQL_TooManyDeadTuples
 
 ALERT PostgreSQL_FleetSizeChange
   IF postgres:databases and changes(postgres:databases[1m]) > 0
-  LABELS {severity="warn"}
+  LABELS {severity="info"}
   ANNOTATIONS {
     title="Number of PostgreSQL Databases in {{$labels.environment}} has changed in the past minute",
 	description="There are now {{$value}} databases in environment \"{{$labels.environment}}\"",
@@ -166,10 +166,18 @@ ALERT PostgreSQL_FleetSizeChange
 
 ALERT PostgreSQL_RoleChange
   IF pg_replication_is_replica and changes(pg_replication_is_replica[1m]) > 0
-  LABELS {severity="warn"}
+  LABELS {severity="info"}
   ANNOTATIONS {
     title="Postgres Database replica promotion occurred in environment \"{{$labels.environment}}\"",
 	description="Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}} *replica* {{else}} *primary* {{end}}",
+  }
+
+ALERT PostgreSQL_ConfigurationChange
+  IF {__name__=~"pg_settings_.*"} != on (__name__,fqdn) {__name__=~"pg_settings_.*"} offset 10m
+  LABELS {severity="info"}
+  ANNOTATIONS {
+    title="Postgres Database configuration change has occured on \"{{$labels.fqdn}}\"",
+	description="Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}",
   }
 
 ALERT PostgreSQL_TooFewPrometheusScrapes
