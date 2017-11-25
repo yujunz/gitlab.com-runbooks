@@ -244,3 +244,13 @@ ALERT PostgreSQL_ExporterErrors
 	description="This probably indicates a buggy query in query.yaml on {{$labels.fqdn}}",
 	runbook="troubleshooting/prometheus-exporter-scrape-errors.md",
   }
+
+ALERT PostgreSQL_DiskUtilizationMaxedOut
+  IF rate(node_disk_io_time_ms{tier="db",type="postgres",device="dm-0",environment="prd"}[1m]) > 950
+  FOR 1m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Postgres server's disk utilization over 95% for over a minute. Expect this to cause replication lag or user visible latency",
+	description="Server {{$labels.fqdn}} disk {{$labels.device}} utilization is {{$value}}/1000",
+	runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped",
+  }
