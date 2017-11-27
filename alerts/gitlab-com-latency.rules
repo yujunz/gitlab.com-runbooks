@@ -3,7 +3,7 @@ ALERT GitLabComLatencyGitaly
   FOR 5m
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="Gitaly latency on {{ $labels.fqdn }} has been over {{$value}} during the last 5m",
+    title="Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last 5m",
     description="Reach out to the Gitaly team and mitigate the problem restarting gitaly on the affected node if it's causing a partial outage."
   }
 
@@ -12,7 +12,7 @@ ALERT GitLabComLatencyWeb
   FOR 1m
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="Web latency on GitLab.com has been over {{$value}} ms during the last 1m",
+    title="Web latency on GitLab.com has been over 3s during the last 1m",
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
   }
 
@@ -21,7 +21,7 @@ ALERT GitLabComLatencyWebCritical
   FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
-    title="Web latency on GitLab.com has been over {{$value}} ms during the last 5m",
+    title="Web latency on GitLab.com has been over 3s during the last 5m",
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
   }
 
@@ -30,6 +30,6 @@ ALERT GitLabComLatencyAPI
   FOR 1m
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="API latency on GitLab.com has been over {{$value}} ms during the last 1m",
+    title="API latency on GitLab.com has been over 120ms during the last 1m",
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
   }
