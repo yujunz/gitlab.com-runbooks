@@ -120,12 +120,31 @@ ALERT PostgreSQL_UnusedReplicationSlot
  	runbook="troubleshooting/postgres.md#replication_slots"
   }
 
+ALERT PostgreSQL_ReplicaStaleXmin
+  IF pg_replication_slots_xmin_age > 10000
+  FOR 5m
+  LABELS {severity="warn", pager="pagerduty"}
+  ANNOTATIONS {
+    title="PostgreSQL replication slot with an stale xmin which can cause bloat on the primary",
+	description="PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which means there's a long-running query or transaction on the database. This can cause bloat on the *primary* due to hot standby feedback.",
+    runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples",
+  }
+
 ## Miscellaneous Database Alerts
+
+ALERT PostgreSQL_LongLivedTransaction
+  IF pg_stat_activity_max_tx_duration >1800
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="There's a Postgres transaction older than 30 minutes",
+	description="Postgres server {{$labels.fqdn}} has a transaction in state \"{{$labels.state}}\" that started {{$values}}s ago",
+    runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples",
+  }
 
 ALERT PostgreSQL_TooManyRowExclusiveLocks
   IF sum(pg_locks_count{mode="rowexclusivelock"}) by (environment) > 100
   FOR 30m
-  LABELS {severity="critical"}
+  LABELS {severity="info"}
   ANNOTATIONS {
     title="Too many row exclusive locks: {{ $value }}",
     description="Huge amounts of ROW EXCLUSIVE locks (used by SQL UPDATEs for example) can result in GitLab.com being unresponsive. See http://performance.gitlab.net/dashboard/db/postgres-stats for more information.",
@@ -156,6 +175,57 @@ ALERT PostgreSQL_TooManyDeadTuples
 
 ## Meta Monitoring
 
+ALERT PostgreSQL_FleetSizeChange
+  IF postgres:databases and changes(postgres:databases[1m]) > 0
+  LABELS {severity="info"}
+  ANNOTATIONS {
+    title="Number of PostgreSQL Databases in {{$labels.environment}} has changed in the past minute",
+	description="There are now {{$value}} databases in environment \"{{$labels.environment}}\"",
+  }
+
+ALERT PostgreSQL_RoleChange
+  IF pg_replication_is_replica and changes(pg_replication_is_replica[1m]) > 0
+  LABELS {severity="info"}
+  ANNOTATIONS {
+    title="Postgres Database replica promotion occurred in environment \"{{$labels.environment}}\"",
+	description="Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}} *replica* {{else}} *primary* {{end}}",
+  }
+
+ALERT PostgreSQL_ConfigurationChange
+  IF {__name__=~"pg_settings_.*"} != on (__name__,fqdn) {__name__=~"pg_settings_.*"} offset 10m
+  LABELS {severity="info"}
+  ANNOTATIONS {
+    title="Postgres Database configuration change has occured on \"{{$labels.fqdn}}\"",
+	description="Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}",
+  }
+
+# The bizarre regexp here is to work around the restrictions of Go's
+# Regexp library's limited RE2 syntax. It's basically implementing
+# /pg_settings_(?!transaction_read_only).*/
+
+# This rule hard codes the current production master name. I don't see
+# a way to avoid this though possibly some templating magic might be
+# able to do it. In an ideal world it we wouldn't be comparing against
+# a single server but just alerting on the odd one out but that's hard
+# because these are different metrics so any attempt to use aggregates
+# loses the metric name. This might be easier if these were all a
+# single metric with a label for the setting name.
+
+ALERT PostgreSQL_ConfigurationInconsistent
+  IF {
+	  __name__=~"pg_settings_([^t]|t[^r]|tr[^a]|tra[^n]|tran[^s]|trans[^a]|transa[^c]|transac[^t]|transact[^i]|transacti[^o]|transactio[^n]|transaction[^_]|transaction_[^r]|transaction_r[^e]|transaction_re[^a]|transaction_rea[^d]|transaction_read[^_]|transaction_read_[^o]|transaction_read_o[^n]|transaction_read_on[^l]|transaction_read_onl[^y]).*",
+      fqdn="db3.cluster.gitlab.com"
+	 }
+     != on (__name__) group_right(instance)
+	 {__name__=~"pg_settings_.*", fqdn!="db3.cluster.gitlab.com"}
+  FOR 60m
+  LABELS {severity="info"}
+  ANNOTATIONS {
+    title="Postgres server configurations inconsistent across fleet",
+	description="The Postges server {{$labels.fqdn}} has {{$labels.__name__}}={{$value}} which doesn't match the current production master db3.cluster.gitlab.com",
+    runbook="troubleshooting/postgres.md",
+  }
+
 ALERT PostgreSQL_TooFewPrometheusScrapes
   IF rate(pg_exporter_scrapes_total[1m]) < 1/60
   FOR 5m
@@ -175,6 +245,12 @@ ALERT PostgreSQL_ExporterErrors
 	runbook="troubleshooting/prometheus-exporter-scrape-errors.md",
   }
 
-
-
-
+ALERT PostgreSQL_DiskUtilizationMaxedOut
+  IF rate(node_disk_io_time_ms{tier="db",type="postgres",device="dm-0",environment="prd"}[1m]) > 950
+  FOR 1m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="Postgres server's disk utilization over 95% for over a minute. Expect this to cause replication lag or user visible latency",
+	description="Server {{$labels.fqdn}} disk {{$labels.device}} utilization is {{$value}}/1000",
+	runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped",
+  }

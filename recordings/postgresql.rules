@@ -26,4 +26,4 @@ postgres:pg_replication_lag_bytes = (pg_xlog_position_bytes and pg_replication_i
 postgres:databases = count(pg_settings_port) by (environment)
 
 # This metric should be 0 if there's ay alerts firing or 1 if there are no alerts
-postgres:up = count(ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing"}) by (environment) == bool 0 or postgres:databases > bool 0
+postgres:up = count(ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info"}) by (environment) == bool 0 or postgres:databases > bool 0
