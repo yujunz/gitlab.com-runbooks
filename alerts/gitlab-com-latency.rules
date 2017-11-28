@@ -7,6 +7,15 @@ ALERT GitLabComLatencyGitaly
     description="Reach out to the Gitaly team and mitigate the problem restarting gitaly on the affected node if it's causing a partial outage."
   }
 
+ALERT GitLabComLatencyGitalyCritical
+  IF gitaly:grpc_server_handling_seconds:p95{environment="prd"} >= 60
+  FOR 5m
+  LABELS {severity="critical", pager="pagerduty"}
+  ANNOTATIONS {
+    title="Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last 5m",
+    description="Reach out to the Gitaly team and mitigate the problem restarting gitaly on the affected node if it's causing a partial outage."
+  }
+
 ALERT GitLabComLatencyWeb
   IF type:rails_requests_completed_milliseconds:p95{environment="prd",type="web"} > 3000
   FOR 1m
@@ -32,4 +41,3 @@ ALERT GitLabComLatencyAPI
   ANNOTATIONS {
     title="API latency on GitLab.com has been over 150ms during the last 5m",
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
-  }
