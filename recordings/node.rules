@@ -18,4 +18,4 @@ instance:node_disk_writes_completed:irate1m = sum(irate(node_disk_writes_complet
 instance:node_disk_reads_completed:irate1m = sum(irate(node_disk_reads_completed{device=~"sd.*"}[1m])) without (device)
 
 # Number of instances up per fleet
-instance:up:count = count(up{job="node", type!=""}) without (instance, fqdn)
+instance:up:count = count(up{job="node", type!=""} == 1) without (instance, fqdn)
