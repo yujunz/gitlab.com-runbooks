@@ -25,6 +25,19 @@ bundle exec knife ssh -C 1 -p 2222 -a ipaddress 'roles:gitlab-base-lb-fe' "echo 
 
 You can look for <backend_name> and <backend_server_name> in HAProxy's configuration, in any of the `feXX.lb.gitlab.com` nodes in `/etc/haproxy/haproxy.conf` file.
 
+##### Example: How to drain all services on `git-02.sv.prd.gitlab.com` from LB:
+
+The following command is copypastable (note that the naming scheme is old on haproxy):
+```
+bundle exec knife ssh -C 1 -p 2222 -a ipaddress 'roles:gitlab-base-lb-fe' 'for s in https_git websockets ssh; do echo "set server ${s}/git02.fe.gitlab.com state maint" ; done | sudo socat stdio /run/haproxy/admin.sock'
+```
+
+##### Example: How to put back all services on `git-02.sv.prd.gitlab.com` on the LBs:
+
+```
+bundle exec knife ssh -C 1 -p 2222 -a ipaddress 'roles:gitlab-base-lb-fe' 'for s in https_git websockets ssh; do echo "set server ${s}/git02.fe.gitlab.com state ready" ; done | sudo socat stdio /run/haproxy/admin.sock'
+```
+
 After disabling a node, make sure you check that all client connections are gone, then run `sudo gitlab-ctl restart unicorn`. On a `web` node, for example, we would check for connections to port 443 with `sudo netstat -pnta | grep nginx | grep -c ESTAB`.
 
 ### Gracefully restart sidekiq jobs

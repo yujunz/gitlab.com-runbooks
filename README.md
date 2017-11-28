@@ -20,6 +20,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Sidekiq stats no longer showing](troubleshooting/sidekiq_stats_no_longer_showing.md)
 * [Sentry is down](troubleshooting/sentry-is-down.md)
 * [Gitaly error rate is too high](troubleshooting/gitaly-error-rate.md)
+* [Gitaly latency is too high](troubleshooting/gitaly-latency.md)
 
 ## Git
 
