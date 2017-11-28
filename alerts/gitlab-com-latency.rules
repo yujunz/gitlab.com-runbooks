@@ -26,10 +26,10 @@ ALERT GitLabComLatencyWebCritical
   }
 
 ALERT GitLabComLatencyAPI
-  IF type:rails_requests_completed_milliseconds:p95{environment="prd",type="api"} > 120
-  FOR 1m
+  IF type:rails_requests_completed_milliseconds:p95{environment="prd",type="api"} > 150
+  FOR 5m
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="API latency on GitLab.com has been over 120ms during the last 1m",
+    title="API latency on GitLab.com has been over 150ms during the last 5m",
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
   }
