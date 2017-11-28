@@ -41,8 +41,9 @@ Credentials are in 1Password.
 sslmate buy about.gitlab.com
 ```
 
-When asked to prove authorization, select **Add a DNS record**, and add the
-provided `CNAME` entry via Route 53. You can leave this `CNAME` record in the zone.
+When asked to prove authorization, select **Add a DNS record (automatic)**.
+We have [Route53 integration with SSLMate](https://sslmate.com/account/integrations/add/aws)
+so the DNS authorization will be done automatically.
 
 The `sslmate` client will download the key and certificate to the directory in
 which the command was executed.
