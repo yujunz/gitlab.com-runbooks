@@ -199,30 +199,33 @@ ALERT PostgreSQL_ConfigurationChange
 	description="Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}",
   }
 
+# This alert detects replicas that have different configuration values
+# than the primary. It only fires after 60m to avoid spamming alert
+# channels when changes are rolled out normally (the above rule will
+# still send an alert). But after 60m all the servers should be
+# updated and if they're still inconsistent then something has gone
+# wrong with the config rollout.
+
 # The bizarre regexp here is to work around the restrictions of Go's
 # Regexp library's limited RE2 syntax. It's basically implementing
-# /pg_settings_(?!transaction_read_only).*/
-
-# This rule hard codes the current production master name. I don't see
-# a way to avoid this though possibly some templating magic might be
-# able to do it. In an ideal world it we wouldn't be comparing against
-# a single server but just alerting on the odd one out but that's hard
-# because these are different metrics so any attempt to use aggregates
-# loses the metric name. This might be easier if these were all a
-# single metric with a label for the setting name.
+# /pg_settings_(?!transaction_read_only).*/ (because
+# transaction_read_only is true on standbys).
 
 ALERT PostgreSQL_ConfigurationInconsistent
-  IF {
-	  __name__=~"pg_settings_([^t]|t[^r]|tr[^a]|tra[^n]|tran[^s]|trans[^a]|transa[^c]|transac[^t]|transact[^i]|transacti[^o]|transactio[^n]|transaction[^_]|transaction_[^r]|transaction_r[^e]|transaction_re[^a]|transaction_rea[^d]|transaction_read[^_]|transaction_read_[^o]|transaction_read_o[^n]|transaction_read_on[^l]|transaction_read_onl[^y]).*",
-      fqdn="db3.cluster.gitlab.com"
-	 }
-     != on (__name__) group_right(instance)
-	 {__name__=~"pg_settings_.*", fqdn!="db3.cluster.gitlab.com"}
+  IF (
+	  {__name__=~"pg_settings_.*"}
+	  and on (instance) pg_replication_is_replica == 1.0
+	 )
+     != on (__name__) group_left()
+     (
+	  {__name__=~"pg_settings_([^t]|t[^r]|tr[^a]|tra[^n]|tran[^s]|trans[^a]|transa[^c]|transac[^t]|transact[^i]|transacti[^o]|transactio[^n]|transaction[^_]|transaction_[^r]|transaction_r[^e]|transaction_re[^a]|transaction_rea[^d]|transaction_read[^_]|transaction_read_[^o]|transaction_read_o[^n]|transaction_read_on[^l]|transaction_read_onl[^y]).*"}
+      and on (instance) pg_replication_is_replica == 0.0
+	 )
   FOR 60m
   LABELS {severity="info"}
   ANNOTATIONS {
     title="Postgres server configurations inconsistent across fleet",
-	description="The Postges server {{$labels.fqdn}} has {{$labels.__name__}}={{$value}} which doesn't match the current production master db3.cluster.gitlab.com",
+	description="The Postges server {{$labels.fqdn}} has {{$labels.__name__}}={{$value}} which doesn't match the current production primary",
     runbook="troubleshooting/postgres.md",
   }
 
