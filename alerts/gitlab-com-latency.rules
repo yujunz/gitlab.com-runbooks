@@ -41,3 +41,4 @@ ALERT GitLabComLatencyAPI
   ANNOTATIONS {
     title="API latency on GitLab.com has been over 150ms during the last 5m",
     description="This might be causing a slowdown on the site and/or affecting users. Please check the Triage Dashboard in Grafana."
+  }
