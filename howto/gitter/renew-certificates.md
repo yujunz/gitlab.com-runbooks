@@ -1,12 +1,11 @@
 # How to renew the TLS certificate for `*.gitter.im`
 
-There are three points where Gitter serves TLS traffic:
+There are four points where Gitter serves TLS traffic:
 
 1. ELBs
 1. CloudFront
-1. Websockets servers
-
-The latter because ELBs don't support websockets traffic hence we just use a TCP listener and terminate the TLS session on the nodes.
+1. Gitter beta (because it's a single node)
+1. Websockets servers (because ELBs don't support websockets traffic hence we just use a TCP listener and terminate the TLS session on the nodes)
 
 First thing you should do is -unsurprisingly- [renew the certificate](https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ssl_cert.md). SSLMate will download the certificates in the current directory. Keep them there for now. Note: having more than one AWS account configured on your profile may confuse SSLMate. If you can't see the new Route53 record configured on the correct zone you should find out where it got created (it's an `NS` type) and create it manually where it should be.
 
@@ -34,7 +33,7 @@ do
 done
 ```
 
-## Websockets servers
+## Preparation
 
 1. Set a maintenance on [Pagerduty](https://gitter.pagerduty.com/services/P16ONUD) for the `monit-prod-critical` service.
 
@@ -45,21 +44,39 @@ openssl x509 -fingerprint -md5 -in '*.gitter.im.crt' | head -1 | cut -f2 -d '=' 
 
 1. Update the certificate and the key in Ansible. The certificate is in `roles/gitter/certs/files/certs/gitter.crt` while the key is an Ansible vault located in `ansible/roles/gitter/certs/vars/main.yml`.
 
-1. Test the roll out on a single node:
+## Beta
+
+1. Test the roll out on `gitter-beta.beta.gitter`:
+```
+ansible-playbook -i beta -l gitter-beta.beta.gitter --check -t certs playbooks/gitter.yml
+```
+
+1. Roll out to beta:
+```
+ansible-playbook -i beta -l gitter-beta.beta.gitter -t certs playbooks/gitter.yml
+```
+
+1. Reload nginx and verify that it's serving the new certificate:
+```
+ansible -si beta gitter-beta.beta.gitter -a 'nginx -s reload'
+ansible -i beta gitter-beta.beta.gitter -m shell -a 'openssl s_client -connect localhost:443'```
+
+## Prod
+
+1. Test the roll out on a single node in prod:
 ```
 ansible-playbook -i prod -l ws-01.prod.gitter --check -t certs playbooks/gitter.yml
 ```
 
-1. Roll out to one node:
+1. Roll out to one node in prod:
 ```
 ansible-playbook -i prod -l ws-01.prod.gitter -t certs playbooks/gitter.yml
 ```
 
 1. Reload nginx and verify that it's serving the new certificate:
 ```
-sudo nginx -s reload
-openssl s_client -connect localhost:443
-```
+ansible -si beta ws-01.prod.gitter -a 'nginx -s reload'
+ansible -i beta ws-01.prod.gitter -m shell -a 'openssl s_client -connect localhost:443'```
 
 1. Roll out to the rest of the nodes. You'll notice that it'll be rolled out to the webapp servers as well. This is expected.
 ```
@@ -67,6 +84,9 @@ ansible-playbook -i prod -t certs playbooks/gitter.yml
 ```
 
 1. Reload nginx on all other nodes.
+```
+ansible -si prod ws-servers -a 'nginx -s reload'
+```
 
 1. Verify, verify, verify.
 
