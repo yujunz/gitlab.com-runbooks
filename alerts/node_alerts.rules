@@ -41,7 +41,7 @@ ALERT HighInodeUsage
   }
 
 ALERT ExtremelyHighCPU
-  IF max(instance_cpu:node_cpu_not_idle:rate5m{environment=~"prd|cny"}) > .95
+  IF instance:node_cpu_in_use:ratio{environment=~"prd|cny"} > .95
   FOR 120m
   LABELS { severity = "critical", pager="pagerduty" }
   ANNOTATIONS {
@@ -51,7 +51,7 @@ ALERT ExtremelyHighCPU
   }
 
 ALERT HighCPU
-  IF max(instance_cpu:node_cpu_not_idle:rate5m{environment=~"prd|cny"}) > .80
+  IF instance:node_cpu_in_use:ratio{environment=~"prd|cny"} > .8
   FOR 120m
   LABELS { severity = "critical" }
   ANNOTATIONS {
