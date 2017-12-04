@@ -34,6 +34,16 @@ ALERT NoJobsOnSharedRunners
   }
 
 
+ALERT TooManyJobsOnSharedRunners
+  IF sum(ci_runner_builds{job="shared-runners"}) > 300
+  FOR 15m
+  LABELS {severity="warn", channel="ci-cd"}
+  ANNOTATIONS {
+    title="Number of jobs running on shared runners is over 300 for the last 15 minutes",
+    description="This may suggest problems with our autoscaled machines fleet OR abusive usage of Runners. Check https://performance.gitlab.net/dashboard/db/ci and https://log.gitlap.com/app/kibana#/dashboard/5d3921f0-79e0-11e7-a8e2-f91bfad41e34",
+  }
+
+
 ## Runners manager status
 ALERT RunnersManagerDown
   IF up{job=~"shared-runners|shared-runners-gitlab-org|shared-runners-high-cpu|private-runners|omnibus-runners"} == 0
