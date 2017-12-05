@@ -176,7 +176,8 @@ ALERT PostgreSQL_TooManyDeadTuples
 ## Meta Monitoring
 
 ALERT PostgreSQL_FleetSizeChange
-  IF postgres:databases and changes(postgres:databases[1m]) > 0
+  IF postgres:databases != postgres:databases offset 2m
+  FOR 1m
   LABELS {severity="info"}
   ANNOTATIONS {
     title="Number of PostgreSQL Databases in {{$labels.environment}} has changed in the past minute",
