@@ -250,8 +250,8 @@ ALERT PostgreSQL_ExporterErrors
   }
 
 ALERT PostgreSQL_DiskUtilizationMaxedOut
-  IF rate(node_disk_io_time_ms{tier="db",type="postgres",device="dm-0",environment="prd"}[1m]) > 950
-  FOR 1m
+  IF rate(node_disk_io_time_ms{tier="db",type="postgres",device="dm-0",environment="prd"}[1m]) > 960
+  FOR 2m
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres server's disk utilization over 95% for over a minute. Expect this to cause replication lag or user visible latency",
