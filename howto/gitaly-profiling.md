@@ -3,10 +3,6 @@
 ## First and foremost
 
 * *Don't Panic*
-* Fetching these profiles _will_ slow down the Gitaly server considerably. Do so with care.
-  * A 5x slow down is to be expected. This is because it works like `strace` capturing all calls.
-  * Tweeting prior to doing this is highly recommended:  
-  `We are profiling one of the storage servers. Some performance degregation might occur during this. Sorry for the inconvinience.` (127 chars)
 
 
 ## 1. Download the profiles
