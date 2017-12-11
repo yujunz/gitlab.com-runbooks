@@ -116,7 +116,7 @@ To upgrade runners on managers you need to:
 
     ```bash
     $ ssh private-runners-manager-1
-    user@private-runners-manager-1:~$ curl -s curl -s http://localhost:9402/debug/jobs/list
+    user@private-runners-manager-1:~$ curl -s http://localhost:9402/debug/jobs/list
     ```
 
     When the last job will be finished, or after the 7200 seconds timeout, the process will
