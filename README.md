@@ -106,6 +106,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ### Work with storage
 
 * [Understanding GitLab Storage Shards](howto/sharding.md)
+* [Build and Deploy New NFS Servers](howto/nfs-servers.md)
 
 ### Work with Terraform
 
