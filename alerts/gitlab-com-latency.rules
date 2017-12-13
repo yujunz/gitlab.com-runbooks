@@ -1,13 +1,3 @@
-ALERT GitLabComLatencyGitaly
-  IF gitaly:grpc_server_handling_seconds:p95{environment="prd"} >= 60
-  FOR 5m
-  LABELS {severity="warn"}
-  ANNOTATIONS {
-    title="Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last 5m",
-    description="Reach out to the Gitaly team and mitigate the problem restarting gitaly on the affected node if it's causing a partial outage.",
-    runbook="troubleshooting/gitaly-latency.md"
-  }
-
 ALERT GitLabComLatencyGitalyCritical
   IF gitaly:grpc_server_handling_seconds:p95{environment="prd"} >= 60
   FOR 5m

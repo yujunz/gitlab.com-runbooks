@@ -19,3 +19,4 @@ instance:node_disk_reads_completed:irate1m = sum(irate(node_disk_reads_completed
 
 # Number of instances up per fleet
 instance:up:count = count(up{job="node", type!=""} == 1) without (instance, fqdn)
+
