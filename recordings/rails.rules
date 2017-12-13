@@ -14,3 +14,6 @@ instance:rails_requests_completed_milliseconds:p99 = histogram_quantile(0.99, su
 
 type:rails_requests_started:rate1m = sum(rate(rails_requests_started{environment="prd"}[1m])) without (instance, fqdn, verb)
 type:rails_requests_completed_milliseconds:p95 = histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket{environment="prd"}[1m])) without (instance, fqdn, status))
+
+instance:rails_no_repository_for_path:rate1m = rate(rails_git_no_repository_for_such_path[1m]
+type:rails_no_repository_for_path:rate1m = sum(instance:rails_no_repository_for_path:rate1m) without (instance, fqdn)
