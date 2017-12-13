@@ -23,5 +23,6 @@ This runbook will be deprecated in favor of the [gitaly pprof runbook](https://g
 
 - If it is late in the day and you cannot engage anyone from the Gitaly team, you might want to restart the `gitaly` process.
   - Log into the affected NFS server.
-  - Issue a `sudo gitlab-ctl restart gitaly`.
-- Otherwise engage with a Gitaly engineer to assess the impact and investigate the problem further.
+  - Issue a `sudo kill -6 <GITALY_SERVER_PID>` to dump goroutines info to logs.
+  - If the command above didn't restart the process, then issue `sudo gitlab-ctl restart gitaly`.
+  - Extract the dump info from the logs for further inspections or inform one of the Gitaly engineers.
