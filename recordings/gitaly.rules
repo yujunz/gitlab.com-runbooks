@@ -16,3 +16,6 @@ gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h = stddev_over_time
 # GRPC p50 & p95 latencies
 gitaly:grpc_server_handling_seconds:p95 = histogram_quantile(0.95, sum(rate(grpc_server_handling_seconds_bucket[1m])) without (grpc_method,grpc_service,grpc_type))
 gitaly:grpc_server_handling_seconds:p50 = histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket[1m])) without (grpc_method,grpc_service,grpc_type))
+
+# GRPC error rate by server
+instance:gitaly_grpc_errors_total:rate1m = sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) without (grpc_method, grpc_type, grpc_service, grpc_code)
