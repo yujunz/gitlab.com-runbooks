@@ -17,13 +17,31 @@ postgres:pg_txid_per_second:rate5m = rate(pg_txid_current[5m])
 
 postgres:pg_replication_lag_bytes = (pg_xlog_position_bytes and pg_replication_is_replica == 0.0) - on (environment) group_right(instance)  (pg_xlog_position_bytes and pg_replication_is_replica == 1.0)
 
-# Calculate uptime based on whether any Postgres alerts are firing. If
-# no alerts then we're up. We may need to tighten which alerts count
-# though as some are noisy.
-
 
 # this is just a count of how many databases to expect per environment to fill in the up metric 
-postgres:databases = count(pg_settings_port) by (environment)
+postgres:databases = count(pg_exporter_scrapes_total) by (environment)
 
-# This metric should be 0 if there's ay alerts firing or 1 if there are no alerts
-postgres:up = count(ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info"}) by (environment) == bool 0 or postgres:databases > bool 0
+
+# Define postgres:up to be 0 if there's ay alerts firing or 1 if there are no alerts
+
+# To allow for bringing up new replicas which will inevitably be
+# triggering alerts until they're fully alive we have to test three
+# things separately here:
+
+# 3. At least two replica databases with no alerts on them
+# 2. No alerts on the primary database
+# 1. No global alerts for the environment as a whole
+
+# Note the inner vector will return an empty vector for any
+# environment with problems so we need the final expression to ensure
+# it is present and evaluates to 0 for such environments.
+
+postgres:up = ( 
+		count(pg_replication_is_replica == 1.0 unless on (fqdn) ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info"}) by (environment) >= 2
+	  and on (environment)
+		count(pg_replication_is_replica == 0.0 unless on (fqdn) ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info"}) by (environment) == 1
+	  unless on (environment)
+		count(ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info",fqdn=""}) by (environment) > 0
+	) > bool 0
+	or on (environment)
+       postgres:databases == bool 0
