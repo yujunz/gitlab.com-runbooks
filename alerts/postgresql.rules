@@ -6,7 +6,7 @@ ALERT PostgresSQL_XIDConsumptionTooLow
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres seems to be consuming transaction IDs very slowly",
-	description="TXID/s is {{$value}} on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
+	description="TXID/s is {{ $value | printf \"%.1f\" }} on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
     runbook="troubleshooting/postgresql.md#availability"
   }
   
@@ -16,7 +16,7 @@ ALERT PostgreSQL_XLOGConsumptionTooLow
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres seems to be consuming XLOG very slowly",
-	description="XLOG bytes/s is {{$value}} on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
+	description="XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
     runbook="troubleshooting/postgresql.md#availability"
   }
 
@@ -26,7 +26,7 @@ ALERT PostgreSQL_CommitRateTooLow
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres seems to be processing very few transactions",
-	description="Commits/s on {{$labels.instance}} database {{$labels.datname}} is {{$value}} which is implausibly low. Perhaps the application is unable to connect",
+	description="Commits/s on {{$labels.instance}} database {{$labels.datname}} is {{$value | printf \"%.0f\" }} which is implausibly low. Perhaps the application is unable to connect",
     runbook="troubleshooting/postgresql.md#availability"
   }
 
@@ -51,7 +51,7 @@ ALERT PostgreSQL_RollbackRateTooHigh
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres transaction rollback rate is high",
-	description="Ratio of transactions being aborted compared to committed is {{$value}} on {{$labels.instance}}",
+	description="Ratio of transactions being aborted compared to committed is {{ $value | printf \"%.2f\" }} on {{$labels.instance}}",
     runbook="troubleshooting/postgresql.md#errors"
   }
 
@@ -78,7 +78,7 @@ ALERT PostgreSQL_ReplicationLagTooLarge
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Postgres Replication lag is over 2 minutes",
-    description="Replication lag on server {{$labels.instance}} is currently {{$value}}s",
+    description="Replication lag on server {{$labels.instance}} is currently {{ $value | humanizeDuration }}",
     runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
   }
 
@@ -95,7 +95,7 @@ ALERT PostgreSQL_ReplicationLagBytesTooLarge
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Postgres Replication lag is over 200MB",
-	description="Replication lag on server {{$labels.instance} is currently {{$value}} bytes",
+	description="Replication lag on server {{$labels.instance} is currently {{ $value | humanize1024}}B",
 	runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
   }
 
@@ -105,7 +105,7 @@ ALERT PostgreSQL_XLOGConsumptionTooHigh
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Postgres is generating XLOG too fast, expect this to cause replication lag",
-	description="XLOG is being generated at a rate of {{$value}} bytes/s on {{$labels.instance}}",
+	description="XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s on {{$labels.instance}}",
 	runbook="troubleshooting/postgres.md#xlog-consumption-is-very-high"
   }
 
@@ -133,21 +133,21 @@ ALERT PostgreSQL_ReplicaStaleXmin
 ## Miscellaneous Database Alerts
 
 ALERT PostgreSQL_LongLivedTransaction
-  IF pg_stat_activity_max_tx_duration >1800
+  IF pg_stat_activity_max_tx_duration > 900
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="There's a Postgres transaction older than 30 minutes",
-	description="Postgres server {{$labels.fqdn}} has a transaction in state \"{{$labels.state}}\" that started {{$values}}s ago",
+	description="Postgres server {{$labels.fqdn}} has a transaction in state \"{{$labels.state}}\" that started {{ $value | humanizeDuration }} ago",
     runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples",
   }
 
 ALERT PostgreSQL_TooManyRowExclusiveLocks
   IF sum(pg_locks_count{mode="rowexclusivelock"}) by (environment) > 100
-  FOR 30m
+  FOR 60m
   LABELS {severity="info"}
   ANNOTATIONS {
     title="Too many row exclusive locks: {{ $value }}",
-    description="Huge amounts of ROW EXCLUSIVE locks (used by SQL UPDATEs for example) can result in GitLab.com being unresponsive. See http://performance.gitlab.net/dashboard/db/postgres-stats for more information.",
+    description="Large numbers of ROW EXCLUSIVE locks (used by SQL UPDATEs for example) can be a symptom of a blocking DDL, long lived transaction holding locks, or system performance degradation. See http://performance.gitlab.net/dashboard/db/postgres-stats for more information.",
     runbook="troubleshooting/postgres.md#locks"
   }
 
@@ -245,16 +245,16 @@ ALERT PostgreSQL_ExporterErrors
   LABELS {severity = "warn"}
   ANNOTATIONS {
     title="Postgres exporter is showing errors for the last hour",
-	description="This probably indicates a buggy query in query.yaml on {{$labels.fqdn}}",
+	description="This may indicate postgres_exporter is not running or a buggy query in query.yaml on {{$labels.fqdn}}",
 	runbook="troubleshooting/prometheus-exporter-scrape-errors.md",
   }
 
 ALERT PostgreSQL_DiskUtilizationMaxedOut
-  IF rate(node_disk_io_time_ms{tier="db",type="postgres",device="dm-0",environment="prd"}[1m]) > 960
+  IF rate(node_disk_io_time_ms{tier="db",type="postgres",device="dm-0",environment="prd"}[1m])/10 > 96
   FOR 2m
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres server's disk utilization over 95% for over a minute. Expect this to cause replication lag or user visible latency",
-	description="Server {{$labels.fqdn}} disk {{$labels.device}} utilization is {{$value}}/1000",
+	description="Server {{$labels.fqdn}} disk {{$labels.device}} utilization is {{$value | printf \"%.1f\"}}%",
 	runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped",
   }
