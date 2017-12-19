@@ -26,7 +26,7 @@ ALERT PostgreSQL_CommitRateTooLow
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres seems to be processing very few transactions",
-	description="Commits/s on {{$labels.instance}} database {{$labels.datname}} is {{$value} which is implausibly low. Perhaps the application is unable to connect",
+	description="Commits/s on {{$labels.instance}} database {{$labels.datname}} is {{$value}} which is implausibly low. Perhaps the application is unable to connect",
     runbook="troubleshooting/postgresql.md#availability"
   }
 
