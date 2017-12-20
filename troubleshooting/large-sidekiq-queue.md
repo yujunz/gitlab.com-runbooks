@@ -164,7 +164,7 @@ Now that we know we are looking for jobs that have a `project_id`, we can find o
 projects are owned by the user. In the Rails console (`sudo gitlab-rails console`):
 
 ```ruby
-user = User.find_by(username: 'foo")
+user = User.find_by(username: 'foo')
 id_list = user.projects.pluck(:id)
 ```
 
