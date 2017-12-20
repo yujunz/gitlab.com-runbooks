@@ -8,9 +8,12 @@ ALERT ChefClientErrorInPrd
     runbook="troubleshooting/chef.md",
   }
 
+# The '+time()%3600' is to try to arrange for these alerts to get
+# grouped together. This way they'll only trigger once an hour on the
+# hour.
 
 ALERT ChefClientStale
-  IF (time()/60/60 - ceil(chef_client_last_run_timestamp_seconds{environment="prd"}/60/60)) > 5
+  IF time() - chef_client_last_run_timestamp_seconds > 5*3600 + time()%3600
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Chef client hasn't run for longer than expected",
