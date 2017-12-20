@@ -148,6 +148,33 @@ Putting script in `/tmp` is one way of making sure its readable by `git` user
 with default umask setting. Otherwise rails console will treat the path as
 Ruby string and [most likely err](https://github.com/rails/rails/blob/v4.2.8/railties/lib/rails/commands/runner.rb#L58-L63).
 
+## Dropping jobs for a specific user
+
+Suppose user `foo` is generating a lot of import jobs. You can use the Sidekiq
+API in the Rails console to remove those specific jobs. To do this, we must
+first identify the arguments that are run with this Sidekiq job.
+
+1. Find the worker in question in https://gitlab.com/gitlab-org/gitlab-ee/tree/master/app/workers.
+For example, jobs in the `repository_import` queue correspond to `repository_import_worker.rb`: https://gitlab.com/gitlab-org/gitlab-ee/blob/master/app/workers/repository_import_worker.rb.
+
+2. Look at the arguments specified in `def perform` method. In this example,
+   `project_id` is the only argument.
+
+Now that we know we are looking for jobs that have a `project_id`, we can find out which
+projects are owned by the user. In the Rails console (`sudo gitlab-rails console`):
+
+```ruby
+user = User.find_by(username: 'foo")
+id_list = user.projects.pluck(:id)
+```
+
+To kill any matching projects, we can run the following in the same console:
+
+```ruby
+queue = Sidekiq::Queue.new('repository_import')
+queue.each { |job| job.delete if id_list.include?(job.args[0]) }
+```
+
 ## References
 
 * https://gitlab.com/gitlab-com/infrastructure/issues/677
