@@ -6,7 +6,7 @@ ALERT PostgresSQL_XIDConsumptionTooLow
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres seems to be consuming transaction IDs very slowly",
-	description="TXID/s is {{ $value | printf \"%.1f\" }} on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
+    description="TXID/s is {{ $value | printf \"%.1f\" }} on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
     runbook="troubleshooting/postgresql.md#availability"
   }
   
@@ -16,7 +16,7 @@ ALERT PostgreSQL_XLOGConsumptionTooLow
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres seems to be consuming XLOG very slowly",
-	description="XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
+    description="XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}} which is unusually low. Perhaps the application is unable to connect",
     runbook="troubleshooting/postgresql.md#availability"
   }
 
@@ -26,7 +26,7 @@ ALERT PostgreSQL_CommitRateTooLow
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres seems to be processing very few transactions",
-	description="Commits/s on {{$labels.instance}} database {{$labels.datname}} is {{$value | printf \"%.0f\" }} which is implausibly low. Perhaps the application is unable to connect",
+    description="Commits/s on {{$labels.instance}} database {{$labels.datname}} is {{$value | printf \"%.0f\" }} which is implausibly low. Perhaps the application is unable to connect",
     runbook="troubleshooting/postgresql.md#availability"
   }
 
@@ -38,7 +38,7 @@ ALERT PostgreSQL_ConnectionsTooHigh
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres has {{$value}} connections on {{$labels.fqdn}} which is close to the maximum",
-	runbook="troubleshooting/postgresql.md#connections"
+    runbook="troubleshooting/postgresql.md#connections"
   }
 
 ## Transaction error rate
@@ -46,12 +46,12 @@ ALERT PostgreSQL_ConnectionsTooHigh
 ALERT PostgreSQL_RollbackRateTooHigh
   IF rate(pg_stat_database_xact_rollback{environment="prd",datname="gitlabhq_production"}[1m])
      / on (instance,datname)
-	 rate(pg_stat_database_xact_commit{environment="prd",datname="gitlabhq_production"}[1m])
-	 > 0.01
+     rate(pg_stat_database_xact_commit{environment="prd",datname="gitlabhq_production"}[1m])
+     > 0.01
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres transaction rollback rate is high",
-	description="Ratio of transactions being aborted compared to committed is {{ $value | printf \"%.2f\" }} on {{$labels.instance}}",
+    description="Ratio of transactions being aborted compared to committed is {{ $value | printf \"%.2f\" }} on {{$labels.instance}}",
     runbook="troubleshooting/postgresql.md#errors"
   }
 
@@ -95,8 +95,8 @@ ALERT PostgreSQL_ReplicationLagBytesTooLarge
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Postgres Replication lag is over 200MB",
-	description="Replication lag on server {{$labels.instance} is currently {{ $value | humanize1024}}B",
-	runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
+    description="Replication lag on server {{$labels.instance}} is currently {{ $value | humanize1024}}B",
+    runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
   }
 
 ALERT PostgreSQL_XLOGConsumptionTooHigh
@@ -105,8 +105,8 @@ ALERT PostgreSQL_XLOGConsumptionTooHigh
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Postgres is generating XLOG too fast, expect this to cause replication lag",
-	description="XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s on {{$labels.instance}}",
-	runbook="troubleshooting/postgres.md#xlog-consumption-is-very-high"
+    description="XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s on {{$labels.instance}}",
+    runbook="troubleshooting/postgres.md#xlog-consumption-is-very-high"
   }
 
 # Group these by database host
@@ -116,8 +116,8 @@ ALERT PostgreSQL_UnusedReplicationSlot
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Unused Replication Slots for {{$labels.fqdn}}",
-  	description="Unused {{$labels.slot_type}} slot \"{{$labels.slot_name}}\" on {{$labels.fqdn}}",
- 	runbook="troubleshooting/postgres.md#replication_slots"
+    description="Unused {{$labels.slot_type}} slot \"{{$labels.slot_name}}\" on {{$labels.fqdn}}",
+    runbook="troubleshooting/postgres.md#replication_slots"
   }
 
 ALERT PostgreSQL_ReplicaStaleXmin
@@ -126,7 +126,7 @@ ALERT PostgreSQL_ReplicaStaleXmin
   LABELS {severity="warn", pager="pagerduty"}
   ANNOTATIONS {
     title="PostgreSQL replication slot with an stale xmin which can cause bloat on the primary",
-	description="PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which means there's a long-running query or transaction on the database. This can cause bloat on the *primary* due to hot standby feedback.",
+    description="PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which means there's a long-running query or transaction on the database. This can cause bloat on the *primary* due to hot standby feedback.",
     runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples",
   }
 
@@ -137,7 +137,7 @@ ALERT PostgreSQL_LongLivedTransaction
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="There's a Postgres transaction older than 30 minutes",
-	description="Postgres server {{$labels.fqdn}} has a transaction in state \"{{$labels.state}}\" that started {{ $value | humanizeDuration }} ago",
+    description="Postgres server {{$labels.fqdn}} has a transaction in state \"{{$labels.state}}\" that started {{ $value | humanizeDuration }} ago",
     runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples",
   }
 
@@ -181,7 +181,7 @@ ALERT PostgreSQL_FleetSizeChange
   LABELS {severity="info"}
   ANNOTATIONS {
     title="Number of PostgreSQL Databases in {{$labels.environment}} has changed in the past minute",
-	description="There are now {{$value}} databases in environment \"{{$labels.environment}}\"",
+    description="There are now {{$value}} databases in environment \"{{$labels.environment}}\"",
   }
 
 ALERT PostgreSQL_RoleChange
@@ -189,7 +189,7 @@ ALERT PostgreSQL_RoleChange
   LABELS {severity="info"}
   ANNOTATIONS {
     title="Postgres Database replica promotion occurred in environment \"{{$labels.environment}}\"",
-	description="Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}} *replica* {{else}} *primary* {{end}}",
+    description="Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}} *replica* {{else}} *primary* {{end}}",
   }
 
 ALERT PostgreSQL_ConfigurationChange
@@ -197,7 +197,7 @@ ALERT PostgreSQL_ConfigurationChange
   LABELS {severity="info"}
   ANNOTATIONS {
     title="Postgres Database configuration change has occured on \"{{$labels.fqdn}}\"",
-	description="Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}",
+    description="Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}",
   }
 
 # This alert detects replicas that have different configuration values
@@ -214,19 +214,19 @@ ALERT PostgreSQL_ConfigurationChange
 
 ALERT PostgreSQL_ConfigurationInconsistent
   IF (
-	  {__name__=~"pg_settings_.*"}
-	  and on (instance) pg_replication_is_replica == 1.0
-	 )
+     {__name__=~"pg_settings_.*"}
+     and on (instance) pg_replication_is_replica == 1.0
+     )
      != on (__name__) group_left()
      (
-	  {__name__=~"pg_settings_([^t]|t[^r]|tr[^a]|tra[^n]|tran[^s]|trans[^a]|transa[^c]|transac[^t]|transact[^i]|transacti[^o]|transactio[^n]|transaction[^_]|transaction_[^r]|transaction_r[^e]|transaction_re[^a]|transaction_rea[^d]|transaction_read[^_]|transaction_read_[^o]|transaction_read_o[^n]|transaction_read_on[^l]|transaction_read_onl[^y]).*"}
+     {__name__=~"pg_settings_([^t]|t[^r]|tr[^a]|tra[^n]|tran[^s]|trans[^a]|transa[^c]|transac[^t]|transact[^i]|transacti[^o]|transactio[^n]|transaction[^_]|transaction_[^r]|transaction_r[^e]|transaction_re[^a]|transaction_rea[^d]|transaction_read[^_]|transaction_read_[^o]|transaction_read_o[^n]|transaction_read_on[^l]|transaction_read_onl[^y]).*"}
       and on (instance) pg_replication_is_replica == 0.0
-	 )
+     )
   FOR 60m
   LABELS {severity="info"}
   ANNOTATIONS {
     title="Postgres server configurations inconsistent across fleet",
-	description="The Postges server {{$labels.fqdn}} has {{$labels.__name__}}={{$value}} which doesn't match the current production primary",
+    description="The Postges server {{$labels.fqdn}} has {{$labels.__name__}}={{$value}} which doesn't match the current production primary",
     runbook="troubleshooting/postgres.md",
   }
 
@@ -236,7 +236,7 @@ ALERT PostgreSQL_TooFewPrometheusScrapes
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="PostgreSQL Exporter not being scraped",
-	description="{{$labels.fqdn}} is showing only {{$value}} scrapes per second which should be > 0.2",
+    description="{{$labels.fqdn}} is showing only {{$value}} scrapes per second which should be > 0.2",
   }
 
 ALERT PostgreSQL_ExporterErrors
@@ -245,8 +245,8 @@ ALERT PostgreSQL_ExporterErrors
   LABELS {severity = "warn"}
   ANNOTATIONS {
     title="Postgres exporter is showing errors for the last hour",
-	description="This may indicate postgres_exporter is not running or a buggy query in query.yaml on {{$labels.fqdn}}",
-	runbook="troubleshooting/prometheus-exporter-scrape-errors.md",
+    description="This may indicate postgres_exporter is not running or a buggy query in query.yaml on {{$labels.fqdn}}",
+    runbook="troubleshooting/prometheus-exporter-scrape-errors.md",
   }
 
 ALERT PostgreSQL_DiskUtilizationMaxedOut
@@ -255,6 +255,6 @@ ALERT PostgreSQL_DiskUtilizationMaxedOut
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres server's disk utilization over 95% for over a minute. Expect this to cause replication lag or user visible latency",
-	description="Server {{$labels.fqdn}} disk {{$labels.device}} utilization is {{$value | printf \"%.1f\"}}%",
-	runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped",
+    description="Server {{$labels.fqdn}} disk {{$labels.device}} utilization is {{$value | printf \"%.1f\"}}%",
+    runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped",
   }
