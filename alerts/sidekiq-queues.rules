@@ -1,6 +1,6 @@
 ## Sidekiq Queues
 ALERT SidekiqQueuesTooLong
-  IF topk(1, sidekiq_queue_size{name!~"process_commit"}) > 10000
+  IF topk(1, sidekiq_queue_size{name!~"process_commit"}) > 20000
   FOR 20m
   LABELS {severity="critical"}
   ANNOTATIONS {
@@ -10,7 +10,7 @@ ALERT SidekiqQueuesTooLong
   }
 
 ALERT SidekiqQueuesTooLargeHourly
-  IF topk(1, sidekiq_queue_size{name!~"process_commit"}) > 2000
+  IF topk(1, sidekiq_queue_size{name!~"process_commit"}) > 20000
   FOR 60m
   LABELS {severity="critical"}
   ANNOTATIONS {
