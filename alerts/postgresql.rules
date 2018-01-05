@@ -55,6 +55,29 @@ ALERT PostgreSQL_RollbackRateTooHigh
     runbook="troubleshooting/postgresql.md#errors"
   }
 
+# These two come from mtail parsing of the log files -- they should
+# both never happen but we do have a low rate of statement timeouts
+# currently.. 
+
+ALERT PostgreSQL_StatementTimeout_Errors
+ IF rate(postgresql_errors_total{type="statement_timeout"}[1m]) > 0.5
+ FOR 5m
+ LABELS {severity="warn"}
+ ANNOTATIONS {
+   title="Postgres transactions showing high rate of statement timeouts",
+   descrition="Database {{$labels.fqdn}} has {{ $value | printf \"%.1f\" }} statement timeouts per second",
+   runbook="troubleshooting/postgresql.md#errors"
+ }
+
+ALERT PostgreSQL_Deadlock_Errors
+ IF rate(postgresql_errors_total{type="deadlock_detected"}[1m]) > 0
+ LABELS {severity="warn"}
+ ANNOTATIONS {
+   title="Postgres detected deadlocks",
+   descrition="Database {{$labels.fqdn}} has {{ $value | printf \"%.1f\" }} deadlock errors per second",
+   runbook="troubleshooting/postgresql.md#errors"
+ }
+
 ## Replication Status
 
 ALERT PostgreSQL_ReplicationStopped
