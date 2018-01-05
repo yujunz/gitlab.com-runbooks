@@ -53,6 +53,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [PgBouncer](howto/pgbouncer.md)
 * [PG-HA](howto/pg-ha.md)
 * [read-only Load Balancing](howto/load-balancing.md)
+* [Add a new secondary replica](howto/postgresql-replica.md)
 * [The DB replication has stopped](troubleshooting/postgresql.md)
 
 ### Redis
