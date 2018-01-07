@@ -6,9 +6,7 @@ to our cluster. This is a fairly straightforward operation, but there are some u
 1. Build the server(s) via terraform. This is as easy as bumping the number in the
    postgres module. Please see [this merge request](https://gitlab.com/gitlab-com/gitlab-com-infrastructure/merge_requests/203)
 1. Add servers to chef with the proper roles. They should be automatically bootstrapped 
-   via terraform, but you will need to add the folowing roles to their node files.
-    * recipe[gitlab-omnibus-prerequisites::git-user]
-    * recipe[gitlab_lvm::generic-lvm]
+   via terraform.
     * role[gitlab-base-db-postgres]
     * role[gitlab-base-db-postgres-replication]
 1. Run `chef-client` to configure. This will create the proper LVM volumes and install and configure PostgreSQL.
@@ -19,7 +17,6 @@ to our cluster. This is a fairly straightforward operation, but there are some u
 1. Enable repmgr, pgbouncer, and consul in `gitlab.rb` and run reconfigure.
     * You will need to run the reconfigure twice.
 1. Update hosts file to point master hostname to internal IP address.
-    * i.e. `10.46.2.8	db3.cluster.gitlab.com`
 1. Run gitlab command to [bootstrap as secondary db node](https://docs.gitlab.com/ee/administration/high_availability/database.html#secondary-nodes).
     * This will take a long time.
     * This may timeout at the very end. That is OK, just run the register command manually `gitlab-ctl repmgr standby register`.
