@@ -1,5 +1,5 @@
 ALERT GitNFSServerDown
-  IF up{fqdn=~"nfs-file-.*", job="node"} == 0
+  IF up{fqdn=~"nfs-file-.*", job="node", environment="prd"} == 0
   FOR 2m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
