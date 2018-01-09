@@ -144,7 +144,7 @@ ALERT PostgreSQL_UnusedReplicationSlot
   }
 
 ALERT PostgreSQL_ReplicaStaleXmin
-  IF pg_replication_slots_xmin_age > 10000
+  IF pg_replication_slots_xmin_age{environment="prd"} > 10000
   FOR 5m
   LABELS {severity="warn", pager="pagerduty"}
   ANNOTATIONS {
