@@ -12,7 +12,7 @@
 
 Several versions of Gitaly are running in production concurrently.
 
-Visit the [Gitaly Version Tracker](https://performance.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-job=gitaly-production)
+Visit the [Gitaly Version Tracker](https://performance.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-environment=prd)
 dashboard to find out which versions are running on each host.
 
 If a deployment is currently being carried out there may be two versions running alongside
