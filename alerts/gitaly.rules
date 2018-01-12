@@ -1,9 +1,6 @@
-gitaly:grpc_server_handled_total:error_max_rate1m = max(gitaly:grpc_server_handled_total:error_rate1m)
-gitaly:grpc_server_handled_total:instance_error_max_rate1m = max(gitaly:grpc_server_handled_total:instance_error_rate1m)
-
 ## Gitaly error rate per method
 ALERT gitaly_error_rate_too_high
-  IF gitaly:grpc_server_handled_total:error_max_rate1m > 2
+  IF gitaly:grpc_server_handled_total:error_rate1m{environment="prd"} > 2
   FOR 5m
   LABELS {severity="critical", channel="gitaly"}
   ANNOTATIONS {
@@ -14,7 +11,7 @@ ALERT gitaly_error_rate_too_high
 
 ## Gitaly error rate per instance
 ALERT gitaly_error_rate_too_high
-  IF gitaly:grpc_server_handled_total:instance_error_max_rate1m > 2
+  IF gitaly:grpc_server_handled_total:instance_error_rate1m{environment="prd"} > 2
   FOR 5m
   LABELS {severity="critical", channel="gitaly"}
   ANNOTATIONS {
