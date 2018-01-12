@@ -88,20 +88,20 @@ ALERT GitalyMethodErrorRateOutlier
     runbook="troubleshooting/gitaly-error-rate.md"
   }
 
-## Gitaly method average latency outlier detection
-## If an endpoint suddenly becomes much slower than it's historical average, raise an alert
-ALERT GitalyLatencyOutlier
-  IF
-    avg(gitaly:grpc_server_handling_seconds:avg5m{environment="prd", tier="stor", type="gitaly", job="gitaly"}) by (grpc_method)
-    > on (grpc_method) group_left()
-      (
-      avg(gitaly:grpc_server_handling_seconds:avg24h{environment="prd", tier="stor", type="gitaly", job="gitaly"}) by (grpc_method)
-      + 2 * avg(gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h) by (grpc_method)
-      )
-  FOR 5m
-  LABELS {severity="warn", channel="gitaly"}
-  ANNOTATIONS {
-    title="Gitaly: Latency on the Gitaly {{ $labels.grpc_method }} is unusually high compared with a 24 hour average",
-    description="The error rate on the {{ $labels.grpc_method }} endpoint is outside normal values over a 12 hour period (95% confidence). Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{ $labels.grpc_method }}&var-tier=stor&var-type=gitaly&var-environment=prd&refresh=5m",
-    runbook="troubleshooting/gitaly-error-rate.md"
-  }
+### Gitaly method average latency outlier detection
+### If an endpoint suddenly becomes much slower than it's historical average, raise an alert
+#ALERT GitalyLatencyOutlier
+#  IF
+#    avg(gitaly:grpc_server_handling_seconds:avg5m{environment="prd", tier="stor", type="gitaly", job="gitaly"}) by (grpc_method)
+#    > on (grpc_method) group_left()
+#      (
+#      avg(gitaly:grpc_server_handling_seconds:avg24h{environment="prd", tier="stor", type="gitaly", job="gitaly"}) by (grpc_method)
+#      + 2 * avg(gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h) by (grpc_method)
+#      )
+#  FOR 5m
+#  LABELS {severity="warn", channel="gitaly"}
+#  ANNOTATIONS {
+#    title="Gitaly: Latency on the Gitaly {{ $labels.grpc_method }} is unusually high compared with a 24 hour average",
+#    description="The error rate on the {{ $labels.grpc_method }} endpoint is outside normal values over a 12 hour period (95% confidence). Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{ $labels.grpc_method }}&var-tier=stor&var-type=gitaly&var-environment=prd&refresh=5m",
+#    runbook="troubleshooting/gitaly-error-rate.md"
+#  }
