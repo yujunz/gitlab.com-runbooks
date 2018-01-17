@@ -1,5 +1,5 @@
 ALERT TestAlertsInDifferentChannelsPrd
-  IF 1 == bool 1
+  IF count(vector(1)) == 1
   FOR 1m
   LABELS {severity="warn", environment="prd"}
   ANNOTATIONS {
