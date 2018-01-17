@@ -190,12 +190,12 @@ ALERT PostgreSQL_TooManyDeadTuples
 ## Meta Monitoring
 
 ALERT PostgreSQL_SplitBrain
-  IF count(pg_replication_is_replica == 0) by (environment) > 0
+  IF count(pg_replication_is_replica == 0) by (environment) != 1
   FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
-    title="More than one Postgres database in the {{$labels.environment}} believes is in primary mode",
-    description="In environment {{$labels.environment}} The following databases are in primary (read-write) mode: {{range query \"pg_replication_is_replica{environment='$labels.environment'}\"}} {{.labels.fqdn}} {{end}} ",
+    title="There are {{$value}} Postgres databases in environment {{$labels.environment}} in read-write (primary) mode",
+    description="In environment {{$labels.environment}} the following {{$value}} databases are in read-write (primary) mode: {{range query \"pg_replication_is_replica{environment='$labels.environment'} == 0.0\"}} {{.labels.fqdn}} {{end}} ",
     runbook="troubleshooting/postgres.md#repmgr"
   }
 
