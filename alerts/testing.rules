@@ -1,9 +1,9 @@
-ALERT TestAlertsInDifferentChannelsPrd
+ALERT PostgreSQL_HawaiianHugs
   IF count(vector(1)) == 1
   FOR 1m
   LABELS {severity="warn", environment="prd"}
   ANNOTATIONS {
-    title="This is like the hawaian alert missile -> fake",
-    description="There's nothing to do here",
+    title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.",
+    description="THIS IS NOT A DRILL",
     runbook="",
   }
