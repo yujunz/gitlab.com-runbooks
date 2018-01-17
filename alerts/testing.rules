@@ -1,4 +1,4 @@
-ALERT PostgreSQL_HawaiianHugs
+ALERT HawaiianHugs
   IF count(vector(1)) == 1
   FOR 1m
   LABELS {severity="warn", environment="prd", channel="ci-cd"}
