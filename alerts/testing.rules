@@ -1,7 +1,7 @@
-ALERT StagingHawaiianHugs
+ALERT GeoHawaiianHugs
   IF count(vector(1)) == 1
   FOR 1m
-  LABELS {severity="warn", environment="stg"}
+  LABELS {environment="geo"}
   ANNOTATIONS {
     title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.",
     description="THIS IS NOT A DRILL",
