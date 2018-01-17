@@ -1,9 +1,0 @@
-ALERT ReplicationLagTooLarge
-  IF (pg_replication_lag{environment="prd"} > 120) and on (instance) (pg_replication_is_replica == 1.0)
-  FOR 5m
-  LABELS {severity="critical", pager="pagerduty"}
-  ANNOTATIONS {
-    title="Postgres Replication lag is over 2 minutes",
-    description="Replication lag on server {{$labels.instance}} is currently {{$value}}s",
-    runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
-  }

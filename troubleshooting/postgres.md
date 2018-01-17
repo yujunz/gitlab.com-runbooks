@@ -92,11 +92,24 @@ child processes.
 
 ### Symptoms
 
-* Alert that replication is lagging behind
+We have several alerts that detect replication problems:
+
+* Alert that replication is stopped
+* Alert that replication lag is over 2min
+* Alert that replication lag is over 200MB
+
+As well there are a few alerts that are intended to detect problems that could *lead* to replication problems:
+
+* Alert for disk utilization maxed out
+* Alert for XLOG consumption is high
 
 ### Possible checks
 
 * Monitoring
+
+* Also check for bloat (see the section "Tables with a large amount of
+  dead tuples" below). Replication lag can cause bloat on the primary
+  due to "vacuum feedback" which we have enabled.
 
 ### Resolution
 
@@ -144,15 +157,82 @@ Drop the replication slot with `SELECT pg_drop_replication_slot('slot_name');`
 
 * Alert that there is a table with too many dead tuples
 
+Also a number of other alerts which link here because they detect
+conditions which will lead to dead tuple bloat:
+
+* Alert on "replication slot with a stale xmin"
+* Alert on "long-lived transaction"
+
 ### Possible Checks
 
-The alert will list which table has a high number of dead tuples
-however note that sometimes when one table has this problem there are
-other tables not far behind that just haven't alerted yet. Run
+Check on Grafana dashboards, in particular the "Postgres Tuple Stats"
+and the "Vacumming" and "Dead Tuples" tabs.
+
+In the "Autovacuum Per Table" chart expect `project_mirror_data` and
+`ci_runners` to be showing about 0.5 vacuums per minute and other
+tables well below that. If any tables are much over 0.5 that's not
+good. If any tables are near 1.0 (1 vacuum per minute is the max our
+settings allow autovacuum to reach) then that's very bad.
+
+In the "Dead Tuple Rates" and "Total Dead Tuples" expect to see a lot
+of fluctations but no trend. If you see "Total Dead Tuples" rising
+over time (or peaks that are rising each time) for a table then
+autovacuum is failing to keep up.
+
+If the alert is for dead tuples then it will list which table has a
+high number of dead tuples however note that sometimes when one table
+has this problem there are other tables not far behind that just
+haven't alerted yet. Run
 `sort_desc(pg_stat_table_n_dead_tup{environment="prd"})` in prometheus
 to see what the top offenders are.
 
-Adjust the vacuum settings for the given table to match the other tables, like this:
+If the alert is for "replication slot with stale xmin" or "long-lived
+transaction" then check the above charts to see if it's already
+causing problems. Log into the relevant replica and run:
+
+```sql
+SELECT now()-xact_start,pid,query,client_addr,application_name 
+  FROM pg_stat_activity 
+ WHERE state != 'idle' 
+   AND query NOT LIKE 'autovacuum%' 
+ ORDER BY now()-xact_start DESC 
+ LIMIT 3;
+```
+
+There are any of three cases to check for:
+
+1. There's a large number of dead tuples which vacuum is being
+   ineffective at cleaning up due to a long-lived transaction
+   (possibly on a replica due to "replication slot with a stale xmin").
+1. There's a large rate of dead tuples being created due to a run-away
+   migration or buggy controller which autovacuum cannot hope to keep
+   up with.
+1. There's a busy table that needs specially tuned autovacuum settings
+   to vacuum it effectively.
+
+If there's a deploy running or recent deploy with background
+migrations running then check for a very high "Deletes" or "Updates"
+rate on a table. Also check for for signs of other problems such as
+replication lag, high web latency or errors, etc. 
+
+If the problem is due to a migration and the dead tuples are high but
+not growing and it's not causing other problems then it can be a
+difficult judgement call whether the migratin should be allowed to
+proceed. Migrations are a generally a one-off case-by-case judgement.
+
+If the "Total Dead Tuples" is increasing over time then canceling the
+migration and reverting the deploy is probably necessary. Similarly if
+the source of the dead tuple thrashing is determined to be from a
+buggy web or api endpoint (or if it can't be determined at all.)
+
+If the source is determined and it's necessary and expected that it
+perform a high rate of updates or deletes on a table then it can be
+accomodated by adjusting the autovacuum settings. Typically this is
+necessary for small frequently updated state tables which are better
+handled using Redis variables.
+
+Adjust the vacuum settings for the given table to match the other
+tables, like this:
 
 ```json roles/gitlab-base-db-postgres.json
 "push_event_payloads": {

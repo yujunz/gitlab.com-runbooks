@@ -44,10 +44,11 @@ ALERT PostgreSQL_ConnectionsTooHigh
 ## Transaction error rate
 
 ALERT PostgreSQL_RollbackRateTooHigh
-  IF rate(pg_stat_database_xact_rollback{environment="prd",datname="gitlabhq_production"}[1m])
+  IF rate(pg_stat_database_xact_rollback{datname="gitlabhq_production"}[5m])
      / on (instance,datname)
-     rate(pg_stat_database_xact_commit{environment="prd",datname="gitlabhq_production"}[1m])
-     > 0.01
+     rate(pg_stat_database_xact_commit{datname="gitlabhq_production"}[5m])
+     > 0.02
+  FOR 5m
   LABELS {severity="warn"}
   ANNOTATIONS {
     title="Postgres transaction rollback rate is high",
@@ -96,7 +97,7 @@ ALERT PostgreSQL_ReplicationStopped
 # data the primary has fed to it.
 
 ALERT PostgreSQL_ReplicationLagTooLarge
-  IF (pg_replication_lag{environment="prd"} > 120) and on (instance) (pg_replication_is_replica == 1.0)
+  IF (pg_replication_lag > 120) and on (instance) (pg_replication_is_replica == 1.0)
   FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
@@ -113,23 +114,23 @@ ALERT PostgreSQL_ReplicationLagBytesTooLarge
   IF (pg_xlog_position_bytes and pg_replication_is_replica == 0.0)
      - on (environment) group_right(instance)
      (pg_xlog_position_bytes and pg_replication_is_replica == 1.0)
-     > 200000000
+     > 1000000000
   FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
-    title="Postgres Replication lag is over 200MB",
+    title="Postgres Replication lag (in bytes) is high",
     description="Replication lag on server {{$labels.instance}} is currently {{ $value | humanize1024}}B",
     runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
   }
 
 ALERT PostgreSQL_XLOGConsumptionTooHigh
-  IF rate(pg_xlog_position_bytes{environment="prd"}[1m]) > 12000000 and on (instance) (pg_replication_is_replica == 0.0)
+  IF rate(pg_xlog_position_bytes[1m]) > 12000000 and on (instance) (pg_replication_is_replica == 0.0)
   FOR 5m
   LABELS {severity="critical", pager="pagerduty"}
   ANNOTATIONS {
     title="Postgres is generating XLOG too fast, expect this to cause replication lag",
     description="XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s on {{$labels.instance}}",
-    runbook="troubleshooting/postgres.md#xlog-consumption-is-very-high"
+    runbook="troubleshooting/postgres.md#replication-is-lagging-or-has-stopped"
   }
 
 # Group these by database host
@@ -144,11 +145,11 @@ ALERT PostgreSQL_UnusedReplicationSlot
   }
 
 ALERT PostgreSQL_ReplicaStaleXmin
-  IF pg_replication_slots_xmin_age{environment="prd"} > 10000
-  FOR 5m
+  IF pg_replication_slots_xmin_age > 20000
+  FOR 10m
   LABELS {severity="warn", pager="pagerduty"}
   ANNOTATIONS {
-    title="PostgreSQL replication slot with an stale xmin which can cause bloat on the primary",
+    title="PostgreSQL replication slot with a stale xmin which can cause bloat on the primary",
     description="PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which means there's a long-running query or transaction on the database. This can cause bloat on the *primary* due to hot standby feedback.",
     runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples",
   }
@@ -156,26 +157,16 @@ ALERT PostgreSQL_ReplicaStaleXmin
 ## Miscellaneous Database Alerts
 
 ALERT PostgreSQL_LongLivedTransaction
-  IF pg_stat_activity_max_tx_duration > 900
+  IF pg_stat_activity_max_tx_duration > 1200
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="There's a Postgres transaction older than 30 minutes",
-    description="Postgres server {{$labels.fqdn}} has a transaction in state \"{{$labels.state}}\" that started {{ $value | humanizeDuration }} ago",
+    title="There's a long-lived Postgres transaction",
+    description="Postgres server {{$labels.fqdn}} has a transaction in currently in state \"{{$labels.state}}\" that started {{ $value | humanizeDuration }} ago",
     runbook="troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples",
   }
 
-ALERT PostgreSQL_TooManyRowExclusiveLocks
-  IF sum(pg_locks_count{mode="rowexclusivelock"}) by (environment) > 100
-  FOR 60m
-  LABELS {severity="info"}
-  ANNOTATIONS {
-    title="Too many row exclusive locks: {{ $value }}",
-    description="Large numbers of ROW EXCLUSIVE locks (used by SQL UPDATEs for example) can be a symptom of a blocking DDL, long lived transaction holding locks, or system performance degradation. See http://performance.gitlab.net/dashboard/db/postgres-stats for more information.",
-    runbook="troubleshooting/postgres.md#locks"
-  }
-
 ALERT PostgreSQL_DBHeavyLoad
-  IF node_load1{environment="prd",type="postgres"} > 200
+  IF node_load1{type="postgres"} > 200
   FOR 5m
   LABELS {severity="critical", channel="production"}
   ANNOTATIONS {
@@ -186,7 +177,7 @@ ALERT PostgreSQL_DBHeavyLoad
 
 ## PostgreSQL dead tuples
 ALERT PostgreSQL_TooManyDeadTuples
-  IF pg_stat_table_n_dead_tup{environment="prd"} > 50000 unless on (instance) (pg_replication_is_replica == 1.0)
+  IF pg_stat_table_n_dead_tup > 50000 unless on (instance) (pg_replication_is_replica == 1.0)
   FOR 1h
   LABELS {severity="critical", channel="production"}
   ANNOTATIONS {
@@ -197,6 +188,26 @@ ALERT PostgreSQL_TooManyDeadTuples
 
 
 ## Meta Monitoring
+
+ALERT PostgreSQL_SplitBrain
+  IF count(pg_replication_is_replica == 0) by (environment) > 0
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    title="More than one Postgres database in the {{$labels.environment}} believes is in primary mode",
+    description="In environment {{$labels.environment}} The following databases are in primary (read-write) mode: {{range query \"pg_replication_is_replica{environment='$labels.environment'}\"}} {{.labels.fqdn}} {{end}} ",
+    runbook="troubleshooting/postgres.md#repmgr"
+  }
+
+ALERT PostgreSQL_SplitBrain_Replicas
+  IF count(count(pg_stat_wal_receiver_status >= 0) by (environment,upstream_host)) by (environment) > 1
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+  title="Replicas have different upstream primary databases",
+  description="In environment {{$labels.environment}} there are {{$value}} different upstream primaries: {{range query \"pg_stat_wal_receiver_status{environment='$labels.environment'} >= 0\"}}\"{{.labels.fqdn}}\" thinks \"{{.labels.upstream_host}}\" is the primary; {{end}} ",
+    runbook="troubleshooting/postgres.md#repmgr"
+  }
 
 ALERT PostgreSQL_FleetSizeChange
   IF postgres:databases != postgres:databases offset 2m
@@ -215,8 +226,13 @@ ALERT PostgreSQL_RoleChange
     description="Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}} *replica* {{else}} *primary* {{end}}",
   }
 
+# The bizarre regexp here is to work around the restrictions of Go's
+# Regexp library's limited RE2 syntax. It's basically implementing
+# /pg_settings_(?!transaction_read_only).*/ (because
+# transaction_read_only is true on standbys).
+
 ALERT PostgreSQL_ConfigurationChange
-  IF {__name__=~"pg_settings_.*"} != on (__name__,fqdn) {__name__=~"pg_settings_.*"} offset 10m
+  IF {__name__=~"pg_settings_.*"} != on (__name__,fqdn) {__name__=~"pg_settings_([^t]|t[^r]|tr[^a]|tra[^n]|tran[^s]|trans[^a]|transa[^c]|transac[^t]|transact[^i]|transacti[^o]|transactio[^n]|transaction[^_]|transaction_[^r]|transaction_r[^e]|transaction_re[^a]|transaction_rea[^d]|transaction_read[^_]|transaction_read_[^o]|transaction_read_o[^n]|transaction_read_on[^l]|transaction_read_onl[^y]).*"} offset 10m
   LABELS {severity="info"}
   ANNOTATIONS {
     title="Postgres Database configuration change has occured on \"{{$labels.fqdn}}\"",
@@ -273,7 +289,7 @@ ALERT PostgreSQL_ExporterErrors
   }
 
 ALERT PostgreSQL_DiskUtilizationMaxedOut
-  IF rate(node_disk_io_time_ms{tier="db",type="postgres",device="dm-0",environment="prd"}[1m])/10 > 96
+  IF rate(node_disk_io_time_ms{tier="db",type="postgres",device="dm-0"}[1m])/10 > 96
   FOR 2m
   LABELS {severity="warn"}
   ANNOTATIONS {
