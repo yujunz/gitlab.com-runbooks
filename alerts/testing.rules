@@ -1,0 +1,9 @@
+ALERT TestAlertsInDifferentChannelsPrd
+  IF 1 == 1
+  FOR 1m
+  LABELS {severity="warn", environment="prd"}
+  ANNOTATIONS {
+    title="This is like the hawaian alert missile -> fake",
+    description="There's nothing to do here",
+    runbook="",
+  }
