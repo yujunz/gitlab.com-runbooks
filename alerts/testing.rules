@@ -1,7 +1,7 @@
 ALERT PostgreSQL_HawaiianHugs
   IF count(vector(1)) == 1
   FOR 1m
-  LABELS {severity="warn", environment="prd"}
+  LABELS {severity="warn", environment="prd", channel="ci-cd"}
   ANNOTATIONS {
     title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.",
     description="THIS IS NOT A DRILL",
