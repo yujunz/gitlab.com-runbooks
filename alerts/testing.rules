@@ -1,4 +1,4 @@
-ALERT HawaiianHugs
+ALERT StagingHawaiianHugs
   IF count(vector(1)) == 1
   FOR 1m
   LABELS {severity="warn", environment="stg"}
