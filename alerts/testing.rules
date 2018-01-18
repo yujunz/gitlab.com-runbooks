@@ -1,7 +1,7 @@
-ALERT GitalyHawaiianHugs
-  IF count(vector(1)) == 1
+ALERT HawaiianHugs
+  IF 1
   FOR 1m
-  LABELS {environment="prd", channel="gitaly"}
+  LABELS {environment="stg", severity="warn"}
   ANNOTATIONS {
     title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.",
     description="THIS IS NOT A DRILL",
