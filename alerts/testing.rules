@@ -1,5 +1,5 @@
 ALERT HawaiianHugs10
-  IF node_load1{environment="prd", type="git", job="node"} > 1
+  IF node_load1{environment="prd", type="git", job="node"} > 100
   FOR 1m
   LABELS {environment="tst"}
   ANNOTATIONS {
