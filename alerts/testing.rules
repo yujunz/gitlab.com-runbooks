@@ -1,5 +1,5 @@
 ALERT HawaiianHugs
-  IF up{environment="prd", type="api", job="node"} == 11
+  IF up{environment="prd", type="api", job="node"} == 1
   FOR 1m
   LABELS {environment="tst"}
   ANNOTATIONS {
