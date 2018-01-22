@@ -1,4 +1,4 @@
-ALERT HawaiianHugs4
+ALERT HawaiianHugs5
   IF up{environment="prd", type="git", job="node"} == 1
   FOR 1m
   LABELS {environment="tst"}
