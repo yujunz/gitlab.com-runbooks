@@ -1,4 +1,4 @@
-ALERT HawaiianHugs
+ALERT HawaiianHugs1
   IF up{environment="prd", type="api", job="node"} == 1
   FOR 1m
   LABELS {environment="tst"}
