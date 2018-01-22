@@ -1,4 +1,4 @@
-ALERT HawaiianHugs9
+ALERT HawaiianHugs10
   IF node_load1{environment="prd", type="git", job="node"} > 1
   FOR 1m
   LABELS {environment="tst"}
