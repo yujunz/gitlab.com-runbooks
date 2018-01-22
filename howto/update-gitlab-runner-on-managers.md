@@ -21,8 +21,6 @@ This runbook describes procedure of upgrading GitLab Runner on our runner manage
     - gitlab-shared-runners-manager-3.gitlab.com
 - `gitlab-gce-ce-ee-runners-east-c`
     - gitlab-shared-runners-manager-4.gitlab.com
-- `omnibus-builder-runners-manager`
-    - omnibus-builder-runners-manager.gitlab.org
 - `gitlab-runner-builder`
     - gitlab-runner-builder.gitlap.com
 
@@ -74,12 +72,6 @@ To upgrade runners on managers you need to:
     where `gitlab-private-runners` is a role used by nodes that you are updating. Please check the
     [roles to runners mapping section](#roles-to-runners-mapping) to find which role you're interested in.
 
-    For omnibus-builder-runers-manager.gitlab.com you should edit `omnibus-builder-runners-manager` role's secrets:
-
-    ```bash
-    $ rake edit_role_secrets[omnibus-builder-runners-manager,_default]
-    ```
-
     In attributes list look for `cookbook-gitlab-runner:gitlab-runner:version` and change it to a version that you want
     to update. It should look like:
 
@@ -87,8 +79,8 @@ To upgrade runners on managers you need to:
     "cookbook-gitlab-runner": {
       "chef-vault" : "gitlab-private-runners",
       "gitlab-runner": {
-        "repository": "gitlab-ci-multi-runner",
-        "version": "9.3.0"
+        "repository": "gitlab-runner",
+        "version": "10.4.0"
       }
     }
     ```
@@ -97,7 +89,7 @@ To upgrade runners on managers you need to:
     value to `unstable`.
 
     If you want to install a Stable version of the Runner, you should set the `repository` value to
-    `gitlab-ci-multi-runner` (which is a default if the key doesn't exists in configuration).
+    `gitlab-runner` (which is a default if the key doesn't exists in configuration).
 
 1. **Upgrade all GitLab Runners**
 
@@ -153,41 +145,23 @@ To upgrade runners on managers you need to:
 
 ## Upgrade of whole GitLab.com Runners fleet
 
+We're in the process of refactorizing configuration of GitLab.com's Runners. Currently, if you want to update
+the version on all Runners, it's easiest to edit `gitlab-runner-base` role. If you want to update only selected
+Runner, then you should edit a related role, and set chosen version with `override_attributes`.
+
 If you want to upgrade all Runners of GitLab.com fleet at the same time, then you can use the following script:
 
 ```bash
 # Stop chef-client
-knife ssh -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-shared-runners OR roles:gitlab-ce-ee-runners OR roles:gitlab-gce-*-runners-* OR roles:omnibus-builder-runners-manager OR roles:gitlab-runner-builder' -- sudo service chef-client stop
+knife ssh -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-shared-runners OR roles:gitlab-ce-ee-runners OR roles:gitlab-gce-*-runners-* OR roles:gitlab-runner-builder' -- sudo service chef-client stop
 
 # Update configuration in roles definition and secrets
-rake edit_role[gitlab-private-runners]
-rake edit_role_secrets[gitlab-private-runners,_default]
-rake edit_role[gitlab-shared-runners]
-rake edit_role_secrets[gitlab-shared-runners,_default]
-rake edit_role[gitlab-ce-ee-runners]
-rake edit_role_secrets[gitlab-ce-ee-runners,_default]
-rake edit_role[gitlab-gce-shared-runners-east-d]
-rake edit_role_secrets[gitlab-gce-shared-runners-east-d,_default]
-rake edit_role[gitlab-gce-shared-runners-east-c]
-rake edit_role_secrets[gitlab-gce-shared-runners-east-c,_default]
-rake edit_role[gitlab-gce-ce-ee-runners-east-d]
-rake edit_role_secrets[gitlab-gce-ce-ee-runners-east-d,_default]
-rake edit_role[gitlab-gce-ce-ee-runners-east-c]
-rake edit_role_secrets[gitlab-gce-ce-ee-runners-east-c,_default]
-rake edit_role[omnibus-builder-runners-manager]
-rake edit_role_secrets[omnibus-builder-runners-manager,_default]
-rake edit_role[gitlab-runner-builder]
-rake edit_role_secrets[gitlab-runner-builder,_default]
+rake edit_role[gitlab-runner-base]
 
 # Upgrade Runner's version and configuration on nodes
-knife ssh -C1 -aipaddress roles:gitlab-private-runners -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:gitlab-shared-runners -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:gitlab-ce-ee-runners -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:gitlab-gce-shared-runners-east-d -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:gitlab-gce-shared-runners-east-c -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:gitlab-gce-ce-ee-runners-east-d -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:gitlab-gce-ce-ee-runners-east-c -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:omnibus-builder-runners-manager -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress roles:gitlab-runner-builder -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-runner-builder' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -aipaddress 'roles:gitlab-shared-runners OR roles:gitlab-gce-shared-runners-east-*' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -aipaddress 'roles:gitlab-ce-ee-runners OR roles:gitlab-gce-ce-ee-runners-east-*' -- sudo /root/runner_upgrade.sh &
 wait
 ```
+
