@@ -1,9 +1,8 @@
 ALERT HawaiianHugs
-  IF 1
+  IF up{environment="prd", type="api", job="node"} == 11
   FOR 1m
-  LABELS {environment="stg", severity="warn"}
+  LABELS {environment="tst"}
   ANNOTATIONS {
     title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.",
     description="THIS IS NOT A DRILL",
-    runbook="",
   }
