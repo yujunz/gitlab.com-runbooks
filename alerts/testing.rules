@@ -1,8 +1,9 @@
-ALERT HawaiianHugs1
-  IF up{environment="prd", type="api", job="node"} == 1
+ALERT HawaiianHugs2
+  IF up{environment="prd", type="git", job="node"} == 1
   FOR 1m
   LABELS {environment="tst"}
   ANNOTATIONS {
     title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.",
-    description="THIS IS NOT A DRILL",
+    description="THIS IS NOT A DRILL - but something that was written down in an annotation as a description",
+    up_value="{{ $value }}",
   }
