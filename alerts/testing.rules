@@ -1,9 +1,19 @@
-ALERT HawaiianHugs10
-  IF node_load1{environment="prd", type="git", job="node"} > 100
+ALERT HawaiianHugs11
+  IF node_load1{environment="prd", type="git", job="node"} > 1
   FOR 1m
-  LABELS {environment="tst"}
+  LABELS {severity="critical"}
   ANNOTATIONS {
     title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.",
     description="THIS IS NOT A DRILL - but something that was written down in an annotation as a description",
+    node_load="{{ $value }}",
+  }
+
+ALERT HawaiianHugs12
+  IF node_load1{environment="prd", type="api", job="node"} > 1
+  FOR 1m
+  LABELS {severity="warn"}
+  ANNOTATIONS {
+    title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER. All caps are my doing",
+    description="This is a nice description",
     node_load="{{ $value }}",
   }
