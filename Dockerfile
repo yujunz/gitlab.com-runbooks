@@ -1,7 +1,6 @@
 FROM debian:latest
-MAINTAINER marat@gitlab.com
 
-ENV PROMETHEUS_VERSION 1.4.1
+ENV PROMETHEUS_VERSION 2.0.1
 
 RUN apt-get update && apt-get install -y wget
 RUN wget -O prometheus.tar.gz https://github.com/prometheus/prometheus/releases/download/v$PROMETHEUS_VERSION/prometheus-$PROMETHEUS_VERSION.linux-amd64.tar.gz
