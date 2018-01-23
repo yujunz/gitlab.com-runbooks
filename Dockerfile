@@ -1,9 +1,10 @@
-FROM debian:latest
+FROM alpine:3.7
 
-ENV PROMETHEUS_VERSION 2.0.1
+ENV PROMETHEUS_VERSION 2.1.0
 
-RUN apt-get update && apt-get install -y wget
+RUN apk add --no-cache wget tar
 RUN wget -O prometheus.tar.gz https://github.com/prometheus/prometheus/releases/download/v$PROMETHEUS_VERSION/prometheus-$PROMETHEUS_VERSION.linux-amd64.tar.gz
 RUN mkdir /prometheus
 RUN tar -xvf prometheus.tar.gz -C /prometheus --strip-components 1 --wildcards */promtool
+RUN rm prometheus.tar.gz
 
