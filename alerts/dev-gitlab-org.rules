@@ -1,9 +1,0 @@
-ALERT DevGitLabOrgDown
-  IF probe_http_status_code{instance="dev.gitlab.org"} != 200
-  FOR 2m
-  LABELS {severity="critical"}
-  ANNOTATIONS {
-    title="dev.gitlab.org is returning errors for 2m",
-    description="The development site is returning status codes other than 200, this usually means that a nightly deployment went wrong and took the site down",
-    runbook="howto/dev-environment.md"
-  }

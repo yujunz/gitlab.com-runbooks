@@ -1,0 +1,23 @@
+groups:
+- name: pages-gitlab-io-status.rules
+  rules:
+  - alert: GitlabPagesDown
+    expr: probe_http_status_code{instance="gitlab-examples.gitlab.io",job="blackbox"}
+      != 200
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: GitLab pages is down for 1 minute! Consider !tweet 'GitLab pages
+        are not responding, we are investigating the root cause.' if problem exists.
+      runbook: troubleshooting/gitlab-pages.md
+      title: GitLab pages is down for 1 minute
+  - alert: GitLabPagesNotScraped
+    expr: absent(gitlab_pages_http_requests_total)
+    for: 5m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      title: GitLab Pages has not be scraped for 5 minutes

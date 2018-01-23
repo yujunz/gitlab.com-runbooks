@@ -1,0 +1,13 @@
+groups:
+- name: nfs-circuitbreaker-tripped.rules
+  rules:
+  - alert: NfsCircuitBreakerTripped
+    expr: filesystem_circuitbreaker{environment="prd"} != 1
+    for: 2m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: Make sure the node has access to the FS and reset the circuitbreaker
+        on http://gitlab.com/admin/health_check
+      title: Circuit breaker for {{ $labels.shard }} tripped on {{ $labels.fqdn }}.

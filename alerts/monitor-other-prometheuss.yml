@@ -1,0 +1,16 @@
+groups:
+- name: monitor-other-prometheus.rules
+  rules:
+  - alert: OtherPrometheusDown
+    expr: up{job="prometheus-other-instance"} == 0
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: This is very critical alert, please check corresponding Prometheus
+        instance according to runbook. Grafana obtaining data from two instances of
+        Prometheus servers, wrong or missing data in one of the instances can result
+        in wrong representation and/or interpretation of collected metrics.
+      runbook: troubleshooting/prometheus-is-down.md
+      title: Prometheus server is down!

@@ -1,0 +1,14 @@
+groups:
+- name: dev-gitlab-org.rules
+  rules:
+  - alert: DevGitLabOrgDown
+    expr: probe_http_status_code{instance="dev.gitlab.org"} != 200
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      description: The development site is returning status codes other than 200,
+        this usually means that a nightly deployment went wrong and took the site
+        down
+      runbook: howto/dev-environment.md
+      title: dev.gitlab.org is returning errors for 2m

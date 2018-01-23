@@ -1,9 +1,0 @@
-ALERT FrontEndWorkerDown
-  IF min(up{fqdn=~"worker-(web|git|api|kiq)[0-9]+.fe.gitlab.com", job!~".*mtail"}) without (job) == 0
-  FOR 20m
-  LABELS {severity="critical", pager="pagerduty"}
-  ANNOTATIONS {
-    title="Front end worker {{$labels.instance}} host is down",
-    description="One of front end node is down for more than 5 minutes, this results in a degraded performance of GitLab.com",
-    runbook="troubleshooting/worker-down.md"
-  }

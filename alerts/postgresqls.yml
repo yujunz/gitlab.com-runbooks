@@ -1,0 +1,264 @@
+groups:
+- name: postgresql.rules
+  rules:
+  - alert: PostgresSQL_XIDConsumptionTooLow
+    expr: rate(pg_txid_current{environment="prd"}[1m]) < 5
+    for: 1m
+    labels:
+      severity: warn
+    annotations:
+      description: TXID/s is {{ $value | printf "%.1f" }} on {{$labels.instance}}
+        which is unusually low. Perhaps the application is unable to connect
+      runbook: troubleshooting/postgresql.md#availability
+      title: Postgres seems to be consuming transaction IDs very slowly
+  - alert: PostgreSQL_XLOGConsumptionTooLow
+    expr: rate(pg_xlog_position_bytes{environment="prd"}[1m]) < 200000
+    for: 2m
+    labels:
+      severity: warn
+    annotations:
+      description: XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}}
+        which is unusually low. Perhaps the application is unable to connect
+      runbook: troubleshooting/postgresql.md#availability
+      title: Postgres seems to be consuming XLOG very slowly
+  - alert: PostgreSQL_CommitRateTooLow
+    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production",environment="prd"}[1m])
+      < 1000
+    for: 2m
+    labels:
+      severity: warn
+    annotations:
+      description: Commits/s on {{$labels.instance}} database {{$labels.datname}}
+        is {{$value | printf "%.0f" }} which is implausibly low. Perhaps the application
+        is unable to connect
+      runbook: troubleshooting/postgresql.md#availability
+      title: Postgres seems to be processing very few transactions
+  - alert: PostgreSQL_ConnectionsTooHigh
+    expr: sum(pg_stat_activity_count) BY (environment, fqdn) > ON(fqdn) pg_settings_max_connections
+      * 0.75
+    for: 10m
+    labels:
+      severity: warn
+    annotations:
+      runbook: troubleshooting/postgresql.md#connections
+      title: Postgres has {{$value}} connections on {{$labels.fqdn}} which is close
+        to the maximum
+  - alert: PostgreSQL_RollbackRateTooHigh
+    expr: rate(pg_stat_database_xact_rollback{datname="gitlabhq_production"}[5m])
+      / ON(instance, datname) rate(pg_stat_database_xact_commit{datname="gitlabhq_production"}[5m])
+      > 0.02
+    for: 5m
+    labels:
+      severity: warn
+    annotations:
+      description: Ratio of transactions being aborted compared to committed is {{
+        $value | printf "%.2f" }} on {{$labels.instance}}
+      runbook: troubleshooting/postgresql.md#errors
+      title: Postgres transaction rollback rate is high
+  - alert: PostgreSQL_StatementTimeout_Errors
+    expr: rate(postgresql_errors_total{type="statement_timeout"}[1m]) > 0.5
+    for: 5m
+    labels:
+      severity: warn
+    annotations:
+      descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} statement
+        timeouts per second
+      runbook: troubleshooting/postgresql.md#errors
+      title: Postgres transactions showing high rate of statement timeouts
+  - alert: PostgreSQL_Deadlock_Errors
+    expr: rate(postgresql_errors_total{type="deadlock_detected"}[1m]) > 0
+    labels:
+      severity: warn
+    annotations:
+      descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} deadlock
+        errors per second
+      runbook: troubleshooting/postgresql.md#errors
+      title: Postgres detected deadlocks
+  - alert: PostgreSQL_ReplicationStopped
+    expr: pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"}
+    for: 5m
+    labels:
+      channel: production
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: PostgreSQL replication has stopped on {{$labels.instance}}.
+      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      title: PostgreSQL replication has stopped
+  - alert: PostgreSQL_ReplicationLagTooLarge
+    expr: (pg_replication_lag > 120) and ON(instance) (pg_replication_is_replica ==
+      1)
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: Replication lag on server {{$labels.instance}} is currently {{
+        $value | humanizeDuration }}
+      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      title: Postgres Replication lag is over 2 minutes
+  - alert: PostgreSQL_ReplicationLagBytesTooLarge
+    expr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - ON(environment)
+      GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica
+      == 1) > 1e+09
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: Replication lag on server {{$labels.instance}} is currently {{
+        $value | humanize1024}}B
+      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      title: Postgres Replication lag (in bytes) is high
+  - alert: PostgreSQL_XLOGConsumptionTooHigh
+    expr: rate(pg_xlog_position_bytes[1m]) > 1.2e+07 and ON(instance) (pg_replication_is_replica
+      == 0)
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s
+        on {{$labels.instance}}
+      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      title: Postgres is generating XLOG too fast, expect this to cause replication
+        lag
+  - alert: PostgreSQL_UnusedReplicationSlot
+    expr: pg_replication_slots_active == 0
+    for: 30m
+    labels:
+      severity: warn
+    annotations:
+      description: Unused {{$labels.slot_type}} slot "{{$labels.slot_name}}" on {{$labels.fqdn}}
+      runbook: troubleshooting/postgres.md#replication_slots
+      title: Unused Replication Slots for {{$labels.fqdn}}
+  - alert: PostgreSQL_ReplicaStaleXmin
+    expr: pg_replication_slots_xmin_age > 20000
+    for: 10m
+    labels:
+      pager: pagerduty
+      severity: warn
+    annotations:
+      description: PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which
+        means there's a long-running query or transaction on the database. This can
+        cause bloat on the *primary* due to hot standby feedback.
+      runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
+      title: PostgreSQL replication slot with a stale xmin which can cause bloat on
+        the primary
+  - alert: PostgreSQL_LongLivedTransaction
+    expr: pg_stat_activity_max_tx_duration > 1200
+    labels:
+      severity: warn
+    annotations:
+      description: Postgres server {{$labels.fqdn}} has a transaction in currently
+        in state "{{$labels.state}}" that started {{ $value | humanizeDuration }}
+        ago
+      runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
+      title: There's a long-lived Postgres transaction
+  - alert: PostgreSQL_DBHeavyLoad
+    expr: node_load1{type="postgres"} > 200
+    for: 5m
+    labels:
+      channel: production
+      severity: critical
+    annotations:
+      description: Really high load in the batabase for the last minute, there are
+        {{ query "sum(pg_slow_queries_total)" }} slow queries, {{ query "sum(pg_blocked_queries_total)"
+        }} and {{ query "sum(pg_locks_count{datname='gitlabhq_production'})" }} locks.
+        Check http://performance.gitlab.net/dashboard/db/postgres-stats and http://performance.gitlab.net/dashboard/db/postgres-queries
+        to get more data.
+      runbook: troubleshooting/postgres.md#load
+      title: 'High load in database {{ $labels.fqdn }}: {{$value}}'
+  - alert: PostgreSQL_TooManyDeadTuples
+    expr: pg_stat_table_n_dead_tup > 50000 unless ON(instance) (pg_replication_is_replica
+      == 1)
+    for: 1h
+    labels:
+      channel: production
+      severity: critical
+    annotations:
+      description: PostgreSQL table {{$labels.table_name}} has {{$value}} dead tuples
+        on {{$labels.instance}}
+      runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
+      title: PostgreSQL dead tuples is too large
+  - alert: PostgreSQL_SplitBrain
+    expr: count(pg_replication_is_replica == 0) BY (environment) != 1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      description: 'In environment {{$labels.environment}} the following {{$value}}
+        databases are in read-write (primary) mode: {{range query "pg_replication_is_replica{environment=''$labels.environment''}
+        == 0.0"}} {{.labels.fqdn}} {{end}} '
+      runbook: troubleshooting/postgres.md#repmgr
+      title: There are {{$value}} Postgres databases in environment {{$labels.environment}}
+        in read-write (primary) mode
+  - alert: PostgreSQL_SplitBrain_Replicas
+    expr: count(count(pg_stat_wal_receiver_status >= 0) BY (environment, upstream_host))
+      BY (environment) > 1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      description: 'In environment {{$labels.environment}} there are {{$value}} different
+        upstream primaries: {{range query "pg_stat_wal_receiver_status{environment=''$labels.environment''}
+        >= 0"}}"{{.labels.fqdn}}" thinks "{{.labels.upstream_host}}" is the primary;
+        {{end}} '
+      runbook: troubleshooting/postgres.md#repmgr
+      title: Replicas have different upstream primary databases
+  - alert: PostgreSQL_FleetSizeChange
+    expr: postgres:databases != postgres:databases OFFSET 2m
+    for: 1m
+    labels:
+      severity: info
+    annotations:
+      description: There are now {{$value}} databases in environment "{{$labels.environment}}"
+      title: Number of PostgreSQL Databases in {{$labels.environment}} has changed
+        in the past minute
+  - alert: PostgreSQL_RoleChange
+    expr: pg_replication_is_replica and changes(pg_replication_is_replica[1m]) > 0
+    labels:
+      severity: info
+    annotations:
+      description: Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}}
+        *replica* {{else}} *primary* {{end}}
+      title: Postgres Database replica promotion occurred in environment "{{$labels.environment}}"
+  - alert: PostgreSQL_ConfigurationChange
+    expr: '{__name__=~"pg_settings_.*"} != ON(__name__, fqdn) {__name__=~"pg_settings_([^t]|t[^r]|tr[^a]|tra[^n]|tran[^s]|trans[^a]|transa[^c]|transac[^t]|transact[^i]|transacti[^o]|transactio[^n]|transaction[^_]|transaction_[^r]|transaction_r[^e]|transaction_re[^a]|transaction_rea[^d]|transaction_read[^_]|transaction_read_[^o]|transaction_read_o[^n]|transaction_read_on[^l]|transaction_read_onl[^y]).*"}
+      OFFSET 10m'
+    labels:
+      severity: info
+    annotations:
+      description: Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}
+      title: Postgres Database configuration change has occured on "{{$labels.fqdn}}"
+  - alert: PostgreSQL_TooFewPrometheusScrapes
+    expr: rate(pg_exporter_scrapes_total[1m]) < 1 / 60
+    for: 5m
+    labels:
+      severity: warn
+    annotations:
+      description: '{{$labels.fqdn}} is showing only {{$value}} scrapes per second
+        which should be > 0.2'
+      title: PostgreSQL Exporter not being scraped
+  - alert: PostgreSQL_ExporterErrors
+    expr: pg_exporter_last_scrape_error == 1
+    for: 1h
+    labels:
+      severity: warn
+    annotations:
+      description: This may indicate postgres_exporter is not running or a buggy query
+        in query.yaml on {{$labels.fqdn}}
+      runbook: troubleshooting/prometheus-exporter-scrape-errors.md
+      title: Postgres exporter is showing errors for the last hour
+  - alert: PostgreSQL_DiskUtilizationMaxedOut
+    expr: rate(node_disk_io_time_ms{device="dm-0",tier="db",type="postgres"}[1m])
+      / 10 > 96
+    for: 2m
+    labels:
+      severity: warn
+    annotations:
+      description: Server {{$labels.fqdn}} disk {{$labels.device}} utilization is
+        {{$value | printf "%.1f"}}%
+      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      title: Postgres server's disk utilization over 95% for over a minute. Expect
+        this to cause replication lag or user visible latency

@@ -1,0 +1,11 @@
+groups:
+- name: gitlab-elk-elasticsearch.rules
+  rules:
+  - alert: ElkElasticsearchDown
+    expr: up{job="elk-elasticsearch"} == 0
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      runbook: troubleshooting/elk-elasticsearch.md
+      title: Elasticsearch on {{$labels.instance}} is down.

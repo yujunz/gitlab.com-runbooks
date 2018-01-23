@@ -1,0 +1,16 @@
+groups:
+- name: commit-workers.rules
+  rules:
+  - alert: ProcessCommitWorkersTooHigh
+    expr: sidekiq_queue_size{name="process_commit"} > 5000
+    for: 10m
+    labels:
+      channel: production
+      severity: critical
+    annotations:
+      description: ProcessCommitWorker sidekiq jobs are piling up for the last 10
+        minutes, this may be under control, but I'm just letting you know that this
+        is going on, check http://performance.gitlab.net/dashboard/db/sidekiq-stats.
+        Note that it is the alert only for ProcessCommitWorker
+      runbook: troubleshooting/large-sidekiq-queue.md
+      title: 'Large amount of ProcessCommitWorker queued jobs: {{$value}}'

@@ -1,0 +1,43 @@
+groups:
+- name: git-timings.rules
+  rules:
+  - alert: BlackBoxGitPullHttps
+    expr: (max(git_pull_seconds{tier="blackbox",transport="https"})) > 15
+    for: 15s
+    labels:
+      severity: warn
+    annotations:
+      description: The Prometheus git blackbox exporter is reporting that git pulls
+        are taking longer than normal.
+      runbook: troubleshooting/git-blackbox-exporter.md
+      title: BlackBox git pulls over https are taking too long.
+  - alert: BlackBoxGitPullSsh
+    expr: (max(git_pull_seconds{tier="blackbox",transport="ssh"})) > 15
+    for: 15s
+    labels:
+      severity: warn
+    annotations:
+      description: The Prometheus git blackbox exporter is reporting that git pulls
+        are taking longer than normal.
+      runbook: troubleshooting/git-blackbox-exporter.md
+      title: BlackBox git pulls over ssh are taking too long.
+  - alert: BlackBoxGitPushHttps
+    expr: (max(git_push_seconds{tier="blackbox",transport="https"})) > 15
+    for: 15s
+    labels:
+      severity: warn
+    annotations:
+      description: The Prometheus git blackbox exporter is reporting that git pushes
+        are taking longer than normal.
+      runbook: troubleshooting/git-blackbox-exporter.md
+      title: BlackBox git pushes over https are taking too long.
+  - alert: BlackBoxGitPushSsh
+    expr: (max(git_push_seconds{tier="blackbox",transport="ssh"})) > 15
+    for: 15s
+    labels:
+      severity: warn
+    annotations:
+      description: The Prometheus git blackbox exporter is reporting that git pushes
+        are taking longer than normal.
+      runbook: troubleshooting/git-blackbox-exporter.md
+      title: BlackBox git pushes over ssh are taking too long.

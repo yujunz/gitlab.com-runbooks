@@ -1,0 +1,21 @@
+groups:
+- name: chef.rules
+  rules:
+  - alert: ChefClientErrorInPrd
+    expr: chef_client_error{environment="prd"} == 1
+    for: 5h
+    labels:
+      severity: warn
+    annotations:
+      description: Check failed chef executions on host {{ $labels.fqdn }} in https://prometheus.gitlab.com/graph?g0.range_input=8w&g0.expr=chef_client_error+%3D%3D+1&g0.tab=1
+      runbook: troubleshooting/chef.md
+      title: Chef client failed for more than 5hs
+  - alert: ChefClientStale
+    expr: time() - chef_client_last_run_timestamp_seconds > 5 * 3600 + time() % 3600
+    labels:
+      severity: warn
+    annotations:
+      description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration
+        }} ago
+      runbook: troubleshooting/chef.md
+      title: Chef client hasn't run for longer than expected

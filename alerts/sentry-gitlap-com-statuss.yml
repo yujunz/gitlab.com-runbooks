@@ -1,0 +1,13 @@
+groups:
+- name: sentry-gitlap-com-status.rules
+  rules:
+  - alert: SentryDown
+    expr: probe_http_status_code{instance="sentry.gitlap.com",job="blackbox-ssl"}
+      != 200
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      description: GitLab sentry has been down for 1 minute!
+      runbook: troubleshooting/sentry-is-down.md
+      title: sentry.gitlap.com is down

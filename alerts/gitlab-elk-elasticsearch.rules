@@ -1,9 +1,0 @@
-## KIBANA IS DOWN
-ALERT ElkElasticsearchDown
-  IF up{job="elk-elasticsearch"} == 0
-  FOR 2m
-  LABELS {severity="critical"}
-  ANNOTATIONS {
-    title="Elasticsearch on {{$labels.instance}} is down.",
-    runbook="troubleshooting/elk-elasticsearch.md"
-  }

@@ -1,0 +1,43 @@
+groups:
+- name: error-rates.rules
+  rules:
+  - alert: HighWebErrorRate
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code="5xx",environment="prd",tier="lb"})
+      - sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code!="5xx",environment="prd",tier="lb"})
+      > 0
+    for: 15s
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: We are having more 5xx returns than any other reply. Web traffic
+        is being impacted and the service is probably down. Have you thought about
+        turning it off and on again?
+      runbook: troubleshooting/gitlab-com-is-down.md
+      title: High Error Rate on Front End Web
+  - alert: High4xxApiRateLimit
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",environment="prd",tier="lb"})
+      / sum(backend_code:haproxy_server_http_responses_total:irate1m{environment="prd",tier="lb"})
+      > 0.1
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: We are seeing an increase of 4xx errors on the load balancing api
+        rate limiting backend, more than 10% of http requests for at least 5 minutes.
+      runbook: troubleshooting
+      title: High 4xx Error Rate on Front End Web on backend api_rate_limit
+  - alert: High4xxRateLimit
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="4xx",environment="prd",tier="lb"})
+      / sum(backend_code:haproxy_server_http_responses_total:irate1m{environment="prd",tier="lb"})
+      > 0.25
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: We are seeing an increase of 4xx errors on the load balancing across
+        all backends, more than 25% of http requests for at least 5 minutes.
+      runbook: troubleshooting
+      title: High 4xx Error Rate on Front End Web

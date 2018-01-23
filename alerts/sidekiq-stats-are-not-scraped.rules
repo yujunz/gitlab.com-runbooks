@@ -1,8 +1,0 @@
-ALERT SidekiqStatsNotScraped
-  IF absent(sidekiq_queue_size)
-  FOR 1m
-  LABELS {severity="warning"}
-  ANNOTATIONS {
-    title="Sidekiq stats failed to be scraped for the last minute",
-    runbook="troubleshooting/sidekiq_stats_no_longer_showing.md"
-  }

@@ -1,0 +1,15 @@
+groups:
+- name: registry-gitlab-com-status.rules
+  rules:
+  - alert: RegistryDown
+    expr: probe_http_status_code{instance="registry.gitlab.com",job="blackbox-ssl"}
+      != 200
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: GitLab registry is down for 1 minute! Consider !tweet 'GitLab Registry
+        is not responding, we are investigating the root cause.' if problem exists.
+      runbook: troubleshooting/gitlab-registry.md
+      title: GitLab Registry is down for 1 minute
