@@ -2,7 +2,7 @@ groups:
 - name: testing.rules
   rules:
   - alert: HawaiianHugs20
-    expr: node_load1{environment="prd",job="node",type="git"} > 1
+    expr: node_load1{environment="prd",job="node",type="git"} > 996
     for: 1m
     labels:
       severity: critical
@@ -11,7 +11,7 @@ groups:
       node_load: '{{ $value }}'
       title: This is the git nodes doing things
   - alert: HawaiianHugs21
-    expr: node_load1{environment="prd",job="node",type="api"} > 1
+    expr: node_load1{environment="prd",job="node",type="api"} > 996
     for: 1m
     labels:
       severity: warn
