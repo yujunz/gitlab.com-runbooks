@@ -1,0 +1,30 @@
+groups:
+- name: redis.rules
+  rules:
+  - record: cmd:redis_command_call_duration_seconds_count:irate1m
+    expr: sum(irate(redis_command_call_duration_seconds_count[1m])) BY (cmd, environment)
+  - record: redis:keyspace_hits:irate1m
+    expr: irate(redis_keyspace_hits_total[1m])
+  - record: redis:keyspace_misses:irate1m
+    expr: irate(redis_keyspace_misses_total[1m])
+  - record: redis:net_input_bytes:irate1m
+    expr: irate(redis_net_input_bytes_total[1m])
+  - record: redis:net_output_bytes:irate1m
+    expr: irate(redis_net_output_bytes_total[1m])
+  - record: redis:db_keys:irate1m
+    expr: irate(redis_db_keys[1m])
+  - record: redis:db_keys_expiring:irate1m
+    expr: irate(redis_db_keys_expiring[1m])
+  - record: redis:expired_keys:irate1m
+    expr: irate(redis_expired_keys_total[1m])
+  - record: redis:evicted_keys:irate1m
+    expr: irate(redis_evicted_keys_total[1m])
+  - record: redis:commands_processed:irate1m
+    expr: irate(redis_commands_processed_total[1m])
+  - record: redis:connections_received:irate1m
+    expr: irate(redis_connections_received_total[1m])
+  - record: gitlab:redis_disconnected_slaves
+    expr: count(redis_connected_slaves) WITHOUT (fqdn, instance, job) - sum(redis_connected_slaves)
+      WITHOUT (fqdn, instance, job) - 1
+  - record: gitlab:redis_master
+    expr: redis_connected_slaves > 1

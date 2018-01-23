@@ -1,0 +1,27 @@
+groups:
+- name: sidekiq.rules
+  rules:
+  - record: priority:sidekiq_jobs_completion_time_seconds:p50
+    expr: histogram_quantile(0.5, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m]))
+      WITHOUT (fqdn, instance, worker))
+  - record: priority:sidekiq_jobs_completion_time_seconds:p95
+    expr: histogram_quantile(0.95, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m]))
+      WITHOUT (fqdn, instance, worker))
+  - record: priority:sidekiq_jobs_completion_time_seconds:p99
+    expr: histogram_quantile(0.99, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m]))
+      WITHOUT (fqdn, instance, worker))
+  - record: worker:sidekiq_jobs_completion_time_seconds:p50
+    expr: histogram_quantile(0.5, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m]))
+      WITHOUT (fqdn, instance, priority))
+  - record: worker:sidekiq_jobs_completion_time_seconds:p95
+    expr: histogram_quantile(0.95, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m]))
+      WITHOUT (fqdn, instance, priority))
+  - record: worker:sidekiq_jobs_completion_time_seconds:p99
+    expr: histogram_quantile(0.99, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="prd"}[1m]))
+      WITHOUT (fqdn, instance, priority))
+  - record: worker:sidekiq_jobs_completion:rate1m
+    expr: sum(rate(sidekiq_jobs_completion_time_seconds_count{environment="prd"}[1m]))
+      WITHOUT (fqdn, instance, priority)
+  - record: worker:sidekiq_jobs_failed:rate1m
+    expr: sum(rate(sidekiq_jobs_failed_total{environment="prd"}[1m])) WITHOUT (fqdn,
+      instance, priority)

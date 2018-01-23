@@ -1,0 +1,13 @@
+groups:
+- name: recording.rules
+  rules:
+  - record: backend_code:haproxy_server_http_responses_total:irate1m
+    expr: sum(irate(haproxy_server_http_responses_total[1m])) WITHOUT (fqdn, instance)
+  - record: job_frontend:haproxy_frontend_bytes_in_total:irate1m
+    expr: sum(irate(haproxy_frontend_bytes_in_total[1m])) WITHOUT (fqdn, instance)
+  - record: job_frontend:haproxy_frontend_request_errors_total:irate1m
+    expr: sum(irate(haproxy_frontend_request_errors_total[1m])) WITHOUT (fqdn, instance)
+  - record: job_backend:haproxy_backend_response_errors_total:irate1m
+    expr: sum(irate(haproxy_backend_response_errors_total[1m])) WITHOUT (fqdn, instance)
+  - record: process_cpu_seconds_total:rate1m
+    expr: rate(process_cpu_seconds_total[1m])

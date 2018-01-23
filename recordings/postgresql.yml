@@ -1,0 +1,32 @@
+groups:
+- name: postgresql.rules
+  rules:
+  - record: postgres:pg_stat_database_xact_commit:rate1m
+    expr: sum(rate(pg_stat_database_xact_commit[1m])) WITHOUT (datname, datid)
+  - record: postgres:pg_stat_database_xact_rollback:rate1m
+    expr: sum(rate(pg_stat_database_xact_rollback[1m])) WITHOUT (datname, datid)
+  - record: postgres:pg_xlog_bytes_per_second:rate1m
+    expr: rate(pg_xlog_position_bytes[1m])
+  - record: postgres:pg_txid_per_second:rate1m
+    expr: rate(pg_txid_current[1m])
+  - record: postgres:pg_stat_database_xact_commit:rate5m
+    expr: sum(rate(pg_stat_database_xact_commit[5m])) WITHOUT (datname, datid)
+  - record: postgres:pg_stat_database_xact_rollback:rate5m
+    expr: sum(rate(pg_stat_database_xact_rollback[5m])) WITHOUT (datname, datid)
+  - record: postgres:pg_xlog_bytes_per_second:rate5m
+    expr: rate(pg_xlog_position_bytes[5m])
+  - record: postgres:pg_txid_per_second:rate5m
+    expr: rate(pg_txid_current[5m])
+  - record: postgres:pg_replication_lag_bytes
+    expr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - ON(environment)
+      GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica
+      == 1)
+  - record: postgres:databases
+    expr: count(pg_exporter_scrapes_total) BY (environment)
+  - record: postgres:up
+    expr: (count(pg_replication_is_replica == 1 unless ON(fqdn) ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info"})
+      BY (environment) >= 2 and ON(environment) count(pg_replication_is_replica ==
+      0 unless ON(fqdn) ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info"})
+      BY (environment) == 1 unless ON(environment) count(ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",fqdn="",severity!="info"})
+      BY (environment) > 0) > BOOL 0 or ON(environment) postgres:databases == BOOL
+      0

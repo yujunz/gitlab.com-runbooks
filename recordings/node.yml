@@ -1,0 +1,19 @@
+groups:
+- name: node.rules
+  rules:
+  - record: instance:node_cpus:count
+    expr: count(node_cpu{mode="idle"}) WITHOUT (cpu, mode)
+  - record: instance_cpu:node_cpu_not_idle:rate5m
+    expr: sum(rate(node_cpu{mode!="idle"}[5m])) WITHOUT (mode)
+  - record: instance_mode:node_cpu:rate5m
+    expr: sum(rate(node_cpu[5m])) WITHOUT (cpu)
+  - record: instance:node_cpu_in_use:ratio
+    expr: sum(instance_mode:node_cpu:rate5m{mode!="idle"}) WITHOUT (mode) / instance:node_cpus:count
+  - record: instance:node_filesystem_avail:ratio
+    expr: node_filesystem_avail{device=~"/dev/.+"} / node_filesystem_size{device=~"/dev/.+"}
+  - record: instance:node_disk_writes_completed:irate1m
+    expr: sum(irate(node_disk_writes_completed{device=~"sd.*"}[1m])) WITHOUT (device)
+  - record: instance:node_disk_reads_completed:irate1m
+    expr: sum(irate(node_disk_reads_completed{device=~"sd.*"}[1m])) WITHOUT (device)
+  - record: instance:up:count
+    expr: count(up{job="node",type!=""} == 1) WITHOUT (instance, fqdn)

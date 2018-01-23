@@ -1,0 +1,39 @@
+groups:
+- name: rails.rules
+  rules:
+  - record: verb:rails_requests_started:rate1m
+    expr: sum(rate(rails_requests_started[1m])) WITHOUT (fqdn, instance)
+  - record: instance:rails_requests_started:rate1m
+    expr: sum(rate(rails_requests_started[1m])) WITHOUT (verb)
+  - record: status:rails_requests_completed:rate1m
+    expr: sum(rate(rails_requests_completed[1m])) WITHOUT (fqdn, instance)
+  - record: instance:rails_requests_completed:rate1m
+    expr: sum(rate(rails_requests_completed[1m])) WITHOUT (status)
+  - record: status:rails_requests_completed_milliseconds:p50
+    expr: histogram_quantile(0.5, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+      WITHOUT (fqdn, instance))
+  - record: status:rails_requests_completed_milliseconds:p95
+    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+      WITHOUT (fqdn, instance))
+  - record: status:rails_requests_completed_milliseconds:p99
+    expr: histogram_quantile(0.99, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+      WITHOUT (fqdn, instance))
+  - record: instance:rails_requests_completed_milliseconds:p50
+    expr: histogram_quantile(0.5, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+      WITHOUT (status))
+  - record: instance:rails_requests_completed_milliseconds:p95
+    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+      WITHOUT (status))
+  - record: instance:rails_requests_completed_milliseconds:p99
+    expr: histogram_quantile(0.99, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+      WITHOUT (status))
+  - record: type:rails_requests_started:rate1m
+    expr: sum(rate(rails_requests_started{environment="prd"}[1m])) WITHOUT (instance,
+      fqdn, verb)
+  - record: type:rails_requests_completed_milliseconds:p95
+    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket{environment="prd"}[1m]))
+      WITHOUT (instance, fqdn, status))
+  - record: instance:rails_no_repository_for_path:rate1m
+    expr: rate(rails_git_no_repository_for_such_path[1m])
+  - record: type:rails_no_repository_for_path:rate1m
+    expr: sum(instance:rails_no_repository_for_path:rate1m) WITHOUT (instance, fqdn)

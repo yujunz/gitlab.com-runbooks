@@ -1,0 +1,37 @@
+groups:
+- name: gitaly.rules
+  rules:
+  - record: gitaly:grpc_server_handled_total:rate1m
+    expr: sum(rate(grpc_server_handled_total[1m])) WITHOUT (fqdn, instance, grpc_code)
+  - record: gitaly:grpc_server_handled_total:error_rate1m
+    expr: sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) WITHOUT (fqdn,
+      instance, grpc_code)
+  - record: gitaly:grpc_server_handled_total:error_avg_rate12h
+    expr: avg_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
+  - record: gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h
+    expr: stddev_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
+  - record: gitaly:grpc_server_handled_total:instance_error_rate1m
+    expr: sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) WITHOUT (grpc_code,
+      grpc_method, grpc_service, grpc_type)
+  - record: gitaly:grpc_server_handling_seconds_bucket:rate1m
+    expr: sum(rate(grpc_server_handling_seconds_bucket[1m])) WITHOUT (instance, grpc_service,
+      grpc_type)
+  - record: gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m
+    expr: sum(irate(grpc_server_handled_total[1m])) WITHOUT (instance, grpc_service,
+      grpc_type)
+  - record: gitaly:grpc_server_handling_seconds:avg5m
+    expr: avg(rate(grpc_server_handling_seconds_sum[5m]) / rate(grpc_server_handling_seconds_count[5m])
+      > 0) WITHOUT (instance, grpc_service, grpc_type)
+  - record: gitaly:grpc_server_handling_seconds:avg24h
+    expr: avg_over_time(gitaly:grpc_server_handling_seconds:avg5m[1d])
+  - record: gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h
+    expr: stddev_over_time(gitaly:grpc_server_handling_seconds:avg5m[1d])
+  - record: gitaly:grpc_server_handling_seconds:p95
+    expr: histogram_quantile(0.95, sum(rate(grpc_server_handling_seconds_bucket[1m]))
+      WITHOUT (grpc_method, grpc_service, grpc_type))
+  - record: gitaly:grpc_server_handling_seconds:p50
+    expr: histogram_quantile(0.5, sum(rate(grpc_server_handling_seconds_bucket[1m]))
+      WITHOUT (grpc_method, grpc_service, grpc_type))
+  - record: instance:gitaly_grpc_errors_total:rate1m
+    expr: sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) WITHOUT (grpc_method,
+      grpc_type, grpc_service, grpc_code)
