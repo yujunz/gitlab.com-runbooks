@@ -1,19 +1,19 @@
-ALERT HawaiianHugs14
+ALERT HawaiianHugs15
   IF node_load1{environment="prd", type="git", job="node"} > 1
   FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
-    title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.",
-    description="THIS IS NOT A DRILL - but something that was written down in an annotation as a description",
+    title="This is the git nodes doing things",
+    description="This one we should really worry about, really... it's git",
     node_load="{{ $value }}",
   }
 
-ALERT HawaiianHugs13
+ALERT HawaiianHugs16
   IF node_load1{environment="prd", type="api", job="node"} > 1
   FOR 1m
   LABELS {severity="warn"}
   ANNOTATIONS {
-    title="BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER. All caps are my doing",
-    description="This is a nice description",
+    title="This is the API servers doing work",
+    description="Nothing to worry about, at least not too much",
     node_load="{{ $value }}",
   }
