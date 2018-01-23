@@ -16,6 +16,6 @@ groups:
     labels:
       severity: warn
     annotations:
-      description: Nothing to worry about, at least not too much
+      description: 'Nothing to worry about, at least not too much'
       node_load: '{{ $value }}'
       title: This is the API servers doing work
