@@ -1,4 +1,4 @@
-ALERT HawaiianHugs11
+ALERT HawaiianHugs14
   IF node_load1{environment="prd", type="git", job="node"} > 1
   FOR 1m
   LABELS {severity="critical"}
@@ -8,7 +8,7 @@ ALERT HawaiianHugs11
     node_load="{{ $value }}",
   }
 
-ALERT HawaiianHugs12
+ALERT HawaiianHugs13
   IF node_load1{environment="prd", type="api", job="node"} > 1
   FOR 1m
   LABELS {severity="warn"}
