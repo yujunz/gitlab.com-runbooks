@@ -2,17 +2,16 @@ groups:
 - name: testing.rules
   rules:
   - alert: HawaiianHugs22
-    expr: node_load1{environment="prd",job="node",type="git"} > 1
+    expr: node_load1{environment="prd",job="node",type="git"} > 999
     for: 1m
     labels:
       severity: critical
-      channel: "#yolo"
     annotations:
       description: "This one we should really worry about, really... it's git"
       node_load: '{{ $value }}'
       title: This is the git nodes doing things
   - alert: HawaiianHugs23
-    expr: node_load1{environment="prd",job="node",type="api"} > 1
+    expr: node_load1{environment="prd",job="node",type="api"} > 999
     for: 1m
     labels:
       severity: warn
