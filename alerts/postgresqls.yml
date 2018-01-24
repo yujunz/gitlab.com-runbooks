@@ -6,6 +6,7 @@ groups:
     for: 1m
     labels:
       severity: warn
+      channel: "#database"
     annotations:
       description: TXID/s is {{ $value | printf "%.1f" }} on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
@@ -16,6 +17,7 @@ groups:
     for: 2m
     labels:
       severity: warn
+      channel: "#database"
     annotations:
       description: XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
@@ -27,6 +29,7 @@ groups:
     for: 2m
     labels:
       severity: warn
+      channel: "#database"
     annotations:
       description: Commits/s on {{$labels.instance}} database {{$labels.datname}}
         is {{$value | printf "%.0f" }} which is implausibly low. Perhaps the application
@@ -39,6 +42,7 @@ groups:
     for: 10m
     labels:
       severity: warn
+      channel: "#database"
     annotations:
       runbook: troubleshooting/postgresql.md#connections
       title: Postgres has {{$value}} connections on {{$labels.fqdn}} which is close
@@ -50,6 +54,7 @@ groups:
     for: 5m
     labels:
       severity: warn
+      channel: "#database"
     annotations:
       description: Ratio of transactions being aborted compared to committed is {{
         $value | printf "%.2f" }} on {{$labels.instance}}
@@ -60,6 +65,7 @@ groups:
     for: 5m
     labels:
       severity: warn
+      channel: "#database"
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} statement
         timeouts per second
@@ -69,6 +75,7 @@ groups:
     expr: rate(postgresql_errors_total{type="deadlock_detected"}[1m]) > 0
     labels:
       severity: warn
+      channel: "#database"
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} deadlock
         errors per second
@@ -78,7 +85,6 @@ groups:
     expr: pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"}
     for: 5m
     labels:
-      channel: production
       pager: pagerduty
       severity: critical
     annotations:
@@ -128,20 +134,22 @@ groups:
     for: 30m
     labels:
       severity: warn
+      channel: "#database"
     annotations:
       description: Unused {{$labels.slot_type}} slot "{{$labels.slot_name}}" on {{$labels.fqdn}}
-      runbook: troubleshooting/postgres.md#replication_slots
+      runbook: "troubleshooting/postgres.md#replication_slots"
       title: Unused Replication Slots for {{$labels.fqdn}}
   - alert: PostgreSQL_ReplicaStaleXmin
     expr: pg_replication_slots_xmin_age > 20000
     for: 10m
     labels:
-      pager: pagerduty
       severity: warn
+      channel: "#database"
     annotations:
-      description: PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which
-        means there's a long-running query or transaction on the database. This can
-        cause bloat on the *primary* due to hot standby feedback.
+      description: |
+        "PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which
+        means there's a long-running query or transaction on the database. This
+        can cause bloat on the *primary* due to hot standby feedback."
       runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
       title: PostgreSQL replication slot with a stale xmin which can cause bloat on
         the primary
@@ -149,37 +157,41 @@ groups:
     expr: pg_stat_activity_max_tx_duration > 1200
     labels:
       severity: warn
+      channel: "#database"
     annotations:
-      description: Postgres server {{$labels.fqdn}} has a transaction in currently
-        in state "{{$labels.state}}" that started {{ $value | humanizeDuration }}
-        ago
+      description: |
+        "Postgres server {{$labels.fqdn}} has a transaction in currently in
+        state "{{$labels.state}}" that started {{ $value | humanizeDuration }}
+        ago"
       runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
-      title: There's a long-lived Postgres transaction
+      title: "There's a long-lived Postgres transaction"
   - alert: PostgreSQL_DBHeavyLoad
     expr: node_load1{type="postgres"} > 200
     for: 5m
     labels:
-      channel: production
       severity: critical
     annotations:
-      description: Really high load in the batabase for the last minute, there are
-        {{ query "sum(pg_slow_queries_total)" }} slow queries, {{ query "sum(pg_blocked_queries_total)"
-        }} and {{ query "sum(pg_locks_count{datname='gitlabhq_production'})" }} locks.
-        Check http://performance.gitlab.net/dashboard/db/postgres-stats and http://performance.gitlab.net/dashboard/db/postgres-queries
-        to get more data.
-      runbook: troubleshooting/postgres.md#load
+      description: |
+        "Really high load in the batabase for the last minute, there are {{
+          query 'sum(pg_slow_queries_total)' }} slow queries, {{ query
+          'sum(pg_blocked_queries_total)' }} and {{ query
+          'sum(pg_locks_count{datname=\'gitlabhq_production\'})' }} locks.
+          Check http://performance.gitlab.net/dashboard/db/postgres-stats and
+          http://performance.gitlab.net/dashboard/db/postgres-queries to get
+          more data."
+      runbook: "troubleshooting/postgres.md#load"
       title: 'High load in database {{ $labels.fqdn }}: {{$value}}'
   - alert: PostgreSQL_TooManyDeadTuples
     expr: pg_stat_table_n_dead_tup > 50000 unless ON(instance) (pg_replication_is_replica
       == 1)
     for: 1h
     labels:
-      channel: production
       severity: critical
     annotations:
-      description: PostgreSQL table {{$labels.table_name}} has {{$value}} dead tuples
-        on {{$labels.instance}}
-      runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
+      description: "Too many dead tuples"
+      table: "{{$labels.table_name}}"
+      dead_tuples: "{{$value}}"
+      runbook: "troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples"
       title: PostgreSQL dead tuples is too large
   - alert: PostgreSQL_SplitBrain
     expr: count(pg_replication_is_replica == 0) BY (environment) != 1
@@ -187,12 +199,13 @@ groups:
     labels:
       severity: critical
     annotations:
-      description: 'In environment {{$labels.environment}} the following {{$value}}
-        databases are in read-write (primary) mode: {{range query "pg_replication_is_replica{environment=''$labels.environment''}
-        == 0.0"}} {{.labels.fqdn}} {{end}} '
-      runbook: troubleshooting/postgres.md#repmgr
-      title: There are {{$value}} Postgres databases in environment {{$labels.environment}}
-        in read-write (primary) mode
+      description: 'The following {{$value}} databases are in read-write
+      (primary) mode: {{range query
+        "pg_replication_is_replica{environment=''$labels.environment''} ==
+        0.0"}} {{.labels.fqdn}} {{end}}'
+      runbook: "troubleshooting/postgres.md#repmgr"
+      title: "Split Brain: too many postgres databases in environment {{$labels.environment}}
+        in read-write (primary) mode"
   - alert: PostgreSQL_SplitBrain_Replicas
     expr: count(count(pg_stat_wal_receiver_status >= 0) BY (environment, upstream_host))
       BY (environment) > 1
@@ -256,6 +269,7 @@ groups:
     for: 2m
     labels:
       severity: warn
+      channle: "#database"
     annotations:
       description: Server {{$labels.fqdn}} disk {{$labels.device}} utilization is
         {{$value | printf "%.1f"}}%
