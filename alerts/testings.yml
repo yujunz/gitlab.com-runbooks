@@ -1,14 +1,15 @@
 groups:
 - name: testing.rules
   rules:
-  - alert: HawaiianHugs22
-    expr: node_load1{environment="prd",job="node",type="git"} > 999
+  - alert: HawaiianHugs24
+    expr: node_load1{environment="prd",job="node",type="git"} > 1
     for: 1m
     labels:
       severity: critical
     annotations:
       description: "This one we should really worry about, really... it's git"
       node_load: '{{ $value }}'
+      something_else: "this annotation will be common to all, so it should be shown anyway"
       title: This is the git nodes doing things
   - alert: HawaiianHugs23
     expr: node_load1{environment="prd",job="node",type="api"} > 999
