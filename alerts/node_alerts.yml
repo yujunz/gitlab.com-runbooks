@@ -6,14 +6,16 @@ groups:
       * 100 <= 10
     for: 15m
     labels:
-      severity: critical
+      severity: warn
     annotations:
-      description: Consider sshing into the instance and removing old logs or clean
-        temp files following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview
+      title: 'Less than 10% disk space left'
+      description: |
+        Consider sshing into the instance and removing old logs, clean
+        temp files, or remove old apt packages with `apt-get autoremove`
       runbook: troubleshooting/filesystem_alerts.md
-      title: 'Really low disk space left on {{ $labels.mountpoint }} on {{ if $labels.fqdn
-        }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }}: {{ $value |
-        humanize }}%'
+      value: '{{ $value | humanize }}%'
+      device: '{{ $labels.device }}%'
+      mount_point: '{{ $labels.mountpoint }}%'
   - alert: NoDiskSpace
     expr: node_filesystem_avail{fstype=~"(ext.|xfs)",job="node"} / node_filesystem_size{fstype=~"(ext.|xfs)",job="node"}
       * 100 <= 1
@@ -22,12 +24,12 @@ groups:
       pager: pagerduty
       severity: critical
     annotations:
-      description: There's only 1% disk space left on host {{ if $labels.fqdn }}{{
-        $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }}
+      title: '1% disk space left'
+      description: "There's only 1% disk space left"
       runbook: troubleshooting/filesystem_alerts.md
-      title: 'No disk space left on {{ $labels.mountpoint }} on {{ if $labels.fqdn
-        }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance }}{{ end }}: {{ $value |
-        humanize }}%'
+      value: '{{ $value | humanize }}%'
+      device: '{{ $labels.device }}%'
+      mount_point: '{{ $labels.mountpoint }}%'
   - alert: HighInodeUsage
     expr: node_filesystem_files_free{fstype=~"(ext.|xfs)",job="node"} / node_filesystem_files{fstype=~"(ext.|xfs)",job="node"}
       * 100 <= 20
@@ -35,12 +37,14 @@ groups:
     labels:
       severity: critical
     annotations:
-      description: Consider ssh'ing into the instance and removing files or clean
-        temp files following the linked runbook. For status check http://performance.gitlab.net/dashboard/db/fleet-overview
+      title: "High number of inode usage"
+      description: |
+        "Consider ssh'ing into the instance and removing files or clean
+        temp files"
       runbook: troubleshooting/filesystem_alerts_inodes.md
-      title: Free inodes on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else }}{{ $labels.instance
-        }}{{ end }} on mountpoint {{ $labels.mountpoint }} is at {{ $value | printf
-        "%.2f" }}%
+      value: '{{ $value | printf "%.2f" }}%'
+      device: '{{ $labels.device }}%'
+      mount_point: '{{ $labels.mountpoint }}%'
   - alert: ExtremelyHighCPU
     expr: instance:node_cpu_in_use:ratio{environment=~"prd|cny"} > 0.95
     for: 2h
