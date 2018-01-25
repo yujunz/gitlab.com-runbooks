@@ -2,7 +2,7 @@ groups:
 - name: testing.rules
   rules:
   - alert: HawaiianHugs24
-    expr: node_load1{environment="prd",job="node",type="git"} > 1
+    expr: node_load1{environment="prd",job="node",type="git"} > 1000
     for: 1m
     labels:
       severity: critical
@@ -11,12 +11,13 @@ groups:
       node_load: '{{ $value }}'
       something_else: "this annotation will be common to all, so it should be shown anyway"
       title: This is the git nodes doing things
-  - alert: HawaiianHugs23
-    expr: node_load1{environment="prd",job="node",type="api"} > 999
+  - alert: HawaiianHugs25
+    expr: node_load1{environment="prd",job="node",type="api"} > 1
     for: 1m
     labels:
       severity: warn
     annotations:
       description: 'Nothing to worry about, at least not too much'
       node_load: '{{ $value }}'
-      title: This is the API servers doing work
+      title: Alerting is hard
+      something_else: This is the git nodes doing things
