@@ -1,108 +1,82 @@
-## How to create alerts in prometheus
+# Alerting
 
-Generally speaking alerts are triggered by prometheus, and then grouped, prioritized and deduped by the alert manager.
+## Prometheus
 
-### General guidelines
+Generally speaking alerts are triggered by prometheus, and then grouped by label, prioritized and deduped by the alert manager.
 
-In order to create new alerts they have to be included in the alerts folder in this repository.
+Currently most alerts are being grouped by environment and alert name. These alerts are then shipped to the alert manager which applies a template to them to ship them to slack or pagerduty, depending on the `pager` label.
 
-The common procedure is as follows:
+## Alert sample
 
-1. Create or reuse an alert rules file in [runbooks alerts directory](https://gitlab.com/gitlab-com/runbooks/tree/master/alerts).
-1. Consider creating a runbook for the alert in the [runbooks project](https://gitlab.com/gitlab-com/runbooks). After mirroring runbook should appear in `https://dev.gitlab.org/cookbooks/runbooks` project. All urls will be constructed with the prefix - `https://dev.gitlab.org/cookbooks/runbooks/blob/master/`. Remain part should be annotated in `runbook` value.
-1. Make sure that the alert title/summary is clear and actionable. Avoid alerting for "Worker load is critical" because that does not provide any action or enough information to know where to look, rather alert on "High load on worker due to increased IOWait" or "High number of queued jobs in sidekiq"
-1. Consider adding a description to the alert with some context, you could also point to relevant graphs or provide quick actions.
-1. Point the runbook link to dev.gitlab.org and make sure that it is available there, when GitLab.com is down you will not be able to get the runbook from there.
-1. If the alert will be triggered throught Slack, consider adding `@channel` to the message to bring attention.
-1. You can create [recording rules](https://prometheus.io/docs/querying/rules/#recording-rules) in your alerting rules files in order to simplify queries and conditions. For [example](https://gitlab.com/gitlab-com/runbooks/blob/master/alerts/available-disk.rules#L1).
+This sample alert would trigger pretty much all the time,
 
-### Sample alert
-
-```
-## ALERT WHEN THE RUNNERS CACHE IS DOWN FOR MORE THAN 10 SECONDS
-ALERT runners_cache_is_down
-  IF probe_success{job="runners-cache", instance="localhost:9100"} == 0
-  FOR 10s
-  LABELS {severity="critical", channel="production", pager="pagerduty"}
-  ANNOTATIONS {
-    title="Runners cache has been down for the past 10 seconds",
-    runbook="howto/howto/manage-cehpfs.md"
-    description="This impacts CI execution builds, consider tweeting: !tweet 'CI executions are being delayed due to our runners cache being down at GitLab.com, we are investigating the root cause'"
-  }
+```yaml
+groups:
+- name: testing.rules
+  rules:
+  - alert: HawaiianHugs
+    expr: node_load1{environment="prd",job="node",type="git"} > 1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      title: "Emergency Alert"
+      description: |
+        "BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.
+        THIS IS NOT A DRILL."
+      node_load: '{{ $value }}'
 ```
 
-This will result in a critical alert posted in slack channes `#prometheus-alerts` and `#production`, pagerduty with a link to https://dev.gitlab.org/cookbooks/runbooks/blob/master/howto/manage-cehpfs.md. Important part is the end or url - `howto/manage-cehpfs.md`. It is taken from annotation `runbook`. Runbook will provide information how to manage situation alerted. Main principle of the runbook should be - `don't make me think`. For channel you can use `#production`, `#ci`, `#gitaly` values.
+### Fields
 
-### What if I want to add more data?
+* alert: the alert name, this will be used as a grouping mechanism.
+* expr: the expression to evaluate, has to evaluate to boolean.
+* for: how long to wait until this alert starts firing.
+* labels: any alert that triggers will include all the labels that come from the prometheus metric, here we can add more labels to manage the alert behavior. We could, for example add more labels like this:
+  * channel: which channel the alert should go to, in slack format, for ex: `#production`
+  * severity: `critical` for it to be red, `warn` for it to be only a warning (orange)
+  * pager: if `pagerduty` then the alert will be also sent to pagerduty to the production on-call
+	* environment: this one generally comes with the metric, we can override it to send to different channels (stg, pre, or geo)
+* annotations: there are 2 annotations that will be always used: title and descriptions. These should be static (they can't have any variable in them) more on this later on. Additionally we can define as many other annotations as we want, more on this later.
 
-You can use prometheus labels data by adding them into the text like this:
+### Annotations
 
-```
-...
-    description="Current response time is {{$value}} seconds for host {{$labels.instance}}"
-...
-```
+As previously said, there are 2 static annotations that should be used always:
 
-That way you provide much more context in a single message.
+* title: this will be the first line of an alert, should be simple a direct saying what the problem is.
+* description: a longer text providing data and context on what this alert is, best if they provide information on how to deal with the alert or which steps to take. Since we are using yaml now it's quite easy to write a really long text, so we should be migrating the runbooks into the alerting.
 
-### Alert routing
-
-All alerts are routed to slack and additionally can be paged to PagerDuty.
-
-### Sending to the Slack Pager
-
-1. Since all alerts sended to slack, you can control only the type of alert.
-1. All alerts will be shown in `#prometheus-alerts` channel.
-1. Additionally you can send alerts to `#ci`, `#gitaly`, `#production` channels. This part controlled with the label `channel='ci'` for example.
-1. Alerts with `severity=critical` are red colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
-1. Alerts with `severity=warn` are yellow colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
-1. Alerts with `severity=info` are green colored messages with `.title` and link to corresponding runbook and `.description` values from alert.
-1. When the critical or warning alert is resolved, a green colored message with same title will be placed in channel. Prefix will be `[RESOLVED]`.
-
-### Sending to the Pagerduty Pager
-
-1. In order to get alerts in pagerduty, label `pager=pagerduty` should be applied during alert activation. You also can append label `priority=low` to pagerduty for the service with low priority.
-1. Pagerduty will receive message with description from `.title` and runbook link.
-1. Pagerduty will then page whoever is on call at that time.
-1. Alertmanager takes care of resolving issue in PagerDuty if alert is resolved.
-
-### Email rules
-
-Currently we are not using email alerting rules.
-
-### Add more slack channels to alerts
-
-1. In routes section of [alertmanager.yml template](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/blob/master/templates/default/alertmanager.yml.erb) add following:
-```
-  - match:
-      channel: gitaly
-    receiver: slack_gitaly
-    continue: true
-```
-1. In receivers section [alertmanager.yml template](https://gitlab.com/gitlab-cookbooks/gitlab-prometheus/blob/master/templates/default/alertmanager.yml.erb) add following. Note that `send_resolved`, `icon_emoji`, etc values must be taken from `slack_production` receiver:
-```
-- name: slack_gitaly
-  slack_configs:
-  - api_url: '<%= @conf['slack']['api_url'] %>'
-    channel: '#gitaly'
-    send_resolved: true
-    icon_emoji: ...
-    title: ...
-    title_link: ...
-    text: ...
-    fallback: ...
-```
+Besides this, we can add any other annotation that we want, the way this will
+work is that for each alert that is grouped the `fqdn` or `instance` will be
+printed under the description, one per line, and then any additional annotation
+will be printed next to it, this means that we can define as many as we want,
+for example, in the previous alert, there will be one line for each node that
+matches the expression and it will include the text `node_load = X` once per
+each host.
 
 
-### Note about alerts which not fit in any routes
+## How to add new alerts
 
-1. Alerts which are routed by default route will be sent to `#prometheus-alerts` channel in slack.
-1. These alerts will prepend the text `following alert not processed`.
-1. If you see such alerts, it means that there is problem with the routes in alertmanager config or severity label is not applied to alert.
+Just create a new yml file in the `/alerts` folder in this repo, commit, push, and then run chef client on `roles:gitlab-prometheus`
 
-![Unknown alert](../img/default_routed_alert.png)
+## Where to find things
 
-### Alert silencing
+### Prometheus
+
+We have 3 of those, 1 and 2 are internal to GitLab.com, 3 is used for the public monitor.gitlab.net site.
+
+### Alert Manager
+
+The alert manager is running on prometheus 1, it can be found chasing the `gitlab-alertmanager` role.
+
+The cookbook that holds all the setup for the alert manager can be found in [this repo](https://gitlab.com/gitlab-cookbooks/gitlab-alertmanager)
+
+The alertmanager specific configuration where the routing are defined can be found in [this file](https://gitlab.com/gitlab-cookbooks/gitlab-alertmanager/blob/master/templates/default/alertmanager.yml.erb).
+
+The alerting templates (which are built using go's text/template engine) can be found in [this folder](https://gitlab.com/gitlab-cookbooks/gitlab-alertmanager/blob/master/files/default/alertmanager/templates/gitlab.tmpl).
+
+
+## Silencing
 
 In some cases you need to silence an alert for an expected condition. This should be done when
 there is something alarming that is understood and will eventually be fixed.
@@ -124,7 +98,14 @@ mountpoint              /var/opt/gitlab
 ```
 * Set a duration and a comment for the silence
 
+## Tips and tricks
+
+* Route new alerts to a testing channel by adding `channel: "#testing"` where the channel is something you know and have agreed. This will reduce noise when developing alerts.
+* Trigger alerts to see how they work by writing a condition that will always be true.
+* Print the whole alerting data and model using go template printf, with a text such as: `text: '{{ printf "%#v" . }}'` in the alert receiver configuration on the alert manager.
+
 ## References
 
 * [Prometheus template source code](https://github.com/prometheus/prometheus/blob/master/template/template.go#L115)
 * [Prometheus default alert manager expansion template](https://github.com/prometheus/alertmanager/blob/master/template/default.tmpl)
+* [Go text/template documentation](https://golang.org/pkg/text/template/)
