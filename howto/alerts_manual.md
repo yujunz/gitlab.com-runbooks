@@ -96,7 +96,7 @@ alertname               LowDiskSpace
 fqdn                    sync.geo.gitlab.com
 mountpoint              /var/opt/gitlab
 ```
-* Set a duration and a comment for the silence
+* Set a duration, an owner and a comment.
 
 ## Tips and tricks
 
