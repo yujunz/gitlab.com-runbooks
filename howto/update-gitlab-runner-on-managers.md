@@ -4,25 +4,87 @@ This runbook describes procedure of upgrading GitLab Runner on our runner manage
 
 ## Roles to runners mapping
 
-- `gitlab-private-runners`
-    - private-runners-manager-1.gitlab.com
-    - private-runners-manager-2.gitlab.com
-- `gitlab-shared-runners`
-    - shared-runners-manager-1.gitlab.com
-    - shared-runners-manager-2.gitlab.com
-- `gitlab-gce-shared-runners-east-d`
-    - shared-runners-manager-3.gitlab.com
-- `gitlab-gce-shared-runners-east-c`
-    - shared-runners-manager-4.gitlab.com
-- `gitlab-ce-ee-runners`
-    - gitlab-shared-runners-manager-1.gitlab.com
-    - gitlab-shared-runners-manager-2.gitlab.com
-- `gitlab-gce-ce-ee-runners-east-d`
-    - gitlab-shared-runners-manager-3.gitlab.com
-- `gitlab-gce-ce-ee-runners-east-c`
-    - gitlab-shared-runners-manager-4.gitlab.com
-- `gitlab-runner-builder`
-    - gitlab-runner-builder.gitlap.com
+```mermaid
+graph LR
+    r::base(gitlab-runner-base)
+    r::builder(gitlab-runner-builder)
+
+    r::gsrm(gitlab-runner-gsrm)
+    r::gsrm-do(gitlab-runner-gsrm-do)
+    r::gsrm-gce(gitlab-runner-gsrm-gce)
+    r::gsrm-gce-us-east1-c(gitlab-runner-gsrm-gce-us-east1-c)
+    r::gsrm-gce-us-east1-d(gitlab-runner-gsrm-gce-us-east1-d)
+
+    r::prm(gitlab-runner-prm)
+    r::prm-do(gitlab-runner-prm-do)
+
+    r::srm(gitlab-runner-srm)
+    r::srm-do(gitlab-runner-srm-do)
+    r::srm-gce(gitlab-runner-srm-gce)
+    r::srm-gce-us-east1-c(gitlab-runner-srm-gce-us-east1-c)
+    r::srm-gce-us-east1-d(gitlab-runner-srm-gce-us-east1-d)
+
+    r::stg-srm(gitlab-runner-stg-srm)
+    r::stg-srm-gce(gitlab-runner-stg-srm-gce)
+    r::stg-srm-gce-us-east1-c(gitlab-runner-stg-srm-gce-us-east1-c)
+    r::stg-srm-gce-us-east1-d(gitlab-runner-stg-srm-gce-us-east1-d)
+
+    n::grb[gitlab-runner-builder.gitlap.com]
+
+    n::gsrm1[gitlab-shared-runners-manager-1.gitlab.com]
+    n::gsrm2[gitlab-shared-runners-manager-2.gitlab.com]
+    n::gsrm3[gitlab-shared-runners-manager-3.gitlab.com]
+    n::gsrm4[gitlab-shared-runners-manager-4.gitlab.com]
+
+    n::prm1[private-runners-manager-1.gitlab.com]
+    n::prm2[private-runners-manager-2.gitlab.com]
+
+    n::srm1[shared-runners-manager-1.gitlab.com]
+    n::srm2[shared-runners-manager-2.gitlab.com]
+    n::srm3[shared-runners-manager-3.gitlab.com]
+    n::srm4[shared-runners-manager-4.gitlab.com]
+
+    n::srm3::stg[shared-runners-manager-3.staging.gitlab.com]
+    n::srm4::stg[shared-runners-manager-4.staging.gitlab.com]
+
+    r::base --> r::builder
+    r::builder ==> n::grb
+
+    r::base --> r::gsrm
+    r::gsrm --> r::gsrm-do
+    r::gsrm-do ==> n::gsrm1
+    r::gsrm-do ==> n::gsrm2
+    r::gsrm --> r::gsrm-gce
+    r::gsrm-gce --> r::gsrm-gce-us-east1-c
+    r::gsrm-gce-us-east1-c ==> n::gsrm4
+    r::gsrm-gce --> r::gsrm-gce-us-east1-d
+    r::gsrm-gce-us-east1-d ==> n::gsrm3
+
+    r::base --> r::prm
+    r::prm --> r::prm-do
+    r::prm-do ==> n::prm1
+    r::prm-do ==> n::prm2
+
+    r::base --> r::srm
+    r::srm --> r::srm-do
+    r::srm-do ==> n::srm1
+    r::srm-do ==> n::srm2
+    r::srm --> r::srm-gce
+    r::srm-gce --> r::srm-gce-us-east1-c
+    r::srm-gce-us-east1-c ==> n::srm4
+    r::srm-gce --> r::srm-gce-us-east1-d
+    r::srm-gce-us-east1-d ==> n::srm3
+
+    r::srm --> r::stg-srm
+    r::srm-gce --> r::stg-srm-gce
+    r::stg-srm --> r::stg-srm-gce
+    r::srm-gce-us-east1-c --> r::stg-srm-gce-us-east1-c
+    r::stg-srm-gce --> r::stg-srm-gce-us-east1-c
+    r::stg-srm-gce-us-east1-c ==> n::srm4::stg
+    r::srm-gce-us-east1-d --> r::stg-srm-gce-us-east1-d
+    r::stg-srm-gce --> r::stg-srm-gce-us-east1-d
+    r::stg-srm-gce-us-east1-d ==> n::srm3::stg
+```
 
 ## Requirements
 
@@ -50,13 +112,13 @@ To upgrade runners on managers you need to:
     For example, to shutdown chef-client on private-runners-manager-X.gitlab.com, you can execute:
 
     ```bash
-    $ knife ssh -aipaddress 'roles:gitlab-private-runners' -- sudo service chef-client stop
+    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- sudo service chef-client stop
     ```
 
     To be sure that chef-cilent process is terminated you can execute:
 
     ```bash
-    $ knife ssh -aipaddress 'roles:gitlab-private-runners' -- "service chef-client status; ps aux | grep chef"
+    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- "service chef-client status; ps aux | grep chef"
     ```
 
 1. **Update chef role (or roles)**
@@ -66,10 +128,10 @@ To upgrade runners on managers you need to:
     In `chef-repo` directory execute:
 
     ```bash
-    $ rake edit_role[gitlab-private-runners]
+    $ rake edit_role[gitlab-runner-prm]
     ```
 
-    where `gitlab-private-runners` is a role used by nodes that you are updating. Please check the
+    where `gitlab-runner-prm` is a role used by nodes that you are updating. Please check the
     [roles to runners mapping section](#roles-to-runners-mapping) to find which role you're interested in.
 
     In attributes list look for `cookbook-gitlab-runner:gitlab-runner:version` and change it to a version that you want
@@ -77,7 +139,6 @@ To upgrade runners on managers you need to:
 
     ```json
     "cookbook-gitlab-runner": {
-      "chef-vault" : "gitlab-private-runners",
       "gitlab-runner": {
         "repository": "gitlab-runner",
         "version": "10.4.0"
@@ -96,20 +157,12 @@ To upgrade runners on managers you need to:
     To upgrade chosen Runners manager, execute the command:
 
     ```bash
-    $ knife ssh -C1 -aipaddress 'roles:gitlab-private-runners' -- sudo /root/runner_upgrade.sh
+    $ knife ssh -C1 -aipaddress 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade.sh
     ```
 
     This will send a stop signal to the Runner. The process will wait until all handled jobs are finished,
-    but no longer than 7200 seconds. The `-C1` flag will make sure that only one node using chosed role
+    but no longer than 7200 seconds. The `-C1` flag will make sure that only one node using chosen role
     will be updated at a time.
-
-    While waiting for jobs to be finished you can check what jobs in which state are running - open
-    another console window, log into chosen Runner and execute the following command:
-
-    ```bash
-    $ ssh private-runners-manager-1
-    user@private-runners-manager-1:~$ curl -s http://localhost:9402/debug/jobs/list
-    ```
 
     When the last job will be finished, or after the 7200 seconds timeout, the process will
     be terminated and the script will:
@@ -127,7 +180,7 @@ To upgrade runners on managers you need to:
     If you want to check which version of Runner is installed, execute the following command:
 
     ```bash
-    $ knife ssh -aipaddress 'roles:gitlab-private-runners' -- gitlab-runner --version
+    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- gitlab-runner --version
     ```
 
     You can also check the [uptime](https://performance.gitlab.net/dashboard/db/ci?refresh=5m&orgId=1&panelId=18&fullscreen)
@@ -153,15 +206,15 @@ If you want to upgrade all Runners of GitLab.com fleet at the same time, then yo
 
 ```bash
 # Stop chef-client
-knife ssh -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-shared-runners OR roles:gitlab-ce-ee-runners OR roles:gitlab-gce-*-runners-* OR roles:gitlab-runner-builder' -- sudo service chef-client stop
+knife ssh -aipaddress 'roles:gitlab-runner-base' -- sudo service chef-client stop
 
 # Update configuration in roles definition and secrets
 rake edit_role[gitlab-runner-base]
 
 # Upgrade Runner's version and configuration on nodes
-knife ssh -C1 -aipaddress 'roles:gitlab-private-runners OR roles:gitlab-runner-builder' -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress 'roles:gitlab-shared-runners OR roles:gitlab-gce-shared-runners-east-*' -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress 'roles:gitlab-ce-ee-runners OR roles:gitlab-gce-ce-ee-runners-east-*' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -aipaddress 'roles:gitlab-runner-builder' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -aipaddress 'roles:gitlab-runner-gsrm' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -aipaddress 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -aipaddress 'roles:gitlab-runner-srm' -- sudo /root/runner_upgrade.sh &
 wait
 ```
-
