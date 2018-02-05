@@ -11,7 +11,7 @@ groups:
     annotations:
       title: 'The number of pending builds for projects with shared runners will be
         too high in 1h: {{$value | printf "%.2f" }}'
-      description: "Hey @cicdops! The number of pending builds for projects with shared runners is
+      description: "Hey <!subteam^S940BK2TV|cicdops>! The number of pending builds for projects with shared runners is
         increasing and will be too high in 1h ({{$value}}). This may suggest problems
         with auto-scaling provider or Runner stability. You should check Runner's
         logs. Check http://performance.gitlab.net/dashboard/db/ci."
@@ -24,7 +24,7 @@ groups:
       severity: warn
     annotations:
       title: 'Number of pending jobs per namespace too high: {{$value}}'
-      description: 'Hey @cicdops! Number of pending jobs for namespace {{$labels.namespace}} is too high: {{$value}}.
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! Number of pending jobs for namespace {{$labels.namespace}} is too high: {{$value}}.
         Check https://performance.gitlab.net/dashboard/db/ci?panelId=33&fullscreen'
       runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
 
@@ -36,7 +36,7 @@ groups:
       severity: warn
     annotations:
       title: 'Number of runnin jobs per namespace too high: {{$value}}'
-      description: 'Hey @cicdops! Number of running jobs for namespace {{$labels.namespace}} is too high: {{$value}}.
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! Number of running jobs for namespace {{$labels.namespace}} is too high: {{$value}}.
         Check https://performance.gitlab.net/dashboard/db/ci?panelId=60&fullscreen'
       runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
 
@@ -48,7 +48,7 @@ groups:
       severity: warn
     annotations:
       title: 'Number of builds running on shared runners is too low: {{$value}}'
-      description: "Hey @cicdops! Number of builds running on shared runners for the last 5 minutes
+      description: "Hey <!subteam^S940BK2TV|cicdops>! Number of builds running on shared runners for the last 5 minutes
         is 0. This may suggest problems with auto-scaling provider or Runner stability.
         You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci."
 
@@ -61,7 +61,7 @@ groups:
     annotations:
       title: Number of jobs running on shared runners is over 300 for the last 15
         minutes
-      description: 'Hey @cicdops! This may suggest problems with our autoscaled machines fleet OR
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
         abusive usage of Runners. Check https://performance.gitlab.net/dashboard/db/ci
         and https://log.gitlap.com/app/kibana#/dashboard/5d3921f0-79e0-11e7-a8e2-f91bfad41e34'
 
@@ -73,7 +73,7 @@ groups:
       severity: critical
     annotations:
       title: Runners manager is down on {{ $labels.instance }
-      description: 'Hey @cicdops! This impacts CI execution builds, consider tweeting: !tweet ''Builds
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''Builds
         are being delayed due to our shared runners manager being non responsive.
         We are restarting it to restore the service and then investigating the root
         cause''. Hosts impacted - {{ $labels.instance }}'
@@ -87,7 +87,7 @@ groups:
       severity: warn
     annotations:
       title: 'Machine creation rate for runners is too high: {{$value | printf "%.2f" }}'
-      description: 'Hey @cicdops! Machine creation rate for the last 1 minute is at least {{$value}}
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! Machine creation rate for the last 1 minute is at least {{$value}}
         times greater than machines idle rate. This may by a symptom of problems with
         the auto-scaling provider. Check http://performance.gitlab.net/dashboard/db/ci.'
       runbook: troubleshooting/ci_graphs.md#runners-manager-auto-scaling
@@ -100,7 +100,7 @@ groups:
       severity: critical
     annotations:
       title: Runners cache service {{ $labels.instance }} on {{ $labels.fqdn }} has been down for more than 5 minutes.
-      description: 'Hey @cicdops! This impacts CI execution builds, consider tweeting: !tweet ''CI
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''CI
         executions are being delayed due to our runners cache being down at GitLab.com,
         we are investigating the root cause'''
       runbook: troubleshooting/runners_cache_is_down.md
@@ -113,7 +113,7 @@ groups:
       severity: critical
     annotations:
       title: Runners cache nginx service on {{ $labels.fqdn }} has been down for more than 5 minutes.
-      description: 'Hey @cicdops! This impacts CI execution builds, consider tweeting: !tweet ''CI
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''CI
         executions are being delayed due to our runners cache being down at GitLab.com,
         we are investigating the root cause'''
       runbook: troubleshooting/runners_cache_is_down.md
@@ -126,7 +126,7 @@ groups:
       severity: critical
     annotations:
       title: Number of established connections for {{ $labels.instance }} is too high
-      description: 'Hey @cicdops! This impacts CI execution builds, consider tweeting: !tweet ''CI
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''CI
         jobs are being delayed due to issues with Shared Runners cache server. We
         are restarting it to restore the service.''. Hosts impacted - {{ $labels.instance }}'
       runbook: troubleshooting/ci_too_many_connections_on_runners_cache_server.md
@@ -140,7 +140,7 @@ groups:
       severity: warn
     annotations:
       title: Number of used file descriptors on {{ $labels.instance }} is too high
-      description: 'Hey @cicdops! {{ $labels.instance }} is using more than 80% of available FDs
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! {{ $labels.instance }} is using more than 80% of available FDs
         since 10 minutes. This may affect Runner''s stability. Please look at https://performance.gitlab.net/dashboard/db/ci
         for more data.'
 
@@ -152,7 +152,7 @@ groups:
       severity: warn
     annotations:
       title: CI Consul+Prometheus cluster is degradated, {{ $labels.instance }} is down
-      description: 'Hey @cicdops! One or more of hosts from CI Consul+Prometheus cluster is down: {{ $labels.instance }}.'
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! One or more of hosts from CI Consul+Prometheus cluster is down: {{ $labels.instance }}.'
 
   - alert: GCPQuotaHighUsage
     expr: |
@@ -166,7 +166,7 @@ groups:
     annotations:
       title: GCP Quota usage of {{ $labels.quota }} is too high
       description: |
-        Hey @cicdops! Quota usage of {{ $labels.quota }} is at the level of {{ $value }} for more than 5 minutes.
+        Hey <!subteam^S940BK2TV|cicdops>! Quota usage of {{ $labels.quota }} is at the level of {{ $value }} for more than 5 minutes.
         Quota limit breach is coming!
         See https://performance.gitlab.net/dashboard/db/ci-autoscaling-providers
 
@@ -182,7 +182,7 @@ groups:
     annotations:
       title: GCP Quota usage of {{ $labels.quota }} is near limit
       description: |
-        Hey @cicdops! Quota usage of {{ $labels.quota }} is at the level of {{ $value }} for more than 5 minutes.
+        Hey <!subteam^S940BK2TV|cicdops>! Quota usage of {{ $labels.quota }} is at the level of {{ $value }} for more than 5 minutes.
         It's less than 5% to reach quota limits!
         See https://performance.gitlab.net/dashboard/db/ci-autoscaling-providers
 
