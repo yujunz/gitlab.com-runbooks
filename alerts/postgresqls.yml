@@ -6,7 +6,7 @@ groups:
     for: 1m
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       description: TXID/s is {{ $value | printf "%.1f" }} on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
@@ -17,7 +17,7 @@ groups:
     for: 2m
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       description: XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
@@ -29,7 +29,7 @@ groups:
     for: 2m
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       description: Commits/s on {{$labels.instance}} database {{$labels.datname}}
         is {{$value | printf "%.0f" }} which is implausibly low. Perhaps the application
@@ -42,7 +42,7 @@ groups:
     for: 10m
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       runbook: troubleshooting/postgresql.md#connections
       title: Postgres has {{$value}} connections on {{$labels.fqdn}} which is close
@@ -54,7 +54,7 @@ groups:
     for: 5m
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       description: Ratio of transactions being aborted compared to committed is {{
         $value | printf "%.2f" }} on {{$labels.instance}}
@@ -65,7 +65,7 @@ groups:
     for: 5m
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} statement
         timeouts per second
@@ -75,7 +75,7 @@ groups:
     expr: rate(postgresql_errors_total{type="deadlock_detected"}[1m]) > 0
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} deadlock
         errors per second
@@ -134,7 +134,7 @@ groups:
     for: 30m
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       description: Unused {{$labels.slot_type}} slot "{{$labels.slot_name}}" on {{$labels.fqdn}}
       runbook: "troubleshooting/postgres.md#replication_slots"
@@ -144,7 +144,7 @@ groups:
     for: 10m
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       description: |
         "PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which
@@ -157,7 +157,7 @@ groups:
     expr: pg_stat_activity_max_tx_duration > 1200
     labels:
       severity: warn
-      channel: "#database"
+      channel: database
     annotations:
       description: |
         "Postgres server {{$labels.fqdn}} has a transaction in currently in
@@ -269,7 +269,7 @@ groups:
     for: 2m
     labels:
       severity: warn
-      channle: "#database"
+      channle: database
     annotations:
       description: Server {{$labels.fqdn}} disk {{$labels.device}} utilization is
         {{$value | printf "%.1f"}}%
