@@ -269,7 +269,7 @@ groups:
     for: 2m
     labels:
       severity: warn
-      channle: database
+      channel: database
     annotations:
       description: Server {{$labels.fqdn}} disk {{$labels.device}} utilization is
         {{$value | printf "%.1f"}}%
