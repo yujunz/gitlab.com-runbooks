@@ -66,17 +66,17 @@ groups:
         and https://log.gitlap.com/app/kibana#/dashboard/5d3921f0-79e0-11e7-a8e2-f91bfad41e34'
 
   - alert: CICDRunnersManagerDown
-    expr: up{job=~"shared-runners|shared-runners-gitlab-org|shared-runners-high-cpu|private-runners|omnibus-runners"} == 0
+    expr: up{job=~"private-runners|shared-runners|shared-runners-gitlab-org|staging-shared-runners"} == 0
     for: 5m
     labels:
       channel: ci-cd
       severity: critical
     annotations:
-      title: Runners manager is down on {{ $labels.instance }
+      title: Runners manager is down on {{ $labels.instance }}
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''Builds
         are being delayed due to our shared runners manager being non responsive.
         We are restarting it to restore the service and then investigating the root
-        cause''. Hosts impacted - {{ $labels.instance }}'
+        cause''. Hosts impacted: {{ $labels.instance }}'
       runbook: troubleshooting/runners_manager_is_down.md
 
   - alert: CICDRunnerMachineCreationRateHigh
