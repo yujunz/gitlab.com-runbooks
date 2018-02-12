@@ -1,6 +1,6 @@
 removed = 0
 
-Gitlab::Redis.with do |redis|
+Gitlab::Redis::Cache.with do |redis|
   cursor = '0'
 
   loop do
