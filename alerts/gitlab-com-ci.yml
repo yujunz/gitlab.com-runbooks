@@ -198,6 +198,6 @@ groups:
     annotations:
       title: Namespace with constant number of long running jobs with repeated commands
       description: |
-        Hey <!subteam^S940BK2TV|cicdops>! Namespace {{$labels.namespace}} is running a constant number of jobs with
-        repeated commands - {{value}}!
+        Hey <!subteam^S940BK2TV|cicdops>! Namespace {{ $labels.namespace }} is running a constant number of jobs with
+        repeated commands!
 
