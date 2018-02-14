@@ -186,3 +186,18 @@ groups:
         It's less than 5% to reach quota limits!
         See https://performance.gitlab.net/dashboard/db/ci-autoscaling-providers
 
+  - alert: CICDNamespaceWithConstantNumberOfLongRunningRepeatedJobs
+    expr: |
+      max(sum(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes"}) by (fqdn,  namespace)) by (namespace) > 5
+      and
+      sum(changes(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes"}[15m])) by (namespace) == 0
+    for: 15m
+    labels:
+      channel: ci-cd
+      severity: warning
+    annotations:
+      title: Namespace with constant number of long running jobs with repeated commands
+      description: |
+        Hey <!subteam^S940BK2TV|cicdops>! Namespace {{$labels.namespace}} is running a constant number of jobs with
+        repeated commands - {{value}}!
+
