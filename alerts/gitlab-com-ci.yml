@@ -190,8 +190,8 @@ groups:
     expr: |
       max(sum(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes"}) by (fqdn,  namespace)) by (namespace) > 5
       and
-      sum(changes(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes"}[15m])) by (namespace) == 0
-    for: 15m
+      sum(changes(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes"}[30m])) by (namespace) == 0
+    for: 30m
     labels:
       channel: ci-cd
       severity: warning
