@@ -12,7 +12,7 @@ groups:
         Check Gitaly logs and consider disabling that method.
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
-  - alert: gitaly_error_rate_too_high
+  - alert: gitaly_instance_error_rate_too_high
     expr: gitaly:grpc_server_handled_total:instance_error_rate1m{environment="prd"}
       > 4
     for: 5m
