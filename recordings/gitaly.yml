@@ -5,7 +5,7 @@ groups:
     expr: sum(rate(grpc_server_handled_total[1m])) WITHOUT (fqdn, instance, grpc_code)
   - record: gitaly:grpc_server_handled_total:error_rate1m
     expr: sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) WITHOUT (fqdn,
-      instance, grpc_code)
+      instance)
   - record: gitaly:grpc_server_handled_total:error_avg_rate12h
     expr: avg_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
   - record: gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h

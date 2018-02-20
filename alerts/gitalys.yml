@@ -8,7 +8,7 @@ groups:
       channel: gitaly
       severity: critical
     annotations:
-      description: Gitaly error rate for the last 5 minutes is over 2 for {{$labels.grpc_method}}.
+      description: Gitaly {{$labels.grpc_code}} error rate for the last 5 minutes is over 2 for {{$labels.grpc_method}}.
         Check Gitaly logs and consider disabling that method.
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
@@ -87,7 +87,7 @@ groups:
       channel: gitaly
       severity: warn
     annotations:
-      description: The error rate on the {{ $labels.grpc_method }} is outside normal
+      description: The {{$labels.grpc_code}} error rate on {{ $labels.grpc_method }} is outside normal
         values over a 12 hour period (95% confidence). Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{
         $labels.grpc_method }}&var-tier=stor&var-type=gitaly&var-environment=prd&refresh=5m
       runbook: troubleshooting/gitaly-error-rate.md
