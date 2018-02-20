@@ -1,7 +1,7 @@
 groups:
 - name: gitaly.rules
   rules:
-  - alert: gitaly_error_rate_too_high
+  - alert: GitalyErrorRateTooHigh
     expr: gitaly:grpc_server_handled_total:error_rate1m{environment="prd"} > 2
     for: 5m
     labels:
@@ -12,7 +12,7 @@ groups:
         Check Gitaly logs and consider disabling that method.
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
-  - alert: gitaly_instance_error_rate_too_high
+  - alert: GitalyInstanceErrorRateTooHigh
     expr: gitaly:grpc_server_handled_total:instance_error_rate1m{environment="prd"}
       > 4
     for: 5m
