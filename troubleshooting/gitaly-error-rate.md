@@ -42,8 +42,3 @@ on Slack's #production channel. The mapping of flag names to gRPC calls is as fo
 | gitaly_local_branches | FindLocalBranches     |
 | gitaly_is_ancestor    | CommitIsAncestor      |
 | gitaly_find_ref_name  | FindRefName           |
-
-
-- If that doesn't solve the issue you can disable Gitaly entirely by updating
-the relevant role(s) on chef-repo and changing the Gitaly override to
-`enable: false` (under `override_attributes -> omnibus-gitlab -> gitlab_rb -> gitaly`)

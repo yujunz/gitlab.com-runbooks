@@ -14,13 +14,13 @@ groups:
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
   - alert: GitalyInstanceErrorRateTooHigh
     expr: gitaly:grpc_server_handled_total:instance_error_rate1m{environment="prd"}
-      > 4
+      > 5
     for: 5m
     labels:
       channel: gitaly
       severity: critical
     annotations:
-      description: Gitaly error rate for the last 5 minutes is over 4 on {{$labels.instance}}.
+      description: Gitaly error rate for the last 5 minutes is over 5 on {{$labels.instance}}.
         Check Gitaly logs and consider disabling it on that host.
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
