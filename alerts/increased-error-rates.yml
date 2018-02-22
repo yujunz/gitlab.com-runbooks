@@ -3,7 +3,7 @@ groups:
   rules:
   - alert: IncreasedErrorRate
     expr: (sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",environment="prd",tier="lb"})
-      BY (code, backend)) > 5
+      BY (code, backend)) > 20
     for: 15s
     labels:
       severity: critical
