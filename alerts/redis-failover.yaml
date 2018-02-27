@@ -1,0 +1,15 @@
+groups:
+- name: redis-failover.rules
+  rules:
+  - alert: RedisFailover
+    expr: sum(changes(redis_connected_slaves{environment="prd"}[5m])) > 0
+    for: 1m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: Redis has had a failover event! Consider
+        reviewing the redis replication status
+      runbook: troubleshooting/redis_replication.md
+      title: Redis failover has occured! New master is {{ range
+        query "gitlab:redis_master" }}{{ .Labels.fqdn }}{{ end }}.
