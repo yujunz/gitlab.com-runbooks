@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+  <style>
+      .primary > rect{
+          fill:#a3d2a3 !important;
+      }
+      .replica > rect{
+          fill:#ffc07e !important;
+      }
+  </style>
+</head>
+<body>
+  Environments:
+  {{ range query "count(pg_settings_server_version_num) by (environment)" | sortByLabel "environment" }}
+  <a href="?environment={{.Labels.environment}}">{{.Labels.environment}}</a>
+  {{ end }}
+  
+  
+  <div class="mermaid">
+  graph LR
+
+  {{ range printf "pg_settings_server_version_num{environment='%s'}"  .Params.environment | query | sortByLabel "fqdn"}}
+  {{ .Labels.fqdn }}
+  {{ end }}
+
+  {{ range printf "pg_replication_is_replica{environment='%s'}" .Params.environment | query | sortByLabel "fqdn"}}
+  {{ if eq (. | value) 1.0 }}
+  class {{.Labels.fqdn}} replica;
+  {{ else }}
+  class {{.Labels.fqdn}} primary;
+  {{ end }}
+  {{ end }}
+
+  {{ range printf "pg_stat_wal_receiver_status{environment='%s'}" .Params.environment | query | sortByLabel "fqdn"}}
+   {{ if .Labels.upstream_host}} {{.Labels.upstream_host}} {{else}} unknownupstream["?"] {{end}} -- {{ if .Labels.slot_name }} "{{.Labels.slot_name}}" {{else}} "no slot" {{end}} --> {{.Labels.fqdn}}
+  {{end}}
+
+  {{ range printf "pg_replication_slots_active{environment='%s'} unless on (slot_name) pg_stat_wal_receiver_status{environment='%s'}" .Params.environment .Params.environment | query | sortByLabel "fqdn"}}
+  {{ .Labels.fqdn }} -. {{ .Labels.slot_name }} .-> unknownreplica["unused slot"]
+  {{ end }}
+  </div>
+</body>
+</html>
