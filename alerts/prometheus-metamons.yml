@@ -2,7 +2,7 @@ groups:
 - name: prometheus-metamon.rules
   rules:
   - alert: PrometheusUnreachable
-    expr: up{job=~"prometheus.*"} == 0
+    expr: up{job=~"prometheus.*", fqdn !~ ".*gprd.*"} == 0
     for: 10m
     labels:
       pager: pagerduty
@@ -14,7 +14,7 @@ groups:
       runbook: troubleshooting/prometheus-is-down.md
       title: '{{$labels.job}} is unreachable'
   - alert: PrometheusManyRestarts
-    expr: changes(process_start_time_seconds{job=~"prometheus.*"}[30m]) > 3
+    expr: changes(process_start_time_seconds{job=~"prometheus.*", fqdn !~ ".*gprd.*"}[30m]) > 3
     for: 30m
     labels:
       pager: pagerduty
@@ -98,7 +98,7 @@ groups:
       runbook: troubleshooting/prometheus-persist-errors.md
       title: '{{$labels.job}} has persist errors'
   - alert: PrometheusNotificationsBacklog
-    expr: prometheus_notifications_queue_length{job=~"prometheus.*"} > 0
+    expr: prometheus_notifications_queue_length{job=~"prometheus.*", fqdn !~ ".*gprd.*"} > 0
     for: 10m
     labels:
       pager: pagerduty
@@ -174,7 +174,7 @@ groups:
       runbook: troubleshooting/prometheus-slow-series-maintenance.md
       title: '{{$labels.job}} is maintaining memory time series too slowly'
   - alert: PrometheusInvalidConfigFile
-    expr: prometheus_config_last_reload_successful{job=~"prometheus.*"} == 0
+    expr: prometheus_config_last_reload_successful{job=~"prometheus.*", fqdn !~ ".*gprd.*"} == 0
     for: 30m
     labels:
       pager: pagerduty
