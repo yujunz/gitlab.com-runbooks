@@ -117,8 +117,7 @@ groups:
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag (in bytes) is high
   - alert: PostgreSQL_XLOGConsumptionTooHigh
-    expr: rate(pg_xlog_position_bytes[1m]) > 1.2e+07 and ON(instance) (pg_replication_is_replica
-      == 0)
+    expr: rate(pg_xlog_position_bytes[1m]) > 2.0e+07 and ON(instance) (pg_replication_is_replica == 0)
     for: 5m
     labels:
       pager: pagerduty
