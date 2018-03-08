@@ -53,13 +53,13 @@ groups:
         You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci."
 
   - alert: CICDTooManyJobsOnSharedRunners
-    expr: sum(ci_runner_builds{job="shared-runners"}) > 300
+    expr: sum(ci_runner_builds{job="shared-runners"}) > 400
     for: 15m
     labels:
       channel: ci-cd
       severity: warn
     annotations:
-      title: Number of jobs running on shared runners is over 300 for the last 15
+      title: Number of jobs running on shared runners is over 400 for the last 15
         minutes
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
         abusive usage of Runners. Check https://performance.gitlab.net/dashboard/db/ci
@@ -190,8 +190,8 @@ groups:
     expr: |
       max(sum(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes"}) by (fqdn,  namespace)) by (namespace) > 5
       and
-      sum(changes(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes"}[30m])) by (namespace) == 0
-    for: 30m
+      sum(changes(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes"}[45m])) by (namespace) == 0
+    for: 45m
     labels:
       channel: ci-cd
       severity: warning
@@ -199,5 +199,5 @@ groups:
       title: Namespace with constant number of long running jobs with repeated commands
       description: |
         Hey <!subteam^S940BK2TV|cicdops>! Namespace {{ $labels.namespace }} is running a constant number of jobs with
-        repeated commands!
+        repeated commands for more than 45 minutes.
 
