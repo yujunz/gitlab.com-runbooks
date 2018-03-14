@@ -6,7 +6,6 @@ groups:
     for: 1m
     labels:
       severity: warn
-      channel: database
     annotations:
       description: TXID/s is {{ $value | printf "%.1f" }} on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
@@ -17,7 +16,6 @@ groups:
     for: 2m
     labels:
       severity: warn
-      channel: database
     annotations:
       description: XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
@@ -29,7 +27,6 @@ groups:
     for: 2m
     labels:
       severity: warn
-      channel: database
     annotations:
       description: Commits/s on {{$labels.instance}} database {{$labels.datname}}
         is {{$value | printf "%.0f" }} which is implausibly low. Perhaps the application
@@ -42,7 +39,6 @@ groups:
     for: 10m
     labels:
       severity: warn
-      channel: database
     annotations:
       runbook: troubleshooting/postgresql.md#connections
       title: Postgres has {{$value}} connections on {{$labels.fqdn}} which is close
@@ -54,7 +50,6 @@ groups:
     for: 5m
     labels:
       severity: warn
-      channel: database
     annotations:
       description: Ratio of transactions being aborted compared to committed is {{
         $value | printf "%.2f" }} on {{$labels.instance}}
@@ -65,7 +60,6 @@ groups:
     for: 5m
     labels:
       severity: warn
-      channel: database
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} statement
         timeouts per second
@@ -75,7 +69,6 @@ groups:
     expr: rate(postgresql_errors_total{type="deadlock_detected"}[1m]) > 0
     labels:
       severity: warn
-      channel: database
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} deadlock
         errors per second
@@ -87,7 +80,6 @@ groups:
     labels:
       pager: pagerduty
       severity: critical
-      channel: database
     annotations:
       description: PostgreSQL replication has stopped on {{$labels.instance}}.
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
@@ -99,7 +91,6 @@ groups:
     labels:
       pager: pagerduty
       severity: critical
-      channel: database
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanizeDuration }}
@@ -113,7 +104,6 @@ groups:
     labels:
       pager: pagerduty
       severity: critical
-      channel: database
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanize1024}}B
@@ -125,7 +115,6 @@ groups:
     labels:
       pager: pagerduty
       severity: critical
-      channel: database
     annotations:
       description: XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s
         on {{$labels.instance}}
@@ -137,7 +126,6 @@ groups:
     for: 30m
     labels:
       severity: warn
-      channel: database
     annotations:
       description: Unused {{$labels.slot_type}} slot "{{$labels.slot_name}}" on {{$labels.fqdn}}
       runbook: "troubleshooting/postgres.md#replication_slots"
@@ -147,7 +135,6 @@ groups:
     for: 10m
     labels:
       severity: warn
-      channel: database
     annotations:
       description: |
         "PostgreSQL slot {{$labels.slot_name}} xmin age is {{$value}} which
@@ -160,7 +147,6 @@ groups:
     expr: pg_stat_activity_max_tx_duration > 1200
     labels:
       severity: warn
-      channel: database
     annotations:
       description: |
         "Postgres server {{$labels.fqdn}} has a transaction in currently in
@@ -173,7 +159,6 @@ groups:
     for: 5m
     labels:
       severity: critical
-      channel: database
     annotations:
       description: |
         "Really high load in the batabase for the last minute, there are {{
@@ -191,7 +176,6 @@ groups:
     for: 1h
     labels:
       severity: critical
-      channel: database
     annotations:
       description: "Too many dead tuples"
       table: "{{$labels.table_name}}"
@@ -203,7 +187,6 @@ groups:
     for: 1m
     labels:
       severity: critical
-      channel: database
     annotations:
       description: 'The following {{$value}} databases are in read-write
       (primary) mode: {{range query
@@ -218,7 +201,6 @@ groups:
     for: 1m
     labels:
       severity: critical
-      channel: database
     annotations:
       description: 'In environment {{$labels.environment}} there are {{$value}} different
         upstream primaries: {{range query "pg_stat_wal_receiver_status{environment=''$labels.environment''}
@@ -231,7 +213,6 @@ groups:
     for: 1m
     labels:
       severity: info
-      channel: database
     annotations:
       description: There are now {{$value}} databases in environment "{{$labels.environment}}"
       title: Number of PostgreSQL Databases in {{$labels.environment}} has changed
@@ -240,7 +221,6 @@ groups:
     expr: pg_replication_is_replica and changes(pg_replication_is_replica[1m]) > 0
     labels:
       severity: info
-      channel: database
     annotations:
       description: Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}}
         *replica* {{else}} *primary* {{end}}
@@ -250,7 +230,6 @@ groups:
       OFFSET 10m'
     labels:
       severity: info
-      channel: database
     annotations:
       description: Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}
       title: Postgres Database configuration change has occured on "{{$labels.fqdn}}"
@@ -259,7 +238,6 @@ groups:
     for: 5m
     labels:
       severity: warn
-      channel: database
     annotations:
       description: '{{$labels.fqdn}} is showing only {{$value}} scrapes per second
         which should be > 0.2'
@@ -269,7 +247,6 @@ groups:
     for: 1h
     labels:
       severity: warn
-      channel: database
     annotations:
       description: This may indicate postgres_exporter is not running or a buggy query
         in query.yaml on {{$labels.fqdn}}
@@ -281,7 +258,6 @@ groups:
     for: 2m
     labels:
       severity: warn
-      channel: database
     annotations:
       description: Server {{$labels.fqdn}} disk {{$labels.device}} utilization is
         {{$value | printf "%.1f"}}%
