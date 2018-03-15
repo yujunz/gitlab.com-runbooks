@@ -5,7 +5,8 @@ groups:
     expr: rate(pg_txid_current{environment="prd"}[1m]) < 5
     for: 1m
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
       channel: database
     annotations:
       description: TXID/s is {{ $value | printf "%.1f" }} on {{$labels.instance}}
@@ -16,7 +17,8 @@ groups:
     expr: rate(pg_xlog_position_bytes{environment="prd"}[1m]) < 200000
     for: 2m
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
       channel: database
     annotations:
       description: XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}}
@@ -28,7 +30,8 @@ groups:
       < 1000
     for: 2m
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
       channel: database
     annotations:
       description: Commits/s on {{$labels.instance}} database {{$labels.datname}}
@@ -53,7 +56,8 @@ groups:
       > 0.02
     for: 5m
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
       channel: database
     annotations:
       description: Ratio of transactions being aborted compared to committed is {{
@@ -64,7 +68,8 @@ groups:
     expr: rate(postgresql_errors_total{type="statement_timeout"}[1m]) > 0.5
     for: 5m
     labels:
-      severity: warn
+      severity: critical
+      pager: pagerduty
       channel: database
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} statement
@@ -136,7 +141,8 @@ groups:
     expr: pg_replication_slots_active == 0
     for: 30m
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
       channel: database
     annotations:
       description: Unused {{$labels.slot_type}} slot "{{$labels.slot_name}}" on {{$labels.fqdn}}
@@ -172,6 +178,7 @@ groups:
     expr: node_load1{type="postgres"} > 200
     for: 5m
     labels:
+      pager: pagerduty
       severity: critical
       channel: database
     annotations:
@@ -190,6 +197,7 @@ groups:
       == 1)
     for: 1h
     labels:
+      pager: pagerduty
       severity: critical
       channel: database
     annotations:
@@ -202,6 +210,7 @@ groups:
     expr: count(pg_replication_is_replica == 0) BY (environment) != 1
     for: 1m
     labels:
+      pager: pagerduty
       severity: critical
       channel: database
     annotations:
@@ -217,6 +226,7 @@ groups:
       BY (environment) > 1
     for: 1m
     labels:
+      pager: pagerduty
       severity: critical
       channel: database
     annotations:
@@ -258,7 +268,8 @@ groups:
     expr: rate(pg_exporter_scrapes_total[1m]) < 1 / 60
     for: 5m
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
       channel: database
     annotations:
       description: '{{$labels.fqdn}} is showing only {{$value}} scrapes per second
@@ -268,7 +279,8 @@ groups:
     expr: pg_exporter_last_scrape_error == 1
     for: 1h
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
       channel: database
     annotations:
       description: This may indicate postgres_exporter is not running or a buggy query
