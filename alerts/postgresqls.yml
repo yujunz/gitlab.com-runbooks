@@ -41,7 +41,7 @@ groups:
       title: Postgres seems to be processing very few transactions
   - alert: PostgreSQL_ConnectionsTooHigh
     expr: sum(pg_stat_activity_count) BY (environment, fqdn) > ON(fqdn) pg_settings_max_connections
-      * 0.75
+      * 0.85
     for: 10m
     labels:
       severity: warn
