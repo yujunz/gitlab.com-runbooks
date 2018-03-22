@@ -300,3 +300,16 @@ groups:
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres server's disk utilization over 95% for over a minute. Expect
         this to cause replication lag or user visible latency
+  - alert: PostgreSQL_DiskUtilizationMaxedOut
+    expr: rate(node_disk_io_time_seconds_total{device="dm-0",tier="db",type="postgres"}[1m])
+      / 10 > 96
+    for: 2m
+    labels:
+      severity: warn
+      channel: database
+    annotations:
+      description: Server {{$labels.fqdn}} disk {{$labels.device}} utilization is
+        {{$value | printf "%.1f"}}%
+      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      title: Postgres server's disk utilization over 95% for over a minute. Expect
+        this to cause replication lag or user visible latency
