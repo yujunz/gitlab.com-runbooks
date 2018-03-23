@@ -10,8 +10,14 @@ the production team.
 * In the issue include the reason for why it is being requested.
 * A production engineer will update the issue and share a google doc folder containing a QR code and an `.ovpn` profile.
 * Scan the authenticator code using the google authenticator app.
-* Load the profile into your openvpn client.
+* Load the profile into your [openvpn client](https://openvpn.net/index.php/access-server/section-faq-openvpn-as/client-configuration.html).
 * Connect to the vpn using your username and the google authenticator code as a password.
+
+### Testing
+You can test that you are successfully connected to the VPN by:
+1. Before connecting to the VPN, check your IP address. You can do this by typing `what's my ip` in either `duckduckgo.com` or `google.com`.
+1. Connect to the VPN
+1. Repeat the first step, if the IP addresses are different, you are successfully connected to the VPN.
 
 ### Troubleshooting
 
