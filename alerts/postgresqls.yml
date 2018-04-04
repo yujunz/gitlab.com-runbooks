@@ -41,8 +41,8 @@ groups:
       title: Postgres seems to be processing very few transactions
   - alert: PostgreSQL_ConnectionsTooHigh
     expr: sum(pg_stat_activity_count) BY (environment, fqdn) > ON(fqdn) pg_settings_max_connections
-      * 0.85
-    for: 10m
+      * 0.95
+    for: 5m
     labels:
       severity: warn
       channel: database
@@ -150,7 +150,7 @@ groups:
       title: Unused Replication Slots for {{$labels.fqdn}}
   - alert: PostgreSQL_ReplicaStaleXmin
     expr: pg_replication_slots_xmin_age > 20000
-    for: 10m
+    for: 30m
     labels:
       severity: warn
       channel: database
@@ -289,8 +289,8 @@ groups:
       title: Postgres exporter is showing errors for the last hour
   - alert: PostgreSQL_DiskUtilizationMaxedOut
     expr: rate(node_disk_io_time_ms{device="dm-0",tier="db",type="postgres"}[1m])
-      / 10 > 96
-    for: 2m
+      / 10 > 97
+    for: 5m
     labels:
       severity: warn
       channel: database
