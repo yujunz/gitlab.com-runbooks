@@ -19,7 +19,7 @@ computer. To easily hand of the files it's suggested to run it from a VPN-connec
   - This fetches 30 seconds of CPU profiling for flame graphs.
 - `curl -o trace.bin http://<SERVER_IP>:<PROM_PORT>>/debug/pprof/trace?seconds=5`
   - This fetches 5 seconds of execution trace.
-- `curl -o heap.bin http://<SERVER_IP>:<PROM_PORT>>/debug/pprog/heap`
+- `curl -o heap.bin http://<SERVER_IP>:<PROM_PORT>>/debug/pprof/heap`
   - This fetches a heap profile to profile memory usage.
 
 ## 2. Hand them off
