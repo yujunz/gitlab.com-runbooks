@@ -191,10 +191,9 @@ To upgrade runners on managers you need to:
 
 1. **Update GitLab.com's configuration description**
 
-    If you are updating shared runners used by GitLab.com, please create a merge request in
-    https://gitlab.com/gitlab-com/www-gitlab-com project to update Runner's version and/or any other changed
-    configuration values which are specified at
-    https://gitlab.com/gitlab-com/www-gitlab-com/blob/master/source/gitlab-com/settings/index.html.md#shared-runners.
+    If you are updating shared runners used by GitLab.com, please [create a merge request in GitLab
+    CE project][gitlab-ce-new-mr] to update configuration values which are
+    specified at https://gitlab.com/gitlab-org/gitlab-ce/blob/master/doc/user/gitlab_com/index.md.
 
 ## Upgrade of whole GitLab.com Runners fleet
 
@@ -218,3 +217,6 @@ knife ssh -C1 -aipaddress 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade
 knife ssh -C1 -aipaddress 'roles:gitlab-runner-srm' -- sudo /root/runner_upgrade.sh &
 wait
 ```
+
+[gitlab-ce-new-mr]: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/new
+
