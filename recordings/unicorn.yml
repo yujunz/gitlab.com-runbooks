@@ -1,0 +1,8 @@
+groups:
+- name: Unicorn
+  interval: 1m
+  rules:
+  - record: controller_action:gitlab_transaction_duration_seconds_count:rate1m
+    expr: sum(rate(gitlab_transaction_duration_seconds_count[1m])) without (fqdn, instance)
+  - record: job_environment:gitlab_transaction_duration_seconds_count:rate1m
+    expr: sum(controller_action:gitlab_transaction_duration_seconds_count:rate1m) without (controller,action)
