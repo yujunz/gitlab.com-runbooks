@@ -8,11 +8,11 @@ IFS=$'\t\n'
 command -v az >/dev/null 2>/dev/null || { echo 'Please install az utility'; exit 1; }
 
 # Variables to change always
-RDATE='2018-03-01'		# Date of snapshot to restore
-RG_NAME='BADFeb2018-f08'	# Name of the resource group
+RDATE='2018-04-11'		# Date of snapshot to restore
+RG_NAME='BADMar2018-f09'	# Name of the resource group
 
 # Variables to change if you want test different box
-RESTORE='file-08'	# Which machine to restore (leave file-08 if you are unsure)
+RESTORE='file-09'	# Which machine to restore (leave file-08 if you are unsure)
 
 # Variables to change only if you know what you are doing
 RG_LOC='eastus2'	# Location to create restoration resource group in
