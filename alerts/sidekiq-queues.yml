@@ -13,7 +13,7 @@ groups:
       runbook: troubleshooting/large-sidekiq-queue.md
       title: 'Large amount of Sidekiq Queued jobs: {{$value}}'
   - alert: SidekiqQueuesTooLargeHourly
-    expr: topk(1, sidekiq_queue_size{name!~"process_commit"}) > 20000
+    expr: topk(1, sidekiq_queue_size{name!~"process_commit|pipeline_background:archive_trace"}) > 20000
     for: 1h
     labels:
       severity: critical

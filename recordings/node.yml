@@ -29,3 +29,5 @@ groups:
     expr: sum(irate(node_disk_reads_completed_total{device=~"sd.*"}[1m])) WITHOUT (device)
   - record: instance:up:count
     expr: count(up{job="node",type!=""} == 1) WITHOUT (instance, fqdn)
+  - record: instance:node_memory_available:ratio
+    expr: (node_memory_MemFree + node_memory_Buffers + node_memory_Cached) / node_memory_MemTotal

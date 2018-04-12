@@ -92,3 +92,15 @@ groups:
         more or less, if it's the latter it can be because nodes went down silently
       runbook: troubleshooting
       title: The fleet size has changed in the last 5 minutes
+  - alert: HighMemoryPressure
+    expr: instance:node_memory_available:ratio * 100 < 5 and rate(node_vmstat_pgmajfault[1m]) > 1000
+    for: 15m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      description: The node is under heavy memory pressure.  The available memory is under 5% and
+        there is a high rate of major page faults.
+      runbook: troubleshooting/node_memory_alerts.md
+      value: 'Available memory {{ $value | printf "%.2f" }}%'
+      title: Node is under heavy memory pressure
