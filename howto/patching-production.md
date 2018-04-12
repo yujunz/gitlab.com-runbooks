@@ -10,14 +10,18 @@ to restore access to the site.
 This is step that has to be done by the proposing team.
 
 * Create a working branch in gitlab-ee from the current version running on
-  production (visit https://gitlab.com/help to find out what this is)
+  production (visit https://gitlab.com/help to find out what this is).
+  * For example, you can do `git checkout -b patch/my-fix v10.7.0-rc4-ee` if you want
+    to derive your branch from `10.7.0 RC4` version based on the tag.
 * Make your code changes
-* Run the command `git --no-pager diff --color=never master.. -- app ee lib > path/to/patch.patch`
+  * You can cherry-pick commits from CE / EE.
+  * In that case remove changes to specs before generating the patch.
+* Run the command `git --no-pager diff --color=never v10.7.0-rc4-ee.. -- app ee lib > path/to/patch.patch`
   * **Note**: this is an example - if you have changed non-spec files in other
     directories, be sure to include those 
 * Clone or Update the repo [post deployment patches][pdp]
 * Create one MR for the correct version of the application following [post
-  deployment patches][pdp] README instructions.
+  deployment patches][pdp-readme] README instructions.
   * Be sure to provide chef roles for prod, pre-prod and staging environments.
     If you don't know which should they be, just ask in the #production channel
 * Submit the patch for review to someone from the production team and someone
@@ -106,4 +110,5 @@ bundle exec knife ssh -C 1 -a ipaddress "roles:$role" "sudo gitlab-ctl hup unico
 
 
 [pdp]: https://dev.gitlab.org/gitlab/post-deployment-patches
+[pdp-readme]: https://dev.gitlab.org/gitlab/post-deployment-patches/tree/master/README.md
 [gp]: https://gitlab.com/gl-infra/gitlab-patcher
