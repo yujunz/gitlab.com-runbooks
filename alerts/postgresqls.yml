@@ -65,7 +65,7 @@ groups:
       runbook: troubleshooting/postgresql.md#errors
       title: Postgres transaction rollback rate is high
   - alert: PostgreSQL_StatementTimeout_Errors
-    expr: rate(postgresql_errors_total{type="statement_timeout"}[1m]) > 0.5
+    expr: rate(postgresql_errors_total{environment="prd", type="statement_timeout"}[1m]) > 0.5
     for: 5m
     labels:
       severity: critical
@@ -87,7 +87,7 @@ groups:
       runbook: troubleshooting/postgresql.md#errors
       title: Postgres detected deadlocks
   - alert: PostgreSQL_ReplicationStopped
-    expr: pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"}
+    expr: pg_stat_replication_pg_xlog_location_diff{environment="prd", job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{environment="prd", job="gitlab-cluster-db"}
     for: 5m
     labels:
       pager: pagerduty
