@@ -269,3 +269,60 @@ Also, FYI "prepared transactions" and replication connections both
 contribute to connection counts. There should be zero prepared
 transactions on gitlab.com and only a small number of replication
 connections (2 currently).
+
+## PGBouncer Errors
+
+If this is for the label `no more connections allowed
+(max_client_conn)` then the number of incoming connections from all
+clients is larger than `max_client_conn`. If this is the main
+pgbouncer node then this means all connections from all processes and
+threads on all hosts.
+
+You can raise the `max_client_conn` temporarily by logging into the
+pgbouncer console and issuing a command. First verify that the `ulimit
+-n` is high enough using prlimit (which can also set it). And get the
+password for pgbouncer console from 1password under `Production -
+gitlab` and `Postgres pgbouncer user`:
+
+```
+# ps auxww |grep bin[/]pgbouncer
+gitlab-+ 109886 34.4  0.6  28888 12836 ?        Rs   Mar19 13929:17 /opt/gitlab/embedded/bin/pgbouncer /var/opt/gitlab/pgbouncer/pgbouncer.ini
+
+# prlimit -n -p 109886
+RESOURCE DESCRIPTION               SOFT  HARD UNITS
+NOFILE   max number of open files 50000 50000 
+
+# sudo gitlab-ctl pgb-console
+Password for user pgbouncer: ...
+
+psql (9.6.5, server 1.7.2/bouncer)
+Type "help" for help.
+
+pgbouncer=# show config;
+            key            |                           value                            | changeable 
+---------------------------+------------------------------------------------------------+------------
+ max_client_conn           | 2048                                                       | yes
+...
+
+pgbouncer=# show pools;
+          database           |   user    | cl_active | cl_waiting | sv_active | sv_idle | sv_used | sv_tested | sv_login | maxwait |  pool_mode  
+-----------------------------+-----------+-----------+------------+-----------+---------+---------+-----------+----------+---------+-------------
+ gitlabhq_production         | gitlab    |       925 |          0 |        50 |      50 |       0 |         0 |        0 |       0 | transaction
+ gitlabhq_production         | pgbouncer |         0 |          0 |         0 |       0 |       1 |         0 |        0 |       0 | transaction
+ gitlabhq_production_sidekiq | gitlab    |      1088 |          0 |        56 |      69 |       0 |         0 |        0 |       0 | transaction
+ gitlabhq_production_sidekiq | pgbouncer |         0 |          0 |         0 |       1 |       0 |         0 |        0 |       0 | transaction
+ pgbouncer                   | pgbouncer |         1 |          0 |         0 |       0 |       0 |         0 |        0 |       0 | statement
+(5 rows)
+
+pgbouncer=# set max_client_conn=4096;
+```
+
+Note in the above `show pools` command the `cl_active` column lists a
+total of 2013 active client connections (not including our
+console). Just 35 short of the `max_client_conn` of 2048.
+
+If this is an alert for any other error you're on your own. But be
+aware that it could be caused by something mundane such as an admin
+typing commands at the console generating "invalid command" errors or
+the database server restarting or clients dying.
+

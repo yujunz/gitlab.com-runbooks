@@ -300,3 +300,22 @@ groups:
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres server disk utilization over 95% for over a minute. Expect
         this to cause replication lag or user visible latency
+  - alert: PostgreSQL_PGBouncer_Errors
+    expr: rate(pgbouncer_errors_count[10m]) > 0
+    labels:
+      severity: warn
+      channel: database
+    annotations:
+      description: PGBouncer is logging errors. This may be due to a a server restart or an admin typing commands at the pgbouncer console
+      runbook: troubleshooting/postgres.md#pgbouncer-errors
+      title: PGBouncer is logging errors
+  - alert: PostgreSQL_PGBouncer_maxclient_conn
+    expr: rate(pgbouncer_errors_count{errmsg="no more connections allowed (max_client_conn)"}[1m]) > 0
+    labels:
+      severity: critical
+      channel: database
+    annotations:
+      description: The number of client connections has reached max_client_conn.
+        Consider raising this parameter or investigating the source of the unusually large number of connections
+      runbook: troubleshooting/postgres.md#pgbouncer-errors
+      title: PGBouncer is logging "no more connections allowed" errors
