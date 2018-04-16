@@ -10,7 +10,7 @@ groups:
       runbook: troubleshooting/kibana_is_down.md
       title: Kibana is down
   - alert: LogstashRootPartition
-    expr: predict_linear(node_filesystem_free{fqdn="logstash.gitlap.com",mountpoint="/"}[15m],
+    expr: predict_linear(node_filesystem_avail_bytes{fqdn="logstash.gitlap.com",mountpoint="/"}[15m],
       3600 * 6) < 0
     for: 5m
     labels:

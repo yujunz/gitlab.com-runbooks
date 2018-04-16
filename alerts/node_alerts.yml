@@ -2,8 +2,7 @@ groups:
 - name: node_alerts.rules
   rules:
   - alert: LowDiskSpace
-    expr: node_filesystem_avail{fstype=~"(ext.|xfs)",job="node"} / node_filesystem_size{fstype=~"(ext.|xfs)",job="node"}
-      * 100 <= 10
+    expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs)",job="node"} * 100 <= 10
     for: 15m
     labels:
       severity: warn
@@ -17,8 +16,7 @@ groups:
       device: '{{ $labels.device }}%'
       mount_point: '{{ $labels.mountpoint }}%'
   - alert: NoDiskSpace
-    expr: node_filesystem_avail{fstype=~"(ext.|xfs)",job="node"} / node_filesystem_size{fstype=~"(ext.|xfs)",job="node"}
-      * 100 <= 1
+    expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs)",job="node"} * 100 <= 1
     for: 15m
     labels:
       pager: pagerduty
