@@ -28,6 +28,7 @@ groups:
     expr: up{environment="prd",job="gitaly",tier="stor",type="gitaly"} == 0
     for: 1m
     labels:
+      pager: pagerduty
       channel: gitaly
       severity: critical
     annotations:
