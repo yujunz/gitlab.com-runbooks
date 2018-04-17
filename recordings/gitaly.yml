@@ -35,3 +35,5 @@ groups:
   - record: instance:gitaly_grpc_errors_total:rate1m
     expr: sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) WITHOUT (grpc_method,
       grpc_type, grpc_service, grpc_code)
+  - record: gitaly:gitaly_rate_limiting_queued:grpc_method
+    expr: sum(gitaly_rate_limiting_queued) by (environment, grpc_method, job)
