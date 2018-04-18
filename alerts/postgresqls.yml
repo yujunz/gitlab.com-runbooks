@@ -301,11 +301,12 @@ groups:
       title: Postgres server disk utilization over 95% for over a minute. Expect
         this to cause replication lag or user visible latency
   - alert: PostgreSQL_PGBouncer_Errors
-    expr: rate(pgbouncer_errors_count[10m]) > 0
+    expr: rate(pgbouncer_errors_count{errmsg!="server conn crashed?"}[10m]) > 0
     labels:
       severity: warn
       channel: database
     annotations:
+      message: "{{$labels.errmsg}}"
       description: PGBouncer is logging errors. This may be due to a a server restart or an admin typing commands at the pgbouncer console
       runbook: troubleshooting/postgres.md#pgbouncer-errors
       title: PGBouncer is logging errors
