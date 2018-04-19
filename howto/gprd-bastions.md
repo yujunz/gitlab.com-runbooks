@@ -21,6 +21,19 @@ Testing (for example, if you have access to deploy node), output should be like 
 $> be knife ssh 'roles:gprd-base-deploy-node' 'hostname'
 deploy-01-sv-gprd.c.gitlab-production.internal deploy-01-sv-gprd
 ```
+##### Console access
+
+There is a dedicated server for console access named
+`console-01-sv-gprd.c.gitlab-production.internal`
+
+You can create the following entry in your ssh config for easier access
+
+```
+Host gprd-console
+    HostName console-01-sv-gprd.c.gitlab-production.internal
+```
+See [granting rails or db access](granting-rails-or-db-access.md) for more
+information on how to request console access.
 
 ##### Host keys
 If you care about security enough to compare ssh host keys, here they are, both sha256 and md5 sums:
