@@ -10,7 +10,6 @@ Host lb-bastion.gprd.gitlab.com
 
 # gprd boxes
 Host *.gitlab-production.internal
-        User                            YOUR_SSH_USERNAME
         PreferredAuthentications        publickey
         IdentityFile                    /path/to/your/ssh/key
         ProxyCommand                    ssh lb-bastion.gprd.gitlab.com -W %h:%p
