@@ -9,15 +9,29 @@ groups:
       pager: pagerduty
       severity: critical
     annotations:
+      title: GitLab pages is down for 1 minute
       description: GitLab pages is down for 1 minute! Consider !tweet 'GitLab pages
         are not responding, we are investigating the root cause.' if problem exists.
       runbook: troubleshooting/gitlab-pages.md
-      title: GitLab pages is down for 1 minute
   - alert: GitLabPagesNotScraped
-    expr: absent(gitlab_pages_http_requests_total)
+    expr: (1 - avg(up{job="gitlab-pages"})) * 100 > 20
     for: 5m
     labels:
       channel: production
       severity: warn
     annotations:
-      title: GitLab Pages has not be scraped for 5 minutes
+      title: GitLab pages servers are failing
+      description: "{{ $value }}% of pages servers have been down for 5 minutes"
+      environment: "{{ $labels.environment }}"
+      runbook: troubleshooting/gitlab-pages.md
+  - alert: GitLabPagesHighErrorRate
+    expr: sum(rate(haproxy_server_http_responses_total{backend="pages_http",code="5xx"}[15m])) by (environment) / sum(rate(haproxy_server_http_responses_total{backend="pages_http"}[15m])) by (environment) * 100 > 1
+    for: 5m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      title: GitLab pages servers are returning errors
+      description: "{{ $value }}% of pages responses have been errors for 5 minutes"
+      environment: "{{ $labels.environment }}"
+      runbook: troubleshooting/gitlab-pages.md
