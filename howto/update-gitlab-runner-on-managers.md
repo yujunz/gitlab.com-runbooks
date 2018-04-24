@@ -118,7 +118,13 @@ To upgrade runners on managers you need to:
     To be sure that chef-cilent process is terminated you can execute:
 
     ```bash
-    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- "service chef-client status; ps aux | grep chef"
+    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- 'service chef-client status; ps aux | grep chef'
+    ```
+
+    or, since we're using systemd on all Runner machines:
+
+    ```bash
+    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- systemctl is-active chef-client
     ```
 
 1. **Update chef role (or roles)**
@@ -206,6 +212,7 @@ If you want to upgrade all Runners of GitLab.com fleet at the same time, then yo
 ```bash
 # Stop chef-client
 knife ssh -aipaddress 'roles:gitlab-runner-base' -- sudo service chef-client stop
+knife ssh -aipaddress 'roles:gitlab-runner-base' -- systemctl is-active chef-client
 
 # Update configuration in roles definition and secrets
 rake edit_role[gitlab-runner-base]
