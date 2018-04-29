@@ -24,4 +24,4 @@ Example for giving access to user `susan`:
 * Submit an MR for the change.
 * Run `knife role from file <role file>` to update the role.
 * After the next chef run susan can access the corresponding console by `ssh susan-<id>@deploy.gitlab.com` for azure production or `ssh susan-<id>@console-01-sv-gprd.c.gitlab-production.internal` for gcp.
-* Note for the gcp environment you must connect to the dedicated console vm, see the [gprd-bastions](gprd-bastions.md) howto.
+* Note for the gcp environment you must connect to the dedicated console vm, see the [gprd-bastions](gprd-bastions.md) and [gstg-bastions](gstg-bastions.md) howtos.
