@@ -234,7 +234,8 @@ handled using Redis variables.
 Adjust the vacuum settings for the given table to match the other
 tables, like this:
 
-```json roles/gitlab-base-db-postgres.json
+```json 
+roles/gitlab-base-db-postgres.json
 "push_event_payloads": {
   "autovacuum_analyze_scale_factor": 0,
   "autovacuum_vacuum_scale_factor": 0,
@@ -242,6 +243,7 @@ tables, like this:
   "autovacuum_analyze_threshold": 10000
 },
 ```
+
 ## Connections
 
 This could indicate a problem with the pgbouncer setup as it's our
@@ -254,7 +256,9 @@ particular for `idle` or `idle in transaction` sessions or sessions
 running very long-lived queries.
 
 e.g.:
+
 ```SQL
+
 SELECT pid,
        age(backend_start) AS backend_age, 
 	   age(xact_start) AS xact_age, 
