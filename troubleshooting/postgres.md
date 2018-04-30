@@ -258,7 +258,6 @@ running very long-lived queries.
 e.g.:
 
 ```SQL
-
 SELECT pid,
        age(backend_start) AS backend_age, 
 	   age(xact_start) AS xact_age, 
