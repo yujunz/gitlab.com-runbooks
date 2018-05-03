@@ -10,29 +10,29 @@ groups:
     expr: sum(rate(rails_requests_completed[1m])) without (fqdn, instance)
   - record: instance:rails_requests_completed:rate1m
     expr: sum(rate(rails_requests_completed[1m])) without (status)
-  - record: status:rails_requests_completed_milliseconds:p50
-    expr: histogram_quantile(0.5, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+  - record: status:rails_requests_completed_seconds:p50
+    expr: histogram_quantile(0.5, sum(rate(rails_requests_completed_seconds_bucket[1m]))
       without (fqdn, instance))
-  - record: status:rails_requests_completed_milliseconds:p95
-    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+  - record: status:rails_requests_completed_seconds:p95
+    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_seconds_bucket[1m]))
       without (fqdn, instance))
-  - record: status:rails_requests_completed_milliseconds:p99
-    expr: histogram_quantile(0.99, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+  - record: status:rails_requests_completed_seconds:p99
+    expr: histogram_quantile(0.99, sum(rate(rails_requests_completed_seconds_bucket[1m]))
       without (fqdn, instance))
-  - record: instance:rails_requests_completed_milliseconds:p50
-    expr: histogram_quantile(0.5, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+  - record: instance:rails_requests_completed_seconds:p50
+    expr: histogram_quantile(0.5, sum(rate(rails_requests_completed_seconds_bucket[1m]))
       without (status))
-  - record: instance:rails_requests_completed_milliseconds:p95
-    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+  - record: instance:rails_requests_completed_seconds:p95
+    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_seconds_bucket[1m]))
       without (status))
-  - record: instance:rails_requests_completed_milliseconds:p99
-    expr: histogram_quantile(0.99, sum(rate(rails_requests_completed_milliseconds_bucket[1m]))
+  - record: instance:rails_requests_completed_seconds:p99
+    expr: histogram_quantile(0.99, sum(rate(rails_requests_completed_seconds_bucket[1m]))
       without (status))
   - record: type:rails_requests_started:rate1m
     expr: sum(rate(rails_requests_started{environment="prd"}[1m])) without (instance,
       fqdn, verb)
-  - record: type:rails_requests_completed_milliseconds:p95
-    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_milliseconds_bucket{environment="prd"}[1m]))
+  - record: type:rails_requests_completed_seconds:p95
+    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_seconds_bucket{environment="prd"}[1m]))
       without (instance, fqdn, status))
   - record: instance:rails_no_repository_for_path:rate1m
     expr: rate(rails_git_no_repository_for_such_path[1m])

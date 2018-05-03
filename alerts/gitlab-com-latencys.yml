@@ -14,7 +14,7 @@ groups:
       title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last
         5m
   - alert: GitLabComLatencyWeb
-    expr: type:rails_requests_completed_milliseconds:p95{environment="prd",type="web", status="200"}
+    expr: type:rails_requests_completed_seconds:p95{environment="prd",type="web", status="200"}
       > 2000
     for: 1m
     labels:
@@ -24,7 +24,7 @@ groups:
         Please check the Triage Dashboard in Grafana.
       title: Web latency on GitLab.com has been over 2s during the last 1m
   - alert: GitLabComLatencyWebCritical
-    expr: type:rails_requests_completed_milliseconds:p95{environment="prd",type="web", status="200"}
+    expr: type:rails_requests_completed_seconds:p95{environment="prd",type="web", status="200"}
       > 2000
     for: 5m
     labels:
@@ -35,7 +35,7 @@ groups:
         Please check the Triage Dashboard in Grafana.
       title: Web latency on GitLab.com has been over 2s during the last 5m
   - alert: GitLabComLatencyAPI
-    expr: type:rails_requests_completed_milliseconds:p95{environment="prd",type="api", status="200"}
+    expr: type:rails_requests_completed_seconds:p95{environment="prd",type="api", status="200"}
       > 1500
     for: 1m
     labels:
@@ -45,7 +45,7 @@ groups:
         Please check the Triage Dashboard in Grafana.
       title: API latency on GitLab.com has been over 1500ms during the last 5m
   - alert: GitLabComLatencyAPICritical
-    expr: type:rails_requests_completed_milliseconds:p95{environment="prd",type="api", status="200"}
+    expr: type:rails_requests_completed_seconds:p95{environment="prd",type="api", status="200"}
       > 1500
     for: 5m
     labels:
@@ -55,7 +55,7 @@ groups:
         Please check the Triage Dashboard in Grafana.
       title: API latency on GitLab.com has been over 1500ms during the last 5m
   - alert: GitLabComLatencyGit
-    expr: type:rails_requests_completed_milliseconds:p95{environment="prd",type="api", status="200"}
+    expr: type:rails_requests_completed_seconds:p95{environment="prd",type="api", status="200"}
       > 450
     for: 1m
     labels:
@@ -65,7 +65,7 @@ groups:
         Please check the Triage Dashboard in Grafana.
       title: Git latency on GitLab.com has been over 450ms during the last 5m
   - alert: GitLabComLatencyGitCritical
-    expr: type:rails_requests_completed_milliseconds:p95{environment="prd",type="api", status="200"}
+    expr: type:rails_requests_completed_seconds:p95{environment="prd",type="api", status="200"}
       > 450
     for: 5m
     labels:
