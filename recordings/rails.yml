@@ -29,11 +29,9 @@ groups:
     expr: histogram_quantile(0.99, sum(rate(rails_requests_completed_seconds_bucket[1m]))
       without (status))
   - record: type:rails_requests_started:rate1m
-    expr: sum(rate(rails_requests_started{environment="prd"}[1m])) without (instance,
-      fqdn, verb)
+    expr: sum(rate(rails_requests_started[1m])) without (instance, fqdn, verb)
   - record: type:rails_requests_completed_seconds:p95
-    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_seconds_bucket{environment="prd"}[1m]))
-      without (instance, fqdn, status))
+    expr: histogram_quantile(0.95, sum(rate(rails_requests_completed_seconds_bucket[1m])) without (instance, fqdn, status))
   - record: instance:rails_no_repository_for_path:rate1m
     expr: rate(rails_git_no_repository_for_such_path[1m])
   - record: type:rails_no_repository_for_path:rate1m
