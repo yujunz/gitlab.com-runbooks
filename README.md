@@ -174,6 +174,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Work with Check_MK (Notifications, scheduled downtime, acknowledge problems)](howto/manage-checkmk.md)
 * [Reload CheckMK metrics](howto/manage-checkmk.md#reload_host_metrics)
 
+### Secrets
+
+* [Working with Google Cloud secrets](howto/working-with-gcloud-secrets.md)
+
 ### Other
 
 * [Setup oauth2-proxy protection for web based application](howto/setup-oauth2-proxy-protected-application.md)
