@@ -31,6 +31,9 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Nodes are missing chef roles](troubleshooting/chef.md)
 * [Knife ssh does not work](troubleshooting/chef.md)
 
+### Errors on chef-client runs
+* [Error executing action `create` on resource 'directory[/some/path]'](troubleshooting/stale-file-handles.md)
+
 ### CI
 
 * [Introduction to Shared Runners](troubleshooting/ci_introduction.md)
@@ -186,10 +189,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [MongoDB operations](howto/gitter/mongodb-operations.md)
 * [Renew the Gitter TLS certificate](howto/gitter/renew-certificates.md)
-
-## Manage Package Signing Keys
-
-* [Manage Package Signing Keys](howto/manage-package-signing-keys.md)
 
 ## Manage Package Signing Keys
 
