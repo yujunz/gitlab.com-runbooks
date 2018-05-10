@@ -4,6 +4,23 @@ Until we have a generalized VPN solution there may be cases where
 we need to grant vpn access to gitlab team members who are not in
 the production team.
 
+## Who needs VPN access?
+
+**Unless you are release manager or involved in geo failover testing
+you probably do not need VPN access.**
+
+Currently VPN access is required for direct access to machines in Azure.
+This is currently necessary for running takeoff for deploys. After the
+GCP move we have switched to a [bastion](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gprd-bastions.md)
+setup where all internal machines are accessed via the bastion hosts.
+
+If you aren't a release manager and would simply like rails, console access
+or ssh access you probably don't need vpn access. You can tunnel or ssh
+from: 
+* deploy.gitlab.com - azure production
+* deploy.stg.gitlab.com - azure staging
+* 
+
 ## Instructions for users requesting access
 
 * Submit an issue to the infrastructure issue tracker to request access using the `production_access` template.
