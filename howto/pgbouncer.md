@@ -20,7 +20,7 @@ statement_timeout = 0` will not work reliably.
 Pgbouncer is configured via omnibus via these [config options](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template#L1587).
 
 The PgBouncer configuration files are located in `/var/opt/gitlab/pgbouncer`,
-and it can include the `database.ini` file from consul, which can be found 
+and it can include the `database.ini` file from consul, which can be found
 here: `/var/opt/gitlab/consul/databases.ini`
 
 The port PgBouncer listens on is 6432.
@@ -50,11 +50,13 @@ information.
 
 ## Applying Changes
 
-Almost all settings of PgBouncer can be adjusted by just reloading the
-configuration file instead of restarting PgBouncer. Right now this means having
-to adjust the configuration file manually, followed by running 
+Almost all settings of PgBouncer can be managed by editing `/etc/gitlab/gitlab.rb` and running `gitlab-ctl reconfigure`.
 
-`sudo systemctl reload pgbouncer`.
+Most settings only require a reload of pgbouncer, which should be handled by `gitlab-ctl reconfigure` and will not cause an interruption of service.
+
+To manually reload, run `sudo gitlab-ctl reload pgbouncer`
+
+To manually restart, run `sudo gitlab-ctl reload pgbouncer`. **Note:** This will cause an interruption to existing connections.
 
 ## Statistics
 
@@ -67,7 +69,7 @@ or
 
     sudo gitlab-ctl pgb-console
 
-This will ask for a password, which you currently can find in *1password*. 
+This will ask for a password, which you currently can find in *1password*.
 Once connected you can run various commands to
 get statistics, see <https://pgbouncer.github.io/usage.html#admin-console> for
 more information.
@@ -80,7 +82,7 @@ Verify that the configuration exists in the `databases.ini`
 
     sudo cat /var/opt/gitlab/consul/databases.ini
 
-If there is a configuration there for the `host=db.gitlab.com` section, log into 
+If there is a configuration there for the `host=db.gitlab.com` section, log into
 pgbouncer itself. Verify that the configuration has been loaded (from within pgbouncer's console):
 
     show databases;
@@ -89,7 +91,7 @@ the entry should look something like this:
 
 ```
 pgbouncer=# show databases;
-            name             |          host          | port |          database           | force_user | pool_size | reserve_pool | pool_mode | max_connections | current_connections 
+            name             |          host          | port |          database           | force_user | pool_size | reserve_pool | pool_mode | max_connections | current_connections
 -----------------------------+------------------------+------+-----------------------------+------------+-----------+--------------+-----------+-----------------+---------------------
  gitlabhq_production         | db.gitlab.com          | 5432 | gitlabhq_production         |            |       100 |            5 |           |               0 |                   0
  gitlabhq_production_sidekiq | db.gitlab.com          | 5432 | gitlabhq_production_sidekiq |            |       150 |            5 |           |               0 |                   0
@@ -98,11 +100,11 @@ pgbouncer=# show databases;
 
 Where the `host` field has the same value as the `databases.ini`.
 
-If the `databases.ini` file does NOT have a valid hostname, verify that the postgresql 
+If the `databases.ini` file does NOT have a valid hostname, verify that the postgresql
 **service** in consul has one (and only one) host in an `up` state.
 
-If this is the case, verify that the consul service received the last configuration change. 
-To do this, check the log file: `/var/log/consul/failover_pgbouncer.log`. 
+If this is the case, verify that the consul service received the last configuration change.
+To do this, check the log file: `/var/log/consul/failover_pgbouncer.log`.
 
 If this contains a line such as this:
 
@@ -121,7 +123,7 @@ Restarting the consul service will also trigger a reconfiguration:
 
 after which you should have entries in the `databases.ini`.
 
-To propagate these changes to pgbouncer (if they have not already been refreshed via the 
+To propagate these changes to pgbouncer (if they have not already been refreshed via the
 `gitlab-ctl pgb-notify`, the pgbouncer can re-read its configuration in two ways:
 
 * restart pgbouncer (`gitlab-ctl restart pgbouncer`)
@@ -129,17 +131,17 @@ To propagate these changes to pgbouncer (if they have not already been refreshed
 
 ### Applications can not log into pgbouncer.
 
-Pgbouncer does not know what users exist on the database. It accepts a new connection 
-and executes the query configured under `auth_query` in the `pgbouncer.ini`. By default 
-this is: `SELECT username, password FROM public.pg_shadow_lookup($1)` for which it will 
-compare the credentials it received from the lookup with those it received from the 
-application. 
+Pgbouncer does not know what users exist on the database. It accepts a new connection
+and executes the query configured under `auth_query` in the `pgbouncer.ini`. By default
+this is: `SELECT username, password FROM public.pg_shadow_lookup($1)` for which it will
+compare the credentials it received from the lookup with those it received from the
+application.
 
 If an application can not log into the db via pgbouncer, there are two places to check:
 
 1. pgbouncer logs: `/var/log/gitlab/pgbouncer/current` to find more information
-1. postgres logs: `/var/log/gitlab/postgresql/current` on the database server. If the 
-user pgbouncer uses to perform this `auth_query` (by default `pgbouncer`), does not 
+1. postgres logs: `/var/log/gitlab/postgresql/current` on the database server. If the
+user pgbouncer uses to perform this `auth_query` (by default `pgbouncer`), does not
 have permissions, you will see errors here.
 
 ### I think we need more connections, how can I check this?
