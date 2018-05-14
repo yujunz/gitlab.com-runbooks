@@ -320,3 +320,17 @@ groups:
         Consider raising this parameter or investigating the source of the unusually large number of connections
       runbook: troubleshooting/postgres.md#pgbouncer-errors
       title: PGBouncer is logging "no more connections allowed" errors
+  - alert: PostgreSQL_too_many_slow_queries
+    expr: rate(pg_slow_queries{environment="prd"}[1m]) * 60 > 100
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: warn
+      channel: database
+    annotations:
+      description: >
+        Database {{ $labels.fqdn }} has {{ $value | printf "%.1f" }} slow
+        queries. This may be the result of badly written SQL queries, an
+        overloaded database, or a performance regression introduced in a new
+        release.
+      title: There are too many slow SQL queries
