@@ -201,3 +201,24 @@ groups:
         Hey <!subteam^S940BK2TV|cicdops>! Namespace {{ $labels.namespace }} is running a constant number of jobs with
         repeated commands for more than 45 minutes.
 
+  - alert: CICDJobQueueDurationUnderperformant
+    expr: |
+      (
+        sum(increase(job_queue_duration_seconds_bucket{environment="prd", shared_runner="true", jobs_running_for_project="0", le="10"}[5m]))
+        /
+        sum(increase(job_queue_duration_seconds_count{environment="prd", shared_runner="true", jobs_running_for_project="0"}[5m]))
+      ) < 0.8
+    for: 5m
+    labels:
+      channel: ci-cd
+      severity: warn
+    annotations:
+      title: Job queue duration performance for '0 - 10s' is to low
+      description: |
+        Hey <!subteam^S940BK2TV|cicdops>! The job queue duration performance for 10s bucket for projects with 0 running
+        jobs is lower than 80% for more than 5 minutes.
+
+        This should be considered as service degratation and the reason should be investigated.
+
+        This would exceed our future SLA on GitLab.com!
+
