@@ -77,7 +77,7 @@ groups:
       runbook: troubleshooting/postgresql.md#errors
       title: Postgres transactions showing high rate of statement timeouts
   - alert: PostgreSQL_Deadlock_Errors
-    expr: rate(postgresql_errors_total{type="deadlock_detected"}[1m]) > 0
+    expr: rate(postgresql_errors_total{type="deadlock_detected"}[1m]) * 60 > 5
     labels:
       severity: warn
       channel: database
