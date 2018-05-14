@@ -194,7 +194,7 @@ groups:
     for: 45m
     labels:
       channel: ci-cd
-      severity: warning
+      severity: warn
     annotations:
       title: Namespace with constant number of long running jobs with repeated commands
       description: |
