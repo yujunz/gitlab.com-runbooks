@@ -83,7 +83,7 @@ groups:
       channel: database
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} deadlock
-        errors per second
+        errors per minute
       runbook: troubleshooting/postgresql.md#errors
       title: Postgres detected deadlocks
   - alert: PostgreSQL_ReplicationStopped
