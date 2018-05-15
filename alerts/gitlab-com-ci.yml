@@ -211,14 +211,31 @@ groups:
     for: 5m
     labels:
       channel: ci-cd
-      severity: warn
+      severity: critical
     annotations:
       title: Job queue duration performance for '0 - 10s' is to low
       description: |
         Hey <!subteam^S940BK2TV|cicdops>! The job queue duration performance for 10s bucket for projects with 0 running
         jobs is lower than 80% for more than 5 minutes.
 
-        This should be considered as service degratation and the reason should be investigated.
+        This should be considered as service degradation and the reason should be investigated.
 
         This would exceed our future SLA on GitLab.com!
+
+  - alert: CICDWorkhorseQueuingUnderperformant
+    expr: |
+      histogram_quantile(
+        0.90,
+        sum(rate(gitlab_workhorse_queueing_waiting_time_bucket{queue_name="ci_api_job_requests",job="gitlab-workhorse-api"}[5m])) by (le)
+      ) >= 30
+    for: 5m
+    labels:
+      channel: ci-cd
+      severity: critical
+    annotations:
+      title: 90% of request queued on Workhorse is longer than 30s
+      description: |
+        Hey <!subteam^S940BK2TV|cicdops>! 90% of requests queued on Workhorse are longer than 30s for last 5 minutes.
+
+        This should be considered as service degradation and the reason should be investigated.
 
