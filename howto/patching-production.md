@@ -16,7 +16,7 @@ This is step that has to be done by the proposing team.
 * Make your code changes
   * You can cherry-pick commits from CE / EE.
   * In that case remove changes to specs before generating the patch.
-* Run the command `git --no-pager diff --color=never v10.7.0-rc4-ee.. -- app ee lib > path/to/patch.patch`
+* Run the command `git --no-pager diff --color=never v10.7.0-rc4-ee.. -- app lib ee/app ee/lib > path/to/patch.patch`
   * **Note**: this is an example - if you have changed non-spec files in other
     directories, be sure to include those 
 * Clone or Update the repo [post deployment patches][pdp]
