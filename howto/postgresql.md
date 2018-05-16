@@ -71,76 +71,16 @@ WHERE NOT blockedl.granted;
 
 ## Triggering a Failover
 
-A failover at the moment has numerous manual steps at the moment:
-
-In general, we have an azure lb which executes a healthcheck on all the nodes in
-its load balancing set. This healthcheck **ONLY** verifies that a port is open on
-a host, regardless of the hosts, state. Currently, only one host is in the load 
-balancing set: the current master (**db1**).
-
-The failover proceedure is as follows:
-
-1. stop postgres on primary (if the node is reachable)
-
-2. promote secondary
-    run the following command on a **secondary**:
-    
-    ```bash
-    sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_ctl -D /var/opt/gitlab/postgresql/data promote
-    ```
-    
-    This will promote the host these commands were executed on to the primary.
-    
-3. update azure lb set
-add the host which is now primary to the `Backend pools` for the load balancer.
-
-* login to azure
-* choose `all resources`
-* search for `DBProdLB`
-* click on `Backend pools`
-* click on the `DBProd` pool
-* click on `Add a target network IP configuration`
-* From the `Target Virtual Machine` drop down, choose the new master
-* click on the trash can to remove the old master
-
-Note: so a machine can show up in the drop down, it has to be associated with the resource group and availibility set of the load balancer (in our case both are called `DBProd`).
+See the [PostgreSQL Switchover](postgresql-switchover.md) document for instructions
 
 ## Setting up Secondaries
 
-Currently setting up a secondary requires some manual steps. First of all, make
-sure that the replica has the following Chef roles assigned:
+See the [PostgreSQL Replica](postgresql-replica.md) document for instructions
 
-* `gitlab-cluster-base`
-* `gitlab-cluster-db`
-* `gitlab-cluster-db-replication`
+## Removing a node from the repmgr cluster
 
-These roles will take care of enabling hot stanby mode and the other settings
-needed to get replication going.
+Before shutting down a host which is no longer required, run the following as root to remove it from the repmgr cluster
 
-Next, SSH into the secondary and run the following:
-
-```bash
-sudo gitlab-ctl start postgresql
-sudo gitlab-ctl pg-upgrade
+```shell
+# gitlab-ctl repmgr standby unregister
 ```
-
-This is necessary because currently Omnibus defaults to PostgreSQL 9.2, and we
-need 9.6.
-
-Once this process is done you should run the following:
-
-```bash
-sudo /root/gitlab_pgsql_replicator.sh
-```
-
-This script will ask you to enter the primary's IP address (be sure to use the
-internal/local IP) and the password to use for the recovery account. The
-password can be found in the DevOps vault in 1Password, under the name "postgres
-gitlab_replicator".
-
-It may take a while for the above script to finish. As such it's best to run
-this script using `tmux` or `screen` and check back in an hour or so.
-
-Once done this script will generate a recovery file that PostgreSQL will use for
-the replication process. This file can be found at
-`/var/opt/gitlab/postgresql/data/recovery.conf`.
