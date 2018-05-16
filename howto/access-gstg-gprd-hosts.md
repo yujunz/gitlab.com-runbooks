@@ -13,6 +13,27 @@ access VMs you will need to configure you ssh client to use the bastion hosts.
 * [Bastion instructions for gprd](gprd-bastions.md)
 * [Bastion instructions for gstg](gstg-bastions.md)
 
+### Monitoring
+
+Logs for gprd & gstg:
+
+- https://log.gitlab.net
+
+Grafana:
+
+- gprd: https://performance.gprd.gitlab.net/
+- gstg: https://performance.gstg.gitlab.net/
+
+Prometheus:
+
+- gprd: https://prometheus.gprd.gitlab.net/ and https://prometheus-app.gprd.gitlab.net/
+- gstg: https://prometheus.gstg.gitlab.net/ and https://prometheus-app.gstg.gitlab.net/
+
+Alerts:
+
+- gprd: https://alerts.gprd.gitlab.net/
+- gstg: https://alerts.gstg.gitlab.net/
+
 ### Hosts for gprd
 
 Last updated: 2018-05-03
