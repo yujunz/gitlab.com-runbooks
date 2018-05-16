@@ -14,18 +14,18 @@ gstg environments are forwarded to log.gitlab.net.
 
 | name | logfile  | type  | index | retention(d) |
 | -----| -------- |------ | ----- | --------- |
-| gitaly | gitaly/current | JSON | pubsub-gitaly-inf | 3
-| pages | gitlab-pages/current | JSON | pubsub-pages-inf | 6
-| db.postgres | postgresql/current | line regex | pubsub-postgres-inf | 6
-| db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf | 6
-| workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf | 3
-| api |gitlab-rails/api\_json.log | JSON | pubsub-api-inf | 6
-| geo | gitlab-rails/geo.log | JSON | pubsub-geo-inf | 6
-| production (rails) | gitlab-rails/production\_json.log | JSON | pubsub-production-inf | 6
-| sidekiq gitlab/sidekiq|cluster/current | JSON | pubsub-sidekiq-inf | 6
-| haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf | 3
-| system.auth | /var/log/auth.log | syslog | pubsub-system-inf | 6
-| system.syslog | /var/log/syslog | syslog | pubsub-system-inf | 6
+| gitaly | gitaly/current | JSON | pubsub-gitaly-inf | 1
+| pages | gitlab-pages/current | JSON | pubsub-pages-inf | 5
+| db.postgres | postgresql/current | line regex | pubsub-postgres-inf | 5
+| db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf | 5
+| workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf | 2
+| api |gitlab-rails/api\_json.log | JSON | pubsub-api-inf | 5
+| geo | gitlab-rails/geo.log | JSON | pubsub-geo-inf | 5
+| production (rails) | gitlab-rails/production\_json.log | JSON | pubsub-production-inf | 5
+| sidekiq gitlab/sidekiq|cluster/current | JSON | pubsub-sidekiq-inf | 5
+| haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf | 1
+| system.auth | /var/log/auth.log | syslog | pubsub-system-inf | 5
+| system.syslog | /var/log/syslog | syslog | pubsub-system-inf | 5
 
 
 ### FAQ
