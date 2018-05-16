@@ -26,7 +26,7 @@ curl -X POST -H 'Content-type: application/json' \
  https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-If it receives a 404 result then the API token is probably not valid.
+If it receives a 404 result then the channel does not exist. See [slack docs](https://api.slack.com/changelog/2016-05-17-changes-to-errors-for-incoming-webhooks) for other possible error codes.
 
 For more information see https://api.slack.com/incoming-webhooks
 
