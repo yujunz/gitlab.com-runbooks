@@ -12,6 +12,16 @@ groups:
         Note that ProcessCommitWorker is excluded from job count.
       runbook: troubleshooting/large-sidekiq-queue.md
       title: 'Large amount of Sidekiq Queued jobs: {{$value}}'
+  - alert: SidekiqNewNotesQueueTooLarge
+    expr: topk(1, sidekiq_queue_size{name="new_note"}) > 5000
+    for: 20m
+    labels:
+      severity: critical
+    annotations:
+      description: The new_note sidekiq queue is piling up. This likely means that users are not receiving email notifications
+        for comments on issues.
+      runbook: troubleshooting/large-sidekiq-queue.md
+      title: 'Large amount of new_note sidekiq queued jobs: {{$value}}'
   - alert: SidekiqQueuesTooLargeHourly
     expr: topk(1, sidekiq_queue_size{name!~"process_commit|pipeline_background:archive_trace"}) > 20000
     for: 1h
