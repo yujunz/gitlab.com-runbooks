@@ -4,6 +4,35 @@
 
 **https://log.gitlab.net**
 
+### Quick Start
+
+_For information about index names and how they map to log files see the
+[table](logging.md#what-are-we-logging) below._
+
+#### Production
+
+To find production logs select the corresponding indexes with `pubsub-*-gprd` in the name
+
+* For azure filter by `json.environment: prd`
+* For GCP filter by `json.environment: gprd`
+
+#### Staging
+
+To find production logs select the corresponding indexes with `pubsub-*-gstg` in the name
+
+* For Azure filter by `json.environment: stg`
+* For GCP filter by `json.environment: gstg`
+
+
+#### .org (dev.gitlab.org)
+
+To find .org logs select the corresponding indexes with `pubsub-*-gstg` in the name
+
+* For azure filter by `json.environment: dev`
+* For GCP filter by `json.environment: dev`
+
+## Overview
+
 Centralized logging at GitLab uses a combination of FluentD, google pubsub,
 and ElasticSearch / Kibana. All logs for the production, staging, gprd and
 gstg environments are forwarded to log.gitlab.net.
@@ -33,7 +62,7 @@ gstg environments are forwarded to log.gitlab.net.
 #### How do I find the right logs for my service?
 
 * Navigate to https://log.gitlab.net
-* Select the appropriate index (see chart below).
+* Select the appropriate index (see chart above).
   * Azure production and GCP production logs are in the *gprd* `*-gprd*` indexes
   * Azure staging and GCP staging logs are in the *gstg* `*-gstg*` indexes
 * Optionally filter by environment if you only want to see logs for azure or gcp.
