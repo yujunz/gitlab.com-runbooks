@@ -5,7 +5,7 @@
 
 ## How to work with Prometheus
 
-1. Check configuration - `/opt/prometheus/prometheus/promtool check-config /opt/prometheus/prometheus/prometheus.yml`.
+1. Check configuration - `/opt/prometheus/prometheus/promtool check config /opt/prometheus/prometheus/prometheus.yml`.
 It should check prometheus configuration file and alerts being used. Please always run this check before restarting prometheus service.
 1. Reload configuration - `sudo sv reload prometheus`.
 1. Restart service - `sudo sv restart prometheus` after checking configuration.
