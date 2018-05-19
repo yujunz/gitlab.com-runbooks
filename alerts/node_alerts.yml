@@ -102,3 +102,13 @@ groups:
       runbook: troubleshooting/node_memory_alerts.md
       value: 'Available memory {{ $value | printf "%.2f" }}%'
       title: Node is under heavy memory pressure
+  - alert: KernelVersionDeviations
+    expr: count(sum(label_replace(node_uname_info{environment=~"gprd"}, "kernel", "$1", "release", "([0-9]+.[0-9]+.[0-9]+).*")) by (kernel)) > 1
+    for: 30m
+    labels:
+      channel: alerts-gprd
+      severity: warn
+    annotations:
+      description: Kernel versions are deviating across fleet, see https://performance.gprd.gitlab.net/d/UMGelaGiz/gitlab-kernel-versions for details
+      runbook: https://gitlab.com/gitlab-com/infrastructure/issues/4221
+      title: 'Different kernel versions are running in production for an hour'
