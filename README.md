@@ -22,6 +22,12 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Gitaly error rate is too high](troubleshooting/gitaly-error-rate.md)
 * [Gitaly latency is too high](troubleshooting/gitaly-latency.md)
 
+## How to deal with incidents
+
+* [Database](incidents/database.md): incidents such as database servers being
+  rebooted, pgbouncer not responding, an outage, a dramatic increase in load,
+  and so on.
+
 ## Git
 
 * [Test pushing through all the git nodes](troubleshooting/git.md)
