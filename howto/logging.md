@@ -1,5 +1,7 @@
 # Application logging at gitlab
 
+**IMPORTANT** : Previously production logs were using the `pubsub-production-*` indices, this has change to the `pubsub-rails-*` indices. For more info see the [table](logging.md#what-are-we-logging).
+
 ## Summary
 
 **https://log.gitlab.net**
@@ -31,15 +33,27 @@ To find .org logs select the corresponding indexes with `pubsub-*-gstg` in the n
 * For azure filter by `json.environment: dev`
 * For GCP filter by `json.environment: dev`
 
+
+### StackDriver
+
+StackDriver receives all logs listed in the [table](logging.md#what-are-we-logging) below, it is sometimes helpful to use
+it to search for logs over a 30day interval. It also allows you to do basic queries for strings across all types and find errors.
+
+
+* [Production and GPRD in Azure and Google](https://console.cloud.google.com/logs/viewer?project=gitlab-production&organizationId=769164969568&minLogLevel=0&expandAll=false&timestamp=2018-05-24T11:23:16.494000000Z&customFacets=&limitCustomFacetWidth=true&dateRangeStart=2018-05-24T10:23:16.747Z&dateRangeEnd=2018-05-24T11:23:16.747Z&interval=PT1H&resource=gce_instance)
+* [Staging and GSTG in Azure and Google](https://console.cloud.google.com/logs/viewer?project=gitlab-staging-1&organizationId=769164969568&minLogLevel=0&expandAll=false&timestamp=2018-05-24T11:22:27.413000000Z&customFacets=&limitCustomFacetWidth=true&dateRangeStart=2018-05-24T10:22:27.667Z&dateRangeEnd=2018-05-24T11:22:27.667Z&interval=PT1H&resource=gce_instance)
+ 
 ## Overview
 
-Centralized logging at GitLab uses a combination of FluentD, google pubsub,
+Centralized logging at GitLab uses a combination of StackDriver, FluentD, google pubsub,
 and ElasticSearch / Kibana. All logs for the production, staging, gprd and
 gstg environments are forwarded to log.gitlab.net.
 
 ![Logical scheme](../img/logging-infr.png)
 
 ### What are we logging?
+
+**Note that the retention here is for elasticsearch, all logs listed below are also stored in stackdriver for 30 days, and object storage for a minimum of 180days**
 
 | name | logfile  | type  | index | retention(d) |
 | -----| -------- |------ | ----- | --------- |
@@ -48,16 +62,27 @@ gstg environments are forwarded to log.gitlab.net.
 | db.postgres | postgresql/current | line regex | pubsub-postgres-inf | 5
 | db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf | 5
 | workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf | 2
-| api |gitlab-rails/api\_json.log | JSON | pubsub-api-inf | 5
-| geo | gitlab-rails/geo.log | JSON | pubsub-geo-inf | 5
-| production (rails) | gitlab-rails/production\_json.log | JSON | pubsub-production-inf | 5
-| sidekiq gitlab/sidekiq|cluster/current | JSON | pubsub-sidekiq-inf | 5
+| rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf | 5
+| rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf | 5
+| rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf | 5
+| rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf | 5
+| shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf | 5
+| unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf | 5
+| unicorn.stderr | /var/log/gitlab/unicorn/unicorn\_stderr.log | line regex | pubsub-unicorn-inf | 5
+| unicorn.stdout | /var/log/gitlab/unicorn/unicorn\_stdout.log | line regex | pubsub-unicorn-inf | 5
+| sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf | 5
 | haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf | 1
+| nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf | 5
 | system.auth | /var/log/auth.log | syslog | pubsub-system-inf | 5
 | system.syslog | /var/log/syslog | syslog | pubsub-system-inf | 5
 
 
 ### FAQ
+
+#### Why are we using StackDriver in addition to ElasticSearch?
+
+We are sending logs to stackdriver in addition to elasticsearch for
+longer retention and to preserve logs in object storage for 180days.
 
 #### How do I find the right logs for my service?
 
