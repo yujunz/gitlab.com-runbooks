@@ -70,6 +70,7 @@ gstg environments are forwarded to log.gitlab.net.
 | unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf | 5
 | unicorn.stderr | /var/log/gitlab/unicorn/unicorn\_stderr.log | line regex | pubsub-unicorn-inf | 5
 | unicorn.stdout | /var/log/gitlab/unicorn/unicorn\_stdout.log | line regex | pubsub-unicorn-inf | 5
+| unstructured.production | gitlab-rails/production.log | lines | pubsub-unstructured-inf | 5
 | sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf | 5
 | haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf | 1
 | nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf | 5
