@@ -23,7 +23,7 @@ from:
 
 ## Instructions for users requesting access
 
-* Submit an issue to the infrastructure issue tracker to request access using the `production_access` template.
+* Submit an issue to the [infrastructure issue tracker](https://gitlab.com/gitlab-com/infrastructure/issues/new?issuable_template=production_access) to request access using the `production_access` template.
 * In the issue include the reason for why it is being requested.
 * A production engineer will update the issue and share a google doc folder containing a QR code and an `.ovpn` profile.
 * Scan the authenticator code using the google authenticator app.
@@ -32,7 +32,7 @@ from:
 
 ### Testing
 You can test that you are successfully connected to the VPN by:
-1. Before connecting to the VPN, check your IP address. You can do this by typing `what's my ip` in either `duckduckgo.com` or `google.com`.
+1. Before connecting to the VPN, check your IP address. You can do this by typing `what's my ip` in either [duckduckgo.com](https://duckduckgo.com/?q=what's+my+ip) or [google.com](https://www.google.com/search?q=what's+my+ip).
 1. Connect to the VPN
 1. Repeat the first step, if the IP addresses are different, you are successfully connected to the VPN.
 
