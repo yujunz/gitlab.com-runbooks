@@ -185,14 +185,15 @@ number in metadata.rb as we have versioning requirements in place so Chef will n
 a cookbook with the same version, even if it has changed. Commit these changes and submit a
 merge request to merge your changes.
 
-Once your changes are merged, you will need to actually upload the cookbook to the server.
-To do this, go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and run
-`berks update <cookbookname>`. This will download the newest version of your cookbook.
-Commit the changes that will be recorded in `Berksfile.lock` and push them. After the
-cookbook is merged, you can use `berks upload <cookbookname>` to upload the cookbook
-to the server.
+Once your changes are merged, you will need to actually upload the cookbook to
+the server.  To do this, go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and run
+ `berks update <cookbookname>`. This will download the newest version of your cookbook from
+the git repository into ~/.berkshelf and automatically update `Berksfile.lock`
+with that version. Commit the changes that will be recorded in
+`Berksfile.lock` and push them. After the cookbook is merged, you can use
+`berks upload <cookbookname>` to upload the cookbook to the server.
 
-To apply this uploaded version to a new environment follow the steps [bellow](#chef-environments-and-cookbooks)
+To apply this uploaded version to a new environment follow the steps [below](#chef-environments-and-cookbooks)
 
 ## Rollback cookbook
 
