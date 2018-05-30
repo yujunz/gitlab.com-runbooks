@@ -60,8 +60,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [Postgresql](howto/postgresql.md)
 * [PgBouncer](howto/pgbouncer.md)
-* [PG-HA](howto/pg-ha.md)
-* [read-only Load Balancing](howto/load-balancing.md)
+* [PostgreSQL High Availability & Failovers](howto/pg-ha.md)
+* [Read-only Load Balancing](howto/load-balancing.md)
 * [Add a new secondary replica](howto/postgresql-replica.md)
 * [The DB replication has stopped](troubleshooting/postgresql.md)
 
