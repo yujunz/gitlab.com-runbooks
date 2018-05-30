@@ -34,7 +34,7 @@ service chef-client stop
 ## Push the chef role changes from development machine
 ```
 cd chef-repo
-git push 
+git push
 knife role from file roles/ENVIRONMENT-base-db-postgres.json
 ```
 
@@ -69,6 +69,17 @@ gitlab-ctl repmgr standby follow <name of new primary>
 gitlab-ctl restart repmgrd
 ```
 You may also need to drop the leftover slot using `pg_drop_replication_slot(...)` on the former primary after demoting it to a replica. Check by issuing `SELECT * FROM pg_replication_slots`. Normally there should be no replication slots on any database other than the current primary for our configuration.
+You can easily remove all replication slots on a secondary by running the
+following SQL query:
+
+```
+SELECT pg_drop_replication_slot(slot_name)
+FROM pg_replication_slots
+WHERE active IS FALSE;
+```
+
+:warning: This will remove **all** active replication slots on the host. Make
+sure you are running this on the right host.
 
 ## Update the hard coded primary in various chef roles
 
@@ -96,6 +107,6 @@ Announce the update is finished on `#production` and `#database` slack channels.
 
 ## Remove silences
 
-* Visit alerts.gitlab.com and verify that there are no alerts firing. 
-* Remove all silences created for the maintenance. 
+* Visit alerts.gitlab.com and verify that there are no alerts firing.
+* Remove all silences created for the maintenance.
 
