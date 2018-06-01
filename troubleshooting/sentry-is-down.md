@@ -54,6 +54,20 @@ If sentry.gitlap.com returns HTTP 500 status code.
 
    Start the service if it is down.
 
+1. Check the status of the Sentry queues:
+
+    ```
+    SENTRY_CONF=/etc/sentry /usr/share/nginx/sentry/bin/sentry queues list
+    ```
+
+1. If the queues are quite large, you may need to purge them so that recent events will be logged:
+
+    ```
+    SENTRY_CONF=/etc/sentry /usr/share/nginx/sentry/bin/sentry queues purge
+    ```
+
+    See the [Sentry documentation on monitoring](https://docs.sentry.io/server/monitoring/) for more details.
+
 ## Details about Sentry installation
 
 Sentry is comprised of three different processes managed by supervisor:
