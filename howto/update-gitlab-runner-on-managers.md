@@ -13,7 +13,11 @@ graph LR
     r::gsrm-do(gitlab-runner-gsrm-do)
     r::gsrm-gce(gitlab-runner-gsrm-gce)
     r::gsrm-gce-us-east1-c(gitlab-runner-gsrm-gce-us-east1-c)
+    r::gsrm3(gitlab-runner-gsrm3)
+    r::gsrm5(gitlab-runner-gsrm5)
     r::gsrm-gce-us-east1-d(gitlab-runner-gsrm-gce-us-east1-d)
+    r::gsrm4(gitlab-runner-gsrm4)
+    r::gsrm6(gitlab-runner-gsrm6)
 
     r::prm(gitlab-runner-prm)
     r::prm-do(gitlab-runner-prm-do)
@@ -22,7 +26,11 @@ graph LR
     r::srm-do(gitlab-runner-srm-do)
     r::srm-gce(gitlab-runner-srm-gce)
     r::srm-gce-us-east1-c(gitlab-runner-srm-gce-us-east1-c)
+    r::srm3(gitlab-runner-srm3)
+    r::srm5(gitlab-runner-srm5)
     r::srm-gce-us-east1-d(gitlab-runner-srm-gce-us-east1-d)
+    r::srm4(gitlab-runner-srm4)
+    r::srm6(gitlab-runner-srm6)
 
     r::stg-srm(gitlab-runner-stg-srm)
     r::stg-srm-gce(gitlab-runner-stg-srm-gce)
@@ -35,6 +43,8 @@ graph LR
     n::gsrm2[gitlab-shared-runners-manager-2.gitlab.com]
     n::gsrm3[gitlab-shared-runners-manager-3.gitlab.com]
     n::gsrm4[gitlab-shared-runners-manager-4.gitlab.com]
+    n::gsrm5[gitlab-shared-runners-manager-5.gitlab.com]
+    n::gsrm6[gitlab-shared-runners-manager-6.gitlab.com]
 
     n::prm1[private-runners-manager-1.gitlab.com]
     n::prm2[private-runners-manager-2.gitlab.com]
@@ -43,6 +53,8 @@ graph LR
     n::srm2[shared-runners-manager-2.gitlab.com]
     n::srm3[shared-runners-manager-3.gitlab.com]
     n::srm4[shared-runners-manager-4.gitlab.com]
+    n::srm5[shared-runners-manager-5.gitlab.com]
+    n::srm6[shared-runners-manager-6.gitlab.com]
 
     n::srm3::stg[shared-runners-manager-3.staging.gitlab.com]
     n::srm4::stg[shared-runners-manager-4.staging.gitlab.com]
@@ -56,9 +68,15 @@ graph LR
     r::gsrm-do ==> n::gsrm2
     r::gsrm --> r::gsrm-gce
     r::gsrm-gce --> r::gsrm-gce-us-east1-c
-    r::gsrm-gce-us-east1-c ==> n::gsrm4
+    r::gsrm-gce-us-east1-c --> r::gsrm4
+    r::gsrm4 ==> n::gsrm4
+    r::gsrm-gce-us-east1-c --> r::gsrm6
+    r::gsrm6 ==> n::gsrm6
     r::gsrm-gce --> r::gsrm-gce-us-east1-d
-    r::gsrm-gce-us-east1-d ==> n::gsrm3
+    r::gsrm-gce-us-east1-d --> r::gsrm3
+    r::gsrm3 ==> n::gsrm3
+    r::gsrm-gce-us-east1-d --> r::gsrm5
+    r::gsrm5 ==> n::gsrm5
 
     r::base --> r::prm
     r::prm --> r::prm-do
@@ -71,9 +89,15 @@ graph LR
     r::srm-do ==> n::srm2
     r::srm --> r::srm-gce
     r::srm-gce --> r::srm-gce-us-east1-c
-    r::srm-gce-us-east1-c ==> n::srm4
+    r::srm-gce-us-east1-c --> r::srm4
+    r::srm4 ==> n::srm4
+    r::srm-gce-us-east1-c --> r::srm6
+    r::srm6 ==> n::srm6
     r::srm-gce --> r::srm-gce-us-east1-d
-    r::srm-gce-us-east1-d ==> n::srm3
+    r::srm-gce-us-east1-d --> r::srm3
+    r::srm3 ==> n::srm3
+    r::srm-gce-us-east1-c --> r::srm5
+    r::srm5 ==> n::srm5
 
     r::srm --> r::stg-srm
     r::srm-gce --> r::stg-srm-gce
