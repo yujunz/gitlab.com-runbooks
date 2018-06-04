@@ -21,6 +21,11 @@ graph LR
 
     r::prm(gitlab-runner-prm)
     r::prm-do(gitlab-runner-prm-do)
+    r::prm-gce(gitlab-runner-prm-gce)
+    r::prm-gce-us-east1-c(gitlab-runner-prm-gce-us-east1-c)
+    r::prm3(gitlab-runner-prm3)
+    r::prm-gce-us-east1-d(gitlab-runner-prm-gce-us-east1-d)
+    r::prm4(gitlab-runner-prm4)
 
     r::srm(gitlab-runner-srm)
     r::srm-do(gitlab-runner-srm-do)
@@ -48,6 +53,8 @@ graph LR
 
     n::prm1[private-runners-manager-1.gitlab.com]
     n::prm2[private-runners-manager-2.gitlab.com]
+    n::prm3[private-runners-manager-3.gitlab.com]
+    n::prm4[private-runners-manager-4.gitlab.com]
 
     n::srm1[shared-runners-manager-1.gitlab.com]
     n::srm2[shared-runners-manager-2.gitlab.com]
@@ -82,6 +89,13 @@ graph LR
     r::prm --> r::prm-do
     r::prm-do ==> n::prm1
     r::prm-do ==> n::prm2
+    r::prm --> r::prm-gce
+    r::prm-gce --> r::prm-gce-us-east1-c
+    r::prm-gce-us-east1-c --> r::prm4
+    r::prm4 ==> n::prm4
+    r::prm-gce --> r::prm-gce-us-east1-d
+    r::prm-gce-us-east1-d --> r::prm3
+    r::prm3 ==> n::prm3
 
     r::base --> r::srm
     r::srm --> r::srm-do
