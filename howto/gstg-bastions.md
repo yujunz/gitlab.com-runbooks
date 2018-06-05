@@ -61,7 +61,7 @@ To set up such a tunnel:
 1. Open a tunnel SSH session:
 
     ```sh
-    ssh -L 8443:fe-01-lb-gstg.c.gitlab-production.internal:443 lb-bastion.gstg.gitlab.com
+    ssh -L 8443:fe-01-lb-gstg.c.gitlab-staging-1.internal:443 lb-bastion.gstg.gitlab.com
     ```
 
 1. Visit gstg on localhost:
@@ -84,7 +84,7 @@ To set up such a tunnel:
    due to incorrect redirect URL. So instead, you can set up the tunnel as root, on port `443`:
 
     ```sh
-    sudo ssh -F $HOME/.ssh/config -L 443:fe-01-lb-gstg.c.gitlab-production.internal:443 lb-bastion.gstg.gitlab.com
+    sudo ssh -F $HOME/.ssh/config -L 443:fe-01-lb-gstg.c.gitlab-staging-1.internal:443 lb-bastion.gstg.gitlab.com
     ```
 
     Visiting `https://gstg.gitlab.com/users/sign_in` will now work as a charm.
@@ -97,7 +97,7 @@ tunnel for git-over-ssh traffic:
 1. Open a tunnel SSH session:
 
     ```sh
-    sudo ssh -F $HOME/.ssh/config -L 22:fe-01-lb-gstg.c.gitlab-production.internal:22 lb-bastion.gstg.gitlab.com
+    sudo ssh -F $HOME/.ssh/config -L 22:fe-01-lb-gstg.c.gitlab-staging-1.internal:22 lb-bastion.gstg.gitlab.com
     ```
 
 1. Clone a repo:
