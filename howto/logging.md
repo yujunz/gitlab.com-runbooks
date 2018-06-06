@@ -33,6 +33,14 @@ To find .org logs select the corresponding indexes with `pubsub-*-gstg` in the n
 * For azure filter by `json.environment: dev`
 * For GCP filter by `json.environment: dev`
 
+#### Runners
+
+To find logs for runners select the `pubsub-syslog-gprd` index.
+
+* For both azure and GCP filter by `json.environment: ci-prd` or `json.environment: ci-stg`.
+
+_Note: Runner logs are unstructured and mixed in with other syslog messages, structured logging tracked with https://gitlab.com/gitlab-org/gitlab-runner/issues/3336_
+
 
 ### StackDriver
 
