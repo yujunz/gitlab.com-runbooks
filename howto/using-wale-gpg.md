@@ -38,7 +38,16 @@ Backups are kept for 8 days and cleaned up by WAL-E.
 
 #### Production
 
-Production info will be added after GPG is enabled.
+WAL-E on production is set up via the gitlab_wale cookbook. This cookbook installs all of the relevant python packages,
+installs a cronjob to create base_backups and trim old backups. The relevant cron command and settings is set via attributes
+on the chef roles.
+
+```cron
+# Chef Name: full wal-e backup
+0 2 * * * PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-push /var/opt/gitlab/postgresql/data &> /tmp/wal-e_backup_push.log
+# Chef Name: trim wal-e backups
+0 18 * * * PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e delete --confirm retain 8 &> /tmp/wal-e_backup_delete.log
+```
 
 #### Secondary Servers
 
@@ -81,9 +90,50 @@ Before we start, take a deep breath and don't panic.
 
 #### Production
 
-Production info will be added when gpg is enabled.
+Restoring a production backup from WAL-E is a fairly manual process. The main problem is the gpg settings.
 
-#### Secondary 
+In order to restore, the following steps should be performed. It is assumed that you have already set up the new server
+and that server is configured with our current chef configuration.
+
+1. Log in to the `gitlab-psql` user (`su - gitlab-psql`) and edit the `~/.gnupg/gpg-agent.conf`.
+    * It should have `allow-loopback-pinentry` and `max-cache-ttl 86400`. Without the TTL, the password will
+    expire out of cache after 2 hours and WAL-E will begin to fail to restore if it is still restoring.
+1. Add the GPG keys to the keyring
+    ```
+    gpg --allow-secret-key-import --import /etc/wal-e.d/ops-contact+dbcrypt.key
+    gpg --import-ownertrust /etc/wal-e.d/gpg_owner_trust
+    ```
+1. Add an environment variable to set the `gpg` binary to use.
+    * Create a file called `/etc/wal-e.d/env/GPG_BIN` with the contents `/usr/bin/gpg2`.
+    * We bundle `gpg2` with omnibus and the `gitlab-psql` user will use this embedded version by default.
+1. Start `gpg-agent` with the command `gpg-agent --homedir /var/opt/gitlab/postgresql/.gnupg --use-standard-socket --daemon`
+1. Create a test file as the `gitlab-psql` user and try to decrypt it with gpg2. `echo 'test' > test`, then `/usr/bin/gpg2 -u 66B9829C -e test`, then `/usr/bin/gpg2 --pinentry-mode loopback -d test.gpg`
+    * It will ask you for the password which can be found in 1Password. Once this is done, the password will be cached for WAL-E to use.
+1. Create restore.conf file.
+
+    ```
+    cat > /var/opt/gitlab/postgresql/data/recovery.conf <<RECOVERY
+    restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
+    recovery_target_time = 'latest'
+    RECOVERY
+    chown gitlab-psql:gitlab-psql/var/opt/gitlab/postgresql/data/recovery.conf
+    ```
+1. Restore the base backup
+
+    ```
+    /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
+    PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data <backup name from backup-list command>
+    ```
+
+    To restore latest backup you can use the following:
+
+    ```
+    PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list 2>/dev/null | tail -1 | cut -d ' ' -f1 | xargs -n1 /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data
+    ```
+1. This command will output nothing if it is successful.
+1. Start PostgreSQL. This will begin the point-in-time recovery to the time specified in recovery.conf. You can watch the progress in the postgres log.
+
+#### Secondary
 
 For now, please follow the manual procedure below.
 
