@@ -27,16 +27,21 @@ if you have the following in a Chef node:
 }
 ```
 
-you'll need to run the following
+You will also need to know the project ID:
 
-```
-gsutil cp gs://path/to/secrets/item.enc - | gcloud kms decrypt --keyring=my-keyring --key=my-key --location=global --ciphertext-file=- --plaintext-file=/path/to/plaintext
+    * Staging: gitlab-staging-1
+    * Production: gitlab-production
+
+Run the following:
+
+```bash
+gsutil cp gs://path/to/secrets/item.enc - | gcloud kms decrypt --project=project-id-here --keyring=my-keyring --key=my-key --location=global --ciphertext-file=- --plaintext-file=/path/to/plaintext
 ```
 
 After that on `/path/to/plaintext` you'll have a decrypted copy of the file.
 
 # Encrypting and uploading a secrets file
 
-```
-gcloud kms encrypt --keyring=my-keyring --key=my-key --location=global --ciphertext-file=- --plaintext-file=/path/to/plaintext | gsutil - cp gs://path/to/secrets/item.enc
+```bash
+gcloud kms encrypt --project=project-id-here --keyring=my-keyring --key=my-key --location=global --ciphertext-file=- --plaintext-file=/path/to/plaintext | gsutil cp - gs://path/to/secrets/item.enc
 ```
