@@ -29,8 +29,8 @@ if you have the following in a Chef node:
 
 You will also need to know the project ID:
 
-    * Staging: gitlab-staging-1
-    * Production: gitlab-production
+* Staging: gitlab-staging-1
+* Production: gitlab-production
 
 Run the following:
 
