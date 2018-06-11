@@ -288,7 +288,7 @@ groups:
       runbook: troubleshooting/prometheus-exporter-scrape-errors.md
       title: Postgres exporter is showing errors for the last hour
   - alert: PostgreSQL_DiskUtilizationMaxedOut
-    expr: rate(node_disk_io_time_seconds_total{device="dm-0",tier="db",type="postgres"}[1m])
+    expr: rate(node_disk_io_time_seconds_total{device=~"dm-(0|1)",tier="db",type="postgres"}[1m])
       / 10 > 97
     for: 5m
     labels:
