@@ -22,9 +22,17 @@ On `gprd` all of the servers are configured to stream to the `postgres-02` subdi
 This is because in the event of a failover, all the servers should have the same backup location to streamline
 both backups and restores. Secondary servers do not push WAL files or base_backups, so they do not interfere.
 
+AWS S3 replicates the data from `gitlab-dbprod-backups` (US bucket) to `gitlab-dbprod-backups-replica` (EU bucket).
+
 Our secondary databases (version, customers, sentry, etc)
 are in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. 
 The key can be found in the Production vault of 1Password.
+
+### Interval and Retention
+
+We currently take a basebackup each day at 2am UTC and continuously stream WAL data to S3. Taking a basebackup currently takes about 5 hours (June 2018).
+
+Backups are kept for 8 days and cleaned up by WAL-E.
 
 ### How Does it Get There?
 

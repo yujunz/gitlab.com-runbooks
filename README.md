@@ -65,6 +65,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Read-only Load Balancing](howto/load-balancing.md)
 * [Add a new secondary replica](howto/postgresql-replica.md)
 * [The DB replication has stopped](troubleshooting/postgresql.md)
+* [Database backups](howto/using-wale-gpg.md)
+* [Database backups restore testing](https://gitlab.com/gitlab-restore/postgres-01.db.prd.gitlab.com/)
 
 ### Redis
 
