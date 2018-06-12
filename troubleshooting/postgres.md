@@ -1,3 +1,30 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Postgresql troubleshooting](#postgresql-troubleshooting)
+    - [First and foremost](#first-and-foremost)
+    - [Dashboards](#dashboards)
+    - [Availability](#availability)
+    - [Errors](#errors)
+    - [Locks](#locks)
+    - [Load](#load)
+    - [Replication is lagging or has stopped](#replication-is-lagging-or-has-stopped)
+        - [Symptoms](#symptoms)
+        - [Possible checks](#possible-checks)
+        - [Resolution](#resolution)
+    - [Replication Slots](#replication-slots)
+        - [Symptoms](#symptoms-1)
+        - [Possible checks](#possible-checks-1)
+        - [Resolution](#resolution-1)
+    - [Tables with a large amount of dead tuples](#tables-with-a-large-amount-of-dead-tuples)
+        - [Symptoms](#symptoms-2)
+        - [Possible Checks](#possible-checks)
+    - [Connections](#connections)
+    - [PGBouncer Errors](#pgbouncer-errors)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Postgresql troubleshooting
 
 ## First and foremost
