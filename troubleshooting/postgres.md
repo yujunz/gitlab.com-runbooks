@@ -24,7 +24,7 @@ They could also indicate the application is having its own problems
 however ideally these thresholds should be set low enough that even a
 minimually functional application would not trigger them.
 
-Keep in mind that 
+Keep in mind that
 
 Check:
 
@@ -32,7 +32,7 @@ Check:
   cause Postgres to shut down and may even allow read-only queries but
   will cause all read-write queries to generate errors).
 
-* Check that you can connect to the database from a psql prompt. 
+* Check that you can connect to the database from a psql prompt.
 
 * Check that the you can connect to the database from the Rails
   console.
@@ -41,7 +41,7 @@ Check:
   txid_current()` is handy for this as it does require disk i/o to
   record the transaction. You could also try creating and dropping a
   dummy table.
-  
+
 * Check other triage dashboards such as the cpu load and I/O metrics
   on the database host in question.
 
@@ -72,7 +72,7 @@ caused by inserts rather than updates or deletes or if they're
 short-lived. But updates or deletes that are not committed for a
 significant amount of time can cause application issues.
 
-Look for blocked queries or application latency. 
+Look for blocked queries or application latency.
 
 Remediation can involved tracking down a rogue migration and killing
 or pausing it.
@@ -140,7 +140,8 @@ cause low disk space free alerts and even an outage.
 
 ### Possible checks
 
-* Look in `select * from pg_replication_slots where NOT active`
+* Look in `select * from pg_replication_slots where NOT active`, for both the
+  primary and the secondaries.
 
 ### Resolution
 
@@ -150,6 +151,11 @@ replica would have needed to resume replication. If it turns out to be
 needed that replica will likely have to be recreated from scratch.
 
 Drop the replication slot with `SELECT pg_drop_replication_slot('slot_name');`
+
+It's possible for a secondary to have one or more inactive replication slots. In
+this case the `xmin` value in `pg_replication_slots` _on the primary_ may start
+lagging behind. This in turn can prevent vacuuming from removing dead tuples.
+This can be solved by dropping the replication slots _on the secondaries_.
 
 ## Tables with a large amount of dead tuples
 
@@ -191,11 +197,11 @@ transaction" then check the above charts to see if it's already
 causing problems. Log into the relevant replica and run:
 
 ```sql
-SELECT now()-xact_start,pid,query,client_addr,application_name 
-  FROM pg_stat_activity 
- WHERE state != 'idle' 
-   AND query NOT LIKE 'autovacuum%' 
- ORDER BY now()-xact_start DESC 
+SELECT now()-xact_start,pid,query,client_addr,application_name
+  FROM pg_stat_activity
+ WHERE state != 'idle'
+   AND query NOT LIKE 'autovacuum%'
+ ORDER BY now()-xact_start DESC
  LIMIT 3;
 ```
 
@@ -213,7 +219,7 @@ There are any of three cases to check for:
 If there's a deploy running or recent deploy with background
 migrations running then check for a very high "Deletes" or "Updates"
 rate on a table. Also check for for signs of other problems such as
-replication lag, high web latency or errors, etc. 
+replication lag, high web latency or errors, etc.
 
 If the problem is due to a migration and the dead tuples are high but
 not growing and it's not causing other problems then it can be a
@@ -234,7 +240,7 @@ handled using Redis variables.
 Adjust the vacuum settings for the given table to match the other
 tables, like this:
 
-```json 
+```json
 roles/gitlab-base-db-postgres.json
 "push_event_payloads": {
   "autovacuum_analyze_scale_factor": 0,
@@ -259,12 +265,12 @@ e.g.:
 
 ```SQL
 SELECT pid,
-       age(backend_start) AS backend_age, 
-	   age(xact_start) AS xact_age, 
-	   age(query_start) AS query_age, 
+       age(backend_start) AS backend_age,
+	   age(xact_start) AS xact_age,
+	   age(query_start) AS query_age,
 	   state,
 	   query
-  FROM pg_stat_activity 
+  FROM pg_stat_activity
  WHERE pid <> pg_backend_pid()
 ```
 
@@ -293,7 +299,7 @@ gitlab-+ 109886 34.4  0.6  28888 12836 ?        Rs   Mar19 13929:17 /opt/gitlab/
 
 # prlimit -n -p 109886
 RESOURCE DESCRIPTION               SOFT  HARD UNITS
-NOFILE   max number of open files 50000 50000 
+NOFILE   max number of open files 50000 50000
 
 # sudo gitlab-ctl pgb-console
 Password for user pgbouncer: ...
@@ -302,13 +308,13 @@ psql (9.6.5, server 1.7.2/bouncer)
 Type "help" for help.
 
 pgbouncer=# show config;
-            key            |                           value                            | changeable 
+            key            |                           value                            | changeable
 ---------------------------+------------------------------------------------------------+------------
  max_client_conn           | 2048                                                       | yes
 ...
 
 pgbouncer=# show pools;
-          database           |   user    | cl_active | cl_waiting | sv_active | sv_idle | sv_used | sv_tested | sv_login | maxwait |  pool_mode  
+          database           |   user    | cl_active | cl_waiting | sv_active | sv_idle | sv_used | sv_tested | sv_login | maxwait |  pool_mode
 -----------------------------+-----------+-----------+------------+-----------+---------+---------+-----------+----------+---------+-------------
  gitlabhq_production         | gitlab    |       925 |          0 |        50 |      50 |       0 |         0 |        0 |       0 | transaction
  gitlabhq_production         | pgbouncer |         0 |          0 |         0 |       0 |       1 |         0 |        0 |       0 | transaction
