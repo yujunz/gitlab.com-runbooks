@@ -163,7 +163,7 @@ groups:
       title: PostgreSQL replication slot with a stale xmin which can cause bloat on
         the primary
   - alert: PostgreSQL_LongLivedTransaction
-    expr: pg_stat_activity_max_tx_duration > 1800
+    expr: pg_stat_activity_max_tx_duration > 3600
     labels:
       severity: warn
       channel: database
