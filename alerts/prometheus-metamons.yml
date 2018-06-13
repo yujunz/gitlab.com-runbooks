@@ -2,7 +2,7 @@ groups:
 - name: prometheus-metamon.rules
   rules:
   - alert: PrometheusUnreachable
-    expr: up{job=~"prometheus.*", fqdn !~ ".*gprd.*"} == 0
+    expr: up{job=~"prometheus.*", fqdn !~ ".*gprd.*|.*gstg.*|.*gce.gitlab-runners.*"} == 0
     for: 10m
     labels:
       pager: pagerduty
