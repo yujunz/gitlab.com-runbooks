@@ -157,15 +157,12 @@ groups:
     annotations:
       title: |
         PostgreSQL replication slot {{$labels.slot_name}} on {{$labels.fqdn}} is
-        using an old xmin value. This can lead to an increase in dead tuples.
+        falling behind the primary.
       description: |
-        "PostgreSQL slot {{$labels.slot_name}} on {{$labels.fqdn}} is {{$value |
+        The replication slot {{$labels.slot_name}} on {{$labels.fqdn}} is {{$value |
         humanize}} transactions behind the primary, this can cause an increase
         in dead tuples on the *primary*. This can be caused by long-running
         queries or transactions, or unused replication slots *on a secondary*.
-
-        You can inspect the state of the replication slots by running
-        `SELECT * FROM pg_replication_slots;` on the primary.
       runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
   - alert: PostgreSQL_LongLivedTransaction
     expr: pg_stat_activity_max_tx_duration > 3600
