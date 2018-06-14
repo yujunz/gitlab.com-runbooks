@@ -35,7 +35,7 @@ If a replica gets out of sync or fails for some reason, you have several options
 1. Run pg_basebackup from the secondary
 2. Use [Wal-E](using-wale-gpg.md)
 3. Take a disk snapshot of the primary and clone it on the secondary. Be
-   sure to [drop replication slots on the secondary after it comes up](postgresql-switchover#dropping-replication-slots).
+   sure to [drop replication slots on the secondary after it comes up](postgresql-switchover.md#dropping-replication-slots).
 
 ## Running pg_basebackup
 
