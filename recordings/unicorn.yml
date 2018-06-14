@@ -2,40 +2,93 @@ groups:
 - name: Unicorn Transactions
   interval: 1m
   rules:
-    - record: controller_action:gitlab_transaction_duration_seconds_count:rate1m
-      expr: sum(rate(gitlab_transaction_duration_seconds_count[1m])) without (fqdn, instance)
-    - record: controller_action:gitlab_transaction_duration_seconds_sum:rate1m
-      expr: sum(rate(gitlab_transaction_duration_seconds_sum[1m])) without (fqdn, instance)
-    - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate1m
-      expr: sum(rate(gitlab_transaction_duration_seconds_bucket[1m])) without (fqdn, instance)
-      
-    - record: controller_action:gitlab_transaction_duration_seconds_sum:avg_rate1m
+    # Request data, per controller/action.
+    - record: controller_action:gitlab_transaction_duration_seconds_count:rate5m
+      expr: sum(rate(gitlab_transaction_duration_seconds_count[5m])) without (fqdn, instance)
+
+    - record: controller_action:gitlab_transaction_duration_seconds_sum:rate5m
+      expr: sum(rate(gitlab_transaction_duration_seconds_sum[5m])) without (fqdn, instance)
+
+    - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_transaction_duration_seconds_bucket[5m])) without (fqdn, instance)
+
+    - record: controller_action:gitlab_transaction_latency_seconds_sum:avg_rate5m
       expr: >
-        controller_action:gitlab_transaction_duration_seconds_sum:rate1m
+        controller_action:gitlab_transaction_duration_seconds_sum:rate5m
           /
-        controller_action:gitlab_transaction_duration_seconds_count:rate1m
+        controller_action:gitlab_transaction_duration_seconds_count:rate5m
 
     - record: controller_action:gitlab_transaction_duration_seconds_bucket:p95
-      expr: histogram_quantile(0.95, controller_action:gitlab_transaction_duration_seconds_bucket:rate1m)
+      expr: histogram_quantile(0.95, controller_action:gitlab_transaction_duration_seconds_bucket:rate5m)
 
     - record: controller_action:gitlab_transaction_duration_seconds_bucket:p99
-      expr: histogram_quantile(0.99, controller_action:gitlab_transaction_duration_seconds_bucket:rate1m)
+      expr: histogram_quantile(0.99, controller_action:gitlab_transaction_duration_seconds_bucket:rate5m)
 
-    - record: job_environment:gitlab_transaction_duration_seconds_count:rate1m
-      expr: sum(controller_action:gitlab_transaction_duration_seconds_count:rate1m) without (controller,action)
-    - record: job_environment:gitlab_transaction_duration_seconds_sum:rate1m
-      expr: sum(controller_action:gitlab_transaction_duration_seconds_sum:rate1m) without (controller,action)
-    - record: job_environment:gitlab_transaction_duration_seconds_bucket:rate1m
-      expr: sum(controller_action:gitlab_transaction_duration_seconds_bucket:rate1m) without (controller,action)
+    # Request data, across the board.
+    - record: job_environment:gitlab_transaction_duration_seconds_count:rate5m
+      expr: sum(controller_action:gitlab_transaction_duration_seconds_count:rate5m) without (controller,action)
 
-    - record: job_environment:gitlab_transaction_duration_seconds_sum:avg_rate1m
+    - record: job_environment:gitlab_transaction_duration_seconds_sum:rate5m
+      expr: sum(controller_action:gitlab_transaction_duration_seconds_sum:rate5m) without (controller,action)
+
+    - record: job_environment:gitlab_transaction_duration_seconds_bucket:rate5m
+      expr: sum(controller_action:gitlab_transaction_duration_seconds_bucket:rate5m) without (controller,action)
+
+    - record: job_environment:gitlab_transaction_duration_latency_sum:avg_rate5m
       expr: >
-        job_environment:gitlab_transaction_duration_seconds_sum:rate1m
+        job_environment:gitlab_transaction_duration_seconds_sum:rate5m
           /
-        job_environment:gitlab_transaction_duration_seconds_count:rate1m
+        job_environment:gitlab_transaction_duration_seconds_count:rate5m
 
     - record: job_environment:gitlab_transaction_duration_seconds_bucket:p95
-      expr: histogram_quantile(0.95, job_environment:gitlab_transaction_duration_seconds_bucket:rate1m)
+      expr: histogram_quantile(0.95, job_environment:gitlab_transaction_duration_seconds_bucket:rate5m)
 
     - record: job_environment:gitlab_transaction_duration_seconds_bucket:p99
-      expr: histogram_quantile(0.99, job_environment:gitlab_transaction_duration_seconds_bucket:rate1m)
+      expr: histogram_quantile(0.99, job_environment:gitlab_transaction_duration_seconds_bucket:rate5m)
+
+- name: Unicorn SQL
+  interval: 1m
+  rules:
+    # SQL data, per controller/action.
+    - record: controller_action:gitlab_sql_duration_seconds_count:rate5m
+      expr: sum(rate(gitlab_sql_duration_seconds_count[5m])) without (fqdn, instance)
+
+    - record: controller_action:gitlab_sql_duration_seconds_sum:rate5m
+      expr: sum(rate(gitlab_sql_duration_seconds_sum[5m])) without (fqdn, instance)
+
+    - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_sql_duration_seconds_bucket[5m])) without (fqdn, instance)
+
+    - record: controller_action:gitlab_sql_latency_seconds_sum:avg_rate5m
+      expr: >
+        controller_action:gitlab_sql_duration_seconds_sum:rate5m
+          /
+        controller_action:gitlab_sql_duration_seconds_count:rate5m
+
+    - record: controller_action:gitlab_sql_duration_seconds_bucket:p95
+      expr: histogram_quantile(0.95, controller_action:gitlab_sql_duration_seconds_bucket:rate5m)
+
+    - record: controller_action:gitlab_sql_duration_seconds_bucket:p99
+      expr: histogram_quantile(0.99, controller_action:gitlab_sql_duration_seconds_bucket:rate5m)
+
+    # SQL data, across the board.
+    - record: job_environment:gitlab_sql_duration_seconds_sum:rate5m
+      expr: sum(controller_action:gitlab_sql_duration_seconds_sum:rate5m) without (controller, action)
+
+    - record: job_environment:gitlab_sql_duration_seconds_count:rate5m
+      expr: sum(controller_action:gitlab_sql_duration_seconds_count:rate5m) without (controller, action)
+
+    - record: job_environment:gitlab_sql_duration_seconds_bucket:rate5m
+      expr: sum(controller_action:gitlab_sql_duration_seconds_bucket:rate5m) without (controller,action)
+
+    - record: job_environment:gitlab_sql_latency_seconds_sum:avg_rate5m
+      expr: >
+        job_environment:gitlab_sql_duration_seconds_sum:rate5m
+          /
+        job_environment:gitlab_sql_duration_seconds_count:rate5m
+
+    - record: job_environment:gitlab_sql_duration_seconds_bucket:p95
+      expr: histogram_quantile(0.95, job_environment:gitlab_sql_duration_seconds_bucket:rate5m)
+
+    - record: job_environment:gitlab_sql_duration_seconds_bucket:p99
+      expr: histogram_quantile(0.99, job_environment:gitlab_sql_duration_seconds_bucket:rate5m)
