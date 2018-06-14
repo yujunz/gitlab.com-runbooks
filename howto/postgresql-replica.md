@@ -27,3 +27,29 @@ to our cluster. This is a fairly straightforward operation, but there are some u
     ```
 
 This will produce a production ready replica of the production database.
+
+# Using pg_basebackup to resync a replica
+
+If a replica gets out of sync or fails for some reason, you have several options to recover:
+
+1. Run pg_basebackup from the secondary
+2. Use [Wal-E](using-wale-gpg.md)
+3. Take a disk snapshot of the primary and clone it on the secondary. Be
+   sure to [drop replication slots on the secondary after it comes up](postgresql-switchover#dropping-replication-slots).
+
+## Running pg_basebackup
+
+You'll need:
+
+1. Name of a replication slot on the primary (run `SELECT * FROM pg_replication_slots` on the primary)
+2. Username that can replicate data (e.g. `gitlab_repmgr`)
+
+Example:
+
+```sh
+PGSSLMODE=disable sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_basebackup -D /var/opt/gitlab/postgresql/data --slot=repmgr_slot_1631008568 -X stream -P --host=postgres-01-db-gprd.c.gitlab-production.internal -p 5432 --username=gitlab_repmgr
+```
+
+* The `PGSSLMODE=disable` environment variable is critical for speeding up the replication
+* The `--slot` parameter ensures that the primary doesn't remove necessary WAL data
+* The `-X stream` parameter streams the WAL segments simultaneously

@@ -68,6 +68,9 @@ gitlab-ctl reconfigure
 gitlab-ctl repmgr standby follow <name of new primary>
 gitlab-ctl restart repmgrd
 ```
+
+### Dropping replication slots
+
 You may also need to drop the leftover slot using `pg_drop_replication_slot(...)` on the former primary after demoting it to a replica. Check by issuing `SELECT * FROM pg_replication_slots`. Normally there should be no replication slots on any database other than the current primary for our configuration.
 You can easily remove all replication slots on a secondary by running the
 following SQL query:
