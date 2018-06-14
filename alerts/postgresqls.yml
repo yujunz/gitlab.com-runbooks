@@ -28,7 +28,7 @@ groups:
   - alert: PostgreSQL_CommitRateTooLow
     expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production",environment="prd"}[1m])
       < 1000
-    for: 2m
+    for: 5m
     labels:
       pager: pagerduty
       severity: critical
