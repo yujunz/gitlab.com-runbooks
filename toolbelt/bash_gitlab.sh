@@ -1,7 +1,7 @@
 # 
 # Source this file, optionally declare the env vars that are a different
 # 
-local DIR=$(dirname $0)
+DIR=$(dirname $BASH_SOURCE)
 for ENV_FILE in $(ls "${DIR}/.env"); do
   source "${DIR}/.env/${ENV_FILE}"
 done
