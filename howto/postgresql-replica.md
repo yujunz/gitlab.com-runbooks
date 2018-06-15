@@ -47,7 +47,7 @@ You'll need:
 Example:
 
 ```sh
-PGSSLMODE=disable sudo -u gitlab-psql /opt/gitlab/embedded/bin/pg_basebackup -D /var/opt/gitlab/postgresql/data --slot=repmgr_slot_1631008568 -X stream -P --host=postgres-01-db-gprd.c.gitlab-production.internal -p 5432 --username=gitlab_repmgr
+sudo -u gitlab-psql PGSSLMODE=disable /opt/gitlab/embedded/bin/pg_basebackup -D /var/opt/gitlab/postgresql/data --slot=repmgr_slot_1631008568 -X stream -P --host=postgres-01-db-gprd.c.gitlab-production.internal -p 5432 --username=gitlab_repmgr
 ```
 
 * The `PGSSLMODE=disable` environment variable is critical for speeding up the replication
