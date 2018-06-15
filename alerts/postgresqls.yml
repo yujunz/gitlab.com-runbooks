@@ -338,3 +338,16 @@ groups:
         overloaded database, or a performance regression introduced in a new
         release.
       title: There are too many slow SQL queries
+  - alert: PostgreSQL_SSLCompressionActive
+    expr: sum(pg_stat_ssl_compression{environment="prd"}) BY (fqdn) > 0
+    for: 10m
+    labels:
+      severity: warn
+      channel: database
+    annotations:
+      description: >
+        Database {{ $labels.fqdn }} has {{ $value | printf "%.1f" }}
+        connections with SSL compression enabled. This may add significant
+        jitter in replication delay. Replicas should turn off SSL compression
+        via `sslcompression=0` in `recovery.conf`.
+      title: Clients are using SSL compression
