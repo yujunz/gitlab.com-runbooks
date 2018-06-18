@@ -65,7 +65,7 @@ groups:
       runbook: troubleshooting/postgresql.md#errors
       title: Postgres transaction rollback rate is high
   - alert: PostgreSQL_StatementTimeout_Errors
-    expr: rate(postgresql_errors_total{environment="prd", type="statement_timeout"}[1m]) > 0.5
+    expr: rate(postgresql_errors_total{environment="prd", type="statement_timeout"}[5m]) > 3
     for: 5m
     labels:
       severity: warn
