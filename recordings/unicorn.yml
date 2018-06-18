@@ -12,16 +12,16 @@ groups:
     - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
       expr: sum(rate(gitlab_transaction_duration_seconds_bucket[5m])) without (fqdn, instance)
 
-    - record: controller_action:gitlab_transaction_latency_seconds_sum:avg_rate5m
+    - record: controller_action:gitlab_transaction_latency_seconds:rate5m
       expr: >
         controller_action:gitlab_transaction_duration_seconds_sum:rate5m
           /
         controller_action:gitlab_transaction_duration_seconds_count:rate5m
 
-    - record: controller_action:gitlab_transaction_duration_seconds_bucket:p95
+    - record: controller_action:gitlab_transaction_duration_seconds:p95
       expr: histogram_quantile(0.95, controller_action:gitlab_transaction_duration_seconds_bucket:rate5m)
 
-    - record: controller_action:gitlab_transaction_duration_seconds_bucket:p99
+    - record: controller_action:gitlab_transaction_duration_seconds:p99
       expr: histogram_quantile(0.99, controller_action:gitlab_transaction_duration_seconds_bucket:rate5m)
 
     # Request data, across the board.
@@ -34,16 +34,16 @@ groups:
     - record: job_environment:gitlab_transaction_duration_seconds_bucket:rate5m
       expr: sum(controller_action:gitlab_transaction_duration_seconds_bucket:rate5m) without (controller,action)
 
-    - record: job_environment:gitlab_transaction_duration_latency_sum:avg_rate5m
+    - record: job_environment:gitlab_transaction_duration_latency_seconds:rate5m
       expr: >
         job_environment:gitlab_transaction_duration_seconds_sum:rate5m
           /
         job_environment:gitlab_transaction_duration_seconds_count:rate5m
 
-    - record: job_environment:gitlab_transaction_duration_seconds_bucket:p95
+    - record: job_environment:gitlab_transaction_duration_seconds:p95
       expr: histogram_quantile(0.95, job_environment:gitlab_transaction_duration_seconds_bucket:rate5m)
 
-    - record: job_environment:gitlab_transaction_duration_seconds_bucket:p99
+    - record: job_environment:gitlab_transaction_duration_seconds:p99
       expr: histogram_quantile(0.99, job_environment:gitlab_transaction_duration_seconds_bucket:rate5m)
 
 - name: Unicorn SQL
@@ -59,16 +59,16 @@ groups:
     - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
       expr: sum(rate(gitlab_sql_duration_seconds_bucket[5m])) without (fqdn, instance)
 
-    - record: controller_action:gitlab_sql_latency_seconds_sum:avg_rate5m
+    - record: controller_action:gitlab_sql_latency_seconds:rate5m
       expr: >
         controller_action:gitlab_sql_duration_seconds_sum:rate5m
           /
         controller_action:gitlab_sql_duration_seconds_count:rate5m
 
-    - record: controller_action:gitlab_sql_duration_seconds_bucket:p95
+    - record: controller_action:gitlab_sql_duration_seconds:p95
       expr: histogram_quantile(0.95, controller_action:gitlab_sql_duration_seconds_bucket:rate5m)
 
-    - record: controller_action:gitlab_sql_duration_seconds_bucket:p99
+    - record: controller_action:gitlab_sql_duration_seconds:p99
       expr: histogram_quantile(0.99, controller_action:gitlab_sql_duration_seconds_bucket:rate5m)
 
     # SQL data, across the board.
@@ -81,14 +81,14 @@ groups:
     - record: job_environment:gitlab_sql_duration_seconds_bucket:rate5m
       expr: sum(controller_action:gitlab_sql_duration_seconds_bucket:rate5m) without (controller,action)
 
-    - record: job_environment:gitlab_sql_latency_seconds_sum:avg_rate5m
+    - record: job_environment:gitlab_sql_latency_seconds:rate5m
       expr: >
         job_environment:gitlab_sql_duration_seconds_sum:rate5m
           /
         job_environment:gitlab_sql_duration_seconds_count:rate5m
 
-    - record: job_environment:gitlab_sql_duration_seconds_bucket:p95
+    - record: job_environment:gitlab_sql_duration_seconds:p95
       expr: histogram_quantile(0.95, job_environment:gitlab_sql_duration_seconds_bucket:rate5m)
 
-    - record: job_environment:gitlab_sql_duration_seconds_bucket:p99
+    - record: job_environment:gitlab_sql_duration_seconds:p99
       expr: histogram_quantile(0.99, job_environment:gitlab_sql_duration_seconds_bucket:rate5m)
