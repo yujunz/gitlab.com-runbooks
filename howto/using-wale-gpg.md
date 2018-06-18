@@ -107,7 +107,7 @@ and that server is configured with our current chef configuration.
     * Create a file called `/etc/wal-e.d/env/GPG_BIN` with the contents `/usr/bin/gpg2`.
     * We bundle `gpg2` with omnibus and the `gitlab-psql` user will use this embedded version by default.
 1. Start `gpg-agent` with the command `gpg-agent --homedir /var/opt/gitlab/postgresql/.gnupg --use-standard-socket --daemon`
-1. Create a test file as the `gitlab-psql` user and try to decrypt it with gpg2. `echo 'test' > test`, then `/usr/bin/gpg2 -u 66B9829C -e test`, then `/usr/bin/gpg2 --pinentry-mode loopback -d test.gpg`
+1. Create a test file as the `gitlab-psql` user and try to decrypt it with gpg2. `echo 'test' > test`, then `/usr/bin/gpg2 -u 66B9829C -r 66B9829C -e test`, then `/usr/bin/gpg2 --pinentry-mode loopback -d test.gpg`
     * It will ask you for the password which can be found in 1Password. Once this is done, the password will be cached for WAL-E to use.
 1. Create restore.conf file.
 
