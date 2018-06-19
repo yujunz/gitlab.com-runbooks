@@ -9,6 +9,7 @@
     - [Errors](#errors)
     - [Locks](#locks)
     - [Load](#load)
+    - [High (and similar) load on multiple hosts](#high-and-similar-load-on-multiple-hosts)
     - [Replication is lagging or has stopped](#replication-is-lagging-or-has-stopped)
         - [Symptoms](#symptoms)
         - [Possible checks](#possible-checks)
@@ -114,6 +115,57 @@ Don't forget to look for generic Unix problems that can cause high
 load such as a broken disk (with processes getting stuck in disk-wait)
 or some administrative task such as mlocate or similar forking many
 child processes.
+
+## High (and similar) load on multiple hosts
+
+It's also possible for high load to be caused by out of date query statistics.
+For example, in <https://gitlab.com/gitlab-com/infrastructure/issues/4429> we
+discovered that incorrect statistics for the "namespaces" table lead to an
+increase in sequential scans on the "issues" table.
+
+Typically problems like this will produce graphs like the following:
+
+![High activity count](img/postgres/high_activity.png)
+
+![High CPU usage](img/postgres/high_cpu.png)
+
+![High database load](img/postgres/high_load.png)
+
+If you happen to know which table has out-of-date or incorrect statistics, you
+can run the following _on the primary_ to resolve this:
+
+```sql
+ANALYZE VERBOSE table_name_here;
+```
+
+However, it's not unlikely that _other_ tables are affected as well, which may
+lead one to believe the problem lies elsewhere. To figure this out you will need
+a few query plans of (now) badly behaving queries, then look at the tables these
+queries use. Once you have identified potential candidates, you can `ANALYZE`
+those tables. Alternative, you can run the following SQL query _on the primary_:
+
+```sql
+SELECT schemaname, relname, last_analyze, last_autoanalyze, last_vacuum, last_autovacuum
+FROM pg_stat_all_tables
+ORDER BY last_analyze DESC;
+```
+
+This will list all tables, including the time `ANALYZE` last ran for the table.
+Look for tables that have not been analysed for a long time, but should have
+been. Keep in mind that `ANALYZE` may run only every now and then, if a table is
+not updated very frequently. In other words, a high `last_analyze` or
+`last_autoanalyze` value is not a guarantee that the table has incorrect
+statistics.
+
+A more drastic and easier approach is to simply re-analyze _all_ tables. This
+won't impact a running system, but this can take around 15 minutes to complete,
+depending on the table sizes. To perform this operation, run the following _on
+the primary_:
+
+```sql
+SET statement_timeout TO 0;
+ANALYZE VERBOSE;
+```
 
 ## Replication is lagging or has stopped
 
