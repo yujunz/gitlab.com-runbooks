@@ -4,7 +4,7 @@ groups:
   - record: gitaly:grpc_server_handled_total:rate1m
     expr: sum(rate(grpc_server_handled_total[1m])) WITHOUT (fqdn, instance, grpc_code)
   - record: gitaly:grpc_server_handled_total:error_rate1m
-    expr: sum(rate(grpc_server_handled_total{grpc_code!="OK",grpc_code!="Canceled"}[1m])) WITHOUT (fqdn,
+    expr: sum(rate(grpc_server_handled_total{grpc_code!="OK",grpc_code!="Canceled",grpc_code!="NotFound"}[1m])) WITHOUT (fqdn,
       instance)
   - record: gitaly:grpc_server_handled_total:error_avg_rate12h
     expr: avg_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
