@@ -3,7 +3,13 @@
 ## First and foremost
 
 * *Don't Panic*
-* But test things in a local LB
+* Make a plan for how to test your change - breaking things at the front door would be bad:
+  * Test things in a local LB when possible
+  * Get a second set of eyes to look at your change / MR
+
+## Examples - how we have blocked before:
+
+* https://dev.gitlab.org/cookbooks/chef-repo/commit/30744f5b8fce05acf1f13e813526b3d5b3512cd0
 
 ## Background
 
