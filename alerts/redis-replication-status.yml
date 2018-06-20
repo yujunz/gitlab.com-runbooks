@@ -11,5 +11,6 @@ groups:
       description: Redis not replicating for all slaves for more than 5 minutes! Consider
         reviewing the redis replication status
       runbook: troubleshooting/redis_replication.md
-      title: Redis replication not working for {{ $value }} slaves. Master is {{ range
-        query "gitlab:redis_master" }}{{ .Labels.fqdn }}{{ end }}.
+      title: |
+        Redis replication not working for {{ range query "gitlab:redis_disconnected_slaves > 1" }}
+        Possible masters are {{ range query "gitlab:redis_master" }}{{ .Labels.fqdn }}{{ end }}.
