@@ -133,20 +133,24 @@ groups:
       runbook: troubleshooting/gitaly-version-mismatch.md
       title: 'Gitaly: multiple versions of Gitaly are currently running in production'
   - alert: GitalyMethodErrorRateOutlier
-    expr: gitaly:grpc_server_handled_total:error_rate1m{environment="prd",job="gitaly",tier="stor",type="gitaly"}
-      > ON(job, grpc_method, environment) GROUP_LEFT() (gitaly:grpc_server_handled_total:error_avg_rate12h{environment="prd",tier="stor",type="gitaly"}
-      + 2 * gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h{environment="prd",job="gitaly",tier="stor",type="gitaly"})
+    expr: >
+      gitaly:grpc_server_handled_total:error_rate1m{environment="prd"} > 
+      (
+        gitaly:grpc_server_handled_total:error_avg_rate12h{environment="prd"}
+          +
+        (2 * gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h{environment="prd"})
+      )
     for: 5m
     labels:
       channel: gitaly
       severity: warn
     annotations:
-      description: The {{$labels.grpc_code}} error rate on {{ $labels.grpc_method }} is outside normal
-        values over a 12 hour period (95% confidence). Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{
-        $labels.grpc_method }}&var-tier=stor&var-type=gitaly&var-environment=prd&refresh=5m
+      description: >
+        The {{$labels.grpc_code}} error rate on {{ $labels.grpc_method }} is outside normal
+        values over a 12 hour period (95% confidence).
+      dashboard: "https://performance.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{ $labels.grpc_method }}&var-environment=prd"
       runbook: troubleshooting/gitaly-error-rate.md
-      title: 'Gitaly: Error rate on {{ $labels.grpc_method }} is unusually high compared
-        with a 12 hour average'
+      title: 'Gitaly: Error rate on {{ $labels.grpc_method }} is unusually high compared with a 12 hour average'
   - alert: GitalyLatencyOutlier
     expr: avg(gitaly:grpc_server_handling_seconds:avg5m{environment="prd",job="gitaly",tier="stor",type="gitaly"})
       BY (grpc_method) > ON(grpc_method) GROUP_LEFT() (avg(gitaly:grpc_server_handling_seconds:avg24h{environment="prd",job="gitaly",tier="stor",type="gitaly"})
