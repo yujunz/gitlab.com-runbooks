@@ -4,3 +4,4 @@ test:
   script:
     - /prometheus/promtool check rules alerts/*.yml
     - /prometheus/promtool check rules recordings/*.yml
+    - /prometheus/promtool check rules rules/*.yml
