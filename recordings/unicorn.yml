@@ -92,3 +92,16 @@ groups:
 
     - record: job_environment:gitlab_sql_duration_seconds:p99
       expr: histogram_quantile(0.99, job_environment:gitlab_sql_duration_seconds_bucket:rate5m)
+
+- name: Unicorn Gitaly
+  interval: 1m
+  rules:
+    # Gitaly data, per controller/action.
+    - record: controller_action:gitaly_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitaly_controller_action_duration_seconds_bucket[5m])) without(fqdn, instance)
+
+    - record: controller_action:gitaly_duration_seconds:p95
+      expr: histogram_quantile(0.95, controller_action:gitaly_duration_seconds_bucket:rate5m)
+
+    - record: controller_action:gitaly_duration_seconds:p99
+      expr: histogram_quantile(0.99, controller_action:gitaly_duration_seconds_bucket:rate5m)
