@@ -105,3 +105,16 @@ groups:
 
     - record: controller_action:gitaly_duration_seconds:p99
       expr: histogram_quantile(0.99, controller_action:gitaly_duration_seconds_bucket:rate5m)
+
+- name: Unicorn Cache
+  interval: 1m
+  rules:
+    # Cache data, per controller/action.
+    - record: controller_action:gitlab_cache_operation_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_cache_operation_duration_seconds_bucket[5m])) without(fqdn, instance, operation)
+
+    - record: controller_action:gitlab_cache_operation_duration_seconds:p95
+      expr: histogram_quantile(0.95, controller_action:gitlab_cache_operation_duration_seconds_bucket:rate5m)
+
+    - record: controller_action:gitlab_cache_operation_duration_seconds:p99
+      expr: histogram_quantile(0.99, controller_action:gitlab_cache_operation_duration_seconds_bucket:rate5m)
