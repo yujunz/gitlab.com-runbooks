@@ -98,7 +98,7 @@ groups:
   rules:
     # Gitaly data, per controller/action.
     - record: controller_action:gitaly_duration_seconds_bucket:rate5m
-      expr: sum(rate(gitaly_controller_action_duration_seconds_bucket[5m])) without(fqdn, instance, rpc)
+      expr: sum(rate(gitaly_controller_action_duration_seconds_bucket[5m])) without(fqdn, instance, rpc, gitaly_service)
 
     - record: controller_action:gitaly_duration_seconds:p95
       expr: histogram_quantile(0.95, controller_action:gitaly_duration_seconds_bucket:rate5m)
