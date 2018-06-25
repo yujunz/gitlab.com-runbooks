@@ -41,7 +41,7 @@ groups:
       runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
 
   - alert: CICDNoJobsOnSharedRunners
-    expr: sum(ci_runner_builds{job="shared-runners"}) == 0
+    expr: sum(gitlab_runner_jobs{job="shared-runners"}) == 0
     for: 5m
     labels:
       channel: ci-cd
@@ -53,7 +53,7 @@ groups:
         You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci."
 
   - alert: CICDTooManyJobsOnSharedRunners
-    expr: sum(ci_runner_builds{job="shared-runners"}) > 400
+    expr: sum(gitlab_runner_jobs{job="shared-runners"}) > 400
     for: 15m
     labels:
       channel: ci-cd
@@ -80,7 +80,7 @@ groups:
       runbook: troubleshooting/runners_manager_is_down.md
 
   - alert: CICDRunnerMachineCreationRateHigh
-    expr: sum(ci_docker_machines_provider_machine_states{state="creating"}) / (sum(ci_docker_machines_provider_machine_states{state="idle"}) + 1) > 100
+    expr: sum(gitlab_runner_autoscaling_machine_states{executor="docker+machine", state="creating"}) / (sum(gitlab_runner_autoscaling_machine_states{executor="docker+machine", state="idle"}) + 1) > 100
     for: 1m
     labels:
       channel: ci-cd
