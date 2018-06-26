@@ -22,7 +22,7 @@ If you have any idea on how to improve such feedback loop or you are missing any
 * One storage node: `nfs5.staging.gitlab.com`
 
 Access to staging environment is treated the same as production as per
-[handbook](https://about.gitlab.com/handbook/infrastructure/#production-and-staging-access).
+[handbook](https://about.gitlab.com/handbook/engineering/infrastructure/#production-and-staging-access).
 
 ## Run a rails console in staging environment
 
