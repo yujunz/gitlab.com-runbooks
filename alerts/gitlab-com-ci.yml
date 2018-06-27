@@ -28,15 +28,27 @@ groups:
         Check https://performance.gitlab.net/dashboard/db/ci?panelId=33&fullscreen'
       runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
 
-  - alert: CICDTooManyRunningJobsPerNamespace
-    expr: max(sum(ci_running_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runner="yes"}) by (fqdn,namespace)) by (namespace) > 200
-    for: 1m
+  - alert: CICDTooManyRunningJobsPerNamespaceOnSharedRunners
+    expr: max(sum(ci_running_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runner="yes",runner=~"40786|40788|44028|44949|380986|380987"}) by (fqdn,namespace)) by (namespace) > 250
+    for: 5m
     labels:
       channel: ci-cd
       severity: warn
     annotations:
       title: 'Number of running jobs per namespace too high: {{$value}}'
-      description: 'Hey <!subteam^S940BK2TV|cicdops>! Number of running jobs for namespace {{$labels.namespace}} is too high: {{$value}}.
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! Number of running jobs for namespace {{$labels.namespace}} running on regular Shared Runners is too high: {{$value}}.
+        Check https://performance.gitlab.net/dashboard/db/ci?panelId=60&fullscreen'
+      runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
+
+  - alert: CICDTooManyRunningJobsPerNamespaceOnSharedRunnersGitLabOrg
+    expr: max(sum(ci_running_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runner="yes",runner=~"37397|37398|157328|157329|380989|380990"}) by (fqdn,namespace)) by (namespace) > 250
+    for: 10m
+    labels:
+      channel: ci-cd
+      severity: warn
+    annotations:
+      title: 'Number of running jobs per namespace too high: {{$value}}'
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! Number of running jobs for namespace {{$labels.namespace}} running on gitlab-org Shared Runners is too high: {{$value}}.
         Check https://performance.gitlab.net/dashboard/db/ci?panelId=60&fullscreen'
       runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
 
@@ -53,13 +65,13 @@ groups:
         You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci."
 
   - alert: CICDTooManyJobsOnSharedRunners
-    expr: sum(gitlab_runner_jobs{job="shared-runners"}) > 400
+    expr: sum(gitlab_runner_jobs{job="shared-runners"}) > 500
     for: 15m
     labels:
       channel: ci-cd
       severity: warn
     annotations:
-      title: Number of jobs running on shared runners is over 400 for the last 15
+      title: Number of jobs running on shared runners is over 500 for the last 15
         minutes
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
         abusive usage of Runners. Check https://performance.gitlab.net/dashboard/db/ci
