@@ -53,11 +53,10 @@ groups:
   - alert: PostgreSQL_RollbackRateTooHigh
     expr: rate(pg_stat_database_xact_rollback{datname="gitlabhq_production"}[5m])
       / ON(instance, datname) rate(pg_stat_database_xact_commit{datname="gitlabhq_production",environment="prd"}[5m])
-      > 0.02
+      > 0.1
     for: 5m
     labels:
-      pager: pagerduty
-      severity: critical
+      severity: warn
       channel: database
     annotations:
       description: Ratio of transactions being aborted compared to committed is {{
