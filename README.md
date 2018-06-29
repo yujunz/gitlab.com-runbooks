@@ -194,6 +194,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [Setup oauth2-proxy protection for web based application](howto/setup-oauth2-proxy-protected-application.md)
 * [Register new domain(s)](howto/domain-registration.md)
+* [Setup and Use my Yubikey](howto/yubikey.md)
 
 ## Gitter
 
