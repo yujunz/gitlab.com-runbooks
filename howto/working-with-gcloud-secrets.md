@@ -3,6 +3,7 @@
 # Prechecks
 
 - Install and configure the [Google Cloud SDK](https://cloud.google.com/sdk/docs/)
+- [Set up access for gcloud CLI](gcloud-cli.md)
 - Ensure you have access to the relevant Google Cloud Platform project
 - Ensure you have permissions for Storage, KMS and IAM on the relevant Google Cloud Platform project
 

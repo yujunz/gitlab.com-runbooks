@@ -1,6 +1,6 @@
 # Chef secrets using GKMS
 
-In general, gkms secrets replace chef vaults, these are data bag items which have been encrypted. The chef vault conventions remain the same, an `<vault> <item>`. 
+In general, gkms secrets replace chef vaults, these are data bag items which have been encrypted. The chef vault conventions remain the same, an `<vault> <item>`.
 
 ## Using gkms secrets in cookbooks
 
@@ -66,4 +66,4 @@ To show secrets for the same vault
 ./bin/gkms-vault-show gitlab-elk gstg
 ```
 
-Note: you will need gcloud setup and access to the appropriate project.
+Note: you will need [gcloud setup](gcloud-cli.md) and access to the appropriate project.
