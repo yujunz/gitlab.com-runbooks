@@ -61,29 +61,33 @@ gstg environments are forwarded to log.gitlab.net.
 
 ### What are we logging?
 
-**Note that the retention here is for elasticsearch, all logs listed below are also stored in stackdriver for 30 days, and object storage for a minimum of 180days**
 
-| name | logfile  | type  | index | retention(d) |
-| -----| -------- |------ | ----- | --------- |
-| gitaly | gitaly/current | JSON | pubsub-gitaly-inf | 1
-| pages | gitlab-pages/current | JSON | pubsub-pages-inf | 5
-| db.postgres | postgresql/current | line regex | pubsub-postgres-inf | 5
-| db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf | 5
-| workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf | 2
-| rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf | 5
-| rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf | 5
-| rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf | 5
-| rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf | 5
-| shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf | 5
-| unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf | 5
-| unicorn.stderr | /var/log/gitlab/unicorn/unicorn\_stderr.log | line regex | pubsub-unicorn-inf | 5
-| unicorn.stdout | /var/log/gitlab/unicorn/unicorn\_stdout.log | line regex | pubsub-unicorn-inf | 5
-| unstructured.production | gitlab-rails/production.log | lines | pubsub-unstructured-inf | 5
-| sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf | 5
-| haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf | 1
-| nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf | 5
-| system.auth | /var/log/auth.log | syslog | pubsub-system-inf | 5
-| system.syslog | /var/log/syslog | syslog | pubsub-system-inf | 5
+**All logs listed below are also stored in stackdriver for 30 days, and object storage for a minimum of 180days**
+
+For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitlab-restore/esc-tools/blob/master/cleanup_indices.sh
+
+
+| name | logfile  | type  | index |
+| -----| -------- |------ | ----- |
+| gitaly | gitaly/current | JSON | pubsub-gitaly-inf
+| pages | gitlab-pages/current | JSON | pubsub-pages-inf
+| db.postgres | postgresql/current | line regex | pubsub-postgres-inf
+| db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf
+| workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf
+| rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf
+| rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf
+| rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf
+| rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf
+| shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf
+| unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf
+| unicorn.stderr | /var/log/gitlab/unicorn/unicorn\_stderr.log | line regex | pubsub-unicorn-inf
+| unicorn.stdout | /var/log/gitlab/unicorn/unicorn\_stdout.log | line regex | pubsub-unicorn-inf
+| unstructured.production | gitlab-rails/production.log | lines | pubsub-unstructured-inf
+| sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf
+| haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf
+| nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf
+| system.auth | /var/log/auth.log | syslog | pubsub-system-inf
+| system.syslog | /var/log/syslog | syslog | pubsub-system-inf
 
 
 ### FAQ
