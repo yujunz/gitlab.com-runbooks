@@ -2,7 +2,7 @@ groups:
 - name: nfs-down.rules
   rules:
   - alert: GitNFSServerDown
-    expr: up{environment="prd",fqdn=~"nfs-file-.*",job="node"} == 0
+    expr: up{environment=~"g?prd",fqdn=~"nfs-file-.*",job="node"} == 0
     for: 2m
     labels:
       pager: pagerduty
@@ -13,7 +13,7 @@ groups:
       runbook: troubleshooting/nfs-server.md
       title: Git NFS Server {{$labels.instance}} is down
   - alert: FileNFSServerDown
-    expr: up{environment="prd",fqdn!="file-storage1.cluster.gitlab.com",job="node",tier="stor",type!="gitaly"}
+    expr: up{environment=~"g?prd",fqdn!="file-storage1.cluster.gitlab.com",job="node",tier="stor",type!="gitaly"}
       == 0
     for: 2m
     labels:

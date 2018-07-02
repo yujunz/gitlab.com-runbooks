@@ -80,7 +80,7 @@ groups:
       title: CPU use percent is unusually high compared with the rate of the last
         hour
   - alert: FleetSizeChanged
-    expr: changes(instance:up:count{environment="prd"}[5m]) >= 1
+    expr: changes(instance:up:count{environment=~"g?prd"}[5m]) >= 1
     for: 15m
     labels:
       channel: production

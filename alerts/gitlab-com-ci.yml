@@ -216,9 +216,9 @@ groups:
   - alert: CICDJobQueueDurationUnderperformant
     expr: |
       (
-        sum(increase(job_queue_duration_seconds_bucket{environment="prd", shared_runner="true", jobs_running_for_project="0", le="10"}[5m]))
+        sum(increase(job_queue_duration_seconds_bucket{environment=~"g?prd", shared_runner="true", jobs_running_for_project="0", le="10"}[5m]))
         /
-        sum(increase(job_queue_duration_seconds_count{environment="prd", shared_runner="true", jobs_running_for_project="0"}[5m]))
+        sum(increase(job_queue_duration_seconds_count{environment=~"g?prd", shared_runner="true", jobs_running_for_project="0"}[5m]))
       ) < 0.8
     for: 5m
     labels:

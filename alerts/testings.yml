@@ -2,7 +2,7 @@ groups:
 - name: testing.rules
   rules:
   - alert: HawaiianHugs24
-    expr: node_load1{environment="prd",job="node",type="git"} > 1000
+    expr: node_load1{environment=~"g?prd",job="node",type="git"} > 1000
     for: 1m
     labels:
       severity: critical
@@ -12,7 +12,7 @@ groups:
       something_else: "this annotation will be common to all, so it should be shown anyway"
       title: This is the git nodes doing things
   - alert: HawaiianHugs25
-    expr: node_load1{environment="prd",job="node",type="api"} > 1000
+    expr: node_load1{environment=~"g?prd",job="node",type="api"} > 1000
     for: 1m
     labels:
       severity: warn

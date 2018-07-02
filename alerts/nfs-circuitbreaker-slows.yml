@@ -2,7 +2,7 @@ groups:
 - name: nfs-circuitbreaker-slow.rules
   rules:
   - alert: NfsCircuitBreakerSlow
-    expr: filesystem_circuitbreaker_latency_seconds{environment="prd"} > 5
+    expr: filesystem_circuitbreaker_latency_seconds{environment=~"g?prd"} > 5
     for: 5m
     labels:
       channel: production

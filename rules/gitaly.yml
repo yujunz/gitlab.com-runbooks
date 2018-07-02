@@ -55,7 +55,7 @@ groups:
     expr: sum(gitaly_rate_limiting_queued) by (environment, grpc_method, job)
   # Alerts
   - alert: GitalyErrorRateTooHigh
-    expr: gitaly:grpc_server_handled_total:error_rate1m{environment="prd"} > 2
+    expr: gitaly:grpc_server_handled_total:error_rate1m{environment=~"g?prd"} > 2
     for: 5m
     labels:
       channel: gitaly
@@ -66,7 +66,7 @@ groups:
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
   - alert: GitalyInstanceErrorRateTooHigh
-    expr: gitaly:grpc_server_handled_total:instance_error_rate1m{environment="prd"}
+    expr: gitaly:grpc_server_handled_total:instance_error_rate1m{environment=~"g?prd"}
       > 5
     for: 5m
     labels:
@@ -78,7 +78,7 @@ groups:
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
   - alert: GitalyFileServerDown
-    expr: up{environment="prd",job="gitaly",tier="stor",type="gitaly"} == 0
+    expr: up{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"} == 0
     for: 1m
     labels:
       pager: pagerduty
@@ -90,7 +90,7 @@ groups:
       runbook: troubleshooting/gitaly-down.md
       title: Gitaly is down on {{ $labels.fqdn }}
   - alert: GitalyFileServerCPUUsage
-    expr: avg(process_cpu_seconds_total:rate1m{environment="prd",job="gitaly",tier="stor",type="gitaly"})
+    expr: avg(process_cpu_seconds_total:rate1m{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"})
       BY (fqdn) / avg(instance:node_cpus:count{tier="stor",type="gitaly"}) BY (fqdn)
       > 0.5
     for: 1m
@@ -104,7 +104,7 @@ groups:
       runbook: troubleshooting/gitaly-high-cpu.md
       title: 'Gitaly: High CPU usage on {{ $labels.fqdn }}'
   - alert: GitalyVersionMismatch
-    expr: count(sum(gitlab_build_info{environment="prd",tier="stor",type="gitaly"})
+    expr: count(sum(gitlab_build_info{environment=~"g?prd",tier="stor",type="gitaly"})
       BY (version) > 0) == 2
     for: 30m
     labels:
@@ -119,7 +119,7 @@ groups:
       title: 'Gitaly: two versions of Gitaly have been running alongside one another
         in production for more than 30 minutes'
   - alert: GitalyVersionMismatchSevere
-    expr: count(sum(gitlab_build_info{environment="prd",tier="stor",type="gitaly"})
+    expr: count(sum(gitlab_build_info{environment=~"g?prd",tier="stor",type="gitaly"})
       BY (version) > 0) > 2
     for: 1m
     labels:
@@ -134,11 +134,11 @@ groups:
       title: 'Gitaly: multiple versions of Gitaly are currently running in production'
   - alert: GitalyMethodErrorRateOutlier
     expr: >
-      gitaly:grpc_server_handled_total:error_rate1m{environment="prd"} > 
+      gitaly:grpc_server_handled_total:error_rate1m{environment=~"g?prd"} >
       (
-        gitaly:grpc_server_handled_total:error_avg_rate12h{environment="prd"}
+        gitaly:grpc_server_handled_total:error_avg_rate12h{environment=~"g?prd"}
           +
-        (2 * gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h{environment="prd"})
+        (2 * gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h{environment=~"g?prd"})
       )
     for: 5m
     labels:
@@ -152,8 +152,8 @@ groups:
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly: Error rate on {{ $labels.grpc_method }} is unusually high compared with a 12 hour average'
   - alert: GitalyLatencyOutlier
-    expr: avg(gitaly:grpc_server_handling_seconds:avg5m{environment="prd",job="gitaly",tier="stor",type="gitaly"})
-      BY (grpc_method) > ON(grpc_method) GROUP_LEFT() (avg(gitaly:grpc_server_handling_seconds:avg24h{environment="prd",job="gitaly",tier="stor",type="gitaly"})
+    expr: avg(gitaly:grpc_server_handling_seconds:avg5m{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"})
+      BY (grpc_method) > ON(grpc_method) GROUP_LEFT() (avg(gitaly:grpc_server_handling_seconds:avg24h{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"})
       BY (grpc_method) + 2 * avg(gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h)
       BY (grpc_method))
     for: 5m
