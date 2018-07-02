@@ -112,3 +112,14 @@ groups:
       description: Kernel versions are deviating across fleet, see https://performance.gprd.gitlab.net/d/UMGelaGiz/gitlab-kernel-versions for details
       runbook: https://gitlab.com/gitlab-com/infrastructure/issues/4221
       title: 'Different kernel versions are running in production for an hour'
+  - alert: CPUStalls
+    expr: rate(rcu_sched_stalls_total[1m]) > 0
+    for: 10m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      description: The node is encountering RCU CPU stall warnings, which may cause the node to lock up occasionally.
+        Check `/var/log/kern.log` for more details. You may need to contact the cloud provider and possibly redeploy the VM.
+      title: CPU stall warnings have been detected on {{ if $labels.fqdn }}{{ $labels.fqdn }}
+        {{ else }}{{ $labels.instance }}{{ end }} for the past 10 minutes.
