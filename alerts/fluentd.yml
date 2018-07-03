@@ -1,0 +1,13 @@
+groups:
+- name: fluentd.rules
+  rules:
+    - alert: TD-AgentDown
+      expr: up{environment=~"g?prd",job="fluentd"} == 0
+      for: 5m
+      labels:
+        severity: warn
+      annotations:
+        title: td-agent is down on {{$labels.instance}}
+        description: |
+          Consider running `sudo service td-agent start`,
+          check `/var/log/td-agent/td-agent.log` for any errors.
