@@ -90,6 +90,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 * [Common tasks to perform while on-call](howto/oncall.md)
 
+### Access Requests
+
+* [Deal with various kinds of access requests](howto/access-requests.md)
+
 ### Deploy
 
 * [Announce a deployment](https://gitlab.com/gitlab-org/takeoff/blob/master/doc/announce-a-deployment.md)
