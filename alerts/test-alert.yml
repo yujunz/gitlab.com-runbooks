@@ -1,0 +1,16 @@
+groups:
+- name: test-alert
+  rules:
+  - alert: TestAlert
+    expr: (probe_success{instance="https://gitlab.com/gitlab-com/infrastructure/raw/master/alert-test"} == 0)
+    for: 1m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      title: The alert test file is missing!
+      description: |
+        Test alert is firing! This means that
+        https://gitlab.com/gitlab-com/infrastructure/blob/master/alert-test is missing
+        or gitlab.com is unavailable.
+      runbook: ""
