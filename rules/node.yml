@@ -1,5 +1,5 @@
 groups:
-- name: node.rules
+- name: CPU rules
   rules:
   - record: instance:node_cpus:count
     expr: count(node_cpu{mode="idle"}) WITHOUT (cpu, mode)
@@ -15,6 +15,45 @@ groups:
     expr: sum(rate(node_cpu_seconds_total[5m])) WITHOUT (cpu)
   - record: instance:node_cpu_in_use:ratio
     expr: sum(instance_mode:node_cpu:rate5m{mode!="idle"}) WITHOUT (mode) / instance:node_cpus:count
+  - alert: ExtremelyHighCPU
+    expr: instance:node_cpu_in_use:ratio{environment=~"prd|cny"} > 0.95
+    for: 2h
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
+        }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
+      runbook: troubleshooting
+      title: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
+        }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
+  - alert: HighCPU
+    expr: instance:node_cpu_in_use:ratio{environment=~"prd|cny"} > 0.8
+    for: 2h
+    labels:
+      severity: critical
+    annotations:
+      description: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
+        }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
+      runbook: troubleshooting
+      title: CPU use percent is high on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{
+        else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
+  - alert: CPUOutlierDetectionOnPrd
+    expr: instance:node_cpu_in_use:percent5m{environment=~"prd|cny"} >= ON(job, fqdn,
+      environment) GROUP_LEFT() (clamp_max(instance:node_cpu_in_use:percent1h + 2
+      * instance:node_cpu_in_use:percent_stddev_over_time1h, 1))
+    for: 10m
+    labels:
+      severity: warn
+    annotations:
+      description: The CPU usage on {{ if $labels.fqdn }}{{ $labels.fqdn }}{{ else
+        }}{{ $labels.instance }}{{ end }} is outside normal values over a 1h period
+      runbook: troubleshooting
+      title: CPU use percent is unusually high compared with the rate of the last
+        hour
+
+- name: Node filesystem rules
+  rules:
   - record: instance:node_filesystem_avail:ratio
     expr: node_filesystem_avail{device=~"/dev/.+"} / node_filesystem_size{device=~"/dev/.+"}
   - record: instance:node_filesystem_avail:ratio
@@ -27,7 +66,96 @@ groups:
     expr: sum(irate(node_disk_reads_completed{device=~"sd.*"}[1m])) WITHOUT (device)
   - record: instance:node_disk_reads_completed:irate1m
     expr: sum(irate(node_disk_reads_completed_total{device=~"sd.*"}[1m])) WITHOUT (device)
-  - record: instance:up:count
-    expr: count(up{job="node",type!=""} == 1) WITHOUT (instance, fqdn)
   - record: instance:node_memory_available:ratio
     expr: (node_memory_MemFree + node_memory_Buffers + node_memory_Cached) / node_memory_MemTotal
+  - alert: LowDiskSpace
+    expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs)",job="node"} * 100 <= 10
+    for: 15m
+    labels:
+      severity: warn
+    annotations:
+      title: 'Less than 10% disk space left'
+      description: |
+        Consider sshing into the instance and removing old logs, clean
+        temp files, or remove old apt packages with `apt-get autoremove`
+      runbook: troubleshooting/filesystem_alerts.md
+      value: '{{ $value | humanize }}%'
+      device: '{{ $labels.device }}%'
+      mount_point: '{{ $labels.mountpoint }}%'
+  - alert: NoDiskSpace
+    expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs)",job="node"} * 100 <= 1
+    for: 15m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      title: '1% disk space left'
+      description: "There's only 1% disk space left"
+      runbook: troubleshooting/filesystem_alerts.md
+      value: '{{ $value | humanize }}%'
+      device: '{{ $labels.device }}%'
+      mount_point: '{{ $labels.mountpoint }}%'
+  - alert: HighInodeUsage
+    expr: node_filesystem_files_free{fstype=~"(ext.|xfs)",job="node"} / node_filesystem_files{fstype=~"(ext.|xfs)",job="node"}
+      * 100 <= 20
+    for: 15m
+    labels:
+      severity: critical
+    annotations:
+      title: "High number of inode usage"
+      description: |
+        "Consider ssh'ing into the instance and removing files or clean
+        temp files"
+      runbook: troubleshooting/filesystem_alerts_inodes.md
+      value: '{{ $value | printf "%.2f" }}%'
+      device: '{{ $labels.device }}%'
+      mount_point: '{{ $labels.mountpoint }}%'
+
+- name: Misc rules
+  rules:
+  - record: instance:up:count
+    expr: count(up{job="node",type!=""} == 1) WITHOUT (instance, fqdn)
+  - alert: FleetSizeChanged
+    expr: changes(instance:up:count{environment=~"g?prd"}[5m]) >= 1
+    for: 15m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      description: The {{ $labels.type }} fleet has changed, this can be due to having
+        more or less, if it's the latter it can be because nodes went down silently
+      runbook: troubleshooting
+      title: The fleet size has changed in the last 5 minutes
+  - alert: HighMemoryPressure
+    expr: instance:node_memory_available:ratio * 100 < 5 and rate(node_vmstat_pgmajfault[1m]) > 1000
+    for: 15m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      description: The node is under heavy memory pressure.  The available memory is under 5% and
+        there is a high rate of major page faults.
+      runbook: troubleshooting/node_memory_alerts.md
+      value: 'Available memory {{ $value | printf "%.2f" }}%'
+      title: Node is under heavy memory pressure
+  - alert: KernelVersionDeviations
+    expr: count(sum(label_replace(node_uname_info{environment=~"gprd"}, "kernel", "$1", "release", "([0-9]+.[0-9]+.[0-9]+).*")) by (kernel)) > 1
+    for: 30m
+    labels:
+      channel: alerts-gprd
+      severity: warn
+    annotations:
+      description: Kernel versions are deviating across fleet, see https://performance.gprd.gitlab.net/d/UMGelaGiz/gitlab-kernel-versions for details
+      runbook: https://gitlab.com/gitlab-com/infrastructure/issues/4221
+      title: 'Different kernel versions are running in production for an hour'
+  - alert: CPUStalls
+    expr: rate(rcu_sched_stalls_total[1m]) > 0
+    for: 10m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      description: The node is encountering RCU CPU stall warnings, which may cause the node to lock up occasionally.
+        Check `/var/log/kern.log` for more details. You may need to contact the cloud provider and possibly redeploy the VM.
+      title: CPU stall warnings have been detected on {{ if $labels.fqdn }}{{ $labels.fqdn }}
+        {{ else }}{{ $labels.instance }}{{ end }} for the past 10 minutes.
