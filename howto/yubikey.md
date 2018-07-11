@@ -316,7 +316,7 @@ sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
 
 ## Generate your SSH Public Key
 ```
-> gpgkey2ssh FAEFD83E
+> gpg --export-ssh-key FAEFD87E
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABA ... COMMENT
 ```
 
@@ -334,9 +334,8 @@ Your `gpg-agent.conf` should look something like
 $ cat ~/.gnupg/gpg-agent.conf
 default-cache-ttl 600
 max-cache-ttl 7200
-pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac
+pinentry-program /usr/local/bin/pinentry-mac
 enable-ssh-support
-write-env-file
 ```
 
 ## Ensure your environment knows how to authenticate SSH
