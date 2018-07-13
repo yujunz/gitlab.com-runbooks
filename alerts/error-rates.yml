@@ -3,13 +3,18 @@ groups:
   rules:
   - record: environment_type:rails_request_errors:ratio
     expr: sum by (type,environment)(rate(rails_requests_completed{status=~"5.."}[1m])) / sum by (type,environment)(rate(rails_requests_completed[1m]))
+  # The threshold for HighRailsErrorRate should be lowered to .5 after:
+  #   * exception: https://gitlab.com/gitlab-org/release/tasks/issues/333
+  #   * MR: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/20565
+  # is on production.
   - alert: HighRailsErrorRate
-    expr: environment_type:rails_request_errors:ratio{environment=~"g?prd"} * 100 > .5
+    expr: environment_type:rails_request_errors:ratio{environment=~"g?prd"} * 100 > 2
+    for: 5m
     labels:
       pager: pagerduty
       severity: critical
     annotations:
-      description: Rails is returning 5xx errors at a high rate for {{ $labels.type }} . Traffic is impacted and users are likely seeing 500 errors.
+      description: Rails is returning 5xx errors at a high rate for {{ $labels.type }} for at least 5minutes. Traffic is impacted and users are likely seeing 500 errors.
       runbook: troubleshooting/gitlab-com-is-down.md
       title: High Rails Error Rate on Front End
   - alert: HighWebErrorRate
