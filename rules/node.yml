@@ -67,7 +67,9 @@ groups:
   - record: instance:node_disk_reads_completed:irate1m
     expr: sum(irate(node_disk_reads_completed_total{device=~"sd.*"}[1m])) WITHOUT (device)
   - record: instance:node_memory_available:ratio
-    expr: (node_memory_MemFree + node_memory_Buffers + node_memory_Cached) / node_memory_MemTotal
+    expr: (node_memory_MemAvailable / node_memory_MemTotal) or ((node_memory_MemFree + node_memory_Buffers + node_memory_Cached) / node_memory_MemTotal)
+  - record: instance:node_memory_available:ratio
+    expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) or ((node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes) / node_memory_MemTotal_bytes)
   - alert: LowDiskSpace
     expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs)",job="node"} * 100 <= 10
     for: 15m
