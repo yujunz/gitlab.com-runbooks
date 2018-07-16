@@ -1,0 +1,87 @@
+groups:
+- name: GitLab Service operations-per-second rates
+  interval: 1m
+  rules:
+  # Postgres Service
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'postgres'
+    expr: >
+      sum by (environment, tier, type) (rate(pg_stat_database_xact_commit{tier="db", type="postgres"}[1m]))
+      +
+      sum by (environment, tier, type) (rate(pg_stat_database_xact_rollback{tier="db", type="postgres"}[1m]))
+  # Redis Service
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'redis'
+    expr: >
+      sum by (environment, tier, type) (redis_instantaneous_ops_per_sec)
+  # Registry Service
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'registry'
+      type: 'registry'
+      tier: 'sv'
+    expr: >
+      sum by (environment) (haproxy_backend_current_session_rate{backend="registry"})
+  # gitlab_shell
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'gitlab_shell'
+      type: 'gitlab_shell'
+      tier: 'sv'
+    expr: >
+      sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
+  # web
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'web'
+    expr: >
+      sum by (environment, tier, type) (rate(gitlab_workhorse_request_duration_seconds_sum{job=~"gitlab-workhorse-web"}[1m]))
+  # api
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'api'
+    expr: >
+      sum by (environment, tier, type) (rate(gitlab_workhorse_request_duration_seconds_sum{job=~"gitlab-workhorse-api"}[1m]))
+  # sidekiq
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'sidekiq'
+    expr: >
+      sum by (environment, tier, type) (rate(gitlab_transaction_duration_seconds_count{type = "sidekiq"}[1m]))
+  # mailroom
+  # TODO: zero placeholder as we have no metrics for mailroom at present
+  - record: gitlab_service_ops:rate
+    labels:
+     service: 'mailroom'
+    expr: >
+      count by (environment, tier, type) (up{type="mailroom"}) - count by (environment, tier, type) (up{type="mailroom"})
+  # pgbouncer
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'pgbouncer'
+    expr: >
+      sum by (environment, tier, type) (rate(pgbouncer_stats_queries_total[1m]))
+  # gitaly
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'gitaly'
+    expr: >
+      sum by (environment, tier, type) (rate(grpc_server_started_total{type="gitaly"}[1m]))
+  # pages
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'pages'
+      type: 'pages'
+      tier: 'sv'
+    expr: >
+      sum by (environment) (haproxy_backend_current_session_rate{backend=~"pages_.*"})
+  # HAProxy
+  - record: gitlab_service_ops:rate
+    labels:
+      service: 'haproxy'
+      type: 'haproxy'
+      tier: 'lb'
+    expr: >
+      sum by (environment) (haproxy_frontend_current_sessions)
