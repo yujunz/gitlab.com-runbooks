@@ -42,4 +42,4 @@ Prioritise the termination of `git` processes in the following order:
 * **Other Long Running Git Processes**:
   * ``` pgrep -u git git | xargs ps -o pcpu,pid,ppid,args,etime --sort -etime -p``` 
   * This may also help: ```ps -u git -o pcpu,pid,ppid,args,etime --sort -etime --forest```
-  
+  * Show the Gitaly process hierarchy, ordered by longest running processes first ```ps -u git -fwwwwH  --sort=-start```
