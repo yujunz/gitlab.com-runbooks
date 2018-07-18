@@ -17,12 +17,11 @@ access VMs you will need to configure you ssh client to use the bastion hosts.
 
 Logs for gprd & gstg:
 
-- https://log.gitlab.net
+- https://log.gitlab.net ([read](logging.md) on how to filter logs per environment)
 
 Grafana:
 
-- gprd: https://performance.gprd.gitlab.net/
-- gstg: https://performance.gstg.gitlab.net/
+- https://dashboards.gitlab.net/
 
 Prometheus:
 
