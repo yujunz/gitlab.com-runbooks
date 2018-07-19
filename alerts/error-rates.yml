@@ -60,14 +60,14 @@ groups:
   - alert: High4xxRateLimitGCP
     expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="4xx",environment=~"gprd",tier="lb"})
       / sum(backend_code:haproxy_server_http_responses_total:irate1m{environment=~"gprd",tier="lb"})
-      > 0.5
+      > 0.6
     for: 5m
     labels:
       pager: pagerduty
       severity: critical
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing across
-        all backends, more than 50% of http requests for at least 5 minutes. Check the registry nodes
+        all backends, more than 60% of http requests for at least 5 minutes. Check the registry nodes
         since they are the ones processing live traffic at the moment.
       runbook: troubleshooting
       title: High 4xx Error Rate on Front End Web
