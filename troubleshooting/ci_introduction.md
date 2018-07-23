@@ -36,4 +36,4 @@ Let's shortly describe data flow and most crucial components of Shared Runners s
 
 ### Creating machines
 
-Runner Manager does manage Machines as described in this document: https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/blob/master/docs/configuration/autoscale.md#autoscaling-algorithm-and-parameters.
+Runner Manager does manage Machines as described in this document: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/configuration/autoscale.md#autoscaling-algorithm-and-parameters.
