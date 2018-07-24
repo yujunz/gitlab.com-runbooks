@@ -1,11 +1,10 @@
 # Configuring and Using the Yubikey
 
-## Basic Setup
+## Requirements
+* `gpg2`
+* `yubikey-personalization`
 
-We need some tools to modify our Yubikey
-```
-brew install yubikey-personalization
-```
+For this guide, when using linux, substitute `gpg` with `gpg2`
 
 Make sure your Yubikey is inserted - and let's get ready to have some fun!
 
@@ -83,7 +82,7 @@ gpg/card> quit
 
 ## Master Key Storage
 
-We want to keep the master key offline, encrypted, and storred in a super-secret-hiding-place.
+We want to keep the master key offline, encrypted, and stored in a super-secret-hiding-place.
 We'll facilitate this by creating an encrypted portable drive on a USB drive.
 For the purpose of this tutorial our USB drive will be called 'transit' and our
 encrypted volume will be called 'GitLab'.
@@ -174,7 +173,7 @@ uid                  John Rando <rando@gitlab.com>
 ```
 
 Now that we have a master key, a good practice is to generate a revocation 
-certificate in the event that we lose the poassword or the key is compromised.
+certificate in the event that we lose the password or the key is compromised.
 
 ```
 > gpg --gen-revoke FAEFD83E > /Volumes/GitLab/gpg_config/FAEFD83E-revocation-certificate.asc
@@ -210,7 +209,7 @@ your machine might store the data and make it available to others!
 ```
 
 ## Generating Subkeys
-We'll use subkeys that are generated on the Yubiikey device itself. Keys generated
+We'll use subkeys that are generated on the Yubikey device itself. Keys generated
 on the Yubikey cannot be copied off, so loss or destruction of the device will 
 mean key rotation.
 
@@ -326,9 +325,49 @@ Open up the GPG Keychain app and import the public key that you just created
 into your regular keychain. Set the Ownertrust to Ultimate on the public key
 you've imported.
 
+Or in a fresh terminal we can:
+```
+> gpg2 --import-key /Volumes/GitLab/gpg_config/FAEFD83E.asc
+gpg: key FAEFD83E: public key imported
+gpg: Total number processed: 1
+gpg:               imported: 1
+
+> gpg2 --edit-key FAEFD83E
+Secret subkeys are available.
+
+pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2018-08-25  usage: C
+                     trust: ultimate      validity: ultimate
+sub  4096R/AE86E89B  created: 2017-08-25  expires: 2018-08-25  usage: E
+sub  4096R/79BF274F  created: 2017-08-25  expires: 2018-08-25  usage: S
+sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
+[ultimate] (1). John Rando <rando@gitlab.com>
+
+gpg> trust
+pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2018-08-25  usage: C
+                     trust: ultimate      validity: ultimate
+sub  4096R/AE86E89B  created: 2017-08-25  expires: 2018-08-25  usage: E
+sub  4096R/79BF274F  created: 2017-08-25  expires: 2018-08-25  usage: S
+sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
+[ultimate] (1). John Rando <rando@gitlab.com>
+
+Please decide how far you trust this user to correctly verify other users' keys
+(by looking at passports, checking fingerprints from different sources, etc.)
+
+  1 = I don't know or won't say
+  2 = I do NOT trust
+  3 = I trust marginally
+  4 = I trust fully
+  5 = I trust ultimately
+  m = back to the main menu
+
+Your decision? 5
+Do you really want to set this key to ultimate trust? (y/N) y
+gpg> quit
+```
+
 ## Ensure proper options are set in gpg-agent.conf
 
-Your `gpg-agent.conf` should look something like 
+Your `gpg-agent.conf` should look something **like** 
 
 ```
 $ cat ~/.gnupg/gpg-agent.conf
@@ -339,15 +378,21 @@ enable-ssh-support
 ```
 
 ## Ensure your environment knows how to authenticate SSH
+* Insert one of the following into your `rc` file
 
+* On OSX you'll need this:
 ```
-$ cat ~/.zshrc
 export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
+```
+
+* On Linux you'll need this:
+```
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 ```
 
 ## Script to Reset gpg-agent and ssh-agent
 
-This script will reset `gpg-agent` and `ssh-agent` after you make the
+On OSX, use this script will reset `gpg-agent` and `ssh-agent` after you make the
 above updates to `gpg-agent.conf`.
 
 ```
@@ -376,3 +421,16 @@ echo
 echo "All done. Now unplug / replug the NEO token."
 echo
 ```
+
+On Linux modify the `gpg-agent` with the following: `gpgconf --launch gpg-agent`
+
+## Personal Cleanup
+* If you have anything inside of your own dot files or system configuration that
+  may startup the ssh-agent, disable it
+* If you have anything that starts up the `gpg-agent`, ensure the options reflect
+  the work we've accomplished above
+* A good short test to validate all is well, when adding ssh keys (such as your
+  git ssh key), should work just fine, as well as a listing `ssh-add -l`
+
+## Reference Material
+* https://github.com/drduh/YubiKey-Guide#21-install---linux
