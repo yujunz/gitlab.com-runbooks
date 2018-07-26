@@ -1,6 +1,7 @@
 groups:
 - name: registry-gitlab-com-status.rules
   rules:
+
   - alert: RegistryDown
     expr: probe_http_status_code{instance="registry.gitlab.com",job="blackbox-ssl"}
       != 200
@@ -13,3 +14,35 @@ groups:
         is not responding, we are investigating the root cause.' if problem exists.
       runbook: troubleshooting/gitlab-registry.md
       title: GitLab Registry is down for 1 minute
+
+  - alert: Detecting5xxForRegistry
+    expr: |
+      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="5xx",environment=~"g?prd",tier="lb"}) >0
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: |
+        Haproxy is seeing/reporting 5xx HTTP responses.  Investigate the following
+          * The Registry is taking too long to respond
+          * The Registry is down
+          * The Registry is throwing Errors
+      runbook: troubleshooting/gitlab-registry.md
+      title: 5xx Error Rate on Docker Registry Load Balancers
+
+  - alert: High4xxRateForRegistry
+    expr: |
+      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="4xx",environment=~"g?prd",tier="lb"})
+      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",environment=~"g?prd",tier="lb"})
+      > 0.6
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: We are seeing an increase of 4xx errors on the load balancing across
+        all backends, more than 60% of http requests for at least 5 minutes. Check the registry nodes
+        since they are the ones processing live traffic at the moment.
+      runbook: troubleshooting/gitlab-registry.md
+      title: High 4xx Error Rate on Docker Registry

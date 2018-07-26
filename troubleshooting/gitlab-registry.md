@@ -6,6 +6,8 @@ GitLab registry is not responding or returns not 200 OK statuses.
 
 1. Open https://registry.gitlab.com and if you are seeing empty page, not 4xx or 5xx error page, then everything is ok.
 1. Also you can check by running `knife ssh role:gitlab-base-fe-registry 'sudo gitlab-ctl status registry'`. If you are seeing messages like `worker15.cluster.gitlab.com run: registry: (pid 1091) 2107486s; run: log: (pid 1085) 2107486s`, then also everything is fine. If registry is not working you will be seeing services in `down` state.
+1. Since we don't have central logging on the registry infrastructure, log into
+   each node, tail out the log files and look for suspicious stuff.
 
 ## What to do?
 
