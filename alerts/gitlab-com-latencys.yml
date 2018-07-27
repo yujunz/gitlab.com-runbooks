@@ -1,18 +1,6 @@
 groups:
 - name: gitlab-com-latency.rules
   rules:
-  - alert: GitLabComLatencyGitalyCritical
-    expr: gitaly:grpc_server_handling_seconds:p95{environment=~"g?prd"} >= 60
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: critical
-    annotations:
-      description: Reach out to the Gitaly team and mitigate the problem restarting
-        gitaly on the affected node if it's causing a partial outage.
-      runbook: troubleshooting/gitaly-latency.md
-      title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last
-        5m
   - alert: GitLabComLatencyWeb
     expr: type:rails_requests_completed_seconds:p95{environment=~"g?prd",type="web", status="200"}
       > 2000

@@ -1,0 +1,30 @@
+groups:
+- name: gitaly.rules
+  rules:
+
+  - alert: GitalyPubSubSendRateLow
+    expr: |
+      stackdriver_pubsub_topic_pubsub_googleapis_com_topic_send_message_operation_count{topic_id="pubsub-gitaly-inf-gprd"} / 60 < 100
+    for: 5m
+    labels:
+      channel: g_gitaly
+      severity: warn
+    annotations:
+      description: |
+        Reach out to the Gitaly team, ensure logging is set properly.
+      runbook: troubleshooting/gitaly-pubsub.md
+      title: Gitaly PubSub send operation is low
+        5m
+
+  - alert: GitLabComLatencyGitalyCritical
+    expr: gitaly:grpc_server_handling_seconds:p95{environment=~"g?prd"} >= 60
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: Reach out to the Gitaly team and mitigate the problem restarting
+        gitaly on the affected node if it's causing a partial outage.
+      runbook: troubleshooting/gitaly-latency.md
+      title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last
+        5m

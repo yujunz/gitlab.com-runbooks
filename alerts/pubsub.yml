@@ -1,0 +1,17 @@
+groups:
+- name: pubsub.rules
+  rules:
+
+  - alert: LoggingVisibilityDiminished
+    expr: |
+      sum(stackdriver_pubsub_subscription_pubsub_googleapis_com_subscription_oldest_unacked_message_age) by (subscription_id) > 60
+    for: 5m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      description: |
+        PubSub messages are queuing up.  Unacked messages older than 60 seconds exist in the queue
+      for the last 5 minutes. This will lead to a loss of log data.
+      runbook: troubleshooting
+      title: PubSub queuing high
