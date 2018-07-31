@@ -3,7 +3,7 @@
 To properly analyze performance of a given cloud instance with Postgres, multiple benchmarking tools and approaches should be combined:
  - synthetic benchmarks for Postgres server ([pgbench](https://www.postgresql.org/docs/10/static/pgbench.html), [sysbench](https://github.com/akopytov/sysbench))
  - "real workload" benchmarks ([pgreplay](https://github.com/laurenz/pgreplay)), optionally with deep SQL query analysis ([nancy](https://github.com/postgres-ai/nancy))
- - disk IO benchmarks ([fio](https://github.com/axboe/fio), [bonnie++](https://en.wikipedia.org/wiki/Bonnie%2B%2B))
+ - disk IO benchmarks ([fio](https://github.com/axboe/fio), [bonnie++](https://en.wikipedia.org/wiki/Bonnie%2B%2B), [seek-scaling](https://github.com/gregs1104/seek-scaling))
  - network benchmark ([iperf3](https://iperf.fr/))
 
 During benchmarking, any heavy workload not related to the benchmark itself must be excluded (verify with `top`, `dstat -f`).
@@ -31,7 +31,7 @@ for i in {1..$N}; do
   j="$i"
   c="$i"
   res=$( \
-    /opt/gitlab/embedded/bin/pgbench pgbench \
+    /opt/gitlab/embedded/bin/pgbench "pgbench_s${s}" \
       -h /var/opt/gitlab/postgresql \
       -T 30 -j "$j" -M prepared -c "$c" --select-only \
     | tail -n1
@@ -72,7 +72,7 @@ Notes:
 
 ## Larger scale, SELECTs only
 
-Same as "Small-sized, SELECTs only", but the `pgbench` database must be initialized using larger scale. For instance, `-s 85000` will produce ~2TB of data.
+Same as "Small-sized, SELECTs only", but the `pgbench` database must be initialized using larger scale. For instance, `-s 100000` will produce ~1.5TB of data.
 
 ## Larger scale, mixed workload
 
@@ -83,7 +83,7 @@ The code is the same as in step "Small-sized, mixed workload"
 In this example the benchmark results for two instances are combined in one picture: 
 ```shell
 N=300
-for s in 1700 8500; do
+for s in 1700 100000; do
   for workload in "selects" "mixed"; do
     fname="s${s}_${workload}"
     echo "Processing fname: $fname..."
