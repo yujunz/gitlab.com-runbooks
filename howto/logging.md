@@ -61,10 +61,12 @@ gstg environments are forwarded to log.gitlab.net.
 
 ### What are we logging?
 
+**production.log and haproxy logs are no longer being sent to elasticcloud due because it was overwhelming our cluster, currently these logs are only available in StackDriver** 
 
 **All logs listed below are also stored in stackdriver for 30 days, and object storage for a minimum of 180days**
 
 For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitlab-restore/esc-tools/blob/master/cleanup_indices.sh
+
 
 
 | name | logfile  | type  | index |
@@ -75,7 +77,7 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf
 | workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf
 | rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf
-| rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf
+| rails.production _only in stackdriver_ | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf
 | rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf
 | rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf
 | shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf
@@ -84,7 +86,7 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | unicorn.stdout | /var/log/gitlab/unicorn/unicorn\_stdout.log | line regex | pubsub-unicorn-inf
 | unstructured.production | gitlab-rails/production.log | lines | pubsub-unstructured-inf
 | sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf
-| haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf
+| haproxy _only in stackdriver_ | /var/log/haproxy.log | syslog | pubsub-haproxy-inf
 | nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf
 | system.auth | /var/log/auth.log | syslog | pubsub-system-inf
 | system.syslog | /var/log/syslog | syslog | pubsub-system-inf
