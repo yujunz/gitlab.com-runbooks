@@ -6,7 +6,7 @@ groups:
 
   - alert: HighRailsErrorRate
     expr: environment_type:rails_request_errors:ratio{environment=~"g?prd"} * 100 > .5
-    for: 15s
+    for: 30s
     labels:
       pager: pagerduty
       severity: critical
