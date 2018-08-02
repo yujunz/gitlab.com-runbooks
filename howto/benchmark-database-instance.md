@@ -95,7 +95,7 @@ for s in 1700 100000; do
 set terminal png size 500,500
 set size 1, 1
 set output 'bench_$fname.png'
-set title 'pgbench -s$s -j{1..$N} -c{1..$N}, workload: $workload'
+set title "`date '+%Y-%m-%d %H:%M'`, Workload: $workload\npgbench -j{1..$N} -c{1..$N}, Scale: -s $s"
 set key left top
 set grid y
 set xlabel '# of clients'
