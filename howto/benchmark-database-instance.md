@@ -27,7 +27,7 @@ psql postgres -c "drop database if exists pgbench_s${s};"
 psql postgres -c "create database pgbench_s${s};"
 /opt/gitlab/embedded/bin/pgbench -i -s "$s" "pgbench_s${s}"
 rm "results_s${s}_selects".bench
-for i in {1..$N}; do
+for i in $(seq "$N"); do
   j="$i"
   c="$i"
   res=$( \
@@ -54,7 +54,7 @@ Notes:
 Given the initialized `pgbench` done in the previous step:
 ```shell
 rm "results_s${s}_mixed".bench
-for i in {1..300}; do
+for i in $(seq "$N"); do
   j="$i"
   c="$i"
   res=$( \
