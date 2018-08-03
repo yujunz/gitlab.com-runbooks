@@ -16,7 +16,7 @@ https://gitlab.com/gitlab-cookbooks/gitlab_openvpn#how-to-create-a-client-certif
 1. Create a folder on google drive that contains the QR code and the .ovpn profile, be sure that you delete the screenshot and the profile from the vpn server and locally after you do this.
 1. Share the folder with the user and update the issue.
 
-##Chef Access
+## Chef Access
 ```
 # on chef.gitlab.com
 chef-server-ctl user-create <username> <first> <last> <email> $(openssl rand -hex 20)
@@ -24,7 +24,7 @@ chef-server-ctl user-create <username> <first> <last> <email> $(openssl rand -he
 chef-server-ctl org-user-add gitlab <username>
 ```
 
-##COG Access
+## COG Access
 1. User talks to @marvin
 1. Admin adds user (keep in mind slack name may be different from unix or email name)
 1. !group-member-add <group> <user>
