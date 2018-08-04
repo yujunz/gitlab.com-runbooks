@@ -35,7 +35,7 @@ groups:
     expr: |
       sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="4xx",environment=~"g?prd",tier="lb"})
       / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",environment=~"g?prd",tier="lb"})
-      > 0.6
+      > 0.75
     for: 5m
     labels:
       pager: pagerduty
