@@ -195,7 +195,7 @@ groups:
       runbook: "troubleshooting/postgres.md#load"
       title: 'High load in database {{ $labels.fqdn }}: {{$value}}'
   - alert: PostgreSQL_TooManyDeadTuples
-    expr: pg_stat_table_n_dead_tup > 50000 unless ON(instance) (pg_replication_is_replica
+    expr: pg_stat_table_n_dead_tup > 500000 unless ON(instance) (pg_replication_is_replica
       == 1)
     for: 1h
     labels:
