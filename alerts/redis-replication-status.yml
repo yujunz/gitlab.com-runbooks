@@ -12,5 +12,5 @@ groups:
         reviewing the redis replication status
       runbook: troubleshooting/redis_replication.md
       title: |
-        Redis replication not working for {{ range query "gitlab:redis_disconnected_slaves > 1" }}
+        Redis replication not working for {{ range query "gitlab:redis_disconnected_slaves > 1" }}{{ .Labels.fqdn }}{{ end }}
         Possible masters are {{ range query "gitlab:redis_master" }}{{ .Labels.fqdn }}{{ end }}.
