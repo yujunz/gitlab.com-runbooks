@@ -35,3 +35,15 @@ groups:
       description: "{{ $value }}% of pages responses have been errors for 5 minutes"
       environment: "{{ $labels.environment }}"
       runbook: troubleshooting/gitlab-pages.md
+  - alert: GitLabPagesLowDomains
+    expr: gitlab_pages_domains_served_total / scalar(quantile(0.9, gitlab_pages_domains_served_total)) < 0.9 or gitlab_pages_domains_served_total < 1000
+    for: 5m
+    labels:
+      channel: alerts
+      severity: warn
+    annotations:
+      title: GitLab Pages server(s) have low number of hosted domains
+      description: |
+        GitLab Pages on {{ $labels.environment }} {{ $labels.fqdn }} have an unusually low number of hosted domains.
+      environment: "{{ $labels.environment }}"
+      runbook: troubleshooting/gitlab-pages.md
