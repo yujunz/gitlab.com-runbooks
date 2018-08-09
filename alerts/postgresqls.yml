@@ -195,15 +195,20 @@ groups:
       runbook: "troubleshooting/postgres.md#load"
       title: 'High load in database {{ $labels.fqdn }}: {{$value}}'
   - alert: PostgreSQL_TooManyDeadTuples
-    expr: pg_stat_table_n_dead_tup > 500000 unless ON(instance) (pg_replication_is_replica
-      == 1)
-    for: 1h
+    expr: >
+      (
+        (pg_stat_user_tables_n_dead_tup > 100)
+        /
+        (pg_stat_user_tables_n_live_tup + pg_stat_user_tables_n_dead_tup > 1000)
+      ) >= 0.05
+      unless ON(instance) (pg_replication_is_replica == 1)
+    for: 30m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: warn
       channel: database
     annotations:
-      description: "Too many dead tuples"
+      description: "The dead tuple ratio of {{$labels.table_name}} is greater than 5%"
       table: "{{$labels.table_name}}"
       dead_tuples: "{{$value}}"
       runbook: "troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples"
