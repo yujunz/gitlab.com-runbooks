@@ -340,7 +340,7 @@ by mixing the *raw* json configuration from `/var/opt/gitlab/consul/database.jso
 Since the consul user needs to be able to speak to pgbouncer directly, it needs a `.pgpass` file to be created:
 
 ```
-sudo gitlab-ctl write-pgpass --host 127.0.0.1 --database pgbouncer --user pgbouncer --hostuser gitlab-consul
+sudo gitlab-ctl write-pgpass --host '*' --database pgbouncer --user pgbouncer --hostuser gitlab-consul
 ```
 
 This file can be found here: `/var/opt/gitlab/consul/.pgpass`
