@@ -2,7 +2,7 @@ groups:
 - name: nfs-circuitbreaker-tripped.rules
   rules:
   - alert: NfsCircuitBreakerTripped
-    expr: filesystem_circuitbreaker{environment=~"g?prd"} != 1
+    expr: filesystem_circuitbreaker{environment=~"gprd"} != 1
     for: 2m
     labels:
       pager: pagerduty

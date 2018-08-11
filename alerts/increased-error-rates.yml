@@ -2,7 +2,7 @@ groups:
 - name: increased-error-rates.rules
   rules:
   - alert: IncreasedErrorRateHTTPSGit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",environment=~"g?prd",tier="lb",backend="https_git"}) > 20
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",environment=~"gprd",tier="lb",backend="https_git"}) > 20
     for: 15s
     labels:
       severity: critical
@@ -11,7 +11,7 @@ groups:
       runbook: troubleshooting/high-error-rate.md
       title: Increased Error Rate Across Fleet
   - alert: IncreasedErrorRateOtherBackends
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",environment=~"g?prd",tier="lb",backend!="https_git"}) by (backend) > 20
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",environment=~"gprd",tier="lb",backend!="https_git"}) by (backend) > 20
     for: 15s
     labels:
       severity: critical

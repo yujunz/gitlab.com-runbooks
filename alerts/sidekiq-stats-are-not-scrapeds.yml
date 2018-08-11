@@ -2,7 +2,7 @@ groups:
 - name: sidekiq-stats-are-not-scraped.rules
   rules:
   - alert: SidekiqStatsNotScraped
-    expr: up{job="sidekiq-redis",environment=~"g?prd"}==0
+    expr: up{job="sidekiq-redis",environment=~"gprd"}==0
     for: 1m
     labels:
       severity: warning

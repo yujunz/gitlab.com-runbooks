@@ -2,7 +2,7 @@ groups:
 - name: fluentd.rules
   rules:
     - alert: TD-AgentDown
-      expr: up{environment=~"g?prd",job="fluentd"} == 0
+      expr: up{environment=~"gprd",job="fluentd"} == 0
       for: 5m
       labels:
         severity: warn

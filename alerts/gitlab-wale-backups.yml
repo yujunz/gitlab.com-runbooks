@@ -4,7 +4,7 @@ groups:
   - record: gitlab_com:last_wale_backup_age_in_seconds
     expr: (time() - wale_backup_last_completed_time_seconds)
   - alert: WALEBackupDelayedProd
-    expr: gitlab_com:last_wale_backup_age_in_seconds{environment=~"prd|gprd"} >= 60 * 15
+    expr: gitlab_com:last_wale_backup_age_in_seconds{environment=~"gprd"} >= 60 * 15
     for: 5m
     labels:
       pager: pagerduty
@@ -15,7 +15,7 @@ groups:
       runbook: troubleshooting/gitlab-com-wale-backups.md
       title: Last WALE backup was seen {{ .Value | humanizeDuration }} ago.
   - alert: WALEBackupDelayedStaging
-    expr: gitlab_com:last_wale_backup_age_in_seconds{environment=~"stg|gstg"} >= 60 * 60
+    expr: gitlab_com:last_wale_backup_age_in_seconds{environment=~"gstg"} >= 60 * 60
     for: 5m
     labels:
       severity: critical
