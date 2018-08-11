@@ -278,7 +278,7 @@ groups:
         which should be > 0.2'
       title: PostgreSQL Exporter not being scraped
   - alert: PostgreSQL_ExporterErrors
-    expr: pg_exporter_last_scrape_error == 1
+    expr: pg_exporter_last_scrape_error{environment=~"gprd|gstg"} == 1
     for: 1h
     labels:
       pager: pagerduty
