@@ -303,7 +303,7 @@ groups:
       title: Postgres server disk utilization over 95% for over a minute. Expect
         this to cause replication lag or user visible latency
   - alert: PostgreSQL_PGBouncer_Errors
-    expr: rate(pgbouncer_errors_count{errmsg!="server conn crashed?"}[10m]) > 5
+    expr: rate(pgbouncer_errors_count{environment=~"gprd|gstg", errmsg!="server conn crashed?"}[10m]) > 5
     for: 5m
     labels:
       severity: warn
