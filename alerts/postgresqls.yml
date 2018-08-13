@@ -208,8 +208,8 @@ groups:
       severity: warn
       channel: database
     annotations:
-      description: "The dead tuple ratio of {{$labels.table_name}} is greater than 5%"
-      table: "{{$labels.table_name}}"
+      description: "The dead tuple ratio of {{$labels.relname}} is greater than 5%"
+      table: "{{$labels.relname}}"
       dead_tuples: "{{$value}}"
       runbook: "troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples"
       title: PostgreSQL dead tuples is too large
