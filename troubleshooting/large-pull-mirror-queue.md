@@ -1,4 +1,4 @@
-# Pull mirror overdeu queue is too large
+# Pull mirror overdue queue is too large
 
 ## First and foremost
 
@@ -18,6 +18,7 @@ you may need to log the state of the pending pull mirror queue.
 
     ```ruby
     projects = Gitlab::Redis::SharedState.with { |redis| redis.smembers(Gitlab::Mirror::PULL_CAPACITY_KEY) }
+    states = ProjectImportState.where(project_id: projects).order(:last_update_started_at).map(&:last_error)
     ```
 
 1. If necessary, clear this set:
