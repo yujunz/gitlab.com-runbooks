@@ -1,0 +1,12 @@
+groups:
+- name: pull-mirror-queues.rules
+  rules:
+  - alert: PullMirrorsOverdueQueueTooLarge
+    expr: quantile(0.5, gitlab_database_rows{query_name="mirrors_ready_to_sync",environment="gprd"})
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      title: 'Large number of overdue pull mirror jobs: {{$value}}'
+      description: There are over 1000 overdue pull mirror jobs in the queue for the last 5 minutes. Check https://dashboards.gitlab.net/d/_MKRXrSmk/pull-mirrors.
+      runbook: troubleshooting/large-pull-mirror-queue.md
