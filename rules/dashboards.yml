@@ -1,0 +1,14 @@
+groups:
+- name: Dashboard servers
+  rules:
+  - alert: DashboardInstanceDown
+    expr: up{job=~"grafana|trickster"} == 0
+    for: 10m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: A dashboard service is down.
+      target: "{{ $labels.job }} {{ $labels.instance }}"
+      runbook: troubleshooting
+      title: Dashboard service down
