@@ -6,6 +6,8 @@ groups:
     for: 5m
     labels:
       severity: critical
+      channel: backend
+      pager: pagerduty
     annotations:
       title: 'Large number of overdue pull mirror jobs: {{$value}}'
       description: There are over 1000 overdue pull mirror jobs in the queue for the last 5 minutes. Check https://dashboards.gitlab.net/d/_MKRXrSmk/pull-mirrors.
