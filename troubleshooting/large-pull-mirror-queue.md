@@ -17,13 +17,13 @@ you may need to log the state of the pending pull mirror queue.
 1. Get the state of the Redis queue that holds which project IDs should be processed. In a Rails console run:
 
     ```ruby
-    projects = Gitlab::Redis::SharedState.with { |redis| redis.smembers('MIRROR_PULL_CAPACITY') }
+    projects = Gitlab::Redis::SharedState.with { |redis| redis.smembers(Gitlab::Mirror::PULL_CAPACITY_KEY) }
     ```
 
 1. If necessary, clear this set:
 
     ```ruby
-    Gitlab::Redis::SharedState.with { |redis| redis.del('MIRROR_PULL_CAPACITY') }
+    Gitlab::Redis::SharedState.with { |redis| redis.del(Gitlab::Mirror::PULL_CAPACITY_KEY) }
     ````
 
 1. If the problem persists send a channel wide notification in `#backend`.
