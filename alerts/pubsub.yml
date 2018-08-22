@@ -13,5 +13,5 @@ groups:
       description: |
         PubSub messages are queuing up.  Unacked messages older than 60 seconds exist in the queue
         for the last 5 minutes. This will lead to a loss of log data.
-      runbook: troubleshooting
+      runbook: troubleshooting/pubsub-queing.md
       title: PubSub queuing high
