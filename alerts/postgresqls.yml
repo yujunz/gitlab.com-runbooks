@@ -26,7 +26,7 @@ groups:
       runbook: troubleshooting/postgresql.md#availability
       title: Postgres seems to be consuming XLOG very slowly
   - alert: PostgreSQL_CommitRateTooLow
-    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production",environment=~"gprd"}[1m])
+    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production",environment=~"gprd", fqdn !="postgres-01-db-gprd.c.gitlab-production.internal"}[1m])
       < 1000
     for: 5m
     labels:
@@ -97,7 +97,7 @@ groups:
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
       title: PostgreSQL replication has stopped
   - alert: PostgreSQL_ReplicationLagTooLarge
-    expr: (pg_replication_lag > 120) and ON(instance) (pg_replication_is_replica == 1)
+    expr: (pg_replication_lag > 120) and ON(instance) (pg_replication_is_replica{fqdn != "postgres-01-db-gprd.c.gitlab-production.internal"} == 1)
     for: 5m
     labels:
       pager: pagerduty
@@ -110,7 +110,7 @@ groups:
       title: Postgres Replication lag is over 2 minutes
   - alert: PostgreSQL_ReplicationLagBytesTooLarge
     expr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - ON(environment)
-      GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica
+      GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica{fqdn != "postgres-01-db-gprd.c.gitlab-production.internal"}
       == 1) > 1e+09
     for: 5m
     labels:
