@@ -1,7 +1,8 @@
-image: registry.gitlab.com/gitlab-com/runbooks:2.1.0
+image: registry.gitlab.com/gitlab-com/runbooks:2.2.0
 
 test:
   script:
+    - find . -name \*.y*ml | xargs yaml-lint
     - /prometheus/promtool check rules alerts/*.yml
     - /prometheus/promtool check rules recordings/*.yml
     - /prometheus/promtool check rules rules/*.yml

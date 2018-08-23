@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM ruby:2.5.1-alpine3.7
 
 ENV PROMETHEUS_VERSION 2.1.0
 
@@ -8,3 +8,4 @@ RUN apk add --no-cache wget tar && \
    tar -xvf prometheus.tar.gz -C /prometheus --strip-components 1 --wildcards */promtool && \
    rm prometheus.tar.gz
 
+RUN gem install yaml-lint
