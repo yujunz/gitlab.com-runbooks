@@ -62,7 +62,7 @@ Check:
 
 * Check that you can connect to the database from a psql prompt.
 
-* Check that the you can connect to the database from the Rails
+* Check that you can connect to the database from the Rails
   console.
 
 * Check that you can make a database modification. Run `select
@@ -102,7 +102,7 @@ significant amount of time can cause application issues.
 
 Look for blocked queries or application latency.
 
-Remediation can involved tracking down a rogue migration and killing
+Remediation can involve tracking down a rogue migration and killing
 or pausing it.
 
 ## Load
