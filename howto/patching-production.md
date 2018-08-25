@@ -36,7 +36,6 @@ preferably by the current on-call for full awareness.
 
 * Get or update [gitlab patcher][gp]
 * Clone or update [post deployment patches][pdp]
-* Connect to VPN (else connections will fail)
 * Run `gitlab-patcher <version> <environment>` to test a dry run, watch for
   possible errors.
 * Attach the output of the dry run to the patching issue (or share it somehow,
