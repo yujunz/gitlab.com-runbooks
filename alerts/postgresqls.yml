@@ -14,7 +14,7 @@ groups:
       runbook: troubleshooting/postgresql.md#availability
       title: Postgres seems to be consuming transaction IDs very slowly
   - alert: PostgreSQL_XLOGConsumptionTooLow
-    expr: rate(pg_xlog_position_bytes{environment=~"gprd"}[1m]) < 200000
+    expr: rate(pg_xlog_position_bytes{environment=~"gprd", fqdn !="postgres-01-db-gprd.c.gitlab-production.internal"}[1m]) < 200000
     for: 2m
     labels:
       pager: pagerduty
