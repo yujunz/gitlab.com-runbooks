@@ -3,6 +3,8 @@ groups:
   rules:
   - record: gitlab_com:last_wale_backup_age_in_seconds
     expr: (time() - wale_backup_last_completed_time_seconds)
+  - record: gitlab_com:last_wale_basebackup_age_in_hours
+    expr: (time() - wale_basebackup_last_completed_time_seconds) / 3600
   - alert: WALEBackupDelayedProd
     expr: gitlab_com:last_wale_backup_age_in_seconds{environment=~"gprd"} >= 60 * 15
     for: 5m
@@ -14,6 +16,16 @@ groups:
         to review the problem.
       runbook: troubleshooting/gitlab-com-wale-backups.md
       title: Last WALE backup was seen {{ .Value | humanizeDuration }} ago.
+  - alert: WALEBaseBackupDelayedProd
+    expr: gitlab_com:last_wale_basebackup_age_in_hours{environment=~"gprd"} >= 48
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      description: WALE basebackup syncs to S3 might be not working. Please follow the runbook
+        to review the problem.
+      runbook: troubleshooting/gitlab-com-wale-backups.md
+      title: Last WALE basebackup was seen {{ .Value | humanizeDuration }} ago.
   - alert: WALEBackupDelayedStaging
     expr: gitlab_com:last_wale_backup_age_in_seconds{environment=~"gstg"} >= 60 * 60
     for: 5m
