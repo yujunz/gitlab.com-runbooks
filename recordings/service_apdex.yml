@@ -1,0 +1,46 @@
+groups:
+- name: GitLab Service apdex scores
+  interval: 1m
+  rules:
+  # web
+  # Satisfied -> 1 seconds
+  # Acceptable -> 10 seconds
+  - record: gitlab_apdex:ratio
+    labels:
+      service: 'web'
+    expr: >
+      (
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", le="1", code=~"^[23].*"}[1m])) by (environment, type, tier)
+      +
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", le="10", code=~"^[23].*"}[1m])) by (environment, type, tier)
+      )
+      /
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", code=~"^[235].*"}[1m])) by (environment, type, tier)
+  # api
+  # Satisfied -> 10 seconds
+  # Acceptable -> 30 seconds
+  - record: gitlab_apdex:ratio
+    labels:
+      service: 'api'
+    expr: >
+      (
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", le="10", code=~"^[23].*"}[1m])) by (environment, type, tier)
+      +
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", le="30", code=~"^[23].*"}[1m])) by (environment, type, tier)
+      )
+      /
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", code=~"^[235].*"}[1m])) by (environment, type, tier)
+  # gitaly
+  # Satisfied -> 0.5 seconds
+  # Acceptable -> 1 seconds
+  - record: gitlab_apdex:ratio
+    labels:
+      service: 'gitaly'
+    expr: >
+      (
+        sum(rate(grpc_server_handling_seconds_bucket{grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages"}[1m])) by (environment, type, tier)
+        +
+        sum(rate(grpc_server_handling_seconds_bucket{grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages"}[1m])) by (environment, type, tier)
+      )
+      /
+      2 / (sum(rate(grpc_server_handling_seconds_count{grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages"}[1m])) by (environment, type, tier) > 0)
