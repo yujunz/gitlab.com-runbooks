@@ -69,6 +69,19 @@ groups:
     expr: (node_memory_MemAvailable / node_memory_MemTotal) or ((node_memory_MemFree + node_memory_Buffers + node_memory_Cached) / node_memory_MemTotal)
   - record: instance:node_memory_available:ratio
     expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) or ((node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes) / node_memory_MemTotal_bytes)
+  - alert: FilesystemFullSoon
+    expr: predict_linear(node_filesystem_avail_bytes{fstype=~"(ext.|xfs)"}[6h], 24 * 3600) < 0
+    for: 30m
+    labels:
+      severity: warn
+    annotations:
+      title: 'Filesystem will be full SOON'
+      description: |
+        The filesystem is predicted to be full in will be full in the next 24 hours.
+      runbook: troubleshooting/filesystem_alerts.md
+      instance: '{{ $labels.instance }}'
+      device: '{{ $labels.device }}'
+      mountpoint: '{{ $labels.mountpoint }}'
   - alert: LowDiskSpace
     expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs)",job="node"} * 100 <= 10
     for: 15m
