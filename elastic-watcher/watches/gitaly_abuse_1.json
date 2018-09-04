@@ -93,7 +93,7 @@
         "message": {
           "from": "ElasticCloud Watcher: gitaly_abuse_1",
           "to": [
-            "#security-alerts-auto"
+            "#security-alert-auto"
           ],
           "text": "Unusual Gitaly activity for a project has been detected. Review the runbook at https://gitlab.com/gitlab-com/runbooks/tree/master/troubleshooting/gitaly-unusual-activity.md for more details",
           "dynamic_attachments": {
