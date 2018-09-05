@@ -69,8 +69,8 @@
       "lang" : "painless",
       "params" : {
         "time_period_seconds" : 600,
-        "wall_time_ms_per_second_threshold": 2000,
-        "invocation_rate_per_second_threshold": 50
+        "wall_time_ms_per_second_threshold": 4000,
+        "invocation_rate_per_second_threshold": 100
       }
     }
   },
@@ -80,8 +80,8 @@
       "lang" : "painless",
       "params" : {
         "time_period_seconds" : 600,
-        "wall_time_ms_per_second_threshold": 2000,
-        "invocation_rate_per_second_threshold": 50
+        "wall_time_ms_per_second_threshold": 4000,
+        "invocation_rate_per_second_threshold": 100
       }
     }
   },
