@@ -2,7 +2,7 @@ groups:
 - name: sentry-gitlap-com-status.rules
   rules:
   - alert: SentryDown
-    expr: probe_http_status_code{instance="sentry.gitlap.com",job="blackbox-ssl"}
+    expr: probe_http_status_code{instance="https://sentry.gitlap.com",job="blackbox"}
       != 200
     for: 5m
     labels:

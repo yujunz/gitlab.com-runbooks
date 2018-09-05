@@ -2,7 +2,7 @@ groups:
 - name: pages-gitlab-io-status.rules
   rules:
   - alert: GitlabPagesDown
-    expr: probe_http_status_code{instance="gitlab-examples.gitlab.io",job="blackbox"}
+    expr: probe_http_status_code{instance="https://gitlab-examples.gitlab.io",job="blackbox"}
       != 200
     for: 5m
     labels:

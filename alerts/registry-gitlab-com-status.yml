@@ -3,7 +3,7 @@ groups:
   rules:
 
   - alert: RegistryDown
-    expr: probe_http_status_code{instance="registry.gitlab.com",job="blackbox-ssl"}
+    expr: probe_http_status_code{instance="https://registry.gitlab.com",job="blackbox"}
       != 200
     for: 5m
     labels:

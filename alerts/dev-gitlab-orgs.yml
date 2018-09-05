@@ -2,7 +2,7 @@ groups:
 - name: dev-gitlab-org.rules
   rules:
   - alert: DevGitLabOrgDown
-    expr: probe_http_status_code{instance="dev.gitlab.org", job="blackbox"} != 200
+    expr: probe_http_status_code{instance="https://dev.gitlab.org", job="blackbox"} != 200
     for: 10m
     labels:
       pager: pagerduty
