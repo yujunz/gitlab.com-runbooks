@@ -2,7 +2,7 @@ groups:
 - name: gitlab-com-status.rules
   rules:
   - alert: GitlabComDown
-    expr: probe_http_status_code{instance="gitlab.com",job="blackbox"} != 200
+    expr: probe_http_status_code{instance="https://gitlab.com",job="blackbox"} != 200
     for: 5m
     labels:
       pager: pagerduty
@@ -13,3 +13,15 @@ groups:
         inconvenience' if there is problems.
       runbook: troubleshooting/gitlab-com-is-down.md
       title: GitLab.com is down for 1 minute
+  - alert: WWWGitlabComDown
+    expr: probe_http_status_code{instance="https://www.gitlab.com",job="blackbox"} != 200
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: www.GitLab.com is down for more than 1 minute! Consider !tweet 'GitLab.com
+        is currently down, we are investigating the root cause, apologies for the
+        inconvenience' if there is problems.
+      runbook: troubleshooting/gitlab-com-is-down.md
+      title: www.gitlab.com is down for 1 minute
