@@ -5,7 +5,7 @@ groups:
   # Postgres Service
   - record: gitlab_service_ops:rate
     labels:
-      service: 'postgres'
+      component: 'service'
     expr: >
       sum by (environment, tier, type) (rate(pg_stat_database_xact_commit{tier="db", type="postgres"}[1m]))
       +
@@ -13,13 +13,12 @@ groups:
   # Redis Service
   - record: gitlab_service_ops:rate
     labels:
-      service: 'redis'
+      component: 'server'
     expr: >
       sum by (environment, tier, type) (redis_instantaneous_ops_per_sec)
   # Registry Service
   - record: gitlab_service_ops:rate
     labels:
-      service: 'registry'
       type: 'registry'
       tier: 'sv'
     expr: >
@@ -27,52 +26,57 @@ groups:
   # gitlab_shell
   - record: gitlab_service_ops:rate
     labels:
-      service: 'gitlab_shell'
-      type: 'gitlab_shell'
+      type: 'git'
       tier: 'sv'
     expr: >
       sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
-  # web
+  # web:workhorse
   - record: gitlab_service_ops:rate
     labels:
-      service: 'web'
+      component: 'workhorse'
     expr: >
-      sum by (environment, tier, type) (rate(gitlab_workhorse_request_duration_seconds_sum{job=~"gitlab-workhorse-web"}[1m]))
-  # api
+      sum by (environment, tier, type) (rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web"}[1m]))
+  # api:workhorse
   - record: gitlab_service_ops:rate
     labels:
-      service: 'api'
+      component: 'workhorse'
     expr: >
-      sum by (environment, tier, type) (rate(gitlab_workhorse_request_duration_seconds_sum{job=~"gitlab-workhorse-api"}[1m]))
+      sum by (environment, tier, type) (rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api"}[1m]))
+  # api/web/sidekiq/git:unicorn
+  - record: gitlab_service_ops:rate
+    labels:
+      component: 'unicorn'
+    expr: >
+      sum by (environment, tier, type) (rate(http_request_duration_seconds_count{job="gitlab-unicorn"}[1m]))
   # sidekiq
   - record: gitlab_service_ops:rate
     labels:
-      service: 'sidekiq'
+      component: 'sidekiq'
     expr: >
       sum by (environment, tier, type) (rate(gitlab_transaction_duration_seconds_count{type = "sidekiq"}[1m]))
   # mailroom
   # TODO: zero placeholder as we have no metrics for mailroom at present
   - record: gitlab_service_ops:rate
     labels:
-     service: 'mailroom'
+      component: 'service'
     expr: >
       count by (environment, tier, type) (up{type="mailroom"}) - count by (environment, tier, type) (up{type="mailroom"})
   # pgbouncer
   - record: gitlab_service_ops:rate
     labels:
-      service: 'pgbouncer'
+      component: 'service'
     expr: >
       sum by (environment, tier, type) (rate(pgbouncer_stats_queries_total[1m]))
-  # gitaly
+  # gitaly:goserver
   - record: gitlab_service_ops:rate
     labels:
       service: 'gitaly'
+      component: 'goserver'
     expr: >
       sum by (environment, tier, type) (rate(grpc_server_started_total{type="gitaly"}[1m]))
   # pages
   - record: gitlab_service_ops:rate
     labels:
-      service: 'pages'
       type: 'pages'
       tier: 'sv'
     expr: >
@@ -80,7 +84,6 @@ groups:
   # HAProxy
   - record: gitlab_service_ops:rate
     labels:
-      service: 'haproxy'
       type: 'haproxy'
       tier: 'lb'
     expr: >
@@ -94,6 +97,6 @@ groups:
     expr: >
       avg_over_time(gitlab_service_ops:rate[1w])
   # Stddev for each service, over a week
-  - record: gitlab_service_ops:rate:avg_over_time_1w
+  - record: gitlab_service_ops:rate:stddev_over_time_1w
     expr: >
       stddev_over_time(gitlab_service_ops:rate[1w])

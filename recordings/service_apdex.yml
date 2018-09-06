@@ -8,6 +8,7 @@ groups:
   - record: gitlab_apdex:ratio
     labels:
       service: 'web'
+      component: 'workhorse'
     expr: >
       (
         sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", le="1", code=~"^[23].*"}[1m])) by (environment, type, tier)
@@ -16,12 +17,13 @@ groups:
       )
       /
       2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", code=~"^[235].*"}[1m])) by (environment, type, tier)
-  # api
+  # api:workhorse
   # Satisfied -> 10 seconds
   # Acceptable -> 30 seconds
   - record: gitlab_apdex:ratio
     labels:
       service: 'api'
+      component: 'workhorse'
     expr: >
       (
         sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", le="10", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
@@ -30,12 +32,13 @@ groups:
       )
       /
       2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", code=~"^[235].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
-  # gitaly
+  # gitaly:goserver
   # Satisfied -> 0.5 seconds
   # Acceptable -> 1 seconds
   - record: gitlab_apdex:ratio
     labels:
       service: 'gitaly'
+      component: 'goserver'
     expr: >
       (
         sum(rate(grpc_server_handling_seconds_bucket{grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier)
@@ -53,6 +56,6 @@ groups:
     expr: >
       avg_over_time(gitlab_apdex:ratio[1w])
   # Stddev for each service, over a week
-  - record: gitlab_apdex:ratio:avg_over_time_1w
+  - record: gitlab_apdex:ratio:stddev_over_time_1w
     expr: >
       stddev_over_time(gitlab_apdex:ratio[1w])

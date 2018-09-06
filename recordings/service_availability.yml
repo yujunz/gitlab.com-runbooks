@@ -1,174 +1,67 @@
 groups:
-- name: GitLab Service Availability
-  interval: 1m
-  rules:
-  # GitLab Shell Service: gitlab_shell
-  - record: gitlab:service:availability:gitlab_shell
-    expr: label_replace(avg(avg_over_time(up{tier="sv", type="git"}[1m])) by (environment, tier, type), "type", "gitlab_shell", "type", "git")
-  # Postgres Service
-  - record: gitlab:service:availability:postgres
-    expr: avg(avg_over_time(up{tier="db", type="postgres"}[1m])) by (environment, tier, type)
-  # Redis Service
-  - record: gitlab:service:availability:redis
-    expr: avg(avg_over_time(up{tier="db", type="redis"}[1m])) by (environment, tier, type)
-  # Registry Service
-  - record: gitlab:service:availability:registry
-    expr: avg(avg_over_time(up{tier="sv", type="registry"}[1m])) by (environment, tier, type)
-  # {web, api, sidekiq, gitlab_shell} node component
-  - record: gitlab:service:availability:_:node
-    expr: label_replace(label_replace(avg(avg_over_time(up{tier="sv", job="node"}[1m])) by (environment, tier, type), "component", "node", "", ""), "type", "gitlab_shell", "type", "git")
-  # {web, api, sidekiq, gitlab_shell} , unicorn component
-  - record: gitlab:service:availability:_:unicorn
-    expr: label_replace(label_replace(avg(avg_over_time(up{tier="sv",job="gitlab-unicorn"}[1m])) by (environment, tier, type), "component", "unicorn", "", ""), "type", "gitlab_shell", "type", "git")
-  # sidekiq, sidekiq_cluster component
-  - record: gitlab:service:availability:sidekiq:sidekiq_cluster
-    expr: label_replace(avg(avg_over_time(up{tier="sv", job="gitlab-sidekiq"}[1m])) by (environment, tier, type), "component", "sidekiq_cluster", "", "")
-  # mailroom
-  - record: gitlab:service:availability:mailroom
-    expr: avg(avg_over_time(up{tier="sv", type="mailroom"}[1m])) by (environment, tier, type)
-  # pgbouncer
-  - record: gitlab:service:availability:pgbouncer
-    expr: avg(avg_over_time(up{tier="db", type="pgbouncer"}[1m])) by (environment, tier, type)
-  # gitaly
-  - record: gitlab:service:availability:gitaly
-    expr: avg(avg_over_time(up{tier="stor", type="gitaly"}[1m])) by (environment, tier, type)
-  # pages
-  - record: gitlab:service:availability:pages
-    expr: avg(avg_over_time(up{tier="sv", type="pages"}[1m])) by (environment, tier, type)
-  # HAProxy
-  - record: gitlab:service:availability:haproxy:server
-    expr: label_replace(avg(label_replace(avg_over_time(up{tier="lb"}[1m]), "type", "haproxy", "type", ".*")) by (environment, tier, type), "component", "server", "", "")
-  - record: gitlab:service:availability:haproxy:_
-    expr: label_replace(avg(label_replace(avg_over_time(haproxy_backend_up[1m]), "component", "$1", "backend", "(.*)")) by (environment, tier, component),"type", "haproxy", "", "")
-  # Combined gitlab:service:availability{environment, tier, type, component}=>fraction availability over the past minute
-  - record: gitlab:service:availability
-    expr: |
-      gitlab:service:availability:gitlab_shell or
-      gitlab:service:availability:postgres or
-      gitlab:service:availability:redis or
-      gitlab:service:availability:registry or
-      gitlab:service:availability:_:node or
-      gitlab:service:availability:_:workhorse or
-      gitlab:service:availability:_:unicorn or
-      gitlab:service:availability:sidekiq:sidekiq_cluster or
-      gitlab:service:availability:mailroom or
-      gitlab:service:availability:pgbouncer or
-      gitlab:service:availability:gitaly or
-      gitlab:service:availability:pages or
-      gitlab:service:availability:haproxy:server or
-      gitlab:service:availability:haproxy:_
-
 - name: GitLab Availability
   interval: 1m
   rules:
-  # GitLab Shell Service: gitlab_shell
-  - record: gitlab_availability:ratio
-    labels:
-      service: 'gitlab_shell'
-    expr: >
-     label_replace(
-       avg by (environment, tier, type) (avg_over_time(up{tier="sv", type="git"}[1m])),
-       "type",
-       "gitlab_shell",
-       "type",
-       "git"
-     )
   # Postgres Service
   - record: gitlab_availability:ratio
     labels:
-      service: 'postgres'
+      component: 'server'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{job="postgres"}[1m]))
+      avg by (environment, tier, type) (avg_over_time(up{geo_role!="secondary", job="postgres"}[1m]))
         and
-      avg by (environment, tier, type) (avg_over_time(pg_up[1m]))
+      avg by (environment, tier, type) (avg_over_time(pg_up{geo_role!="secondary"}[1m]))
   # Redis Service
   - record: gitlab_availability:ratio
     labels:
-      service: 'redis'
-    expr: avg by (environment, tier, type) (avg_over_time(up{tier="db", type="redis"}[1m]))
+      component: 'server'
+    expr: >
+      avg by (environment, tier, type) (avg_over_time(up{tier="db", type="redis"}[1m]))
   # Registry Service
   - record: gitlab_availability:ratio
     labels:
-      service: 'registry'
-    expr: avg by (environment, tier, type) (avg_over_time(up{tier="sv", type="registry"}[1m]))
-  # {web, api, sidekiq, gitlab_shell} node component
-  - record: gitlab_availability:ratio
-    labels:
-      component: 'node'
+      component: 'server'
     expr: >
-      label_replace(
-        label_replace(
-          avg by (environment, tier, type) (avg_over_time(up{tier="sv", job="node"}[1m])),
-          "type",
-          "gitlab_shell",
-          "type",
-          "git"
-        ),
-        "service",
-        "$1",
-        "type",
-        "(.*)"
-      )
-  # {web, api, sidekiq, gitlab_shell} , unicorn component
+      avg by (environment, tier, type) (avg_over_time(up{tier="sv", type="registry"}[1m]))
+  # {web, api, sidekiq, git} , unicorn component
   - record: gitlab_availability:ratio
     labels:
       component: 'unicorn'
     expr: >
-      label_replace(
-        label_replace(
-          avg by (environment, tier, type) (avg_over_time(up{tier="sv",job="gitlab-unicorn"}[1m])),
-          "type",
-          "gitlab_shell",
-          "type",
-          "git"
-        ),
-        "service",
-        "$1",
-        "type",
-        "(.*)"
-      )
+      avg by (environment, tier, type) (avg_over_time(up{tier="sv",job="gitlab-unicorn"}[1m]))
   # sidekiq, sidekiq_cluster component
   - record: gitlab_availability:ratio
     labels:
-      service: 'sidekiq'
-      component: 'sidekiq_cluster'
-    expr: avg by (environment, tier, type) (avg_over_time(up{tier="sv", job="gitlab-sidekiq"}[1m]))
-  # mailroom
-  - record: gitlab_availability:ratio
-    labels:
-     service: 'mailroom'
-    expr: avg by (environment, tier, type) (avg_over_time(up{tier="sv", type="mailroom"}[1m]))
+      component: 'sidekiq'
+    expr: >
+      avg by (environment, tier, type) (avg_over_time(up{tier="sv", job="gitlab-sidekiq"}[1m]))
   # pgbouncer
   - record: gitlab_availability:ratio
     labels:
-      service: 'pgbouncer'
-    expr: avg by (environment, tier, type) (avg_over_time(up{tier="db", type="pgbouncer"}[1m]))
-  # gitaly
+      component: 'server'
+    expr: >
+      avg by (environment, tier, type) (avg_over_time(up{tier="db", type="pgbouncer"}[1m]))
+  # gitaly:goserver
   - record: gitlab_availability:ratio
     labels:
-      service: 'gitaly'
-    expr: avg by (environment, tier, type) (avg_over_time(up{tier="stor", type="gitaly"}[1m]))
+      component: 'goserver'
+    expr: >
+      avg by (environment, tier, type) (avg_over_time(up{tier="stor", type="gitaly"}[1m]))
   # pages
   - record: gitlab_availability:ratio
     labels:
-      service: 'pages'
-    expr: avg by (environment, tier, type) (avg_over_time(up{tier="sv", type="pages"}[1m]))
-  # HAProxy
+      component: 'service'
+    expr: >
+      avg by (environment, tier, type) (avg_over_time(up{tier="sv", job="gitlab-pages"}[1m]))
+  # haproxy backends
   - record: gitlab_availability:ratio
     labels:
-      service: 'haproxy'
-      component: 'server'
-    expr: avg by (environment, tier) (avg_over_time(up{tier="lb"}[1m]))
-  - record: gitlab_availability:ratio
-    labels:
-      service: 'haproxy'
       type: 'haproxy'
     expr: >
       avg by (environment, tier, component) (
         label_replace(
           avg_over_time(haproxy_backend_up[1m]),
           "component",
-          "$1",
+          "$1-backend",
           "backend",
           "(.*)"
         )
@@ -182,6 +75,6 @@ groups:
     expr: >
       avg_over_time(gitlab_availability:ratio[1w])
   # Stddev for each service, over a week
-  - record: gitlab_availability:ratio:avg_over_time_1w
+  - record: gitlab_availability:ratio:stddev_over_time_1w
     expr: >
       stddev_over_time(gitlab_availability:ratio[1w])
