@@ -15,7 +15,7 @@
 * increase of git http processes
   * ![Sample of high count of git http processes](../img/high-http-git-processes.png)
 * Relevant Dashboard where to find all these graphs
-  * http://performance.gitlab.net/dashboard/db/fleet-overview
+  * http://dashboards.gitlab.net/dashboard/db/fleet-overview
 
 ## Possible checks
 

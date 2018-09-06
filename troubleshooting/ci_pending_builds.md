@@ -25,7 +25,7 @@ To understand what can be wrong, you need to find a cause.
 3. Verify long polling behavior (we are not yet aware of potential problems as of now),
 4. Verify workhorse queueing: [Workhorse queueing graphs](ci_graphs.md#workhorse-queueing).
    If you see a large number of requests ending up in the queue it may indicate that CI API is degraded.
-   Verify the performance of `builds/register` endpoint: https://performance.gitlab.net/dashboard/db/grape-endpoints?var-action=Grape%23POST%20%2Fbuilds%2Fregister&var-database=Production,
+   Verify the performance of `builds/register` endpoint: https://dashboards.gitlab.net/dashboard/db/grape-endpoints?var-action=Grape%23POST%20%2Fbuilds%2Fregister&var-database=Production,
 5. Verify runners uptime. If you see that runners uptime is varying it does indicate that most likely Runners Manager does die, because of the crash. It will be shown in runners manager logs: `grep panic /var/log/messages`.
 
 ## 3. Verify if we have [the high DO Token Rate Limit usage](ci_runner_manager_do_limits.md)

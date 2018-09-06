@@ -8,7 +8,7 @@ groups:
       severity: critical
     annotations:
       description: Sidekiq jobs are piling up for the last minute, this may be under
-        control, but I'm just letting you know that this is going on, check http://performance.gitlab.net/dashboard/db/sidekiq-stats.
+        control, but I'm just letting you know that this is going on, check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
         Note that ProcessCommitWorker is excluded from job count.
       runbook: troubleshooting/large-sidekiq-queue.md
       title: 'Large amount of Sidekiq Queued jobs: {{$value}}'
@@ -29,7 +29,7 @@ groups:
       severity: critical
     annotations:
       description: There have been over queued 2000 Sidekiq jobs for the last hour.
-        Check http://performance.gitlab.net/dashboard/db/sidekiq-stats. Note that
+        Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats. Note that
         ProcessCommitWorker is excluded from job count.
       runbook: troubleshooting/large-sidekiq-queue.md
       title: 'Large amount of Sidekiq Queued jobs: {{$value}}'

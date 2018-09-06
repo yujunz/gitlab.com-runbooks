@@ -34,11 +34,11 @@
 
 ## Dashboards
 
-* https://performance.gitlab.net/dashboard/db/postgres-stats
+* https://dashboards.gitlab.net/dashboard/db/postgres-stats
 
-* https://performance.gitlab.net/dashboard/db/postgres-tuple-statistics
+* https://dashboards.gitlab.net/dashboard/db/postgres-tuple-statistics
 
-* https://performance.gitlab.net/dashboard/db/postgres-queries
+* https://dashboards.gitlab.net/dashboard/db/postgres-queries
 
 ## Availability
 

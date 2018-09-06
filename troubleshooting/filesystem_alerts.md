@@ -21,7 +21,7 @@ First, check out if the host you're working on is one of the following:
 
 ### Well known hosts
 
-#### performance.gitlab.net
+#### dashboards.gitlab.net
 
 This alerts triggered on `/var/lib/influxdb/data` and `influxdb` is likely to be the culprit. Apparently there is a file handler leak somewhere and this happens regularly.
 

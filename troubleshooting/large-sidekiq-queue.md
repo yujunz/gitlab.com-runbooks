@@ -14,7 +14,7 @@ queue to the next not actually doing any job at all.
 
 ## Symptoms
 
-Open the [Sidekiq dashboard](http://performance.gitlab.net/dashboard/db/sidekiq-stats)
+Open the [Sidekiq dashboard](http://dashboards.gitlab.net/dashboard/db/sidekiq-stats)
 and check the Sidekiq Queue Size Size gauge. If it is over 5k it should be red, which
 means that at least we should be keeping an eye on it.
 Particularly take a look at Sidekiq Enqueued Jobs to hint a trend, if the trend

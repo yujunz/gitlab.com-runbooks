@@ -1,6 +1,6 @@
 ## CI graphs
 
-When you go to https://performance.gitlab.net/dashboard/db/ci you will see a number of graphs.
+When you go to https://dashboards.gitlab.net/dashboard/db/ci you will see a number of graphs.
 
 This document tries to explain what you see and what each of the values does indicate.
 

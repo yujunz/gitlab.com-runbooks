@@ -14,7 +14,7 @@ This runbook will be deprecated in favor of the [gitaly pprof runbook](https://g
 
 ## 1. Check the triage dashboard to assess the impact
 
-- Visit the **[Triage Dashboard](https://performance.gitlab.net/dashboard/db/triage-overview)**.
+- Visit the **[Triage Dashboard](https://dashboards.gitlab.net/dashboard/db/triage-overview)**.
 - Check the **Gitaly p95 latency** graph and identify the offending server or servers.
 - Check if there has been any impact on the **p95 Latency per Type** graph
   - Check the `web` latency to assess wether we are impacting the site performance and users.

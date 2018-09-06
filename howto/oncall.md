@@ -14,7 +14,7 @@ First check [the on-call log](https://docs.google.com/document/d/1nWDqjzBwzYecn9
 
 Start by checking how many alerts are in flight right now, to do this:
 
-- go to the [fleet overview dashboard](https://performance.gitlab.net/dashboard/db/fleet-overview) and check the number of Active Alerts, it should be 0. If it is not 0
+- go to the [fleet overview dashboard](https://dashboards.gitlab.net/dashboard/db/fleet-overview) and check the number of Active Alerts, it should be 0. If it is not 0
   - go to the alerts dashboard and check what is [being triggered](https://prometheus.gitlab.com/alerts) each alert here should point you to the right runbook to fix it.
   - if they don't, you have more work to do.
   - be sure to create an issue, particularly to declare toil so we can work on it and suppress it.
@@ -27,7 +27,7 @@ Go to your chef repo and run `knife status`, if you see hosts that are red it me
 
 Check how many targets are not scraped at the moment. alerts are in flight right now, to do this:
 
-- go to the [fleet overview dashboard](https://performance.gitlab.net/dashboard/db/fleet-overview) and check the number of Targets down. It should be 0. If it is not 0
+- go to the [fleet overview dashboard](https://dashboards.gitlab.net/dashboard/db/fleet-overview) and check the number of Targets down. It should be 0. If it is not 0
   - go to the [targets down list](https://prometheus.gitlab.com/consoles/up.html) and check what is.
   - try to figure out why there is scraping problems and try to fix it. Note that sometimes there can be temporary scraping problems because of exporter errors.
   - be sure to create an issue, particularly to declare toil so we can work on it and suppress it.

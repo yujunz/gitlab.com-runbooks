@@ -11,7 +11,7 @@
 
 ## Possible checks
 
-- Open the [**Gitaly NFS Metrics per Host** dashboard](https://performance.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?refresh=30s&orgId=1&var-fqdn=nfs-file-08.stor.gitlab.com&from=now-1h&to=now) making sure to select the correct host,
+- Open the [**Gitaly NFS Metrics per Host** dashboard](https://dashboards.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?refresh=30s&orgId=1&var-fqdn=nfs-file-08.stor.gitlab.com&from=now-1h&to=now) making sure to select the correct host,
   and check the metrics
 - Log into the NFS server through a shell
 - Use `uptime` and `iotop` to check the current load values on the box

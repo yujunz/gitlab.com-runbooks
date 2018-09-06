@@ -37,4 +37,4 @@ sudo service elasticsearch restart
 
 * There is only `log-es(2|3|4).gitlap.com` nodes.
 
-[ELK performance dashboard]: https://performance.gitlab.net/dashboard/db/elk-stats?orgId=1
+[ELK performance dashboard]: https://dashboards.gitlab.net/dashboard/db/elk-stats?orgId=1

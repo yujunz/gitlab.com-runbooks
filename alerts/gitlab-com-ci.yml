@@ -14,7 +14,7 @@ groups:
       description: "Hey <!subteam^S940BK2TV|cicdops>! The number of pending builds for projects with shared runners is
         increasing and will be too high in 1h ({{$value}}). This may suggest problems
         with auto-scaling provider or Runner stability. You should check Runner's
-        logs. Check http://performance.gitlab.net/dashboard/db/ci."
+        logs. Check http://dashboards.gitlab.net/dashboard/db/ci."
 
   - alert: CICDTooManyPendingJobsPerNamespace
     expr: max(ci_pending_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runners="yes"}) by (namespace) > 350
@@ -25,7 +25,7 @@ groups:
     annotations:
       title: 'Number of pending jobs per namespace too high: {{$value}}'
       description: 'Hey <!subteam^S940BK2TV|cicdops>! Number of pending jobs for namespace {{$labels.namespace}} is too high: {{$value}}.
-        Check https://performance.gitlab.net/dashboard/db/ci?panelId=33&fullscreen'
+        Check https://dashboards.gitlab.net/dashboard/db/ci?panelId=33&fullscreen'
       runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
 
   - alert: CICDTooManyRunningJobsPerNamespaceOnSharedRunners
@@ -37,7 +37,7 @@ groups:
     annotations:
       title: 'Number of running jobs per namespace too high: {{$value}}'
       description: 'Hey <!subteam^S940BK2TV|cicdops>! Number of running jobs for namespace {{$labels.namespace}} running on regular Shared Runners is too high: {{$value}}.
-        Check https://performance.gitlab.net/dashboard/db/ci?panelId=60&fullscreen'
+        Check https://dashboards.gitlab.net/dashboard/db/ci?panelId=60&fullscreen'
       runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
 
   - alert: CICDTooManyRunningJobsPerNamespaceOnSharedRunnersGitLabOrg
@@ -49,7 +49,7 @@ groups:
     annotations:
       title: 'Number of running jobs per namespace too high: {{$value}}'
       description: 'Hey <!subteam^S940BK2TV|cicdops>! Number of running jobs for namespace {{$labels.namespace}} running on gitlab-org Shared Runners is too high: {{$value}}.
-        Check https://performance.gitlab.net/dashboard/db/ci?panelId=60&fullscreen'
+        Check https://dashboards.gitlab.net/dashboard/db/ci?panelId=60&fullscreen'
       runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
 
   - alert: CICDNoJobsOnSharedRunners
@@ -62,7 +62,7 @@ groups:
       title: 'Number of builds running on shared runners is too low: {{$value}}'
       description: "Hey <!subteam^S940BK2TV|cicdops>! Number of builds running on shared runners for the last 5 minutes
         is 0. This may suggest problems with auto-scaling provider or Runner stability.
-        You should check Runner's logs. Check http://performance.gitlab.net/dashboard/db/ci."
+        You should check Runner's logs. Check http://dashboards.gitlab.net/dashboard/db/ci."
 
   - alert: CICDTooManyJobsOnSharedRunners
     expr: sum(gitlab_runner_jobs{job="shared-runners"}) > 500
@@ -74,7 +74,7 @@ groups:
       title: Number of jobs running on shared runners is over 500 for the last 15
         minutes
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
-        abusive usage of Runners. Check https://performance.gitlab.net/dashboard/db/ci
+        abusive usage of Runners. Check https://dashboards.gitlab.net/dashboard/db/ci
         and https://log.gitlap.com/app/kibana#/dashboard/5d3921f0-79e0-11e7-a8e2-f91bfad41e34'
 
   - alert: CICDRunnersManagerDown
@@ -101,7 +101,7 @@ groups:
       title: 'Machine creation rate for runners is too high: {{$value | printf "%.2f" }}'
       description: 'Hey <!subteam^S940BK2TV|cicdops>! Machine creation rate for the last 1 minute is at least {{$value}}
         times greater than machines idle rate. This may by a symptom of problems with
-        the auto-scaling provider. Check http://performance.gitlab.net/dashboard/db/ci.'
+        the auto-scaling provider. Check http://dashboards.gitlab.net/dashboard/db/ci.'
       runbook: troubleshooting/ci_graphs.md#runners-manager-auto-scaling
 
   - alert: CICDRunnersCacheDown
@@ -153,7 +153,7 @@ groups:
     annotations:
       title: Number of used file descriptors on {{ $labels.instance }} is too high
       description: 'Hey <!subteam^S940BK2TV|cicdops>! {{ $labels.instance }} is using more than 80% of available FDs
-        since 10 minutes. This may affect Runner''s stability. Please look at https://performance.gitlab.net/dashboard/db/ci
+        since 10 minutes. This may affect Runner''s stability. Please look at https://dashboards.gitlab.net/dashboard/db/ci
         for more data.'
 
   - alert: CICDDegradatedCIConsulPrometheusCluster
@@ -180,7 +180,7 @@ groups:
       description: |
         Hey <!subteam^S940BK2TV|cicdops>! Quota usage of {{ $labels.quota }} is at the level of {{ $value }} for more than 5 minutes.
         Quota limit breach is coming!
-        See https://performance.gitlab.net/dashboard/db/ci-autoscaling-providers
+        See https://dashboards.gitlab.net/dashboard/db/ci-autoscaling-providers
 
   - alert: CICDGCPQuotaCriticalUsage
     expr: |
@@ -196,7 +196,7 @@ groups:
       description: |
         Hey <!subteam^S940BK2TV|cicdops>! Quota usage of {{ $labels.quota }} is at the level of {{ $value }} for more than 5 minutes.
         It's less than 5% to reach quota limits!
-        See https://performance.gitlab.net/dashboard/db/ci-autoscaling-providers
+        See https://dashboards.gitlab.net/dashboard/db/ci-autoscaling-providers
 
   - alert: CICDNamespaceWithConstantNumberOfLongRunningRepeatedJobs
     expr: |

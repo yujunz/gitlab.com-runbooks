@@ -34,11 +34,11 @@ Replication lag indicates that the Redis secondaries are struggling to keep up w
 
 Replication lag is measured in bytes in the replication stream.
 
-https://performance.gitlab.net/dashboard/db/andrew-redis?panelId=13&fullscreen&orgId=1
+https://dashboards.gitlab.net/dashboard/db/andrew-redis?panelId=13&fullscreen&orgId=1
 
 #### Redis Replication Events
 
-* Check the Redis Replication Events dashboard to see if Redis is frequently failing over. This may indicate replication issues. https://performance.gitlab.net/dashboard/db/andrew-redis?panelId=14&fullscreen&orgId=1
+* Check the Redis Replication Events dashboard to see if Redis is frequently failing over. This may indicate replication issues. https://dashboards.gitlab.net/dashboard/db/andrew-redis?panelId=14&fullscreen&orgId=1
 
 ### Redis Sentinel
 

@@ -100,7 +100,7 @@ groups:
     annotations:
       description: 'Gitaly has been using more than 50% of total available CPU on
         {{$labels.fqdn}} for the past minute. This may affect the stability of the
-        NFS server. Visit this dashboard: https://performance.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?refresh=30s&orgId=1&var-fqdn={{$labels.fqdn}}&from=now-1h&to=now'
+        NFS server. Visit this dashboard: https://dashboards.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?refresh=30s&orgId=1&var-fqdn={{$labels.fqdn}}&from=now-1h&to=now'
       runbook: troubleshooting/gitaly-high-cpu.md
       title: 'Gitaly: High CPU usage on {{ $labels.fqdn }}'
   - alert: GitalyVersionMismatch
@@ -113,7 +113,7 @@ groups:
     annotations:
       description: During a deployment, two distinct versions of Gitaly may be running
         alongside one another, but this should not be the case for more than 30m.
-        Visit https://performance.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-environment=prd
+        Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-environment=prd
         for details of versions deployed across the fleet.
       runbook: troubleshooting/gitaly-version-mismatch.md
       title: 'Gitaly: two versions of Gitaly have been running alongside one another
@@ -128,7 +128,7 @@ groups:
     annotations:
       description: Three of more versions of Gitaly are currently running alongside
         one another in production. This should never occur and indicates serious deployment
-        failures. Visit https://performance.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-environment=prd
+        failures. Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-environment=prd
         for details of versions deployed across the fleet.
       runbook: troubleshooting/gitaly-version-mismatch.md
       title: 'Gitaly: multiple versions of Gitaly are currently running in production'
@@ -148,7 +148,7 @@ groups:
       description: >
         The {{$labels.grpc_code}} error rate on {{ $labels.grpc_method }} is outside normal
         values over a 12 hour period (95% confidence).
-      dashboard: "https://performance.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{ $labels.grpc_method }}&var-environment=prd"
+      dashboard: "https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{ $labels.grpc_method }}&var-environment=prd"
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly: Error rate on {{ $labels.grpc_method }} is unusually high compared with a 12 hour average'
   - alert: GitalyLatencyOutlier
@@ -162,7 +162,7 @@ groups:
       severity: warn
     annotations:
       description: The error rate on the {{ $labels.grpc_method }} endpoint is outside
-        normal values over a 12 hour period (95% confidence). Check https://performance.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{
+        normal values over a 12 hour period (95% confidence). Check https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{
         $labels.grpc_method }}&var-tier=stor&var-type=gitaly&var-environment=prd&refresh=5m
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly: Latency on the Gitaly {{ $labels.grpc_method }} is unusually

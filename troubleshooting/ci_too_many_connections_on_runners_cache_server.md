@@ -60,6 +60,6 @@ stage graph].
 In jobs that at this moment were in the `archive_cache` or `restore_cache` stage, the current cache operation may be
 interrupted and may fail but this should not fail the whole job (just make it slower if cache was not restored).
 
-[cache server connections graph]:https://performance.gitlab.net/dashboard/db/ci?orgId=1&refresh=5m&from=now-24h&to=now&panelId=56&fullscreen
-[jobs by runner's stage graph]:https://performance.gitlab.net/dashboard/db/ci?refresh=5m&orgId=1&from=now-24h&to=now&panelId=6&fullscreen
+[cache server connections graph]:https://dashboards.gitlab.net/dashboard/db/ci?orgId=1&refresh=5m&from=now-24h&to=now&panelId=56&fullscreen
+[jobs by runner's stage graph]:https://dashboards.gitlab.net/dashboard/db/ci?refresh=5m&orgId=1&from=now-24h&to=now&panelId=6&fullscreen
 

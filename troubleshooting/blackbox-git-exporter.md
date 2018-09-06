@@ -9,9 +9,9 @@
 
 ## Check dashboards
 
-* Check the [timings dashboard](https://performance.gitlab.net/dashboard/db/gitlab-com-git-timings) to
+* Check the [timings dashboard](https://dashboards.gitlab.net/dashboard/db/gitlab-com-git-timings) to
 see if the problem is specific to particular nfs shard or is the same across all storage nodes.
-* Check the [host dashboard](https://performance.gitlab.net/dashboard/db/host-stats) if there appears to
+* Check the [host dashboard](https://dashboards.gitlab.net/dashboard/db/host-stats) if there appears to
 be problems on a specific storage node.
 
 ## Verify the blackbox exporter is working properly

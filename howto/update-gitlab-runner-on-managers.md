@@ -227,9 +227,9 @@ To upgrade runners on managers you need to:
     $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- gitlab-runner --version
     ```
 
-    You can also check the [uptime](https://performance.gitlab.net/dashboard/db/ci?refresh=5m&orgId=1&panelId=18&fullscreen)
-    and [version](https://performance.gitlab.net/dashboard/db/ci?refresh=5m&orgId=1&panelId=12&fullscreen) on
-    CI dashboard at https://performance.gitlab.net/. Notice that the version table shows versions existing for last 1
+    You can also check the [uptime](https://dashboards.gitlab.net/dashboard/db/ci?refresh=5m&orgId=1&panelId=18&fullscreen)
+    and [version](https://dashboards.gitlab.net/dashboard/db/ci?refresh=5m&orgId=1&panelId=12&fullscreen) on
+    CI dashboard at https://dashboards.gitlab.net/. Notice that the version table shows versions existing for last 1
     minute so if you check it immediately after upgrading Runner you may see it twice - with old and new version.
     After a minute the old entry should disappear.
 

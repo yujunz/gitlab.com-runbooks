@@ -1,5 +1,5 @@
 Sidekiq stats are collected by [gitlab-monitor](https://gitlab.com/gitlab-org/gitlab-monitor/blob/fdad76bdff3698111744c4bfbc129c57d99355b7/lib/gitlab_monitor/sidekiq.rb) by talking to Redis, and scraped by Prometheus.
-If you see no stats in the [Sidekiq dashboard](http://performance.gitlab.net/dashboard/db/sidekiq-stats) then something could be wrong with these three components.
+If you see no stats in the [Sidekiq dashboard](http://dashboards.gitlab.net/dashboard/db/sidekiq-stats) then something could be wrong with these three components.
 
 ## Symptoms
 
