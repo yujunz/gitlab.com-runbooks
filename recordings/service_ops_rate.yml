@@ -70,7 +70,6 @@ groups:
   # gitaly:goserver
   - record: gitlab_service_ops:rate
     labels:
-      service: 'gitaly'
       component: 'goserver'
     expr: >
       sum by (environment, tier, type) (rate(grpc_server_started_total{type="gitaly"}[1m]))
