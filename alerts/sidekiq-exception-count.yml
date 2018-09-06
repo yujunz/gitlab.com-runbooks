@@ -1,0 +1,13 @@
+groups:
+- name: sidekiq-exception-count.rules
+  rules:
+  - alert: SidekiqExceptionCountTooHigh
+    expr: sum by (controller) (gitlab_transaction_event_sidekiq_exception_total{environment="gprd"}) > 1000
+    for: 1h
+    labels:
+      severity: warn
+    annotations:
+      description: There have been over 1000 Sidekiq exceptions for {{ $labels.controller }} for the last hour.
+        Check https://dashboards.gitlab.net/dashboard/db/geo-status?panelId=33&fullscreen&from=now-6h&to=now.
+      runbook: troubleshooting/sidekiq-exceptions.md
+      title: 'Large number of Sidekiq exceptions for {{ $labels.controller }}: {{$value}}'
