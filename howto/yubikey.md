@@ -121,7 +121,7 @@ echo use-agent >> /Volumes/GitLab/gpg_config/gpg.conf
 ## Master Key Creation
 
 ```
-> gpg --expert --gen-key
+> gpg --expert --full-generate-key
 Please select what kind of key you want:
    (1) RSA and RSA (default)
    (2) DSA and Elgamal
