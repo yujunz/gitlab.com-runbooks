@@ -173,3 +173,15 @@ groups:
           "(.*)"
         )
       )
+
+- name: GitLab Service Availability Stats
+  interval: 5m
+  rules:
+  # Average values for each service, over a week
+  - record: gitlab_availability:ratio:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_availability:ratio[1w])
+  # Stddev for each service, over a week
+  - record: gitlab_availability:ratio:avg_over_time_1w
+    expr: >
+      stddev_over_time(gitlab_availability:ratio[1w])

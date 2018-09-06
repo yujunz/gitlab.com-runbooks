@@ -1,5 +1,5 @@
 groups:
-- name: GitLab Service apdex scores
+- name: GitLab Service Apdex Scores
   interval: 1m
   rules:
   # web
@@ -44,3 +44,15 @@ groups:
       )
       /
       2 / (sum(rate(grpc_server_handling_seconds_count{grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier) > 0)
+
+- name: GitLab Service Apdex Score Stats
+  interval: 5m
+  rules:
+  # Average values for each service, over a week
+  - record: gitlab_apdex:ratio:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_apdex:ratio[1w])
+  # Stddev for each service, over a week
+  - record: gitlab_apdex:ratio:avg_over_time_1w
+    expr: >
+      stddev_over_time(gitlab_apdex:ratio[1w])

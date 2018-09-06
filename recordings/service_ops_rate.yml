@@ -1,5 +1,5 @@
 groups:
-- name: GitLab Service operations-per-second rates
+- name: GitLab Service Operations-per-Second Rates
   interval: 1m
   rules:
   # Postgres Service
@@ -85,3 +85,15 @@ groups:
       tier: 'lb'
     expr: >
       sum by (environment) (haproxy_frontend_current_sessions)
+
+- name: GitLab Service Operations-per-Second Rate Stats
+  interval: 5m
+  rules:
+  # Average values for each service, over a week
+  - record: gitlab_service_ops:rate:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_service_ops:rate[1w])
+  # Stddev for each service, over a week
+  - record: gitlab_service_ops:rate:avg_over_time_1w
+    expr: >
+      stddev_over_time(gitlab_service_ops:rate[1w])
