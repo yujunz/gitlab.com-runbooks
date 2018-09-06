@@ -1,0 +1,42 @@
+groups:
+- name: GitLab Service Errors-per-Second Rates
+  interval: 1m
+  rules:
+  - record: gitlab_service_errors:rate
+    labels:
+      component: 'workhorse'
+    expr: >
+      sum by (environment, tier, type) (rate(gitlab_workhorse_http_requests_total{job=~"gitlab-workhorse-.*", code=~"^5.*"}[1m]))
+
+  # api/web/sidekiq/git:unicorn
+  - record: gitlab_service_errors:rate
+    labels:
+      component: 'unicorn'
+    expr: >
+      sum by (environment, tier, type) (rate(http_request_duration_seconds_count{job="gitlab-unicorn", status=~"^5.*"}[1m]))
+
+  # sidekiq
+  - record: gitlab_service_errors:rate
+    labels:
+      component: 'sidekiq'
+    expr: >
+      sum by (environment, tier, type) (rate(sidekiq_jobs_failed_total{type = "sidekiq"}[1m]))
+
+  # gitaly:goserver
+  - record: gitlab_service_errors:rate
+    labels:
+      component: 'goserver'
+    expr: >
+      sum by (environment, tier, type) (rate(grpc_server_handled_total{type="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists)$"}[1m]))
+
+- name: GitLab Service Errors-per-Second Rate Stats
+  interval: 5m
+  rules:
+  # Average values for each service, over a week
+  - record: gitlab_service_errors:rate:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_service_errors:rate[1w])
+  # Stddev for each service, over a week
+  - record: gitlab_service_errors:rate:stddev_over_time_1w
+    expr: >
+      stddev_over_time(gitlab_service_errors:rate[1w])
