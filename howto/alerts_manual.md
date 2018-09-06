@@ -15,7 +15,7 @@ groups:
 - name: testing.rules
   rules:
   - alert: HawaiianHugs
-    expr: node_load1{environment="prd",job="node",type="git"} > 1
+    expr: node_load1{environment="gprd",job="node",type="git"} > 1
     for: 1m
     labels:
       severity: critical

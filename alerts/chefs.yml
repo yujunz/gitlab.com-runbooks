@@ -2,7 +2,7 @@ groups:
 - name: chef.rules
   rules:
   - alert: ChefClientErrorInPrd
-    expr: chef_client_error{environment=~"gprd"} == 1
+    expr: chef_client_error{environment="gprd"} == 1
     for: 5h
     labels:
       severity: warn

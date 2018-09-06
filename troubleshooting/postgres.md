@@ -268,7 +268,7 @@ If the alert is for dead tuples then it will list which table has a
 high number of dead tuples however note that sometimes when one table
 has this problem there are other tables not far behind that just
 haven't alerted yet. Run
-`sort_desc(pg_stat_table_n_dead_tup{environment="prd"})` in prometheus
+`sort_desc(pg_stat_table_n_dead_tup{environment="gprd"})` in prometheus
 to see what the top offenders are.
 
 If the alert is for "replication slot with stale xmin" or "long-lived
