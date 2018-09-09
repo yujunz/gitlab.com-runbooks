@@ -8,6 +8,6 @@ groups:
       severity: warn
     annotations:
       description: There have been over 1000 Sidekiq exceptions for {{ $labels.controller }} for the last hour.
-        Check https://dashboards.gitlab.net/dashboard/db/geo-status?panelId=33&fullscreen&from=now-6h&to=now.
+        Check https://dashboards.gitlab.net/dashboard/db/geo-status?panelId=66&fullscreen&orgId=1&from=now-6h&to=now.
       runbook: troubleshooting/sidekiq-exceptions.md
       title: 'Large number of Sidekiq exceptions for {{ $labels.controller }}: {{$value}}'
