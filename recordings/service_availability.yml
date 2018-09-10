@@ -28,6 +28,11 @@ groups:
       component: 'unicorn'
     expr: >
       avg by (environment, tier, type) (avg_over_time(up{tier="sv",job="gitlab-unicorn"}[1m]))
+  - record: gitlab_component_availability:ratio
+    labels:
+      component: 'workhorse'
+    expr: >
+      avg by (environment, tier, type) (avg_over_time(up{tier="sv",job=~"gitlab-workhorse-.*"}[1m]))
   # sidekiq, sidekiq_cluster component
   - record: gitlab_component_availability:ratio
     labels:
