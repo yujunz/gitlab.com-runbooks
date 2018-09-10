@@ -71,4 +71,15 @@ Useful things to look at:
 1. `/var/log/gitlab/postgresql/current`
 1. `select * from pg_stat_replication` on `$upstream`
 
+Here's an example of a `recovery.conf` that has both streaming
+replication and archive recovery enabled (note `$upstream, $fqdn, $slot`
+need to be replaced):
 
+```
+standby_mode = 'on'
+primary_conninfo = 'user=gitlab_repmgr password=REDACTED host='$upstream' port=5432 fallback_application_name=repmgr sslmode=prefer sslcompression=0 application_name='$fqdn''
+recovery_target_timeline = 'latest'
+primary_slot_name = $slot
+
+restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch -p 32 "%f" "%p"'
+```
