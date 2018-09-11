@@ -260,7 +260,7 @@ knife ssh -C1 -aipaddress 'roles:gitlab-runner-builder' -- sudo /root/runner_upg
 knife ssh -C1 -aipaddress 'roles:gitlab-runner-gsrm' -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -aipaddress 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -aipaddress 'roles:gitlab-runner-srm' -- sudo /root/runner_upgrade.sh &
-wait
+time wait
 ```
 
 [gitlab-ce-new-mr]: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/new
