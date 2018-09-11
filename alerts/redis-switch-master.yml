@@ -1,0 +1,13 @@
+groups:
+- name: redis-switch-master.rules
+  rules:
+  - alert: RedisSwitchMaster
+    expr: sum(changes(redis_connected_slaves{event=~"switch-master"}[5m])) > 0
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      title: Redis Switch Master
+      description: Redis node {{$labels.fqdn}} has a switch-master event in the last 5 minutes.
+      runbook: howto/redis-switch-master.md
