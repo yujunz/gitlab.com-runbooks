@@ -145,7 +145,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ### Work with storage
 * [Understanding GitLab Storage Shards](howto/sharding.md)
-* [Build and Deploy New NFS Servers](howto/nfs-servers.md)
+* [Build and Deploy New Storage Servers](howto/storage-servers.md)
 
 ### Mangle front end load balancers
 * [Isolate a worker by disabling the service in the LBs](howto/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
