@@ -263,5 +263,12 @@ knife ssh -C1 -aipaddress 'roles:gitlab-runner-srm' -- sudo /root/runner_upgrade
 time wait
 ```
 
+> **NOTICE:**
+Be aware, that gracefull restart of whole CI Runners fleet may take up to several hours!
+6-8 hours is the usual timing. Until we'll finish our plan to
+[use K8S to deploy Runner Managers][k8s-deployment] anyone that needs to update/restart
+Runner on our CI fleet should expect, that the operation will be **really long**.
+
 [gitlab-ce-new-mr]: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/new
+[k8s-deployment]: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/4813
 
