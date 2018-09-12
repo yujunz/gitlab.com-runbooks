@@ -6,6 +6,7 @@ stages:
 
 test:
   script:
+    - scripts/validate-service-mappings
     - find . -name \*.y*ml | xargs yaml-lint
     - /prometheus/promtool check rules alerts/*.yml
     - /prometheus/promtool check rules recordings/*.yml

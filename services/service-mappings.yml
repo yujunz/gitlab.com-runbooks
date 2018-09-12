@@ -1,0 +1,121 @@
+teams:
+- name: backend
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/
+  slack_channel: backend
+
+- name: gitaly
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/gitaly/
+  slack_channel: gitaly
+
+- name: release
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/
+  slack_channel: g_release
+
+- name: infrastructure
+  url: https://about.gitlab.com/handbook/engineering/infrastructure/
+  slack_channel: production
+
+# Package team doesn't seem to exist
+- name: package
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/
+  slack_channel: backend
+
+tiers:
+- name: sv
+- name: lb
+- name: stor
+- name: db
+
+services:
+- name: api
+  tier: sv
+  team: backend
+  sentry_slug: gitlab/gitlabcom
+  elk:
+    permalink: https://log.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684
+    index: pubsub-rails-inf-gprd-*
+  label: Service:API
+
+- name: web
+  tier: sv
+  team: backend
+  sentry_slug: gitlab/gitlabcom
+  elk:
+    permalink: https://log.gitlab.net/goto/5e1aa9dac377ff2282c70748e9278860
+    index: pubsub-rails-inf-gprd-*
+  label: Service:Web
+
+- name: git
+  tier: sv
+  team: backend
+  sentry_slug: gitlab/gitlabcom
+  elk:
+    permalink: https://log.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
+    index: pubsub-rails-inf-gprd-*
+  label: Service:GitLab Shell
+
+- name: gitaly
+  tier: stor
+  team: gitaly
+  sentry_slug: gitlab/gitaly-production
+  grafana_folder: SRXyrrSmk
+  elk:
+    permalink: https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d
+    index: pubsub-gitaly-inf-gprd-*
+  label: Service:Gitaly
+
+- name: mailroom
+  tier: sv
+  team: backend
+
+- name: pages
+  tier: sv
+  team: release
+  grafana_folder: v2ZhpeSik
+  elk:
+    permalink: https://log.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
+    index: pubsub-pages-inf-gprd-*
+  label: Service:Pages
+
+- name: pgbouncer
+  tier: db
+  team: infrastructure
+  elk:
+    permalink: https://log.gitlab.net/goto/365bdf8fb46a83863df50cb618597b79
+    index: pubsub-postgres-inf-gprd-*
+
+- name: postgres
+  tier: db
+  team: infrastructure
+  grafana_folder: jYXDze5mk
+  elk:
+    permalink: https://log.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c
+    index: pubsub-postgres-inf-gprd-*
+  label: Service:Postgres
+
+- name: redis
+  tier: db
+  team: infrastructure
+  grafana_folder: D5R0peIik
+  elk:
+    permalink: https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc
+    index: pubsub-redis-inf-gprd-*
+  label: Service:Redis
+
+- name: registry
+  tier: sv
+  team: package
+  elk:
+    permalink: https://log.gitlab.net/goto/1c2fe46c1db40a7aa7d31875f3fd2ad1
+    index: pubsub-registry-inf-gprd-*
+  label: Service:Redis
+
+- name: sidekiq
+  tier: sv
+  team: backend
+  sentry_slug: gitlab/gitlabcom
+  grafana_folder: c7nMugpmz
+  elk:
+    permalink: https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
+    index: pubsub-sidekiq-inf-gprd-*
+  label: Service:Sidekiq
