@@ -1,20 +1,5 @@
 # CI runner manager report a high number of errors
 
-## Symptoms
-
-* Check MK links
-    1. [shared-runners-manager-1.gitlab.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3F%26host%3Dshared-runners-manager-1.gitlab.com%26srv%3DDocker_machine%26source%3D1%26theme%3Dmultisite%26baseurl%3D%2Fgitlab%2Fcheck_mk%2F)
-    2. [shared-runners-manager-2.gitlab.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3F%26host%3Dshared-runners-manager-2.gitlab.com%26srv%3DDocker_machine%26source%3D0%26theme%3Dmultisite%26baseurl%3D%2Fgitlab%2Fcheck_mk%2F)
-    3. [docker-ci-1.gitlap.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3Fhost%3Ddocker-ci-1.gitlap.com%26srv%3DDocker_machine%26theme%3Dmultisite%26baseurl%3D..%2Fcheck_mk%2F)
-    4. [docker-ci-2.gitlap.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3Fhost%3Ddocker-ci-2.gitlap.com%26srv%3DDocker_machine%26theme%3Dmultisite%26baseurl%3D..%2Fcheck_mk%2F)
-* Increase in docker_machine errors over 30.
-
-    ![Sample High Errors on runner machines](../img/ci-runner-manager-errors.png)
-
-* Message in alerts channel:
-    * *shared-runners-manager-[1-2].gitlab.com service Docker_machine is CRITICAL*
-    * *docker-ci-[1-2].gitlap.com service Docker_machine is CRITICAL*
-
 ## Possible checks
 
 1. Check DigitalOcean status on Twitter: [@DOStatus](https://twitter.com/DOStatus).

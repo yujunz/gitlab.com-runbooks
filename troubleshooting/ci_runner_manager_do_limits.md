@@ -1,19 +1,5 @@
 # CI runnner manager report a high number of errors
 
-## Symptoms
-
-* Check MK links:
-
-    1. [shared-runners-manager-1.gitlab.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3Fhost%3Dshared-runners-manager-1.gitlab.com%26srv%3DDO_TOKEN_RATE_LIMITS%26theme%3Dmultisite%26baseurl%3D..%2Fcheck_mk%2F)
-    1. [shared-runners-manager-2.gitlab.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3Fhost%3Dshared-runners-manager-2.gitlab.com%26srv%3DDO_TOKEN_RATE_LIMITS%26theme%3Dmultisite%26baseurl%3D..%2Fcheck_mk%2F)
-    1. [docker-ci-1.gitlap.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3Fhost%3Ddocker-ci-1.gitlap.com%26srv%3DDO_TOKEN_RATE_LIMITS%26theme%3Dmultisite%26baseurl%3D..%2Fcheck_mk%2F)
-    1. [docker-ci-2.gitlap.com](https://checkmk.gitlap.com/gitlab/check_mk/index.py?start_url=%2Fgitlab%2Fpnp4nagios%2Findex.php%2Fgraph%3Fhost%3Ddocker-ci-2.gitlap.com%26srv%3DDO_TOKEN_RATE_LIMITS%26theme%3Dmultisite%26baseurl%3D..%2Fcheck_mk%2F)
-
-* Remaining token limits are below 1000.
-* Message in alerts channel:
-    * *shared-runners-manager-[1-2].gitlab.com service DO_TOKEN_RATE_LIMITS is CRITICAL*
-    * *docker-ci-[1-2].gitlap.com service DO_TOKEN_RATE_LIMITS is CRITICAL*
-
 ## Possible checks
 
 1. Check DigitalOcean status on Twitter: [@DOStatus](https://twitter.com/DOStatus). Have an eye on this site
