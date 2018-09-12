@@ -1,0 +1,114 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'erb'
+require 'ostruct'
+require 'open3'
+
+START_MARKER="<!-- MARKER: do not edit this section directly. Edit services/service-mappings.yml then run scripts/generate-docs -->"
+STOP_MARKER="<!-- END_MARKER -->"
+
+def find_troubleshooting_docs(service_name)
+  docs = []
+  troubleshooting_docs_glob = File.join(__dir__, "..", "troubleshooting", "*.md")
+  Open3.popen3("grep -li '\\b#{service_name}\\b' #{troubleshooting_docs_glob}") do |stdin, stdout, stderr, wait_thr|
+    while line = stdout.gets
+      file_name = File.basename(line.chomp)
+      docs.push(file_name) unless file_name.include? "service-"
+    end
+  end
+
+  docs
+end
+
+def replace_header(file, header)
+  lines = File.readlines(file)
+  start = lines.find_index { |line| line.chomp == START_MARKER }
+  throw "Unable to find start marker" if start.nil?
+  stop = lines.find_index { |line| line.chomp == STOP_MARKER }
+  throw "Unable to find stop marker" if stop.nil?
+
+  lines.slice! start, stop - start + 1
+  lines.insert start, header
+
+  IO.write(file, lines.join("\n"))
+end
+
+def generate_header(service, team, tier)
+  service_name = service["name"]
+  troubeshooting_docs = find_troubleshooting_docs(service_name)
+  template = <<-EOF
+#{START_MARKER}
+#  <%= service["name"].capitalize %> Service
+
+* **Responsible Team**: [<%= team["name"] %>](<%= team["url"] %>)
+* **Slack Channel**: [\#<%= team["slack_channel"] %>](https://gitlab.slack.com/archives/production/<%= team["slack_channel"] %>)
+* **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=<%= service_name %>&orgId=1
+* **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22<%= service_name %>%22%2C%20tier%3D%22<%= service["tier"] %>%22%7D
+<% if service["label"] -%>
+* **Label**: gitlab-com~"<%= service["label"] %>"
+<% end -%>
+<% if service["sentry_slug"] -%>
+* **Sentry**: https://sentry.gitlap.com/<%= service["sentry_slug"] %>
+<% end -%>
+<%- if service["grafana_folder"] -%>
+* **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/<%= service["grafana_folder"] %>
+<% end -%>
+<% if service["elk"] -%>
+* **ELK**: [`<%= service["elk"]["index"] %>`](<%= service["elk"]["permalink"] %>)
+<% end -%>
+<% if troubeshooting_docs && !troubeshooting_docs.empty? -%>
+
+## Troubleshooting Pointers
+
+<%- troubeshooting_docs.each do |troubeshooting_doc| -%>
+* [<%= troubeshooting_doc %>](<%= troubeshooting_doc %>)
+<%- end -%>
+<% end -%>
+
+## Operating Rate
+
+![](https://dashboards.gitlab.com/render/d-solo/WOtyonOiz/general-triage-service?from=now-24h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=<%= service_name %>&orgId=1&panelId=12&width=1200&height=600&tz=UTC&theme=light)
+
+#{STOP_MARKER}
+EOF
+
+  ERB.new(template, 0, "-").result(OpenStruct.new({ team: team, service: service, tier: tier, troubeshooting_docs: troubeshooting_docs }).instance_eval { binding })
+end
+
+def generate_docs()
+  service_mapping_yaml = YAML.load_file(File.join(__dir__, "..", "services", "service-mappings.yml"))
+  services = service_mapping_yaml["services"]
+
+  team_map = service_mapping_yaml["teams"].inject({}) { |map, team| map[team["name"]] = team; map }
+  tier_map = service_mapping_yaml["tiers"].inject({}) { |map, tier| map[tier["name"]] = tier; map }
+  service_map = service_mapping_yaml["services"].inject({}) { |map, service| map[service["name"]] = service; map }
+
+  services.each do |service|
+    service_name = service["name"]
+    team = team_map[service["team"]]
+    tier = tier_map[service["tier"]]
+
+    troubleshooting_doc =  File.join(__dir__, "..", "troubleshooting", "service-#{service_name}.md")
+    details = generate_header(service, team, tier)
+    if File.exist?(troubleshooting_doc)
+      replace_header(troubleshooting_doc, details)
+    else
+      File.write(troubleshooting_doc, details)
+    end
+  end
+
+  Dir.glob(File.join(__dir__, "..", "troubleshooting", "service-*.md")).each do |file|
+    referred_service_name = File.basename(file, ".md").sub("service-","")
+    if !service_map[referred_service_name]
+      File.delete(file)
+    end
+  end
+end
+
+begin
+  generate_docs()
+# rescue StandardError => e
+#   STDERR.puts "error: #{e.message}"
+#   exit 1
+end

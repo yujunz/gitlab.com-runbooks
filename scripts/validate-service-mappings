@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+
+def validate(service_mapping_path)
+  service_mapping_yaml = YAML.load_file(service_mapping_path)
+  services = service_mapping_yaml["services"]
+
+  raise "Service mapping must contain one or more teams" unless service_mapping_yaml["teams"] && !service_mapping_yaml["teams"].empty?
+  raise "Service mapping must contain one or more tiers" unless service_mapping_yaml["tiers"] && !service_mapping_yaml["tiers"].empty?
+  raise "Service mapping must contain one or more services" unless services && !services.empty?
+
+  team_map = service_mapping_yaml["teams"].inject({}) { |map, team| map[team["name"]] = team; map }
+  tier_map = service_mapping_yaml["tiers"].inject({}) { |map, tier| map[tier["name"]] = tier; map }
+
+  services.each do |service|
+    raise "unknown team '#{service["team"]}''" unless team_map[service["team"]]
+    raise "unknown tier '#{service["tier"]}''" unless tier_map[service["tier"]]
+  end
+end
+
+begin
+  validate(File.join(__dir__, "..", "services", "service-mappings.yml"))
+rescue StandardError => e
+  STDERR.puts "error: #{e.message}"
+  exit 1
+end
