@@ -255,16 +255,21 @@ groups:
         {{end}} '
       runbook: troubleshooting/postgres.md#repmgr
       title: Replicas have different upstream primary databases
-  - alert: PostgreSQL_FleetSizeChange
-    expr: postgres:databases != postgres:databases OFFSET 2m
+
+  - alert: PostgreSQL_ServiceDown
+    expr: pg_up == 0
     for: 1m
     labels:
-      severity: info
       channel: database
+      pager: pagerduty
+      severity: critical
     annotations:
-      description: There are now {{$value}} databases in environment "{{$labels.environment}}"
-      title: Number of PostgreSQL Databases in {{$labels.environment}} has changed
-        in the past minute
+      description: |
+        {{$labels.fqdn}} postgres service appears down
+      runbook: "troubleshooting/postgres.md"
+      title: |
+        {{$labels.fqdn}} postgres service appears down
+
   - alert: PostgreSQL_RoleChange
     expr: pg_replication_is_replica and changes(pg_replication_is_replica[1m]) > 0
     labels:
