@@ -65,22 +65,24 @@
   },
   "condition" : {
     "script" : {
-      "inline" : "ctx.payload.aggregations.significant_repos.buckets.any(bucket -> ((bucket.wall_time_ms.value / params.time_period_seconds) >= params.wall_time_ms_per_second_threshold) ||  ((bucket.doc_count / params.time_period_seconds) >= params.invocation_rate_per_second_threshold))",
+      "inline" : "ctx.payload.aggregations.significant_repos.buckets.any(bucket -> ((bucket.doc_count / params.time_period_seconds) >= params.minimum_invocation_rate_per_second) && (((bucket.wall_time_ms.value / params.time_period_seconds) >= params.wall_time_ms_per_second_threshold) || ((bucket.doc_count / params.time_period_seconds) >= params.invocation_rate_per_second_threshold)))",
       "lang" : "painless",
       "params" : {
         "time_period_seconds" : 600,
         "wall_time_ms_per_second_threshold": 4000,
+        "minimum_invocation_rate_per_second": 20,
         "invocation_rate_per_second_threshold": 100
       }
     }
   },
   "transform" : {
     "script" : {
-      "inline" : "['items': ctx.payload.aggregations.significant_repos.buckets.findAll(bucket -> ((bucket.wall_time_ms.value / params.time_period_seconds) >= params.wall_time_ms_per_second_threshold) ||  ((bucket.doc_count / params.time_period_seconds) >= params.invocation_rate_per_second_threshold)).collect(bucket -> ['key': bucket.key, 'count': bucket.doc_count, 'wall_time_ms_per_second': Math.round(bucket.wall_time_ms.value / params.time_period_seconds), 'invocation_rate_per_second': Math.round(bucket.doc_count / params.time_period_seconds), 'fqdn': bucket.fqdn.hits.hits[0].fields['json.fqdn.keyword'][0]])]",
+      "inline" : "['items': ctx.payload.aggregations.significant_repos.buckets.findAll(bucket -> ((bucket.doc_count / params.time_period_seconds) >= params.minimum_invocation_rate_per_second) && (((bucket.wall_time_ms.value / params.time_period_seconds) >= params.wall_time_ms_per_second_threshold) || ((bucket.doc_count / params.time_period_seconds) >= params.invocation_rate_per_second_threshold))).collect(bucket -> ['key': bucket.key, 'count': bucket.doc_count, 'wall_time_ms_per_second': Math.round(bucket.wall_time_ms.value / params.time_period_seconds), 'invocation_rate_per_second': Math.round(bucket.doc_count / params.time_period_seconds), 'fqdn': bucket.fqdn.hits.hits[0].fields['json.fqdn.keyword'][0]])]",
       "lang" : "painless",
       "params" : {
         "time_period_seconds" : 600,
         "wall_time_ms_per_second_threshold": 4000,
+        "minimum_invocation_rate_per_second": 20,
         "invocation_rate_per_second_threshold": 100
       }
     }
@@ -93,7 +95,7 @@
         "message": {
           "from": "ElasticCloud Watcher: gitaly_abuse_1",
           "to": [
-            "#security-alert-auto"
+            "#alert-prod-abuse"
           ],
           "text": "Unusual Gitaly activity for a project has been detected. Review the runbook at https://gitlab.com/gitlab-com/runbooks/tree/master/troubleshooting/gitaly-unusual-activity.md for more details",
           "dynamic_attachments": {
