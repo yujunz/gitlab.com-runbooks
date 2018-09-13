@@ -3,7 +3,6 @@ groups:
   rules:
   - alert: RedisSwitchMaster
     expr: sum(changes(redis_sentinel_commands_total{environment=~"gstg", event=~"switch-master"}[5m])) > 0
-    for: 5m
     labels:
       severity: warn
     annotations:
