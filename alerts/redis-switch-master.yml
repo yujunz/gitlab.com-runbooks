@@ -2,9 +2,10 @@ groups:
 - name: redis-switch-master.rules
   rules:
   - alert: RedisSwitchMaster
-    expr: sum(changes(redis_sentinel_commands_total{environment=~"gstg", event=~"switch-master"}[5m])) > 0
+    expr: sum(changes(redis_sentinel_commands_total{environment=~"gprd", event=~"switch-master"}[5m])) > 0
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
     annotations:
       title: Redis Switch Master
       description: Redis node {{$labels.fqdn}} has a switch-master event in the last 5 minutes.
