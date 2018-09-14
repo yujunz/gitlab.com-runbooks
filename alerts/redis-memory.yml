@@ -2,7 +2,7 @@ groups:
 - name: redis-memory.rules
   rules:
   - alert: RedisMemoryUsageTooHigh
-    expr: (avg(redis_memory_used_bytes{environment=~"gprd", type="redis"}) by (fqdn) / avg(node_memory_MemTotal_bytes{environment=~"gprd", type="redis"}) by (fqdn)) > 0.80
+    expr: (redis_memory_used_rss_bytes / on(fqdn, tier, type, environment) node_memory_MemTotal_bytes) > 0.80
     for: 5m
     labels:
       pager: pagerduty
