@@ -1,8 +1,8 @@
 groups:
 - name: chef.rules
   rules:
-  - alert: ChefClientErrorInPrd
-    expr: chef_client_error{environment="gprd"} == 1
+  - alert: ChefClientError
+    expr: chef_client_error == 1
     for: 5h
     labels:
       severity: warn
@@ -15,7 +15,6 @@ groups:
     labels:
       severity: warn
     annotations:
-      description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration
-        }} ago
+      description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration }} ago
       runbook: troubleshooting/chef.md
       title: Chef client hasn't run for longer than expected

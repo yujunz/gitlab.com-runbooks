@@ -3,7 +3,7 @@ groups:
   rules:
 
   - alert: FeLoadBalancerLossOfRedundancy
-    expr: avg(up{environment=~"gprd", tier="lb",job="node"} * 100) by (type) < 100
+    expr: avg(up{tier="lb",job="node"} * 100) by (type) < 100
     for: 5m
     labels:
       pager: pagerduty
@@ -15,7 +15,7 @@ groups:
       title: Loss of Redundancy
 
   - alert: FeLoadBalancerMissingNodes
-    expr: sum (up{environment=~"gprd",tier="lb",job="node"}) by (type) == 0
+    expr: sum (up{tier="lb",job="node"}) by (type) == 0
       > 0
     labels:
       pager: pagerduty

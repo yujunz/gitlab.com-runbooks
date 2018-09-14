@@ -2,7 +2,7 @@ groups:
 - name: redis-switch-master.rules
   rules:
   - alert: RedisSwitchMaster
-    expr: sum(changes(redis_sentinel_commands_total{environment=~"gprd", event=~"switch-master"}[5m])) > 0
+    expr: sum(changes(redis_sentinel_commands_total{event=~"switch-master"}[5m])) > 0
     labels:
       pager: pagerduty
       severity: critical

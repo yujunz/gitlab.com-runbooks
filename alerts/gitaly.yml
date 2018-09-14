@@ -17,7 +17,7 @@ groups:
         5m
 
   - alert: GitLabComLatencyGitalyCritical
-    expr: gitaly:grpc_server_handling_seconds:p95{environment=~"gprd"} >= 60
+    expr: gitaly:grpc_server_handling_seconds:p95 >= 60
     for: 5m
     labels:
       pager: pagerduty

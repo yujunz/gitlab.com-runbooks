@@ -14,7 +14,7 @@ groups:
         are not responding, we are investigating the root cause.' if problem exists.
       runbook: troubleshooting/gitlab-pages.md
   - alert: GitLabPagesNotScraped
-    expr: (1 - avg(up{environment=~"gprd|gstg", job="gitlab-pages"})) * 100 > 20
+    expr: (1 - avg(up{job="gitlab-pages"})) * 100 > 20
     for: 5m
     labels:
       channel: alerts

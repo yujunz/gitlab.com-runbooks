@@ -2,7 +2,7 @@ groups:
 - name: postgresql.rules
   rules:
   - alert: PostgresSQL_XIDConsumptionTooLow
-    expr: rate(pg_txid_current{environment=~"gprd"}[1m]) < 5
+    expr: rate(pg_txid_current[1m]) < 5
     for: 1m
     labels:
       pager: pagerduty
@@ -14,7 +14,7 @@ groups:
       runbook: troubleshooting/postgresql.md#availability
       title: Postgres seems to be consuming transaction IDs very slowly
   - alert: PostgreSQL_XLOGConsumptionTooLow
-    expr: rate(pg_xlog_position_bytes{environment=~"gprd", fqdn !="postgres-01-db-gprd.c.gitlab-production.internal"}[1m]) < 200000
+    expr: rate(pg_xlog_position_bytes{fqdn !="postgres-01-db-gprd.c.gitlab-production.internal"}[1m]) < 200000
     for: 2m
     labels:
       pager: pagerduty
@@ -26,7 +26,7 @@ groups:
       runbook: troubleshooting/postgresql.md#availability
       title: Postgres seems to be consuming XLOG very slowly
   - alert: PostgreSQL_CommitRateTooLow
-    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production",environment=~"gprd", fqdn !="postgres-01-db-gprd.c.gitlab-production.internal"}[1m])
+    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production",fqdn !="postgres-01-db-gprd.c.gitlab-production.internal"}[1m])
       < 1000
     for: 5m
     labels:
@@ -52,7 +52,7 @@ groups:
         to the maximum
   - alert: PostgreSQL_RollbackRateTooHigh
     expr: rate(pg_stat_database_xact_rollback{datname="gitlabhq_production"}[5m])
-      / ON(instance, datname) rate(pg_stat_database_xact_commit{datname="gitlabhq_production",environment=~"gprd"}[5m])
+      / ON(instance, datname) rate(pg_stat_database_xact_commit{datname="gitlabhq_production"}[5m])
       > 0.1
     for: 5m
     labels:
@@ -64,7 +64,7 @@ groups:
       runbook: troubleshooting/postgresql.md#errors
       title: Postgres transaction rollback rate is high
   - alert: PostgreSQL_StatementTimeout_Errors
-    expr: rate(postgresql_errors_total{environment=~"gprd", type="statement_timeout"}[5m]) > 3
+    expr: rate(postgresql_errors_total{type="statement_timeout"}[5m]) > 3
     for: 5m
     labels:
       severity: warn
@@ -86,7 +86,7 @@ groups:
       runbook: troubleshooting/postgresql.md#errors
       title: Postgres detected deadlocks
   - alert: PostgreSQL_ReplicationStopped
-    expr: pg_stat_replication_pg_xlog_location_diff{environment=~"gprd", job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{environment=~"gprd", job="gitlab-cluster-db"}
+    expr: pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"}
     for: 5m
     labels:
       pager: pagerduty

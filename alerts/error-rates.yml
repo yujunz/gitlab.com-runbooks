@@ -5,7 +5,7 @@ groups:
     expr: sum by (type,environment)(rate(rails_requests_completed{status=~"5.."}[1m])) / sum by (type,environment)(rate(rails_requests_completed[1m]))
 
   - alert: HighRailsErrorRate
-    expr: environment_type:rails_request_errors:ratio{environment=~"gprd"} * 100 > .5
+    expr: environment_type:rails_request_errors:ratio * 100 > .5
     for: 30s
     labels:
       pager: pagerduty
@@ -16,8 +16,8 @@ groups:
       title: High Rails Error Rate on Front End
 
   - alert: HighWebErrorRate
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code="5xx",environment=~"gprd",tier="lb"})
-      - sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code!="5xx",environment=~"gprd",tier="lb"})
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code="5xx",tier="lb"})
+      - sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code!="5xx",tier="lb"})
       > 0
     for: 15s
     labels:
@@ -30,8 +30,8 @@ groups:
       runbook: troubleshooting/gitlab-com-is-down.md
       title: High Error Rate on Front End Web
   - alert: High4xxApiRateLimit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",environment=~"gprd",tier="lb"})
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{environment=~"gprd",tier="lb"})
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",tier="lb"})
+      / sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb"})
       > 0.1
     for: 5m
     labels:
@@ -43,8 +43,8 @@ groups:
       runbook: troubleshooting
       title: High 4xx Error Rate on Front End Web on backend api_rate_limit
   - alert: High4xxRateLimit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",code="4xx",environment=~"gprd",tier="lb"})
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",environment=~"gprd",tier="lb"})
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",code="4xx",tier="lb"})
+      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",tier="lb"})
       > 0.25
     for: 5m
     labels:

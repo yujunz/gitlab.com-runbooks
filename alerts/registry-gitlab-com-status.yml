@@ -17,7 +17,7 @@ groups:
 
   - alert: Detecting5xxForRegistry
     expr: |
-      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="5xx",environment=~"gprd",tier="lb"}) >0
+      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="5xx",tier="lb"}) >0
     for: 5m
     labels:
       pager: pagerduty
@@ -33,8 +33,8 @@ groups:
 
   - alert: High4xxRateForRegistry
     expr: |
-      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="4xx",environment=~"gprd",tier="lb"})
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",environment=~"gprd",tier="lb"})
+      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="4xx",tier="lb"})
+      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",tier="lb"})
       > 0.75
     for: 5m
     labels:

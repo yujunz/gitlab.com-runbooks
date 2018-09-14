@@ -2,7 +2,7 @@ groups:
 - name: mailroom.rules
   rules:
   - alert: MailroomUnreadMessagesPilingUp
-    expr: max(imap_nb_unread_messages_in_mailbox{environment=~"gprd"}) >= 25
+    expr: max(imap_nb_unread_messages_in_mailbox) >= 25
     for: 5m
     labels:
       severity: warn
@@ -12,7 +12,7 @@ groups:
         not stuck in a launch loop (`sudo tail -f /var/log/gitlab/mailroom/current`).
       title: Unread incoming emails are piling up
   - alert: ImapMailboxExporterIsNotRunning
-    expr: imap_up{environment=~"gprd"} == 0
+    expr: imap_up == 0
     for: 5m
     labels:
       severity: warn

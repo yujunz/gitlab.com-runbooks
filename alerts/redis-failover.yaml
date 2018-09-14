@@ -2,7 +2,7 @@ groups:
 - name: redis-failover.rules
   rules:
   - alert: RedisFailover
-    expr: sum(changes(redis_connected_slaves{environment=~"gprd"}[5m])) > 0
+    expr: sum(changes(redis_connected_slaves[5m])) > 0
     for: 1m
     labels:
       pager: pagerduty
