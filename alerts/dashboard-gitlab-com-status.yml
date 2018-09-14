@@ -1,0 +1,12 @@
+groups:
+- name: dashboards-gitlab-com.rules
+  rules:
+  - alert: DashboardsGitlabComDown
+    expr: probe_http_status_code{instance="https://dashboards.gitlab.com", job="blackbox"} != 200
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      title: The public dashboard page is down
+      description: dashboards.gitlab.com is down. Investigate the root cause by logging into the host.
