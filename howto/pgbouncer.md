@@ -56,7 +56,7 @@ Most settings only require a reload of pgbouncer, which should be handled by `gi
 
 To manually reload, run `sudo gitlab-ctl reload pgbouncer`
 
-To manually restart, run `sudo gitlab-ctl reload pgbouncer`. **Note:** This will cause an interruption to existing connections.
+To manually restart, run `sudo gitlab-ctl restart pgbouncer`. **Note:** This will cause an interruption to existing connections.
 
 ## Statistics
 
@@ -104,7 +104,7 @@ If the `databases.ini` file does NOT have a valid hostname, verify that the post
 **service** in consul has one (and only one) host in an `up` state.
 
 If this is the case, verify that the consul service received the last configuration change.
-To do this, check the log file: `/var/log/consul/failover_pgbouncer.log`.
+To do this, check the log file: `/var/log/gitlab/consul/failover_pgbouncer.log`.
 
 If this contains a line such as this:
 

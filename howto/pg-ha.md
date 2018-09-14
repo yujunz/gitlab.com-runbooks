@@ -346,8 +346,8 @@ sudo gitlab-ctl write-pgpass --host '*' --database pgbouncer --user pgbouncer --
 This file can be found here: `/var/opt/gitlab/consul/.pgpass`
 
 Since the watcher is triggered anytime the consul service changes, it is possible that certain errors can
-occur when there are short network outages. Consul recongnizes these as changes in the service, so it
-triggers a reconfiguration. In such cases we use `exit status 4` to signify *no master found* and dont actually
+occur when there are short network outages. Consul recognizes these as changes in the service, so it
+triggers a reconfiguration. In such cases we use `exit status 4` to signify *no master found* and don't actually
 let anything get triggered:
 
 ```
