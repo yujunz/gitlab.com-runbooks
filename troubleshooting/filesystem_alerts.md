@@ -70,3 +70,45 @@ Finally you can try to remove cached temp files by restarting services.
 This happens when a process deletes a file but doesn't close the file handler on it. The kernel then can't see that space as free as it's still been held by the process.
 
 You easily can check this with `sudo lsof | grep deleted`. If you see many deleted file handlers held by the same process you can fix this by restarting it.
+
+### Expanding a disk in GCP
+
+As a last resort you may need to expand either a persistent or root volume in
+GCP. This can be done online for persistent mounted disks and root volumes. In
+the case of root volumes terraform will try to recreate the resource so it will
+need to be done in the console manually, and then made in terraform.
+
+* Make the adjustment in terraform or the console to for the disk, this can be
+  done while the instance is running.
+* run `sudo lsblk` to see that the new space is available:
+Example:
+```
+sudo lsblk
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sdb      8:16   0   50G  0 disk /var/log
+sda      8:0    0  100G  0 disk
+└─sda1   8:1    0   20G  0 part /
+```
+* run `growpart <device> <partition number>` to increase the partition to the
+  space available. **Note that there is a space between the device and the
+  partition number.**.
+
+```
+## Root volume example
+sudo growpart /dev/sda 1
+```
+* confirm that the space is now taken with `sudo lsblk`.
+Example:
+```
+$sudo lsblk
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sdb      8:16   0   50G  0 disk /var/log
+sda      8:0    0  100G  0 disk
+└─sda1   8:1    0  100G  0 part /
+```
+* Resize the filesystem to use the new space with `sudo resize2fs <partition>`.
+Example:
+```
+resize2fs /dev/sda1
+```
+
