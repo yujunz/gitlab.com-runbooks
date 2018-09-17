@@ -2,7 +2,7 @@
 #  Redis Service
 
 * **Responsible Team**: [infrastructure](https://about.gitlab.com/handbook/engineering/infrastructure/)
-* **Slack Channel**: [#production](https://gitlab.slack.com/archives/production/production)
+* **Slack Channel**: [#production](https://gitlab.slack.com/archives/production)
 * **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=redis&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22redis%22%2C%20tier%3D%22db%22%7D
 * **Label**: gitlab-com~"Service:Redis"

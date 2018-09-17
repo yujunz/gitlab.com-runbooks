@@ -2,7 +2,7 @@
 #  Pages Service
 
 * **Responsible Team**: [release](https://about.gitlab.com/handbook/engineering/dev-backend/)
-* **Slack Channel**: [#g_release](https://gitlab.slack.com/archives/production/g_release)
+* **Slack Channel**: [#g_release](https://gitlab.slack.com/archives/g_release)
 * **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=pages&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22pages%22%2C%20tier%3D%22sv%22%7D
 * **Label**: gitlab-com~"Service:Pages"
