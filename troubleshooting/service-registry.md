@@ -18,9 +18,4 @@
 * [runners_cache_is_down.md](runners_cache_is_down.md)
 * [runners_registry_is_down.md](runners_registry_is_down.md)
 * [ssl_cert.md](ssl_cert.md)
-
-## Operating Rate
-
-![](https://dashboards.gitlab.com/render/d-solo/WOtyonOiz/general-triage-service?from=now-24h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=registry&orgId=1&panelId=12&width=1200&height=600&tz=UTC&theme=light)
-
 <!-- END_MARKER -->

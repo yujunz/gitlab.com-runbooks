@@ -20,9 +20,4 @@
 * [large-sidekiq-queue.md](large-sidekiq-queue.md)
 * [recovering-from-nfs-disaster.md](recovering-from-nfs-disaster.md)
 * [workers-high-load.md](workers-high-load.md)
-
-## Operating Rate
-
-![](https://dashboards.gitlab.com/render/d-solo/WOtyonOiz/general-triage-service?from=now-24h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=git&orgId=1&panelId=12&width=1200&height=600&tz=UTC&theme=light)
-
 <!-- END_MARKER -->

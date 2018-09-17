@@ -14,9 +14,4 @@
 * [gitlab-com-is-down.md](gitlab-com-is-down.md)
 * [load-balancer-outage.md](load-balancer-outage.md)
 * [postgres.md](postgres.md)
-
-## Operating Rate
-
-![](https://dashboards.gitlab.com/render/d-solo/WOtyonOiz/general-triage-service?from=now-24h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=postgres&orgId=1&panelId=12&width=1200&height=600&tz=UTC&theme=light)
-
 <!-- END_MARKER -->

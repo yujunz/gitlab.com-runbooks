@@ -15,9 +15,4 @@
 * [gitaly-unusual-activity.md](gitaly-unusual-activity.md)
 * [gitlab-pages.md](gitlab-pages.md)
 * [node_memory_alerts.md](node_memory_alerts.md)
-
-## Operating Rate
-
-![](https://dashboards.gitlab.com/render/d-solo/WOtyonOiz/general-triage-service?from=now-24h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=pages&orgId=1&panelId=12&width=1200&height=600&tz=UTC&theme=light)
-
 <!-- END_MARKER -->
