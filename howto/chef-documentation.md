@@ -35,31 +35,21 @@ Creating new cookbook consists of several steps:
       ```
 1. Now its time to create two repos for your new cookbook. The main one, on
    `gitlab.com`, is used for everyday work, and template points to .com by
-   default. The mirror cookbook on `dev.gitlab.org` is used by chef-server
+   default. The mirror cookbook on `ops.gitlab.net` is used by chef-server
    when gitlab.com is down, and should never be pushed directly to.
    1. Create a [new project](https://gitlab.com/projects/new?namespace_id=650153)
       in `gitlab-cookbooks` namespace (please use `gitlab_` prefix)
-   1. Navigate to Settings->CI/CD of the newly created cookbook and add
-      the `DIGITALOCEAN_ACCESS_TOKEN` environment variable to enable integration
-      tests on DO in CI. Currently, we use the toke from Gitlab Dev account, get
-      it from 1password or from another cookbook. We should use ephemeral ones
-      for this (this is ongoing effort in Vault project)
-   1. Navigate to Settings->Repository and expand "Push to a remote repository"
-      group. You will need to add `dev.gitlab.org` mirror repository there. See
-      the existing cookbooks for the example, and tick "Remote mirror repository".
-   1. Create a [new project](https://dev.gitlab.org/projects/new?namespace_id=36)
-      in `cookbooks` namespace on `dev.gitlab.org` with the same name. You can
-      also add the `DIGITALOCEAN_ACCESS_TOKEN` there too, but since mirroring
-      takes place after merge anyways, its not necessary.
+   1. Follow [these instructions](https://gitlab.com/gitlab-com/gitlab-com-infrastructure/blob/81c2fffc5fd742f7fab656c06c47d8a01b190917/environments/ops/scripts/ops-gitlab-net-repo-update/README.md)
+      to setup mirroring on ops.
 
-1. Do a `git push origin master` and verify that the reposiory is mirrored to
-   dev in few minutes.
+1. Do a `git push origin master` and verify that the repository is mirrored to
+   ops in few minutes.
 
 1. Last step: tighten up push/merge rules to enforce some consistency of the
-   cookbook. Since `dev.gitlab.org` is only mirror, and should never be used
+   cookbook. Since `ops.gitlab.net` is only mirror, and should never be used
    directly, the following is done only cookbook located on `gitlab.com`:
    1. Set some description in Settings -> General.
-   1. Check "Merge request approvals" and add `@gl-infra` group to approvers under Settings -> General.
+   1. Check "Merge request approvals" and add `@gitlab-com/gl-infra` group to approvers under Settings -> General.
    1. Allow merge only with green pipelines and resolved discussions there too.
    1. Set "Check whether author is a GitLab user" and "Prevent committing secrets
       to Git" under Settings -> Repository. Make sure `master` branch is protected
@@ -68,7 +58,7 @@ Creating new cookbook consists of several steps:
 
 Go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and edit the
 Berksfile to add the new cookbook. Be sure that you add version pinning and point it to the
-dev repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
+ops repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
 Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef server.
 
 To apply this uploaded cookbook to a new environment follow the steps [below](#chef-environments-and-cookbooks)
@@ -185,13 +175,7 @@ number in metadata.rb as we have versioning requirements in place so Chef will n
 a cookbook with the same version, even if it has changed. Commit these changes and submit a
 merge request to merge your changes.
 
-Once your changes are merged, you will need to actually upload the cookbook to
-the server.  To do this, go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and run
- `berks update <cookbookname>`. This will download the newest version of your cookbook from
-the git repository into ~/.berkshelf and automatically update `Berksfile.lock`
-with that version. Commit the changes that will be recorded in
-`Berksfile.lock` and push them. After the cookbook is merged, you can use
-`berks upload <cookbookname>` to upload the cookbook to the server.
+Once your changes are merged, the new cookbook will be uploaded to Chef server automatically as part of a CI pipeline.
 
 To apply this uploaded version to a new environment follow the steps [below](#chef-environments-and-cookbooks)
 
@@ -235,10 +219,7 @@ The pattern matching follows the same syntax as [gem or berks version operators]
 (ie. <, >, <=, >=, ~>, =). This allows us to roll out a cookbook one environment at a time.
 The workflow for this would look as follows.
 
-We begin by uploading the cookbook as usual:
-1. `berks update cookbook-name` and `berks upload cookbook-name` as usual
-
-Now the version is on the chef server, but is only actively being applied to nodes in the `_default`
+The version should be on the chef server when it was merged into master, but is only actively being applied to nodes in the `_default`
 environment, since `_default` has no version constraints. The next steps are the same as
 for any omnibus deploy:
 
