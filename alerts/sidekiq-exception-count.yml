@@ -7,6 +7,6 @@ groups:
     labels:
       severity: warn
     annotations:
-      description: There have been over 1000 Sidekiq exceptions for {{ $labels.controller }} for the last hour.
+      description: There have been over 1000 Sidekiq exceptions for {{ $labels.controller }} in {{ $labels.environment }} for the last hour.
         Check https://dashboards.gitlab.net/dashboard/db/geo-status?panelId=66&fullscreen&orgId=1&from=now-6h&to=now.
-      title: 'Large number of Sidekiq exceptions for {{ $labels.controller }}: {{$value}}'
+      title: 'Large number of Sidekiq exceptions for {{ $labels.controller }} in {{ $labels.environment }}: {{$value}}'
