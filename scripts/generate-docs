@@ -46,7 +46,7 @@ def generate_header(service, team, tier)
 * **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=<%= service_name %>&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22<%= service_name %>%22%2C%20tier%3D%22<%= service["tier"] %>%22%7D
 <% if service["label"] -%>
-* **Label**: gitlab-com~"<%= service["label"] %>"
+* **Label**: gitlab-com/gl-infra/production~"<%= service["label"] %>"
 <% end -%>
 <% if service["sentry_slug"] -%>
 * **Sentry**: https://sentry.gitlap.com/<%= service["sentry_slug"] %>

@@ -5,7 +5,7 @@
 * **Slack Channel**: [#backend](https://gitlab.slack.com/archives/backend)
 * **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=sidekiq&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22sidekiq%22%2C%20tier%3D%22sv%22%7D
-* **Label**: gitlab-com~"Service:Sidekiq"
+* **Label**: gitlab-com/gl-infra/production~"Service:Sidekiq"
 * **Sentry**: https://sentry.gitlap.com/gitlab/gitlabcom
 * **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/c7nMugpmz
 * **ELK**: [`pubsub-sidekiq-inf-gprd-*`](https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f)

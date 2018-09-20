@@ -5,7 +5,7 @@
 * **Slack Channel**: [#backend](https://gitlab.slack.com/archives/backend)
 * **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=api&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22api%22%2C%20tier%3D%22sv%22%7D
-* **Label**: gitlab-com~"Service:API"
+* **Label**: gitlab-com/gl-infra/production~"Service:API"
 * **Sentry**: https://sentry.gitlap.com/gitlab/gitlabcom
 * **ELK**: [`pubsub-rails-inf-gprd-*`](https://log.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684)
 

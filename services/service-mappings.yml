@@ -67,6 +67,7 @@ services:
 - name: mailroom
   tier: sv
   team: backend
+  label: Service:Mailroom
 
 - name: pages
   tier: sv
@@ -83,6 +84,7 @@ services:
   elk:
     permalink: https://log.gitlab.net/goto/365bdf8fb46a83863df50cb618597b79
     index: pubsub-postgres-inf-gprd-*
+  label: Service:pgbouncer
 
 - name: postgres
   tier: db
@@ -108,7 +110,7 @@ services:
   elk:
     permalink: https://log.gitlab.net/goto/1c2fe46c1db40a7aa7d31875f3fd2ad1
     index: pubsub-registry-inf-gprd-*
-  label: Service:Redis
+  label: Service:Registry
 
 - name: sidekiq
   tier: sv
