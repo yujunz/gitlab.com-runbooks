@@ -157,7 +157,7 @@ groups:
         for more data.'
 
   - alert: CICDDegradatedCIConsulPrometheusCluster
-    expr: up{job="node",fqdn=~"(prometheus|consul)-.*(nyc1|us-east1-(c|d)).*"} == 0
+    expr: up{job="ci-node",fqdn=~"(prometheus|consul)-.*(nyc1|us-east1-(c|d)).*"} == 0
     for: 5m
     labels:
       channel: ci-cd
