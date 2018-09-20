@@ -10,5 +10,5 @@
 
 ## Troubleshoot
 - Check the [triage overview](https://dashboards.gitlab.net/dashboard/db/triage-overview) dashboard for 5xx errors by backend.
-- Check [Sentry](https://sentry.gitlap.com/gitlab/gitlabcom/) for new 500 errors.
+- Check [Sentry](https://sentry.gitlab.net/gitlab/gitlabcom/) for new 500 errors.
 - If the problem persists send a channel wide notification in `#development`.

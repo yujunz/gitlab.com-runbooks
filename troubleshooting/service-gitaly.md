@@ -6,7 +6,7 @@
 * **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=gitaly&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22gitaly%22%2C%20tier%3D%22stor%22%7D
 * **Label**: gitlab-com/gl-infra/production~"Service:Gitaly"
-* **Sentry**: https://sentry.gitlap.com/gitlab/gitaly-production
+* **Sentry**: https://sentry.gitlab.net/gitlab/gitaly-production
 * **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/SRXyrrSmk
 * **ELK**: [`pubsub-gitaly-inf-gprd-*`](https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d)
 

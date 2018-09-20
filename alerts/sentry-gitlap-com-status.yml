@@ -1,8 +1,8 @@
 groups:
-- name: sentry-gitlap-com-status.rules
+- name: sentry.gitlab.net-status.rules
   rules:
   - alert: SentryDown
-    expr: probe_http_status_code{instance="https://sentry.gitlap.com",job="blackbox"}
+    expr: probe_http_status_code{instance="https://sentry.gitlab.net",job="blackbox"}
       != 200
     for: 5m
     labels:
@@ -10,4 +10,4 @@ groups:
     annotations:
       description: GitLab sentry has been down for 1 minute!
       runbook: troubleshooting/sentry-is-down.md
-      title: sentry.gitlap.com is down
+      title: sentry.gitlab.net is down
