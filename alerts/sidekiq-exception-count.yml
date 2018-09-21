@@ -2,7 +2,7 @@ groups:
 - name: sidekiq-exception-count.rules
   rules:
   - alert: SidekiqExceptionCountTooHigh
-    expr: sum by (controller) (gitlab_transaction_event_sidekiq_exception_total) > 1000
+    expr: sum by (controller,environment) (gitlab_transaction_event_sidekiq_exception_total) > 1000
     for: 1h
     labels:
       severity: warn
