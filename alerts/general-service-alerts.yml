@@ -1,102 +1,117 @@
 groups:
-- name: service_availability.rules
-  rules:
-    # Availability above 2 sigma
-  - alert: service_availability_out_of_bounds_lower_2sigma_5m
-    expr: |
-      gitlab_service_availability:ratio
-      <
-      gitlab_service_availability:ratio:avg_over_time_1w - 2 * gitlab_service_availability:ratio:stddev_over_time_1w
-    for: 5m
-    labels:
-      rules_domain: general
-      metric: gitlab_service_availability
-      severity: warn
-      period: 5m
-      bound: lower
-      threshold_sigma: 2
-    annotations:
-      description: |
-        Server is running outside of normal availability parameters
-      runbook: troubleshooting/
-      title: Server availability alert
+  - name: service_availability.rules
+    rules:
+      # Availability above 2 sigma
+      - alert: service_availability_out_of_bounds_lower_2sigma_5m
+        expr: |
+          gitlab_service_availability:ratio
+          <
+          gitlab_service_availability:ratio:avg_over_time_1w - 2.5 * gitlab_service_availability:ratio:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_service_availability
+          severity: warn
+          period: 5m
+          bound: lower
+          threshold_sigma: "2.5"
+        annotations:
+          description: |
+            Server is running outside of normal availability parameters
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "{{ $labels.type }} service operation rate alert"
+          grafana_dashboard_id: "WOtyonOiz/general-triage-service"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type"
 
-  # Operation rate above 2 sigma
-  - alert: service_ops_out_of_bounds_upper_2sigma_5m
-    expr: |
-      gitlab_service_ops:rate
-      >
-      gitlab_service_ops:rate:avg_over_time_1w + 2 * gitlab_service_ops:rate:stddev_over_time_1w
-    for: 5m
-    labels:
-      rules_domain: general
-      metric: gitlab_service_ops
-      severity: warn
-      period: 5m
-      bound: upper
-      threshold_sigma: 2
-    annotations:
-      description: |
-        Server is running outside of normal operation rate parameters
-      runbook: troubleshooting/
-      title: Server operation rate alert
+      # Operation rate above 2 sigma
+      - alert: service_ops_out_of_bounds_upper_2sigma_5m
+        expr: |
+          gitlab_service_ops:rate
+          >
+          gitlab_service_ops:rate:avg_over_time_1w + 2.5 * gitlab_service_ops:rate:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_service_ops
+          severity: warn
+          period: 5m
+          bound: upper
+          threshold_sigma: "2.5"
+        annotations:
+          description: |
+            Server is running outside of normal operation rate parameters
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "{{ $labels.type }} service operation rate alert"
+          grafana_dashboard_id: "WOtyonOiz/general-triage-service"
+          grafana_panel_id: "12"
+          grafana_variables: "environment,type"
 
-  # Operation rate below 2 sigma
-  - alert: service_ops_out_of_bounds_lower_2sigma_5m
-    expr: |
-      gitlab_service_ops:rate
-      <
-      gitlab_service_ops:rate:avg_over_time_1w - 2 * gitlab_service_ops:rate:stddev_over_time_1w
-    for: 5m
-    labels:
-      rules_domain: general
-      metric: gitlab_service_ops
-      severity: warn
-      period: 5m
-      bound: lower
-      threshold_sigma: 2
-    annotations:
-      description: |
-        Server is running outside of normal operation rate parameters
-      runbook: troubleshooting/
-      title: Server operation rate alert
+      # Operation rate below 2 sigma
+      - alert: service_ops_out_of_bounds_lower_2sigma_5m
+        expr: |
+          gitlab_service_ops:rate
+          <
+          gitlab_service_ops:rate:avg_over_time_1w - 2.5 * gitlab_service_ops:rate:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_service_ops
+          severity: warn
+          period: 5m
+          bound: lower
+          threshold_sigma: "2.5"
+        annotations:
+          description: |
+            Server is running outside of normal operation rate parameters
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "{{ $labels.type }} service operation rate alert"
+          grafana_dashboard_id: "WOtyonOiz/general-triage-service"
+          grafana_panel_id: "12"
+          grafana_variables: "environment,type"
 
-  # Apdex lower than 2 sigma
-  - alert: service_apdex_out_of_bounds_lower_2sigma_5m
-    expr: |
-      gitlab_service_apdex:ratio
-      <
-      gitlab_service_apdex:ratio:avg_over_time_1w - 2 * gitlab_service_apdex:ratio:stddev_over_time_1w
-    for: 5m
-    labels:
-      rules_domain: general
-      metric: gitlab_service_apdex
-      severity: warn
-      period: 5m
-      bound: lower
-      threshold_sigma: 2
-    annotations:
-      description: |
-        Server is running outside of normal apdex parameters
-      runbook: troubleshooting/
-      title: Server apdex alert
+      # Apdex lower than 2 sigma
+      - alert: service_apdex_out_of_bounds_lower_2sigma_5m
+        expr: |
+          gitlab_service_apdex:ratio
+          <
+          gitlab_service_apdex:ratio:avg_over_time_1w - 2.5 * gitlab_service_apdex:ratio:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_service_apdex
+          severity: warn
+          period: 5m
+          bound: lower
+          threshold_sigma: "2.5"
+        annotations:
+          description: |
+            Server is running outside of normal apdex parameters
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "{{ $labels.type }} service apdex alert"
+          grafana_dashboard_id: "WOtyonOiz/general-triage-service"
+          grafana_panel_id: "16"
+          grafana_variables: "environment,type"
 
-  # Error rate exceeds 2 sigma
-  - alert: service_errors_out_of_bounds_upper_2sigma_5m
-    expr: |
-      gitlab_service_errors:rate
-      >
-      gitlab_service_errors:rate:avg_over_time_1w + 2 * gitlab_service_errors:rate:stddev_over_time_1w
-    for: 5m
-    labels:
-      rules_domain: general
-      metric: gitlab_service_errors
-      severity: warn
-      period: 5m
-      bound: upper
-      threshold_sigma: 2
-    annotations:
-      description: |
-        Server is running outside of normal error parameters
-      runbook: troubleshooting/
-      title: Server apdex alert
+      # Error rate exceeds 2 sigma
+      - alert: service_errors_out_of_bounds_upper_2sigma_5m
+        expr: |
+          gitlab_service_errors:rate
+          >
+          gitlab_service_errors:rate:avg_over_time_1w + 2.5 * gitlab_service_errors:rate:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_service_errors
+          severity: warn
+          period: 5m
+          bound: upper
+          threshold_sigma: "2.5"
+        annotations:
+          description: |
+            Server is running outside of normal error parameters
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "{{ $labels.type }} service error alert"
+          grafana_dashboard_id: "WOtyonOiz/general-triage-service"
+          grafana_panel_id: "24"
+          grafana_variables: "environment,type"
