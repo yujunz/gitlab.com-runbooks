@@ -3,19 +3,31 @@ groups:
   rules:
   - alert: GitlabComDown
     expr: probe_http_status_code{instance="https://gitlab.com",job="blackbox"} != 200
-    for: 5m
+    for: 2m
     labels:
       pager: pagerduty
       severity: critical
     annotations:
-      description: GitLab.com is down for more than 1 minute! Consider !tweet 'GitLab.com
+      description: GitLab.com is down for more than 2 minutes! Consider !tweet 'GitLab.com
         is currently down, we are investigating the root cause, apologies for the
         inconvenience' if there is problems.
       runbook: troubleshooting/gitlab-com-is-down.md
-      title: GitLab.com is down for 1 minute
+      title: GitLab.com is down for 2 minutes
+  - alert: GitlabComSignInDown
+    expr: probe_http_status_code{instance="https://gitlab.com/users/sign_in",job="blackbox"} != 200
+    for: 2m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: GitLab.com is down for more than 2 minutes! Consider !tweet 'GitLab.com
+        is currently down, we are investigating the root cause, apologies for the
+        inconvenience' if there is problems.
+      runbook: troubleshooting/gitlab-com-is-down.md
+      title: GitLab.com is down for 2 minutes
   - alert: WWWGitlabComDown
     expr: probe_http_status_code{instance="https://www.gitlab.com",job="blackbox"} != 200
-    for: 5m
+    for: 2m
     labels:
       pager: pagerduty
       severity: critical
@@ -24,4 +36,4 @@ groups:
         is currently down, we are investigating the root cause, apologies for the
         inconvenience' if there is problems.
       runbook: troubleshooting/gitlab-com-is-down.md
-      title: www.gitlab.com is down for 1 minute
+      title: www.gitlab.com is down for 2 minutes
