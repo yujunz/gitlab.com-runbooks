@@ -57,7 +57,16 @@ each host.
 
 ## How to add new alerts
 
-Just create a new yml file in the `/alerts` folder in this repo, commit, push, and then run chef client on `roles:gitlab-prometheus`
+Create a new yml file under `/alerts` in this repo, and submit a MR. Once the MR has been approved &
+merged, trigger a chef converge on the `[gstg|gprd|ops]-infra-alerts` roles.
+
+From local clone of `dev.gitlab.org:chef-repo`
+
+```
+bundle exec knife ssh 'roles:gstg-infra-alerts'
+bundle exec knife ssh 'roles:gprd-infra-alerts'
+bundle exec knife ssh 'roles:ops-infra-alerts'
+```
 
 ## Where to find things
 
