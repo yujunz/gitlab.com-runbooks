@@ -18,7 +18,7 @@ only apparent to some users but not others.
     curl -v https://pages.gitlab.io > /dev/null
     ```
 
-1. Go to https://log.gitlap.com and look for that request. You can search in Kibana for the terms:
+1. Go to https://log.gitlab.net and look for that request. You can search in Kibana for the terms:
 
 
     ```

@@ -15,7 +15,7 @@
 ## 2. Check the Gitaly Logs
 
 - Check [Sentry](https://sentry.gitlab.net/gitlab/gitaly-production/) for unusual errors
-- Check [Kibana](https://log.gitlap.com/goto/5347dee91b984026567bfa48f30c38fb) for increased error rates
+- Check [Kibana](https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d) for increased error rates
 - Check the Gitaly service logs on the affected host
 - Check [Grafana dashboards](https://dashboards.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?orgId=1) to check for a cause of this outage
 

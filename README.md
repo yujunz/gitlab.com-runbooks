@@ -64,7 +64,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [HAProxy is missing workers](troubleshooting/chef.md)
 * [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
 * [Azure Load Balancers Misbehave](troubleshooting/load-balancer-outage.md)
-* [Kibana is down](troubleshooting/kibana_is_down.md)
 * [GitLab registry is down](troubleshooting/gitlab-registry.md)
 * [Sidekiq stats no longer showing](troubleshooting/sidekiq_stats_no_longer_showing.md)
 * [Gemnasium is down](troubleshooting/gemnasium_is_down.md)
