@@ -12,7 +12,7 @@ groups:
       severity: critical
     annotations:
       description: Rails is returning 5xx errors at a high rate for {{ $labels.type }} . Traffic is impacted and users are likely seeing 500 errors.
-      runbook: troubleshooting/gitlab-com-is-down.md
+      runbook: troubleshooting/high-error-rate.md
       title: High Rails Error Rate on Front End
 
   - alert: HighWebErrorRate
