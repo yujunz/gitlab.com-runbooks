@@ -64,18 +64,49 @@ groups:
         is 0. This may suggest problems with auto-scaling provider or Runner stability.
         You should check Runner's logs. Check http://dashboards.gitlab.net/dashboard/db/ci."
 
-  - alert: CICDTooManyJobsOnSharedRunners
-    expr: sum(gitlab_runner_jobs{job="shared-runners"}) > 500
-    for: 15m
+  - alert: CICDRunnersConcurrentLimitHigh
+    expr: (sum(gitlab_runner_jobs) by (job) / sum(gitlab_runner_concurrent) by (job)) > 0.85
+    for: 5m
     labels:
       channel: ci-cd
       severity: warn
     annotations:
-      title: Number of jobs running on shared runners is over 500 for the last 15
-        minutes
+      title: "{{ $labels.job }} runners are using 85% of concurrent limit for more than 5 minutes."
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
-        abusive usage of Runners. Check https://dashboards.gitlab.net/dashboard/db/ci
-        and https://log.gitlap.net/app/kibana#/dashboard/5d3921f0-79e0-11e7-a8e2-f91bfad41e34'
+        abusive usage of Runners. Check https://dashboards.gitlab.net/dashboard/db/ci'
+
+  - alert: CICDRunnersConcurrentLimitCritical
+    expr: (sum(gitlab_runner_jobs) by (job) / sum(gitlab_runner_concurrent) by (job)) > 0.95
+    for: 5m
+    labels:
+      channel: ci-cd
+      severity: critical
+    annotations:
+      title: "{{ $labels.job }} runners are using 95% of concurrent limit for more than 5 minutes."
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
+        abusive usage of Runners. Check https://dashboards.gitlab.net/dashboard/db/ci'
+
+  - alert: CICDRunnersWorkerLimitHigh
+    expr: (sum(gitlab_runner_jobs) by (instance, runner) / sum(gitlab_runner_limit) by (instance, runner)) > 0.85
+    for: 5m
+    labels:
+      channel: ci-cd
+      severity: warn
+    annotations:
+      title: "{{ $labels.instance }}, worker {{ $labels.runner }} is using 85% of concurrent limit for more than 5 minutes."
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
+        abusive usage of Runners. Check https://dashboards.gitlab.net/dashboard/db/ci'
+
+  - alert: CICDRunnersWorkerLimitCritical
+    expr: (sum(gitlab_runner_jobs) by (instance, runner) / sum(gitlab_runner_limit) by (instance, runner)) > 0.95
+    for: 5m
+    labels:
+      channel: ci-cd
+      severity: critical
+    annotations:
+      title: "{{ $labels.instance }}, worker {{ $labels.runner }} is using 95% of concurrent limit for more than 5 minutes."
+      description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
+        abusive usage of Runners. Check https://dashboards.gitlab.net/dashboard/db/ci'
 
   - alert: CICDRunnersManagerDown
     expr: up{job=~"private-runners|shared-runners|shared-runners-gitlab-org|staging-shared-runners"} == 0
