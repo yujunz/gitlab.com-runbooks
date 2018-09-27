@@ -36,6 +36,7 @@ services:
     permalink: https://log.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684
     index: pubsub-rails-inf-gprd-*
   label: Service:API
+  criticality: 3
 
 - name: web
   tier: sv
@@ -46,6 +47,7 @@ services:
     permalink: https://log.gitlab.net/goto/5e1aa9dac377ff2282c70748e9278860
     index: pubsub-rails-inf-gprd-*
   label: Service:Web
+  criticality: 3
 
 - name: git
   tier: sv
@@ -56,6 +58,7 @@ services:
     permalink: https://log.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
     index: pubsub-rails-inf-gprd-*
   label: Service:GitLab Shell
+  criticality: 3
 
 - name: gitaly
   tier: stor
@@ -67,11 +70,13 @@ services:
     permalink: https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d
     index: pubsub-gitaly-inf-gprd-*
   label: Service:Gitaly
+  criticality: 2
 
 - name: mailroom
   tier: sv
   team: backend
   label: Service:Mailroom
+  criticality: 3
 
 - name: pages
   tier: sv
@@ -82,6 +87,7 @@ services:
     permalink: https://log.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
     index: pubsub-pages-inf-gprd-*
   label: Service:Pages
+  criticality: 3
 
 - name: pgbouncer
   tier: db
@@ -92,6 +98,7 @@ services:
     permalink: https://log.gitlab.net/goto/365bdf8fb46a83863df50cb618597b79
     index: pubsub-postgres-inf-gprd-*
   label: Service:pgbouncer
+  criticality: 1
 
 - name: postgres
   tier: db
@@ -102,6 +109,7 @@ services:
     permalink: https://log.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c
     index: pubsub-postgres-inf-gprd-*
   label: Service:Postgres
+  criticality: 1
 
 - name: redis
   tier: db
@@ -112,6 +120,7 @@ services:
     permalink: https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc
     index: pubsub-redis-inf-gprd-*
   label: Service:Redis
+  criticality: 1
 
 - name: registry
   tier: sv
@@ -120,6 +129,7 @@ services:
     permalink: https://log.gitlab.net/goto/1c2fe46c1db40a7aa7d31875f3fd2ad1
     index: pubsub-registry-inf-gprd-*
   label: Service:Registry
+  criticality: 3
 
 - name: sidekiq
   tier: sv
@@ -131,3 +141,4 @@ services:
     permalink: https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
     index: pubsub-sidekiq-inf-gprd-*
   label: Service:Sidekiq
+  criticality: 3
