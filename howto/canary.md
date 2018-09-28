@@ -22,8 +22,6 @@ all non-cookie production traffic from reaching canary execute the following com
 ./bin/set-canary-weights gprd 0
 ```
 
-### Dasbhoards
-
 ### Utilities
 
 There are two scripts that help to manage canary traffic and can be used to
