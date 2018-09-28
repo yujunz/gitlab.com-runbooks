@@ -133,6 +133,18 @@ groups:
         $value | humanizeDuration }}
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag is over 12 hours on archive recovery replica
+  - alert: PostgreSQL_ReplicationLagTooLarge_DelayedReplica
+    expr: (pg_replication_lag > 43200) and ON(instance) (pg_replication_is_replica{type = "postgres-delayed"} == 1)
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: warn
+      channel: database
+    annotations:
+      description: Replication lag on server {{$labels.instance}} is currently {{
+        $value | humanizeDuration }}
+      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      title: Postgres Replication lag is over 12 hours on delayed replica
   - alert: PostgreSQL_ReplicationLagBytesTooLarge
     expr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - ON(environment)
       GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica{type = "postgres", fqdn != "postgres-01-db-gprd.c.gitlab-production.internal"}
