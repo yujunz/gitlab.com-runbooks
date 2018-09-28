@@ -184,7 +184,7 @@ groups:
       runbook: "troubleshooting/postgres.md#replication_slots"
       title: Unused Replication Slots for {{$labels.fqdn}}
   - alert: PostgreSQL_ReplicaStaleXmin
-    expr: pg_replication_slots_xmin_age > 20000
+    expr: pg_replication_slots_xmin_age{slot_name =~ '^repmgr_slot_[0-9]+'} > 20000
     for: 30m
     labels:
       severity: critical
