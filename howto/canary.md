@@ -15,7 +15,7 @@ Non-canary boxes are labeled as:
 ### HOW TO STOP ALL PRODUCTION TRAFFIC TO CANARY
 
 Canary is the first stage that receives production traffic, if you want to stop
-all production traffic from reaching canary execute the following command in the
+all non-cookie production traffic from reaching canary execute the following command in the
 [chef-repo bin dir](https://dev.gitlab.org/cookbooks/chef-repo/tree/master/bin):
 
 ```
