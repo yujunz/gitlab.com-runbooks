@@ -2,7 +2,7 @@ groups:
 - name: pull-mirror-queues.rules
   rules:
   - alert: PullMirrorsOverdueQueueTooLarge
-    expr: quantile(0.5, gitlab_database_rows{query_name="mirrors_ready_to_sync",environment="gprd"}) > 5000
+    expr: quantile(0.5, gitlab_database_rows{query_name="mirrors_ready_to_sync"}) > 5000
     for: 10m
     labels:
       severity: critical
