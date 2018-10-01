@@ -2,12 +2,21 @@ groups:
 - name: sidekiq-exception-count.rules
   rules:
   - alert: SidekiqExceptionCountTooHigh
-    expr: sum by (controller,environment) (gitlab_transaction_event_sidekiq_exception_total) > 5000
+    expr: sum by (controller,environment) (gitlab_transaction_event_sidekiq_exception_total{controller!="RepositoryUpdateMirrorWorker"}) > 2000
     for: 1h
     labels:
       severity: warn
     annotations:
-      description: There have been over 5000 Sidekiq exceptions for {{ $labels.controller }} in {{ $labels.environment }} for the last hour.
+      description: There have been over 2000 Sidekiq exceptions for {{ $labels.controller }} in {{ $labels.environment }} for the last hour.
+        Check https://dashboards.gitlab.net/dashboard/db/sidekiq-stats?panelId=66&fullscreen&orgId=1&from=now-6h&to=now.
+      title: 'Large number of Sidekiq exceptions for {{ $labels.controller }} in {{ $labels.environment }}: {{$value}}'
+  - alert: RepositoryMirrorUpdateWorkerExceptionCountTooHigh
+    expr: sum by (controller,environment) (gitlab_transaction_event_sidekiq_exception_total{controller="RepositoryUpdateMirrorWorker"}) > 10000
+    for: 1h
+    labels:
+      severity: warn
+    annotations:
+      description: There have been over 10000 Sidekiq exceptions for {{ $labels.controller }} in {{ $labels.environment }} for the last hour.
         Check https://dashboards.gitlab.net/dashboard/db/sidekiq-stats?panelId=66&fullscreen&orgId=1&from=now-6h&to=now.
       title: 'Large number of Sidekiq exceptions for {{ $labels.controller }} in {{ $labels.environment }}: {{$value}}'
       runbook: troubleshooting/sidekiq_exception_count.md
