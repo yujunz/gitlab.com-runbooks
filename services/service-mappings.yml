@@ -31,6 +31,7 @@ services:
   tier: sv
   team: backend
   sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
+  primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=api"
   elk:
     permalink: https://log.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684
     index: pubsub-rails-inf-gprd-*
@@ -40,6 +41,7 @@ services:
   tier: sv
   team: backend
   sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
+  primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=web"
   elk:
     permalink: https://log.gitlab.net/goto/5e1aa9dac377ff2282c70748e9278860
     index: pubsub-rails-inf-gprd-*
@@ -49,6 +51,7 @@ services:
   tier: sv
   team: backend
   sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
+  primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=git"
   elk:
     permalink: https://log.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
     index: pubsub-rails-inf-gprd-*
@@ -59,6 +62,7 @@ services:
   team: gitaly
   sentry_slug: gitlab/gitaly-production
   grafana_folder: SRXyrrSmk
+  primary_grafana_dashboard: "000000214/gitaly-fleet-overview"
   elk:
     permalink: https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d
     index: pubsub-gitaly-inf-gprd-*
@@ -73,6 +77,7 @@ services:
   tier: sv
   team: release
   grafana_folder: v2ZhpeSik
+  primary_grafana_dashboard: "_IQB_rSmk/pages"
   elk:
     permalink: https://log.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
     index: pubsub-pages-inf-gprd-*
@@ -81,6 +86,8 @@ services:
 - name: pgbouncer
   tier: db
   team: infrastructure
+  grafana_folder: jYXDze5mk
+  primary_grafana_dashboard: "PwlB95Jmk/pgbouncer-overview"
   elk:
     permalink: https://log.gitlab.net/goto/365bdf8fb46a83863df50cb618597b79
     index: pubsub-postgres-inf-gprd-*
@@ -90,6 +97,7 @@ services:
   tier: db
   team: infrastructure
   grafana_folder: jYXDze5mk
+  primary_grafana_dashboard: "000000142/postgresql-overview"
   elk:
     permalink: https://log.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c
     index: pubsub-postgres-inf-gprd-*
@@ -99,6 +107,7 @@ services:
   tier: db
   team: infrastructure
   grafana_folder: D5R0peIik
+  primary_grafana_dashboard: "wccEP9Imk/redis"
   elk:
     permalink: https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc
     index: pubsub-redis-inf-gprd-*
@@ -117,6 +126,7 @@ services:
   team: backend
   sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
   grafana_folder: c7nMugpmz
+  primary_grafana_dashboard: "9GOIu9Siz/sidekiq-stats"
   elk:
     permalink: https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
     index: pubsub-sidekiq-inf-gprd-*
