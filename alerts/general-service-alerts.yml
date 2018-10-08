@@ -1,7 +1,7 @@
 groups:
   - name: service_availability.rules
     rules:
-      # Availability above 2 sigma
+      # Availability below 2 sigma
       - alert: service_availability_out_of_bounds_lower_2sigma_5m
         expr: |
           gitlab_service_availability:ratio
@@ -17,12 +17,18 @@ groups:
           threshold_sigma: "2.5"
         annotations:
           description: |
-            Server is running outside of normal availability parameters
+            The ratio of services that are available to serve the `{{ $labels.type }}` service
+            is unusually low, and a unusually large proportion of the fleet is not responding.
+
+            This may be caused the service crashing and restarting due to segfaults, memory pressure,
+            application errors. Check error rate metrics, application logs, sentry for root cause.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
-          title: "{{ $labels.type }} service operation rate alert"
+          title: "The `{{ $labels.type }}` service is less available than normal"
           grafana_dashboard_id: "WOtyonOiz/general-triage-service"
           grafana_panel_id: "2"
           grafana_variables: "environment,type"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
 
       # Operation rate above 2 sigma
       - alert: service_ops_out_of_bounds_upper_2sigma_5m
@@ -40,12 +46,19 @@ groups:
           threshold_sigma: "2.5"
         annotations:
           description: |
-            Server is running outside of normal operation rate parameters
+            The `{{ $labels.type }}` service is receiving more requests than normal.
+
+            This is often caused by user generated traffic, sometimes abuse. It can also be cause by
+            application changes that lead to higher operations rates or from retries in the event of
+            errors. Check the abuse reporting watches in Elastic, ELK for possible abuse,
+            error rates (possibly on upstream services) for root cause.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
-          title: "{{ $labels.type }} service operation rate alert"
+          title: "The `{{ $labels.type }}` service is receiving more requests than normal"
           grafana_dashboard_id: "WOtyonOiz/general-triage-service"
           grafana_panel_id: "12"
           grafana_variables: "environment,type"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
 
       # Operation rate below 2 sigma
       - alert: service_ops_out_of_bounds_lower_2sigma_5m
@@ -63,12 +76,18 @@ groups:
           threshold_sigma: "2.5"
         annotations:
           description: |
-            Server is running outside of normal operation rate parameters
+            The `{{ $labels.type }}` service is receiving fewer requests than normal.
+
+            This is often caused by a failure in an upstream service - for example, an upstream load balancer rejected
+            all incoming traffic. In many cases, this is as serious or more serious than a traffic spike. Check
+            upstream services for errors that may be leading to traffic flow issues in downstream services.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
-          title: "{{ $labels.type }} service operation rate alert"
+          title: "The `{{ $labels.type }}` service is receiving fewer requests than normal"
           grafana_dashboard_id: "WOtyonOiz/general-triage-service"
           grafana_panel_id: "12"
           grafana_variables: "environment,type"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
 
       # Apdex lower than 2 sigma
       - alert: service_apdex_out_of_bounds_lower_2sigma_5m
@@ -86,12 +105,19 @@ groups:
           threshold_sigma: "2.5"
         annotations:
           description: |
-            Server is running outside of normal apdex parameters
+            The `{{ $labels.type }}` service is operating at a slower rate than normal.
+
+            The service is taking longer to respond to requests than usual. This could be caused by
+            user abuse, application changes in upstream services that lead to higher request rates or slower
+            requested, or slowdown in downstream services. Check operation rates in upstream and downstream
+            services, error rates and check ELK for abuse.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
-          title: "{{ $labels.type }} service apdex alert"
+          title: "`{{ $labels.type }}` service is operating at a slower rate than normal"
           grafana_dashboard_id: "WOtyonOiz/general-triage-service"
           grafana_panel_id: "16"
           grafana_variables: "environment,type"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
 
       # Error rate exceeds 2 sigma
       - alert: service_errors_out_of_bounds_upper_2sigma_5m
@@ -109,9 +135,15 @@ groups:
           threshold_sigma: "2.5"
         annotations:
           description: |
-            Server is running outside of normal error parameters
+            The `{{ $labels.type }}` service is generating more errors than normal.
+
+            The service is generating more errors than usual. This could be caused by application changes,
+            downstream service failures or user-invoked failures.
+            Review sentry errors, ELK and downstream service alerts.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
           title: "{{ $labels.type }} service error alert"
           grafana_dashboard_id: "WOtyonOiz/general-triage-service"
           grafana_panel_id: "24"
           grafana_variables: "environment,type"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-errors.md"
