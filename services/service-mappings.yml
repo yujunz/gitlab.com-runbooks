@@ -30,7 +30,7 @@ services:
 - name: api
   tier: sv
   team: backend
-  sentry_slug: gitlab/gitlabcom
+  sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
   elk:
     permalink: https://log.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684
     index: pubsub-rails-inf-gprd-*
@@ -39,7 +39,7 @@ services:
 - name: web
   tier: sv
   team: backend
-  sentry_slug: gitlab/gitlabcom
+  sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
   elk:
     permalink: https://log.gitlab.net/goto/5e1aa9dac377ff2282c70748e9278860
     index: pubsub-rails-inf-gprd-*
@@ -48,7 +48,7 @@ services:
 - name: git
   tier: sv
   team: backend
-  sentry_slug: gitlab/gitlabcom
+  sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
   elk:
     permalink: https://log.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
     index: pubsub-rails-inf-gprd-*
@@ -115,7 +115,7 @@ services:
 - name: sidekiq
   tier: sv
   team: backend
-  sentry_slug: gitlab/gitlabcom
+  sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
   grafana_folder: c7nMugpmz
   elk:
     permalink: https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
