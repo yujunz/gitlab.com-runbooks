@@ -88,7 +88,7 @@ groups:
       pager: pagerduty
       severity: critical
     annotations:
-      description: We are seeing an increase in server connectino errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.
+      description: We are seeing an increase in server connection errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.
         This likely indicates that requests are being sent to servers and there are errors reported to users.
       runbook: troubleshooting/haproxy.md
       title: Increased Server Connection Errors
