@@ -80,7 +80,7 @@ groups:
     for: 5m
     labels:
       channel: ci-cd
-      severity: critical
+      severity: error
     annotations:
       title: "{{ $labels.job }} runners are using 95% of concurrent limit for more than 5 minutes."
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This may suggest problems with our autoscaled machines fleet OR
@@ -91,7 +91,7 @@ groups:
     for: 5m
     labels:
       channel: ci-cd
-      severity: critical
+      severity: error
     annotations:
       title: Runners manager is down on {{ $labels.instance }}
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''Builds
@@ -118,7 +118,7 @@ groups:
     for: 5m
     labels:
       channel: ci-cd
-      severity: critical
+      severity: error
     annotations:
       title: Runners cache service {{ $labels.instance }} on {{ $labels.fqdn }} has been down for more than 5 minutes.
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''CI
@@ -131,7 +131,7 @@ groups:
     for: 5m
     labels:
       channel: ci-cd
-      severity: critical
+      severity: error
     annotations:
       title: Runners cache nginx service on {{ $labels.fqdn }} has been down for more than 5 minutes.
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''CI
@@ -144,7 +144,7 @@ groups:
     for: 20m
     labels:
       channel: ci-cd
-      severity: critical
+      severity: error
     annotations:
       title: Number of established connections for {{ $labels.instance }} is too high
       description: 'Hey <!subteam^S940BK2TV|cicdops>! This impacts CI execution builds, consider tweeting: !tweet ''CI
@@ -199,7 +199,7 @@ groups:
     for: 5m
     labels:
       channel: ci-cd
-      severity: critical
+      severity: error
     annotations:
       title: GCP Quota usage of {{ $labels.quota }} is near limit
       description: |
@@ -232,7 +232,7 @@ groups:
     for: 5m
     labels:
       channel: ci-cd
-      severity: critical
+      severity: error
     annotations:
       title: Job queue duration performance for '0 - 10s' is to low
       description: |
@@ -252,7 +252,7 @@ groups:
     for: 5m
     labels:
       channel: ci-cd
-      severity: critical
+      severity: error
     annotations:
       title: 90% of request queued on Workhorse is longer than 30s
       description: |
