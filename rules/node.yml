@@ -141,7 +141,7 @@ groups:
       value: 'Available memory {{ $value | printf "%.2f" }}%'
       title: Node is under heavy memory pressure
   - alert: KernelVersionDeviations
-    expr: count(sum(label_replace(node_uname_info{environment=~"gprd"}, "kernel", "$1", "release", "([0-9]+.[0-9]+.[0-9]+).*")) by (kernel)) > 1
+    expr: count(sum(label_replace(node_uname_info{environment=~"gprd", stage="main"}, "kernel", "$1", "release", "([0-9]+.[0-9]+.[0-9]+).*")) by (kernel)) > 1
     for: 30m
     labels:
       channel: alerts-gprd
