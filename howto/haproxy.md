@@ -82,8 +82,8 @@ HAProxy configuration.
 * `ssh`: all of the `git-xx` nodes
 * `websockets`: all of the `git-xx` nodes
 * `altssh`: all of the `git-xx` nodes
-* `pages_http`: all of the `web-xx` nodes
-* `pages_https`: all of the `web-xx` nodes
+* `pages_http`: all of the `web-pages-xx` nodes
+* `pages_https`: all of the `web-pages-xx` nodes
 
 ## Load balancing
 
