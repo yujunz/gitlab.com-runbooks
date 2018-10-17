@@ -53,15 +53,16 @@ groups:
   # Acceptable -> 1 seconds
   - record: gitlab_component_apdex:ratio
     labels:
+      type: gitaly
       component: 'goserver'
     expr: >
       (
-        sum(rate(grpc_server_handling_seconds_bucket{grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier)
+        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier)
         +
-        sum(rate(grpc_server_handling_seconds_bucket{grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier)
+        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier)
       )
       /
-      2 / (sum(rate(grpc_server_handling_seconds_count{grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier) > 0)
+      2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier) > 0)
 
 - name: GitLab Service Apdex Scores
   interval: 1m
