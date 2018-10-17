@@ -67,6 +67,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [GitLab registry is down](troubleshooting/gitlab-registry.md)
 * [Sidekiq stats no longer showing](troubleshooting/sidekiq_stats_no_longer_showing.md)
 * [Gemnasium is down](troubleshooting/gemnasium_is_down.md)
+* [Blocking a project causing high load](howto/block-high-load-project.md)
 
 ### Supporting Services
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
