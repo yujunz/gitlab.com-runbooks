@@ -2,7 +2,8 @@
 
 ## Summary
 
-Loading logs from a StackDriver sink In order to load a BigQuery table from a
+Searching older logs requires loading from line-delimited JSON files stored
+in GCS into another tool. In order to load a BigQuery table from a
 StackDriver produced log archive, a schema must be defined using `RECORD`
 types for the nested JSON elements.
 
