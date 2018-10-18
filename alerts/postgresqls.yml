@@ -14,7 +14,7 @@ groups:
       runbook: troubleshooting/postgresql.md#availability
       title: Postgres seems to be consuming transaction IDs very slowly
   - alert: PostgreSQL_XLOGConsumptionTooLow
-    expr: rate(pg_xlog_position_bytes{type = "postgres", fqdn !="postgres-01-db-gprd.c.gitlab-production.internal"}[1m]) < 200000
+    expr: rate(pg_xlog_position_bytes{type = "postgres"}[1m]) < 200000
     for: 2m
     labels:
       pager: pagerduty
@@ -26,7 +26,7 @@ groups:
       runbook: troubleshooting/postgresql.md#availability
       title: Postgres seems to be consuming XLOG very slowly
   - alert: PostgreSQL_CommitRateTooLow
-    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type = "postgres", fqdn !="postgres-01-db-gprd.c.gitlab-production.internal"}[1m])
+    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type = "postgres"}[1m])
       < 1000
     for: 5m
     labels:
@@ -97,7 +97,7 @@ groups:
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
       title: PostgreSQL replication has stopped
   - alert: PostgreSQL_ReplicationLagTooLarge
-    expr: (pg_replication_lag > 120) and ON(instance) (pg_replication_is_replica{type = "postgres", fqdn != "postgres-01-db-gprd.c.gitlab-production.internal"} == 1)
+    expr: (pg_replication_lag > 120) and ON(instance) (pg_replication_is_replica{type = "postgres"} == 1)
     for: 5m
     labels:
       pager: pagerduty
@@ -108,19 +108,6 @@ groups:
         $value | humanizeDuration }}
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag is over 2 minutes
-  - alert: PostgreSQL_ReplicationLagTooLarge_ArchiveReplica_deprecated
-    # (TODO: deprecated, remove once postgres-01-db-gprd has changed its role)
-    expr: (pg_replication_lag > 43200) and ON(instance) (pg_replication_is_replica{fqdn="postgres-01-db-gprd.c.gitlab-production.internal"} == 1)
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: warn
-      channel: database
-    annotations:
-      description: Replication lag on server {{$labels.instance}} is currently {{
-        $value | humanizeDuration }}
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
-      title: Postgres Replication lag is over 12 hours on archive recovery replica
   - alert: PostgreSQL_ReplicationLagTooLarge_ArchiveReplica
     expr: (pg_replication_lag > 3600) and ON(instance) (pg_replication_is_replica{type = "postgres-archive"} == 1)
     for: 5m
@@ -147,7 +134,7 @@ groups:
       title: Postgres Replication lag is over 9 hours on delayed replica (normal is 8 hours)
   - alert: PostgreSQL_ReplicationLagBytesTooLarge
     expr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - ON(environment)
-      GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica{type = "postgres", fqdn != "postgres-01-db-gprd.c.gitlab-production.internal"}
+      GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica{type = "postgres"}
       == 1) > 1e+09
     for: 5m
     labels:
