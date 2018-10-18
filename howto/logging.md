@@ -118,6 +118,10 @@ longer retention and to preserve logs in object storage for 180days.
 
 They are created by https://github.com/GoogleCloudPlatform/pubsubbeat , I don't see a way we can remove them without forking the project.
 
+#### What if I need to query logs older than 30 days?
+
+See [logging_gcs_archive_bigquery.md](logging_gcs_archive_bigquery.md) for 
+instructions on loading logs into `BigQuery` from their GCS archive files.
 
 ### Configuration
 
