@@ -133,7 +133,7 @@ groups:
       runbook: troubleshooting/gitaly-down.md
       title: Gitaly is down on {{ $labels.fqdn }}
   - alert: GitalyFileServerCPUUsage
-    expr: avg(process_cpu_seconds_total:rate1m{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"})
+    expr: avg(instance:process_cpu_seconds_total:rate1m{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"})
       BY (fqdn) / avg(instance:node_cpus:count{tier="stor",type="gitaly"}) BY (fqdn)
       > 0.5
     for: 1m
