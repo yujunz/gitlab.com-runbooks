@@ -1,0 +1,44 @@
+groups:
+- name: Node Components
+  interval: 1m
+  rules:
+  - record: node_cpu:rate
+    expr: >
+      sum without(cpu) (rate(node_cpu_seconds_total[1m]))
+  - record: node_component:rate
+    labels:
+      component: 'iowait'
+    expr: >
+      sum by(environment, tier, type, stage) (node_cpu:rate{mode="iowait"})
+  - record: node_component:rate
+    labels:
+      component: 'network_rx_bytes'
+    expr: >
+      sum by(environment, tier, type, stage) (rate(node_network_receive_bytes_total[1m]))
+  - record: node_component:rate
+    labels:
+      component: 'network_tx_bytes'
+    expr: >
+      sum by(environment, tier, type, stage) (rate(node_network_transmit_bytes_total[1m]))
+  - record: node_component:rate
+    labels:
+      component: 'disk_read_seconds'
+    expr: >
+      sum by(environment, tier, type, stage, device) (rate(node_disk_read_time_seconds_total[1m]))
+  - record: node_component:rate
+    labels:
+      component: 'disk_write_seconds'
+    expr: >
+      sum by(environment, tier, type, stage, device) (rate(node_disk_write_time_seconds_total[1m]))
+
+- name: Node Components Rate Stats
+  interval: 5m
+  rules:
+  # Average values for each component, over a week
+  - record: node_component:rate:avg_over_time_1w
+    expr: >
+      avg_over_time(node_component:rate[1w])
+  # Stddev for each component, over a week
+  - record: node_component:rate:stddev_over_time_1w
+    expr: >
+      stddev_over_time(node_component:rate[1w])
