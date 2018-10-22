@@ -1,0 +1,5 @@
+groups:
+- name: Generic process
+  rules:
+  - record: process_cpu_seconds_total:rate1m
+    expr: rate(process_cpu_seconds_total[1m])

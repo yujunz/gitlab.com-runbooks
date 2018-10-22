@@ -1,6 +1,39 @@
 groups:
 - name: haproxy.rules
   rules:
+  - record: backend_code:haproxy_server_http_responses_total:irate1m
+    expr: >
+      sum without (fqdn, instance) (
+        irate(haproxy_server_http_responses_total[1m])
+      )
+  - record: frontend_code:haproxy_frontend_http_responses_total:irate1m
+    expr: >
+      sum without (fqdn, instance) (
+        irate(haproxy_frontend_http_responses_total[1m])
+      )
+
+  - record: job_frontend:haproxy_frontend_bytes_in_total:irate1m
+    expr: >
+      sum without (fqdn, instance) (
+        irate(haproxy_frontend_bytes_in_total[1m])
+      )
+  - record: job_frontend:haproxy_frontend_bytes_out_total:irate1m
+    expr: >
+      sum without (fqdn, instance) (
+        irate(haproxy_frontend_bytes_out_total[1m])
+      )
+
+  - record: job_backend:haproxy_backend_response_errors_total:irate1m
+    expr: >
+      sum without (fqdn, instance) (
+        irate(haproxy_backend_response_errors_total[1m])
+      )
+  - record: job_frontend:haproxy_frontend_request_errors_total:irate1m
+    expr: >
+      sum without (fqdn, instance) (
+        irate(haproxy_frontend_request_errors_total[1m])
+      )
+
   - alert: HighWebErrorRate
     expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code="5xx",tier="lb"})
       - sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code!="5xx",tier="lb"})
