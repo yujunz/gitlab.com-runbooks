@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'logger'
+
+LOGGER = Logger.new(STDERR)
+LOGGER.level = Logger::DEBUG
+
+def validate_rule(alert_file_path, rule)
+  return if rule["record"] # Don't validate recordings
+
+  annotations = rule["annotations"]
+  labels = rule["labels"]
+  alert = rule["alert"]
+
+  raise StandardError, "Rules must contain an `alert` attribute" unless alert
+
+  raise StandardError, "#{alert}: rules must contain a `title` annotation" unless annotations["title"]
+
+  LOGGER.warn "#{alert_file_path}: #{alert}: Rules should contain a `description` annotation" unless annotations["description"]
+
+  raise StandardError, " #{alert}: rules must contain a `severity` label" unless labels["severity"]
+  raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels["severity"]}" unless ["info", "warn", "error", "critical"].include?(labels["severity"])
+end
+
+def validate_group(alert_file_path, group)
+  name = group["name"]
+
+  begin
+    rules = group["rules"]
+
+    rules.each do |rule|
+      validate_rule alert_file_path, rule
+    end
+  rescue StandardError => e
+    raise StandardError, "group `#{name}`: #{e.message}"
+  end
+end
+
+def validate(alert_file_path)
+  begin
+    alert_yaml = YAML.load_file(alert_file_path)
+    raise StandardError, "Invalid configuration" if !alert_yaml
+
+    groups = alert_yaml["groups"]
+    groups.each do |group|
+      validate_group alert_file_path, group
+    end
+  rescue StandardError => e
+    raise StandardError, "Unable to validate file #{alert_file_path}: #{e.message}"
+  end
+end
+
+begin
+  alert_files = File.join(__dir__, "..", "alerts", "*.yml")
+  Dir[alert_files].each do |file|
+    validate File.expand_path(file)
+  end
+
+rescue StandardError => e
+  STDERR.puts "error: #{e.message}"
+  exit 1
+ensure
+  LOGGER.close
+end

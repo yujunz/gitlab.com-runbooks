@@ -12,6 +12,7 @@ test:
     - /prometheus/promtool check rules recordings/*.yml
     - /prometheus/promtool check rules rules/*.yml
     - scripts/validate_kibana_urls
+    - scripts/validate-alerts
 
 deploy_elastic_watcher_updates:
   stage: deploy
