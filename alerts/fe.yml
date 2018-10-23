@@ -7,7 +7,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: warn
+      severity: critical
     annotations:
       description: |
         {{ $labels.type }} has lost redundancy. Only {{ $value }}% of servers are online.

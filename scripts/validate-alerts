@@ -21,6 +21,14 @@ def validate_rule(alert_file_path, rule)
 
   raise StandardError, " #{alert}: rules must contain a `severity` label" unless labels["severity"]
   raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels["severity"]}" unless ["info", "warn", "error", "critical"].include?(labels["severity"])
+
+  if labels["pager"]
+    raise StandardError, " #{alert}: rules contains an invalid `pager` label: #{labels["pager"]}" unless labels["pager"] == "pagerduty"
+    raise StandardError, " #{alert}: only severity critical errors should page" unless labels["severity"] == "critical"
+  else
+    raise StandardError, " #{alert}: critical alerts should be configured to send to pagerduty" if labels["severity"] == "critical"
+  end
+
 end
 
 def validate_group(alert_file_path, group)

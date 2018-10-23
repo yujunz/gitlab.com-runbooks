@@ -20,6 +20,7 @@ groups:
     expr: gitlab_com:last_wale_basebackup_age_in_hours >= 48
     for: 5m
     labels:
+      pager: pagerduty
       severity: critical
     annotations:
       description: WALE basebackup syncs to S3 might be not working. Please follow the runbook
