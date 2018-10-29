@@ -6,6 +6,7 @@ groups:
     for: 30s
     labels:
       severity: critical
+      pager: pagerduty
     annotations:
       description: Prometheus instance for monitor.gitlab.net is down. Please check
         the Prometheus service.
@@ -17,6 +18,7 @@ groups:
     for: 30s
     labels:
       severity: critical
+      pager: pagerduty
     annotations:
       description: monitor.gitlab.net is down. nginx or/and grafana services are down.
       runbook: troubleshooting/monitor-gitlab-net-not-accessible.md

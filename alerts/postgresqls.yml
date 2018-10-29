@@ -67,7 +67,7 @@ groups:
     expr: rate(postgresql_errors_total{type="statement_timeout"}[5m]) > 3
     for: 5m
     labels:
-      severity: warn
+      severity: critical
       pager: pagerduty
       channel: database
     annotations:
@@ -101,7 +101,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: warn
+      severity: critical
       channel: database
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
@@ -113,7 +113,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: warn
+      severity: critical
       channel: database
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
@@ -125,7 +125,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: warn
+      severity: critical
       channel: database
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
@@ -139,7 +139,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: warn
+      severity: critical
       channel: database
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
@@ -151,7 +151,7 @@ groups:
     for: 10m
     labels:
       pager: pagerduty
-      severity: warn
+      severity: critical
       channel: database
     annotations:
       description: XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s
@@ -229,7 +229,7 @@ groups:
     for: 30m
     labels:
       pager: pagerduty
-      severity: warn
+      severity: critical
       channel: database
     annotations:
       description: "The dead tuple ratio of {{$labels.relname}} is greater than 5%"
@@ -350,6 +350,7 @@ groups:
   - alert: PostgreSQL_PGBouncer_maxclient_conn
     expr: rate(pgbouncer_errors_count{errmsg="no more connections allowed (max_client_conn)"}[1m]) > 0
     labels:
+      pager: pagerduty
       severity: critical
       channel: database
     annotations:
@@ -362,7 +363,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: warn
+      severity: critical
       channel: database
     annotations:
       description: >

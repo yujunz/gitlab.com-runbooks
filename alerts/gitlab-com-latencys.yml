@@ -37,6 +37,7 @@ groups:
       > 1500
     for: 5m
     labels:
+      pager: pagerduty
       severity: critical
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
@@ -58,6 +59,7 @@ groups:
     for: 5m
     labels:
       severity: critical
+      pager: pagerduty
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
