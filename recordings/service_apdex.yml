@@ -99,7 +99,7 @@ groups:
   # gitaly:goserver
   # Satisfied -> 0.5 seconds
   # Acceptable -> 1 seconds
-  - record: gitlab_component_apdex:ratio
+  - record: gitlab_component_node_apdex:ratio
     labels:
       type: gitaly
       tier: stor
