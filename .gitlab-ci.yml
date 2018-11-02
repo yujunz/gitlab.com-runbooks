@@ -26,3 +26,12 @@ deploy_elastic_watcher_updates:
       - master
     variables:
       - $ES_URL
+
+deploy_pingdom_checks:
+  image: golang:1.11
+  script:
+    - cd pingdom
+    - go run pingdom.go
+  only:
+    refs:
+      - master
