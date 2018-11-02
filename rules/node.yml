@@ -146,7 +146,7 @@ groups:
       channel: alerts-gprd
       severity: warn
     annotations:
-      description: Kernel versions are deviating across fleet, see https://performance.gprd.gitlab.net/d/UMGelaGiz/gitlab-kernel-versions for details
+      description: Kernel versions are deviating across fleet, see https://dashboards.gitlab.net/d/6xx-DC7ik/gitlab-kernel-versions for details
       runbook: https://gitlab.com/gitlab-com/infrastructure/issues/4221
       title: 'Different kernel versions are running in production for an hour'
   - alert: CPUStalls

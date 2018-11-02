@@ -11,5 +11,5 @@ groups:
     annotations:
       description: |
         The rate of Sidekiq {{ $labels.controller }} Exceptions in {{ $labels.environment }} is high.
-        Check https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?panelId=58&orgId=1&from=1541138657538&to=1541160257538&fullscreen&var-environment=gprd&var-prometheus=prometheus-01-inf-gprd&var-app_prometheus=prometheus-app-01-inf-gprd
+        Check https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?orgId=1&panelId=58&fullscreen
       title: 'High Rate of Sidekiq {{ $labels.controller }} exceptions in {{ $labels.environment }}: {{$value}}'
