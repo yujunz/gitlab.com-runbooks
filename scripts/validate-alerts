@@ -20,7 +20,7 @@ def validate_rule(alert_file_path, rule)
   LOGGER.warn "#{alert_file_path}: #{alert}: Rules should contain a `description` annotation" unless annotations["description"]
 
   raise StandardError, " #{alert}: rules must contain a `severity` label" unless labels["severity"]
-  raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels["severity"]}" unless ["info", "warn", "error", "critical"].include?(labels["severity"])
+  raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels["severity"]}" unless ["warn", "error", "critical"].include?(labels["severity"])
 
   if labels["pager"]
     raise StandardError, " #{alert}: rules contains an invalid `pager` label: #{labels["pager"]}" unless labels["pager"] == "pagerduty"

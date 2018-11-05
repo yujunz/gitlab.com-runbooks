@@ -23,12 +23,5 @@ groups:
       == 1)
   - record: postgres:databases
     expr: count(pg_exporter_scrapes_total) BY (environment)
-  - record: postgres:up
-    expr: (count(pg_replication_is_replica == 1 unless ON(fqdn) ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info"})
-      BY (environment) >= 2 and ON(environment) count(pg_replication_is_replica ==
-      0 unless ON(fqdn) ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",severity!="info"})
-      BY (environment) == 1 unless ON(environment) count(ALERTS{alertname=~"PostgreSQL_.*",alertstate="firing",fqdn="",severity!="info"})
-      BY (environment) > 0) > BOOL 0 or ON(environment) postgres:databases == BOOL
-      0
-  - record: postgres:pg_stat_seq_scans:rate2m 
+  - record: postgres:pg_stat_seq_scans:rate2m
     expr: rate(pg_stat_user_tables_seq_tup_read[2m])
