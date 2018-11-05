@@ -15,6 +15,8 @@ ykpersonalize -m86
 This setting lets us use the Yubikey as both a SmartCard and an OTP device
 at the same time.
 
+**Note:** The above command is not necessary on a YubiKey 5 (and won't work)
+
 ## Changing the Default PIN Entries on the Yubikey PIV Card
 By default the user PIN is `123456` and the ADMIN PIN is `12345678`, keep this
 in mind when changing the PINS when it asks for the current PIN
@@ -175,6 +177,8 @@ uid                  John Rando <rando@gitlab.com>
 Now that we have a master key, a good practice is to generate a revocation 
 certificate in the event that we lose the password or the key is compromised.
 
+**Note:** In some versions you do not see the key id in the gpg output. You can use your email here.
+
 ```
 > gpg --gen-revoke FAEFD83E > /Volumes/GitLab/gpg_config/FAEFD83E-revocation-certificate.asc
 
@@ -310,6 +314,10 @@ sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
 ## Backup and Publish your Public Key
 ```
 > gpg --armor --export FAEFD83E > /Volumes/GitLab/gpg_config/FAEFD83E.asc
+```
+
+If your gpg version does not output the key id you should use the full fingerprint instead.
+```
 > gpg --keyserver hkps://hkps.pool.sks-keyservers.net --send-key FAEFD83E
 ```
 
@@ -327,12 +335,12 @@ you've imported.
 
 Or in a fresh terminal we can:
 ```
-> gpg2 --import-key /Volumes/GitLab/gpg_config/FAEFD83E.asc
+> gpg --import /Volumes/GitLab/gpg_config/FAEFD83E.asc
 gpg: key FAEFD83E: public key imported
 gpg: Total number processed: 1
 gpg:               imported: 1
 
-> gpg2 --edit-key FAEFD83E
+> gpg --edit-key FAEFD83E
 Secret subkeys are available.
 
 pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2018-08-25  usage: C
