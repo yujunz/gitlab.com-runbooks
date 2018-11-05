@@ -1,12 +1,12 @@
 groups:
   - name: service_availability.rules
     rules:
-      # Availability below 2 sigma
-      - alert: service_availability_out_of_bounds_lower_2sigma_5m
+      # Availability below 3 sigma
+      - alert: service_availability_out_of_bounds_lower_5m
         expr: |
           gitlab_service_availability:ratio
           <
-          gitlab_service_availability:ratio:avg_over_time_1w - 2.5 * gitlab_service_availability:ratio:stddev_over_time_1w
+          gitlab_service_availability:ratio:avg_over_time_1w - 3 * gitlab_service_availability:ratio:stddev_over_time_1w
         for: 5m
         labels:
           rules_domain: general
@@ -14,7 +14,7 @@ groups:
           severity: warn
           period: 5m
           bound: lower
-          threshold_sigma: "2.5"
+          threshold_sigma: "3"
         annotations:
           description: |
             The ratio of services that are available to serve the `{{ $labels.type }}` service
@@ -31,12 +31,12 @@ groups:
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
 
-      # Operation rate above 2 sigma
-      - alert: service_ops_out_of_bounds_upper_2sigma_5m
+      # Operation rate above 3 sigma
+      - alert: service_availability_out_of_bounds_lower_5m
         expr: |
           gitlab_service_ops:rate
           >
-          gitlab_service_ops:rate:avg_over_time_1w + 2.5 * gitlab_service_ops:rate:stddev_over_time_1w
+          gitlab_service_ops:rate:avg_over_time_1w + 3 * gitlab_service_ops:rate:stddev_over_time_1w
         for: 5m
         labels:
           rules_domain: general
@@ -44,7 +44,7 @@ groups:
           severity: warn
           period: 5m
           bound: upper
-          threshold_sigma: "2.5"
+          threshold_sigma: "3"
         annotations:
           description: |
             The `{{ $labels.type }}` service is receiving more requests than normal.
@@ -62,12 +62,12 @@ groups:
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
 
-      # Operation rate below 2 sigma
-      - alert: service_ops_out_of_bounds_lower_2sigma_5m
+      # Operation rate below 3 sigma
+      - alert: service_ops_out_of_bounds_lower_5m
         expr: |
           gitlab_service_ops:rate
           <
-          gitlab_service_ops:rate:avg_over_time_1w - 2.5 * gitlab_service_ops:rate:stddev_over_time_1w
+          gitlab_service_ops:rate:avg_over_time_1w - 3 * gitlab_service_ops:rate:stddev_over_time_1w
         for: 5m
         labels:
           rules_domain: general
@@ -75,7 +75,7 @@ groups:
           severity: warn
           period: 5m
           bound: lower
-          threshold_sigma: "2.5"
+          threshold_sigma: "3"
         annotations:
           description: |
             The `{{ $labels.type }}` service is receiving fewer requests than normal.
@@ -92,12 +92,12 @@ groups:
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
 
-      # Apdex lower than 2 sigma
-      - alert: service_apdex_out_of_bounds_lower_2sigma_5m
+      # Apdex lower than 3 sigma
+      - alert: service_ops_out_of_bounds_lower_5m
         expr: |
           gitlab_service_apdex:ratio
           <
-          gitlab_service_apdex:ratio:avg_over_time_1w - 2.5 * gitlab_service_apdex:ratio:stddev_over_time_1w
+          gitlab_service_apdex:ratio:avg_over_time_1w - 3 * gitlab_service_apdex:ratio:stddev_over_time_1w
         for: 5m
         labels:
           rules_domain: general
@@ -105,7 +105,7 @@ groups:
           severity: warn
           period: 5m
           bound: lower
-          threshold_sigma: "2.5"
+          threshold_sigma: "3"
         annotations:
           description: |
             The `{{ $labels.type }}` service is operating at a slower rate than normal.
@@ -123,12 +123,12 @@ groups:
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
 
-      # Error rate exceeds 2 sigma
-      - alert: service_errors_out_of_bounds_upper_2sigma_5m
+      # Error rate exceeds 3 sigma
+      - alert: service_errors_out_of_bounds_upper_5m
         expr: |
           gitlab_service_errors:rate
           >
-          gitlab_service_errors:rate:avg_over_time_1w + 2.5 * gitlab_service_errors:rate:stddev_over_time_1w
+          gitlab_service_errors:rate:avg_over_time_1w + 3 * gitlab_service_errors:rate:stddev_over_time_1w
         for: 5m
         labels:
           rules_domain: general
@@ -136,7 +136,7 @@ groups:
           severity: warn
           period: 5m
           bound: upper
-          threshold_sigma: "2.5"
+          threshold_sigma: "3"
         annotations:
           description: |
             The `{{ $labels.type }}` service is generating more errors than normal.
