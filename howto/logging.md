@@ -76,15 +76,18 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | db.postgres | postgresql/current | line regex | pubsub-postgres-inf
 | db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf
 | workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf
-| rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf
-| rails.production _only in stackdriver_ | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf
-| rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf
 | rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf
+| rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf
+| rails.audit | gitlab-rails/audit_json.log | JSON | pubsub-rails-inf
+| rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf
+| rails.importer | gitlab-rails/impoter.log | JSON | pubsub-rails-inf
+| rails.integrations | gitlab-rails/integrations\_json.log | JSON | pubsub-rails-inf
+| rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf
 | shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf
 | unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf
 | unicorn.stderr | /var/log/gitlab/unicorn/unicorn\_stderr.log | line regex | pubsub-unicorn-inf
 | unicorn.stdout | /var/log/gitlab/unicorn/unicorn\_stdout.log | line regex | pubsub-unicorn-inf
-| unstructured.production | gitlab-rails/production.log | lines | pubsub-unstructured-inf
+| unstructured.production _only in stackdriver_ | gitlab-rails/production.log | lines | pubsub-unstructured-inf
 | sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf
 | haproxy _only in stackdriver_ | /var/log/haproxy.log | syslog | pubsub-haproxy-inf
 | nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf
