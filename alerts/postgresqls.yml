@@ -26,7 +26,7 @@ groups:
     annotations:
       description: TXID/s is {{ $value | printf "%.1f" }} on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
-      runbook: troubleshooting/postgresql.md#availability
+      runbook: troubleshooting/postgres.md#availability
       title: Postgres seems to be consuming transaction IDs very slowly
   - alert: PostgreSQL_XLOGConsumptionTooLow
     expr: rate(pg_xlog_position_bytes{type = "postgres"}[1m]) < 200000
@@ -38,7 +38,7 @@ groups:
     annotations:
       description: XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
-      runbook: troubleshooting/postgresql.md#availability
+      runbook: troubleshooting/postgres.md#availability
       title: Postgres seems to be consuming XLOG very slowly
   - alert: PostgreSQL_CommitRateTooLow
     expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type = "postgres"}[1m])
@@ -52,7 +52,7 @@ groups:
       description: Commits/s on {{$labels.instance}} database {{$labels.datname}}
         is {{$value | printf "%.0f" }} which is implausibly low. Perhaps the application
         is unable to connect
-      runbook: troubleshooting/postgresql.md#availability
+      runbook: troubleshooting/postgres.md#availability
       title: Postgres seems to be processing very few transactions
   - alert: PostgreSQL_ConnectionsTooHigh
     expr: sum(pg_stat_activity_count) BY (environment, fqdn) > ON(fqdn) pg_settings_max_connections
@@ -62,7 +62,7 @@ groups:
       severity: warn
       channel: database
     annotations:
-      runbook: troubleshooting/postgresql.md#connections
+      runbook: troubleshooting/postgres.md#connections
       title: Postgres has {{$value}} connections on {{$labels.fqdn}} which is close
         to the maximum
   - alert: PostgreSQL_RollbackRateTooHigh
@@ -76,7 +76,7 @@ groups:
     annotations:
       description: Ratio of transactions being aborted compared to committed is {{
         $value | printf "%.2f" }} on {{$labels.instance}}
-      runbook: troubleshooting/postgresql.md#errors
+      runbook: troubleshooting/postgres.md#errors
       title: Postgres transaction rollback rate is high
   - alert: PostgreSQL_StatementTimeout_Errors
     expr: rate(postgresql_errors_total{type="statement_timeout"}[5m]) > 3
@@ -88,7 +88,7 @@ groups:
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} statement
         timeouts per second
-      runbook: troubleshooting/postgresql.md#errors
+      runbook: troubleshooting/postgres.md#errors
       title: Postgres transactions showing high rate of statement timeouts
   - alert: PostgreSQL_Deadlock_Errors
     expr: rate(postgresql_errors_total{type="deadlock_detected"}[1m]) * 60 > 5
@@ -98,7 +98,7 @@ groups:
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} deadlock
         errors per minute
-      runbook: troubleshooting/postgresql.md#errors
+      runbook: troubleshooting/postgres.md#errors
       title: Postgres detected deadlocks
   - alert: PostgreSQL_ReplicationStopped
     expr: pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"}
@@ -336,7 +336,6 @@ groups:
     annotations:
       description: This may indicate postgres_exporter is not running or a buggy query
         in query.yaml on {{$labels.fqdn}}
-      runbook: troubleshooting/prometheus-exporter-scrape-errors.md
       title: Postgres exporter is showing errors for the last hour
   - alert: PostgreSQL_DiskUtilizationMaxedOut
     expr: rate(node_disk_io_time_seconds_total{device=~"dm-(0|1)",tier="db",type="postgres"}[1m])

@@ -29,6 +29,18 @@ def validate_rule(alert_file_path, rule)
     raise StandardError, " #{alert}: critical alerts should be configured to send to pagerduty" if labels["severity"] == "critical"
   end
 
+  if annotations["runbook"]
+    runbook_relative_link = annotations["runbook"]
+    runbook_file = runbook_relative_link.gsub(/#.*$/, "")
+    # We can't validate files that include template values eg: "{{ $labels.type }}"
+    # but for other files, ensure that they exist
+    if !runbook_file.include?("{{") && !File.file?(File.join(__dir__, "..", runbook_file))
+      raise StandardError, " #{alert}: rule references a non-existent runbook #{runbook_file}"
+    end
+  else
+    LOGGER.warn "#{alert_file_path}: #{alert}: alerts should reference a runbook"
+  end
+
 end
 
 def validate_group(alert_file_path, group)

@@ -13,4 +13,3 @@ groups:
         Test alert is firing! This means that
         https://gitlab.com/gitlab-com/infrastructure/blob/master/alert-test is missing
         or gitlab.com is unavailable.
-      runbook: ""

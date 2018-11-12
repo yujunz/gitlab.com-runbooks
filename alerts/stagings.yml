@@ -13,5 +13,4 @@ groups:
         is being executed, then the migration must be stopped and reviewed as it will
         impact production with downtime when executed there, if not, something really
         odd is going on. cc/ @developers to review impacting migrations.
-      runbook: ""
       title: Staging Postgres is using all the available IO capacity
