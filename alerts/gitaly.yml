@@ -47,7 +47,6 @@ groups:
         A very high proportion of Gitaly  {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are being queued up for an extended period.
 
         This issue is likely to be immediately client-impacting.
-      runbook: "troubleshooting/workhorse-git-session-alerts.md"
       grafana_dashboard_id: "VBaSC9aik/gitaly-rate-limiting-alerting"
       grafana_panel_id: "2"
       grafana_variables: "environment,stage,grpc_method"
@@ -75,7 +74,6 @@ groups:
         An extremely high proportion of Gitaly  {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are being queued up for an extended period.
 
         This issue is likely to be immediately client-impacting.
-      runbook: "troubleshooting/workhorse-git-session-alerts.md"
       grafana_dashboard_id: "VBaSC9aik/gitaly-rate-limiting-alerting"
       grafana_panel_id: "2"
       grafana_variables: "environment,stage,grpc_method"

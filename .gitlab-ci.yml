@@ -11,6 +11,8 @@ test:
     - /prometheus/promtool check rules alerts/*.yml
     - /prometheus/promtool check rules recordings/*.yml
     - /prometheus/promtool check rules rules/*.yml
+    # Prometheus config checks are stricter than rules checks, so use a fake config to check this too
+    - /prometheus/promtool check config scripts/prometheus.yml
     - scripts/validate_kibana_urls
     - scripts/validate-alerts
 
