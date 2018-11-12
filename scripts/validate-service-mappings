@@ -18,6 +18,7 @@ def validate(service_mapping_path)
     raise "unknown team '#{service["team"]}''" unless team_map[service["team"]]
     raise "unknown tier '#{service["tier"]}''" unless tier_map[service["tier"]]
     raise "service '#{service_name}' requires a criticality attribute" unless service["criticality"]
+    raise "service '#{service_name}' requires at least one logging configuration" unless service["logging"] && !service["logging"].empty?
   end
 end
 

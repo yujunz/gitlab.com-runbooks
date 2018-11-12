@@ -7,7 +7,11 @@
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22postgres%22%2C%20tier%3D%22db%22%7D
 * **Label**: gitlab-com/gl-infra/production~"Service:Postgres"
 * **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/jYXDze5mk
-* **ELK**: [`pubsub-postgres-inf-gprd-*`](https://log.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c)
+
+## Logging
+
+* [Postgres](https://log.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c)
+* [system](https://log.gitlab.net/goto/3669d551a595a3a5cf1e9318b74e6c22)
 
 ## Troubleshooting Pointers
 

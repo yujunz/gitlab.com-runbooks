@@ -7,7 +7,11 @@
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22redis%22%2C%20tier%3D%22db%22%7D
 * **Label**: gitlab-com/gl-infra/production~"Service:Redis"
 * **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/D5R0peIik
-* **ELK**: [`pubsub-redis-inf-gprd-*`](https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc)
+
+## Logging
+
+* [Redis](https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc)
+* [system](https://log.gitlab.net/goto/e107ce00a9adede2e130d0c8ec1a2ac7)
 
 ## Troubleshooting Pointers
 

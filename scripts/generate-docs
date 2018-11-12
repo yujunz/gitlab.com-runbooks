@@ -54,11 +54,14 @@ def generate_header(service, team, tier)
 <%- if service["grafana_folder"] -%>
 * **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/<%= service["grafana_folder"] %>
 <% end -%>
-<% if service["elk"] -%>
-* **ELK**: [`<%= service["elk"]["index"] %>`](<%= service["elk"]["permalink"] %>)
-<% end -%>
-<% if troubeshooting_docs && !troubeshooting_docs.empty? -%>
 
+## Logging
+
+<%- service["logging"].each do |logging_location| -%>
+* [<%= logging_location["name"] %>](<%= logging_location["permalink"] %>)
+<%- end -%>
+
+<% if troubeshooting_docs && !troubeshooting_docs.empty? -%>
 ## Troubleshooting Pointers
 
 <%- troubeshooting_docs.each do |troubeshooting_doc| -%>

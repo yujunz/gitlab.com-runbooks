@@ -8,7 +8,11 @@
 * **Label**: gitlab-com/gl-infra/production~"Service:Gitaly"
 * **Sentry**: https://sentry.gitlab.net/gitlab/gitaly-production
 * **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/SRXyrrSmk
-* **ELK**: [`pubsub-gitaly-inf-gprd-*`](https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d)
+
+## Logging
+
+* [Gitaly](https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d)
+* [system](https://log.gitlab.net/goto/7cfb513706cffc0789ad0842674e108a)
 
 ## Troubleshooting Pointers
 
