@@ -1,0 +1,147 @@
+groups:
+  - name: workhorse.rules
+    rules:
+      # git http sessions below normal range
+      - alert: gitlab_workhorse_git_http_sessions_active_out_of_bounds_lower_5m
+        expr: |
+          gitlab_workhorse_git_http_sessions_active:total
+          <
+          gitlab_workhorse_git_http_sessions_active:total:avg_over_time_1w - 3 * gitlab_workhorse_git_http_sessions_active:total:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_workhorse_git_http_sessions_active:total
+          severity: warn
+          period: 5m
+          bound: lower
+          threshold_sigma: "3"
+        annotations:
+          description: |
+            This may be caused by an upstream load-balancer issue, DNS issue or authentication issues.
+          runbook: "troubleshooting/workhorse-git-session-alerts.md"
+          title: "The number of active Git HTTP sessions is unusually low"
+          grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: 12
+
+      - alert: gitlab_workhorse_git_http_sessions_active_out_of_bounds_lower_5m
+        expr: |
+          gitlab_workhorse_git_http_sessions_active:total
+          <
+          gitlab_workhorse_git_http_sessions_active:total:avg_over_time_1w - 4 * gitlab_workhorse_git_http_sessions_active:total:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_workhorse_git_http_sessions_active:total
+          severity: error
+          period: 5m
+          bound: lower
+          threshold_sigma: "4"
+        annotations:
+          description: |
+            This may be caused by an upstream load-balancer issue, DNS issue or authentication issues.
+          runbook: "troubleshooting/workhorse-git-session-alerts.md"
+          title: "The number of active Git HTTP sessions is unusually low"
+          grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: 12
+
+      - alert: gitlab_workhorse_git_http_sessions_active_out_of_bounds_lower_5m
+        expr: |
+          gitlab_workhorse_git_http_sessions_active:total
+          <
+          gitlab_workhorse_git_http_sessions_active:total:avg_over_time_1w - 5 * gitlab_workhorse_git_http_sessions_active:total:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_workhorse_git_http_sessions_active:total
+          severity: critical
+          pager: pagerduty
+          period: 5m
+          bound: lower
+          threshold_sigma: "5"
+        annotations:
+          description: |
+            This may be caused by an upstream load-balancer issue, DNS issue or authentication issues.
+          runbook: "troubleshooting/workhorse-git-session-alerts.md"
+          title: "The number of active Git HTTP sessions is unusually low"
+          grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: 12
+
+      # git http sessions above normal range
+      - alert: gitlab_workhorse_git_http_sessions_active_out_of_bounds_upper_5m
+        expr: |
+          gitlab_workhorse_git_http_sessions_active:total
+          >
+          gitlab_workhorse_git_http_sessions_active:total:avg_over_time_1w + 3 * gitlab_workhorse_git_http_sessions_active:total:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_workhorse_git_http_sessions_active:total
+          severity: warn
+          period: 5m
+          bound: lower
+          threshold_sigma: "3"
+        annotations:
+          description: |
+            The number of Git HTTP sessions is unusually high. This could be because of a surge in traffic,
+            a bottleneck in a upstream load-balancer, or a slow backend Gitaly server.
+          runbook: "troubleshooting/workhorse-git-session-alerts.md"
+          title: "The number of active Git HTTP sessions is unusually high"
+          grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: 12
+
+      - alert: gitlab_workhorse_git_http_sessions_active_out_of_bounds_upper_5m
+        expr: |
+          gitlab_workhorse_git_http_sessions_active:total
+          >
+          gitlab_workhorse_git_http_sessions_active:total:avg_over_time_1w + 4 * gitlab_workhorse_git_http_sessions_active:total:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_workhorse_git_http_sessions_active:total
+          severity: error
+          period: 5m
+          bound: lower
+          threshold_sigma: "4"
+        annotations:
+          description: |
+            The number of Git HTTP sessions is unusually high. This could be because of a surge in traffic,
+            a bottleneck in a upstream load-balancer, or a slow backend Gitaly server.
+          runbook: "troubleshooting/workhorse-git-session-alerts.md"
+          title: "The number of active Git HTTP sessions is unusually high"
+          grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: 12
+
+      - alert: gitlab_workhorse_git_http_sessions_active_out_of_bounds_upper_5m
+        expr: |
+          gitlab_workhorse_git_http_sessions_active:total
+          >
+          gitlab_workhorse_git_http_sessions_active:total:avg_over_time_1w + 5 * gitlab_workhorse_git_http_sessions_active:total:stddev_over_time_1w
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_workhorse_git_http_sessions_active:total
+          severity: critical
+          pager: pagerduty
+          period: 5m
+          bound: lower
+          threshold_sigma: "5"
+        annotations:
+          description: |
+            The number of Git HTTP sessions is unusually high. This could be because of a surge in traffic,
+            a bottleneck in a upstream load-balancer, or a slow backend Gitaly server.
+          runbook: "troubleshooting/workhorse-git-session-alerts.md"
+          title: "The number of active Git HTTP sessions is unusually high"
+          grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: 12

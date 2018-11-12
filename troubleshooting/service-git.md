@@ -25,9 +25,11 @@
 * [git-stuck-processes.md](git-stuck-processes.md)
 * [git.md](git.md)
 * [gitaly-high-cpu.md](gitaly-high-cpu.md)
+* [gitaly-rate-limiting.md](gitaly-rate-limiting.md)
 * [haproxy.md](haproxy.md)
 * [large-sidekiq-queue.md](large-sidekiq-queue.md)
 * [missing_repos.md](missing_repos.md)
 * [recovering-from-nfs-disaster.md](recovering-from-nfs-disaster.md)
 * [workers-high-load.md](workers-high-load.md)
+* [workhorse-git-session-alerts.md](workhorse-git-session-alerts.md)
 <!-- END_MARKER -->

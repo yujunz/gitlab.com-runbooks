@@ -21,6 +21,8 @@
 * [gitaly-high-cpu.md](gitaly-high-cpu.md)
 * [gitaly-latency.md](gitaly-latency.md)
 * [gitaly-pubsub.md](gitaly-pubsub.md)
+* [gitaly-rate-limiting.md](gitaly-rate-limiting.md)
 * [gitaly-unusual-activity.md](gitaly-unusual-activity.md)
 * [gitaly-version-mismatch.md](gitaly-version-mismatch.md)
+* [workhorse-git-session-alerts.md](workhorse-git-session-alerts.md)
 <!-- END_MARKER -->
