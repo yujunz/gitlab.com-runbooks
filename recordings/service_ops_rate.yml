@@ -122,3 +122,20 @@ groups:
   - record: gitlab_service_ops:rate:stddev_over_time_1w
     expr: >
       stddev_over_time(gitlab_service_ops:rate[1w])
+
+- name: GitLab Service Ops Rate Weekly Periodic Values
+  interval: 5m
+  rules:
+  # The average value of for this time over a 4 hour range, over three consecutive weeks
+  - record: gitlab_service_ops:ratio:avg_at_time_1w
+    expr: >
+      avg(
+        label_replace(avg_over_time(gitlab_service_ops:rate[4h] offset 166h), "p", "1w", "", "") # 1 week - 2 hours
+        or
+        label_replace(avg_over_time(gitlab_service_ops:rate[4h] offset 334h), "p", "2w", "", "") # 2 weeks - 2 hours
+        or
+        label_replace(avg_over_time(gitlab_service_ops:rate[4h] offset 502h) , "p", "3w", "", "") # 3 weeks - 2 hours
+        or
+        label_replace(avg_over_time(gitlab_service_ops:rate[4h] offset 670h) , "p", "4w", "", "") # 4 weeks - 2 hours
+      )
+      without (p)
