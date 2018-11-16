@@ -3,12 +3,21 @@ groups:
   rules:
   - record: environment_type:rails_request_errors:ratio
     expr: sum by (type,environment)(rate(rails_requests_completed{status=~"5.."}[1m])) / sum by (type,environment)(rate(rails_requests_completed[1m]))
-  - alert: HighRailsErrorRate
+  - alert: HighRailsErrorRateCritical
     expr: environment_type:rails_request_errors:ratio * 100 > .5
-    for: 30s
+    for: 5m
     labels:
       pager: pagerduty
       severity: critical
+    annotations:
+      description: Rails is returning 5xx errors at a high rate for {{ $labels.type }} . Traffic is impacted and users are likely seeing 500 errors.
+      runbook: troubleshooting/high-error-rate.md
+      title: High Rails Error Rate on Front End
+  - alert: HighRailsErrorRateWarning
+    expr: environment_type:rails_request_errors:ratio * 100 > .5
+    for: 30s
+    labels:
+      severity: warn
     annotations:
       description: Rails is returning 5xx errors at a high rate for {{ $labels.type }} . Traffic is impacted and users are likely seeing 500 errors.
       runbook: troubleshooting/high-error-rate.md
