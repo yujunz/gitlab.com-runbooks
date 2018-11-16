@@ -7,7 +7,7 @@ integrations:
     id: 65172
 checks:
   - url: https://gitlab.com/gitlab-org/gitlab-ce/
-    timeout_ms: 5000
+    timeout_ms: 20000
     notify_when_restored: true
     tags:
       - gitaly
@@ -17,7 +17,7 @@ checks:
     integrations:
       - pagerduty
   - url: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/
-    timeout_ms: 5000
+    timeout_ms: 20000
     notify_when_restored: true
     tags:
       - gitaly
@@ -27,7 +27,7 @@ checks:
     integrations:
       - pagerduty
   - url: https://gitlab.com/gitlab-org/gitlab-ce/tree/master
-    timeout_ms: 5000
+    timeout_ms: 20000
     notify_when_restored: true
     tags:
       - gitaly
@@ -36,7 +36,7 @@ checks:
     integrations:
       - pagerduty
   - url: https://gitlab.com/gitlab-org/gitlab-ce/issues
-    timeout_ms: 5000
+    timeout_ms: 20000
     notify_when_restored: true
     tags:
       - database
