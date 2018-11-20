@@ -373,7 +373,7 @@ groups:
       runbook: troubleshooting/postgres.md#pgbouncer-errors
       title: PGBouncer is logging "no more connections allowed" errors
   - alert: PostgreSQL_too_many_slow_queries
-    expr: rate(pg_slow_queries{environment=~"gprd"}[1m]) * 60 > 100
+    expr: rate(pg_slow_queries{environment=~"gprd"}[1m]) * 60 > 300
     for: 5m
     labels:
       pager: pagerduty
