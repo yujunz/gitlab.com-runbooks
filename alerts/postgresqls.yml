@@ -223,14 +223,14 @@ groups:
       severity: critical
       channel: database
     annotations:
-      description: |
-        "Really high load in the batabase for the last minute, there are {{
-          query 'sum(pg_slow_queries_total)' }} slow queries, {{ query
-          'sum(pg_blocked_queries_total)' }} and {{ query
-          'sum(pg_locks_count{datname=\'gitlabhq_production\'})' }} locks.
+      description: >
+        Really high load in the batabase for the last minute, there are
+          {{ query "sum(pg_slow_queries_total)" }} slow queries,
+          {{ query "sum(pg_blocked_queries_total)" }} and
+          {{ query "sum(pg_locks_count{datname=\"gitlabhq_production\"})" }} locks.
           Check http://dashboards.gitlab.net/dashboard/db/postgres-stats and
           http://dashboards.gitlab.net/dashboard/db/postgres-queries to get
-          more data."
+          more data.
       runbook: "troubleshooting/postgres.md#load"
       title: 'High load in database {{ $labels.fqdn }}: {{$value}}'
   - alert: PostgreSQL_TooManyDeadTuples
