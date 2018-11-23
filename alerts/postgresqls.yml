@@ -224,7 +224,7 @@ groups:
       channel: database
     annotations:
       description: >
-        Really high load in the batabase for the last minute, there are
+        Really high load in the database for the last minute, there are
           {{ query "sum(pg_slow_queries_total)" }} slow queries,
           {{ query "sum(pg_blocked_queries_total)" }} and
           {{ query "sum(pg_locks_count{datname=\"gitlabhq_production\"})" }} locks.
