@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/url"
 	"os"
 	"strconv"
@@ -48,7 +49,7 @@ func (c PingdomCheck) name() string {
 func (c PingdomCheck) hostname() string {
 	u, err := url.Parse(c.URL)
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to parse URL: %v", err)
 	}
 	return u.Hostname()
 }
@@ -56,7 +57,7 @@ func (c PingdomCheck) hostname() string {
 func (c PingdomCheck) encryption() bool {
 	u, err := url.Parse(c.URL)
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to parse URL: %v", err)
 	}
 	return u.Scheme == "https"
 }
@@ -64,7 +65,7 @@ func (c PingdomCheck) encryption() bool {
 func (c PingdomCheck) path() string {
 	u, err := url.Parse(c.URL)
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to parse URL: %v", err)
 	}
 
 	return u.Path + u.RawQuery
@@ -91,11 +92,11 @@ func (c PingdomCheck) getCheck(config PingdomChecks, teamMap map[string]pingdom.
 	for _, v := range c.Teams {
 		team, ok := teamMap[v]
 		if !ok {
-			panic("Unable to find team " + v)
+			log.Fatalf("Unable to find team %v", v)
 		}
 		teamID, err := strconv.Atoi(team.ID)
 		if err != nil {
-			panic("TeamID is not an integer: " + team.ID)
+			log.Fatalf("TeamID is not an integer: %s", team.ID)
 		}
 
 		teamIds = append(teamIds, teamID)
@@ -105,7 +106,7 @@ func (c PingdomCheck) getCheck(config PingdomChecks, teamMap map[string]pingdom.
 	for _, v := range c.Integrations {
 		integrationID, ok := integrationIDMap[v]
 		if !ok {
-			panic("Unable to find integration " + v)
+			log.Fatalf("Unable to find integration %v", v)
 		}
 
 		integrationIDs = append(integrationIDs, integrationID)
@@ -125,10 +126,10 @@ func (c PingdomCheck) getCheck(config PingdomChecks, teamMap map[string]pingdom.
 		Encryption:            c.encryption(),
 		Resolution:            resolutionMinutes,
 		ResponseTimeThreshold: timeoutMS,
-		Tags:                  strings.Join(tags, ","),
-		TeamIds:               teamIds,
-		IntegrationIds:        integrationIDs,
-		NotifyWhenBackup:      c.NotifyWhenRestored,
+		Tags:             strings.Join(tags, ","),
+		TeamIds:          teamIds,
+		IntegrationIds:   integrationIDs,
+		NotifyWhenBackup: c.NotifyWhenRestored,
 	}
 }
 
@@ -158,39 +159,121 @@ func findChecksForInsertion(configMap map[string]PingdomCheck, deployedChecks ma
 		_, present := deployedChecks[v.name()]
 
 		if !present {
-			fmt.Printf("%v has not been deployed: %v\n", v.name(), deployedChecks)
+			log.Printf("%v has not been deployed: %v", v.name(), deployedChecks)
 			result = append(result, v)
 		}
 	}
 	return result
 }
 
+type pingdomCheckUpdater interface {
+	insert(check pingdom.Check) error
+	update(id int, check pingdom.Check) error
+	delete(id int) error
+}
+
+type dryRunUpdater struct{}
+
+func (c dryRunUpdater) insert(check pingdom.Check) error {
+	log.Printf("dry-run: will create: %v", check)
+	return nil
+}
+
+func (c dryRunUpdater) update(id int, check pingdom.Check) error {
+	log.Printf("dry-run: will update: %v", check)
+	return nil
+}
+
+func (c dryRunUpdater) delete(id int) error {
+	log.Printf("dry-run: will delete: %d", id)
+	return nil
+}
+
+type executingUpdater struct {
+	client *pingdom.Client
+}
+
+func (c executingUpdater) insert(check pingdom.Check) error {
+	response, err := c.client.Checks.Create(check)
+	if err != nil {
+		return err
+	}
+	log.Println("execute: created check:", response)
+	return nil
+}
+
+func (c executingUpdater) update(id int, check pingdom.Check) error {
+	response, err := c.client.Checks.Update(id, check)
+	if err != nil {
+		return err
+	}
+	log.Println("execute: updated check:", response)
+	return nil
+}
+
+func (c executingUpdater) delete(id int) error {
+	response, err := c.client.Checks.Delete(id)
+	if err != nil {
+		return err
+	}
+	log.Println("execute: deleted check:", response)
+	return nil
+}
+
+var (
+	configurationFile = flag.String("config", "pingdom.yml", "Configuration File")
+	dryRun            = flag.Bool("dry-run", false, "Enable dry-run mode")
+)
+
+func newClient() (*pingdom.Client, error) {
+	username := os.Getenv("PINGDOM_USERNAME")
+	password := os.Getenv("PINGDOM_PASSWORD")
+	appkey := os.Getenv("PINGDOM_APPKEY")
+	accountEmail := os.Getenv("PINGDOM_ACCOUNT_EMAIL")
+
+	if username == "" || password == "" || appkey == "" || accountEmail == "" {
+		return nil, fmt.Errorf("please configure the PINGDOM_USERNAME, PINGDOM_PASSWORD, PINGDOM_APPKEY, PINGDOM_ACCOUNT_EMAIL environment variables")
+	}
+
+	client := pingdom.NewMultiUserClient(username, password, appkey, accountEmail)
+	return client, nil
+}
+
 func main() {
-	configurationFile := flag.String("config", "pingdom.yml", "Configuration File")
+	flag.Parse()
 
 	yamlFile, err := ioutil.ReadFile(*configurationFile)
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to parse configuration %v: %v", *configurationFile, err)
 	}
-	var pingdomChecks PingdomChecks
-	err = yaml.Unmarshal(yamlFile, &pingdomChecks)
-	fmt.Printf("%+v\n", pingdomChecks)
+	var configuration PingdomChecks
+	err = yaml.Unmarshal(yamlFile, &configuration)
 
 	configMap := make(map[string]PingdomCheck)
-	for _, v := range pingdomChecks.Checks {
+	for _, v := range configuration.Checks {
 		configMap[v.name()] = v
 	}
 
-	integrationIdMap := make(map[string]int)
-	for _, v := range pingdomChecks.Integrations {
-		integrationIdMap[v.Name] = v.ID
+	integrationIDMap := make(map[string]int)
+	for _, v := range configuration.Integrations {
+		integrationIDMap[v.Name] = v.ID
 	}
 
-	client := pingdom.NewMultiUserClient(os.Getenv("PINGDOM_USERNAME"), os.Getenv("PINGDOM_PASSWORD"), os.Getenv("PINGDOM_APPKEY"), os.Getenv("PINGDOM_ACCOUNT_EMAIL"))
+	client, err := newClient()
+	if err != nil {
+		log.Fatalf("unable to connect: %v", err)
+	}
+
+	var updater pingdomCheckUpdater
+	if *dryRun {
+		updater = dryRunUpdater{}
+	} else {
+		updater = executingUpdater{client: client}
+	}
 
 	teams, err := client.Teams.List()
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to list teams: %v", err)
 	}
 
 	teamMap := make(map[string]pingdom.TeamResponse)
@@ -200,7 +283,7 @@ func main() {
 
 	checks, err := client.Checks.List()
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to list checks: %v", err)
 	}
 
 	deployedChecks := make(map[string]pingdom.CheckResponse)
@@ -216,33 +299,30 @@ func main() {
 
 	// Do the inserts
 	for _, v := range forInsertion {
-		check, err := client.Checks.Create(v.getCheck(pingdomChecks, teamMap, integrationIdMap))
+		err := updater.insert(v.getCheck(configuration, teamMap, integrationIDMap))
 		if err != nil {
-			panic(err)
+			log.Fatalf("insert failed: %v", err)
 		}
-		fmt.Println("Created check:", check) // {ID, Name}
 	}
 
 	// Do the updates
 	for _, update := range forUpdate {
 		v, ok := configMap[update.Name]
 		if !ok {
-			panic("Unable to lookup " + update.Name)
+			log.Fatalf("Unable to lookup %s", update.Name)
 		}
 
-		check, err := client.Checks.Update(update.ID, v.getCheck(pingdomChecks, teamMap, integrationIdMap))
+		err := updater.update(update.ID, v.getCheck(configuration, teamMap, integrationIDMap))
 		if err != nil {
-			panic(err)
+			log.Fatalf("update failed: %v", err)
 		}
-		fmt.Println("Updated check:", check) // {ID, Name}
 	}
 
 	// Do the deletions
 	for _, d := range forRemoval {
-		check, err := client.Checks.Delete(d.ID)
+		err := updater.delete(d.ID)
 		if err != nil {
-			panic(err)
+			log.Fatalf("delete failed: %v", err)
 		}
-		fmt.Println("Deleted check:", check) // {ID, Name}
 	}
 }

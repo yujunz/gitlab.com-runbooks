@@ -29,6 +29,15 @@ deploy_elastic_watcher_updates:
     variables:
       - $ES_URL
 
+dryrun_pingdom_checks:
+  image: golang:1.11
+  script:
+    - cd pingdom
+    - go run pingdom.go --dry-run
+  except:
+    refs:
+      - master
+
 deploy_pingdom_checks:
   image: golang:1.11
   script:
