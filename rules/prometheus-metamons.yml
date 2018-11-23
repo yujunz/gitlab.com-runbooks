@@ -101,3 +101,48 @@ groups:
         is taking more than 70% of the evaluation over the last 30 minutes.'
       runbook: troubleshooting/prometheus-slow-rule-eval.md
       title: 'Prometheus has slow rule evaluations'
+  - alert: PrometheusFailedCompactions
+    expr: increase(prometheus_tsdb_compactions_failed_total[6h]) > 0
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has failed compactions in the last 6 hours'
+      runbook: troubleshooting/prometheus-failed-compactions.md
+      title: 'Prometheus has failed compactions'
+  - alert: PrometheusLargeScrapes
+    expr: increase(prometheus_target_scrapes_exceeded_sample_limit_total[30m]) > 60
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has many scrapes that exceed the sample limit'
+      runbook: troubleshooting/prometheus-scrape-errors.md
+      title: 'Prometheus has large scrape errors'
+  - alert: PrometheusFailedCheckpoints
+    expr: increase(prometheus_tsdb_checkpoint_creations_failed_total[5m]) > 0
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has failed to create checkpoints.'
+      runbook: troubleshooting/prometheus-failed-checkpoints.md
+      title: 'Prometheus has failed checkpoints'
+  - alert: PrometheusFailedDeletingCheckpoints
+    expr: increase(prometheus_tsdb_checkpoint_deletions_failed_total[5m]) > 0
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has failed to delete checkpoints.'
+      runbook: troubleshooting/prometheus-failed-checkpoints.md
+      title: 'Prometheus has failed deleting checkpoints'
+  - alert: PrometheusWALTruncationsFailed
+    expr: increase(prometheus_tsdb_wal_truncations_total[5m]) > 0
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has failed to wal truncations.'
+      runbook: troubleshooting/prometheus-failed-wal-truncations.md
+      title: 'Prometheus has failed wal truncations'
