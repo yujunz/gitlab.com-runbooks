@@ -146,3 +146,12 @@ groups:
       description: '{{$labels.job}} at {{$labels.instance}} has failed to wal truncations.'
       runbook: troubleshooting/prometheus-failed-wal-truncations.md
       title: 'Prometheus has failed wal truncations'
+  - alert: PrometheusRuleEvalFailures
+    expr: increase(prometheus_rule_evaluation_failures_total[5m]) > 0
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has failing rule evaluations.'
+      runbook: troubleshooting/prometheu-failing-rule-evaluations.md
+      title: 'Prometheus has failing rule evaluations'
