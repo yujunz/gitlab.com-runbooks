@@ -261,7 +261,7 @@ groups:
         This should be considered as service degradation and the reason should be investigated.
 
   - alert: CICDTooManyArchivingTraceFailures
-    expr: (sum (rate(job_trace_archive_failed_total[5m])) by (job)) > 0.05
+    expr: (sum (rate(job_trace_archive_failed_total[5m])) by (job)) > 10
     for: 5m
     labels:
       channel: ci-cd
