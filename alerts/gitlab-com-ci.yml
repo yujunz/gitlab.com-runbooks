@@ -260,14 +260,13 @@ groups:
 
         This should be considered as service degradation and the reason should be investigated.
 
-  - alert: CICDTooManyFailedArchivingTraces
-    expr: sum by (job)(rate(pages_deployments_failed_total[5m])) > 0.05
-    for: 1m
+  - alert: CICDTooManyArchivingTraceFailures
+    expr: (sum (rate(job_trace_archive_failed_total[5m])) by (job)) > 0.05
+    for: 5m
     labels:
       channel: ci-cd
       severity: warn
     annotations:
       title: 'Keep failing to archive traces: {{$value}}'
       description: 'Hey <!subteam^S940BK2TV|cicdops>! Keep failing to archive traces. Please check if all traces are correctly archived.: {{$value}}.
-        Check https://dashboards.gitlab.net/dashboard/db/ci?panelId=33&fullscreen'
-      runbook: troubleshooting/ci_pending_builds.md#2-verify-graphs-and-potential-outcomes-out-of-the-graphs-as-described-in-ci-graphsci_graphsmd
+        Check https://sentry.gitlab.net/gitlab/gitlabcom/?query=BuildTraceChunk&statsPeriod=14d'
