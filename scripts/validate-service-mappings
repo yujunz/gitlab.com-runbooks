@@ -14,8 +14,11 @@ def validate(service_mapping_path)
   tier_map = service_mapping_yaml["tiers"].inject({}) { |map, tier| map[tier["name"]] = tier; map }
 
   services.each do |service|
+    service_name =service["name"]
     raise "unknown team '#{service["team"]}''" unless team_map[service["team"]]
     raise "unknown tier '#{service["tier"]}''" unless tier_map[service["tier"]]
+    raise "service '#{service_name}' requires a criticality attribute" unless service["criticality"]
+    raise "service '#{service_name}' requires at least one logging configuration" unless service["logging"] && !service["logging"].empty?
   end
 end
 

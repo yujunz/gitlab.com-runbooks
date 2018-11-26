@@ -46,19 +46,22 @@ def generate_header(service, team, tier)
 * **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=<%= service_name %>&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22<%= service_name %>%22%2C%20tier%3D%22<%= service["tier"] %>%22%7D
 <% if service["label"] -%>
-* **Label**: gitlab-com~"<%= service["label"] %>"
+* **Label**: gitlab-com/gl-infra/production~"<%= service["label"] %>"
 <% end -%>
 <% if service["sentry_slug"] -%>
-* **Sentry**: https://sentry.gitlap.com/<%= service["sentry_slug"] %>
+* **Sentry**: https://sentry.gitlab.net/<%= service["sentry_slug"] %>
 <% end -%>
 <%- if service["grafana_folder"] -%>
 * **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/<%= service["grafana_folder"] %>
 <% end -%>
-<% if service["elk"] -%>
-* **ELK**: [`<%= service["elk"]["index"] %>`](<%= service["elk"]["permalink"] %>)
-<% end -%>
-<% if troubeshooting_docs && !troubeshooting_docs.empty? -%>
 
+## Logging
+
+<%- service["logging"].each do |logging_location| -%>
+* [<%= logging_location["name"] %>](<%= logging_location["permalink"] %>)
+<%- end -%>
+
+<% if troubeshooting_docs && !troubeshooting_docs.empty? -%>
 ## Troubleshooting Pointers
 
 <%- troubeshooting_docs.each do |troubeshooting_doc| -%>

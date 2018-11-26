@@ -8,7 +8,7 @@ one build before it is destroyed.
 
 ## Do a search through logs
 
-First, let's log into https://log.gitlap.com/
+First, let's log into https://log.gitlab.net/
 
 To find if the IP was used by Runner:
 

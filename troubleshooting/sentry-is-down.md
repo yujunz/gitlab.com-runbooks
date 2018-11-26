@@ -2,11 +2,11 @@
 
 ## Symptoms
 
-If sentry.gitlap.com returns HTTP 500 status code.
+If sentry.gitlab.net returns HTTP 500 status code.
 
 ## Possible checks
 
-1. Login to the sentry.gitlap.com, and check that the processes under `supervisor` are running:
+1. Login to the sentry.gitlab.net, and check that the processes under `supervisor` are running:
 
     ```
     sudo supervisorctl status

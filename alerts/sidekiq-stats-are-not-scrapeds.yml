@@ -5,7 +5,7 @@ groups:
     expr: up{job="sidekiq-redis"}==0
     for: 1m
     labels:
-      severity: warning
+      severity: warn
     annotations:
       runbook: troubleshooting/sidekiq_stats_no_longer_showing.md
       title: Sidekiq stats failed to be scraped for the last minute

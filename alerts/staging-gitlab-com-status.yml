@@ -1,0 +1,23 @@
+groups:
+- name: gitlab-com-status.rules
+  rules:
+  - alert: StagingGitlabComDown
+    expr: probe_http_status_code{instance="https://staging.gitlab.com",job="blackbox"} != 200
+    for: 30m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: GitLab.com is down for more than 30 minutes!
+      runbook: troubleshooting/gitlab-com-is-down.md
+      title: staging.GitLab.com is down for 30 minutes
+  - alert: StagingGitlabComSignInDown
+    expr: probe_http_status_code{instance="https://staging.gitlab.com/users/sign_in",job="blackbox"} != 200
+    for: 30m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: GitLab.com is down for more than 30 minutes!
+      runbook: troubleshooting/gitlab-com-is-down.md
+      title: staging.GitLab.com is down for 30 minutes

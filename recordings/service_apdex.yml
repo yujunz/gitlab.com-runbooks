@@ -6,62 +6,126 @@ groups:
   # web:workhorse
   # Satisfied -> 1 seconds
   # Acceptable -> 10 seconds
-  - record: gitlab_component_apdex:ratio
+  - record: gitlab_component_node_apdex:ratio
     labels:
+      type: web
+      tier: sv
       component: 'workhorse'
     expr: >
       (
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", le="1", code=~"^[23].*"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="1", code=~"^[23].*"}[1m])) by (environment, type, tier, fqdn)
       +
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", le="10", code=~"^[23].*"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="10", code=~"^[23].*"}[1m])) by (environment, type, tier, fqdn)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", code=~"^[235].*"}[1m])) by (environment, type, tier) > 0
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier, fqdn) > 0
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: web
+      tier: sv
+      component: 'workhorse'
+    expr: >
+      (
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="1", code=~"^[23].*"}[1m])) by (environment, type, tier)
+      +
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="10", code=~"^[23].*"}[1m])) by (environment, type, tier)
+      )
+      /
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier) > 0
 
   # api:workhorse
   # Satisfied -> 10 seconds
   # Acceptable -> 30 seconds
-  - record: gitlab_component_apdex:ratio
+  - record: gitlab_component_node_apdex:ratio
     labels:
+      type: api
+      tier: sv
       component: 'workhorse'
     expr: >
       (
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", le="10", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="10", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, fqdn)
       +
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", le="30", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="30", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, fqdn)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", code=~"^[235].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier) > 0
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", code=~"^[235].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, fqdn) > 0
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: api
+      tier: sv
+      component: 'workhorse'
+    expr: >
+      (
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="10", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
+      +
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="30", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
+      )
+      /
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", code=~"^[235].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier) > 0
 
   # git:workhorse
   # Satisfied -> 30 seconds
   # Acceptable -> 60 seconds
-  - record: gitlab_component_apdex:ratio
+  - record: gitlab_component_node_apdex:ratio
     labels:
+      type: git
+      tier: sv
       component: 'workhorse'
     expr: >
       (
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", le="30", code=~"^[23].*"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="30", code=~"^[23].*"}[1m])) by (environment, type, tier, fqdn)
       +
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", le="60", code=~"^[23].*"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="60", code=~"^[23].*"}[1m])) by (environment, type, tier, fqdn)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", code=~"^[235].*"}[1m])) by (environment, type, tier) > 0
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier, fqdn) > 0
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: git
+      tier: sv
+      component: 'workhorse'
+    expr: >
+      (
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="30", code=~"^[23].*"}[1m])) by (environment, type, tier)
+      +
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="60", code=~"^[23].*"}[1m])) by (environment, type, tier)
+      )
+      /
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier) > 0
 
   # gitaly:goserver
   # Satisfied -> 0.5 seconds
   # Acceptable -> 1 seconds
-  - record: gitlab_component_apdex:ratio
+  - record: gitlab_component_node_apdex:ratio
     labels:
+      type: gitaly
+      tier: stor
       component: 'goserver'
     expr: >
       (
-        sum(rate(grpc_server_handling_seconds_bucket{grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier)
+        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, fqdn)
         +
-        sum(rate(grpc_server_handling_seconds_bucket{grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier)
+        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, fqdn)
       )
       /
-      2 / (sum(rate(grpc_server_handling_seconds_count{grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert"}[1m])) by (environment, type, tier) > 0)
+      2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, fqdn) > 0)
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: gitaly
+      tier: stor
+      component: 'goserver'
+    expr: >
+      (
+        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier)
+        +
+        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier)
+      )
+      /
+      2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier) > 0)
 
 - name: GitLab Service Apdex Scores
   interval: 1m
@@ -73,6 +137,18 @@ groups:
   - record: gitlab_service_apdex:ratio
     expr: >
       avg by (environment, tier, type) (gitlab_component_apdex:ratio)
+
+- name: GitLab Component Node Apdex Score Stats
+  interval: 5m
+  rules:
+  # Average values for each component, over a week
+  - record: gitlab_component_node_apdex:ratio:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_component_node_apdex:ratio[1w])
+  # Stddev for each component, over a week
+  - record: gitlab_component_node_apdex:ratio:stddev_over_time_1w
+    expr: >
+      stddev_over_time(gitlab_component_node_apdex:ratio[1w])
 
 - name: GitLab Component Apdex Score Stats
   interval: 5m

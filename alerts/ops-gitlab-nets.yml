@@ -1,0 +1,12 @@
+groups:
+- name: ops-gitlab-nets.rules
+  rules:
+  - alert: OpsGitLabNetDown
+    expr: probe_http_status_code{instance="https://ops.gitlab.net/users/sign_in", job="blackbox"} != 200
+    for: 10m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: The ops GitLab instance is returning errors for more than 10 minutes.
+      title: ops.gitlab.net is returning errors for 10m

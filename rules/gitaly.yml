@@ -1,61 +1,24 @@
 groups:
-- name: Gitaly
+- name: Gitaly grpc handled
   rules:
   - record: gitaly:grpc_server_handled_total:rate1m
     expr: sum(rate(grpc_server_handled_total[1m])) without (fqdn, instance, grpc_code)
   - record: gitaly:grpc_server_handled_total:error_rate1m
     expr: >
-      sum without (fqdn,instance)
-       (rate(grpc_server_handled_total{grpc_code!="OK",grpc_code!="Canceled",grpc_code!="NotFound"}[1m]))
+      sum without (fqdn,instance) (
+       rate(grpc_server_handled_total{grpc_code!="OK",grpc_code!="Canceled",grpc_code!="NotFound"}[1m])
+      )
   - record: gitaly:grpc_server_handled_total:error_avg_rate12h
     expr: avg_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
   - record: gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h
     expr: stddev_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
   - record: gitaly:grpc_server_handled_total:instance_error_rate1m
     expr: >
-      sum without (grpc_code, grpc_method, grpc_service, grpc_type)
-        (rate(grpc_server_handled_total{grpc_code!="OK"}[1m]))
-  - record: gitaly:grpc_server_handling_seconds_bucket:rate1m
-    expr: >
-      sum without (instance, grpc_service, grpc_type)
-        (rate(grpc_server_handling_seconds_bucket[1m]))
-  - record: gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m
-    expr: >
-      sum without (instance, grpc_service, grpc_type)
-        (irate(grpc_server_handled_total[1m]))
-  - record: gitaly:grpc_server_handling_seconds:avg5m
-    expr: >
-       avg without (instance, grpc_service, grpc_type)
-         (
-           rate(grpc_server_handling_seconds_sum[5m])
-             /
-           rate(grpc_server_handling_seconds_count[5m]) > 0
-         )
-  - record: gitaly:grpc_server_handling_seconds:avg24h
-    expr: avg_over_time(gitaly:grpc_server_handling_seconds:avg5m[1d])
-  - record: gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h
-    expr: stddev_over_time(gitaly:grpc_server_handling_seconds:avg5m[1d])
-  - record: gitaly:grpc_server_handling_seconds:p95
-    expr: >
-      histogram_quantile(0.95,
-        sum without (grpc_method, grpc_service, grpc_type)
-         (rate(grpc_server_handling_seconds_bucket[1m]))
+      sum without (grpc_code, grpc_method, grpc_service, grpc_type) (
+        rate(grpc_server_handled_total{grpc_code!="OK"}[1m])
       )
-  - record: gitaly:grpc_server_handling_seconds:p50
-    expr: >
-      histogram_quantile(0.5,
-        sum without (grpc_method, grpc_service, grpc_type)
-          (rate(grpc_server_handling_seconds_bucket[1m]))
-      )
-  - record: instance:gitaly_grpc_errors_total:rate1m
-    expr: >
-      sum without (grpc_method, grpc_type, grpc_service, grpc_code)
-        (rate(grpc_server_handled_total{grpc_code!="OK"}[1m]))
-  - record: gitaly:gitaly_rate_limiting_queued:grpc_method
-    expr: sum(gitaly_rate_limiting_queued) by (environment, grpc_method, job)
-  # Alerts
   - alert: GitalyErrorRateTooHigh
-    expr: gitaly:grpc_server_handled_total:error_rate1m{environment=~"g?prd"} > 2
+    expr: gitaly:grpc_server_handled_total:error_rate1m > 2
     for: 5m
     labels:
       channel: gitaly
@@ -66,8 +29,7 @@ groups:
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
   - alert: GitalyInstanceErrorRateTooHigh
-    expr: gitaly:grpc_server_handled_total:instance_error_rate1m{environment=~"g?prd"}
-      > 5
+    expr: gitaly:grpc_server_handled_total:instance_error_rate1m > 5
     for: 5m
     labels:
       channel: gitaly
@@ -77,8 +39,100 @@ groups:
         Check Gitaly logs and consider disabling it on that host.
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
+  - alert: GitalyMethodErrorRateOutlier
+    expr: >
+      gitaly:grpc_server_handled_total:error_rate1m >
+      (
+        gitaly:grpc_server_handled_total:error_avg_rate12h
+          +
+        (2 * gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h)
+      )
+    for: 5m
+    labels:
+      channel: gitaly
+      severity: warn
+    annotations:
+      description: >
+        The {{$labels.grpc_code}} error rate on {{ $labels.grpc_method }} is outside normal
+        values over a 12 hour period (95% confidence).
+      dashboard: "https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{ $labels.grpc_method }}&var-environment={{ $labels.environment }}"
+      runbook: troubleshooting/gitaly-error-rate.md
+      title: 'Gitaly: Error rate on {{ $labels.grpc_method }} is unusually high compared with a 12 hour average'
+
+- name: Gitaly grpc buckets
+  rules:
+  - record: gitaly:grpc_server_handling_seconds_bucket:rate1m
+    expr: >
+      sum without (instance, grpc_service, grpc_type) (
+        rate(grpc_server_handling_seconds_bucket[1m])
+      )
+  - record: gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m
+    expr: >
+      sum without (instance, grpc_service, grpc_type) (
+        irate(grpc_server_handled_total[1m])
+      )
+  - record: gitaly:grpc_server_handling_seconds:avg5m
+    expr: >
+       avg without (instance, grpc_service, grpc_type) (
+         rate(grpc_server_handling_seconds_sum[5m])
+           /
+         rate(grpc_server_handling_seconds_count[5m]) > 0
+       )
+  - record: gitaly:grpc_server_handling_seconds:avg24h
+    expr: avg_over_time(gitaly:grpc_server_handling_seconds:avg5m[1d])
+  - record: gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h
+    expr: stddev_over_time(gitaly:grpc_server_handling_seconds:avg5m[1d])
+  - record: gitaly:grpc_server_handling_seconds:p95
+    expr: >
+      histogram_quantile(0.95,
+        sum without (grpc_method, grpc_service, grpc_type) (
+          rate(grpc_server_handling_seconds_bucket[1m])
+        )
+      )
+  - record: gitaly:grpc_server_handling_seconds:p50
+    expr: >
+      histogram_quantile(0.5,
+        sum without (grpc_method, grpc_service, grpc_type) (
+          rate(grpc_server_handling_seconds_bucket[1m])
+        )
+      )
+  - record: instance:gitaly_grpc_errors_total:rate1m
+    expr: >
+      sum without (grpc_method, grpc_type, grpc_service, grpc_code) (
+        rate(grpc_server_handled_total{grpc_code!="OK"}[1m])
+      )
+  - alert: GitalyLatencyOutlier
+    expr: >
+      avg by (environment, grpc_method) (
+        gitaly:grpc_server_handling_seconds:avg5m{job="gitaly",tier="stor",type="gitaly"}
+      ) > ON(environment, grpc_method) GROUP_LEFT() (
+        avg by (environment, grpc_method) (
+          gitaly:grpc_server_handling_seconds:avg24h{job="gitaly",tier="stor",type="gitaly"}
+        )
+        + 2 * avg by (environment, grpc_method) (gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h
+        )
+      )
+    for: 5m
+    labels:
+      channel: gitaly
+      severity: warn
+    annotations:
+      description: The error rate on the {{ $labels.grpc_method }} endpoint is outside
+        normal values over a 12 hour period (95% confidence). Check https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{
+        $labels.grpc_method }}&var-tier=stor&var-type=gitaly&var-environment={{ $labels.environment }}&refresh=5m
+      runbook: troubleshooting/gitaly-error-rate.md
+      title: 'Gitaly: Latency on the Gitaly {{ $labels.grpc_method }} is unusually
+        high compared with a 24 hour average'
+
+- name: Gitaly rate limiting
+  rules:
+  - record: gitaly:gitaly_rate_limiting_queued:grpc_method
+    expr: sum(gitaly_rate_limiting_queued) by (environment, grpc_method, job)
+
+- name: Gitaly misc alerts
+  rules:
   - alert: GitalyFileServerDown
-    expr: up{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"} == 0
+    expr: up{job="gitaly",tier="stor",type="gitaly"} == 0
     for: 1m
     labels:
       pager: pagerduty
@@ -90,9 +144,13 @@ groups:
       runbook: troubleshooting/gitaly-down.md
       title: Gitaly is down on {{ $labels.fqdn }}
   - alert: GitalyFileServerCPUUsage
-    expr: avg(process_cpu_seconds_total:rate1m{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"})
-      BY (fqdn) / avg(instance:node_cpus:count{tier="stor",type="gitaly"}) BY (fqdn)
-      > 0.5
+    expr: >
+      avg by (environment, fqdn) (
+        instance:process_cpu_seconds_total:rate1m{job="gitaly",tier="stor",type="gitaly"}
+      ) /
+      avg by (environment, fqdn) (
+        instance:node_cpus:count{tier="stor",type="gitaly"}
+      ) * 100 > 50
     for: 1m
     labels:
       channel: gitaly
@@ -100,12 +158,16 @@ groups:
     annotations:
       description: 'Gitaly has been using more than 50% of total available CPU on
         {{$labels.fqdn}} for the past minute. This may affect the stability of the
-        NFS server. Visit this dashboard: https://dashboards.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?refresh=30s&orgId=1&var-fqdn={{$labels.fqdn}}&from=now-1h&to=now'
+        NFS server. Visit this dashboard: https://dashboards.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?refresh=30s&orgId=1&var-fqdn={{$labels.fqdn}}'
       runbook: troubleshooting/gitaly-high-cpu.md
       title: 'Gitaly: High CPU usage on {{ $labels.fqdn }}'
   - alert: GitalyVersionMismatch
-    expr: count(sum(gitlab_build_info{environment=~"g?prd",tier="stor",type="gitaly"})
-      BY (version) > 0) == 2
+    expr: >
+      count(
+        sum by (environment, version) (
+          gitlab_build_info{tier="stor",type="gitaly"}
+        ) > 0
+      ) == 2
     for: 30m
     labels:
       channel: gitaly
@@ -113,14 +175,18 @@ groups:
     annotations:
       description: During a deployment, two distinct versions of Gitaly may be running
         alongside one another, but this should not be the case for more than 30m.
-        Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-environment=prd
+        Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
         for details of versions deployed across the fleet.
       runbook: troubleshooting/gitaly-version-mismatch.md
       title: 'Gitaly: two versions of Gitaly have been running alongside one another
         in production for more than 30 minutes'
   - alert: GitalyVersionMismatchSevere
-    expr: count(sum(gitlab_build_info{environment=~"g?prd",tier="stor",type="gitaly"})
-      BY (version) > 0) > 2
+    expr: >
+      count(
+        sum by (environment, version) (
+         gitlab_build_info{tier="stor",type="gitaly"}
+        ) > 0
+      ) > 2
     for: 1m
     labels:
       channel: gitaly
@@ -128,42 +194,7 @@ groups:
     annotations:
       description: Three of more versions of Gitaly are currently running alongside
         one another in production. This should never occur and indicates serious deployment
-        failures. Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1&var-environment=prd
+        failures. Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
         for details of versions deployed across the fleet.
       runbook: troubleshooting/gitaly-version-mismatch.md
       title: 'Gitaly: multiple versions of Gitaly are currently running in production'
-  - alert: GitalyMethodErrorRateOutlier
-    expr: >
-      gitaly:grpc_server_handled_total:error_rate1m{environment=~"g?prd"} >
-      (
-        gitaly:grpc_server_handled_total:error_avg_rate12h{environment=~"g?prd"}
-          +
-        (2 * gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h{environment=~"g?prd"})
-      )
-    for: 5m
-    labels:
-      channel: gitaly
-      severity: warn
-    annotations:
-      description: >
-        The {{$labels.grpc_code}} error rate on {{ $labels.grpc_method }} is outside normal
-        values over a 12 hour period (95% confidence).
-      dashboard: "https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{ $labels.grpc_method }}&var-environment=prd"
-      runbook: troubleshooting/gitaly-error-rate.md
-      title: 'Gitaly: Error rate on {{ $labels.grpc_method }} is unusually high compared with a 12 hour average'
-  - alert: GitalyLatencyOutlier
-    expr: avg(gitaly:grpc_server_handling_seconds:avg5m{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"})
-      BY (grpc_method) > ON(grpc_method) GROUP_LEFT() (avg(gitaly:grpc_server_handling_seconds:avg24h{environment=~"g?prd",job="gitaly",tier="stor",type="gitaly"})
-      BY (grpc_method) + 2 * avg(gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h)
-      BY (grpc_method))
-    for: 5m
-    labels:
-      channel: gitaly
-      severity: warn
-    annotations:
-      description: The error rate on the {{ $labels.grpc_method }} endpoint is outside
-        normal values over a 12 hour period (95% confidence). Check https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?from=now-1h&to=now&orgId=1&var-method={{
-        $labels.grpc_method }}&var-tier=stor&var-type=gitaly&var-environment=prd&refresh=5m
-      runbook: troubleshooting/gitaly-error-rate.md
-      title: 'Gitaly: Latency on the Gitaly {{ $labels.grpc_method }} is unusually
-        high compared with a 24 hour average'

@@ -1,6 +1,6 @@
 FROM ruby:2.5.1-alpine3.7
 
-ENV PROMETHEUS_VERSION 2.1.0
+ENV PROMETHEUS_VERSION 2.5.0
 
 RUN apk add --no-cache wget tar && \
    wget -O prometheus.tar.gz https://github.com/prometheus/prometheus/releases/download/v$PROMETHEUS_VERSION/prometheus-$PROMETHEUS_VERSION.linux-amd64.tar.gz && \

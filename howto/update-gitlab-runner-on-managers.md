@@ -253,8 +253,22 @@ knife ssh -aipaddress 'roles:gitlab-runner-base' -- sudo service chef-client sto
 knife ssh -aipaddress 'roles:gitlab-runner-base' -- systemctl is-active chef-client
 
 # Update configuration in roles definition and secrets
-rake edit_role[gitlab-runner-base]
+git checkout master && git pull
+git checkout -b update-runners-fleet
+$EDITOR roles/gitlab-runner-base.json
+git add roles/gitlab-runner-base.json && git commit -m "Update runners fleet to [X.Y.Z-...]"
+git push -u origin update-runners-fleet
+```
 
+When the push will be finished - use the printed URL to open an MR. Double check if the
+changes are doing what it should be done for the deployment, and set 'Merge when pipeline succeeds'.
+After the branch will be merged, open the pipeline FOR THE MERGE COMMIT (search at https://ops.gitlab.net/gitlab-cookbooks/chef-repo/pipelines/)
+and check in the `apply_to_staging` job, if the dry-run tries to upload only the role file updated above.
+If yes - hit `play` on the `apply_to_prod` job and wait until the job on Chef Server will be updated.
+
+You can continue **after the changes are uploaded to CHef Server**.
+
+```bash
 # Upgrade Runner's version and configuration on nodes
 knife ssh -C1 -aipaddress 'roles:gitlab-runner-builder' -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -aipaddress 'roles:gitlab-runner-gsrm' -- sudo /root/runner_upgrade.sh &

@@ -13,7 +13,7 @@
 1. View the [pull mirror dashboard](https://dashboards.gitlab.net/d/_MKRXrSmk/pull-mirrors).
 1. Under "Running Jobs", pay attention to the `UpdateAllMirrorsWorker`. If that has gone flat, then
 you may need to log the state of the pending pull mirror queue.
-1. Check [Sentry](https://sentry.gitlap.com/gitlab/gitlabcom/) for new 500 errors relating to `UpdateAllMirrorsWorker`.
+1. Check [Sentry](https://sentry.gitlab.net/gitlab/gitlabcom/) for new 500 errors relating to `UpdateAllMirrorsWorker`.
 1. Get the state of the Redis queue that holds which project IDs should be processed. In a Rails console run:
 
     ```ruby

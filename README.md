@@ -64,10 +64,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [HAProxy is missing workers](troubleshooting/chef.md)
 * [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
 * [Azure Load Balancers Misbehave](troubleshooting/load-balancer-outage.md)
-* [Kibana is down](troubleshooting/kibana_is_down.md)
 * [GitLab registry is down](troubleshooting/gitlab-registry.md)
 * [Sidekiq stats no longer showing](troubleshooting/sidekiq_stats_no_longer_showing.md)
 * [Gemnasium is down](troubleshooting/gemnasium_is_down.md)
+* [Blocking a project causing high load](howto/block-high-load-project.md)
 
 ### Supporting Services
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
@@ -89,6 +89,9 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Runners registry is down](troubleshooting/runners_registry_is_down.md)
 * [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
 * [Too many connections on Runner's cache server](troubleshooting/ci_too_many_connections_on_runners_cache_server.md)
+
+### ELK
+* [`mapper_parsing_exception` errors](troubleshooting/elk_mapper_parsing_exception.md)
 
 ## Non-Critical
 * [SSL certificate expires](troubleshooting/ssl_cert.md)
@@ -151,6 +154,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ### Mangle front end load balancers
 * [Isolate a worker by disabling the service in the LBs](howto/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
 * [Deny a path in the load balancers](howto/block-things-in-haproxy.md#deny-a-path-with-the-delete-http-method)
+* [Purchasing/Renewing SSL Certificates](howto/ssl_cert.md)
 
 ### Work with Chef
 * [Create users, rotate or remove keys from chef](howto/manage-chef.md)

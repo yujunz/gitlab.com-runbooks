@@ -1,0 +1,15 @@
+groups:
+- name: sidekiq-exception-rate.rules
+  rules:
+
+  - alert: SidekiqExceptionRateTooHigh
+    expr: |
+      sum(rate(gitlab_transaction_event_sidekiq_exception_total[1m])) by (controller,environment) > 1
+    for: 5m
+    labels:
+      severity: warn
+    annotations:
+      description: |
+        The rate of Sidekiq {{ $labels.controller }} Exceptions in {{ $labels.environment }} is high.
+        Check https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?orgId=1&panelId=58&fullscreen
+      title: 'High Rate of Sidekiq {{ $labels.controller }} exceptions in {{ $labels.environment }}: {{$value}}'

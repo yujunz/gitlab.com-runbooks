@@ -3,55 +3,22 @@ groups:
   rules:
   - record: environment_type:rails_request_errors:ratio
     expr: sum by (type,environment)(rate(rails_requests_completed{status=~"5.."}[1m])) / sum by (type,environment)(rate(rails_requests_completed[1m]))
-
-  - alert: HighRailsErrorRate
+  - alert: HighRailsErrorRateCritical
     expr: environment_type:rails_request_errors:ratio * 100 > .5
-    for: 30s
+    for: 5m
     labels:
       pager: pagerduty
       severity: critical
     annotations:
       description: Rails is returning 5xx errors at a high rate for {{ $labels.type }} . Traffic is impacted and users are likely seeing 500 errors.
-      runbook: troubleshooting/gitlab-com-is-down.md
+      runbook: troubleshooting/high-error-rate.md
       title: High Rails Error Rate on Front End
-
-  - alert: HighWebErrorRate
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code="5xx",tier="lb"})
-      - sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code!="5xx",tier="lb"})
-      > 0
-    for: 15s
+  - alert: HighRailsErrorRateWarning
+    expr: environment_type:rails_request_errors:ratio * 100 > .5
+    for: 30s
     labels:
-      pager: pagerduty
-      severity: critical
+      severity: warn
     annotations:
-      description: We are having more 5xx returns than any other reply. Web traffic
-        is being impacted and the service is probably down. Have you thought about
-        turning it off and on again?
-      runbook: troubleshooting/gitlab-com-is-down.md
-      title: High Error Rate on Front End Web
-  - alert: High4xxApiRateLimit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",tier="lb"})
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb"})
-      > 0.1
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: critical
-    annotations:
-      description: We are seeing an increase of 4xx errors on the load balancing api
-        rate limiting backend, more than 10% of http requests for at least 5 minutes.
-      runbook: troubleshooting
-      title: High 4xx Error Rate on Front End Web on backend api_rate_limit
-  - alert: High4xxRateLimit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",code="4xx",tier="lb"})
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",tier="lb"})
-      > 0.25
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: critical
-    annotations:
-      description: We are seeing an increase of 4xx errors on the load balancing across
-        all backends, more than 25% of http requests for at least 5 minutes.
-      runbook: troubleshooting
-      title: High 4xx Error Rate on Front End Web
+      description: Rails is returning 5xx errors at a high rate for {{ $labels.type }} . Traffic is impacted and users are likely seeing 500 errors.
+      runbook: troubleshooting/high-error-rate.md
+      title: High Rails Error Rate on Front End

@@ -5,6 +5,7 @@ groups:
   # Postgres Service
   - record: gitlab_component_availability:ratio
     labels:
+      type: 'posgres'
       component: 'server'
     expr: >
       avg by (environment, tier, type) (avg_over_time(up{geo_role!="secondary", job="postgres"}[1m]))
@@ -15,13 +16,15 @@ groups:
     labels:
       component: 'server'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="db", type="redis"}[1m]))
+      avg by (environment, tier, type) (avg_over_time(redis_up{type="redis", tier="db"}[1m]))
   # Registry Service
+  # Note: currently we have no insight into the availability of the registry, so we
+  # have to rely on the node_exporter
   - record: gitlab_component_availability:ratio
     labels:
       component: 'server'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="sv", type="registry"}[1m]))
+      avg by (environment, tier, type) (avg_over_time(up{tier="sv", type="registry", job="node"}[1m]))
   # {web, api, sidekiq, git} , unicorn component
   - record: gitlab_component_availability:ratio
     labels:
@@ -44,13 +47,13 @@ groups:
     labels:
       component: 'server'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="db", type="pgbouncer"}[1m]))
+      avg by (environment, tier, type) (avg_over_time(up{tier="db", type="pgbouncer", job="pgbouncer"}[1m]))
   # gitaly:goserver
   - record: gitlab_component_availability:ratio
     labels:
       component: 'goserver'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="stor", type="gitaly"}[1m]))
+      avg by (environment, tier, type) (avg_over_time(up{tier="stor", type="gitaly", job="gitaly"}[1m]))
   # pages
   - record: gitlab_component_availability:ratio
     labels:
@@ -66,7 +69,17 @@ groups:
         label_replace(
           avg_over_time(haproxy_backend_up[1m]),
           "component",
-          "$1-backend",
+          "backend-$1",
+          "backend",
+          "(.*)"
+        )
+      )
+      or
+      avg by (environment, tier, component) (
+        label_replace(
+          avg_over_time(haproxy_server_up[1m]),
+          "component",
+          "server-$1",
           "backend",
           "(.*)"
         )

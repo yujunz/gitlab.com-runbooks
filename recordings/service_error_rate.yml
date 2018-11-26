@@ -11,6 +11,7 @@ groups:
   # api/web/sidekiq/git:unicorn
   - record: gitlab_component_errors:rate
     labels:
+      # type from series: ` api/web/sidekiq/git`
       component: 'unicorn'
     expr: >
       sum by (environment, tier, type) (rate(http_request_duration_seconds_count{job="gitlab-unicorn", status=~"^5.*"}[1m]))
@@ -18,6 +19,7 @@ groups:
   # sidekiq
   - record: gitlab_component_errors:rate
     labels:
+      type: sidekiq
       component: 'sidekiq'
     expr: >
       sum by (environment, tier, type) (rate(sidekiq_jobs_failed_total{type = "sidekiq"}[1m]))
@@ -25,9 +27,10 @@ groups:
   # gitaly:goserver
   - record: gitlab_component_errors:rate
     labels:
+      type: gitaly
       component: 'goserver'
     expr: >
-      sum by (environment, tier, type) (rate(grpc_server_handled_total{type="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists)$"}[1m]))
+      sum by (environment, tier, type) (rate(grpc_server_handled_total{type="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1m]))
 
 - name: GitLab Service Errors-per-Second Rates
   interval: 1m

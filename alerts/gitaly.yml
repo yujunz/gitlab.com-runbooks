@@ -14,7 +14,6 @@ groups:
         Reach out to the Gitaly team, ensure logging is set properly.
       runbook: troubleshooting/gitaly-pubsub.md
       title: Gitaly PubSub send operation is low
-        5m
 
   - alert: GitLabComLatencyGitalyCritical
     expr: gitaly:grpc_server_handling_seconds:p95 >= 60
@@ -26,5 +25,57 @@ groups:
       description: Reach out to the Gitaly team and mitigate the problem restarting
         gitaly on the affected node if it's causing a partial outage.
       runbook: troubleshooting/gitaly-latency.md
-      title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last
-        5m
+      title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last 5m
+
+  - alert: gitaly_lock_acquisition_rates
+    expr: |
+      1 - (
+        sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{le="60"}[10m])) by (environment, tier, type, stage, fqdn, grpc_method)
+        /
+        sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{le="+Inf"}[10m])) by (environment, tier, type, stage, fqdn, grpc_method)
+      ) > 0.1
+    for: 10m
+    labels:
+      rules_domain: general
+      type: gitaly
+      metric: gitaly_rate_limiting_acquiring_seconds_bucket
+      severity: error
+      period: 10m
+    annotations:
+      title: "More than 10% of Gitaly {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are queueing for more than 60s"
+      description: |
+        A very high proportion of Gitaly  {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are being queued up for an extended period.
+
+        This issue is likely to be immediately client-impacting.
+      grafana_dashboard_id: "VBaSC9aik/gitaly-rate-limiting-alerting"
+      grafana_panel_id: "2"
+      grafana_variables: "environment,stage,grpc_method"
+      grafana_min_zoom_hours: 6
+      runbook: "troubleshooting/gitaly-rate-limiting.md"
+
+  - alert: gitaly_lock_acquisition_rates
+    expr: |
+      1 - (
+        sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{le="60"}[10m])) by (environment, tier, type, stage, fqdn, grpc_method)
+        /
+        sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{le="+Inf"}[10m])) by (environment, tier, type, stage, fqdn, grpc_method)
+      ) > 0.2
+    for: 10m
+    labels:
+      rules_domain: general
+      type: gitaly
+      metric: gitaly_rate_limiting_acquiring_seconds_bucket
+      severity: critical
+      pager: pagerduty
+      period: 10m
+    annotations:
+      title: "More than 20% of Gitaly {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are queueing for more than 60s"
+      description: |
+        An extremely high proportion of Gitaly  {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are being queued up for an extended period.
+
+        This issue is likely to be immediately client-impacting.
+      grafana_dashboard_id: "VBaSC9aik/gitaly-rate-limiting-alerting"
+      grafana_panel_id: "2"
+      grafana_variables: "environment,stage,grpc_method"
+      grafana_min_zoom_hours: 6
+      runbook: "troubleshooting/gitaly-rate-limiting.md"

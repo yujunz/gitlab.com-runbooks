@@ -70,7 +70,7 @@
       "params" : {
         "time_period_seconds" : 600,
         "wall_time_ms_per_second_threshold": 4000,
-        "minimum_invocation_rate_per_second": 20,
+        "minimum_invocation_rate_per_second": 10,
         "invocation_rate_per_second_threshold": 100
       }
     }
@@ -82,7 +82,7 @@
       "params" : {
         "time_period_seconds" : 600,
         "wall_time_ms_per_second_threshold": 4000,
-        "minimum_invocation_rate_per_second": 20,
+        "minimum_invocation_rate_per_second": 10,
         "invocation_rate_per_second_threshold": 100
       }
     }
@@ -95,7 +95,7 @@
         "message": {
           "from": "ElasticCloud Watcher: gitaly_abuse_1",
           "to": [
-            "#alert-prod-abuse"
+            "#alerts-prod-abuse"
           ],
           "text": "Unusual Gitaly activity for a project has been detected. Review the runbook at https://gitlab.com/gitlab-com/runbooks/tree/master/troubleshooting/gitaly-unusual-activity.md for more details",
           "dynamic_attachments": {

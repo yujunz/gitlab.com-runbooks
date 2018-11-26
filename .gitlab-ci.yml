@@ -11,6 +11,10 @@ test:
     - /prometheus/promtool check rules alerts/*.yml
     - /prometheus/promtool check rules recordings/*.yml
     - /prometheus/promtool check rules rules/*.yml
+    # Prometheus config checks are stricter than rules checks, so use a fake config to check this too
+    - /prometheus/promtool check config scripts/prometheus.yml
+    - scripts/validate_kibana_urls
+    - scripts/validate-alerts
 
 deploy_elastic_watcher_updates:
   stage: deploy
@@ -24,3 +28,21 @@ deploy_elastic_watcher_updates:
       - master
     variables:
       - $ES_URL
+
+dryrun_pingdom_checks:
+  image: golang:1.11
+  script:
+    - cd pingdom
+    - go run pingdom.go --dry-run
+  except:
+    refs:
+      - master
+
+deploy_pingdom_checks:
+  image: golang:1.11
+  script:
+    - cd pingdom
+    - go run pingdom.go
+  only:
+    refs:
+      - master

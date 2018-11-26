@@ -1,0 +1,103 @@
+groups:
+- name: prometheus-metamon.rules
+  rules:
+  - alert: PrometheusUnreachable
+    expr: up{job=~"prometheus.*"} == 0
+    for: 10m
+    labels:
+      pager: pagerduty
+      service: prometheus
+      severity: critical
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} could not be scraped for
+        over 10 minutes.'
+      runbook: troubleshooting/prometheus-is-down.md
+      title: '{{$labels.job}} is unreachable'
+  - alert: PrometheusManyRestarts
+    expr: changes(process_start_time_seconds{job=~"prometheus.*"}[30m]) > 3
+    for: 30m
+    labels:
+      pager: pagerduty
+      service: prometheus
+      severity: critical
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has restarted more than
+        3 times in the last 30 minutes. It might be crashlooping.'
+      runbook: troubleshooting/prometheus-is-down.md
+      title: '{{$labels.job}} is restarting frequently'
+  - alert: PrometheusManyFileSDReadErrors
+    expr: >
+      rate(prometheus_sd_file_read_errors_total[5m]) /
+      rate(prometheus_sd_file_scan_duration_seconds_count[5m])
+      * 100 > 5
+    for: 10m
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has {{$value}}% of DNS-SD
+        requests failing.'
+      runbook: troubleshooting/prometheus-file-sd-errors.md
+      title: '{{$labels.job}} has many DNS-SD errors'
+  - alert: PrometheusRuleEvaluationSlow
+    expr: prometheus_rule_evaluation_duration_seconds{quantile="0.9"} > 60
+    for: 10m
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has a 90th percentile
+        latency of {{$value}}s completing rule evaluation cycles.'
+      runbook: troubleshooting/prometheus-slow-rule-eval.md
+      title: '{{$labels.job}} is evaluating rules too slowly'
+  - alert: PrometheusNotificationsBacklog
+    expr: prometheus_notifications_queue_length > 0
+    for: 10m
+    labels:
+      pager: pagerduty
+      service: prometheus
+      severity: critical
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} is backlogging on the
+        notifications queue. The queue has not been empty for 10 minutes. Current
+        queue length: {{$value}}.'
+      runbook: troubleshooting/prometheus-notifications-backlog.md
+      title: '{{$labels.job}} is backlogging on the notifications queue'
+  - alert: PrometheusScrapingSlowly
+    expr: prometheus_target_interval_length_seconds{interval!~".*m.*",quantile="0.9"}
+      > 2 * 60
+    for: 10m
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} has a 90th percentile
+        latency of {{$value}}s for scraping targets in the {{$labels.interval}} target
+        pool.'
+      runbook: troubleshooting/prometheus-slow-scrapes.md
+      title: '{{$labels.job}} is scraping targets slowly'
+  - alert: PrometheusInvalidConfigFile
+    expr: prometheus_config_last_reload_successful == 0
+    for: 30m
+    labels:
+      pager: pagerduty
+      service: prometheus
+      severity: critical
+    annotations:
+      description: The configuration file for {{$labels.job}} at {{$labels.instance}}
+        is invalid and was therefore not reloaded.
+      runbook: troubleshooting/prometheus-invalid-config.md
+      title: '{{$labels.job}} has an invalid config'
+  - alert: PrometheusSlowRuleEvaluation
+    expr: >
+      (prometheus_rule_group_last_duration_seconds /
+      prometheus_rule_group_interval_seconds) * 100 > 70
+    for: 30m
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.job}} at {{$labels.instance}} rule group {{$labels.rule_group}}
+        is taking more than 70% of the evaluation over the last 30 minutes.'
+      runbook: troubleshooting/prometheus-slow-rule-eval.md
+      title: 'Prometheus has slow rule evaluations'

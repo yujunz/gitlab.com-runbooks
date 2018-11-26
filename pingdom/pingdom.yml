@@ -1,0 +1,47 @@
+# See ../howto/pingdom.md for details of how to use this
+unique_tag: "pingdom-automated"
+defaults:
+  timeout_ms: 2000
+integrations:
+  - name: pagerduty
+    id: 65172
+checks:
+  - url: https://gitlab.com/gitlab-org/gitlab-ce/
+    timeout_ms: 20000
+    notify_when_restored: true
+    tags:
+      - gitaly
+      - database
+    teams:
+      - Infrastructure
+    integrations:
+      - pagerduty
+  - url: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/
+    timeout_ms: 20000
+    notify_when_restored: true
+    tags:
+      - gitaly
+      - database
+    teams:
+      - Infrastructure
+    integrations:
+      - pagerduty
+  - url: https://gitlab.com/gitlab-org/gitlab-ce/tree/master
+    timeout_ms: 20000
+    notify_when_restored: true
+    tags:
+      - gitaly
+    teams:
+      - Infrastructure
+    integrations:
+      - pagerduty
+  - url: https://gitlab.com/gitlab-org/gitlab-ce/issues
+    timeout_ms: 20000
+    notify_when_restored: true
+    tags:
+      - database
+    teams:
+      - Infrastructure
+    integrations:
+      - pagerduty
+

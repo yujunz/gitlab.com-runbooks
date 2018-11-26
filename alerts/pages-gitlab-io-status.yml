@@ -47,3 +47,27 @@ groups:
         GitLab Pages on {{ $labels.environment }} {{ $labels.fqdn }} have an unusually low number of hosted domains.
       environment: "{{ $labels.environment }}"
       runbook: troubleshooting/gitlab-pages.md
+  - alert: GitLabPagesProdFeIpPossibleChange
+    expr: probe_http_status_code{instance=~"https?://prod.pages-check.gitlab.net",job="blackbox"}
+      != 200
+    for: 1m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      title: GitLab Pages production front-end IP could've been changed
+      description: A pages site (https://prod.pages-check.gitlab.net/) that points to Pages front-end IP
+        directly has stopped working for a minute. This can make similar Pages sites stop working as well.
+        Consider reaching out to GCP support to try recovering the old IP if that is the case.
+  - alert: GitLabPagesStagingFeIpPossibleChange
+    expr: probe_http_status_code{instance=~"https?://staging.pages-check.gitlab.net",job="blackbox"}
+      != 200
+    for: 1m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      title: GitLab Pages staging front-end IP could've been changed
+      description: A pages site (https://staging.pages-check.gitlab.net/) that points to Pages front-end IP
+        directly has stopped working for a minute. If a change has been made to the LB configuration, make sure *they
+        are not* applied to production.

@@ -6,6 +6,7 @@ groups:
     for: 20m
     labels:
       severity: critical
+      pager: pagerduty
     annotations:
       description: Sidekiq jobs are piling up for the last minute, this may be under
         control, but I'm just letting you know that this is going on, check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
@@ -17,6 +18,7 @@ groups:
     for: 20m
     labels:
       severity: critical
+      pager: pagerduty
     annotations:
       description: The new_note sidekiq queue is piling up. This likely means that users are not receiving email notifications
         for comments on issues.
@@ -27,6 +29,7 @@ groups:
     for: 1h
     labels:
       severity: critical
+      pager: pagerduty
     annotations:
       description: There have been over queued 2000 Sidekiq jobs for the last hour.
         Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats. Note that
