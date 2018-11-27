@@ -267,6 +267,7 @@ groups:
       channel: ci-cd
       severity: warn
     annotations:
-      title: 'Keep failing to archive traces: {{$value}}'
-      description: 'Hey <!subteam^S940BK2TV|cicdops>! Keep failing to archive traces. Please check if all traces are correctly archived.: {{$value}}.
-        Check https://sentry.gitlab.net/gitlab/gitlabcom/?query=BuildTraceChunk&statsPeriod=14d'
+      title: 'Too big number of traces archiving failures: {{$value}}'
+      description: |
+        Hey <!subteam^S940BK2TV|cicdops>! Traces archiving keeps failing for more than 5 minutes.
+        Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&orgId=1&panelId=153&fullscreen to find out more details
