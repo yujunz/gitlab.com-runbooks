@@ -6,6 +6,7 @@ This runbook describes procedure of upgrading GitLab Runner on our runner manage
 
 ```mermaid
 graph LR
+    classDef default fill:#e0e0e0,stroke:#000
     r::base(gitlab-runner-base)
     r::builder(gitlab-runner-builder)
 
