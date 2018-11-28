@@ -2,51 +2,36 @@
 
 ## Wal-E Overview
 
-[Wal-E][Wal-E] was designed by Heroku to solve their PostgreSQL
-backup issues. It is a python based application that is invoked by the PostgreSQL process
-via the 'archive_command' as part of PostgreSQLs
-[continuous archiving][PSQL_Archiving] setup.
+[Wal-E][Wal-E] was designed by Heroku to solve their PostgreSQL backup issues. It is a python based application that is invoked by the PostgreSQL process via the 'archive_command' as part of PostgreSQLs [continuous archiving][PSQL_Archiving] setup.
 
-It works by taking [Write-Ahead Logging][PSQL_WAL]
-files, compressing them, and then archiving them off to a storage target in near realtime.
-On a nightly schedule Wal-E also pushes a full backup to the storage target, referred to
-as a 'base backup'. A restore then is a combination of a 'base backup' and all of the
-WAL transaction files since the backup to recover the database to a given point in time.
+It works by taking [Write-Ahead Logging][PSQL_WAL] files, compressing them, and then archiving them off to a storage target in near realtime. On a nightly schedule Wal-E also pushes a full backup to the storage target, referred to as a 'base backup'. A restore then is a combination of a 'base backup' and all of the WAL transaction files since the backup to recover the database to a given point in time.
 
 ## Backing Our Data Up
 
 ### Where is Our Data Going
 
-Currently our production data is being streamed to Amazon S3 into a bucket labeled `gitlab-dbprod-backups`.
-On `gprd` all of the servers are configured to stream to the `postgres-02` subdirectory of that bucket.
-This is because in the event of a failover, all the servers should have the same backup location to streamline
-both backups and restores. Secondary servers do not push WAL files or base_backups, so they do not interfere.
+Currently our production data is being pushed to Google Cloud Storage into a bucket labeled [`gitlab-gprd-postgres-backup`](https://console.cloud.google.com/storage/browser/gitlab-gprd-postgres-backup).
+All servers of an environment (like `gprd`) push their WAL to the same bucket location. This is because in the event of a failover, all the servers should have the same backup location to streamline both backups and restores. Secondary servers do not push WAL files or base backups, so they do not interfere. However, some replicas retrieve WAL from the bucket for archive recovery.
 
-AWS S3 replicates the data from `gitlab-dbprod-backups` (US bucket) to `gitlab-dbprod-backups-replica` (EU bucket).
+The GCS bucket is configured with multi-regional storage (US location).
 
-Our secondary databases (version, customers, sentry, etc)
-are in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. 
-The key can be found in the Production vault of 1Password.
+Our secondary databases (version, customers, sentry, etc) are still in AWS S3 in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. The key can be found in the Production vault of 1Password.
 
 ### Interval and Retention
 
-We currently take a basebackup each day at 2am UTC and continuously stream WAL data to S3. Taking a basebackup currently takes about 5 hours (June 2018).
+We currently take a basebackup each day at 0am UTC and continuously stream WAL data to GCS. Taking a  basebackup currently takes about 3-4 hours (November 2018).
 
-Backups are kept for 8 days and cleaned up by WAL-E.
+Backups are kept for 14 days and cleaned up by a lifecycle rule on GCS.
 
 ### How Does it Get There?
 
 #### Production
 
-WAL-E on production is set up via the gitlab_wale cookbook. This cookbook installs all of the relevant python packages,
-installs a cronjob to create base_backups and trim old backups. The relevant cron command and settings is set via attributes
-on the chef roles.
+WAL-E on production is set up via the gitlab_wale cookbook. This cookbook installs all of the relevant python packages and installs a cronjob to create base_backups. The relevant cron command and settings is set via attributes on the chef roles.
 
 ```cron
 # Chef Name: full wal-e backup
 0 2 * * * PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-push /var/opt/gitlab/postgresql/data &> /tmp/wal-e_backup_push.log
-# Chef Name: trim wal-e backups
-0 18 * * * PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e delete --confirm retain 8 &> /tmp/wal-e_backup_delete.log
 ```
 
 #### Secondary Servers
@@ -68,18 +53,13 @@ archive_command = /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e --gpg-ke
 
 ### How do I Verify This?
 
-You can always check the S3 storage bucket, or you can check the logs of the PostgreSQL server:
+You can always check the GCS storage bucket, or you can check the logs of the PostgreSQL server:
 
 ```bash
-root@db1:~# tail -f /var/log/gitlab/postgresql/current | grep -i wal_
-2017-02-24_09:31:01.15531 db1 postgresql: wal_e.worker.upload INFO     MSG: begin archiving a file
-2017-02-24_09:31:01.15573 db1 postgresql:         DETAIL: Uploading "pg_xlog/0000000200000BF800000090" to "s3://gitlab-dbprod-backups/db1/wal_005/0000000200000BF800000090.lzo".
-2017-02-24_09:31:01.15588 db1 postgresql:         STRUCTURED: time=2017-02-24T09:31:01.153419-00 pid=61703 action=push-wal key=s3://gitlab-dbprod-backups/db1/wal_005/0000000200000BF800000090.lzo prefix=db1/ seg=0000000200000BF800000090 state=begin
-2017-02-24_09:31:01.81012 db1 postgresql: wal_e.worker.upload INFO     MSG: completed archiving to a file
-2017-02-24_09:31:01.81034 db1 postgresql:         DETAIL: Archiving to "s3://gitlab-dbprod-backups/db1/wal_005/0000000200000BF800000090.lzo" complete at 17302.3KiB/s.
-2017-02-24_09:31:01.81043 db1 postgresql:         STRUCTURED: time=2017-02-24T09:31:01.806205-00 pid=61703 action=push-wal key=s3://gitlab-dbprod-backups/db1/wal_005/0000000200000BF800000090.lzo prefix=db1/ rate=17302.3 seg=0000000200000BF800000090 state=complete
-^C
-root@db1:~#
+root@db1:~# tail -f /var/log/gitlab/postgresql/current
+2018-11-15_12:39:13.91682         DETAIL: Archiving to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/00000006000096F30000006A.lzo" complete at 10986.4KiB/s.
+2018-11-15_12:39:13.91682         STRUCTURED: time=2018-11-15T12:39:13.916366-00 pid=41960 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/00000006000096F30000006A.lzo prefix=pitr-wale-v1/ rate=10986.4 seg=00000006000096F30000006A state=complete
+2018-11-15_12:39:13.95760 wal_e.worker.upload INFO     MSG: completed archiving to a file
 ```
 
 ## Restoring Data
@@ -90,34 +70,22 @@ Before we start, take a deep breath and don't panic.
 
 #### Production
 
-Restoring a production backup from WAL-E is a fairly manual process. The main problem is the gpg settings.
+Consider using the delayed replica to speed up PITR. The full database backup restore is also automated in a [CI pipeline](https://gitlab.com/gitlab-restore/postgres-gprd) which may be helpful depending on the type of disaster.
 
-In order to restore, the following steps should be performed. It is assumed that you have already set up the new server
-and that server is configured with our current chef configuration.
+In order to restore, the following steps should be performed. It is assumed that you have already set up the new server and that server is configured with our current chef configuration.
 
-1. Log in to the `gitlab-psql` user (`su - gitlab-psql`) and edit the `~/.gnupg/gpg-agent.conf`.
-    * It should have `allow-loopback-pinentry` and `max-cache-ttl 86400`. Without the TTL, the password will
-    expire out of cache after 2 hours and WAL-E will begin to fail to restore if it is still restoring.
-1. Add the GPG keys to the keyring
-    ```
-    gpg --allow-secret-key-import --import /etc/wal-e.d/ops-contact+dbcrypt.key
-    gpg --import-ownertrust /etc/wal-e.d/gpg_owner_trust
-    ```
-1. Add an environment variable to set the `gpg` binary to use.
-    * Create a file called `/etc/wal-e.d/env/GPG_BIN` with the contents `/usr/bin/gpg2`.
-    * We bundle `gpg2` with omnibus and the `gitlab-psql` user will use this embedded version by default.
-1. Start `gpg-agent` with the command `gpg-agent --homedir /var/opt/gitlab/postgresql/.gnupg --use-standard-socket --daemon`
-1. Create a test file as the `gitlab-psql` user and try to decrypt it with gpg2. `echo 'test' > test`, then `/usr/bin/gpg2 -u 66B9829C -r 66B9829C -e test`, then `/usr/bin/gpg2 --pinentry-mode loopback -d test.gpg`
-    * It will ask you for the password which can be found in 1Password. Once this is done, the password will be cached for WAL-E to use.
+1. Log in to the `gitlab-psql` user (`su - gitlab-psql`)
+
 1. Create restore.conf file.
 
     ```
     cat > /var/opt/gitlab/postgresql/data/recovery.conf <<RECOVERY
-    restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
-    recovery_target_time = 'latest'
+    restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch -p 4 "%f" "%p"'
+    recovery_target_timeline = 'latest'
     RECOVERY
     chown gitlab-psql:gitlab-psql/var/opt/gitlab/postgresql/data/recovery.conf
     ```
+
 1. Restore the base backup
 
     ```
@@ -128,10 +96,15 @@ and that server is configured with our current chef configuration.
     To restore latest backup you can use the following:
 
     ```
-    PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list 2>/dev/null | tail -1 | cut -d ' ' -f1 | xargs -n1 /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data
+    /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
+    PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data LATEST
     ```
+
 1. This command will output nothing if it is successful.
-1. Start PostgreSQL. This will begin the point-in-time recovery to the time specified in recovery.conf. You can watch the progress in the postgres log.
+
+1. Optional: In case the database should only be recovered to a certain point-in-time, add [recovery target settings](https://www.postgresql.org/docs/9.6/recovery-target-settings.html) to `recovery.conf`.
+
+1. Start PostgreSQL. This will begin the archive recovery. You can watch the progress in the postgres log.
 
 #### Secondary
 
