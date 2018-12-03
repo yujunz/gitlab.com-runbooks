@@ -1,0 +1,23 @@
+groups:
+  - name: patroni.yml
+    rules:
+      - alert: PatroniErrors
+        expr: rate(patroni_errors_total[1m]) > 1
+        for: 5m
+        labels:
+          pager: pagerduty
+          severity: critical
+        annotations:
+          description: Patroni on {{$labels.fqdn}} is logging errors, this can mean it can't start PostgreSQL.
+          title: Patroni is logging errors
+          runbook: howto/patroni-management.md
+      - alert: PatroniIsDown
+        expr: (time() - patroni_health_check_last_completed_seconds) > 60
+        for: 5m
+        labels:
+          pager: pagerduty
+          severity: critical
+        annotations:
+          description: Patroni on {{$labels.fqdn}} seems to be down, which means that PostgreSQL is probably down there as well.
+          title: Patroni is down
+          runbook: howto/patroni-management.md
