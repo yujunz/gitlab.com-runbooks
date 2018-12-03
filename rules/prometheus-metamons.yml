@@ -138,7 +138,7 @@ groups:
       runbook: troubleshooting/prometheus-failed-checkpoints.md
       title: 'Prometheus has failed deleting checkpoints'
   - alert: PrometheusWALTruncationsFailed
-    expr: increase(prometheus_tsdb_wal_truncations_total[5m]) > 0
+    expr: increase(prometheus_tsdb_wal_truncations_failed_total[5m]) > 0
     labels:
       service: prometheus
       severity: warn
