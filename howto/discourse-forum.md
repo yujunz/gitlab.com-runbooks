@@ -20,6 +20,10 @@ The directory structure is documented in the
 
 ## Updating to newer versions
 
+**WARNING**
+
+This process has the capability to take forum down for upwards of 30 minutes
+
 Generally, Discourse has an [admin web interface](https://forum.gitlab.com/admin/upgrade)
 where you can upgrade to newer versions via the UI.
 
