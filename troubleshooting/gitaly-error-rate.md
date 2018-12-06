@@ -27,18 +27,3 @@ identify the instance with a high error rate.
 sudo less /var/log/gitlab/gitaly/current
 ```
 
-## 3. Disable the Gitaly operation causing trouble
-
-- Go to https://dashboards.gitlab.net/dashboard/db/gitaly-features?orgId=1 and identify the feature with a high error rate.
-- Disable the relevant feature flag by running `!feature-set <flag_name> false`
-on Slack's #production channel. The mapping of flag names to gRPC calls is as follows:
-
-
-| Flag name             | gRPC call             |
-|-----------------------|-----------------------|
-| gitaly_root_ref       | FindDefaultBranchName |
-| gitaly_branch_names   | FindAllBranchNames    |
-| gitaly_tag_names      | FindAllTagNames       |
-| gitaly_local_branches | FindLocalBranches     |
-| gitaly_is_ancestor    | CommitIsAncestor      |
-| gitaly_find_ref_name  | FindRefName           |
