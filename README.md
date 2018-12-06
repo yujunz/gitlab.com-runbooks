@@ -80,6 +80,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Workers have huge load because of cat-files](troubleshooting/workers-high-load.md)
 * [Test pushing through all the git nodes](troubleshooting/git.md)
 * [How to gracefully restart gitaly-ruby](howto/gracefully-restart-gitaly-ruby.md)
+* [Debugging gitaly with gitaly-debug](howto/gitaly-debugging-tool.md)
 
 ### CI
 * [Large number of CI pending builds](troubleshooting/ci_pending_builds.md)
