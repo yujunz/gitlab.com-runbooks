@@ -201,7 +201,7 @@ groups:
       runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
       title: "There's a long-lived Postgres transaction"
   - alert: PostgreSQL_DBHeavyLoad
-    expr: node_load1{type="postgres"} > 200
+    expr: node_load1{type=~"postgres|patroni"} > 200
     for: 5m
     labels:
       pager: pagerduty
@@ -253,7 +253,7 @@ groups:
       title: "Split Brain: too many postgres databases in environment {{$labels.environment}}
         in read-write (primary) mode"
   - alert: PostgreSQL_SplitBrain_Replicas
-    expr: count(count(pg_stat_wal_receiver_status{type="postgres"} >= 0) BY (environment, upstream_host))
+    expr: count(count(pg_stat_wal_receiver_status{type=~"postgres|patroni"} >= 0) BY (environment, upstream_host))
       BY (environment) > 1
     for: 1m
     labels:
@@ -323,7 +323,7 @@ groups:
         in query.yaml on {{$labels.fqdn}}
       title: Postgres exporter is showing errors for the last hour
   - alert: PostgreSQL_DiskUtilizationMaxedOut
-    expr: rate(node_disk_io_time_seconds_total{device=~"dm-(0|1)",tier="db",type="postgres"}[1m])
+    expr: rate(node_disk_io_time_seconds_total{device=~"dm-(0|1)",tier="db",type=~"postgres|patroni"}[1m])
       / 10 > 97
     for: 5m
     labels:

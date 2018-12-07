@@ -41,7 +41,7 @@ groups:
       avg by (environment) (
         gitlab_service_availability:ratio{type="pgbouncer", tier="db"}
         or
-        gitlab_service_availability:ratio{type="postgres", tier="db"}
+        gitlab_service_availability:ratio{type=~"postgres|patroni", tier="db"}
         or
         gitlab_service_availability:ratio{type="redis", tier="db"}
       )
