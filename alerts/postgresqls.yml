@@ -1,21 +1,6 @@
 groups:
 - name: postgresql.rules
   rules:
-  - alert: NoPostgresMasterDetectedByConsul
-    expr: |
-      sum(consul_health_service_status{check="service:postgresql", tier="inf", status="passing"}) == 0
-    labels:
-      pager: pagerduty
-      severity: critical
-      channel: database
-    annotations:
-      description: |
-        No postgresql master is passing the consul check.  If there were a
-        failover, no server is available to populate the pgbouncer
-        configuration. Check: https://dashboards.gitlab.net/d/a988f2tmz/consul?panelId=23&fullscreen&orgId=1
-      runbook: troubleshooting/postgres.md
-      title: No Postgresql Master detected by Consul
-
   - alert: PostgresSQL_XIDConsumptionTooLow
     expr: rate(pg_txid_current[1m]) < 5
     for: 1m
