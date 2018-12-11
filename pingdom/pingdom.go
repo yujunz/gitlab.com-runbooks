@@ -167,25 +167,25 @@ func findChecksForInsertion(configMap map[string]PingdomCheck, deployedChecks ma
 }
 
 type pingdomCheckUpdater interface {
-	insert(check pingdom.Check) error
-	update(id int, check pingdom.Check) error
-	delete(id int) error
+	insert(name string, check pingdom.Check) error
+	update(id int, name string, check pingdom.Check) error
+	delete(id int, name string) error
 }
 
 type dryRunUpdater struct{}
 
-func (c dryRunUpdater) insert(check pingdom.Check) error {
-	log.Printf("dry-run: will create: %v", check)
+func (c dryRunUpdater) insert(name string, check pingdom.Check) error {
+	log.Printf("dry-run: will create: %s", name)
 	return nil
 }
 
-func (c dryRunUpdater) update(id int, check pingdom.Check) error {
-	log.Printf("dry-run: will update: %v", check)
+func (c dryRunUpdater) update(id int, name string, check pingdom.Check) error {
+	log.Printf("dry-run: will update: %s (%s)", name, urlForPingdomCheck(id))
 	return nil
 }
 
-func (c dryRunUpdater) delete(id int) error {
-	log.Printf("dry-run: will delete: %d", id)
+func (c dryRunUpdater) delete(id int, name string) error {
+	log.Printf("dry-run: will delete: %s (%s)", name, urlForPingdomCheck(id))
 	return nil
 }
 
@@ -193,7 +193,9 @@ type executingUpdater struct {
 	client *pingdom.Client
 }
 
-func (c executingUpdater) insert(check pingdom.Check) error {
+func (c executingUpdater) insert(name string, check pingdom.Check) error {
+	log.Printf("execute: creating check: %s", name)
+
 	response, err := c.client.Checks.Create(check)
 	if err != nil {
 		return err
@@ -202,7 +204,9 @@ func (c executingUpdater) insert(check pingdom.Check) error {
 	return nil
 }
 
-func (c executingUpdater) update(id int, check pingdom.Check) error {
+func (c executingUpdater) update(id int, name string, check pingdom.Check) error {
+	log.Printf("execute: updating check: %s (%s)", name, urlForPingdomCheck(id))
+
 	response, err := c.client.Checks.Update(id, check)
 	if err != nil {
 		return err
@@ -211,13 +215,39 @@ func (c executingUpdater) update(id int, check pingdom.Check) error {
 	return nil
 }
 
-func (c executingUpdater) delete(id int) error {
+func (c executingUpdater) delete(id int, name string) error {
+	log.Printf("execute: deleting check: %s (%s)", name, urlForPingdomCheck(id))
+
 	response, err := c.client.Checks.Delete(id)
 	if err != nil {
 		return err
 	}
 	log.Println("execute: deleted check:", response)
 	return nil
+}
+
+func validateResolutionMinutes(value int, checkName string) {
+	switch value {
+	case 1, 5, 15, 30, 60:
+		return
+	}
+	log.Fatalf("invalid value %v for `ResolutionMinutes` in %v.  Allowed values are [1,5,15,30,60].", value, checkName)
+}
+
+func validateDefaults(defaults PingdomCheckDefaults) {
+	if defaults.ResolutionMinutes != 0 {
+		validateResolutionMinutes(defaults.ResolutionMinutes, "defaults")
+	}
+}
+
+func validateCheck(check PingdomCheck) {
+	if check.ResolutionMinutes != 0 {
+		validateResolutionMinutes(check.ResolutionMinutes, check.name())
+	}
+}
+
+func urlForPingdomCheck(id int) string {
+	return fmt.Sprintf("https://my.pingdom.com/newchecks/checks#check=%d", id)
 }
 
 var (
@@ -249,8 +279,11 @@ func main() {
 	var configuration PingdomChecks
 	err = yaml.Unmarshal(yamlFile, &configuration)
 
+	validateDefaults(configuration.Defaults)
+
 	configMap := make(map[string]PingdomCheck)
 	for _, v := range configuration.Checks {
+		validateCheck(v)
 		configMap[v.name()] = v
 	}
 
@@ -299,7 +332,7 @@ func main() {
 
 	// Do the inserts
 	for _, v := range forInsertion {
-		err := updater.insert(v.getCheck(configuration, teamMap, integrationIDMap))
+		err := updater.insert(v.name(), v.getCheck(configuration, teamMap, integrationIDMap))
 		if err != nil {
 			log.Fatalf("insert failed: %v", err)
 		}
@@ -312,7 +345,7 @@ func main() {
 			log.Fatalf("Unable to lookup %s", update.Name)
 		}
 
-		err := updater.update(update.ID, v.getCheck(configuration, teamMap, integrationIDMap))
+		err := updater.update(update.ID, v.name(), v.getCheck(configuration, teamMap, integrationIDMap))
 		if err != nil {
 			log.Fatalf("update failed: %v", err)
 		}
@@ -320,7 +353,7 @@ func main() {
 
 	// Do the deletions
 	for _, d := range forRemoval {
-		err := updater.delete(d.ID)
+		err := updater.delete(d.ID, d.Name)
 		if err != nil {
 			log.Fatalf("delete failed: %v", err)
 		}
