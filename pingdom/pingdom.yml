@@ -121,7 +121,7 @@ checks:
     - pagerduty
   - url: https://deps.sec.gitlab.com/api/ping
     timeout_ms: 30000
-    resolution_minutes: 10
+    resolution_minutes: 5
     notify_when_restored: true
     teams:
     - Infrastructure
