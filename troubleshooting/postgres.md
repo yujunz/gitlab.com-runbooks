@@ -38,11 +38,11 @@ All PostgreSQL dashboards can be found in the [PostgreSQL Grafana Folder](https:
 
 Some relevant dashboards:
 
-* [PostgreSQL Overview](https://dashboards.gitlab.net/d/000000144/postgresql-overview?orgId=1&var-environment=gprd&var-prometheus=prometheus-01-inf-gprd&var-type=patroni&from=1544526317571&to=1544537117571)
+* [PostgreSQL Overview](https://dashboards.gitlab.net/d/000000144/postgresql-overview?orgId=1&var-environment=gprd&var-prometheus=prometheus-01-inf-gprd&var-type=patroni)
 
-* [Tuple Statistics](https://dashboards.gitlab.net/d/000000167/postgresql-tuple-statistics?refresh=1m&orgId=1&from=1544515580673&to=1544537180673&var-environment=gprd&var-prometheus=prometheus-01-inf-gprd&var-instance=patroni-01-db-gprd.c.gitlab-production.internal)
+* [Tuple Statistics](https://dashboards.gitlab.net/d/000000167/postgresql-tuple-statistics?refresh=1m&orgId=1&var-environment=gprd&var-prometheus=prometheus-01-inf-gprd&var-instance=patroni-01-db-gprd.c.gitlab-production.internal)
 
-* [Postgres Queries](https://dashboards.gitlab.net/d/000000153/postgresql-queries?refresh=1m&orgId=1&var-environment=gprd&var-type=patroni&var-fqdn=patroni-01-db-gprd.c.gitlab-production.internal&var-prometheus=prometheus-01-inf-gprd&from=1544450907761&to=1544537307762)
+* [Postgres Queries](https://dashboards.gitlab.net/d/000000153/postgresql-queries?refresh=1m&orgId=1&var-environment=gprd&var-type=patroni&var-fqdn=patroni-01-db-gprd.c.gitlab-production.internal&var-prometheus=prometheus-01-inf-gprd)
 
 ## Availability
 
