@@ -272,3 +272,17 @@ groups:
         Hey <!subteam^S940BK2TV|cicdops>! Traces archiving keeps failing for more than 5 minutes.
         Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&orgId=1&panelId=153&fullscreen and
         https://sentry.gitlab.net/gitlab/gitlabcom/?query=BuildTraceChunk&statsPeriod=14d to find out more details
+
+  - alert: CICDSidekiqQueuesTooBig
+    expr: (sidekiq_queue_size{environment=~"gprd",name=~"pipeline.*"} and on (fqdn) gitlab:redis_master) > 1000
+    for: 5m
+    labels:
+      channel: ci-cd
+      severity: error
+    annotations:
+      title: 'Sidekiq queues for CI/CD are growing: {{$value}}'
+      description: |
+        Hey <!subteam^S940BK2TV|cicdops>! Sidekiq queues for CI/CD are growing and are over 1000 for
+        more than last 5 minutes.
+        Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&from=now-1h&to=now&orgId=1&panelId=85&fullscreen
+
