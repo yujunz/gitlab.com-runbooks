@@ -2,53 +2,47 @@ groups:
 - name: Node Components
   interval: 1m
   rules:
-  # - record: node_cpu:rate
-  #   expr: >
-  #     sum without(cpu) (rate(node_cpu_seconds_total[1m]))
-  - record: node_iowait:rate_1m
+  - record: node:iowait:rate1m
+    labels:
+      component: 'iowait'
     expr: >
       avg by(environment, tier, type, stage, fqdn) (rate(node_cpu_seconds_total{mode="iowait"}[1m]))
-  # - record: node_component:rate
-  #   labels:
-  #     component: 'iowait'
-  #   expr: >
-  #     avg by(environment, tier, type, stage, fqdn) (rate(node_cpu_seconds_total{mode="iowait"}[1m]))
-  # - record: node_component:rate
-  #   labels:
-  #     component: 'network_rx_bytes'
-  #   expr: >
-  #     sum by(environment, tier, type, stage) (rate(node_network_receive_bytes_total[1m]))
-  # - record: node_component:rate
-  #   labels:
-  #     component: 'network_tx_bytes'
-  #   expr: >
-  #     sum by(environment, tier, type, stage) (rate(node_network_transmit_bytes_total[1m]))
-  # - record: node_component:rate
-  #   labels:
-  #     component: 'disk_read_seconds'
-  #   expr: >
-  #     sum by(environment, tier, type, stage, device) (rate(node_disk_read_time_seconds_total[1m]))
-  # - record: node_component:rate
-  #   labels:
-  #     component: 'disk_write_seconds'
-  #   expr: >
-  #     sum by(environment, tier, type, stage, device) (rate(node_disk_write_time_seconds_total[1m]))
+  - record: node:network_rx_bytes:rate1m
+    labels:
+      component: 'network_rx_bytes'
+    expr: >
+      sum by(environment, tier, type, stage) (rate(node_network_receive_bytes_total[1m]))
+  - record: node:network_tx_bytes:rate1m
+    labels:
+      component: 'network_tx_bytes'
+    expr: >
+      sum by(environment, tier, type, stage) (rate(node_network_transmit_bytes_total[1m]))
+  - record: node:disk_read_seconds:rate1m
+    labels:
+      component: 'disk_read_seconds'
+    expr: >
+      sum by(environment, tier, type, stage, device) (rate(node_disk_read_time_seconds_total[1m]))
+  - record: node:disk_write_seconds:rate1m
+    labels:
+      component: 'disk_write_seconds'
+    expr: >
+      sum by(environment, tier, type, stage, device) (rate(node_disk_write_time_seconds_total[1m]))
 
 - name: Node Service Rate Stats
   interval: 1m
   rules:
   - record: gitlab_service_iowait:rate_1m
     expr: >
-      avg by (environment, tier, type, stage) (node_iowait:rate1m)
+      avg by (environment, tier, type, stage) (node:iowait:rate1m)
 
   # Average values for each component, over a week
-  - record: node_iowait:rate_1m:avg_over_time_1w
+  - record: node:iowait:rate1m:avg_over_time_1w
     expr: >
-      avg_over_time(node_iowait:rate_1m[1w])
+      avg_over_time(node:iowait:rate1m[1w])
   # Stddev for each component, over a week
-  - record: node_iowait:rate_1m:stddev_over_time_1w
+  - record: node:iowait:rate1m:stddev_over_time_1w
     expr: >
-      stddev_over_time(node_iowait:rate_1m[1w])
+      stddev_over_time(node:iowait:rate1m[1w])
 
   # Average values for each service, over a week
   - record: gitlab_service_iowait:rate_1m:avg_over_time_1w
