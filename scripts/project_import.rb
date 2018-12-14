@@ -40,18 +40,22 @@ class SlackWebhook
   CouldNotPostError = Class.new(StandardError)
 
   CHANNEL = '#announcements'
-  WEBHOOK_URL = 'https://hooks.slack.com/services/' + ENV['SLACK_TOKEN']
+  WEBHOOK_URL = 'https://hooks.slack.com/services/' + ENV['SLACK_TOKEN'].to_s
 
-  def self.start(current_user, project)
-    fire_hook("#{current_user.username} started a foreground import of *#{project}*")
+  def self.start(project)
+    fire_hook("#{username} started a foreground import of *#{project}*")
   end
 
-  def self.error(current_user, project, error)
-    fire_hook("#{current_user.username} started a foreground import of *#{project}*", attachment: error)
+  def self.error(project, error)
+    fire_hook("#{username} started a foreground import of *#{project}*", attachment: error)
   end
 
-  def self.done(current_user, project)
-    fire_hook("#{current_user.username} finished a foreground import of *#{project}*")
+  def self.done(project)
+    fire_hook("#{username} finished a foreground import of *#{project}*")
+  end
+  
+  def self.username
+    @username ||= `whoami`
   end
 
   def self.fire_hook(text, attachment: nil, channel: CHANNEL)
@@ -78,7 +82,7 @@ class LocalProjectService < ::Projects::CreateService
     if @project.errors.empty?
       job_id = 'custom-import-@project.id-' + SecureRandom.base64
 
-      @project.import_jid = job_id if job_id
+      @project.import_state.update_column(:jid, job_id) if job_id
       @project.log_import_activity(job_id)
 
       RepositoryImportWorker.new.perform(@project.id)
@@ -101,16 +105,19 @@ class GitlabProjectImport
   def import
     show_warning!
 
-    SlackWebhook.start(@current_user, @project_path)
+    SlackWebhook.start(@project_path)
 
     import_project
 
-    if @project.import_error
-      puts @project.import_error
-      SlackWebhook.error(@current_user, @project_path, @project.import_error)
+    if @project&.import_state&.last_error
+      puts @project.import_state.last_error
+      SlackWebhook.error(@project_path, @project.import_state.last_error)
+    elsif @project.errors.any?
+      puts @project.errors.full_messages.join(', ').red
+      SlackWebhook.error(@project_path, @project.errors.full_messages.join(', '))
     else
       puts 'Done!'.green
-      SlackWebhook.done(@current_user, @project_path)
+      SlackWebhook.done(@project_path)
     end
   end
 
