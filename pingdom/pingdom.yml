@@ -54,7 +54,7 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: https://gitlab.com/projects/new
     timeout_ms: 30000
@@ -62,7 +62,7 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: https://gitlab.com/gitlab-com/gitlab-com-infrastructure/tree/master
     timeout_ms: 30000
@@ -70,7 +70,7 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: https://about.gitlab.com/
     timeout_ms: 30000
@@ -78,14 +78,14 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
   - url: http://gitlab.org/
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: https://version.gitlab.com/
     timeout_ms: 30000
@@ -93,15 +93,16 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
-    - pagerduty
+# Temporarily disabling pagerduty integration for https://gitlab.com/gitlab-com/gl-infra/production/issues/618
+# integrations:
+#- pagerduty
   - url: https://gitlab-examples.gitlab.io/
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: https://license.gitlab.com/users/sign_in
     timeout_ms: 30000
@@ -109,7 +110,7 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: https://forum.gitlab.com/
     timeout_ms: 30000
@@ -117,7 +118,7 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: https://deps.sec.gitlab.com/api/ping
     timeout_ms: 30000
@@ -125,7 +126,7 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: https://gitlab.com/gitlab-org/gitlab-ce/issues/1
     timeout_ms: 30000
@@ -133,7 +134,7 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
   - url: http://about.gitlab.com/
     timeout_ms: 30000
@@ -141,5 +142,5 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-    integrations: 
+    integrations:
     - pagerduty
