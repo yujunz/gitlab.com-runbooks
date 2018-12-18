@@ -441,6 +441,12 @@ pinentry-program /usr/bin/pinentry
 enable-ssh-support
 ```
 
+If you'd like a graphical GPG experience, installing `gpg-suite` an option, in which case your pin entry program will be located at:
+
+```bash
+pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac
+```
+
 ## Ensure your environment knows how to authenticate SSH
 
 * Insert one of the following into your `rc` file
