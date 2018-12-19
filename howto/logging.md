@@ -44,13 +44,20 @@ _Note: Runner logs are unstructured and mixed in with other syslog messages, str
 
 ### StackDriver
 
-StackDriver receives all logs listed in the [table](logging.md#what-are-we-logging) below, it is sometimes helpful to use
-it to search for logs over a 30day interval. It also allows you to do basic queries for strings across all types and find errors.
+All logs listed in the [table](logging.md#what-are-we-logging) below are processed by StackDriver, but
+most are excluded from it's indexing for cost reasons. It is sometimes helpful to use
+it to search for logs over a 30day interval for the included logs. It also allows
+you to do basic queries for strings across all types and find errors.
+
+The current exclusions for StackDriver can be found in [terraform variables.tf](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/blob/master/shared/gstg-gprd/variables.tf),
+search for `sd_log_filters`.
+
+### BigQuery
+
+The `haproxy` logs are also configured to be forwarded to a BigQuery dataset using
+a StackDriver sink: [gitlab-production:haproxy_logs](https://console.cloud.google.com/bigquery?organizationId=769164969568&project=gitlab-production&p=gitlab-production&d=haproxy_logs&page=dataset)
 
 
-* [Production and GPRD in Azure and Google](https://console.cloud.google.com/logs/viewer?project=gitlab-production&organizationId=769164969568&minLogLevel=0&expandAll=false&timestamp=2018-05-24T11:23:16.494000000Z&customFacets=&limitCustomFacetWidth=true&dateRangeStart=2018-05-24T10:23:16.747Z&dateRangeEnd=2018-05-24T11:23:16.747Z&interval=PT1H&resource=gce_instance)
-* [Staging and GSTG in Azure and Google](https://console.cloud.google.com/logs/viewer?project=gitlab-staging-1&organizationId=769164969568&minLogLevel=0&expandAll=false&timestamp=2018-05-24T11:22:27.413000000Z&customFacets=&limitCustomFacetWidth=true&dateRangeStart=2018-05-24T10:22:27.667Z&dateRangeEnd=2018-05-24T11:22:27.667Z&interval=PT1H&resource=gce_instance)
- 
 ## Overview
 
 Centralized logging at GitLab uses a combination of StackDriver, FluentD, google pubsub,
@@ -61,39 +68,41 @@ gstg environments are forwarded to log.gitlab.net.
 
 ### What are we logging?
 
-**production.log and haproxy logs are no longer being sent to elasticcloud due because it was overwhelming our cluster, currently these logs are only available in StackDriver** 
+**production.log and haproxy logs are no longer being sent to elasticcloud due because it was overwhelming our cluster, currently these logs are only available in StackDriver**
 
-**All logs listed below are also stored in stackdriver for 30 days, and object storage for a minimum of 180days**
+**All logs not excluded from from StackDriver are stored in stackdriver for 30 days**
+
+**All logs processed by StackDriver are archived object storage for a minimum of 180days even if excluded**
 
 For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitlab-restore/esc-tools/blob/master/cleanup_indices.sh
 
-
-
-| name | logfile  | type  | index |
-| -----| -------- |------ | ----- |
-| gitaly | gitaly/current | JSON | pubsub-gitaly-inf
-| pages | gitlab-pages/current | JSON | pubsub-pages-inf
-| db.postgres | postgresql/current | line regex | pubsub-postgres-inf
-| db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf
-| workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf
-| rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf
-| rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf
-| rails.audit | gitlab-rails/audit_json.log | JSON | pubsub-rails-inf
-| rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf
-| rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf
-| rails.importer | gitlab-rails/impoter.log | JSON | pubsub-rails-inf
-| rails.integrations | gitlab-rails/integrations\_json.log | JSON | pubsub-rails-inf
-| rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf
-| shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf
-| unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf
-| unicorn.stderr | /var/log/gitlab/unicorn/unicorn\_stderr.log | line regex | pubsub-unicorn-inf
-| unicorn.stdout | /var/log/gitlab/unicorn/unicorn\_stdout.log | line regex | pubsub-unicorn-inf
-| unstructured.production _only in stackdriver_ | gitlab-rails/production.log | lines | pubsub-unstructured-inf
-| sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf
-| haproxy _only in stackdriver_ | /var/log/haproxy.log | syslog | pubsub-haproxy-inf
-| nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf
-| system.auth | /var/log/auth.log | syslog | pubsub-system-inf
-| system.syslog | /var/log/syslog | syslog | pubsub-system-inf
+| name | logfile  | type  | index | stackdriver filter |
+| -----| -------- |------ | ----- |--------------------|
+| gitaly | gitaly/current | JSON | pubsub-gitaly-inf | |
+| pages | gitlab-pages/current | JSON | pubsub-pages-inf | |
+| db.postgres | postgresql/current | line regex | pubsub-postgres-inf | |
+| db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf | |
+| workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf | |
+| rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf | |
+| rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf | |
+| rails.audit | gitlab-rails/audit_json.log | JSON | pubsub-rails-inf | |
+| rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf | |
+| rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf | |
+| rails.importer | gitlab-rails/impoter.log | JSON | pubsub-rails-inf | |
+| rails.integrations | gitlab-rails/integrations\_json.log | JSON | pubsub-rails-inf | |
+| rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf | |
+| shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf | |
+| unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf | |
+| unicorn.stderr | /var/log/gitlab/unicorn/unicorn\_stderr.log | line regex | pubsub-unicorn-inf | |
+| unicorn.stdout | /var/log/gitlab/unicorn/unicorn\_stdout.log | line regex | pubsub-unicorn-inf | |
+| unstructured.production | gitlab-rails/production.log | lines | pubsub-unstructured-inf | label.tag="unstrucctured.production" |
+| sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf | |
+| haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf | label.tag="haproxy" |
+| nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf | |
+| system.auth | /var/log/auth.log | syslog | pubsub-system-inf | |
+| system.syslog | /var/log/syslog | syslog | pubsub-system-inf | |
+| history.psql | /home/*-db/.psql_history  | | |
+| history.irb | /var/log/irb_history/*.log  | | |
 
 
 ### FAQ
@@ -124,7 +133,7 @@ They are created by https://github.com/GoogleCloudPlatform/pubsubbeat , I don't 
 
 #### What if I need to query logs older than 30 days?
 
-See [logging_gcs_archive_bigquery.md](logging_gcs_archive_bigquery.md) for 
+See [logging_gcs_archive_bigquery.md](logging_gcs_archive_bigquery.md) for
 instructions on loading logs into `BigQuery` from their GCS archive files.
 
 ### Configuration
@@ -140,7 +149,7 @@ There are three cookbooks that configure logging on gitlab.com
 #### Role configuration
 
 * There is a [single role for all pubsub beats](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/roles/gprd-infra-pubsub.json) per environment, the index is determined by the hostname which allows it to be dyamic.
-* Add  `recipe[gitlab_fluentd::<type>]` to the corresponding role to enable td-agent for the template
+* Add `recipe[gitlab_fluentd::<type>]` to the corresponding role to enable td-agent for the template
 * The [ops proxy role](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/roles/ops-infra-log-proxy.json) configures the proxy vm that is the reverse proxy for elastic cloud.
 
 
