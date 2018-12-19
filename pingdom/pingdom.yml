@@ -93,9 +93,8 @@ checks:
     notify_when_restored: true
     teams:
     - Infrastructure
-# Temporarily disabling pagerduty integration for https://gitlab.com/gitlab-com/gl-infra/production/issues/618
-# integrations:
-#- pagerduty
+    integrations:
+    - pagerduty
   - url: https://gitlab-examples.gitlab.io/
     timeout_ms: 30000
     resolution_minutes: 5
