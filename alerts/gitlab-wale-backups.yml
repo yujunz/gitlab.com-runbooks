@@ -2,9 +2,9 @@ groups:
 - name: gitlab-wale-backup.rules
   rules:
   - record: gitlab_com:last_wale_backup_age_in_seconds
-    expr: (time() - wale_backup_last_completed_time_seconds)
+    expr: (min(time() - wale_backup_last_completed_time_seconds))
   - record: gitlab_com:last_wale_basebackup_age_in_hours
-    expr: (time() - wale_basebackup_last_completed_time_seconds) / 3600
+    expr: (min(time() - wale_basebackup_last_completed_time_seconds) / 3600)
   - alert: WALEBackupDelayed
     expr: gitlab_com:last_wale_backup_age_in_seconds >= 60 * 15
     for: 5m
@@ -12,7 +12,7 @@ groups:
       pager: pagerduty
       severity: critical
     annotations:
-      description: WALE syncs to S3 might be not working. Please follow the runbook
+      description: WALE syncs to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: troubleshooting/gitlab-com-wale-backups.md
       title: Last WALE backup was seen {{ .Value | humanizeDuration }} ago.
@@ -23,7 +23,7 @@ groups:
       pager: pagerduty
       severity: critical
     annotations:
-      description: WALE basebackup syncs to S3 might be not working. Please follow the runbook
+      description: WALE basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: troubleshooting/gitlab-com-wale-backups.md
       title: Last WALE basebackup was seen {{ .Value | humanizeDuration }} ago.
