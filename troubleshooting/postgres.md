@@ -275,6 +275,19 @@ haven't alerted yet. Run
 `sort_desc(pg_stat_table_n_dead_tup{environment="gprd"})` in prometheus
 to see what the top offenders are.
 
+*Check that statistics are up to date for those offenders:*
+
+Log into the primary and check that statistics are present. If the
+below query does not yield any results for a particular table,
+consider running `ANALYZE $table` to update statistics.
+
+Example for table `ci_builds`:
+
+```sql
+select n_live_tup, n_dead_tup, last_autoanalyze, last_analyze from
+pg_stat_user_tables where relname='ci_builds';
+```
+
 If the alert is for "replication slot with stale xmin" or "long-lived
 transaction" then check the above charts to see if it's already
 causing problems. Log into the relevant replica and run:
