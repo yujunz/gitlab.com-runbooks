@@ -12,7 +12,7 @@ groups:
       pager: pagerduty
       severity: critical
     annotations:
-      description: WALE syncs to S3 might be not working. Please follow the runbook
+      description: WALE syncs to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: troubleshooting/gitlab-com-wale-backups.md
       title: Last WALE backup was seen {{ .Value | humanizeDuration }} ago.
@@ -23,7 +23,7 @@ groups:
       pager: pagerduty
       severity: critical
     annotations:
-      description: WALE basebackup syncs to S3 might be not working. Please follow the runbook
+      description: WALE basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: troubleshooting/gitlab-com-wale-backups.md
       title: Last WALE basebackup was seen {{ .Value | humanizeDuration }} ago.
