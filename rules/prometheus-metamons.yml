@@ -153,5 +153,15 @@ groups:
       severity: warn
     annotations:
       description: '{{$labels.job}} at {{$labels.instance}} has failing rule evaluations.'
-      runbook: troubleshooting/prometheu-failing-rule-evaluations.md
+      runbook: troubleshooting/prometheus-failing-rule-evaluations.md
       title: 'Prometheus has failing rule evaluations'
+  - alert: PrometheusEmptyJobs
+    expr: prometheus_sd_discovered_targets == 0
+    for: 5m
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: '{{$labels.config}} at {{$labels.instance}} has no targets in service discovery.'
+      runbook: troubleshooting/prometheus-empty-sd.md
+      title: 'Prometheus has no targets'
