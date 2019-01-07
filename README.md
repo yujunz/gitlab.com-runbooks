@@ -175,6 +175,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [CI project namespace check](howto/ci-project-namespace-check.md)
 
 ### Work with Infrastructure Providers (VMs)
+* [Getting Support w/ RackSpace for GCP/GKE](howto/GCP-rackspace-support.md)
 * [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
 * [Create VMs in Azure, add disks, etc](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
 * [Bootstrap a new VM](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/new-vps.md)
