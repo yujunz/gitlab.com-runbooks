@@ -10,6 +10,9 @@
 
 ## Troubleshoot
 
+1. View the [Sidekiq Queue size graph](https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?orgId=1&panelId=3&fullscreen).
+1. This alert may just be a symptom of slow Sidekiq jobs. If there are many jobs in the queue (i.e. over 10,000 and growing),
+   you may want to [investigate the state of PgBouncer](pgbouncer.md).
 1. View the [pull mirror dashboard](https://dashboards.gitlab.net/d/_MKRXrSmk/pull-mirrors).
 1. Under "Running Jobs", pay attention to the `UpdateAllMirrorsWorker`. If that has gone flat, then
 you may need to log the state of the pending pull mirror queue.
