@@ -1,0 +1,13 @@
+groups:
+- name: pgbouncer.rules
+  rules:
+  - alert: PGBouncer_SidekiqActiveConnectionsSaturated
+    expr: pgbouncer_pools_server_active_connections{database="gitlabhq_production_sidekiq"} > 140
+    for: 10m
+    labels:
+      severity: warn
+      channel: production
+    annotations:
+      title: 'Sidekiq is using most of its PgBouncer connections: {{$value}}'
+      description: On average, Sidekiq is using over 140 connections for the last 10 minutes. Check https://dashboards.gitlab.net/d/PwlB97Jmk/pgbouncer-overview.
+      runbook: troubleshooting/pgbouncer.md
