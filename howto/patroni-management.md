@@ -109,6 +109,36 @@ And this command to unpause/resume the cluster:
 patroni-01-db-gstg $ gitlab-patronictl resume --wait pg-ha-cluster
 ```
 
+## Replica Maintenance
+
+If clients are connecting to replicas by means of [service discovery][service-discovery]
+(as opposed to hard-coded list of hosts), you can remove a replica from the list of hosts
+used by the clients by enabling Consul service maintenance on the selected replica:
+
+```
+patroni-01-db-gstg $ consul maint -enable -service=patroni-replica -reason="Production issue #xyz"
+```
+
+You can verify the action by running:
+
+```
+patroni-01-db-gstg $ dig @localhost -p8600 +short replica.patroni.service.consul. | grep $(hostname -I) | wc -l # Prints 0
+```
+
+Wait until all client connections are drained from the replica (it depends on the interval value set for the clients),
+use this command to track number of client connections:
+
+```
+patroni-01-db-gstg $ while true; do sudo pgb-console -c 'SHOW CLIENTS;' | grep gitlabhq_production | wc -l; sleep 5; done
+```
+
+After you're done with the maintenance, disable Consul service maintenance and verify it:
+
+```
+patroni-01-db-gstg $ consul maint -disable -service=patroni-replica
+patroni-01-db-gstg $ dig @localhost -p8600 +short replica.patroni.service.consul. | grep $(hostname -I) | wc -l # Prints 1
+```
+
 ## Failover/Switchover
 
 Failover and Switchover are similar in their end-result, still there are slight differences between them:
@@ -140,3 +170,4 @@ by running `sudo chef-client` across the cluster.
 
 [environment-variables]: https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/blob/989d22c9d15b75812d3d116a94513d34428c021e/environments/gstg/variables.tf#L382
 [pause-docs]: https://github.com/zalando/patroni/blob/v1.5.0/docs/pause.rst
+[service-discovery]: https://docs.gitlab.com/ee/administration/database_load_balancing.html#service-discovery
