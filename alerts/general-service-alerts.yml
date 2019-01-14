@@ -5,12 +5,12 @@ groups:
       # Availability: what ratio of the expected number of service processes are healthy?
       ################################################
 
-      # Warn: Availability below 3 sigma
+      # Warn: Availability below 75%
       - alert: service_availability_out_of_bounds_lower_5m
         expr: |
           gitlab_service_availability:ratio
           <
-          gitlab_service_availability:ratio:avg_over_time_1w - 3 * gitlab_service_availability:ratio:stddev_over_time_1w
+          0.75
         for: 5m
         labels:
           rules_domain: general
@@ -18,7 +18,7 @@ groups:
           severity: warn
           period: 5m
           bound: lower
-          threshold_sigma: "3"
+          threshold_value: "0.75"
         annotations:
           description: |
             The ratio of services that are available to serve the `{{ $labels.type }}` service
@@ -35,12 +35,12 @@ groups:
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
 
-      # Error: Availability below 4 sigma
+      # Error: Availability below 50%
       - alert: service_availability_out_of_bounds_lower_5m
         expr: |
           gitlab_service_availability:ratio
           <
-          gitlab_service_availability:ratio:avg_over_time_1w - 4 * gitlab_service_availability:ratio:stddev_over_time_1w
+          0.5
         for: 5m
         labels:
           rules_domain: general
@@ -48,7 +48,7 @@ groups:
           severity: error
           period: 5m
           bound: lower
-          threshold_sigma: "4"
+          threshold_value: "0.5"
         annotations:
           description: |
             The ratio of services that are available to serve the `{{ $labels.type }}` service

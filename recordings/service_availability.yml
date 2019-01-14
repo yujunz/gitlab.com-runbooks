@@ -11,12 +11,6 @@ groups:
       avg by (environment, tier, type) (avg_over_time(up{geo_role!="secondary", job="postgres"}[1m]))
         and
       avg by (environment, tier, type) (avg_over_time(pg_up{geo_role!="secondary"}[1m]))
-  # Redis Service
-  - record: gitlab_component_availability:ratio
-    labels:
-      component: 'server'
-    expr: >
-      avg by (environment, tier, type) (avg_over_time(redis_up{type="redis", tier="db"}[1m]))
   # Registry Service
   # Note: currently we have no insight into the availability of the registry, so we
   # have to rely on the node_exporter
