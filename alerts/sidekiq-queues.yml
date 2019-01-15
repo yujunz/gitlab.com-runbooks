@@ -29,7 +29,7 @@ groups:
       severity: critical
       pager: pagerduty
     annotations:
-      description: There have over 50,000 Sidekiq jobs queued for the last hour.
+      description: There have been over 50,000 Sidekiq jobs queued for the last hour.
         Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
       runbook: troubleshooting/large-sidekiq-queue.md
       title: 'Large amount of Sidekiq Queued jobs: {{$value}}'
