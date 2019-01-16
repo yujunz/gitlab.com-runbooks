@@ -2,6 +2,17 @@ groups:
 - name: GitLab Workhorse Git HTTP Session Count
   interval: 30s
   rules:
+  - record: code_method:gitlab_workhorse_http_requests_total:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_requests_total[1m])
+      )
+  - record: job:gitlab_workhorse_http_requests_total:rate1m
+    expr: >
+      sum without (code,method,route) (
+        code_method:gitlab_workhorse_http_requests_total:rate1m
+      )
+
   - record: gitlab_workhorse_git_http_sessions_active:total
     labels:
       type: git
