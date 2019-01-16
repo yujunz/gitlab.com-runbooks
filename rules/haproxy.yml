@@ -3,7 +3,7 @@ groups:
   rules:
   - record: backend_code:haproxy_server_http_responses_total:irate1m
     expr: >
-      sum without (fqdn, instance) (
+      sum without (fqdn, instance, server) (
         irate(haproxy_server_http_responses_total[1m])
       )
   - record: frontend_code:haproxy_frontend_http_responses_total:irate1m
