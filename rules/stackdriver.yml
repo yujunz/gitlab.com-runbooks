@@ -1,0 +1,37 @@
+groups:
+- name: Stackdriver
+  interval: 60s
+  rules:
+  - record: zone:stackdriver_haproxy_errors:rate1m
+    labels:
+      code: "500"
+    expr: >
+      sum without (instance_id) (
+        stackdriver_gce_instance_logging_googleapis_com_user_haproxy_500
+      ) / 60
+  - record: zone:stackdriver_haproxy_errors:rate1m
+    labels:
+      code: "502"
+    expr: >
+      sum without (instance_id) (
+        stackdriver_gce_instance_logging_googleapis_com_user_haproxy_502
+      ) / 60
+  - record: zone:stackdriver_haproxy_errors:rate1m
+    labels:
+      code: "503"
+    expr: >
+      sum without (instance_id) (
+        stackdriver_gce_instance_logging_googleapis_com_user_haproxy_503
+      ) / 60
+  - record: zone:stackdriver_haproxy_errors:rate1m
+    labels:
+      code: "504"
+    expr: >
+      sum without (instance_id) (
+        stackdriver_gce_instance_logging_googleapis_com_user_haproxy_504
+      ) / 60
+  - record: zone:stackdriver_haproxy_deadline_exceeded:rate1m
+    expr: >
+      sum without (instance_id) (
+        stackdriver_gce_instance_logging_googleapis_com_user_unstructured_500_deadline_exceeded
+      ) / 60
