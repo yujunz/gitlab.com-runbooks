@@ -165,3 +165,13 @@ groups:
       description: '{{$labels.config}} at {{$labels.instance}} has no targets in service discovery.'
       runbook: troubleshooting/prometheus-empty-sd.md
       title: 'Prometheus has no targets'
+  - alert: PrometheusHighMemoryUtilization
+    expr: process_resident_memory_bytes{job="prometheus"} / on (fqdn) node_memory_MemTotal_bytes * 100 > 90
+    for: 30m
+    labels:
+      service: prometheus
+      severity: warn
+    annotations:
+      description: 'Prometheus at {{$labels.instance}} has very high ({{$value}}%) system memory utilization.'
+      runbook: troubleshooting/prometheus-high-memory.md
+      title: 'Prometheus High Memory Utilization'
