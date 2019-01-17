@@ -1,0 +1,29 @@
+groups:
+- name: gitlab-walg-backup.rules
+  rules:
+  - record: gitlab_com:last_walg_backup_age_in_seconds
+    expr: (min(time() - walg_backup_last_completed_time_seconds))
+  - record: gitlab_com:last_walg_basebackup_age_in_hours
+    expr: (min(time() - walg_basebackup_last_completed_time_seconds) / 3600)
+  - alert: walgBackupDelayed
+    expr: gitlab_com:last_walg_backup_age_in_seconds >= 60 * 15
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: walg syncs to GCS might be not working. Please follow the runbook
+        to review the problem.
+      runbook: troubleshooting/gitlab-com-walg-backups.md
+      title: Last walg backup was seen {{ .Value | humanizeDuration }} ago.
+  - alert: walgBaseBackupDelayed
+    expr: gitlab_com:last_walg_basebackup_age_in_hours >= 48
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: walg basebackup syncs to GCS might be not working. Please follow the runbook
+        to review the problem.
+      runbook: troubleshooting/gitlab-com-walg-backups.md
+      title: Last walg basebackup was seen {{ .Value | humanizeDuration }} ago.
