@@ -14,7 +14,7 @@ On patroni cluster this job would take backup on only **one of the read replica*
 
 dbmon bot posts the a message to #database slack channel reporting which read replica takes the backup and the duration like below :
 
-![Screen Shot 2019-01-17 at 3.00.25 PM](/Users/yguo/Desktop/Screen Shot 2019-01-17 at 3.00.25 PM.png)
+```Backup successfully completed on patroni-02-db-gstg. Duration: 00:47:11```
 
 To check the backup issues, login to the reported host (in above picture the host is patroni-02-db-gstg) and check the log file `sudo cat /var/log/wal-g/wal-g_backup_push.log`
 
