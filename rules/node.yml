@@ -26,6 +26,23 @@ groups:
       sum without (mode) (
         instance_mode:node_cpu_seconds:rate5m{mode!="idle"}
       ) / instance:node_cpus:count
+  # CPU summaries
+  - record: job:node_cpu_utilization:min_ratio
+    expr: >
+      min without (fqdn, instance) (
+        instance:node_cpu_in_use:ratio
+      )
+  - record: job:node_cpu_utilization:avg_ratio
+    expr: >
+      avg without (fqdn, instance) (
+        instance:node_cpu_in_use:ratio
+      )
+  - record: job:node_cpu_utilization:max_ratio
+    expr: >
+      max without (fqdn, instance) (
+        instance:node_cpu_in_use:ratio
+      )
+  
   # CPU Alerts
   - alert: HighCPU
     expr: instance:node_cpu_utilization:ratio > 0.95
