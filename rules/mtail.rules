@@ -1,0 +1,17 @@
+groups:
+- name: mtail Syslog NFS
+  interval: 60s
+  rules:
+  - record: nfs_server:syslog_nfs_timeouts:rate1m
+    expr: >
+      sum by (nfs_server) (
+        rate(syslog_nfs_timeouts[1m])
+      )
+- name: mtail Unicorn 
+  interval: 60s
+  rules:
+  - record: job:unicorn_killer_terminations_total:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(unicorn_killer_terminations_total[1m])
+      )
