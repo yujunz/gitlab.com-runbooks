@@ -1,5 +1,22 @@
 groups:
-- name: haproxy.rules
+- name: haproxy availability
+  interval: 60s
+  rules:
+  - record: instance:haproxy_availability:ratio
+    expr: >
+      avg_over_time(haproxy_up[1m])
+  - record: backend:haproxy_backend_availability:ratio
+    expr: >
+      avg without (fqdn, instance) (
+        avg_over_time(haproxy_backend_up[1m])
+      )
+  - record: server:haproxy_server_availability:ratio
+    expr: >
+      avg without (fqdn, instance, backend) (
+        avg_over_time(haproxy_server_up[1m])
+      )
+
+- name: haproxy traffic
   rules:
   - record: backend_code:haproxy_server_http_responses_total:irate1m
     expr: >
