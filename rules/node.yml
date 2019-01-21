@@ -184,7 +184,7 @@ groups:
       runbook: https://gitlab.com/gitlab-com/infrastructure/issues/4221
       title: 'Different kernel versions are running in production for an hour'
   - alert: CPUStalls
-    expr: rate(rcu_sched_stalls_total[1m]) > 0
+    expr: rate(syslog_rcu_sched_stalls_total[1m]) > 0 or rate(rcu_sched_stalls_total[1m]) > 0
     for: 10m
     labels:
       channel: production
