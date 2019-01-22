@@ -55,7 +55,7 @@ class SlackWebhook
   end
   
   def self.username
-    @username ||= `whoami`
+    @username ||= `logname`.strip
   end
 
   def self.fire_hook(text, attachment: nil, channel: CHANNEL)
