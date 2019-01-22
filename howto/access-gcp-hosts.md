@@ -1,7 +1,6 @@
-## Accessing the gstg and gprd hosts
+## Accessing the GCP hosts
 
-As we build out the new gprd and gstg environments you may need to access the
-hosts. If you need ssh access to individual vms you have come to the right
+If you need ssh access to individual vms on GCP you have come to the right
 place. If you are having difficulty with getting access or you don't believe we
 have enabled your public ssh key on these hosts please submit an issue to the
 [infrastructure tracker](https://gitlab.com/gitlab-com/infrastructure) with the
@@ -12,6 +11,7 @@ access VMs you will need to configure you ssh client to use the bastion hosts.
 
 * [Bastion instructions for gprd](gprd-bastions.md)
 * [Bastion instructions for gstg](gstg-bastions.md)
+* [Bastion instructions for dr](dr-bastions.md)
 
 ### Hosts
 
