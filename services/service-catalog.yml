@@ -1,0 +1,897 @@
+teams:
+- name: create
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/create/
+  manager_slug: douwe
+  slack_channel: g_create
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
+- name: distribution
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/distribution/
+  manager_slug: marin
+  slack_channel: distribution
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
+- name: geo
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/geo/
+  manager_slug: geo-mgr
+  slack_channel: g_geo
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
+- name: gitaly
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/gitaly/
+  slack_channel: gitaly
+  slack_low_severity_alerts_channel: gitaly-alerts
+  engagement_policy:
+  oncall_schedule:   
+
+- name: gitter
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/gitter/
+  manager_slug: eng-manager-gitaly
+  slack_channel: g_gitaly
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
+- name: manage
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/manage/
+  manager_slug: ruben-d
+  slack_channel: g_manage
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
+- name: plan
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/manage/
+  manager_slug: ean-m
+  slack_channel: g_plan
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
+- name: release
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/
+  manager_slug: darby-frey
+  slack_channel: g_release
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
+- name: infrastructure
+  url: https://about.gitlab.com/handbook/engineering/infrastructure/
+  manager_slug: 
+  slack_channel: production
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
+
+# Package team doesn't seem to exist
+- name: package
+  url: https://about.gitlab.com/handbook/engineering/dev-backend/
+  manager_slug: clement
+  slack_channel: backend
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
+tiers:
+- name: sv
+- name: lb
+- name: stor
+- name: db
+- name: inf 
+
+services:
+- name: api
+  tier: sv
+  teams: 
+    - create 
+    - distribution
+    - geo
+    - gitaly
+    - gitter 
+    - manage 
+    - plan 
+  label: Service:API
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       3 
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging: 
+      - name: Rails
+        permalink: https://log.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684
+      - name: Workhorse
+        permalink: https://log.gitlab.net/goto/eb99f28c17cfcdfd30969a1c85e209dc
+      - name: Unicorn
+        permalink: https://log.gitlab.net/goto/c8f89b2415788b46978fcd2910b4afec
+      - name: nginx
+        permalink: https://log.gitlab.net/goto/0d1c84486d6fb28a785f1c21473e5611
+      - name: Unstructured Rails
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22api%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
+      - name: system
+        permalink: https://log.gitlab.net/goto/2b9679dab019791136cb8ae1535fb781        
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=api"
+      sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
+    alert_label: type=api # The `type=` alert label for the service 
+  
+- name: web
+  tier: sv
+  teams: 
+    - create 
+    - distribution
+    - geo
+    - gitaly
+    - gitter 
+    - manage
+    - plan 
+  label: Service:Web
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       3 
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: Rails
+        permalink: https://log.gitlab.net/goto/5e1aa9dac377ff2282c70748e9278860
+      - name: Workhorse
+        permalink: https://log.gitlab.net/goto/cebefc3cf285ce2a94fbfdcadc55f1a4
+      - name: Unicorn
+        permalink: https://log.gitlab.net/goto/766f73d879983f5ec962d5d6c0ae1cf4
+      - name: nginx
+        permalink: https://log.gitlab.net/goto/4844ecfa4a7e6f0491685b2cc9224eb0
+      - name: Unstructured Rails
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22web%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
+      - name: system
+        permalink: https://log.gitlab.net/goto/c93fb9b8e5df92ed79d993d3a62b5452
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
+      primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=web"
+    alert_label: type=web
+
+- name: git
+  tier: sv
+  teams: 
+    - create 
+    - distribution
+    - geo
+    - gitaly
+    - gitter 
+    - manage
+    - plan 
+  label: Service:Git
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       3 
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: Rails
+        permalink: https://log.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
+      - name: Workhorse
+        permalink: https://log.gitlab.net/goto/3ddd4ee7141ba2ec1a8b3bb0cb1476fe
+      - name: Unicorn
+        permalink: https://log.gitlab.net/goto/0cf60e9a1c94236eefb23348c39feaeb
+      - name: nginx
+        permalink: https://log.gitlab.net/goto/8a5fb5820ec7c8daebf719c51fa00ce0
+      - name: Unstructured Rails
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22git%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
+      - name: system
+        permalink: https://log.gitlab.net/goto/bd680ccb3c21567e47a821bbf52a7c09
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
+      primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=git"
+    alert_label: type=git
+
+- name: gitaly
+  tier: stor
+  teams: 
+    - gitaly
+  label: Service:Gitaly
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       2 
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: Gitaly
+        permalink: https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d
+      - name: system
+        permalink: https://log.gitlab.net/goto/7cfb513706cffc0789ad0842674e108a
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      sentry_slug: gitlab/gitaly-production
+      grafana_folder: SRXyrrSmk
+      primary_grafana_dashboard: "000000214/gitaly-fleet-overview"
+    alert_label: type=gitaly
+
+- name: mailroom
+  tier: sv
+  teams: 
+    - create 
+    - distribution
+    - geo
+    - gitaly
+    - gitter 
+    - manage
+    - plan 
+  label: Service:Mailroom
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       3 
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/0ce3bf67abafcfc0f81f3d6e7a066912
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      primary_grafana_dashboard: 
+      sentry_slug: 
+    alert_label: type=mailroom
+
+- name: pages
+  tier: sv
+  teams: 
+    - release
+  label: Service:Pages
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       3 
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: Pages
+        permalink: https://log.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
+      - name: haproxy
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22&advancedFilter=labels.tag%3D%22haproxy%22%0Alabels.%22compute.googleapis.com%2Fresource_name%22%3A%22fe-pages-%22
+      - name: system
+        permalink: https://log.gitlab.net/goto/3384c89c5a828db866d2fa8ec86cd97f
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      grafana_folder: v2ZhpeSik
+      primary_grafana_dashboard: "_IQB_rSmk/pages"
+    alert_label: type=pages
+  
+- name: pgbouncer
+  tier: db
+  teams: 
+    - infrastructure
+  label: Service:pgbouncer
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       1
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: pgbouncer
+        permalink: https://log.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
+      - name: system
+        permalink: https://log.gitlab.net/goto/ae311f6f133cc1c45b62541977081043
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      grafana_folder: jYXDze5mk
+      primary_grafana_dashboard: "PwlB95Jmk/pgbouncer-overview"
+    alert_label: type=pgbouncer
+
+- name: postgres
+  tier: db
+  teams: 
+    - infrastructure
+  label: Service:Postgres
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       1
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: Postgres
+        permalink: https://log.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c
+      - name: system
+        permalink: https://log.gitlab.net/goto/3669d551a595a3a5cf1e9318b74e6c22
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      grafana_folder: jYXDze5mk
+      primary_grafana_dashboard: "000000142/postgresql-overview"
+    alert_label: type=postgres
+
+- name: redis
+  tier: db
+  teams: 
+    - infrastructure
+  label: Service:Redis
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       1
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: Redis
+        permalink: https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc
+      - name: system
+        permalink: https://log.gitlab.net/goto/e107ce00a9adede2e130d0c8ec1a2ac7
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      grafana_folder: D5R0peIik
+      primary_grafana_dashboard: "wccEP9Imk/redis"
+    alert_label: type=redis
+                       
+- name: registry
+  tier: sv
+  teams: 
+    - package
+  label: Service:Registry
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       3 
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: Registry
+        permalink: https://log.gitlab.net/goto/1c2fe46c1db40a7aa7d31875f3fd2ad1
+      - name: haproxy
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22&advancedFilter=labels.tag%3D%22haproxy%22%0Alabels.%22compute.googleapis.com%2Fresource_name%22%3A%22fe-registry-%22
+      - name: system
+        permalink: https://log.gitlab.net/goto/b68e1a4183a652dc8d5e52a1fc2c1aba
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      primary_grafana_dashboard: 
+      sentry_slug: 
+    alert_label: type=registry
+
+- name: sidekiq
+  tier: sv
+  teams: 
+    - create 
+    - distribution
+    - geo
+    - gitaly
+    - gitter 
+    - manage
+    - plan
+  label: Service:Sidekiq
+  business: 
+    requirement:       # Business requirement of the service (text or paragraph)
+    customers:         # List of customers 
+    business_value:    # Text/paragraph containing info on what 
+                       # business value it brings
+    SLA:
+      availability:    # Availability SLA promised to customers
+      response_time:   # Response time for inquiries or issues 
+                       # relating this service
+  technical: 
+    project:           # GitLab project link 
+    criticality:       3 
+                       # If this service goes down, what criticality 
+                       # of impact is this? (1, 2, 3...etc)
+    slx:               # Link to SLX document (SLOs, SLIs)
+    documents: 
+      design:          # Link to the design doc
+      architecture:    # Link to the architecture doc
+      service:         # This is the README.md of the service unless
+                       # a separate doc exists
+      security:        # Link to security related document, if available,
+                       # that talks about how the service ensures security 
+                       # (encryption, rotation...etc)
+    dependencies: 
+      - service:       # Existing service name from the catalog that 
+                       # it directly depends on 
+    configurations:    # A service might have one or more configs
+      - config_name:   # Config file name 
+        location:      # Location of the config file 
+    chef_roles:        # List of Chef roles for this service
+    scalability:       
+      bound:           # cpu or memory or network or... 
+      scalable:        # horizontal or vertical 
+    security: 
+      security_reviewed: # If security team reviewed the service (yes or no or n/a)
+      data_classification: # What level of data does this service handle?
+      security_incidents:  # Link to (past/present) security incidents
+    logging:
+      - name: Sidekiq
+        permalink: https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
+      - name: Rails
+        permalink: https://log.gitlab.net/goto/86fbcd537588abef69339a352ef81d72
+      - name: Unicorn
+        permalink: https://log.gitlab.net/goto/c87a39cf228c45ed8691c855aa583170
+      - name: Unstructured
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22sidekiq%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
+      - name: system
+        permalink: https://log.gitlab.net/goto/72d0f3fdfd8db18db9800cc04d8b6f55
+  infrastructure: 
+    provider:          # azure, do, aws, gcp
+    architecture:      # Link to infra architecture diagram for this service 
+    provisioning:      # terraform      
+    accesses:
+      - account_name:  # User or system account that has access to the service 
+                       # components in the infra provider
+        access_type:   # Level of access
+        reviewed:      # Is it reviewed and approved?
+  operations:
+    maintenance:       # Link to maintenance procedures document
+    runbooks:          # Link to runbooks for this service
+    playbooks:         # Link to playbooks for this service
+    error_budget:      # Link to error budget document for this service 
+  observability: 
+    monitors: 
+      grafana_folder: c7nMugpmz
+      primary_grafana_dashboard: "9GOIu9Siz/sidekiq-stats"
+      sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
+    alert_label: type=sidekiq
+
+
+  
+  
+  
+  
+  
+  
