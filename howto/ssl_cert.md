@@ -62,7 +62,24 @@ suitable for the vault, use this command:
 awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' [domain].key
 
 awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' [domain].chained.crt
+
+**Note:** You _must_ use the `[domain].chained.crt` certificate file, _not_ the
+`[domain].crt` file!
+
 ```
+
+### Upload certificate to GCP
+
+If your certificate is to be used by a GCP resource (for example, a load
+balancer) you can upload it using this command:
+
+```
+gcloud compute ssl-certificates create [CERTIFICATE_NAME] --certificate [PATH_TO_CRT] --private-key [PATH_TO_KEY] --project [PROJECT_NAME]
+```
+
+The certificate will then be available at the following resource route:
+`projects/[PROJECT_NAME]/global/sslCertificates/[CERTIFICATE_NAME]` (you may
+have to specify that resource path to the relevant terraform module).
 
 **Note:** You _must_ use the `[domain].chained.crt` certificate file, _not_ the
 `[domain].crt` file!
@@ -94,7 +111,7 @@ when those certificates are going to expire.
   to a certificate expiring and again at regular intervals until the cert is
   replaced or expired.
 
-* SSLMate is configured to monitor the following domains for certificates that 
+* SSLMate is configured to monitor the following domains for certificates that
   are issued outside of SSLMate control and alert Production Engineering:
   * gitlab.com
   * gitlab.org
