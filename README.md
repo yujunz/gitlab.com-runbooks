@@ -142,6 +142,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Use aptly](howto/aptly.md)
 * [Disable PackageCloud](howto/stop-or-start-packagecloud.md)
 * [Re-index a package in PackageCloud](howto/reindex-package-in-packagecloud.md)
+* [Access hosts in GCP](howto/access-gcp-hosts.md)
 
 ### Restore Backups
 * [Database Backups and Replication with Encrypted WAL-E](howto/using-wale-gpg.md)
