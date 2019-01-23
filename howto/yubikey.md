@@ -441,6 +441,13 @@ pinentry-program /usr/bin/pinentry
 enable-ssh-support
 ```
 
+For graphical pin-entry on MacOS install the brew package `pinentry-mac`
+
+```bash
+brew install pinentry-mac
+```
+
+
 If you'd like a graphical GPG experience, installing `gpg-suite` an option, in which case your pin entry program will be located at:
 
 ```bash
