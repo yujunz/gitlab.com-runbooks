@@ -180,6 +180,67 @@ services:
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=api"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
 
+- name: blackbox
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:Blackbox
+  business:
+    requirement: |
+      We need a service that's capabale of pinging multiple endpoints over different protocols
+      (HTTPS, SSH) and reporting the result of such pings to drive custom alerts when certain
+      conditions are met.
+    customers:
+      - Internally used for monitoring endpoints
+    business_value: |
+      It probes several endpoints periodically, the results of which is used to
+      trigger alerts about other services being down or being slow to respond.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-cookbooks/gitlab-exporters
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://github.com/prometheus/blackbox_exporter/blob/master/README.md
+      security:
+    dependencies:
+      - service: prometheus
+    configurations:
+      - config_name: blackbox_exporter.yml
+        location: /opt/prometheus/blackbox_exporter/blackbox_exporter.yml
+    chef_roles:
+      - gstg-base-blackbox
+      - gprd-base-blackbox
+    scalability:
+      bound: network
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/b4618f79f80f44cb21a32623a275a0e6
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+
 - name: web
   tier: sv
   teams: 
