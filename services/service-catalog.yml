@@ -89,53 +89,67 @@ tiers:
 services:
 - name: api
   tier: sv
-  teams: 
-    - create 
+  teams:
+    - create
     - distribution
     - geo
     - gitaly
-    - gitter 
-    - manage 
-    - plan 
+    - gitter
+    - manage
+    - plan
   label: Service:API
-  business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+  business:
+    requirement: |
+      API is required to allow developing tools (i.e. bots) that makes use of GitLab.com data,
+      otherwise the only way to develop such tools is to parse and/or interact with HTML pages,
+      which is far from ideal and unstable as structure can be changed between releases.
+    customers:
+      - GitLab.com customers
+      - Internally used for push/pull operations
+      - Internally used for CI/CD interactions
+    business_value: |
+      Allows GitLab.com customers to interact with GitLab.com programmatically
+      through a uniform interface
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       3 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
-    logging: 
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-ce
+      - https://gitlab.com/gitlab-org/gitlab-ee
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      service:
+        - https://docs.gitlab.com/ce/api/
+        - https://docs.gitlab.com/ee/api/
+      security:
+    dependencies:
+      - service: postgres
+      - service: gitaly
+      - service: redis
+    configurations:
+      - config_name: gitlab.rb
+        location: /etc/gitlab/gitlab.rb
+    chef_roles:
+      - gprd-base-fe-api
+      - gstg-base-fe-api
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+        - https://gitlab.com/gitlab-org/gitlab-ce/issues/37946
+        - https://gitlab.com/gitlab-org/gitlab-ce/issues/51690
+        - https://gitlab.com/gitlab-org/gitlab-ce/issues/53072
+        - https://gitlab.com/gitlab-org/gitlab-ce/issues/54334
+        - https://gitlab.com/gitlab-org/gitlab-ce/issues/54857
+        - https://gitlab.com/gitlab-org/gitlab-ce/issues/54865
+    logging:
       - name: Rails
         permalink: https://log.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684
       - name: Workhorse
@@ -147,26 +161,25 @@ services:
       - name: Unstructured Rails
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22api%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
-        permalink: https://log.gitlab.net/goto/2b9679dab019791136cb8ae1535fb781        
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+        permalink: https://log.gitlab.net/goto/2b9679dab019791136cb8ae1535fb781
+  infrastructure:
+    provider: gcp
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=api"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
-  
+
 - name: web
   tier: sv
   teams: 
