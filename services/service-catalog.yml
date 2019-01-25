@@ -166,7 +166,6 @@ services:
     monitors: 
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=api"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
-    alert_label: api 
   
 - name: web
   tier: sv
@@ -247,7 +246,6 @@ services:
     monitors: 
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=web"
-    alert_label: web
 
 - name: git
   tier: sv
@@ -328,7 +326,6 @@ services:
     monitors: 
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=git"
-    alert_label: git
 
 - name: gitaly
   tier: stor
@@ -396,7 +393,6 @@ services:
       sentry_slug: gitlab/gitaly-production
       grafana_folder: SRXyrrSmk
       primary_grafana_dashboard: "000000214/gitaly-fleet-overview"
-    alert_label: gitaly
 
 - name: mailroom
   tier: sv
@@ -467,7 +463,6 @@ services:
     monitors: 
       primary_grafana_dashboard: 
       sentry_slug: 
-    alert_label: mailroom
 
 - name: pages
   tier: sv
@@ -536,7 +531,6 @@ services:
     monitors: 
       grafana_folder: v2ZhpeSik
       primary_grafana_dashboard: "_IQB_rSmk/pages"
-    alert_label: pages
   
 - name: pgbouncer
   tier: db
@@ -603,7 +597,6 @@ services:
     monitors: 
       grafana_folder: jYXDze5mk
       primary_grafana_dashboard: "PwlB95Jmk/pgbouncer-overview"
-    alert_label: pgbouncer
 
 - name: postgres
   tier: db
@@ -670,7 +663,6 @@ services:
     monitors: 
       grafana_folder: jYXDze5mk
       primary_grafana_dashboard: "000000142/postgresql-overview"
-    alert_label: postgres
 
 - name: redis
   tier: db
@@ -737,7 +729,6 @@ services:
     monitors: 
       grafana_folder: D5R0peIik
       primary_grafana_dashboard: "wccEP9Imk/redis"
-    alert_label: redis
                        
 - name: registry
   tier: sv
@@ -806,7 +797,6 @@ services:
     monitors: 
       primary_grafana_dashboard: 
       sentry_slug: 
-    alert_label: registry
 
 - name: sidekiq
   tier: sv
@@ -886,12 +876,3 @@ services:
       grafana_folder: c7nMugpmz
       primary_grafana_dashboard: "9GOIu9Siz/sidekiq-stats"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
-    alert_label: sidekiq
-
-
-  
-  
-  
-  
-  
-  
