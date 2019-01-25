@@ -4,7 +4,7 @@
 
 Base backup is running as a daily cron job under the Postgresql user (gitlab-psql).
 
-Run `sudo -u gitlab-psql  ` and `cront -l | grep backup` it should output 
+Run `sudo -u gitlab-psql  ` and `crontab -l | grep backup` it should output 
 
 ```# Chef Name: full wal-g backup
 0 3 * * * /opt/wal-g/bin/backup.sh > /var/log/wal-g/wal-g_backup_push.log 2>&1
