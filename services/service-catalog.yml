@@ -87,6 +87,78 @@ tiers:
 - name: inf 
 
 services:
+- name: alertmanager
+  tier: sv
+  teams:
+    - infrastructure
+  label: Service:AlertManager
+  business:
+    requirement: We use Prometheus for our monitoring solution. Alerting with Prometheus is separated into two parts. Alerting rules in Prometheus servers send alerts to an Alertmanager. The Alertmanager then manages those alerts, including silencing, inhibition, aggregation and sending out notifications via, in our case, PagerDuty and Slack.
+    customers:
+      - infrastructure
+    business_value:    AlertManager handles deduping, grouping and routing of alerts. It also takes care of silencing and inhibition of alerts. Therefore, it helps us get informed of possible issues in an efficient way so that we can focus on fixing the issues rather than figuring out how to manage and configure the alerts.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-org/build/omnibus-mirror/alertmanager
+    criticality: 3
+    slx:
+    documents:
+      design: https://docs.google.com/document/d/1-4jefGkFo71jlaLo4lHz40ZBoCv9ycBBBbjzbXifGyY
+      architecture: https://github.com/prometheus/alertmanager/blob/master/doc/arch.svg
+      service: https://github.com/prometheus/alertmanager/blob/master/README.md
+      security: https://prometheus.io/docs/operating/security/#alertmanager
+    dependencies:
+      - prometheus
+      - pagerduty
+      - slack
+    configurations:
+      - config_name: alertmanager.yml
+        location: /opt/prometheus/alertmanager/alertmanager.yml
+    chef_roles:
+      - gprd-infra-alerts
+      - gprd-base
+      - gprd-omnibus-version
+    scalability:
+      note: We run AlertManager in HA, where we have multiple instances in a cluster with gossip protcol. Given that AlertManager does deduping, grouping, silencing, inhibiting...etc it could run a series of checks against incoming alerts and could end up taking up a lot of CPU. Users reported issues where, due to misconfiuration, AlertManager was taking up all of available CPU as well. This indicates that AlertManager is CPU-bound and thus a vertically scalable service.
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: Sidekiq
+        permalink: https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
+      - name: Rails
+        permalink: https://log.gitlab.net/goto/86fbcd537588abef69339a352ef81d72
+      - name: Unicorn
+        permalink: https://log.gitlab.net/goto/c87a39cf228c45ed8691c855aa583170
+      - name: Unstructured
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22sidekiq%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
+      - name: system
+        permalink: https://log.gitlab.net/goto/72d0f3fdfd8db18db9800cc04d8b6f55
+  infrastructure:
+    provider: gcp
+    architecture: https://drive.google.com/open?id=1aKSvWfsnrSo_XWm7ZVY3oHLqsd2czZcs
+    provisioning: terrafrom
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance: none
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/alertmanager-notification-failures.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/alerts_manual.md
+    error_budget:
+  observability:
+    monitors:
+      grafana_folder:
+      primary_grafana_dashboard:
+
 - name: api
   tier: sv
   teams: 
