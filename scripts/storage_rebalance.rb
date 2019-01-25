@@ -5,6 +5,8 @@ require 'optparse'
 
 require '/opt/gitlab/embedded/service/gitlab-rails/config/environment.rb'
 
+$stdout.sync = true
+
 options = {
   dry_run: true,
   move_amount: 0,
