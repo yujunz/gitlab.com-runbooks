@@ -302,6 +302,85 @@ services:
   observability:
     monitors:
 
+- name: console
+  tier: sv
+  teams:
+    - infrastructure
+  label: Service:Console
+  business:
+    requirement:
+      - Restricted access to the primary DB console
+      - Restricted access to a secondary DB console
+      - Restricted access to the Geo DB console
+      - Restricted access to a Rails console
+    customers:
+      - GitLab Engineering Team
+    business_value: |
+      It allows the engineering team to run DB queries and/or Rails commands
+      against production and/or staging without giving them full access an
+      infrastructure host. It is also used by the SRE team to run maintenance scripts
+      that could potentially use a lot of memory and/or CPU, so a production worker
+      isn't starved of its resources.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-cookbooks/gitlab_users
+    criticality: 4
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+      security:
+    dependencies:
+      - service: postgres
+      - service: gitaly
+      - service: redis
+    configurations:
+      - config_name: 99-db-console-access
+        location: /etc/sudoers.d/99-db-console-access
+      - config_name: 99-db-console-primary-access
+        location: /etc/sudoers.d/99-db-console-primary-access
+      - config_name: 99-db-console-geo-access
+        location: /etc/sudoers.d/99-db-console-geo-access
+      - config_name: 99-rails-console-access
+        location: /etc/sudoers.d/99-rails-console-access
+      - config_name: .irbrc
+        location: /var/opt/gitlab/.irbrc
+    chef_roles:
+      - gprd-base-console-node
+      - gstg-base-console-node
+    scalability:
+      bound:
+        - memory
+        - cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: history
+      - permalink: # Logs are sent to Stackdriver currently are lacking a tag, so we can't come up with a permalink
+                   # Progress is being tracked in https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6051
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
+
 - name: web
   tier: sv
   teams: 
