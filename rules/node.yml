@@ -68,6 +68,30 @@ groups:
   - record: instance:node_cpu_in_use:ratio
     expr: sum(instance_mode:node_cpu:rate5m{mode!="idle"}) WITHOUT (mode) / instance:node_cpus:count
 
+# Rules for calculating and alerting on long-term node utilization issues.
+- name: Utilization
+  interval: 300s
+  rules:
+  - record: instance:cpu_utilization:ratio_max
+    expr: max_over_time(instance:node_cpu_utilization:ratio[300s])
+  - record: instance:cpu_utilization:ratio_avg
+    expr: avg_over_time(instance:node_cpu_utilization:ratio[300s])
+  - record: instance:cpu_utilization:ratio_q95
+    expr: quantile_over_time(0.95, instance:node_cpu_utilization:ratio[300s])
+  - record: instance:memory_utilization:ratio_max
+    expr: 1 - min_over_time(instance:node_memory_available:ratio[300s])
+  - record: instance:memory_utilization:ratio_avg
+    expr: 1 - avg_over_time(instance:node_memory_available:ratio[300s])
+  - record: instance:memory_utilization:ratio_q95
+    expr: 1 - quantile_over_time(0.05, instance:node_memory_available:ratio[300s])
+# TODO(bjk): This is a proposal for an alert. We should send this to a webhook that opens an issue.
+#  - alert: NodeUnderUtilized
+#    expr: >
+#      (quantile_over_time(0.95, instance:cpu_utilization:ratio_q95[1d]) * 100 < 10)
+#        and
+#      (quantile_over_time(0.95, instance:memory_utilization:ratio_q95[1d]) * 100 < 10)
+#    for: 7d
+
 - name: Node filesystem rules
   rules:
   - record: instance:node_filesystem_avail:ratio
