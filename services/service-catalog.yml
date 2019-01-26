@@ -543,67 +543,84 @@ services:
 
 - name: gitaly
   tier: stor
-  teams: 
+  teams:
     - gitaly
   label: Service:Gitaly
-  business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+  business:
+    requirement: |
+      It is needed to eliminate the latencies of doing git operations
+      over NFS, and to avoid bringing GitLab.com down when one of the
+      NFS nodes is down.
+    customers:
+      - Internally used by GitLab workers
+    business_value: |
+      It considerably faster than using git-over-NFS, allows for better
+      visibility over git operations, and could be expanded to support caching
+      and HA.
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       2 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-org/gitaly
+    criticality: 2
+    slx:
+    documents:
+      design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/DESIGN.md
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      service: https://gitlab.com/gitlab-org/gitaly/blob/master/README.md
+      security:
+    dependencies:
+      - service: gitaly
+      - service: fe-lb # through gitlab-shell
+      - service: redis # through gitlab-shell
+    configurations:
+      - config_name: Gitaly config
+        location: /var/opt/gitlab/gitaly/config.toml
+      - config_name: gitlab-shell config
+        location: /var/opt/gitlab/gitlab-shell/config.yml
+    chef_roles:
+      - gstg-base-stor-gitaly
+      - gprd-base-stor-gitaly
+    scalability:
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
     logging:
       - name: Gitaly
         permalink: https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d
+      - name: gitlab-shell
+        permalink: https://log.gitlab.net/goto/ba97a9597863f0df1c3b894b44eb1db6
       - name: system
         permalink: https://log.gitlab.net/goto/7cfb513706cffc0789ad0842674e108a
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-pubsub.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-latency.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-high-cpu.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-error-rate.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-rate-limiting.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-unusual-activity.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-version-mismatch.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gitaly-profiling.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gracefully-restart-gitaly-ruby.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gitaly-debugging-tool.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
       sentry_slug: gitlab/gitaly-production
       grafana_folder: SRXyrrSmk
       primary_grafana_dashboard: "000000214/gitaly-fleet-overview"
