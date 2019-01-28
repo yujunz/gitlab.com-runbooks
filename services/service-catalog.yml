@@ -461,6 +461,71 @@ services:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=web"
 
+- name: fe-lb
+  tier: lb
+  teams:
+    - infrastructure
+  label: Service:HAProxy
+  business:
+    requirement: |
+      Load balancers offered by cloud providers has limited configurations and doesn't
+      allow for lots of flexible setups, hence we use HAProxy to avoid those shortcomings.
+    customers:
+      - GitLab.com customers
+    business_value: |
+      HAProxy is invisible to customers but it provides us high levels of operational flexibility,
+      like rate limiting, blocking access based on different criteria, ease of removing backend from
+      balancing pools for maintenance, customizable logging, and many more.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-cookbooks/gitlab-haproxy
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
+      service: https://cbonte.github.io/haproxy-dconv/1.7/intro.html
+      security:
+    dependencies:
+      - service: api
+      - service: git
+      - service: web
+    configurations:
+      - config_name: haproxy.cfg
+        location: /etc/haproxy/haproxy.cfg
+    chef_roles:
+      - gprd-base-lb-fe
+      - gstg-base-lb-fe
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: haproxy
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&organizationId=769164969568&interval=PT1H&resource=gce_instance%2Finstance_id%2F1812745190666049211&scrollTimestamp=2019-01-22T15:27:18.915253748Z&advancedFilter=resource.type%3D%22gce_instance%22%0Alabels.tag%3D%22haproxy%22
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance: https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/haproxy.md
+    runbooks: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/haproxy.md
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: N9YSt6Siz
+      primary_grafana_dashboard: "ZOOh_aNik/haproxy"
+
 - name: git
   tier: sv
   teams: 
