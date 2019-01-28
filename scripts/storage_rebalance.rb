@@ -58,6 +58,27 @@ class MoveIt
     input / 1024 / 1024 / 1024
   end
 
+  def get_commit(project_id)
+    uri = URI("https://gitlab.com/api/v4/projects/#{project_id}/repository/commits")
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    req = Net::HTTP::Get.new(uri.request_uri)
+    req['Private-Token'] = ENV.fetch('PRIVATE_TOKEN')
+
+    res = http.request(req)
+
+    return nil if res.code.to_i != 200
+
+    jd = JSON.parse(res.body)
+
+    if jd.first
+      return jd.first['id'] unless jd.first['id'].empty?
+    end
+
+    return nil
+  end
+
   def move_many_projects(min_amount, project_ids)
     size = 0
     while size < min_amount
@@ -95,7 +116,19 @@ class MoveIt
     end
   end
 
+  def validate_integrity(project, commit)
+    unless commit == get_commit(project.id)
+      puts "Failed validating integrity for id:#[project.id}"
+    end
+  end
+
   def move_project(project)
+    commit = get_commit(project.id)
+    if commit.nil?
+      puts "Cannot obtain a commit id:#{project.id}, skipping..."
+      return
+    end
+
     if @dry_run
       puts "Would move id:#{project.id}"
     else
@@ -106,6 +139,7 @@ class MoveIt
         puts "Failed scheduling id:#{project.id}"
       else
         validate(project)
+        validate_integrity(project, commit) unless commit.nil?
       end
     end
   end
