@@ -1,0 +1,146 @@
+groups:
+  - name: deadman-switch-alerts.yml
+    rules:
+      # Availability for 15 minutes deadman
+      - alert: deadman_15m_missing_series
+        expr: |
+          (deadman_15m_checkin offset 1d)
+          unless
+          deadman_15m_checkin
+        for: 15m
+        labels:
+          rules_domain: general
+          severity: warn
+        annotations:
+          title: "Availability data for the deadman switch of `{{ $labels.resource }}` is missing"
+          description: |
+            The `deadman_15m_checkin` metrics are missing for `{{ $labels.resource }}`. This might indicate that our observability has been affected.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource"
+          grafana_min_zoom_hours: 24
+
+      # Availability for 30 minutes deadman
+      - alert: deadman_30m_missing_series
+        expr: |
+          (deadman_30m_checkin offset 1d)
+          unless
+          deadman_30m_checkin
+        for: 30m
+        labels:
+          rules_domain: general
+          severity: warn
+        annotations:
+          title: "Availability data for the deadman switch of `{{ $labels.resource }}` is missing"
+          description: |
+            The `deadman_30m_checkin` metrics are missing for `{{ $labels.resource }}`. This might indicate that our observability has been affected.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource"
+          grafana_min_zoom_hours: 24
+
+      # Availability for 6 hours deadman
+      - alert: deadman_6h_missing_series
+        expr: |
+          (deadman_6h_checkin offset 1d)
+          unless
+          deadman_6h_checkin
+        for: 6h
+        labels:
+          rules_domain: general
+          severity: warn
+        annotations:
+          title: "Availability data for the deadman switch of `{{ $labels.resource }}` is missing"
+          description: |
+            The `deadman_6h_checkin` metrics are missing for `{{ $labels.resource }}`. This might indicate that our observability has been affected.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource"
+          grafana_min_zoom_hours: 24
+
+      # Availability for 1 day deadman
+      - alert: deadman_1d_missing_series
+        expr: |
+          (deadman_1d_checkin offset 2d)
+          unless
+          deadman_1d_checkin
+        for: 1d
+        labels:
+          rules_domain: general
+          severity: warn
+        annotations:
+          title: "Availability data for the deadman switch of `{{ $labels.resource }}` is missing"
+          description: |
+            The `deadman_1d_checkin` metrics are missing for `{{ $labels.resource }}`. This might indicate that our observability has been affected.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource"
+          grafana_min_zoom_hours: 168
+
+      # Timestamp comparison for 15 minutes deadman
+      - alert: deadman_15m_expired
+        expr: |
+          count(deadman_15m_checkin < time() - 900) by (resource)
+        for: 15m
+        labels:
+          rules_domain: general
+          severity: warn
+        annotations:
+          title: "Deadman switch of `{{ $labels.resource }}` has expired"
+          description: |
+            The deadman switch for `{{ $labels.resource }}` has not been updated in the last 15 minutes.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource"
+          grafana_min_zoom_hours: 24
+
+      # Timestamp comparison for 30 minutes deadman
+      - alert: deadman_30m_expired
+        expr: |
+          count(deadman_30m_checkin < time() - 1800) by (resource)
+        for: 30m
+        labels:
+          rules_domain: general
+          severity: warn
+        annotations:
+          title: "Deadman switch of `{{ $labels.resource }}` has expired"
+          description: |
+            The deadman switch for `{{ $labels.resource }}` has not been updated in the last 30 minutes.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource"
+          grafana_min_zoom_hours: 24
+
+      # Timestamp comparison for 6 hours deadman
+      - alert: deadman_6h_expired
+        expr: |
+          count(deadman_6h_checkin < time() - 21600) by (resource)
+        for: 6h
+        labels:
+          rules_domain: general
+          severity: warn
+        annotations:
+          title: "Deadman switch of `{{ $labels.resource }}` has expired"
+          description: |
+            The deadman switch for `{{ $labels.resource }}` has not been updated in the last 6 hours.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource"
+          grafana_min_zoom_hours: 24
+
+      # Timestamp comparison for 1 day deadman
+      - alert: deadman_1d_expired
+        expr: |
+          count(deadman_1d_checkin < time() - 86400) by (resource)
+        for: 1d
+        labels:
+          rules_domain: general
+          severity: warn
+        annotations:
+          title: "Deadman switch of `{{ $labels.resource }}` has expired"
+          description: |
+            The deadman switch for `{{ $labels.resource }}` has not been updated in the last day.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource"
+          grafana_min_zoom_hours: 168
