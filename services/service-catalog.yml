@@ -752,6 +752,70 @@ services:
       grafana_folder: SRXyrrSmk
       primary_grafana_dashboard: "000000214/gitaly-fleet-overview"
 
+- name: influxdb
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:Influxdb
+  business:
+    requirement: |
+      Until the Rails application is fully migrated to export Prometheus metrics,
+      we still need InfluxDB to consume metrics from the application parts that still
+      emit InfluxDB metrics.
+    customers:
+      - Internally by dashboards.gitlab.net
+      - Publicly by dashboards.gitlab.com
+    business_value: |
+      It receives application metrics that provide useful insights about GitLab.com transactions
+      like durations, method calls, etc...
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/influxdata/influxdb
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://github.com/influxdata/influxdb/blob/master/README.md
+      security: https://docs.influxdata.com/influxdb/v1.7/administration/security/
+    dependencies:
+    configurations:
+      - config_name: InfluxDB
+        location: /etc/influxdb/influxdb.conf
+    chef_roles:
+      - gstg-influxdb
+      - gprd-influxdb
+    scalability:
+      bound: disk
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: green
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/bf44358a81c549827fd8142a4da59d4a
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-influxdb.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      primary_grafana_dashboard:
+      sentry_slug:
+
 - name: mailroom
   tier: sv
   teams: 
