@@ -63,17 +63,17 @@ groups:
   rules:
   - record: gitaly:grpc_server_handling_seconds_bucket:rate1m
     expr: >
-      sum without (instance, grpc_service, grpc_type) (
+      sum without (fqdn, instance, grpc_service, grpc_type) (
         rate(grpc_server_handling_seconds_bucket[1m])
       )
   - record: gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m
     expr: >
-      sum without (instance, grpc_service, grpc_type) (
+      sum without (fqdn, instance, grpc_service, grpc_type) (
         irate(grpc_server_handled_total[1m])
       )
   - record: gitaly:grpc_server_handling_seconds:avg5m
     expr: >
-       avg without (instance, grpc_service, grpc_type) (
+       avg without (fqdn, instance, grpc_service, grpc_type) (
          rate(grpc_server_handling_seconds_sum[5m])
            /
          rate(grpc_server_handling_seconds_count[5m]) > 0
