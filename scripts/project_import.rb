@@ -47,7 +47,7 @@ class SlackWebhook
   end
 
   def self.error(project, error)
-    fire_hook("#{username} started a foreground import of *#{project}*", attachment: error)
+    fire_hook("#{username} error importing *#{project}*", attachment: error)
   end
 
   def self.done(project)
@@ -77,7 +77,7 @@ class LocalProjectService < ::Projects::CreateService
   IMPORT_JOBS_EXPIRATION = 48.hours.to_i
 
   def import_schedule
-    @project.import_state.update_column(:status, 'scheduled')
+    @project.import_state&.update_column(:status, 'scheduled')
 
     if @project.errors.empty?
       job_id = 'custom-import-@project.id-' + SecureRandom.base64
