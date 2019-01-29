@@ -94,7 +94,7 @@ Silencing alerts is helpful to reduce the broken window effect, critical alarms 
 be actionable and if they aren't we should ideally change the alert or if it something temporary
 silence them.
 
-* Go to https://alerts.gitlab.com/#/silences and select "New Silence"
+* Go to https://alerts.(gprd|gstg|ops).gitlab.net/#/silences and select "New Silence"
 * Add matchers for the conditions to target the specific alert, for example:
 
 ```
