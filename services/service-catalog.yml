@@ -1094,11 +1094,11 @@ services:
 - name: version
   tier: sv
   teams:
-    - geo
+    - manage
   label: Service:Version
   business:
     requirement: |
-      We want to communicate to our users on what versions of GitLab are available and whether there are any vulnerable versions that our users should be aware of so that they consider upgrading to a secure version. The original announcement link - https://about.gitlab.com/2015/05/07/version-check/
+      We want to communicate to our users whether they are running a secure version or a vulnerable version. The original announcement link https://about.gitlab.com/2015/05/07/version-check/ talks about how this exactly works.
     customers:
       - GitLab.com customers
       - GitLab Engineering teams
@@ -1117,22 +1117,27 @@ services:
       service: https://gitlab.com/gitlab-com/version-gitlab-com/blob/master/README.md
       security:
     dependencies:
-      - service: postgres
-      - service: redis
-      - service: sidekiq
     configurations:    
-      - config_name: Production
+      - config_name: database
+        location: /home/gitlab-version/version-gitlab-com/config/database.yml
+      - config_name: nginx
+        location: /etc/nginx/nginx.conf
+      - config_name: redis
+        location: /etc/redis/redis.conf
+      - config_name: sidekiq
+        location: /etc/supervisor/conf.d/version-sidekiq.conf
+      - config_name: unicorn
         location: /home/gitlab-version/version-gitlab-com/config/unicorn/production.rb
     chef_roles:
       - version-gitlab-com
       - version-gitlab-walg
     scalability:  
-      note: Per unit work is CPU bound. Therefore, scaling the service horizontally is the right thing to do. However, the next layer of bottleck is postgres DB. This means there would be a point where horizontal scaling no longer becomes an option unless postgres connection size is increased (which would indicated a vertical scaling.)
+      note: Per unit work is CPU bound. Therefore, scaling the service horizontally would be the right thing to do. However, Version is a self-contained app and its DB runs locally on the same host. Therefore, horizontal scaling wouldn't work. Our option for now is to scale up the service vertically.
       bound: cpu      
-      scalable: horizontal
+      scalable: vertical
     security:
       security_reviewed:
-      data_classification: green
+      data_classification: red
       security_incidents:
     logging:
       - name: production.log
