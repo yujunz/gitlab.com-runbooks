@@ -381,6 +381,72 @@ services:
     monitors:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
 
+- name: consul
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:Consul
+  business:
+    requirement: |
+      In order to correctly point pgbouncer to a DB master after a failover occurs, we needed
+      a solution that can do so in an automated fashion. Among different service
+      discovery solutions, we chose Consul.
+    customers:
+      - Internally used by the Patroni cluster to manage leader election and to share common configurations
+      - Internally usable by all other infrastructure nodes within a single environment
+    business_value: |
+      Consul is feature-rich and easy to use. Beside being used by Patroni, it can be used by the Rails application
+      to discover healthy DB replicas. Combined with service discovery, its DNS feature is being considered to be
+      used in a dedicated pgbouncer cluster instead of the old approach of using Consul watchers.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/hashicorp/consul
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture: https://www.consul.io/docs/internals/architecture.html
+      service: https://github.com/hashicorp/consul/blob/master/README.md
+      security: https://www.consul.io/docs/internals/security.html
+    dependencies:
+    configurations:
+      - config_name: Consul server
+        location: /etc/consul/consul.json
+    chef_roles:
+      - gstg-infra-consul
+      - gprd-infra-consul
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: Consul
+        permalink: https://log.gitlab.net/goto/7f15b1f04a0f09fbb18fc62adefe3ed1
+      - name: system
+        permalink: https://log.gitlab.net/goto/a22fbb60e45a3f6d7860908a5427301c
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      primary_grafana_dashboard: "a988f2tmz/consul"
+      sentry_slug:
+
 - name: elk
   tier: inf
   teams:
