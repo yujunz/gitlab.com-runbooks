@@ -1119,22 +1119,24 @@ services:
     dependencies:
       - service: postgres
     configurations:
-      - config_name: Database
+      - config_name: database
         location: /home/gitlab-license/license-gitlab-com/config/database.yml
-      - config_name: Production
+      - config_name: nginx
+        location: /etc/nginx/nginx.conf
+      - config_name: production
         location: /home/gitlab-license/license-gitlab-com/config/environments/production.rb
-      - config_name: Unicorn
+      - config_name: unicorn
         location: /home/gitlab-license/license-gitlab-com/config/unicorn/production.rb
     chef_roles:
       - license-gitlab-com
       - license-gitlab-walg
     scalability:
-      note: Per unit work is CPU bound. Therefore, scaling the service horizontally is the right thing to do. However, the next layer of bottleck is postgres DB. This means there would be a point where horizontal scaling no longer becomes an option unless postgres connection size is increased (which would indicated a vertical scaling.)
+    note: Per unit work is CPU bound. However, given that License is a self-contained app the DB runs locally on the same host. This means scaling horizontally is not an option and we would have to scale it up vertically.
       bound: cpu
-      scalable: horizontal
+      scalable: vertical
     security:
       security_reviewed:
-      data_classification:
+      data_classification: red
       security_incidents:
     logging:
       - name: production.log
