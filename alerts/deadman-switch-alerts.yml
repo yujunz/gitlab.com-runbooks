@@ -17,7 +17,7 @@ groups:
             The `deadman_15m_checkin` metrics are missing for `{{ $labels.resource }}`. This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
-          grafana_variables: "resource"
+          grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 24
 
       # Availability for 30 minutes deadman
@@ -36,7 +36,7 @@ groups:
             The `deadman_30m_checkin` metrics are missing for `{{ $labels.resource }}`. This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
-          grafana_variables: "resource"
+          grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 24
 
       # Availability for 6 hours deadman
@@ -55,7 +55,7 @@ groups:
             The `deadman_6h_checkin` metrics are missing for `{{ $labels.resource }}`. This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
-          grafana_variables: "resource"
+          grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 24
 
       # Availability for 1 day deadman
@@ -74,7 +74,7 @@ groups:
             The `deadman_1d_checkin` metrics are missing for `{{ $labels.resource }}`. This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
-          grafana_variables: "resource"
+          grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 168
 
       # Timestamp comparison for 15 minutes deadman
@@ -91,7 +91,7 @@ groups:
             The deadman switch for `{{ $labels.resource }}` has not been updated in the last 15 minutes.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
-          grafana_variables: "resource"
+          grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 24
 
       # Timestamp comparison for 30 minutes deadman
@@ -108,7 +108,7 @@ groups:
             The deadman switch for `{{ $labels.resource }}` has not been updated in the last 30 minutes.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
-          grafana_variables: "resource"
+          grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 24
 
       # Timestamp comparison for 6 hours deadman
@@ -125,7 +125,7 @@ groups:
             The deadman switch for `{{ $labels.resource }}` has not been updated in the last 6 hours.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
-          grafana_variables: "resource"
+          grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 24
 
       # Timestamp comparison for 1 day deadman
@@ -142,5 +142,5 @@ groups:
             The deadman switch for `{{ $labels.resource }}` has not been updated in the last day.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
-          grafana_variables: "resource"
+          grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 168
