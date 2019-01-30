@@ -1101,7 +1101,7 @@ services:
       We want to communicate to our users whether they are running a secure version or a vulnerable version. The original announcement link https://about.gitlab.com/2015/05/07/version-check/ talks about how this exactly works.
     customers:
       - GitLab.com customers
-      - GitLab Engineering teams
+      - GitLab employees
     business_value: |
         Running a vulnerable version opens our customers to security vulnerabilities. Getting insights into version check in time prompts our customers to consider upgrading their software to a secure version. Therefore, the business value the version check brings is tremendous.
     SLA:
