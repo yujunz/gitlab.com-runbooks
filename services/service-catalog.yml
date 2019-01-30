@@ -1117,7 +1117,6 @@ services:
       service: https://gitlab.com/gitlab-com/license-gitlab-com/blob/master/README.md
       security:
     dependencies:
-      - service: postgres
     configurations:
       - config_name: database
         location: /home/gitlab-license/license-gitlab-com/config/database.yml
