@@ -79,6 +79,14 @@ teams:
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
+- name: verify
+  url: https://about.gitlab.com/handbook/engineering/ops-backend/verify/
+  manager_slug: Elliot
+  slack_channel: g_verify
+  engagement_policy: # Link to doc that talks about engagement
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
 tiers:
 - name: sv
 - name: lb
@@ -445,6 +453,62 @@ services:
   observability:
     monitors:
       primary_grafana_dashboard: "a988f2tmz/consul"
+      sentry_slug:
+
+- name: contributors
+  tier: sv
+  teams:
+    - verify # The service is maintained by Matija Čupić who is part of the Verify team
+  label: Service:Contributors
+  business:
+    requirement: It allows giving credits to GitLab CE contributors.
+    customers:
+      - Available publicly
+    business_value: It is considered a nice interface to show contributors stats.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-com/gitlab-contributors
+    criticality: 4
+    slx:
+    documents:
+      design: https://github.com/rails/rails-contributors/blob/master/doc/design.md
+      architecture:
+      service: https://gitlab.com/gitlab-com/gitlab-contributors/blob/master/README.md
+      security:
+    dependencies:
+    configurations:
+      - config_name: NGINX
+        location: /etc/nginx/sites-available/contributors
+    chef_roles:
+      - contributors-gitlab-com
+    scalability:
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: green
+      security_incidents:
+    logging:
+      - name: Rails
+        permalink: /home/contributors/app/log/production.log
+  infrastructure:
+    provider: do
+    architecture:
+    provisioning: manual
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      primary_grafana_dashboard:
       sentry_slug:
 
 - name: elk
