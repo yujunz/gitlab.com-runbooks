@@ -667,7 +667,7 @@ services:
   label: Service:Git
   business: 
     requirement: |
-      Serves git operation requests over SSH and HTTP.
+      Serves git operation requests over SSH and HTTP. The specific git operations handled are git-upload-pack (pushing), git-receive-pack (pulling), git-upload-archive (creating an archive of a tree), and git-lfs-authenticate (LFS authentication). git-upload-pack is also used in git-ls-remote.
     customers:
       - GitLab.com customers
       - GitLab Employees
