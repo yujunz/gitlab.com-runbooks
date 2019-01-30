@@ -84,7 +84,8 @@ groups:
         for: 15m
         labels:
           rules_domain: general
-          severity: warn
+          pager: pagerduty
+          severity: critical
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
@@ -101,7 +102,8 @@ groups:
         for: 30m
         labels:
           rules_domain: general
-          severity: warn
+          pager: pagerduty
+          severity: critical
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
@@ -118,7 +120,8 @@ groups:
         for: 6h
         labels:
           rules_domain: general
-          severity: warn
+          pager: pagerduty
+          severity: critical
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
@@ -135,7 +138,8 @@ groups:
         for: 1d
         labels:
           rules_domain: general
-          severity: warn
+          pager: pagerduty
+          severity: critical
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
