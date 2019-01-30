@@ -8,7 +8,7 @@ groups:
       channel: production
       severity: warn
     annotations:
-      description: 'File server is more than {{$value}}%. 
+      description: '{{ $labels.fqdn }} is more than {{$value}}%. 
         We need to build new file servers or rebalance repos.'
       runbook: howto/storage-servers.md
       title: Git data file server disk usage is high - {{$value}}
