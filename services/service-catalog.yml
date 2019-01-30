@@ -730,42 +730,47 @@ services:
     - plan 
   label: Service:Git
   business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+    requirement: |
+      Serves git operation requests over SSH and HTTP. The specific git operations handled are git-upload-pack (pushing), git-receive-pack (pulling), git-upload-archive (creating an archive of a tree), and git-lfs-authenticate (LFS authentication). git-upload-pack is also used in git-ls-remote.
+    customers:
+      - GitLab.com customers
+      - GitLab Employees
+    business_value:
+      This is the standard way of working with and managing remote repositories.
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       3 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-shell # SSH
+      - https://gitlab.com/gitlab-org/gitlab-workhorse # HTTP
+    criticality: 3
+    documents:
+      design:
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
+      service: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      security:
+    dependencies:
+      - service: gitaly
+      - service: postgres
+      - service: redis
+    configurations:
+      - config_name: gitlab.rb
+        location: /etc/gitlab/gitlab.rb
+      - config_name: gitlab-shell
+        location: /var/opt/gitlab/gitlab-shel/config.yml
+      - config_name: gitlab-workhorse
+        location: /var/opt/gitlab/gitlab-workhorse/config.toml
+    chef_roles:
+      - gprd-base-fe-git
+      - gstg-base-fe-git
+    scalability:
+      bound: network
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
     logging:
       - name: Rails
         permalink: https://log.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
@@ -779,22 +784,23 @@ services:
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22git%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
         permalink: https://log.gitlab.net/goto/bd680ccb3c21567e47a821bbf52a7c09
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/git.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/git-stuck-processes.md
+    error_budget:
+  observability:
+    monitors:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=git"
 
