@@ -1356,3 +1356,73 @@ services:
       grafana_folder: c7nMugpmz
       primary_grafana_dashboard: "9GOIu9Siz/sidekiq-stats"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
+
+- name: version
+  tier: sv
+  teams:
+    - manage
+  label: Service:Version
+  business:
+    requirement: |
+      We want to communicate to our users whether they are running a secure version or a vulnerable version. The original announcement link https://about.gitlab.com/2015/05/07/version-check/ talks about how this exactly works.
+    customers:
+      - GitLab.com customers
+      - GitLab employees
+    business_value: |
+        Running a vulnerable version opens our customers to security vulnerabilities. Getting insights into version check in time prompts our customers to consider upgrading their software to a secure version. Therefore, the business value the version check brings is tremendous.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-com/version-gitlab-com
+    criticality: 4
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://gitlab.com/gitlab-com/version-gitlab-com/blob/master/README.md
+      security:
+    dependencies:
+    configurations:    
+      - config_name: database
+        location: /home/gitlab-version/version-gitlab-com/config/database.yml
+      - config_name: nginx
+        location: /etc/nginx/nginx.conf
+      - config_name: redis
+        location: /etc/redis/redis.conf
+      - config_name: sidekiq
+        location: /etc/supervisor/conf.d/version-sidekiq.conf
+      - config_name: unicorn
+        location: /home/gitlab-version/version-gitlab-com/config/unicorn/production.rb
+    chef_roles:
+      - version-gitlab-com
+      - version-gitlab-walg
+    scalability:  
+      note: Per unit work is CPU bound. Therefore, scaling the service horizontally would be the right thing to do. However, Version is a self-contained app and its DB runs locally on the same host. Therefore, horizontal scaling wouldn't work. Our option for now is to scale up the service vertically.
+      bound: cpu      
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: production.log
+        permalink: /var/log/version/
+  infrastructure: 
+    provider: aws
+    architecture:
+    provisioning:
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance: https://gitlab.com/gitlab-com/version-gitlab-com/blob/master/README.md
+    runbooks:
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      grafana_folder:
+      primary_grafana_dashboard:
+      sentry_slug:
