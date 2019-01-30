@@ -667,17 +667,19 @@ services:
   label: Service:Git
   business: 
     requirement: |
-      Serves git operation requests over ssh and altssh (mapping of port 443 back to 22). 
+      Serves git operation requests over SSH and HTTP.
     customers:
       - GitLab.com customers
-      - GitLab internal users
+      - GitLab Employees
     business_value:
-      This is the standard way of working with and manaing remote repositories.  
+      This is the standard way of working with and managing remote repositories.
     SLA:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-org/gitlab-shell (ssh), https://gitlab.com/gitlab-org/gitlab-workhorse (http)
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-shell # SSH
+      - https://gitlab.com/gitlab-org/gitlab-workhorse # HTTP
     criticality: 3
     documents:
       design:
@@ -688,10 +690,13 @@ services:
       - service: gitaly
       - service: postgres
       - service: redis
-      - service: stor
     configurations:
       - config_name: gitlab.rb
         location: /etc/gitlab/gitlab.rb
+      - config_name: gitlab-shell
+        location: /var/opt/gitlab/gitlab-shel/config.yml
+      - config_name: gitlab-workhorse
+        location: /var/opt/gitlab/gitlab-workhorse/config.toml
     chef_roles:
       - gprd-base-fe-git
       - gstg-base-fe-git
