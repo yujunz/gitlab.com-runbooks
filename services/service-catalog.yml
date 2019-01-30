@@ -1131,7 +1131,7 @@ services:
       - license-gitlab-com
       - license-gitlab-walg
     scalability:
-    note: Per unit work is CPU bound. However, given that License is a self-contained app the DB runs locally on the same host. This means scaling horizontally is not an option and we would have to scale it up vertically.
+      note: Per unit work is CPU bound. However, given that License is a self-contained app the DB runs locally on the same host. This means scaling horizontally is not an option and we would have to scale it up vertically.
       bound: cpu
       scalable: vertical
     security:
