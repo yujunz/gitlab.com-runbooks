@@ -7,7 +7,6 @@ groups:
           (deadman_15m_checkin offset 1d)
           unless
           deadman_15m_checkin
-        for: 15m
         labels:
           rules_domain: general
           severity: warn
@@ -26,7 +25,6 @@ groups:
           (deadman_30m_checkin offset 1d)
           unless
           deadman_30m_checkin
-        for: 30m
         labels:
           rules_domain: general
           severity: warn
@@ -45,7 +43,6 @@ groups:
           (deadman_6h_checkin offset 1d)
           unless
           deadman_6h_checkin
-        for: 6h
         labels:
           rules_domain: general
           severity: warn
@@ -64,7 +61,6 @@ groups:
           (deadman_1d_checkin offset 2d)
           unless
           deadman_1d_checkin
-        for: 1d
         labels:
           rules_domain: general
           severity: warn
@@ -81,7 +77,6 @@ groups:
       - alert: deadman_15m_expired
         expr: |
           max(deadman_15m_checkin) by (environment, tier, type, resource) < time() - 900
-        for: 15m
         labels:
           rules_domain: general
           pager: pagerduty
@@ -99,7 +94,6 @@ groups:
       - alert: deadman_30m_expired
         expr: |
           max(deadman_30m_checkin) by (environment, tier, type, resource) < time() - 1800
-        for: 30m
         labels:
           rules_domain: general
           pager: pagerduty
@@ -117,7 +111,6 @@ groups:
       - alert: deadman_6h_expired
         expr: |
           max(deadman_6d_checkin) by (environment, tier, type, resource) < time() - 21600
-        for: 6h
         labels:
           rules_domain: general
           pager: pagerduty
@@ -135,7 +128,6 @@ groups:
       - alert: deadman_1d_expired
         expr: |
           max(deadman_15m_checkin) by (environment, tier, type, resource) < time() - 86400
-        for: 1d
         labels:
           rules_domain: general
           pager: pagerduty
