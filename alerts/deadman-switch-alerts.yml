@@ -8,7 +8,6 @@ groups:
           unless
           deadman_15m_checkin
         labels:
-          rules_domain: general
           severity: warn
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
@@ -26,7 +25,6 @@ groups:
           unless
           deadman_30m_checkin
         labels:
-          rules_domain: general
           severity: warn
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
@@ -44,7 +42,6 @@ groups:
           unless
           deadman_6h_checkin
         labels:
-          rules_domain: general
           severity: warn
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
@@ -62,7 +59,6 @@ groups:
           unless
           deadman_1d_checkin
         labels:
-          rules_domain: general
           severity: warn
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
@@ -78,7 +74,6 @@ groups:
         expr: |
           max(deadman_15m_checkin) by (environment, tier, type, resource) < time() - 900
         labels:
-          rules_domain: general
           pager: pagerduty
           severity: critical
         annotations:
@@ -95,7 +90,6 @@ groups:
         expr: |
           max(deadman_30m_checkin) by (environment, tier, type, resource) < time() - 1800
         labels:
-          rules_domain: general
           pager: pagerduty
           severity: critical
         annotations:
@@ -112,7 +106,6 @@ groups:
         expr: |
           max(deadman_6h_checkin) by (environment, tier, type, resource) < time() - 21600
         labels:
-          rules_domain: general
           pager: pagerduty
           severity: critical
         annotations:
@@ -129,7 +122,6 @@ groups:
         expr: |
           max(deadman_1d_checkin) by (environment, tier, type, resource) < time() - 86400
         labels:
-          rules_domain: general
           pager: pagerduty
           severity: critical
         annotations:
