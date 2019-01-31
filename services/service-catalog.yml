@@ -1098,12 +1098,11 @@ services:
   label: Service:License
   business:
     requirement: |
-      Users need to be able to create license based on their subscription.
+      GitLab employees need an interface to manage existing licenses and create custom new ones.
     customers:
-      - GitLab.com customers
-      - Self-managed customers
+      - GitLab Employees
     business_value: |
-      Licenses allow users unlock the corresponding features of GitLab (either .com or self-managed) beyond the core functionalities. Licenses do come with expiration dates. Users get notified in advance regarding upcoming license expiration and this also allows users to plan ahead for their continued subscription.
+      We can easily look up existing licenses as well as create new ones. Having all of these options in a centralized place helps us save time and provide better and faster support to our customers when needed.
     SLA:
       availability:
       response_time:
