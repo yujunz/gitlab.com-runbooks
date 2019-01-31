@@ -1427,49 +1427,46 @@ services:
       primary_grafana_dashboard: "9GOIu9Siz/sidekiq-stats"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
 
-- name: version
+- name: license
   tier: sv
   teams:
     - manage
-  label: Service:Version
+  label: Service:License
   business:
     requirement: |
-      We want to communicate to our users whether they are running a secure version or a vulnerable version. The original announcement link https://about.gitlab.com/2015/05/07/version-check/ talks about how this exactly works.
+      GitLab employees need an interface to manage existing licenses and create custom new ones.
     customers:
-      - GitLab.com customers
-      - GitLab employees
+      - GitLab Employees
     business_value: |
-        Running a vulnerable version opens our customers to security vulnerabilities. Getting insights into version check in time prompts our customers to consider upgrading their software to a secure version. Therefore, the business value the version check brings is tremendous.
+      We can easily look up existing licenses as well as create new ones. Having all of these options in a centralized place helps us save time and provide better and faster support to our customers when needed.
     SLA:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-com/version-gitlab-com
-    criticality: 4
+    project: https://gitlab.com/gitlab-com/license-gitlab-com
+    criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: https://gitlab.com/gitlab-com/version-gitlab-com/blob/master/README.md
+      service: https://gitlab.com/gitlab-com/license-gitlab-com/blob/master/README.md
       security:
     dependencies:
-    configurations:    
+    configurations:
       - config_name: database
-        location: /home/gitlab-version/version-gitlab-com/config/database.yml
+        location: /home/gitlab-license/license-gitlab-com/config/database.yml
       - config_name: nginx
         location: /etc/nginx/nginx.conf
-      - config_name: redis
-        location: /etc/redis/redis.conf
-      - config_name: sidekiq
-        location: /etc/supervisor/conf.d/version-sidekiq.conf
+      - config_name: production
+        location: /home/gitlab-license/license-gitlab-com/config/environments/production.rb
       - config_name: unicorn
-        location: /home/gitlab-version/version-gitlab-com/config/unicorn/production.rb
+        location: /home/gitlab-license/license-gitlab-com/config/unicorn/production.rb
     chef_roles:
-      - version-gitlab-com
-      - version-gitlab-walg
-    scalability:  
-      note: Per unit work is CPU bound. Therefore, scaling the service horizontally would be the right thing to do. However, Version is a self-contained app and its DB runs locally on the same host. Therefore, horizontal scaling wouldn't work. Our option for now is to scale up the service vertically.
-      bound: cpu      
+      - license-gitlab-com
+      - license-gitlab-walg
+    scalability:
+      note: Per unit work is CPU bound. However, given that License is a self-contained app the DB runs locally on the same host. This means scaling horizontally is not an option and we would have to scale it up vertically.
+      bound: cpu
       scalable: vertical
     security:
       security_reviewed:
@@ -1477,8 +1474,8 @@ services:
       security_incidents:
     logging:
       - name: production.log
-        permalink: /var/log/version/
-  infrastructure: 
+        permalink: /home/gitlab-license/license-gitlab-com/log/
+  infrastructure:
     provider: aws
     architecture:
     provisioning:
@@ -1487,7 +1484,7 @@ services:
         access_type:
         reviewed:
   operations:
-    maintenance: https://gitlab.com/gitlab-com/version-gitlab-com/blob/master/README.md
+    maintenance:
     runbooks:
     playbooks:
     error_budget:
