@@ -110,7 +110,7 @@ groups:
       # Timestamp comparison for 6 hours deadman
       - alert: deadman_6h_expired
         expr: |
-          max(deadman_6d_checkin) by (environment, tier, type, resource) < time() - 21600
+          max(deadman_6h_checkin) by (environment, tier, type, resource) < time() - 21600
         labels:
           rules_domain: general
           pager: pagerduty
@@ -127,7 +127,7 @@ groups:
       # Timestamp comparison for 1 day deadman
       - alert: deadman_1d_expired
         expr: |
-          max(deadman_15m_checkin) by (environment, tier, type, resource) < time() - 86400
+          max(deadman_1d_checkin) by (environment, tier, type, resource) < time() - 86400
         labels:
           rules_domain: general
           pager: pagerduty
