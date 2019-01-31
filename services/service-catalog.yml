@@ -79,6 +79,14 @@ teams:
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
+- name: verify
+  url: https://about.gitlab.com/handbook/engineering/ops-backend/verify/
+  manager_slug: Elliot
+  slack_channel: g_verify
+  engagement_policy: # Link to doc that talks about engagement
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
 tiers:
 - name: sv
 - name: lb
@@ -381,6 +389,190 @@ services:
     monitors:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
 
+- name: consul
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:Consul
+  business:
+    requirement: |
+      In order to correctly point pgbouncer to a DB master after a failover occurs, we needed
+      a solution that can do so in an automated fashion. Among different service
+      discovery solutions, we chose Consul.
+    customers:
+      - Internally used by the Patroni cluster to manage leader election and to share common configurations
+      - Internally usable by all other infrastructure nodes within a single environment
+    business_value: |
+      Consul is feature-rich and easy to use. Beside being used by Patroni, it can be used by the Rails application
+      to discover healthy DB replicas. Combined with service discovery, its DNS feature is being considered to be
+      used in a dedicated pgbouncer cluster instead of the old approach of using Consul watchers.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/hashicorp/consul
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture: https://www.consul.io/docs/internals/architecture.html
+      service: https://github.com/hashicorp/consul/blob/master/README.md
+      security: https://www.consul.io/docs/internals/security.html
+    dependencies:
+    configurations:
+      - config_name: Consul server
+        location: /etc/consul/consul.json
+    chef_roles:
+      - gstg-infra-consul
+      - gprd-infra-consul
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: Consul
+        permalink: https://log.gitlab.net/goto/7f15b1f04a0f09fbb18fc62adefe3ed1
+      - name: system
+        permalink: https://log.gitlab.net/goto/a22fbb60e45a3f6d7860908a5427301c
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      primary_grafana_dashboard: "a988f2tmz/consul"
+      sentry_slug:
+
+- name: contributors
+  tier: sv
+  teams:
+    - verify # The service is maintained by Matija Čupić who is part of the Verify team
+  label: Service:Contributors
+  business:
+    requirement: It allows giving credits to GitLab CE contributors.
+    customers:
+      - Available publicly
+    business_value: It is considered a nice interface to show contributors stats.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-com/gitlab-contributors
+    criticality: 4
+    slx:
+    documents:
+      design: https://github.com/rails/rails-contributors/blob/master/doc/design.md
+      architecture:
+      service: https://gitlab.com/gitlab-com/gitlab-contributors/blob/master/README.md
+      security:
+    dependencies:
+    configurations:
+      - config_name: NGINX
+        location: /etc/nginx/sites-available/contributors
+    chef_roles:
+      - contributors-gitlab-com
+    scalability:
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: green
+      security_incidents:
+    logging:
+      - name: Rails
+        permalink: /home/contributors/app/log/production.log
+  infrastructure:
+    provider: do
+    architecture:
+    provisioning: manual
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      primary_grafana_dashboard:
+      sentry_slug:
+
+- name: elk
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:ELK
+  business:
+    requirement: |
+      Managing an Elasticsearch cluster in-house turned out to be not an easy undertaking,
+      so we're turned to a hosted solution that can handle our volume of logs and provide
+      professional support for it.
+    customers:
+      - Used internally by GitLab teams
+    business_value: |
+      Allows visibility into the infrastructure, aides in debugging issues and
+      incidents handling.
+    SLA:
+      availability:
+      response_time: 4 hours (critical), 1 day (L2), 2 days (L3)
+  technical:
+    project:
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+      security:
+    dependencies:
+    configurations:
+      - config_name: Elasticsearch config
+        location: https://cloud.elastic.co/region/gcp-us-central1/deployment/022d92a4ba7ff6fdacc2a7182948cb0a/edit # Under "User settings overrides"
+    chef_roles:
+    scalability:
+      bound: disk
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: Elasticsearch
+        permalink: https://cloud.elastic.co/region/gcp-us-central1/deployment/022d92a4ba7ff6fdacc2a7182948cb0a/elasticsearch/logs
+  infrastructure:
+    provider: gcp # managed by Elastic Cloud (elastic.co/cloud)
+    architecture:
+    provisioning:
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/elk_mapper_parsing_exception.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/elastic-cloud.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      primary_grafana_dashboard: "USVj3qHmk/logging"
+      sentry_slug:
+
 - name: web
   tier: sv
   teams: 
@@ -461,6 +653,71 @@ services:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=web"
 
+- name: fe-lb
+  tier: lb
+  teams:
+    - infrastructure
+  label: Service:HAProxy
+  business:
+    requirement: |
+      Load balancers offered by cloud providers has limited configurations and doesn't
+      allow for lots of flexible setups, hence we use HAProxy to avoid those shortcomings.
+    customers:
+      - GitLab.com customers
+    business_value: |
+      HAProxy is invisible to customers but it provides us high levels of operational flexibility,
+      like rate limiting, blocking access based on different criteria, ease of removing backend from
+      balancing pools for maintenance, customizable logging, and many more.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-cookbooks/gitlab-haproxy
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
+      service: https://cbonte.github.io/haproxy-dconv/1.7/intro.html
+      security:
+    dependencies:
+      - service: api
+      - service: git
+      - service: web
+    configurations:
+      - config_name: haproxy.cfg
+        location: /etc/haproxy/haproxy.cfg
+    chef_roles:
+      - gprd-base-lb-fe
+      - gstg-base-lb-fe
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: haproxy
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&organizationId=769164969568&interval=PT1H&resource=gce_instance%2Finstance_id%2F1812745190666049211&scrollTimestamp=2019-01-22T15:27:18.915253748Z&advancedFilter=resource.type%3D%22gce_instance%22%0Alabels.tag%3D%22haproxy%22
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance: https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/haproxy.md
+    runbooks: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/haproxy.md
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: N9YSt6Siz
+      primary_grafana_dashboard: "ZOOh_aNik/haproxy"
+
 - name: git
   tier: sv
   teams: 
@@ -473,42 +730,47 @@ services:
     - plan 
   label: Service:Git
   business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+    requirement: |
+      Serves git operation requests over SSH and HTTP. The specific git operations handled are git-upload-pack (pushing), git-receive-pack (pulling), git-upload-archive (creating an archive of a tree), and git-lfs-authenticate (LFS authentication). git-upload-pack is also used in git-ls-remote.
+    customers:
+      - GitLab.com customers
+      - GitLab Employees
+    business_value:
+      This is the standard way of working with and managing remote repositories.
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       3 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-shell # SSH
+      - https://gitlab.com/gitlab-org/gitlab-workhorse # HTTP
+    criticality: 3
+    documents:
+      design:
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
+      service: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      security:
+    dependencies:
+      - service: gitaly
+      - service: postgres
+      - service: redis
+    configurations:
+      - config_name: gitlab.rb
+        location: /etc/gitlab/gitlab.rb
+      - config_name: gitlab-shell
+        location: /var/opt/gitlab/gitlab-shel/config.yml
+      - config_name: gitlab-workhorse
+        location: /var/opt/gitlab/gitlab-workhorse/config.toml
+    chef_roles:
+      - gprd-base-fe-git
+      - gstg-base-fe-git
+    scalability:
+      bound: network
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
     logging:
       - name: Rails
         permalink: https://log.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
@@ -522,204 +784,278 @@ services:
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22git%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
         permalink: https://log.gitlab.net/goto/bd680ccb3c21567e47a821bbf52a7c09
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/git.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/git-stuck-processes.md
+    error_budget:
+  observability:
+    monitors:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=git"
 
 - name: gitaly
   tier: stor
-  teams: 
+  teams:
     - gitaly
   label: Service:Gitaly
-  business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+  business:
+    requirement: |
+      It is needed to eliminate the latencies of doing git operations
+      over NFS, and to avoid bringing GitLab.com down when one of the
+      NFS nodes is down.
+    customers:
+      - Internally used by GitLab workers
+    business_value: |
+      It considerably faster than using git-over-NFS, allows for better
+      visibility over git operations, and could be expanded to support caching
+      and HA.
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       2 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-org/gitaly
+    criticality: 2
+    slx:
+    documents:
+      design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/DESIGN.md
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      service: https://gitlab.com/gitlab-org/gitaly/blob/master/README.md
+      security:
+    dependencies:
+      - service: gitaly
+      - service: fe-lb # through gitlab-shell
+      - service: redis # through gitlab-shell
+    configurations:
+      - config_name: Gitaly config
+        location: /var/opt/gitlab/gitaly/config.toml
+      - config_name: gitlab-shell config
+        location: /var/opt/gitlab/gitlab-shell/config.yml
+    chef_roles:
+      - gstg-base-stor-gitaly
+      - gprd-base-stor-gitaly
+    scalability:
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
     logging:
       - name: Gitaly
         permalink: https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d
+      - name: gitlab-shell
+        permalink: https://log.gitlab.net/goto/ba97a9597863f0df1c3b894b44eb1db6
       - name: system
         permalink: https://log.gitlab.net/goto/7cfb513706cffc0789ad0842674e108a
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-pubsub.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-latency.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-high-cpu.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-error-rate.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-rate-limiting.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-unusual-activity.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-version-mismatch.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gitaly-profiling.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gracefully-restart-gitaly-ruby.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gitaly-debugging-tool.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
       sentry_slug: gitlab/gitaly-production
       grafana_folder: SRXyrrSmk
       primary_grafana_dashboard: "000000214/gitaly-fleet-overview"
 
+- name: influxdb
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:Influxdb
+  business:
+    requirement: |
+      Until the Rails application is fully migrated to export Prometheus metrics,
+      we still need InfluxDB to consume metrics from the application parts that still
+      emit InfluxDB metrics.
+    customers:
+      - Internally by dashboards.gitlab.net
+      - Publicly by dashboards.gitlab.com
+    business_value: |
+      It receives application metrics that provide useful insights about GitLab.com transactions
+      like durations, method calls, etc...
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/influxdata/influxdb
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://github.com/influxdata/influxdb/blob/master/README.md
+      security: https://docs.influxdata.com/influxdb/v1.7/administration/security/
+    dependencies:
+    configurations:
+      - config_name: InfluxDB
+        location: /etc/influxdb/influxdb.conf
+    chef_roles:
+      - gstg-influxdb
+      - gprd-influxdb
+    scalability:
+      bound: disk
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: green
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/bf44358a81c549827fd8142a4da59d4a
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-influxdb.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      primary_grafana_dashboard:
+      sentry_slug:
+
 - name: mailroom
   tier: sv
-  teams: 
-    - create 
+  teams:
+    - create
     - distribution
     - geo
     - gitaly
-    - gitter 
+    - gitter
     - manage
-    - plan 
+    - plan
   label: Service:Mailroom
-  business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+  business:
+    requirement: It is needed to allow responding to issues/MR through email replies.
+    customers:
+      - GitLab.com customers
+    business_value: It is convenient to users to respond to issues/MRs through email replies.
+
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       3 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/tpitale/mail_room
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://github.com/tpitale/mail_room/blob/master/README.md
+      security:
+    dependencies:
+      - service: redis
+    configurations:
+      - config_name: MailRoom
+        location: /opt/gitlab/embedded/service/gitlab-rails/config/mail_room.yml
+    chef_roles:
+      - gstg-base-be-mailroom
+      - gprd-base-be-mailroom
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
     logging:
       - name: system
         permalink: https://log.gitlab.net/goto/0ce3bf67abafcfc0f81f3d6e7a066912
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
-      primary_grafana_dashboard: 
-      sentry_slug: 
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      primary_grafana_dashboard:
+      sentry_slug:
 
 - name: pages
   tier: sv
-  teams: 
+  teams:
     - release
   label: Service:Pages
-  business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+  business:
+    requirement: |
+      It allows publishing static web sites in a few minutes, with the ability to set
+      custom domain(s) and TLS certificates.
+    customers:
+      - GitLab.com customers
+      - Internally for sites like docs.gitlab.com and design.gitlab.com
+    business_value: |
+      It allows hosting static websites on GitLab.com for free, which can be an incentive
+      for new users to join and use GitLab.com.
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       3 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project: https://gitlab.com/gitlab-org/gitlab-pages
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://gitlab.com/gitlab-org/gitlab-pages/blob/master/README.md
+      security:
+    dependencies:
+    configurations:
+    chef_roles:
+      - gstg-base-fe-web-pages
+      - gprd-base-fe-web-pages
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: green
+      security_incidents:
     logging:
       - name: Pages
         permalink: https://log.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
@@ -727,25 +1063,25 @@ services:
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22&advancedFilter=labels.tag%3D%22haproxy%22%0Alabels.%22compute.googleapis.com%2Fresource_name%22%3A%22fe-pages-%22
       - name: system
         permalink: https://log.gitlab.net/goto/3384c89c5a828db866d2fa8ec86cd97f
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-pages.md
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
       grafana_folder: v2ZhpeSik
       primary_grafana_dashboard: "_IQB_rSmk/pages"
-  
+
 - name: pgbouncer
   tier: db
   teams: 
