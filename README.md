@@ -145,6 +145,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Access hosts in GCP](howto/access-gcp-hosts.md)
 
 ### Restore Backups
+* [Community Project Restoration](howto/community-project-restore.md)
 * [Database Backups and Replication with Encrypted WAL-E](howto/using-wale-gpg.md)
 * [Work with Azure Snapshots](howto/azure-snapshots.md)
 * [Work with GCP Snapshots](howto/gcp-snapshots.md)
