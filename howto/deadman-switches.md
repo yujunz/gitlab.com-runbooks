@@ -14,7 +14,7 @@ The current check-ins for deadman switches can be visualized on this dashboard: 
 
 Creating a new deadman switch is the same process as checking-in/updating. This is driven by convention over configuration. It is enough to publish a metric with an arbitrary `resource` label, specifying the resource that the alert reports on. This could be a URL to a repository and the job name in case of a scheduled pipeline, but must not include data, that changes between invocations (e.g. pipeline or job IDs). In addition to that the `type` and `tier` labels are required, as per all our alerts. These should correspond with the type and tier of the underlying service, that the deadman switch is monitoring.
 
-Currently implemented intervals are 15m, 30m 6h and 1d. Be aware, that is is not easily possible to change the repoting time, without triggering the old alerts. In case of changes the old alerts should be silenced.
+Currently implemented intervals are 15m, 30m 6h and 1d. Be aware, that is is not easily possible to change the reporting time, without triggering the old alerts. In case of changes the old alerts should be silenced.
 
 The metric to be exported will be `deadman_<interval>_checkin` (with the labels mentioned above) and has to be a valid unix-timestamp in seconds.
 
@@ -30,7 +30,7 @@ EOF
 | Variable | Description |
 | -------- | ----------- |
 | `GATEWAY` | The hostname/IP of the pushgateway to push to (check firewalls, stay within environment if possible) |
-| `INTERVAL` | THe targeted report interval (selection of `15m`, `30m`, `6h` or `1d`) |
+| `INTERVAL` | The targeted report interval (selection of `15m`, `30m`, `6h` or `1d`) |
 | `RESOURCE` | The resource identifier to include in alerts. Do not include data, that changes between invocations (such as pipeline or job IDs for example) |
 | `TIER` | The tier of the monitored service (e.g. `db`) |
 | `TYPE` | The tpye of the monitored service (e.g. `postgres`)
