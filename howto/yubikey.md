@@ -93,7 +93,7 @@ gpg/card> quit
 
 We want to be able to keep a backup of the GPG master key offline, encrypted,
 and stored in a super-secret-hiding-place. We do this by making the gpg_config
-location on a virtual disk that we mount locally. This can afford two benefits.
+location on a virtual disk that we mount locally. This can afford two benefits:
 * The virtual disk can be copied to a secure location for recovery (such as on
   a USB key).
 * The virtual disk has a password and must be mounted locally for access to
@@ -518,9 +518,9 @@ echo
 
 On Linux modify the `gpg-agent --daemon` with the following: `gpg-connect-agent reloadagent /bye`
 
-## Optional: Generate Your SSH Public Key
+## Generate Your SSH Public Key
 
-**Note:** This step should not be necessary assuming the `gpg-agent` is running and configured.
+This generates a public key that you can paste into GitLab or use as a public key for SSH access to systems via Chef.
 
 ```bash
 > gpg --export-ssh-key FAEFD87E
