@@ -1350,52 +1350,58 @@ services:
 
 - name: sidekiq
   tier: sv
-  teams: 
-    - create 
+  teams:
+    - create
     - distribution
     - geo
     - gitaly
-    - gitter 
+    - gitter
     - manage
     - plan
   label: Service:Sidekiq
-  business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+  business:
+    requirement: |
+      It is required as some actions takes considerable amount of time
+      and it can't be done as part of a synchronous HTTP request, so it has to be done
+      in the background.
+    customers:
+      - GitLab.com customers
+      - Internally for long-running data migrations
+    business_value: |
+      It sends emails, processes git push requests, import repositories, and many more.
+      # For a list of available background workers, see https://gitlab.com/gitlab-org/gitlab-ee/tree/master/app/workers
+      # and https://gitlab.com/gitlab-org/gitlab-ee/tree/master/ee/app/workers
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       3 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-ce
+      - https://gitlab.com/gitlab-org/gitlab-ee
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      service: https://github.com/mperham/sidekiq/blob/master/README.md
+      security:
+    dependencies:
+      - service: postgres
+      - service: gitaly
+      - service: redis
+    configurations:
+      - config_name: gitlab.rb
+        location: /etc/gitlab/gitlab.rb
+    chef_roles:
+      - gstg-base-be-sidekiq
+      - gprd-base-be-sidekiq
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
     logging:
       - name: Sidekiq
         permalink: https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
@@ -1407,22 +1413,24 @@ services:
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22sidekiq%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
         permalink: https://log.gitlab.net/goto/72d0f3fdfd8db18db9800cc04d8b6f55
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/sidekiq_exception_count.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/sidekiq_stats_no_longer_showing.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/large-sidekiq-queue.md
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
       grafana_folder: c7nMugpmz
       primary_grafana_dashboard: "9GOIu9Siz/sidekiq-stats"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
