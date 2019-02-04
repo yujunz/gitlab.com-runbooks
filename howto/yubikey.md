@@ -23,7 +23,9 @@ at the same time.
 ## Changing the Default PIN Entries on the Yubikey PIV Card
 
 By default the user PIN is `123456` and the ADMIN PIN is `12345678`, keep this
-in mind when changing the PINS when it asks for the current PIN
+in mind when changing the PINS when it asks for the current PIN. The user pin
+is what you will use most of the time for confirming access via the keys stored
+on the Yubikey.
 
 ```bash
 
@@ -89,7 +91,14 @@ gpg/card> quit
 
 ## Master Key Storage
 
-We want to keep the master key offline, encrypted, and stored in a super-secret-hiding-place.
+We want to be able to keep a backup of the GPG master key offline, encrypted,
+and stored in a super-secret-hiding-place. We do this by making the gpg_config
+location on a virtual disk that we mount locally. This can afford two benefits.
+* The virtual disk can be copied to a secure location for recovery (such as on
+  a USB key).
+* The virtual disk has a password and must be mounted locally for access to
+  the gpg_config location by gpg.
+
 We'll facilitate this by creating an encrypted portable drive on a USB drive.
 For the purpose of this tutorial our USB drive will be called 'transit' and our
 encrypted volume will be called 'GitLab'.
