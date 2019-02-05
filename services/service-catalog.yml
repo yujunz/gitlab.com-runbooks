@@ -1226,8 +1226,8 @@ services:
     error_budget:  
   observability: 
     monitors: 
-      grafana_folder: jYXDze5mk
-      primary_grafana_dashboard: "000000142/postgresql-overview"
+      grafana_folder: RNfEDpLmz
+      primary_grafana_dashboard: "000000144/postgresql-overview"
 
 - name: redis
   tier: db
