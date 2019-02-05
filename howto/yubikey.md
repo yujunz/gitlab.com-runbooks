@@ -431,11 +431,12 @@ Your decision? 5
 Do you really want to set this key to ultimate trust? (y/N) y
 gpg> quit
 ```
+## Copy the gpg.conf settings you need
 
-## Copy the MOUNTPOINT files to our every day use location (~/.gnupg)
+Earlier in this howto, you edited a gpg.conf file in your mounted encrypted drive. You should copy that file (or it's contents) into the gpg.conf file in your ~/.gnupg directory.
 
-```
-cp -avi $MOUNTPOINT/gpg_config/* ~/.gnupg/
+```bash
+cp $MOUNTPOINT/gpg_config/gpg.conf ~/.gnupg/
 ```
 
 ## Ensure proper options are set in gpg-agent.conf
@@ -523,6 +524,7 @@ echo
 ```
 
 On Linux modify the `gpg-agent --daemon` with the following: `gpg-connect-agent reloadagent /bye`
+
 
 ## Generate Your SSH Public Key
 
