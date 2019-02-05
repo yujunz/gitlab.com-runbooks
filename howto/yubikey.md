@@ -3,13 +3,14 @@
 ## Requirements
 
 * `gpg2`
-* `yubikey-personalization`
+* `yubikey-personalization` for Yubikey 4
+* `ykman` for Yubikey 5 (on macOS that's `brew install ykman`, on Linux the pkg name is `yubikey-manager`. ykman manual can be found [here](https://support.yubico.com/support/solutions/articles/15000012643-yubikey-manager-cli-ykman-user-manual))
 
 For this guide, when using linux, substitute `gpg` with `gpg2`
 
 Make sure your Yubikey is inserted - and let's get ready to have some fun!
 
-Let's set the module to behave like we want:
+**Note:** Yubikey 5 comes with all modes enabled by default, you can confirm that with `ykman info`. Yubikey 4 does not, so let's set the module to behave like we want:
 
 ```bash
 ykpersonalize -m86
@@ -17,8 +18,6 @@ ykpersonalize -m86
 
 This setting lets us use the Yubikey as both a SmartCard and an OTP device
 at the same time.
-
-**Note:** The above command is not necessary on a YubiKey 5 (and won't work)
 
 ## Changing the Default PIN Entries on the Yubikey PIV Card
 
