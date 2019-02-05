@@ -69,6 +69,23 @@ groups:
           grafana_variables: "resource,environment,tier,type"
           grafana_min_zoom_hours: 168
 
+      # Availability for 1 day 6 hours deadman
+      - alert: deadman_1d6h_missing_series
+        expr: |
+          (deadman_1d6h_checkin offset 2d)
+          unless
+          deadman_1d6h_checkin
+        labels:
+          severity: warn
+        annotations:
+          title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
+          description: |
+            The `deadman_1d_checkin` metrics are missing for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`). This might indicate that our observability has been affected.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource,environment,tier,type"
+          grafana_min_zoom_hours: 168
+
       # Timestamp comparison for 15 minutes deadman
       - alert: deadman_15m_expired
         expr: |
@@ -128,6 +145,22 @@ groups:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
             The deadman switch for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`) has not been updated in the last day.
+          grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
+          grafana_panel_id: "2"
+          grafana_variables: "resource,environment,tier,type"
+          grafana_min_zoom_hours: 168
+
+      # Timestamp comparison for 1 day 6 hours deadman
+      - alert: deadman_1d6h_expired
+        expr: |
+          max(deadman_1d6h_checkin) by (environment, tier, type, resource) < time() - 108000
+        labels:
+          pager: pagerduty
+          severity: critical
+        annotations:
+          title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
+          description: |
+            The deadman switch for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`) has not been updated in the last day and 6 hours.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
