@@ -236,7 +236,7 @@ certificate in the event that we lose the password or the key is compromised.
 
 **Note:** In some versions you do not see the key id in the gpg output. You can use your email here.
 
-**Note:** This is most likely not necessary in Linux since the revocation certificate is generated automatically as per the output line from previous command: `gpg: revocation certificate stored as '/.../GitLab/gpg_config/openpgp-revocs.d/<key_id>.rev'`
+**Note:** This is most likely not necessary if you are using GPG 2.1 or later since the revocation certificate is generated automatically as per the output line from previous command: `gpg: revocation certificate stored as '/.../GitLab/gpg_config/openpgp-revocs.d/<key_id>.rev'`
 
 ```bash
 > gpg --gen-revoke FAEFD83E > /Volumes/GitLab/gpg_config/FAEFD83E-revocation-certificate.asc
@@ -430,6 +430,12 @@ Please decide how far you trust this user to correctly verify other users' keys
 Your decision? 5
 Do you really want to set this key to ultimate trust? (y/N) y
 gpg> quit
+```
+
+## Copy the MOUNTPOINT files to our every day use location (~/.gnupg)
+
+```
+cp -avi $MOUNTPOINT/gpg_config/* ~/.gnupg/
 ```
 
 ## Ensure proper options are set in gpg-agent.conf
