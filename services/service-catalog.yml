@@ -1093,7 +1093,7 @@ services:
     customers:  
       - GitLab.com customers
     business_value:   |
-      It allows pooling and reusing client connections to reduce the the number of database conections.
+      It allows pooling and reusing server connections to reduce the number of database conections.
     SLA:
       availability:    # Availability SLA promised to customers
       response_time:   # Response time for inquiries or issues 
@@ -1108,10 +1108,10 @@ services:
       service:  https://pgbouncer.github.io/features.html
       security: 
     dependencies: 
-      - service:  postgresql
+      - service:  postgres
     configurations:    # A service might have one or more configs
-      - config_name:  patroni.yml
-        location:  /var/opt/gitlab/patroni/patroni.yml
+      - config_name:  pgbouncer.ini
+        location:  /var/opt/gitlab/pgbouncer/pgbouncer.ini
     chef_roles:
       - gprd-base-db-pgbouncer-common
       - gprd-base-db-pgbouncer
@@ -1145,7 +1145,7 @@ services:
     playbooks:  
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pgbouncer.md
 
-    error_budget:      # Link to error budget document for this service 
+    error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability: 
     monitors: 
       grafana_folder: RNfEDpLmz
