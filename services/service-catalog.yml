@@ -1178,7 +1178,7 @@ services:
       service:  https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
     dependencies:     
-      - service: prometheus  
+      - service: consul  
     configurations:   
       - config_name:  postgresql.conf
         location:  /var/opt/gitlab/postgresql/postgresql.conf
