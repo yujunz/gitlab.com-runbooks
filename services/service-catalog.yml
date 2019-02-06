@@ -401,6 +401,7 @@ services:
       discovery solutions, we chose Consul.
     customers:
       - Internally used by the Patroni cluster to manage leader election and to share common configurations
+      - Internally used by WAL-G to do basebackup on one slave node in the Patroni cluster
       - Internally usable by all other infrastructure nodes within a single environment
     business_value: |
       Consul is feature-rich and easy to use. Beside being used by Patroni, it can be used by the Rails application
@@ -1154,38 +1155,43 @@ services:
     - infrastructure
   label: Service:Postgres
   business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+    requirement:  We use Postgres as our backend database.
+    customers:      
+      - GitLab.com customers
+    business_value: |
+      PostgreSQL is a powerful, open source object-relational database system 
+      that uses and extends the SQL language combined with many features 
+      that safely store and scale the most complicated data workloads.
+      We use Patroni as the high-availability solution, PGBouncer as the pooling solution, and WAL-G as the backup solution.
+
     SLA:
       availability:    # Availability SLA promised to customers
       response_time:   # Response time for inquiries or issues 
                        # relating this service
   technical: 
-    project:           # GitLab project link 
+    project:  https://github.com/postgres/postgres
     criticality:       1
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
+    slx:  
     documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
+      design: 
+      architecture:   
+      service:  https://www.postgresql.org/docs/9.6/index.html
+      security: https://www.postgresql.org/support/security/
     dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
+      - service:       
+    configurations:   
+      - config_name:  postgresql.conf
+        location:  /var/opt/gitlab/postgresql/postgresql.conf
+      - config_name:  pg_ident.conf
+        location:  /var/opt/gitlab/postgresql/pg_ident.conf
+      - config_name:  patroni.yml
+        location:  /var/opt/gitlab/patroni/patroni.yml
+    chef_roles:
+      - gstg-base-db-patroni
+      - gprd-base-db-patroni
     scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
+      bound:  cpu, memory, disk
+      scalable: horizontal or vertical. We can horizontally scale by adding more read only replicas to serve read oprations. However, for serving read/write operations we may need to scale vertically.
     security: 
       security_reviewed: # If security team reviewed the service (yes or no or n/a)
       data_classification: # What level of data does this service handle?
@@ -1196,23 +1202,32 @@ services:
       - name: system
         permalink: https://log.gitlab.net/goto/3669d551a595a3a5cf1e9318b74e6c22
   infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+    provider:  gcp
+    architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+    provisioning:  terraform      
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:  
+        access_type:   
+        reviewed: 
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
+    maintenance:  
+    runbooks:  
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/patroni-management.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/postgres.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-wale-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-walg-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pg-ha.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-disk-space.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-rebuild-trigram-indexes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-replica.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-switchover.md
+    playbooks: 
+    error_budget:  
   observability: 
     monitors: 
-      grafana_folder: jYXDze5mk
-      primary_grafana_dashboard: "000000142/postgresql-overview"
+      grafana_folder: RNfEDpLmz
+      primary_grafana_dashboard: "000000144/postgresql-overview"
 
 - name: redis
   tier: db
