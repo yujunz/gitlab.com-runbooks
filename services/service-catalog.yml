@@ -1089,51 +1089,50 @@ services:
     - infrastructure
   label: Service:pgbouncer
   business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+    requirement:  We use PgBouncer as the connection pooler for PostgreSQL
+    customers:  
+      - GitLab.com customers
+    business_value:   |
+      It allows pooling and reusing server connections to reduce the number of database conections.
     SLA:
       availability:    # Availability SLA promised to customers
       response_time:   # Response time for inquiries or issues 
                        # relating this service
   technical: 
-    project:           # GitLab project link 
-    criticality:       1
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
+    project:   https://github.com/pgbouncer/pgbouncer
+    criticality:  1
+    slx:  
     documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
+      design:   
+      architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+      service:  https://pgbouncer.github.io/features.html
+      security: 
     dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
+      - service:  postgres
     configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
+      - config_name:  pgbouncer.ini
+        location:  /var/opt/gitlab/pgbouncer/pgbouncer.ini
+    chef_roles:
+      - gprd-base-db-pgbouncer-common
+      - gprd-base-db-pgbouncer
+      - gstg-base-db-pgbouncer-common
+      - gstg-base-db-pgbouncer
     scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
+      bound:  cpu
+      scalable: vertical
     security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      security_reviewed: 
+      data_classification: 
+      security_incidents:  
     logging:
       - name: pgbouncer
-        permalink: https://log.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
+        permalink: https://log.gitlab.net/goto/3fb9391e5ef07b47aac2fce6fda175d9
       - name: system
         permalink: https://log.gitlab.net/goto/ae311f6f133cc1c45b62541977081043
   infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+    provider:   gcp
+    architecture:   https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+    provisioning:  terraform      
     accesses:
       - account_name:  # User or system account that has access to the service 
                        # components in the infra provider
@@ -1141,13 +1140,16 @@ services:
         reviewed:      # Is it reviewed and approved?
   operations:
     maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
+    runbooks:   
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/pgbouncer.md
+    playbooks:  
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pgbouncer.md
+
+    error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability: 
     monitors: 
-      grafana_folder: jYXDze5mk
-      primary_grafana_dashboard: "PwlB95Jmk/pgbouncer-overview"
+      grafana_folder: RNfEDpLmz
+      primary_grafana_dashboard: "PwlB97Jmk/pgbouncer-overview"
 
 - name: postgres
   tier: db
@@ -1174,7 +1176,7 @@ services:
     slx:  
     documents: 
       design: 
-      architecture:   
+      architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
       service:  https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
     dependencies:     
