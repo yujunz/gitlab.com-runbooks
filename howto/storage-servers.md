@@ -19,19 +19,14 @@ You will need to manually create the directory.
 ## Deploying
 
 Once the servers have been configured as above, you will need to tell the GitLab
-application about them. This is done via updates to the `gprd-base` and `gprd-base-stor-nfs`
+application about them. This is done via updates to the `gprd-base` and `gprd-base-stor-gitaly`
 role.
 
 The `gprd-base` role will need to be updated with the Gitaly storage targets
 as seen in [this MR](https://dev.gitlab.org/cookbooks/chef-repo/merge_requests/2419/diffs#d38d00ba2c0e0e3043780492adc276b5b9cf6b32_421_446).
 Please note, you no longer need to add mount data, only the Gitaly storage targets.
-You will also need to add the new servers to the `gprd-base-stor-nfs` role otherwise Gitaly
+You will also need to add the new servers to the `gprd-base-stor-gitaly` role otherwise Gitaly
 will not know about the new servers which will cause strange errors.
-
-After updating chef, the fleet should update the application itself. If the rollout is successful,
-you will need to send a HUP to the sidekiq-cluster processes on our sidekiq fleet. For whatever reason, sidekiq requires
-a HUP after updating the storage locations in `gitlab.rb` but `gitlab-ctl reconfigure` does not do that for you. This led to
-some interesting and obscure failures when we most recently added storage servers.
 
 Create a NEW project and use the API to [move it to a new storage server](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/sharding.md) before pushing any data to it.
 Now that the project is moved, push some data to it and ensure that everything works. Namely, be sure that the
