@@ -12,19 +12,20 @@ groups:
     * backends: `pages_http`, `pages_https`
 * `<env>-base-lb-fe`: HTTP/HTTPS, SSH for gitlab.com
     * frontends: `http`, `https`, `ssh`
-    * backends: `api`, `https_git`, `websocket`, `canary_web`, `web`
-* `<env>-base-lb-altssh`: TCP port 443 for altssh.gitlab.com 
+    * backends: `api`, `https_git`, `websocket`, `web`, `canary_web`,
+      `canary_api`, `canary_https_git`, `canary_registry`
+* `<env>-base-lb-altssh`: TCP port 443 for altssh.gitlab.com
     * frontends: `altssh`
     * backends: `altssh`
 * `<env>-base-lb-registry`: HTTP/HTTPS for registry.gitlab.com
     * frontends: `http', `https`
     * backends: `registry`
 
-Explanation: 
-* Each `<env>-base-lb-*` above represents a Chef role since we use Chef to 
+Explanation:
+* Each `<env>-base-lb-*` above represents a Chef role since we use Chef to
 configure our nodes. Browse to `chef-repo/roles` directory and you will see them.
-* The references after the _frontends_ and _backends_ refer to _node_ concept in 
-HAProxy configuration. 
+* The references after the _frontends_ and _backends_ refer to _node_ concept in
+HAProxy configuration.
 
 ```
      client request
@@ -50,7 +51,7 @@ HAProxy configuration.
 * HAProxy frontends define how requests are forwarded to backends
 * Backends configure a list of servers for load balancing
 * The HAProxy configuration is defined in [gitlab-haproxy cookbook](https://gitlab.com/gitlab-cookbooks/gitlab-haproxy) and you can also find it in `/etc/haproxy/haproxy.cfg` on any of the haproxy nodes.
-* 
+*
 ### Frontends
 * `http`: port 80
     *  delivers a 301 to https
@@ -68,7 +69,7 @@ HAProxy configuration.
     * sends to the `altssh` backend
 * `pages_http`: port 80
     * sends to the `pages_http` backend
-* `pages_https`: port 443 
+* `pages_https`: port 443
     * sends to the `pages_https` backend
 
 ### Backends
@@ -77,13 +78,16 @@ HAProxy configuration.
 * `api_rate_limit`: proxy for the `api_rate_limit` front-end
 * `https_git`: all of the `git-xx` nodes
 * `web`: all of the `web-xx` nodes
-* `canary_web`: all of the `web-cny-xx` nodes
 * `registry`: all of the `registry-xx` nodes
 * `ssh`: all of the `git-xx` nodes
 * `websockets`: all of the `git-xx` nodes
 * `altssh`: all of the `git-xx` nodes
 * `pages_http`: all of the `web-pages-xx` nodes
 * `pages_https`: all of the `web-pages-xx` nodes
+* `canary_web`: all of the `web-cny-xx` nodes
+* `canary_api`: all of the `api-cny-xx` nodes
+* `canary_https_git`: all of the `git-cny-xx` nodes
+* `canary_registry`: all of the `registry-cny-xx` nodes
 
 ## Load balancing
 
@@ -94,14 +98,22 @@ There is an open issue to discuss using sticky sessions for the web backend, see
 ## Server Weights
 
 By default all servers attached to the backends have the same weight of `100`
-with the exception of the canary servers. These have a weight of `0` by
-default. It is possible to increase the weight of the canaries using command
-line utilities, for more information see the [canary howto](canary.md).
+with the exception of the canary servers which are also in the non-canary
+backends with a weight of zero. It is possible to direct all traffic to canary
+but the normal way we send traffic is through a static list of request paths for
+internal projects. For more information see the
+[canary release documentation](https://gitlab.com/gitlab-org/release/docs/blob/master/general/deploy/canary.md)
 
 
 ## Tooling
 
-There are tool tools in [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo) to assist setting server statuses. In general, it is advised to always drain active connections from a server before rebooting.
+* There are helper scripts in [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo) to assist setting server statuses. In general, it is advised to always drain active connections from a server before rebooting.
+* For controling traffic to canary there are chatops commands, for more
+  information see the
+  [canary chatops documentation](https://gitlab.com/gitlab-org/release/docs/blob/master/general/deploy/canary.md#canary-chatops)
+
+The following helper script can be used for setting the state of any server in
+the backend:
 
 ### get-server-state
 
@@ -174,6 +186,3 @@ Fetching server state...
    3 ssh/git-01-sv-gstg : DRAIN
    3 websockets/git-01-sv-gstg : DRAIN
 ```
-
-
-

@@ -15,7 +15,7 @@
 * Is the alert specific to canary servers or the canary backend? Check canaries
   to ensure they are reporting OK. If this is the cause you should immediately change the weight of canary traffic.
     * Canary dashboard - https://dashboards.gitlab.net/d/llfd4b2ik/canary
-    * Canary howto - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/canary.md
+    * To disable canary traffic see the [canary chatops documentation](https://gitlab.com/gitlab-org/release/docs/blob/master/general/deploy/canary.md#canary-chatops)
 
 ## Resolution
 * If there is a single backend server alerting, check to see if the node is healthy on
