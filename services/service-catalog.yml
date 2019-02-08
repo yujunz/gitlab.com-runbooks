@@ -576,52 +576,56 @@ services:
 
 - name: web
   tier: sv
-  teams: 
-    - create 
+  teams:
+    - create
     - distribution
     - geo
     - gitaly
-    - gitter 
+    - gitter
     - manage
-    - plan 
+    - plan
   label: Service:Web
-  business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+  business:
+    requirement: |
+      Web is required as the main destination of GitLab.com, through which users collaborate
+      on their code, discuss issues, and many more.
+    customers:
+      - GitLab.com customers
+    business_value: |
+      Allows GitLab.com customers to interact with GitLab.com through web-based interface.
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       3 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-ce
+      - https://gitlab.com/gitlab-org/gitlab-ee
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      service:
+        - https://docs.gitlab.com/ce/
+        - https://docs.gitlab.com/ee/
+      security:
+    dependencies:
+      - service: postgres
+      - service: gitaly
+      - service: redis
+    configurations:
+      - config_name: gitlab.rb
+        location: /etc/gitlab/gitlab.rb
+    chef_roles:
+      - gprd-base-fe-web
+      - gstg-base-fe-web
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
     logging:
       - name: Rails
         permalink: https://log.gitlab.net/goto/5e1aa9dac377ff2282c70748e9278860
@@ -635,22 +639,21 @@ services:
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22web%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
         permalink: https://log.gitlab.net/goto/c93fb9b8e5df92ed79d993d3a62b5452
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=web"
 
