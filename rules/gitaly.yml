@@ -28,6 +28,7 @@ groups:
     for: 5m
     labels:
       channel: gitaly
+      pager: pagerduty
       severity: critical
     annotations:
       description: Gitaly {{$labels.grpc_code}} error rate for the last 5 minutes is over 2 for {{$labels.grpc_method}}.
@@ -39,6 +40,7 @@ groups:
     for: 5m
     labels:
       channel: gitaly
+      pager: pagerduty
       severity: critical
     annotations:
       description: Gitaly error rate for the last 5 minutes is over 5 on {{$labels.instance}}.
@@ -141,8 +143,8 @@ groups:
     expr: up{job="gitaly",tier="stor",type="gitaly"} == 0
     for: 1m
     labels:
-      pager: pagerduty
       channel: gitaly
+      pager: pagerduty
       severity: critical
     annotations:
       description: Gitaly has been marked as down for the past minute on {{$labels.instance}}.
@@ -160,6 +162,7 @@ groups:
     for: 1m
     labels:
       channel: gitaly
+      pager: pagerduty
       severity: critical
     annotations:
       description: 'Gitaly has been using more than 50% of total available CPU on
@@ -177,6 +180,7 @@ groups:
     for: 30m
     labels:
       channel: gitaly
+      pager: pagerduty
       severity: critical
     annotations:
       description: During a deployment, two distinct versions of Gitaly may be running
@@ -196,6 +200,7 @@ groups:
     for: 1m
     labels:
       channel: gitaly
+      pager: pagerduty
       severity: critical
     annotations:
       description: Three of more versions of Gitaly are currently running alongside
@@ -270,8 +275,8 @@ groups:
       rules_domain: general
       type: gitaly
       metric: gitaly_rate_limiting_acquiring_seconds_bucket
-      severity: critical
       pager: pagerduty
+      severity: critical
       period: 10m
     annotations:
       title: "More than 20% of Gitaly {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are queueing for more than 60s"

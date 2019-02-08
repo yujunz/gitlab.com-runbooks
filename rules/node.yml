@@ -53,7 +53,7 @@ groups:
     annotations:
       description: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
         }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
-      runbook: troubleshooting
+      runbook: troubleshooting/node_cpu.md
       title: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
         }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
 
@@ -157,6 +157,7 @@ groups:
       * 100 <= 20
     for: 15m
     labels:
+      pager: pagerduty
       severity: critical
     annotations:
       title: "High number of inode usage"
@@ -181,7 +182,6 @@ groups:
     annotations:
       description: The {{ $labels.type }} fleet has changed, this can be due to having
         more or less, if it's the latter it can be because nodes went down silently
-      runbook: troubleshooting
       title: The fleet size has changed in the last 5 minutes
   - alert: HighMemoryPressure
     expr: instance:node_memory_available:ratio * 100 < 5 and rate(node_vmstat_pgmajfault[1m]) > 1000
@@ -206,8 +206,7 @@ groups:
     labels:
       severity: warn
     annotations:
-      description: Kernel versions are deviating across fleet, see https://dashboards.gitlab.net/d/6xx-DC7ik/gitlab-kernel-versions for details
-      runbook: https://gitlab.com/gitlab-com/infrastructure/issues/4221
+      description: Kernel versions are deviating across fleet, see https://dashboards.gitlab.net/d/6xx-DC7ik/gitlab-kernel-versions for details. https://gitlab.com/gitlab-com/infrastructure/issues/4221
       title: 'Different kernel versions are running in production for an hour'
   - alert: CPUStalls
     expr: rate(syslog_rcu_sched_stalls_total[1m]) > 0 or rate(rcu_sched_stalls_total[1m]) > 0
