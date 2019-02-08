@@ -37,7 +37,7 @@ groups:
     annotations:
       description: '{{$labels.job}} at {{$labels.instance}} has {{$value}}% of DNS-SD
         requests failing.'
-      runbook: troubleshooting/prometheus-file-sd-errors.md
+      runbook: troubleshooting/prometheus-filesd-errors.md
       title: '{{$labels.job}} has many DNS-SD errors'
   - alert: PrometheusRuleEvaluationSlow
     expr: prometheus_rule_evaluation_duration_seconds{quantile="0.9"} > 60

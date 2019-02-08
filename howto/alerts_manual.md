@@ -57,7 +57,7 @@ each host.
 
 ## How to add new alerts
 
-Create a new yml file under `/alerts` in this repo, and submit a MR. Once the MR has been approved &
+Create a new yml file under `/rules` in this repo, and submit a MR. Once the MR has been approved &
 merged, trigger a chef converge on the `[gstg|gprd|ops]-infra-alerts` roles.
 
 From local clone of `dev.gitlab.org:chef-repo`

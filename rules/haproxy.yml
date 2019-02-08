@@ -95,6 +95,7 @@ groups:
     expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend="https_git"}) > 20
     for: 15s
     labels:
+      pager: pagerduty
       severity: critical
     annotations:
       description: We are having a high rate of 5xx on https_git backend. It's likely that customers are impacted.
@@ -104,6 +105,7 @@ groups:
     expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend!="https_git"}) by (backend) > 20
     for: 15s
     labels:
+      pager: pagerduty
       severity: critical
     annotations:
       description: We are having a high rate of 5xx accross other backends (web(sockets)?/api/registry/etc, anything except https_git). It's likely that customers are impacted.
@@ -125,6 +127,7 @@ groups:
     expr: rate(haproxy_server_response_errors_total[1m]) > .5
     for: 10s
     labels:
+      pager: pagerduty
       severity: critical
     annotations:
       description: We are seeing an increase in server response errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.

@@ -72,7 +72,7 @@ def validate(alert_file_path)
 end
 
 begin
-  alert_files = File.join(__dir__, "..", "alerts", "*.yml")
+  alert_files = File.join(__dir__, "..", "rules", "*.yml")
   Dir[alert_files].each do |file|
     validate File.expand_path(file)
   end

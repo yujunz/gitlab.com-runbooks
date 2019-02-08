@@ -12,4 +12,4 @@ error rate of the service is the sum of these values, so would report 3 for a si
 
 ## Service Availablity Definitions
 
-The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/recordings/service_error_rate.yml
+The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/rules/service_error_rate.yml
