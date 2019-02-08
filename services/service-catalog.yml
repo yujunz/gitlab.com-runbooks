@@ -1371,6 +1371,71 @@ services:
       primary_grafana_dashboard: 
       sentry_slug: 
 
+- name: share
+  tier: stor
+  teams:
+    - infrastructure
+    - create
+    - distribution
+    - geo
+    - manage
+    - plan
+  label: Service:Share
+  business:
+    requirement: |
+      It is required to have a storage node that's shared between the workers.
+    customers:
+      - GitLab.com customers
+    business_value: |
+      In the absence of a cloud object storage configuration, the node is used for storing different
+      classes of files (e.g. uploads, artifacts, LFS objects, job traces, temporary files, ...), making them accessible
+      to all workers so they can be served to clients. With object storage configuration present, it can
+      store files temporarily until they are picked by a background worker to be uploaded to said object storage.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#storage-architecture
+      service:
+      security:
+    dependencies:
+    configurations:
+    chef_roles:
+      - gstg-base-stor-nfs-server
+      - gprd-base-stor-nfs-server
+    scalability:
+      bound: disk
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/3a1a0019df2f6b555866b6f11eb92172
+  infrastructure:
+    provider: gcp
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#storage-architecture
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder:
+      primary_grafana_dashboard: "XrqPY11mk/nfs"
+
 - name: sidekiq
   tier: sv
   teams: 
