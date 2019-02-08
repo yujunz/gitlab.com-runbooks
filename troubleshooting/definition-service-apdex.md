@@ -33,4 +33,4 @@ the metric.
 
 ## Service Availablity Definitions
 
-The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/recordings/service_apdex.yml
+The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/rules/service_apdex.yml

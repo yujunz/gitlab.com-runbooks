@@ -97,7 +97,7 @@ We utilize prometheus blackbox to regularly check endpoints and send us alerts
 when those endpoints go down as well as validate and alert us at a threshold
 when those certificates are going to expire.
 
-* https://gitlab.com/gitlab-com/runbooks/blob/master/alerts/ssl-certificate-expirations.yml
+* https://gitlab.com/gitlab-com/runbooks/blob/master/rules/ssl-certificate-expirations.yml
 
 ## Notes
 

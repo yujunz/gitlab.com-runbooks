@@ -18,4 +18,4 @@ This is usually done in one of three ways:
 
 ## Service Availablity Definitions
 
-The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/recordings/service_availability.yml
+The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/rules/service_availability.yml
