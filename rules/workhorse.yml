@@ -202,3 +202,52 @@ groups:
       grafana_panel_id: "2"
       grafana_variables: "environment,type,stage"
       grafana_min_zoom_hours: 12
+
+- name: Workhorse Histograms
+  interval: 1m
+  rules:
+  - record: job:gitlab_workhorse_http_time_to_write_header_seconds_count:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_time_to_write_header_seconds_count[1m])
+      )
+  - record: job:gitlab_workhorse_http_time_to_write_header_seconds_sum:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_time_to_write_header_seconds_sum[1m])
+      )
+  - record: job:gitlab_workhorse_http_time_to_write_header_seconds_bucket:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_time_to_write_header_seconds_bucket[1m])
+      )
+  - record: job:gitlab_workhorse_http_request_size_bytes_count:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_request_size_bytes_count[1m])
+      )
+  - record: job:gitlab_workhorse_http_request_size_bytes_sum:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_request_size_bytes_sum[1m])
+      )
+  - record: job:gitlab_workhorse_http_request_size_bytes_bucket:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_request_size_bytes_bucket[1m])
+      )
+  - record: job:gitlab_workhorse_http_request_duration_seconds_count:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_request_duration_seconds_count[1m])
+      )
+  - record: job:gitlab_workhorse_http_request_duration_seconds_sum:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_request_duration_seconds_sum[1m])
+      )
+  - record: job:gitlab_workhorse_http_request_duration_seconds_bucket:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(gitlab_workhorse_http_request_duration_seconds_bucket[1m])
+      )
