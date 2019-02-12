@@ -66,7 +66,10 @@ Contribute changes or new schemas back to [logging_bigquery_schemas](../logging_
 
 ## Example Queries
 
+The following sample queries can be run on tables created for logs coming from `gitlab-gprd-logging-archive/rails-application/*` and conforming to [the rails_application production schema](https://gitlab.com/gitlab-com/runbooks/blob/master/logging_bigquery_schemas/rails_production_schema.json).
+
 ### Find the most used Source-IP-Addresses for a User
+
 
 ```
 select jsonPayload.remote_ip, count(jsonPayload.remote_ip) as count from dataset.table where jsonPayload.username='SomeUsername' group by jsonPayload.remote_ip
