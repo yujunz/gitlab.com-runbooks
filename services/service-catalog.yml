@@ -1237,6 +1237,182 @@ services:
       grafana_folder: RNfEDpLmz
       primary_grafana_dashboard: "000000144/postgresql-overview"
 
+- name: prometheus
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:Prometheus
+  business:
+    requirement: |
+      It is needed to collect, store and view metrics exposed by
+      parts of our infrastructure that are not running application
+      code (e.g. database, redis, ...).
+    customers:
+      - Internally for infrastructure monitoring at dashboards.gitlab.net
+      - General public for publicly available dashboards at dashboards.gitlab.com
+    business_value: |
+      It gives visibility into our non-application infrastructure (see requirement above),
+      it also powers AlertManager.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/prometheus/prometheus
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md#architecture-overview
+      service: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
+      security:
+    dependencies:
+      - service:
+    configurations:
+      - config_name: prometheus.yml
+        location: /opt/prometheus/prometheus/prometheus.yml
+      - config_name: Rule definitions
+        location: /opt/prometheus/prometheus/rules/*.yml
+    chef_roles:
+      - gstg-infra-prometheus
+      - gprd-infra-prometheus
+    scalability:
+      bound: disk
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/3a0b51d10d33c9558765e97640acb325
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-checkpointing-slow.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-empty-sd.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-checkpoints.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-compactions.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-wal-truncations.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failing-rule-evaluations.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-filesd-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-high-memory.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-indexing-backlog.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-invalid-config.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-is-down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-not-ingesting.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-notifications-backlog.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-out-of-order.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-persist-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-persistence-pressure-high.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-scrape-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-rule-eval.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-scrapes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-series-maintenance.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-storage-inconsistent.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-prometheus-and-exporters.md
+    error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: 5dsvpeImz
+      primary_grafana_dashboard: "-gJSV0Yiz/prometheus-performance"
+
+- name: prometheus-app
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:PrometheusApp
+  business:
+    requirement: |
+      It is needed to collect, store and view metrics exposed by
+      parts of our infrastructure that are running application
+      code (e.g. api, web, git, sidekiq, ...).
+    customers:
+      - Internally for infrastructure monitoring at dashboards.gitlab.net
+      - General public for publicly available dashboards at dashboards.gitlab.com
+    business_value: |
+      It gives visibility into our application infrastructure (see requirement above),
+      it also powers AlertManager.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/prometheus/prometheus
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md#architecture-overview
+      service: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
+      security:
+    dependencies:
+      - service:
+    configurations:
+      - config_name: prometheus.yml
+        location: /opt/prometheus/prometheus/prometheus.yml
+      - config_name: Rule definitions
+        location: /opt/prometheus/prometheus/rules/*.yml
+    chef_roles:
+      - gstg-infra-prometheus-app
+      - gprd-infra-prometheus-app
+    scalability:
+      bound: disk
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/8872908a99847f4c6c03602f0c76bdbc
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-checkpointing-slow.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-empty-sd.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-checkpoints.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-compactions.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-wal-truncations.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failing-rule-evaluations.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-filesd-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-high-memory.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-indexing-backlog.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-invalid-config.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-is-down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-not-ingesting.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-notifications-backlog.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-out-of-order.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-persist-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-persistence-pressure-high.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-scrape-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-rule-eval.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-scrapes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-series-maintenance.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-storage-inconsistent.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-prometheus-and-exporters.md
+    error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: 5dsvpeImz
+      primary_grafana_dashboard: "-gJSV0Yiz/prometheus-performance"
+
 - name: redis
   tier: db
   teams: 
