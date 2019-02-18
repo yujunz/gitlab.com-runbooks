@@ -1593,6 +1593,8 @@ services:
       data_classification: yellow
       security_incidents:
     logging:
+      - name:
+        permalink:
   infrastructure:
     provider: gcp
     architecture: https://drive.google.com/open?id=1xJfH7XhfcRzYhgHIelenAn3AZbco6HN0
