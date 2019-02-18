@@ -1698,6 +1698,74 @@ services:
       primary_grafana_dashboard: "9GOIu9Siz/sidekiq-stats"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
 
+- name: runner
+  tier: sv
+  teams:
+    - verify
+  label: Service:Runner
+  business:
+    requirement: |
+      It is required to run CI jobs that process ChatOps commands.
+    customers:
+      - GitLab.com employees
+    business_value: |
+      ChatOps is convenient for GitLab employees as it allows them to perform actions
+      that would otherwise require elevated access, such as getting the EXPLAIN ANALYZE
+      of a query, seeing who's currently on-call, etc.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-runner
+      - https://gitlab.com/gitlab-com/chatops
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
+      security: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/security/index.md
+    dependencies:
+    configurations:
+      - config_name: Runner
+        location: /etc/gitlab-runner/config.toml
+    chef_roles:
+      - gstg-base-runner
+      - gprd-base-runner
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/9b8322ad2ddacec15c7c1691d6c67733
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/runners_manager_is_down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_do_limits.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/create-runners-manager-node.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-gitlab-runner-on-managers.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: bpcbFeIiz
+      primary_grafana_dashboard: "000000159/ci"
+
 - name: license
   tier: sv
   teams:
