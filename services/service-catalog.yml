@@ -1419,64 +1419,65 @@ services:
     - infrastructure
   label: Service:Redis
   business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+    requirement: |
+      Redis is packaged to provide a place to store session data, temporary cache information and background job queues (as the backend for SideKiq).
+    customers:
+      - GitLab.com customers
+    business_value: |
+      Redis brings performance as it is an in-memory data structure store and it provides high availability via Redis Sentinel. Therefore, essentially we have a performant and HA service that couples nicely with SideKiq and lets background jobs to be stored and processed.
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       1
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-ce
+      - https://gitlab.com/gitlab-org/gitlab-ee
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+        - https://redis.io/documentation
+        - https://docs.gitlab.com/omnibus/settings/redis.html
+      security:
+    dependencies:
+      - service:
+    configurations:
+      - config_name: redis.conf
+        location: /var/opt/gitlab/redis/redis.conf
+    chef_roles:
+      - gstg-base-db-redis-server-single
+      - gprd-base-db-redis-server-single
+    scalability:
+      bound: memory
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
     logging:
       - name: Redis
         permalink: https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc
       - name: system
         permalink: https://log.gitlab.net/goto/e107ce00a9adede2e130d0c8ec1a2ac7
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture: https://drive.google.com/open?id=1DOIKubC0edztw3_t7ZW-Lqh24heVlrdQ
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
-      grafana_folder: D5R0peIik
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+    error_budget:
+  observability:
+    monitors:
+      grafana_folder: wccEP9Imk
       primary_grafana_dashboard: "wccEP9Imk/redis"
                        
 - name: registry
