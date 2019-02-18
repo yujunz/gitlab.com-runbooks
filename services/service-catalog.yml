@@ -1547,7 +1547,71 @@ services:
     monitors:
       grafana_folder: wccEP9Imk
       primary_grafana_dashboard: "wccEP9Imk/redis"
-                       
+
+- name: redis-cache-sentinel
+  tier: db
+  teams: 
+    - infrastructure
+  label: Service:RedisCacheSentinel
+  business: 
+    requirement: |
+      Redis Sentinel provides High Availability (HA) to Redis. In addition, Sentinel monitors Redis nodes, initiates automatical failover and service discovery.
+    customers:
+      - GitLab.com customers
+      - GitLab employees
+    business_value: |
+      Redis is a criticality 1 service for us. Therefore, the business value Sentinel provides is huge in the sense that not only does it ensure we have resilient service but also saves us a lot of work and resources (such as monitoring, automatical failover and discovery).
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-ce
+      - https://gitlab.com/gitlab-org/gitlab-ee
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+        - https://redis.io/topics/sentinel
+        - https://docs.gitlab.com/omnibus/settings/redis.html#redis-sentinel
+      security:
+    dependencies:
+      - service:
+    configurations:
+      - config_name: sentinel.conf
+        location: /var/opt/gitlab/sentinel/sentinel.conf
+    chef_roles:
+      - gstg-base-db-redis-sentinel-cache
+      - gprd-base-db-redis-sentinel-cache
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: yellow
+      security_incidents:
+    logging:
+  infrastructure:
+    provider: gcp
+    architecture: https://drive.google.com/open?id=1xJfH7XhfcRzYhgHIelenAn3AZbco6HN0
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+    error_budget:
+  observability:
+    monitors:
+      grafana_folder: wccEP9Imk
+      primary_grafana_dashboard: "wccEP9Imk/redis"
+
 - name: registry
   tier: sv
   teams: 
