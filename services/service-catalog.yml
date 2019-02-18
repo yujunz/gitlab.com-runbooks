@@ -1522,7 +1522,7 @@ services:
       scalable: vertical
     security:
       security_reviewed:
-      data_classification:
+      data_classification: red
       security_incidents:
     logging:
       - name: Redis
