@@ -30,5 +30,14 @@ If it receives a 404 result then the channel does not exist. See [slack docs](ht
 
 For more information see https://api.slack.com/incoming-webhooks
 
-## Resolution
+## Troubleshooting which integration is failing
+
+* In Prometheus, run this query: [`rate(alertmanager_notifications_failed_total[10m])`](https://prometheus.gprd.gitlab.net/graph?g0.range_input=1d&g0.expr=rate(alertmanager_notifications_failed_total%5B10m%5D)&g0.tab=0).
+* This will give you a breakdown of which integration is failing, and from which server.
+* Keep in mind that, if nothing has changed, the problem is likely to be on the remote side - for example, a Slack or Pagerduty issue.
+
+## Manually review the currently open alerts
+
+* Open the alert-manager UI: https://alerts.gprd.gitlab.net/
+* Review each alert to check if it's notification has failed and whether further action is required.
 
