@@ -1841,11 +1841,11 @@ services:
   label: Service:PubSub
   business:
     requirement: |
-      Deliver logs from multiple sources (including Stackdriver) to ELK
+      Deliver logs from multiple sources (including Stackdriver) to ELK.
     customers:
       - ELK cluster (logging infrastructure)
     business_value: |
-      Google's Pub/Sub is very reliable without the burden of maintenance. Integrations with Pub/Sub are available
+      Google's Pub/Sub is very reliable without the burden of maintenance. Integrations with Pub/Sub are available.
     SLA:
       availability:
       response_time: 4 hours (critical), 1 day (L2), 2 days (L3)
@@ -1917,8 +1917,7 @@ services:
       team:
   observability:
     monitors:
-      primary_grafana_dashboard:
+      primary_grafana_dashboard: https://dashboards.gitlab.net/d/USVj3qHmk/logging
       sentry_slug:
-      stackdriver_graph: https://app.google.stackdriver.com/monitoring/1088234/logging-pubsub-in-gprd?project=gitlab-production
     alerts:
       - alert_link:
