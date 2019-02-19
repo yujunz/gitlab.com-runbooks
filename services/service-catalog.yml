@@ -1237,6 +1237,86 @@ services:
       grafana_folder: RNfEDpLmz
       primary_grafana_dashboard: "000000144/postgresql-overview"
 
+- name: postgres-dr-delayed
+  tier: db
+  teams:
+    - infrastructure
+  label: Service:PostgresDelayed
+  business:
+    requirement: |
+      It is required to be able to restore DB records that was deleted
+      within the last 8 hours from the production DB. This is done by
+      continuously restoring WAL segments that are only 8 hours old.
+    customers:
+      - Internally used by DBREs
+    business_value: |
+      It is convenient for us and the customers as sometimes people
+      have second thoughts about a project they deleted, so we can
+      restore its relevant DB records from DR Delayed as it hasn't
+      been deleted there yet.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/postgres/postgres
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+      service:  https://www.postgresql.org/docs/9.6/index.html
+      security: https://www.postgresql.org/support/security/
+    dependencies:
+    configurations:
+      - config_name: postgresql.conf
+        location: /var/opt/gitlab/postgresql/postgresql.conf
+      - config_name: pg_ident.conf
+        location: /var/opt/gitlab/postgresql/pg_ident.conf
+      - config_name: pg_hba.conf
+        location: /var/opt/gitlab/postgresql/pg_hba.conf
+      - config_name: recovery.conf
+        location: /var/opt/gitlab/postgresql/data/recovery.conf
+    chef_roles:
+      - gstg-base-db-postgres-delayed
+      - gprd-base-db-postgres-delayed
+    scalability:
+      bound: disk
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/3fea946a232d2288e90e575c912fa3e7
+  infrastructure:
+    provider: gcp
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/postgres.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-wale-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-walg-backups.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/patroni-management.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pg-ha.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-disk-space.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-rebuild-trigram-indexes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-replica.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-switchover.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: RNfEDpLmz
+      primary_grafana_dashboard: "000000144/postgresql-overview"
+
 - name: psql-timings
   tier: inf
   teams:
