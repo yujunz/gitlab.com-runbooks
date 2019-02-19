@@ -1901,3 +1901,91 @@ services:
       grafana_folder:
       primary_grafana_dashboard:
       sentry_slug:
+
+- name: pubsub
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:PubSub
+  business:
+    requirement: |
+      Deliver logs from multiple sources (including Stackdriver) to ELK.
+    customers:
+      - ELK cluster (logging infrastructure)
+    business_value: |
+      Google's Pub/Sub is very reliable without the burden of maintenance. Integrations with Pub/Sub are available.
+    SLA:
+      availability:
+      response_time: 4 hours (critical), 1 day (L2), 2 days (L3)
+  technical:
+    project:
+      - https://cloud.google.com/pubsub/docs/overview
+      - https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/pubsubbeat
+      - https://gitlab.com/gitlab-cookbooks/gitlab-elk
+      - https://gitlab.com/gitlab-com/runbooks/tree/master/rules/pubsub.yml
+      - https://gitlab.com/gitlab-com/runbooks/tree/master/rules/gitaly.yml
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+    criticality: 3
+    slx:
+    documents:
+      design: |
+        Services publish their logs to corresponding PubSub topics using fluentd. There is a separate VM for each topic in each environment. Each VM runs a Pubsubbeat process which is subscribed to a topic and uploads messages it receives to ELK.
+      architecture: |
+        Pub/Sub is a messaging service available on GCP which is similar to RabbitMQ or Kafka. It can be used for many things such as event-driven programming or managing distributed systems. We use it for forwarding logs to ELK. Different components and systems publish their logs to a Pub/Sub topic using fluentd. Pubsubbeat (Elastic Beat capable of subscribing to Pub/Sub topics) forwards them to ELK. For more information about how Pub/Sub is used for collecting logs see: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+      service:
+      security:
+    dependencies:
+      - service:
+        type:
+    configurations:
+      - config_name: pubsubbeat config file
+        location: /opt/pubsubbeat/pubsubbeat.yml
+      - config_name: Prometheus alert rule - logging visibility diminishing
+        location: /opt/prometheus/prometheus/rules/pubsub.yml
+      - config_name: Prometheus alert rule - gitaly pubsub log send rate is low
+        location: /opt/prometheus/prometheus/rules/gitaly.yml
+    chef_roles:
+      - dr-infra-pubsub
+      - gprd-infra-pubsub
+      - gstg-infra-pubsub
+      - ops-infra-pubsub
+    scalability:
+      bound:
+      scalable:
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: stackdriver
+        permalink: https://console.cloud.google.com/logs
+      - name: multiple indexes in Kibana
+        permalink: https://log.gitlab.net/app/kibana#/discover?_g=()&_a=(columns:!(_source),index:AWQepqf0ihEw2C1phQJl,interval:auto,query:(match_all:()),sort:!('@timestamp',desc))
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+    servers:
+      - server_name:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/pubsub-queing.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-pubsub.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/elk_mapper_parsing_exception.md
+    playbooks:
+    issues:
+    error_budget:
+    engagement:
+      team:
+  observability:
+    monitors:
+      primary_grafana_dashboard: https://dashboards.gitlab.net/d/USVj3qHmk/logging
+      sentry_slug:
+    alerts:
+      - alert_link:
