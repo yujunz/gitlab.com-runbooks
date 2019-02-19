@@ -1430,8 +1430,7 @@ services:
       response_time:
   technical:
     project:
-      - https://gitlab.com/gitlab-org/gitlab-ce
-      - https://gitlab.com/gitlab-org/gitlab-ee
+      - https://github.com/antirez/redis/
     criticality: 1
     slx:
     documents:
@@ -1477,7 +1476,6 @@ services:
     error_budget:
   observability:
     monitors:
-      grafana_folder: wccEP9Imk
       primary_grafana_dashboard: "wccEP9Imk/redis"
                        
 - name: registry
