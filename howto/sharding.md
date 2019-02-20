@@ -30,7 +30,7 @@ specified by the numerical `project_id` number associated with it.
 
 ### Slightly Automated Method
 A script exists in this repo
-[`scripts/storage-rebalance.rb`](../scripts/storage-rebalance.rb)
+[`scripts/storage_rebalance.rb`](../scripts/storage_rebalance.rb)
 
 The goal of this script is to select two file servers, one of which we want to
 move data _OFF_, otherwise known as `current-file-server`, and one where we want
