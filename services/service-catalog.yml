@@ -1184,6 +1184,8 @@ services:
       security: https://www.postgresql.org/support/security/
     dependencies:     
       - service: consul  
+    components:
+      - patroni
     configurations:   
       - config_name:  postgresql.conf
         location:  /var/opt/gitlab/postgresql/postgresql.conf
