@@ -1551,7 +1551,6 @@ services:
       Redis Sentinel provides High Availability (HA) to Redis. In addition, Sentinel monitors Redis nodes, initiates automatical failover and service discovery.
     customers:
       - GitLab.com customers
-      - GitLab employees
     business_value: |
       Redis is a criticality 1 service for us. Therefore, the business value Sentinel provides is huge in the sense that not only does it ensure we have resilient service but also saves us a lot of work and resources (such as monitoring, automatical failover and discovery).
     SLA:
@@ -1559,8 +1558,7 @@ services:
       response_time:
   technical:
     project:
-      - https://gitlab.com/gitlab-org/gitlab-ce
-      - https://gitlab.com/gitlab-org/gitlab-ee
+      - https://github.com/antirez/redis/
     criticality: 1
     slx:
     documents:
@@ -1586,8 +1584,8 @@ services:
       data_classification: yellow
       security_incidents:
     logging:
-      - name:
-        permalink:
+      - name: system
+        permalink: https://log.gitlab.net/goto/0b28cb1d20663b4359f8bc05995a22ad
   infrastructure:
     provider: gcp
     architecture: https://drive.google.com/open?id=1xJfH7XhfcRzYhgHIelenAn3AZbco6HN0
@@ -1604,7 +1602,6 @@ services:
     error_budget:
   observability:
     monitors:
-      grafana_folder: wccEP9Imk
       primary_grafana_dashboard: "wccEP9Imk/redis"
 
 - name: registry
