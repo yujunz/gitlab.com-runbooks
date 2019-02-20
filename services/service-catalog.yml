@@ -1478,6 +1478,69 @@ services:
     monitors:
       primary_grafana_dashboard: "wccEP9Imk/redis"
 
+- name: redis-cache
+  tier: db
+  teams: 
+    - infrastructure
+  label: Service:RedisCache
+  business: 
+    requirement: |
+      Redis-Cache is used to cache things like function calls, return values...etc in our Rails appl for performance and optimization purpose. Instead of using the Rails' built-in caching infrastructure, we use annotation decorations to do caching in Redis-Cache.
+    customers:
+      - GitLab.com customers
+    business_value: |
+      Redis-Cache delivers us performance and optimization in our Rails app. 
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://github.com/antirez/redis/
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+        - https://redis.io/documentation
+        - https://docs.gitlab.com/omnibus/settings/redis.html
+      security:
+    dependencies:
+      - service:
+    configurations:
+      - config_name: redis.conf
+        location: /var/opt/gitlab/redis/redis.conf
+    chef_roles:
+      - gstg-base-db-redis-server-cache
+      - gprd-base-db-redis-server-cache
+    scalability:
+      bound: memory
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/1a4342231de57c0ceabc8f5e0e402909
+  infrastructure:
+    provider: gcp
+    architecture: https://drive.google.com/open?id=1H5s5EonMX0Mzz6jahAotMOb349TNO7YK
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+    error_budget:
+  observability:
+    monitors:
+      primary_grafana_dashboard: "wccEP9Imk/redis"
+                       
 - name: registry
   tier: sv
   teams:
