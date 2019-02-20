@@ -1430,8 +1430,7 @@ services:
       response_time:
   technical:
     project:
-      - https://gitlab.com/gitlab-org/gitlab-ce
-      - https://gitlab.com/gitlab-org/gitlab-ee
+      - https://github.com/antirez/redis/
     criticality: 1
     slx:
     documents:
@@ -1454,7 +1453,7 @@ services:
       scalable: vertical
     security:
       security_reviewed:
-      data_classification:
+      data_classification: red
       security_incidents:
     logging:
       - name: Redis
@@ -1477,7 +1476,6 @@ services:
     error_budget:
   observability:
     monitors:
-      grafana_folder: wccEP9Imk
       primary_grafana_dashboard: "wccEP9Imk/redis"
 
 - name: redis-cache
@@ -1490,7 +1488,6 @@ services:
       Redis-Cache is used to cache things like function calls, return values...etc in our Rails appl for performance and optimization purpose. Instead of using the Rails' built-in caching infrastructure, we use annotation decorations to do caching in Redis-Cache.
     customers:
       - GitLab.com customers
-      - GitLab employees
     business_value: |
       Redis-Cache delivers us performance and optimization in our Rails app. 
     SLA:
@@ -1498,8 +1495,7 @@ services:
       response_time:
   technical:
     project:
-      - https://gitlab.com/gitlab-org/gitlab-ce
-      - https://gitlab.com/gitlab-org/gitlab-ee
+      - https://github.com/antirez/redis/
     criticality: 1
     slx:
     documents:
@@ -1522,13 +1518,11 @@ services:
       scalable: vertical
     security:
       security_reviewed:
-      data_classification:
+      data_classification: red
       security_incidents:
     logging:
-      - name: Redis
-        permalink: https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc
       - name: system
-        permalink: https://log.gitlab.net/goto/e107ce00a9adede2e130d0c8ec1a2ac7
+        permalink: https://log.gitlab.net/goto/1a4342231de57c0ceabc8f5e0e402909
   infrastructure:
     provider: gcp
     architecture: https://drive.google.com/open?id=1H5s5EonMX0Mzz6jahAotMOb349TNO7YK
@@ -1545,7 +1539,6 @@ services:
     error_budget:
   observability:
     monitors:
-      grafana_folder: wccEP9Imk
       primary_grafana_dashboard: "wccEP9Imk/redis"
 
 - name: redis-cache-sentinel
@@ -1616,46 +1609,45 @@ services:
 
 - name: registry
   tier: sv
-  teams: 
+  teams:
     - package
   label: Service:Registry
-  business: 
-    requirement:       # Business requirement of the service (text or paragraph)
-    customers:         # List of customers 
-    business_value:    # Text/paragraph containing info on what 
-                       # business value it brings
+  business:
+    requirement: |
+      It is needed to have a Docker Container Registry integrated into GitLab
+      so every project can have its own space to store its Docker images.
+    customers:
+      - GitLab.com customers
+    business_value: |
+      GitLab is all about having a single, integrated experience and registry is no exception.
+      Customers can easily use their images for GitLab CI, create images specific for tags or branches and much more.
     SLA:
-      availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
-                       # relating this service
-  technical: 
-    project:           # GitLab project link 
-    criticality:       3 
-                       # If this service goes down, what criticality 
-                       # of impact is this? (1, 2, 3...etc)
-    slx:               # Link to SLX document (SLOs, SLIs)
-    documents: 
-      design:          # Link to the design doc
-      architecture:    # Link to the architecture doc
-      service:         # This is the README.md of the service unless
-                       # a separate doc exists
-      security:        # Link to security related document, if available,
-                       # that talks about how the service ensures security 
-                       # (encryption, rotation...etc)
-    dependencies: 
-      - service:       # Existing service name from the catalog that 
-                       # it directly depends on 
-    configurations:    # A service might have one or more configs
-      - config_name:   # Config file name 
-        location:      # Location of the config file 
-    chef_roles:        # List of Chef roles for this service
-    scalability:       
-      bound:           # cpu or memory or network or... 
-      scalable:        # horizontal or vertical 
-    security: 
-      security_reviewed: # If security team reviewed the service (yes or no or n/a)
-      data_classification: # What level of data does this service handle?
-      security_incidents:  # Link to (past/present) security incidents
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/docker/distribution
+    criticality: 2
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://github.com/docker/distribution/blob/364d2e4a5bed94e9393dd88232ea3be29ca8f27a/README.md
+      security:
+    dependencies:
+      - service: web # For JWT authentication
+    configurations:
+      - config_name: Registry
+        location: /var/opt/gitlab/registry/config.yml
+    chef_roles:
+      - gstg-base-fe-registry
+      - gprd-base-fe-registry
+    scalability:
+      bound: memory
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
     logging:
       - name: Registry
         permalink: https://log.gitlab.net/goto/1c2fe46c1db40a7aa7d31875f3fd2ad1
@@ -1663,24 +1655,24 @@ services:
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22&advancedFilter=labels.tag%3D%22haproxy%22%0Alabels.%22compute.googleapis.com%2Fresource_name%22%3A%22fe-registry-%22
       - name: system
         permalink: https://log.gitlab.net/goto/b68e1a4183a652dc8d5e52a1fc2c1aba
-  infrastructure: 
-    provider:          # azure, do, aws, gcp
-    architecture:      # Link to infra architecture diagram for this service 
-    provisioning:      # terraform      
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
-                       # components in the infra provider
-        access_type:   # Level of access
-        reviewed:      # Is it reviewed and approved?
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:       # Link to maintenance procedures document
-    runbooks:          # Link to runbooks for this service
-    playbooks:         # Link to playbooks for this service
-    error_budget:      # Link to error budget document for this service 
-  observability: 
-    monitors: 
-      primary_grafana_dashboard: 
-      sentry_slug: 
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-registry.md
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: Ymoh2MEmk
+      primary_grafana_dashboard: "bd2Kl8Imk/registry-host-stats"
 
 - name: share
   tier: stor
@@ -1834,6 +1826,74 @@ services:
       primary_grafana_dashboard: "9GOIu9Siz/sidekiq-stats"
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22sidekiq%22"
 
+- name: runner
+  tier: sv
+  teams:
+    - verify
+  label: Service:Runner
+  business:
+    requirement: |
+      It is required to run CI jobs that process ChatOps commands.
+    customers:
+      - GitLab.com employees
+    business_value: |
+      ChatOps is convenient for GitLab employees as it allows them to perform actions
+      that would otherwise require elevated access, such as getting the EXPLAIN ANALYZE
+      of a query, seeing who's currently on-call, etc.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-runner
+      - https://gitlab.com/gitlab-com/chatops
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
+      security: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/security/index.md
+    dependencies:
+    configurations:
+      - config_name: Runner
+        location: /etc/gitlab-runner/config.toml
+    chef_roles:
+      - gstg-base-runner
+      - gprd-base-runner
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/9b8322ad2ddacec15c7c1691d6c67733
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/runners_manager_is_down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_do_limits.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/create-runners-manager-node.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-gitlab-runner-on-managers.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: bpcbFeIiz
+      primary_grafana_dashboard: "000000159/ci"
+
 - name: license
   tier: sv
   teams:
@@ -1969,3 +2029,91 @@ services:
       grafana_folder:
       primary_grafana_dashboard:
       sentry_slug:
+
+- name: pubsub
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:PubSub
+  business:
+    requirement: |
+      Deliver logs from multiple sources (including Stackdriver) to ELK.
+    customers:
+      - ELK cluster (logging infrastructure)
+    business_value: |
+      Google's Pub/Sub is very reliable without the burden of maintenance. Integrations with Pub/Sub are available.
+    SLA:
+      availability:
+      response_time: 4 hours (critical), 1 day (L2), 2 days (L3)
+  technical:
+    project:
+      - https://cloud.google.com/pubsub/docs/overview
+      - https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/pubsubbeat
+      - https://gitlab.com/gitlab-cookbooks/gitlab-elk
+      - https://gitlab.com/gitlab-com/runbooks/tree/master/rules/pubsub.yml
+      - https://gitlab.com/gitlab-com/runbooks/tree/master/rules/gitaly.yml
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+    criticality: 3
+    slx:
+    documents:
+      design: |
+        Services publish their logs to corresponding PubSub topics using fluentd. There is a separate VM for each topic in each environment. Each VM runs a Pubsubbeat process which is subscribed to a topic and uploads messages it receives to ELK.
+      architecture: |
+        Pub/Sub is a messaging service available on GCP which is similar to RabbitMQ or Kafka. It can be used for many things such as event-driven programming or managing distributed systems. We use it for forwarding logs to ELK. Different components and systems publish their logs to a Pub/Sub topic using fluentd. Pubsubbeat (Elastic Beat capable of subscribing to Pub/Sub topics) forwards them to ELK. For more information about how Pub/Sub is used for collecting logs see: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+      service:
+      security:
+    dependencies:
+      - service:
+        type:
+    configurations:
+      - config_name: pubsubbeat config file
+        location: /opt/pubsubbeat/pubsubbeat.yml
+      - config_name: Prometheus alert rule - logging visibility diminishing
+        location: /opt/prometheus/prometheus/rules/pubsub.yml
+      - config_name: Prometheus alert rule - gitaly pubsub log send rate is low
+        location: /opt/prometheus/prometheus/rules/gitaly.yml
+    chef_roles:
+      - dr-infra-pubsub
+      - gprd-infra-pubsub
+      - gstg-infra-pubsub
+      - ops-infra-pubsub
+    scalability:
+      bound:
+      scalable:
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: stackdriver
+        permalink: https://console.cloud.google.com/logs
+      - name: multiple indexes in Kibana
+        permalink: https://log.gitlab.net/app/kibana#/discover?_g=()&_a=(columns:!(_source),index:AWQepqf0ihEw2C1phQJl,interval:auto,query:(match_all:()),sort:!('@timestamp',desc))
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+    servers:
+      - server_name:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/pubsub-queing.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-pubsub.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/elk_mapper_parsing_exception.md
+    playbooks:
+    issues:
+    error_budget:
+    engagement:
+      team:
+  observability:
+    monitors:
+      primary_grafana_dashboard: https://dashboards.gitlab.net/d/USVj3qHmk/logging
+      sentry_slug:
+    alerts:
+      - alert_link:
