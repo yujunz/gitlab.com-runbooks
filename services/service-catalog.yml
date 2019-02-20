@@ -1237,6 +1237,71 @@ services:
       grafana_folder: RNfEDpLmz
       primary_grafana_dashboard: "000000144/postgresql-overview"
 
+- name: psql-timings
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:PsqlTimings
+  business:
+    requirement: |
+      It is needed to store profiles of GitLab Rails RSpec test suites as executed in our CI pipelines,
+      to identify specs with interesting attributes. It is also needed to
+      store profiling results from https://gitlab.com/gitlab-com/gitlab-profiler.
+    customers:
+      - GitLab.com employees
+    business_value: |
+      Having profiles for RSpec test suites has advantages like finding the slowest specs,
+      or the spec which issues the most queries. Profiling GitLab.com URLs can help identify
+      a bottle-nick or a code that's written poorly.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 4
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+        - https://gitlab.com/gitlab-org/gitlab-ce/blob/master/config/initializers/rspec_profiling.rb
+        - https://github.com/foraker/rspec_profiling
+        - https://gitlab.com/gitlab-com/gitlab-profiler
+      security:
+    dependencies:
+      - service:
+    configurations:
+      - config_name: postgresql.conf
+        location: /etc/postgresql/9.5/main/postgresql.conf
+    chef_roles:
+    scalability:
+      bound: disk
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: PostgreSQL
+        permalink: /var/log/postgresql/postgresql-9.5-main.log
+  infrastructure:
+    provider: do
+    architecture:
+    provisioning:
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder:
+      primary_grafana_dashboard:
+
 - name: prometheus
   tier: inf
   teams:
