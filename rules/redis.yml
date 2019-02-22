@@ -28,3 +28,18 @@ groups:
       WITHOUT (fqdn, instance, job) - 1
   - record: gitlab:redis_master
     expr: redis_connected_slaves > 1
+- name: Redis Alerts
+  rules:
+  - alert: RedisReplicasFlapping
+    expr: changes(redis_connected_slaves[5m]) > 1 
+    for: 1m
+    labels:
+      pager: pagerduty
+      severity: critical
+    annotations:
+      description: Changes have been detected in Redis replica connection. 
+        This can occur when replica nodes loose connection to the master and 
+        reconnect (a.k.a flapping)
+      runbook: troubleshooting/redis_replication.md
+      title: Connection of Redis replicas to the master is flapping! 
+        Look at `{{ $labels.instance }}` and its replicas.
