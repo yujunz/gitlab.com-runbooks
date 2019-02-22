@@ -2282,7 +2282,7 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-org/gitlab-runner
-    criticality: 3
+    criticality: 2
     slx:
     documents:
       design:
@@ -2330,3 +2330,5 @@ services:
     monitors:
       grafana_folder: bpcbFeIiz
       primary_grafana_dashboard: "000000159/ci"
+    alerts:
+      - alert_link: https://alerts.gprd.gitlab.net/#/alerts?silenced=false&inhibited=false&filter=%7Bchannel%3D%22ci-cd%22%7D
