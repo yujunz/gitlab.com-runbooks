@@ -2306,8 +2306,8 @@ services:
       data_classification: red
       security_incidents:
     logging:
-      - name: system
-        permalink: https://log.gitlab.net/goto/45ea1cb06c965d83020ec46394b582df
+      - name: shared runners
+        permalink: https://log.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a
   infrastructure:
     provider: gcp and do
     architecture:
