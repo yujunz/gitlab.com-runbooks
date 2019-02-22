@@ -28,6 +28,8 @@ groups:
       WITHOUT (fqdn, instance, job) - 1
   - record: gitlab:redis_master
     expr: redis_connected_slaves > 1
+- name: Redis Alerts
+  rules:
   - alert: RedisReplicasFlapping
     expr: changes(redis_connected_slaves[5m]) > 1 
     for: 1m
