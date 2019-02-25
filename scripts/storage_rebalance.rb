@@ -148,14 +148,16 @@ class MoveIt
     # query all projects on the current file server, sort by size descending,
     # then sort by last activity date ascending
     # I want the most idle largest projects
-    ActiveRecord::Base.connection.execute “SET statement_timeout = 600000”
-    Project
-      .joins(:statistics)
-      .where(repository_storage: @current_fs)
-      .order('project_statistics.repository_size DESC')
-      .order('last_activity_at ASC')
-      .pluck(:id)
-    ActiveRecord::Base.connection.execute “SET statement_timeout = 30000"
+    Project.transaction do
+      ActiveRecord::Base.connection.execute “SET statement_timeout = 600000”
+      Project
+        .joins(:statistics)
+        .where(repository_storage: @current_fs)
+        .order('project_statistics.repository_size DESC')
+        .order('last_activity_at ASC')
+        .pluck(:id)
+      ActiveRecord::Base.connection.execute “SET statement_timeout = 30000"
+    done
   end
 
   def go
