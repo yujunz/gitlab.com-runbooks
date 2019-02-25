@@ -150,13 +150,11 @@ class MoveIt
     # I want the most idle largest projects
     Project.transaction do
       ActiveRecord::Base.connection.execute 'SET statement_timeout = 600000'
-      Project
-        .joins(:statistics)
-        .where(repository_storage: @current_fs)
-        .order('project_statistics.repository_size DESC')
-        .order('last_activity_at ASC')
-        .pluck(:id)
-      ActiveRecord::Base.connection.execute 'SET statement_timeout = 30000'
+      Project.joins(:statistics)
+      Project.where(repository_storage: @current_fs)
+      Project.order('project_statistics.repository_size DESC')
+      Project.order('last_activity_at ASC')
+      Project.pluck(:id)
     end
   end
 
