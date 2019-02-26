@@ -1239,6 +1239,92 @@ services:
       grafana_folder: RNfEDpLmz
       primary_grafana_dashboard: "000000144/postgresql-overview"
 
+- name: postgres-dr-archive
+  tier: db
+  teams:
+    - infrastructure
+  label: Service:PostgresArchive
+  business:
+    requirement: |
+      It is required to continuously recover from the WAL archive
+      and hence test the WAL archive. This is necessary because PITR
+      relies on a continuous sequence of WAL that can be applied to a
+      snapshot of the database (basebackup). If that sequence is broken
+      for whatever reason, PITR can only recover until this point and no
+      further. We monitor the replication lag of the archive replica.
+      If it falls back too far, there's likely a problem with the WAL archive.
+    customers:
+      - Internally used by DBREs
+    business_value: |
+      Having multiple ways to recover a database is necessary in case one way
+      failed for any reason. WAL archiving is one of the ways we can restore
+      a database, in addition to disk snapshots and, in the near future, ZFS
+      snapshots.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project: https://github.com/postgres/postgres
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+      service:  https://www.postgresql.org/docs/9.6/index.html
+      security: https://www.postgresql.org/support/security/
+    dependencies:
+    configurations:
+      - config_name: postgresql.conf
+        location: /var/opt/gitlab/postgresql/postgresql.conf
+      - config_name: pg_ident.conf
+        location: /var/opt/gitlab/postgresql/pg_ident.conf
+      - config_name: pg_hba.conf
+        location: /var/opt/gitlab/postgresql/pg_hba.conf
+      - config_name: recovery.conf
+        location: /var/opt/gitlab/postgresql/data/recovery.conf
+    chef_roles:
+      - gstg-base-db-postgres-archive
+      - gprd-base-db-postgres-archive
+    scalability:
+      bound: disk
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: postgres
+        permalink: https://log.gitlab.net/goto/0b7a4ff726bfd3e4eb4b51da82979efc
+      - name: system
+        permalink: https://log.gitlab.net/goto/4a5ab78f128dcf1b40ad16b75e521609
+  infrastructure:
+    provider: gcp
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/postgres.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-wale-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-walg-backups.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/patroni-management.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pg-ha.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-disk-space.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-rebuild-trigram-indexes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-replica.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-switchover.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: RNfEDpLmz
+      primary_grafana_dashboard: "000000144/postgresql-overview"
+
 - name: postgres-dr-delayed
   tier: db
   teams:
