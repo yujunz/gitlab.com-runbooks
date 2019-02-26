@@ -1,5 +1,7 @@
 # Execute via:
-# `sudo gitlab-rails runner /<path>/<to>/#{$PROGRAM_NAME}`
+# `sudo su -`
+# `export PRIVATE_TOKEN=XXX`
+# `gitlab-rails runner /<path>/<to>/#{$PROGRAM_NAME}`
 
 require 'optparse'
 

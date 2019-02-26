@@ -40,7 +40,10 @@ file server, their repository size that is known in the `project statistics`
 table and sort it by the project that was updated by data ascending.
 
 #### How to Use it
-1. Copy it to a location where the git user can access it on the console server
+1. You will need a personal access token that has _API_ access using your admin
+   account.
+1. Copy it to a location where the git user can access it on the console server.
+   The console server might be a good location.
 1. Utilize the `-h` flag for details on how to use it
 1. See issue https://gitlab.com/gitlab-com/gl-infra/production/issues/664 for
    further inspiration
