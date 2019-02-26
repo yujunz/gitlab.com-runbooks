@@ -30,7 +30,7 @@ parser = OptionParser.new do |opts|
   end
 
   opts.on('-m', '--move-amount [N]', Integer, 'Amount in GB worth of repo data to move. If no amount provided, only 1 repo will move') do |move_amount|
-    abort 'Size too large' if move_amount > 16000
+    abort 'Size too large' if move_amount > 16_000
     options[:move_amount] = move_amount
   end
 
@@ -120,7 +120,7 @@ class MoveIt
 
   def validate_integrity(project, commit)
     unless commit == get_commit(project.id)
-      puts "Failed validating integrity for id:#[project.id}"
+      puts "Failed validating integrity for id:#{project.id}"
     end
   end
 
@@ -137,7 +137,7 @@ class MoveIt
       print "Scheduling move id:#{project.id} to #{@target_fs}"
       change_result = project.change_repository_storage(@target_fs)
       project.save
-      if change_result == nil
+      if change_result.nil?
         puts "Failed scheduling id:#{project.id}"
       else
         validate(project)
