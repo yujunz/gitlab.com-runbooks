@@ -574,6 +574,92 @@ services:
       primary_grafana_dashboard: "USVj3qHmk/logging"
       sentry_slug:
 
+- name: logging
+  tier: inf
+  teams:
+    - infrastructure
+  label: Service:Logging
+  business:
+    requirement: We are required to keep logs, both on legal terms as well as for debugging production issues
+    customers:
+      - infrastructure
+    business_value: Without logging we might not be able to comply with legal requirements and are unable to debug production issues.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 2
+    slx:
+    documents:
+      design:
+      architecture: https://gitlab.com/gitlab-com/runbooks/raw/master/img/logging-infr.png
+      service: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+      security:
+    dependencies:
+      - elk
+    sub_components:
+      - fluentd
+      - google-pubsub-topics
+      - pubsubbeat
+      - stackdriver
+      - stackdriver-exporter
+    configurations:
+      - config_name: td-agent/fluentd main configuration
+        location: /etc/td-agent/td-agent.conf
+      - config_name: td-agent transformation, filter and plugin configuration
+        location: /etc/td-agent/conf.d/*
+      - config_name: Google PubSub topic configuration
+        location: https://console.cloud.google.com/cloudpubsub/topicList?project=gitlab-production
+      - config_name: Stackdriver log ingestion
+        location: https://console.cloud.google.com/logs/usage?project=gitlab-production
+      - config_name: stackdriver exporter config
+        location: https://gitlab.com/gitlab-cookbooks/gitlab-exporters/blob/master/attributes/stackdriver_exporter.rb#L8
+      - config_name: stackdriver scrape config on Prometheus
+        location: /opt/prometheus/prometheus/inventory/stackdriver.yml
+
+    chef_roles:
+      - gprd-base
+      - gstg-base
+      - ops-base
+      - dr-base
+      - gprd-infra-pubsub
+      - gstg-infra-pubsub
+      - ops-infra-pubsub
+      - dr-infra-pubsub
+      - dr-infra-sd-exporter
+      - gprd-infra-sd-exporter
+      - gstg-infra-sd-exporter
+      - ops-infra-sd-exporter
+    scalability:
+      note: We run fluentd for logs on each host; Google PubSub topics and stackdriver are cloud services; We can only sensibly scale out pubsubbeats.
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: Kibana
+        permalink: https://log.gitlab.net/app/kibana
+      - name: Stackdriver
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production
+  infrastructure:
+    provider: gcp
+    architecture: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+    provisioning: terraform
+    accesses:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      grafana_folder:
+      primary_grafana_dashboard:
+
 - name: web
   tier: sv
   teams:

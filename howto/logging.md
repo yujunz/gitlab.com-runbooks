@@ -66,6 +66,10 @@ gstg environments are forwarded to log.gitlab.net.
 
 ![Logical scheme](../img/logging-infr.png)
 
+### Stackdriver exporter
+
+There is a VM in each environment called `sd-exporter-*`. This VM is created using a generic terraform module https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/generic-sv-with-group . The VM has a chef role assigned to it which downloads and runs the stackdriver exporter https://gitlab.com/gitlab-cookbooks/gitlab-exporters/ . The exporter service runs on a tcp port number 9255. Prometheus is configured through a role in chef-repo to scrape port 9255 on "sd-exporter-*" VM.
+
 ### What are we logging?
 
 **production.log and haproxy logs are no longer being sent to elasticcloud due because it was overwhelming our cluster, currently these logs are only available in StackDriver**
