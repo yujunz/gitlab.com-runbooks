@@ -21,8 +21,8 @@ in the same data bags. Access types we have:
 
 | Access Type | Description                                             | Data bag group    | Bastion setup                                                             |
 |-------------|---------------------------------------------------------|-------------------|---------------------------------------------------------------------------|
-| Staging     | Access to staging environment via staging bastion       | gstg-bastion-only | https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gprd-bastions.md |
-| Production  | Access to production environment via production bastion | gprd-bastion-only | https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gstg-bastions.md |
+| Staging     | Access to staging environment via staging bastion       | gstg-bastion-only | https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gstg-bastions.md |
+| Production  | Access to production environment via production bastion | gprd-bastion-only | https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gprd-bastions.md |
 
 ## Process
 Team member, needing access, should:
