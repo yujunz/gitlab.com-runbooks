@@ -15,6 +15,8 @@ options = {
   wait: 10
 }
 
+ARGV << '-h' if ARGV.empty?
+
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{$PROGRAM_NAME} [options] --current-file-server <servername> --target-file-server <servername>"
   opts.on('--current-file-server SERVERNAME', String, 'Current file server we want to move stuff off from') do |server|
@@ -38,7 +40,7 @@ parser = OptionParser.new do |opts|
     options[:wait] = wait
   end
 
-  opts.on('-h', '--help', 'Displays Help') do
+  opts.on('-srh', '--srhelp', 'Displays Help') do
     puts opts
     exit
   end

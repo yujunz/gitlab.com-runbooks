@@ -39,14 +39,37 @@ much data we'd like to move.  This script will then query all projects on that
 file server, their repository size that is known in the `project statistics`
 table and sort it by the project that was updated by data ascending.
 
+Once this list of projects is built, the script submits a migration job that
+sidekiq will attempt to carry out. The `wait` time specified is the time to
+wait for that job to be completed. It is possible that the script will timeout
+but that the sidekiq job is still running and completes successfully. You will
+need to verify that the project file location is accurate and see if sidekiq
+marked the repository as writable to verify this.
+
 #### How to Use it
-1. You will need a personal access token that has _API_ access using your admin
-   account.
+
 1. Copy it to a location where the git user can access it on the console server.
    The console server might be a good location.
-1. Utilize the `-h` flag for details on how to use it
+1. You will need a personal access token that has _API_ access using your admin
+   account. This token will need to be exported as an environment variable,
+   `PRIVATE_TOKEN`.
+1. Utilize the `-srh` flag for details on how to use it
 1. See issue https://gitlab.com/gitlab-com/gl-infra/production/issues/664 for
    further inspiration
+
+#### Verify Information
+Via the rails console, we have a few easy lookups to see where a project lives,
+what it's filepath is, and if it is writeable. For example:
+```
+[ gstg ] production> project = Project.find(1234567890)
+=> #<Project id:1234567890 foo/bar>
+[ gstg ] production> project.repository_storage
+=> "nfs-file05"
+[ gstg ] production> project.disk_path
+=> "@hashed/8d/23/8d23cf6c86e834a7aa6ede26ce2bb2e74903538c61bdd5d2197997ab2f72"
+[ gstg ] production> project.repository_read_only
+=> false
+```
 
 #### Pitfalls of this
 * If too many are executed at once, we'll start to drown the file server
@@ -81,9 +104,10 @@ table and sort it by the project that was updated by data ascending.
 ## Gotchas
 
 Sometimes moving a project can timeout and encounter irrecoverable errors. When
-this happens the project will appear to the end user as if it is gone. On the file
-system where it originally was there will be a directory appended with `+moved-YYYMMDD-HHMMSS`.
-It is perfectly fine to copy this back into the original file name and try again.
+this happens the project will appear to the end user as if it is gone. On the
+file system where it originally was there will be a directory appended with
+`+moved-YYYMMDD-HHMMSS`. It is perfectly fine to copy this back into the
+original file name and try again.
 
 
 ## Behind the Scenes
