@@ -15,6 +15,11 @@ groups:
         rate(node_cpu_seconds_total{mode!="idle"}[1m])
       )
   # CPU in use by mode.
+  - record: instance_mode:node_cpu_seconds:rate1m
+    expr: >
+      sum without (cpu) (
+        rate(node_cpu_seconds_total[1m])
+      )
   - record: instance_mode:node_cpu_seconds:rate5m
     expr: >
       sum without (cpu) (
@@ -24,7 +29,7 @@ groups:
   - record: instance:node_cpu_utilization:ratio
     expr: >
       sum without (mode) (
-        instance_mode:node_cpu_seconds:rate5m{mode!="idle"}
+        instance_mode:node_cpu_seconds:rate1m{mode!="idle"}
       ) / instance:node_cpus:count
   # CPU summaries
   - record: job:node_cpu_utilization:min_ratio
