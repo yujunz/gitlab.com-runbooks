@@ -2278,7 +2278,7 @@ services:
       to a higher plan.
     SLA:
       availability:
-      response_time:
+      response_time: p90 of 30 second job pick up latency
   technical:
     project:
       - https://gitlab.com/gitlab-org/gitlab-runner
