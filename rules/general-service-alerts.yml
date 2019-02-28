@@ -14,7 +14,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_availability
+          metric: gitlab_service_availability:ratio
           severity: warn
           period: 5m
           bound: lower
@@ -34,6 +34,8 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
+          promql_template_1: 'gitlab_service_availability:ratio{type="$type"}'
+          promql_template_2: 'gitlab_component_availability:ratio{type="$type"}'
 
       # Error: Availability below 50%
       - alert: service_availability_out_of_bounds_lower_5m
@@ -44,7 +46,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_availability
+          metric: gitlab_service_availability:ratio
           severity: error
           period: 5m
           bound: lower
@@ -64,6 +66,8 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
+          promql_template_1: 'gitlab_service_availability:ratio{type="$type"}'
+          promql_template_2: 'gitlab_component_availability:ratio{type="$type"}'
 
       ################################################
       # Operation Rate: how many operations is this service handling per second?
@@ -82,7 +86,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_ops
+          metric: gitlab_service_ops:rate
           severity: warn
           period: 5m
           bound: upper
@@ -103,6 +107,8 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
+          promql_template_1: 'gitlab_service_ops:rate{type="$type"}'
+          promql_template_2: 'gitlab_component_ops:rate{type="$type"}'
 
       # Error: Operation rate above 4 sigma
       - alert: service_ops_out_of_bounds_upper_5m
@@ -113,7 +119,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_ops
+          metric: gitlab_service_ops:rate
           severity: error
           period: 5m
           bound: upper
@@ -134,6 +140,8 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
+          promql_template_1: 'gitlab_service_ops:rate{type="$type"}'
+          promql_template_2: 'gitlab_component_ops:rate{type="$type"}'
 
       # ------------------------------------
       # Lower bound thresholds exceeded
@@ -148,7 +156,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_ops
+          metric: gitlab_service_ops:rate
           severity: warn
           period: 5m
           bound: lower
@@ -168,6 +176,8 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
+          promql_template_1: 'gitlab_service_ops:rate{type="$type"}'
+          promql_template_2: 'gitlab_component_ops:rate{type="$type"}'
 
       # Error: Operation rate below 4 sigma
       - alert: service_ops_out_of_bounds_lower_5m
@@ -178,7 +188,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_ops
+          metric: gitlab_service_ops:rate
           severity: error
           period: 5m
           bound: lower
@@ -198,6 +208,8 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
+          promql_template_1: 'gitlab_service_ops:rate{type="$type"}'
+          promql_template_2: 'gitlab_component_ops:rate{type="$type"}'
 
       ################################################
       # Apdex: what ratio of the service operations are completing with an acceptable amount of time?
@@ -212,7 +224,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_apdex
+          metric: gitlab_service_apdex:ratio
           severity: warn
           period: 5m
           bound: lower
@@ -233,6 +245,9 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
+          promql_template_1: 'gitlab_service_apdex:ratio{type="$type"}'
+          promql_template_2: 'gitlab_component_apdex:ratio{type="$type"}'
+          promql_template_3: 'gitlab_component_node_apdex:ratio{type="$type"}'
 
       # Error: Apdex lower than 4 sigma
       - alert: service_apdex_out_of_bounds_lower_5m
@@ -243,7 +258,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_apdex
+          metric: gitlab_service_apdex:ratio
           severity: error
           period: 5m
           bound: lower
@@ -264,6 +279,9 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
+          promql_template_1: 'gitlab_service_apdex:ratio{type="$type"}'
+          promql_template_2: 'gitlab_component_apdex:ratio{type="$type"}'
+          promql_template_3: 'gitlab_component_node_apdex:ratio{type="$type"}'
 
       ################################################
       # Error rate: how many exception events is this service generating per second?
@@ -278,7 +296,7 @@ groups:
         for: 5m
         labels:
           rules_domain: general
-          metric: gitlab_service_errors
+          metric: gitlab_service_errors:rate
           severity: warn
           period: 5m
           bound: upper
@@ -298,6 +316,8 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-errors.md"
+          promql_template_1: 'gitlab_service_errors:rate{type="$type"}'
+          promql_template_2: 'gitlab_component_errors:rate{type="$type"}'
 
       # Error: Error rate exceeds 4 sigma
       - alert: service_errors_out_of_bounds_upper_5m
@@ -328,3 +348,5 @@ groups:
           grafana_min_zoom_hours: 12
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-errors.md"
+          promql_template_1: 'gitlab_service_errors:rate{type="$type"}'
+          promql_template_2: 'gitlab_component_errors:rate{type="$type"}'
