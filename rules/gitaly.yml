@@ -262,6 +262,7 @@ groups:
       grafana_variables: "environment,stage,grpc_method"
       grafana_min_zoom_hours: 6
       runbook: "troubleshooting/gitaly-rate-limiting.md"
+      promql_template_1: 'histogram_quantile(0.90, sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{stage="$stage",grpc_method="$grpc_method"}[1m])) by (fqdn, grpc_method, le))'
 
   - alert: gitaly_lock_acquisition_rates
     expr: |
@@ -289,3 +290,4 @@ groups:
       grafana_variables: "environment,stage,grpc_method"
       grafana_min_zoom_hours: 6
       runbook: "troubleshooting/gitaly-rate-limiting.md"
+      promql_template_1: 'histogram_quantile(0.80, sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{stage="$stage",grpc_method="$grpc_method"}[1m])) by (fqdn, grpc_method, le))'
