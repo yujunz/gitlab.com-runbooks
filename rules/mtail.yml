@@ -15,3 +15,13 @@ groups:
       sum without (fqdn,instance) (
         rate(unicorn_killer_terminations_total[1m])
       )
+- name: mtail target is not being scraped
+  rules:
+  - alert: MtailNotScraped
+    expr: up{job="mtail"}==0
+    for: 5m
+    labels:
+      severity: warn
+    annotations:
+      runbook: https://gitlab.com/gitlab-com/runbooks/tree/master/monitoring
+      title: Prometheus is failing to scrape mtail
