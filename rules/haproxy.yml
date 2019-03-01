@@ -145,3 +145,12 @@ groups:
         This likely indicates that requests are being sent to servers and there are errors reported to users.
       runbook: troubleshooting/haproxy.md
       title: Increased Server Connection Errors
+  - alert: HAProxyHighCPU
+    expr: rate(haproxy_process_cpu_seconds_total[30s]) > 0.95
+    for: 15m
+    labels:
+      severity: warn
+    annotations:
+      description: HAProxy process high CPU usage on {{ $labels.fqdn }}
+      runbook: troubleshooting/haproxy.md
+      title: HAProxy process high CPU usage on {{ $labels.fqdn }}
