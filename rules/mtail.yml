@@ -23,5 +23,5 @@ groups:
     labels:
       severity: warn
     annotations:
-      runbook: https://gitlab.com/gitlab-com/runbooks/tree/master/monitoring
+      runbook: https://gitlab.com/gitlab-com/runbooks/blob/master/monitoring/README.md
       title: Prometheus is failing to scrape mtail
