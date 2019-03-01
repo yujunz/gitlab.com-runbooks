@@ -242,11 +242,6 @@
       },
       {
         "mode": "NULLABLE",
-        "name": "ps",
-        "type": "STRING"
-      },
-      {
-        "mode": "NULLABLE",
         "name": "captured_headers",
         "type": "STRING"
       },
