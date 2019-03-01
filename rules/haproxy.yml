@@ -151,8 +151,6 @@ groups:
     labels:
       severity: warn
     annotations:
-      description: HAProxy process high CPU usage on {{ if $labels.fqdn }}{{ $labels.fqdn
-        }}{{ else }}{{ $labels.instance }}{{ end }}
+      description: HAProxy process high CPU usage on {{ $labels.fqdn }}
       runbook: troubleshooting/haproxy.md
-      title: HAProxy process high CPU usage on {{ if $labels.fqdn }}{{ $labels.fqdn
-        }}{{ else }}{{ $labels.instance }}{{ end }}
+      title: HAProxy process high CPU usage on {{ $labels.fqdn }}
