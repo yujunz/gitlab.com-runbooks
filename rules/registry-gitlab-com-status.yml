@@ -33,7 +33,7 @@ groups:
 
   - alert: High4xxRateForRegistry
     expr: |
-      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="4xx",tier="lb"}) > 2
+      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",code="4xx",tier="lb"})
       / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="registry",tier="lb"})
       > 0.75
     for: 5m
@@ -42,7 +42,7 @@ groups:
       severity: critical
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing across
-        all backends, more than 75% of http requests and more than 2 requests per second for at least 5 minutes. Check the registry nodes
+        all backends, more than 60% of http requests for at least 5 minutes. Check the registry nodes
         since they are the ones processing live traffic at the moment.
       runbook: troubleshooting/gitlab-registry.md
       title: High 4xx Error Rate on Docker Registry
