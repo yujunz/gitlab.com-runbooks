@@ -149,7 +149,8 @@ groups:
     expr: rate(haproxy_process_cpu_seconds_total[30s]) > 0.95
     for: 15m
     labels:
-      severity: warn
+      pager: pagerduty
+      severity: critical
     annotations:
       description: HAProxy process high CPU usage on {{ $labels.fqdn }}
       runbook: troubleshooting/haproxy.md
