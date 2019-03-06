@@ -1,5 +1,7 @@
 # Execute via:
-# `sudo gitlab-rails runner /<path>/<to>/#{$PROGRAM_NAME}`
+# `sudo su -`
+# `export PRIVATE_TOKEN=XXX`
+# `gitlab-rails runner /<path>/<to>/#{$PROGRAM_NAME}`
 
 require 'optparse'
 
@@ -12,6 +14,8 @@ options = {
   move_amount: 0,
   wait: 10
 }
+
+ARGV << '-h' if ARGV.empty?
 
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{$PROGRAM_NAME} [options] --current-file-server <servername> --target-file-server <servername>"
@@ -28,7 +32,7 @@ parser = OptionParser.new do |opts|
   end
 
   opts.on('-m', '--move-amount [N]', Integer, 'Amount in GB worth of repo data to move. If no amount provided, only 1 repo will move') do |move_amount|
-    abort 'Size too large' if move_amount > 16000
+    abort 'Size too large' if move_amount > 16_000
     options[:move_amount] = move_amount
   end
 
@@ -36,7 +40,7 @@ parser = OptionParser.new do |opts|
     options[:wait] = wait
   end
 
-  opts.on('-h', '--help', 'Displays Help') do
+  opts.on('-srh', '--srhelp', 'Displays Help') do
     puts opts
     exit
   end
@@ -118,7 +122,7 @@ class MoveIt
 
   def validate_integrity(project, commit)
     unless commit == get_commit(project.id)
-      puts "Failed validating integrity for id:#[project.id}"
+      puts "Failed validating integrity for id:#{project.id}"
     end
   end
 
@@ -135,7 +139,7 @@ class MoveIt
       print "Scheduling move id:#{project.id} to #{@target_fs}"
       change_result = project.change_repository_storage(@target_fs)
       project.save
-      if change_result == nil
+      if change_result.nil?
         puts "Failed scheduling id:#{project.id}"
       else
         validate(project)
@@ -148,12 +152,15 @@ class MoveIt
     # query all projects on the current file server, sort by size descending,
     # then sort by last activity date ascending
     # I want the most idle largest projects
-    Project
-      .joins(:statistics)
-      .where(repository_storage: @current_fs)
-      .order('project_statistics.repository_size DESC')
-      .order('last_activity_at ASC')
-      .pluck(:id)
+    Project.transaction do
+      ActiveRecord::Base.connection.execute 'SET statement_timeout = 600000'
+      Project
+        .joins(:statistics)
+        .where(repository_storage: @current_fs)
+        .order('project_statistics.repository_size DESC')
+        .order('last_activity_at ASC')
+        .pluck(:id)
+    end
   end
 
   def go
@@ -172,7 +179,7 @@ end
 parser.parse!
 
 if options[:current_file_server].nil? || options[:target_file_server].nil?
-  abort("Missing arguments. Use #{$PROGRAM_NAME} --help to see the list of arguments available") 
+  abort("Missing arguments. Use #{$PROGRAM_NAME} --help to see the list of arguments available")
 end
 
 MoveIt.new(options[:current_file_server], options[:target_file_server], options[:move_amount], options[:dry_run], options[:wait]).go
