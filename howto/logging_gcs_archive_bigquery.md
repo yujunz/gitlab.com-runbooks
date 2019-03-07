@@ -42,7 +42,7 @@ differing styles.
 ![record type](../img/bigquery_schema_record.png)
 
 6. In `Advanced options`, check `Ignore unknown values`
-7. Ifthe data to be imported is large, consider whether partioning will be necessary.
+7. If the data to be imported is large, consider whether partioning will be necessary.
    1. Add `timestamp` field of type `TIMESTAMP`
    2. In `Advanced options`, select it as the partitioning field:
 
