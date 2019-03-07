@@ -52,8 +52,8 @@ groups:
       )
 
   - alert: HighWebErrorRate
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code="5xx",tier="lb"})
-      - sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code!="5xx",tier="lb"})
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code="5xx",tier="lb"}) by (environment)
+      - sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="web",code!="5xx",tier="lb"}) by (environment)
       > 0
     for: 15s
     labels:
@@ -66,8 +66,8 @@ groups:
       runbook: troubleshooting/haproxy.md
       title: High Error Rate on Front End Web
   - alert: High4xxApiRateLimit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",tier="lb"})
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb"})
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",tier="lb"}) by (environment)
+      / sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb"}) by (environment)
       > 0.1
     for: 5m
     labels:
@@ -79,8 +79,8 @@ groups:
       runbook: troubleshooting/haproxy.md
       title: High 4xx Error Rate on Front End Web on backend api_rate_limit
   - alert: High4xxRateLimit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",code="4xx",tier="lb"})
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",tier="lb"})
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",code="4xx",tier="lb"}) by (environment)
+      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",tier="lb"}) by (environment)
       > 0.25
     for: 5m
     labels:
@@ -92,7 +92,7 @@ groups:
       runbook: troubleshooting/haproxy.md
       title: High 4xx Error Rate on Front End Web
   - alert: IncreasedErrorRateHTTPSGit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend="https_git"}) > 20
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend="https_git"}) by (environment) > 20
     for: 15s
     labels:
       pager: pagerduty
@@ -102,7 +102,7 @@ groups:
       runbook: troubleshooting/high-error-rate.md
       title: Increased Error Rate Across Fleet
   - alert: IncreasedErrorRateOtherBackends
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend!="https_git"}) by (backend) > 20
+    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend!="https_git"}) by (backend, environment) > 20
     for: 15s
     labels:
       pager: pagerduty
