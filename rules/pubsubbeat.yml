@@ -1,0 +1,26 @@
+groups:
+- name: pubsubbeats.rules
+  rules:
+    - alert: TooManyPubsubbeatWarnings
+      expr: rate(pubsubbeat_warnings_total[1m]) > 1
+      for: 5m
+      labels:
+        severity: warn
+      annotations:
+        title: Pubsubbeat is logging a lot of warnings
+        description: |
+          Warnings could be a result of failures in publishing logs.
+          Consider checking /var/log/pubsubbeat/current on the affected
+          host and see what's the cause of the warnings.
+
+    - alert: TooManyPubsubbeatErrors
+      expr: rate(pubsubbeat_errors_total[1m]) > 1
+      for: 5m
+      labels:
+        severity: warn
+      annotations:
+        title: Pubsubbeat is logging a lot of errors
+        description: |
+          Warnings could be a result of pubsubbeat being unable to connect to
+          Elasticsearch. Consider checking /var/log/pubsubbeat/current on the affected
+          host and see what's the cause of the errors.
