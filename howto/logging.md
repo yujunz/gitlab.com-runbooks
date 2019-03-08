@@ -103,6 +103,7 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf | |
 | haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf | label.tag="haproxy" |
 | nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf | |
+| registry | /var/log/gitlab/registry/current | lines | pubsub-registry-inf | |
 | system.auth | /var/log/auth.log | syslog | pubsub-system-inf | |
 | system.syslog | /var/log/syslog | syslog | pubsub-system-inf | |
 | history.psql | /home/*-db/.psql_history  | | |
@@ -159,6 +160,13 @@ There are three cookbooks that configure logging on gitlab.com
 
 #### Terraform
 
+Pub/Sub Topics are managed by terraform (specifically,
+[the pubsubbeat module](https://gitlab.com/gitlab-com/gl-infra/terraform-modules/google/pubsubbeat)).
+
+Pub/Sub Subscriptions should be automatically created by the pubsubbeat service
+on each pubsub host. If subscriptions get misconfigured (e.g. topics appear
+as `_deleted-topic_`) you can delete them and restart the pubsubbeat services to
+re-create them.
 
 #### Adding a new logfile
 
@@ -192,5 +200,5 @@ variable "pubsubbeats" {
 #### Logs have stopped showing up on elastic search
 
 * Find the appropriate beat for the index, look for the vm that matches the index name
-* SSH to the vm and look at the `/var/log/pubsub/current` logfile to see if there are any errors.
+* SSH to the vm and look at the `/var/log/pubsubbeat/current` logfile to see if there are any errors.
 * If there are no errors check out the `/var/log/tg-agent` logfile on one of the nodes sending logs.
