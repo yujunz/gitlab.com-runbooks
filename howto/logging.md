@@ -88,7 +88,7 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | db.pgbouncer | gitlab/pgbouncer/current | line regex | pubsub-postgres-inf | |
 | workhorse | gitlab/gitlab-workhorse/current | JSON | pubsub-workhorse-inf | |
 | rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf | |
-| rails.application | gitlab-rails/application.log | JSON | pubsub-rails-inf | |
+| rails.application | gitlab-rails/application.log | JSON | pubsub-application-inf | |
 | rails.audit | gitlab-rails/audit_json.log | JSON | pubsub-rails-inf | |
 | rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf | |
 | rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf | |
