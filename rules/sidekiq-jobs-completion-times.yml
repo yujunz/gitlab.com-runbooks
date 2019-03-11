@@ -1,0 +1,12 @@
+groups:
+- name: sidekiq-jobs-completion-times.rules
+  rules:
+  - alert: SidekiqJobsCompletionTimeTooHigh
+    expr: rate(sidekiq_jobs_completion_time_seconds_bucket{priority!="besteffort"}[1m]) > 30
+    for: 15m
+    labels:
+      severity: warn
+    annotations:
+      description: Sidekiq jobs are taking more than 30s to process. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
+      runbook: troubleshooting/service-sidekiq.md
+      title: 'Sidekiq Jobs completion time too high: {{$value}}'
