@@ -4,14 +4,14 @@ groups:
   - alert: SidekiqJobsCompletionTimeTooHigh
     expr: |
       1 - (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50",priority!="besteffort"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
         /
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf",priority!="besteffort"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
       ) > 0.1
     for: 15m
     labels:
       severity: warn
     annotations:
-      description: Sidekiq jobs are taking more than 30s to process. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
+      description: More than 10% of Sidekiq jobs are taking a long time to complete. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
       runbook: troubleshooting/service-sidekiq.md
       title: 'Sidekiq Jobs completion time too high: {{$value}}'
