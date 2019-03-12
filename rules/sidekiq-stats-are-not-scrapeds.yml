@@ -11,7 +11,7 @@ groups:
       title: Sidekiq stats failed to be scraped for the last minute
   - alert: SidekiqJobsMetricsMissing
     expr: absent(sidekiq_jobs_completion_time_seconds_bucket)
-    for: 12h
+    for: 2h
     labels:
       severity: warn
     annotations:

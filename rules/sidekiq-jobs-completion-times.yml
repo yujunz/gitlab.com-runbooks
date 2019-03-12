@@ -2,7 +2,12 @@ groups:
 - name: sidekiq-jobs-completion-times.rules
   rules:
   - alert: SidekiqJobsCompletionTimeTooHigh
-    expr: rate(sidekiq_jobs_completion_time_seconds_bucket{priority!="besteffort"}[1m]) > 30
+    expr: |
+      1 - (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
+        /
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
+      ) > 0.1
     for: 15m
     labels:
       severity: warn
