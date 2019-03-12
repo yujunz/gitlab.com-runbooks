@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-runner
+  namespace: gitlab
+data:
+  config.toml: |
+    concurrent = 30
+
+    [[runners]]
+      name = "Kubernetes Runner"
+      url = "https://$GITLAB_ENDPOINT/"
+      token = "$RUNNER_TOKEN"
+      executor = "kubernetes"
+      [runners.kubernetes]
+        namespace = "gitlab"
+        privileged = true
+        image = "busybox"
