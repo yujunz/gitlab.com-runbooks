@@ -2,6 +2,48 @@ groups:
 - name: GitLab Component Apdex Scores
   interval: 1m
   rules:
+  # haproxy:http traffic
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: 'haproxy'
+      tier: 'lb'
+    expr: >
+      avg by (environment, tier, component) (
+        label_replace(
+      sum(rate(haproxy_http_response_duration_seconds_bucket{le="5"}[1m])) by (environment, backend_name)
+      /
+      sum(rate(haproxy_http_response_duration_seconds_bucket{le="+Inf"}[1m])) by (environment, backend_name) > 0,
+          "component",
+          "backend-$1",
+          "backend_name",
+          "(.*)"
+        )
+      )
+
+  # haproxy:ssh traffic
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: 'haproxy'
+      tier: 'lb'
+      stage: 'main'
+      component: 'backend-ssh'
+    expr: >
+      sum(rate(haproxy_ssh_request_duration_seconds_bucket{le="8"}[1m])) by (environment)
+      /
+      sum(rate(haproxy_ssh_request_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) > 0
+
+    # Note: As yet, there is no canary git+ssh traffic
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: 'haproxy'
+      tier: 'lb'
+      stage: 'cny'
+      component: 'backend-registry'
+    expr: >
+      sum(rate(haproxy_http_response_duration_seconds_bucket{server_name=~"^registry-cny-\\d.*", le="5"}[1m])) by (environment)
+      /
+      sum(rate(haproxy_http_response_duration_seconds_bucket{server_name=~"^registry-cny-\\d.*", le="+Inf"}[1m])) by (environment) > 0
 
   # web:workhorse
   # Satisfied -> 1 seconds
