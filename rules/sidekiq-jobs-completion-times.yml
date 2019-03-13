@@ -8,7 +8,7 @@ groups:
         /
         sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf",priority!="besteffort"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
       ) > 0.1
-    for: 15m
+    for: 5m
     labels:
       severity: warn
     annotations:
