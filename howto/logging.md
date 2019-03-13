@@ -18,6 +18,13 @@ To find production logs select the corresponding indexes with `pubsub-*-gprd` in
 * For azure filter by `json.environment: prd`
 * For GCP filter by `json.environment: gprd`
 
+#### PreProd (pre.gitlab.com)
+
+The PreProduction environment shares the same ES indexes as staging.
+To find PreProd logs select the corresponding indexes with `pubsub-*-gstg` in the name
+
+* Filter by `json.environment: pre`
+
 #### Staging
 
 To find production logs select the corresponding indexes with `pubsub-*-gstg` in the name
