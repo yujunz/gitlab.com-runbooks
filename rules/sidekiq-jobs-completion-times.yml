@@ -1,17 +1,33 @@
 groups:
 - name: sidekiq-jobs-completion-times.rules
   rules:
-  - alert: SidekiqJobsCompletionTimeTooHigh
+
+  - alert: SidekiqJobsCompletionTimeTooHighNewMR
     expr: |
       1 - (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50",priority!="besteffort"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5",priority!="besteffort",worker="NewMergeRequestWorker"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
         /
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf",priority!="besteffort"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf",priority!="besteffort",worker="NewMergeRequestWorker"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
       ) > 0.1
     for: 5m
     labels:
       severity: warn
     annotations:
-      description: More than 10% of Sidekiq jobs are taking a long time to complete. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
+      description: More than 10% of NewMergeRequestWorker jobs are taking a long time to complete. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
+      runbook: troubleshooting/service-sidekiq.md
+      title: 'Sidekiq Jobs completion time too high: {{$value}}'
+
+  - alert: SidekiqJobsCompletionTimeTooHighUpdateMR
+    expr: |
+      1 - (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5",priority!="besteffort",worker="UpdateMergeRequestsWorker"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
+        /
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf",priority!="besteffort",worker="UpdateMergeRequestsWorker"}[10m])) by (environment, fqdn, priority, stage, tier, type, worker)
+      ) > 0.1
+    for: 5m
+    labels:
+      severity: warn
+    annotations:
+      description: More than 10% of UpdateMergeRequestsWorker jobs are taking a long time to complete. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
       runbook: troubleshooting/service-sidekiq.md
       title: 'Sidekiq Jobs completion time too high: {{$value}}'
