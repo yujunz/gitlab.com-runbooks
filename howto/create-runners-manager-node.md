@@ -16,11 +16,11 @@
 
 ### Prepare node
 
-Prepare droplet in `GitLab prod team` on DO and chose corresponding DC. Prefer NYC1 or NYC3 over NYC2. Runners cache and registry are limited in disk space on NYC2. [Bootstrap](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/new-vps.md) droplet with chef.
+Prepare droplet in `GitLab prod team` on DO and chose corresponding DC. Prefer NYC1 or NYC3 over NYC2. Runners cache and registry are limited in disk space on NYC2. [Bootstrap](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/new-vps.md) droplet with chef.
 
 ### Create role and secrets
 
-Create role ([sample](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/roles/gitlab-ce-ee-runners.json)) and corresponding secrets.
+Create role ([sample](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/roles/gitlab-ce-ee-runners.json)) and corresponding secrets.
 
 This is the main attributes which must be configured:
 

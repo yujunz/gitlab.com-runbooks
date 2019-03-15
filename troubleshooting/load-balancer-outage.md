@@ -2,7 +2,7 @@
 
 We utilize Azure load balancers to deal with failover of our postgres database.
 Occasionally there will be an outage of the load balancer that will cause disruption.
-For more information on our load balanced Postgres setup, visit the [docs section of chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/tree/postgres-docs/doc)
+For more information on our load balanced Postgres setup, visit the [docs section of chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/tree/postgres-docs/doc)
 
 ## Determine if the outage is the vendor or us
 
@@ -30,7 +30,7 @@ If you do NOT see this for a host or it instead times out, that host cannot reac
 server.
 
 If some of the workers CAN reach postgres but others CANNOT, this is likely a Microsoft issue. 
-You will need to [contact Microsoft support](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#creating-a-ticket-for-pro-direct-support-in-azure)
+You will need to [contact Microsoft support](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/azure.md#creating-a-ticket-for-pro-direct-support-in-azure)
 as soon as possible. They should reply within the hour.
 
 ## Workaround for Postgres

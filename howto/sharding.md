@@ -15,7 +15,7 @@ the `git_data_dirs` parameter.
 ### GitLab Chef Configuration
 
 We use chef to configure the storage shards that we have, these configuration
-settings are applied via the `gitlab-base` chef role [internal link](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/roles/gitlab-base.json#L193-207).
+settings are applied via the `gitlab-base` chef role [internal link](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/roles/gitlab-base.json#L193-207).
 
 ## Moving Repositories between Shards
 

@@ -53,5 +53,5 @@ Access to staging environment is treated the same as production as per
 
 ## Deploy to staging
 
-Follow the instructions [from the chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/staging.md)
+Follow the instructions [from the chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/staging.md)
 (to which you need access to deploy anyway)

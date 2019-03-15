@@ -56,7 +56,7 @@ Creating new cookbook consists of several steps:
       there too.
    1. Uncheck the "Public pipelines" under Settings -> Pipelines.
 
-Go to the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/) and edit the
+Go to the [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/) and edit the
 Berksfile to add the new cookbook. Be sure that you add version pinning and point it to the
 ops repo. Next, run `berks install` to download the cookbook for the first time, commit, and push.
 Finally, run `berks upload <cookbookname>` to upload the cookbook to the Chef server.
@@ -193,15 +193,15 @@ By utilizing environments in chef we are able to roll out our cookbooks to a sub
 of our infrastructure. As an [environment](https://docs.chef.io/environments.html) we
 divide up our infrastructure the same way was in terraform:
 
-* [stg](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/stg.json) (staging)
-* [pre](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/pre.json) (pre production)
-* [cny](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/cny.json) (canary)
-* [prd](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/prd.json) (production)
+* [stg](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/stg.json) (staging)
+* [pre](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/pre.json) (pre production)
+* [cny](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/cny.json) (canary)
+* [prd](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/prd.json) (production)
 
 with the addition of the chef default environment:
 
 
-* [\_default](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/_default.json)
+* [\_default](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/_default.json)
 
 To see the nodes in an environment use a knife search command such as:
 
@@ -224,19 +224,19 @@ environment, since `_default` has no version constraints. The next steps are the
 for any omnibus deploy:
 
 1. deploy and test in staging
-  1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/stg.json)
+  1. edit the [environment file](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/stg.json)
   1. upload the environment file `knife environment from file path/to/stg.json`
   1. verify changes (e.g. run `chef-client` on a server)
 1. deploy and test in pre-production
-  1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/pre.json)
+  1. edit the [environment file](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/pre.json)
   1. upload the environment file `knife environment from file path/to/pre.json`
   1. verify changes (e.g. run `chef-client` on a server)
 1. deploy and test in canary
-  1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/cny.json)
+  1. edit the [environment file](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/cny.json)
   1. upload the environment file `knife environment from file path/to/cny.json`
   1. verify changes (e.g. run `chef-client` on a server)
 1. deploy and run in production
-  1. edit the [environment file](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/environments/prd.json)
+  1. edit the [environment file](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/environments/prd.json)
   1. upload the environment file `knife environment from file path/to/prd.json`
   1. verify changes (e.g. run `chef-client` on a server)
 
@@ -265,7 +265,7 @@ In here you can type `help` to get really useful help, but then for instance you
 And then examine this node from chef's perspective
 
 ## References
-  - [GitLab's chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/)
+  - [GitLab's chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/)
   - [ChefSpec documentation](https://docs.chef.io/chefspec.html)
   - [ChefSpec examples on GitHub](https://github.com/sethvargo/chefspec/tree/master/examples)
   - [KitchenCI getting started guide](http://kitchen.ci/docs/getting-started/)

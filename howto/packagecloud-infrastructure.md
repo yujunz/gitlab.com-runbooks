@@ -83,7 +83,7 @@ Manual way:
     * 443
     * 22
     * Standard monitoring ports, available only to prometheus servers
-1. Add the newly created server to [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo) with the
+1. Add the newly created server to [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo) with the
    the current `packages.gitlab.com` node as a template.
 1. Once you run chef-client on the new server, it will automatically set the config
    up for you. Alternatively, you can manually install packagecloud by:

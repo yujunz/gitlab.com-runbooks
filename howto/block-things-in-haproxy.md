@@ -9,13 +9,13 @@
 
 ## Examples - how we have blocked before:
 
-* https://dev.gitlab.org/cookbooks/chef-repo/commit/30744f5b8fce05acf1f13e813526b3d5b3512cd0
+* https://ops.gitlab.net/gitlab-cookbooks/chef-repo/commit/30744f5b8fce05acf1f13e813526b3d5b3512cd0
 
 ## Background
 
 HAPRoxy is the main load balancer we use, it is configured first in the
 [NFS cluster cookbook](https://dev.gitlab.org/cookbooks/gitlab-nfs-cluster/blob/master/templates/default/haproxy.cfg.erb)
-and then there an [lb role in the chef repo](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/roles/gitlab-cluster-lb.json)
+and then there an [lb role in the chef repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/roles/gitlab-cluster-lb.json)
 
 ## How do I
 

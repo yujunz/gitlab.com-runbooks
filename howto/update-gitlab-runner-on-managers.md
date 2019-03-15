@@ -129,7 +129,7 @@ graph LR
 
 To upgrade runners on managers you need to:
 
-- have write access to dev.gitlab.org/cookbooks/chef-repo,
+- have write access to ops.gitlab.net/gitlab-cookbooks/chef-repo,
 - have write access to chef.gitlab.com,
 - have configured knife environment,
 - have admin access to nodes (sudo access).

@@ -23,7 +23,7 @@ application about them. This is done via updates to the `gprd-base` and `gprd-ba
 role.
 
 The `gprd-base` role will need to be updated with the Gitaly storage targets
-as seen in [this MR](https://dev.gitlab.org/cookbooks/chef-repo/merge_requests/2419/diffs#d38d00ba2c0e0e3043780492adc276b5b9cf6b32_421_446).
+as seen in [this MR](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/2419/diffs#d38d00ba2c0e0e3043780492adc276b5b9cf6b32_421_446).
 Please note, you no longer need to add mount data, only the Gitaly storage targets.
 You will also need to add the new servers to the `gprd-base-stor-gitaly` role otherwise Gitaly
 will not know about the new servers which will cause strange errors.

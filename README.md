@@ -127,10 +127,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ### Deploy
 * [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
-* [Deploy GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md)
-* [Rollback GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/deploying.md#rolling-back-gitlabcom)
-* [Deploy staging.GitLab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/staging.md)
-* [Refresh data on staging.gitlab.com](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/staging.md)
+* [Deploy GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/deploying.md)
+* [Rollback GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/deploying.md#rolling-back-gitlabcom)
+* [Deploy staging.GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/staging.md)
+* [Refresh data on staging.gitlab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/staging.md)
 
 ### Work with the fleet and the rails app
 * [Reload unicorn with zero downtime](howto/manage-workers.md#reload-unicorn-with-zero-downtime)
@@ -181,8 +181,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 ### Work with Infrastructure Providers (VMs)
 * [Getting Support w/ RackSpace for GCP/GKE](howto/GCP-rackspace-support.md)
 * [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
-* [Create VMs in Azure, add disks, etc](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
-* [Bootstrap a new VM](https://dev.gitlab.org/cookbooks/chef-repo/blob/master/doc/new-vps.md)
+* [Create VMs in Azure, add disks, etc](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
+* [Bootstrap a new VM](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/new-vps.md)
 * [Remove existing node checklist](howto/remove-node.md)
 
 ### Manually ban an IP or netblock
