@@ -13,7 +13,7 @@ Renaming a node after it is already in Chef is a multi-step process to ensure th
 ```
 knife bootstrap 12.34.56.78 --node-name example.gitlap.com --sudo -x username
 ```
-1. Move the old node info to the new name in the [chef-repo](https://dev.gitlab.org/cookbooks/chef-repo/tree/master/nodes). Be certain you also update the "name" attribute and not just copy the file to a new name.
+1. Move the old node info to the new name in the [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/tree/master/nodes). Be certain you also update the "name" attribute and not just copy the file to a new name.
 1. Add the node to any secrets it needs to access to. `bundle exec rake 'add_node_secrets[example.gitlap.com, syslog-client]'`
 1. Run chef-client on the newly renamed node to ensure success.
 

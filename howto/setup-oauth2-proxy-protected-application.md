@@ -12,7 +12,7 @@ from unauthorized access.
 To configure new application with oauth2-proxy you need to:
 
 - have admin access to https://dev.gitlab.org/,
-- have write access to dev.gitlab.org/cookbooks/chef-repo,
+- have write access to ops.gitlab.net/gitlab-cookbooks/chef-repo,
 - have write access to chef.gitlab.com,
 - have configured knife environment,
 - have admin access to nodes where the application is deployed (with sudo access).
