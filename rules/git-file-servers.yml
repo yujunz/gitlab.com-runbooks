@@ -1,0 +1,14 @@
+groups:
+- name: git-file-servers.rules
+  rules:
+  - alert: GitFileServerFull
+    expr: (1 - instance:node_filesystem_avail:ratio{device="/dev/sdb",tier="stor"}) * 100 >= 80
+    for: 5m
+    labels:
+      channel: production
+      severity: warn
+    annotations:
+      description: '{{ $labels.fqdn }} is more than {{$value}}%. 
+        We need to build new file servers or rebalance repos.'
+      runbook: howto/storage-servers.md
+      title: Git data file server disk usage is high - {{$value}}
