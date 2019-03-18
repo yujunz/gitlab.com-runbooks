@@ -35,6 +35,8 @@ dryrun_pingdom_checks:
   except:
     refs:
       - master
+    variables:
+      - "$PINGDOM_APPKEY"
 
 deploy_pingdom_checks:
   image: golang:1.11
