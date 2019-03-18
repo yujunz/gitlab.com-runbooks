@@ -45,4 +45,4 @@ deploy_pingdom_checks:
     refs:
       - master
     variables:
-      - $PINGDOM_APPKEY
+      - "$PINGDOM_APPKEY"
