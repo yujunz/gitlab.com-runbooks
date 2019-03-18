@@ -35,8 +35,9 @@ dryrun_pingdom_checks:
   except:
     refs:
       - master
+  only:
     variables:
-      - "$PINGDOM_APPKEY"
+      - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
 
 deploy_pingdom_checks:
   image: golang:1.11
@@ -47,4 +48,4 @@ deploy_pingdom_checks:
     refs:
       - master
     variables:
-      - "$PINGDOM_APPKEY"
+      - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
