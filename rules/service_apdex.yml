@@ -10,9 +10,9 @@ groups:
     expr: >
       avg by (environment, tier, component) (
         label_replace(
-      sum(rate(haproxy_http_response_duration_seconds_bucket{le="5"}[1m])) by (environment, backend_name)
-      /
-      sum(rate(haproxy_http_response_duration_seconds_bucket{le="+Inf"}[1m])) by (environment, backend_name) > 0,
+          sum(rate(haproxy_http_response_duration_seconds_bucket{le="5"}[1m])) by (environment, backend_name)
+          /
+          sum(rate(haproxy_http_response_duration_seconds_bucket{le="+Inf"}[1m])) by (environment, backend_name) > 0,
           "component",
           "backend-$1",
           "backend_name",
@@ -168,6 +168,29 @@ groups:
       )
       /
       2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier) > 0)
+
+  # Sidekiq jobs
+  # Apdex for selected jobs is calculated as percentage of jobs which run in under 25 seconds.
+  # The criteria for selecting the jobs is:
+  # 1: should be fairly active
+  # 2: should be spread across the queues
+  # 3: should have an observable impact for users if the queue is stalled
+  # 4: should take less than 25 seconds in normal situations
+  - record: gitlab_component_apdex:ratio
+    expr: >
+      avg by (environment, tier, type, component) (
+        label_replace(
+          (
+            sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25",
+              worker=~"CreateGpgSignatureWorker|WebHookWorker|PostReceive|StageUpdateWorker|ProjectDailyStatisticsWorker|ExpireJobCacheWorker|BuildHooksWorker|ProjectImportScheduleWorker|RepositoryUpdateMirrorWorker|ProcessCommitWorker|PostReceive|ArchiveTraceWorker"}[1m])) by (environment, stage, tier, type, worker) /
+            sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf"}[1m])) by (environment, stage, tier, type, worker)
+          ),
+          "component",
+          "worker-$1",
+          "worker",
+          "(.*)"
+        )
+      )
 
 - name: GitLab Service Apdex Scores
   interval: 1m
