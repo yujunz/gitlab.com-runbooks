@@ -2310,7 +2310,7 @@ services:
         permalink: https://log.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a
   infrastructure:
     provider: gcp and do
-    architecture:
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/ci-architecture.html
     provisioning: manual
     accesses:
       - account_name:
