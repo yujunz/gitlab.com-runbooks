@@ -18,3 +18,15 @@ groups:
       description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration }} ago
       runbook: troubleshooting/chef.md
       title: Chef client hasn't run for longer than expected
+  - alert: ChefClientErrorCritical
+    expr: count(chef_client_error == 1) / count(chef_client_error) > .25
+    for: 5m
+    labels:
+      severity: critical
+      pager: pagerduty
+    annotations:
+      description: |
+        At least 25% of the fleet are failing chef-runs, this likely points to a configuration
+        error. Check the syslog of the failing hosts to see the reasons
+      runbook: troubleshooting/chef.md
+      title: Chef client failures have reached critical levels
