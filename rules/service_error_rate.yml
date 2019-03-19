@@ -2,6 +2,20 @@ groups:
 - name: GitLab Component Errors-per-Second Rates
   interval: 1m
   rules:
+  # haproxy - treat each backend as a component
+  - record: gitlab_component_errors:rate
+    expr: >
+      avg by (environment, tier, component) (
+        label_replace(
+          sum(rate(haproxy_backend_response_errors_total[1m]))  by (environment, tier, backend),
+          "component",
+          "backend-$1",
+          "backend",
+          "(.*)"
+        )
+      )
+
+  # api/web/sidekiq/git:workhorse
   - record: gitlab_component_errors:rate
     labels:
       component: 'workhorse'
