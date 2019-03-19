@@ -2433,3 +2433,74 @@ services:
       sentry_slug:
     alerts:
       - alert_link:
+
+- name: shared-runners
+  tier: sv
+  teams:
+    - infrastructure
+  label: Service:CI Runner
+  business:
+    requirement: |
+      Shared runners to service CI jobs for any project on GitLab.com.
+    customers:
+      - GitLab.com customers
+    business_value: |
+      Shared runners are used by customers to run CI jobs. We offer every
+      account up to 2000 minutes, but more can be purchased by upgrading
+      to a higher plan.
+    SLA:
+      availability:
+      response_time: p90 of 30 second job pick up latency
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitlab-runner
+    criticality: 2
+    slx:
+    documents:
+      design:
+      architecture:
+      service: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
+      security: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/security/index.md
+    dependencies:
+    configurations:
+      - config_name: Runner
+        location: /etc/gitlab-runner/config.toml
+    chef_roles:
+      - gitlab-runner-base
+      - gitlab-runner-gsrm
+      - gitlab-runner-prm
+      - gitlab-runner-srm
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: shared runners
+        permalink: https://log.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a
+  infrastructure:
+    provider: gcp and do
+    architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/ci-architecture.html
+    provisioning: manual
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/runners_manager_is_down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_do_limits.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/create-runners-manager-node.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-gitlab-runner-on-managers.md
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+    monitors:
+      grafana_folder: bpcbFeIiz
+      primary_grafana_dashboard: "000000159/ci"
+    alerts:
+      - alert_link: https://alerts.gprd.gitlab.net/#/alerts?silenced=false&inhibited=false&filter=%7Bchannel%3D%22ci-cd%22%7D
