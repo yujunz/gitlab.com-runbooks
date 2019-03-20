@@ -1,2 +1,4 @@
 toolbelt/.env/*
 .env
+/dashboards/.env.sh
+/dashboards/grafonnet-lib/
