@@ -1,9 +1,4 @@
-----
 
-- TOC
-{:toc}
-
-----
 # Application logging at gitlab
 
 **IMPORTANT** : Previously production logs were using the `pubsub-production-*` indices, this has change to the `pubsub-rails-*` indices. For more info see the [table](logging.md#what-are-we-logging).
