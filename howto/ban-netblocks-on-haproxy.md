@@ -3,52 +3,52 @@
 ## First and foremost
 
 * *Don't Panic*
-* Be very careful when manipulating the ip routing tables of machines. Check, and double check your work.
+* Be careful when manipulating the ip blacklist.
 
 ## Background
 
 From time to time it may become necessary to block IP addresses or networks of IP addresses from accessing GitLab.
-We do this by routing the requesting traffic into a 'blackhole' on the HA Proxy nodes.
+We do this by managing those IP adresses in the file 
+[deny-403-ips.lst](https://gitlab.com/gitlab-com/security-tools/front-end-security/blob/master/deny-403-ips.lst) in the
+[security-tools/front-end](https://gitlab.com/gitlab-com/security-tools/front-end-security) repository. Updates to this file
+are distributed to the HA Proxy nodes on each chef run by the [gitlab-haproxy](https://gitlab.com/gitlab-cookbooks/gitlab-haproxy) cookbook.
+
+The gitlab.com repo is mirrored by the ops.gitlab.net instance and the `gitlab-haproxy` role is picking up changes from there!
+
+
 
 ## How do I
 
-### See what IP addresses are currently in the blackhole
+### See what IP addresses are currently blocked
 
-On your workstation with a properly configured GitLab chef client, perform the following:
+Open [deny-403-ips.lst](https://gitlab.com/gitlab-com/security-tools/front-end-security/blob/master/deny-403-ips.lst).
 
-```
-% knife ssh -p 2222 -a ipaddress -C 2 'roles:gitlab-base-lb-fe' 'sudo ip route show| grep blackhole'
-```
-
-This will produce a listing of all of the blackhole IP addresses listed once per HA-Proxy node.
-
-For a more concise listing you can run a command that massages the data:
-
-```
-% knife ssh -p 2222 -a ipaddress -C 2 'roles:gitlab-base-lb-fe' 'sudo ip route show| grep blackhole' | tr -s ' ' | cut -d ' ' -f3 | sort -n | uniq -c 
-```
-
-This will produce a count and listing of all the IP addresses in the blackhole state on all of the HA Proxies.  The count should equal the number of HA Proxies in production.
+Or, on a haproxy node, look into `/etc/haproxy/front-end-security/deny-403-ips.lst`.
 
 ### Add a netblock to the blackhole
 
 Just like Santa Clause, you want to check your list twice before you sort the naughties into the blackhole.
 
+* Edit and commit [deny-403-ips.lst](https://gitlab.com/gitlab-com/security-tools/front-end-security/blob/master/deny-403-ips.lst).
+  * All IP addresses must have a subnet mask, even if it's a single address (/32).
+* Wait for changes to be mirrored to the ops.gitlab.net instance and for the next chef run to pick them up and reload haproxy on the LBs.
+
+How can we make this go faster?
+
+* Manually force the mirror sync in the [repo settings](https://ops.gitlab.net/gitlab-com/security-tools/front-end-security/settings/repository)
+* run chef client on the haproxy nodes:
+
 ```
-% knife ssh -p 2222 -a ipaddress -C 2 'roles:gitlab-base-lb-fe' 'sudo ip route add blackhole 192.168.1.0/24'
+knife ssh 'roles:gprd-base-lb' sudo chef-client
 ```
 
 ### Remove a netblock from the blackhole
 
-More often than not, the source for the block is a transient to the network that it originates from and should be removed after the incident is over.
-
-```
-% knife ssh -p 2222 -a ipaddress -C 2 'roles:gitlab-base-lb-fe' 'sudo ip route del blackhole 192.168.1.0/24'
-```
+Same as above.
 
 ## CLEAN UP
 
 It is important to note that blackhole entires ***DO NOT*** clean up after themselves, you must remove the entries
 after the threat or issue has been mitigated / resolved.  When a network is blackholed the users are not able to reach
 ANY of the GitLab infrastructure that depends upon the HA Proxies (almost all of it!). This makes it even more important
-that you clean up after yourself.
+that you clean up after yourself. You will probably want to work together with the abuse team and support.
