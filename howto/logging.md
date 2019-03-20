@@ -124,6 +124,10 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 We are sending logs to stackdriver in addition to elasticsearch for
 longer retention and to preserve logs in object storage for 180days.
 
+#### Why are we using pubsub queues instead of sending logs from fluentd directly to Elastic?
+
+We use it for two reasons. Firstly, to handle situations when our log sources emit more logs than Logstash/Elasticsearch can ingest at real time. In this scenario, pubsub serves the role of a buffer. Secondly, we were overloading Elastic Cloud with the number of connections. Thus, having only a few pubsubbeats helps to reduce the overhead of separate connnections.
+
 #### How do I find the right logs for my service?
 
 * Navigate to https://log.gitlab.net
