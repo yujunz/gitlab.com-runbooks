@@ -5,6 +5,7 @@
 - [Chef](#chef)
 - [AWS DNS entries (production console)](#aws-dns-entries-production-console)
 - [Fastly](#fastly)
+- [gitlab-ci.yml config in www-gitlab-com](#gitlab-ciyml-config-in-www-gitlab-com)
 
 <!-- markdown-toc end -->
 
@@ -47,11 +48,12 @@ Tags:
 ```
 
 relevant bits of config:
+- node-exporter (there are no other exporters, we do not ship logs anywhere)
 - secrets in gitlab-vault (tls certs)
 - nginx
-- nginx config for about-src.gitlab.com
-- nginx config for redirects
-- gitlab-runner (gitlab-runner config or gitlab-runner register command are not managed with Chef!)
+- nginx config for about-src.gitlab.com (contains config for about.gitlab.com, review apps and redirects within about.gitlab.com)
+- nginx config for redirects (redirects for four old links, almost never changes)
+- gitlab-runner (only installs the package, gitlab-runner config or gitlab-runner register command are not managed with Chef!)
 - cron to prune review apps
 
 # AWS DNS entries (production console) #
@@ -91,4 +93,12 @@ Between bytes (ms)
     10000 
 
 ```
+
+# gitlab-ci.yml config in www-gitlab-com #
+
+[url](https://gitlab.com/gitlab-com/www-gitlab-com/blob/master/.gitlab-ci.yml)
+
+most jobs use runners with `gitlab-org` tag (general purpose docker runners)
+
+there are three deploy jobs: deploy review apps (only merge requests), stop deploying review apps (manual), deploy the prod version of the website (only master). All three use the runner on about-src.gitlab.com, it's a shell runner. All three deploy websites content by rsyncing artifacts generated using MiddleMan in previous jobs
 
