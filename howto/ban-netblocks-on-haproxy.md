@@ -13,7 +13,9 @@ We do this by managing those IP adresses in the file
 [security-tools/front-end](https://gitlab.com/gitlab-com/security-tools/front-end-security) repository. Updates to this file
 are distributed to the HA Proxy nodes on each chef run by the [gitlab-haproxy](https://gitlab.com/gitlab-cookbooks/gitlab-haproxy) cookbook.
 
-The gitlab.com repo is mirrored by the ops.gitlab.net instance and the `gitlab-haproxy` role is picking up changes from there!
+**Even if it's called `deny-403-ips.lst` - it will also block non-HTTP traffic!**
+
+**The gitlab.com repo is mirrored by the ops.gitlab.net instance and the `gitlab-haproxy` role is picking up changes from there!**
 
 
 
@@ -25,7 +27,7 @@ Open [deny-403-ips.lst](https://gitlab.com/gitlab-com/security-tools/front-end-s
 
 Or, on a haproxy node, look into `/etc/haproxy/front-end-security/deny-403-ips.lst`.
 
-### Add a netblock to the blackhole
+### Add a netblock to the list
 
 Just like Santa Clause, you want to check your list twice before you sort the naughties into the blackhole.
 
@@ -42,13 +44,13 @@ How can we make this go faster?
 knife ssh 'roles:gprd-base-lb' sudo chef-client
 ```
 
-### Remove a netblock from the blackhole
+### Remove a netblock from the list
 
 Same as above.
 
 ## CLEAN UP
 
-It is important to note that blackhole entires ***DO NOT*** clean up after themselves, you must remove the entries
+It is important to note that blackhole entries ***DO NOT*** clean up after themselves, you must remove the entries
 after the threat or issue has been mitigated / resolved.  When a network is blackholed the users are not able to reach
 ANY of the GitLab infrastructure that depends upon the HA Proxies (almost all of it!). This makes it even more important
 that you clean up after yourself. You will probably want to work together with the abuse team and support.
