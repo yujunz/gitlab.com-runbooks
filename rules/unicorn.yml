@@ -1,4 +1,42 @@
 groups:
+- name: Unicorn Connections
+  interval: 15s
+  rules:
+    - record: job:unicorn_active_connections:sum
+      expr: >
+        sum without (fqdn,instance) (
+          unicorn_active_connections
+        )
+    - record: job:unicorn_queued_connections:sum
+      expr: >
+        sum without (fqdn,instance) (
+          unicorn_queued_connections
+        )
+- name: Unicorn Worker Churn
+  interval: 1m
+  rules:
+    - record: job:unicorn_exceeds_memory_limit_total:rate1m
+      expr: >
+        sum without (fqdn,instance) (
+          rate(unicorn_exceeds_memory_limit_total[1m])
+        )
+    - record: job:unicorn_killer_terminations_total:rate1m
+      expr: >
+        sum without (fqdn,instance) (
+          rate(unicorn_killer_terminations_total[1m])
+        )
+    - record: job:unicorn_pid_timeouts_total:rate1m
+      expr: >
+        sum without (fqdn,instance) (
+          rate(unicorn_pid_timeouts_total[1m])
+        )
+
+    - record: job:unicorn_process_reaped_total:rate1m
+      expr: >
+        sum without (fqdn,instance) (
+          rate(unicorn_process_reaped_total[1m])
+        )
+
 - name: Unicorn Transactions 1m
   interval: 1m
   rules:
