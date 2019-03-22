@@ -12,7 +12,7 @@
 
 # Azure #
 
-the VM was manually created through the WebUI (there is no Terraform config for it)
+Terraform code for Azure infra is deprecated and no longer maintained, it hasn't been used in a long time so any changes should be made manually through the WebUI
 
 ```
 $ dig +short about.gitlab.com
@@ -51,8 +51,8 @@ relevant bits of config:
 - node-exporter (there are no other exporters, we do not ship logs anywhere)
 - secrets in gitlab-vault (tls certs)
 - nginx
-- nginx config for about-src.gitlab.com (contains config for about.gitlab.com, review apps and redirects within about.gitlab.com)
-- nginx config for redirects (redirects for four old links, almost never changes)
+- `about-src.gitlab.com` nginx config, contains config for review apps (which use `<branch_name>.about-src.gitlab.com`) as well as for `about.gitlab.com` and redirects within `about.gitlab.com`
+- `redirects` nginx config, it redirects four old links, almost never changes
 - gitlab-runner (only installs the package, gitlab-runner config or gitlab-runner register command are not managed with Chef!)
 - cron to prune review apps
 
