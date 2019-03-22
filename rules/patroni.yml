@@ -12,7 +12,7 @@ groups:
           title: Patroni is logging errors
           runbook: howto/patroni-management.md
       - alert: PatroniIsDown
-        expr: (time() - max(patroni_health_check_last_completed_seconds) by (fqdn)) > 60
+        expr: (time() - max(patroni_health_check_last_completed_seconds) by (fqdn, environment)) > 60
         for: 5m
         labels:
           pager: pagerduty
