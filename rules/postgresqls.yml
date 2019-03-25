@@ -384,3 +384,14 @@ groups:
         jitter in replication delay. Replicas should turn off SSL compression
         via `sslcompression=0` in `recovery.conf`.
       title: Clients are using SSL compression
+  - alert: PostgreSQL_SSLCompressionActive
+    expr: rate(postgresql_temp_files_total[1m]) > 1
+    for: 5m
+    labels:
+      severity: warn
+      channel: database
+    annotations:
+      description: >
+        Database {{ $labels.fqdn }} has a high rate of temporary files creation,
+        which can be a result of an abuse or poorly-written query.
+      title: High rate of temporary files creation
