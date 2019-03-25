@@ -109,13 +109,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-org/build/omnibus-mirror/alertmanager
+    project: 
+      - https://gitlab.com/gitlab-org/build/omnibus-mirror/alertmanager
     criticality: 3
     slx:
     documents:
       design: https://docs.google.com/document/d/1-4jefGkFo71jlaLo4lHz40ZBoCv9ycBBBbjzbXifGyY
       architecture: https://github.com/prometheus/alertmanager/blob/master/doc/arch.svg
-      service: https://github.com/prometheus/alertmanager/blob/master/README.md
+      service: 
+        - https://github.com/prometheus/alertmanager/blob/master/README.md
       security: https://prometheus.io/docs/operating/security/#alertmanager
     dependencies:
       - service: prometheus
@@ -268,13 +270,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-cookbooks/gitlab-exporters
+    project: 
+      - https://gitlab.com/gitlab-cookbooks/gitlab-exporters
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: https://github.com/prometheus/blackbox_exporter/blob/master/README.md
+      service: 
+        - https://github.com/prometheus/blackbox_exporter/blob/master/README.md
       security:
     dependencies:
       - service: prometheus
@@ -316,7 +320,7 @@ services:
     - infrastructure
   label: Service:Console
   business:
-    requirement:
+    requirement: |
       - Restricted access to the primary DB console
       - Restricted access to a secondary DB console
       - Restricted access to the Geo DB console
@@ -333,7 +337,8 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-cookbooks/gitlab_users
+    project: 
+      - https://gitlab.com/gitlab-cookbooks/gitlab_users
     criticality: 4
     slx:
     documents:
@@ -360,9 +365,7 @@ services:
       - gprd-base-console-node
       - gstg-base-console-node
     scalability:
-      bound:
-        - memory
-        - cpu
+      bound: memory, cpu
       scalable: horizontal
     security:
       security_reviewed:
@@ -411,13 +414,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://github.com/hashicorp/consul
+    project: 
+      - https://github.com/hashicorp/consul
     criticality: 3
     slx:
     documents:
       design:
       architecture: https://www.consul.io/docs/internals/architecture.html
-      service: https://github.com/hashicorp/consul/blob/master/README.md
+      service: 
+        - https://github.com/hashicorp/consul/blob/master/README.md
       security: https://www.consul.io/docs/internals/security.html
     dependencies:
     configurations:
@@ -470,13 +475,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-com/gitlab-contributors
+    project: 
+      - https://gitlab.com/gitlab-com/gitlab-contributors
     criticality: 4
     slx:
     documents:
       design: https://github.com/rails/rails-contributors/blob/master/doc/design.md
       architecture:
-      service: https://gitlab.com/gitlab-com/gitlab-contributors/blob/master/README.md
+      service:
+        - https://gitlab.com/gitlab-com/gitlab-contributors/blob/master/README.md
       security:
     dependencies:
     configurations:
@@ -594,10 +601,11 @@ services:
     documents:
       design:
       architecture: https://gitlab.com/gitlab-com/runbooks/raw/master/img/logging-infr.png
-      service: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+      service:
+        - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
       security:
     dependencies:
-      - elk
+      - service: elk
     sub_components:
       - fluentd
       - google-pubsub-topics
@@ -762,13 +770,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-cookbooks/gitlab-haproxy
+    project: 
+      - https://gitlab.com/gitlab-cookbooks/gitlab-haproxy
     criticality: 1
     slx:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
-      service: https://cbonte.github.io/haproxy-dconv/1.7/intro.html
+      service: 
+        - https://cbonte.github.io/haproxy-dconv/1.7/intro.html
       security:
     dependencies:
       - service: api
@@ -800,7 +810,8 @@ services:
         reviewed:
   operations:
     maintenance: https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/haproxy.md
-    runbooks: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/haproxy.md
+    runbooks: 
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/haproxy.md
     playbooks:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
@@ -838,7 +849,8 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
-      service: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      service: 
+        - https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
       security:
     dependencies:
       - service: gitaly
@@ -914,13 +926,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-org/gitaly
+    project: 
+      - https://gitlab.com/gitlab-org/gitaly
     criticality: 2
     slx:
     documents:
       design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/DESIGN.md
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
-      service: https://gitlab.com/gitlab-org/gitaly/blob/master/README.md
+      service: 
+        - https://gitlab.com/gitlab-org/gitaly/blob/master/README.md
       security:
     dependencies:
       - service: gitaly
@@ -998,13 +1012,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://github.com/influxdata/influxdb
+    project: 
+      - https://github.com/influxdata/influxdb
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: https://github.com/influxdata/influxdb/blob/master/README.md
+      service: 
+        - https://github.com/influxdata/influxdb/blob/master/README.md
       security: https://docs.influxdata.com/influxdb/v1.7/administration/security/
     dependencies:
     configurations:
@@ -1063,13 +1079,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://github.com/tpitale/mail_room
+    project: 
+      - https://github.com/tpitale/mail_room
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: https://github.com/tpitale/mail_room/blob/master/README.md
+      service: 
+        - https://github.com/tpitale/mail_room/blob/master/README.md
       security:
     dependencies:
       - service: redis
@@ -1126,13 +1144,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-org/gitlab-pages
+    project: 
+      - https://gitlab.com/gitlab-org/gitlab-pages
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: https://gitlab.com/gitlab-org/gitlab-pages/blob/master/README.md
+      service: 
+        - https://gitlab.com/gitlab-org/gitlab-pages/blob/master/README.md
       security:
     dependencies:
     configurations:
@@ -1188,13 +1208,15 @@ services:
       response_time:   # Response time for inquiries or issues 
                        # relating this service
   technical: 
-    project:   https://github.com/pgbouncer/pgbouncer
+    project:
+      - https://github.com/pgbouncer/pgbouncer
     criticality:  1
     slx:  
     documents: 
       design:   
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
-      service:  https://pgbouncer.github.io/features.html
+      service: 
+        - https://pgbouncer.github.io/features.html
       security: 
     dependencies: 
       - service:  postgres
@@ -1260,13 +1282,15 @@ services:
       response_time:   # Response time for inquiries or issues 
                        # relating this service
   technical: 
-    project:  https://github.com/postgres/postgres
+    project:
+      - https://github.com/postgres/postgres
     criticality:       1
     slx:  
     documents: 
       design: 
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
-      service:  https://www.postgresql.org/docs/9.6/index.html
+      service:
+        - https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
     dependencies:     
       - service: consul  
@@ -1350,13 +1374,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://github.com/postgres/postgres
+    project:
+      - https://github.com/postgres/postgres
     criticality: 3
     slx:
     documents:
       design:
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
-      service:  https://www.postgresql.org/docs/9.6/index.html
+      service:
+        - https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
     dependencies:
     configurations:
@@ -1432,13 +1458,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://github.com/postgres/postgres
+    project:
+      - https://github.com/postgres/postgres
     criticality: 3
     slx:
     documents:
       design:
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
-      service:  https://www.postgresql.org/docs/9.6/index.html
+      service:
+        - https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
     dependencies:
     configurations:
@@ -1576,13 +1604,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://github.com/prometheus/prometheus
+    project:
+      - https://github.com/prometheus/prometheus
     criticality: 3
     slx:
     documents:
       design:
       architecture: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md#architecture-overview
-      service: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
+      service: 
+        - https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
       security:
     dependencies:
       - service:
@@ -1664,13 +1694,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://github.com/prometheus/prometheus
+    project:
+      - https://github.com/prometheus/prometheus
     criticality: 3
     slx:
     documents:
       design:
       architecture: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md#architecture-overview
-      service: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
+      service: 
+        - https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
       security:
     dependencies:
       - service:
@@ -1941,13 +1973,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://github.com/docker/distribution
+    project:
+      - https://github.com/docker/distribution
     criticality: 2
     slx:
     documents:
       design:
       architecture:
-      service: https://github.com/docker/distribution/blob/364d2e4a5bed94e9393dd88232ea3be29ca8f27a/README.md
+      service: 
+        - https://github.com/docker/distribution/blob/364d2e4a5bed94e9393dd88232ea3be29ca8f27a/README.md
       security:
     dependencies:
       - service: web # For JWT authentication
@@ -2090,7 +2124,8 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
-      service: https://github.com/mperham/sidekiq/blob/master/README.md
+      service:
+        - https://github.com/mperham/sidekiq/blob/master/README.md
       security:
     dependencies:
       - service: postgres
@@ -2168,7 +2203,8 @@ services:
     documents:
       design:
       architecture:
-      service: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
+      service:
+        - https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
       security: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/security/index.md
     dependencies:
     configurations:
@@ -2226,13 +2262,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-com/license-gitlab-com
+    project:
+      - https://gitlab.com/gitlab-com/license-gitlab-com
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: https://gitlab.com/gitlab-com/license-gitlab-com/blob/master/README.md
+      service:
+        - https://gitlab.com/gitlab-com/license-gitlab-com/blob/master/README.md
       security:
     dependencies:
     configurations:
@@ -2293,13 +2331,15 @@ services:
       availability:
       response_time:
   technical:
-    project: https://gitlab.com/gitlab-com/version-gitlab-com
+    project:
+      - https://gitlab.com/gitlab-com/version-gitlab-com
     criticality: 4
     slx:
     documents:
       design:
       architecture:
-      service: https://gitlab.com/gitlab-com/version-gitlab-com/blob/master/README.md
+      service:
+        - https://gitlab.com/gitlab-com/version-gitlab-com/blob/master/README.md
       security:
     dependencies:
     configurations:
@@ -2459,7 +2499,8 @@ services:
     documents:
       design:
       architecture:
-      service: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
+      service:
+        - https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
       security: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/security/index.md
     dependencies:
     configurations:
