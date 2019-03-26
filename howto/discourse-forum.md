@@ -25,9 +25,14 @@ The directory structure is documented in the
 This process has the capability to take forum down for upwards of 30 minutes
 
 Generally, Discourse has an [admin web interface](https://forum.gitlab.com/admin/upgrade)
-where you can upgrade to newer versions via the UI.
+where you can upgrade to newer versions via the UI. You need to be in the [admin group](https://forum.gitlab.com/g/admins) to do this of course.
 
-Sometimes this is not possible and the upgrade must be
+To see who updated Discourse the last time look at the [staff actions log](https://forum.gitlab.com/admin/logs/staff_action_logs).
+
+Notifications for new Discourse versions are going to ops-notifications@gitlab.com.
+We should watch them and act accordingly to fix security issues in a timely manner.
+
+Sometimes updating via admin web interface is not possible and the upgrade must be
 [operated manually](https://meta.discourse.org/t/how-do-i-manually-update-discourse-and-docker-image-to-latest/23325).
 In short, you go to the directory where the deployment repository is cloned,
 you pull in the latest changes and rebuild the Docker image:
