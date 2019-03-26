@@ -109,6 +109,26 @@ And this command to unpause/resume the cluster:
 patroni-01-db-gstg $ gitlab-patronictl resume --wait pg-ha-cluster
 ```
 
+### Restarting Patroni When Paused
+
+When the cluster is paused, before restarting the Patroni process, it is better
+to check if Postgres postmaster didn't start when the system clock was skewed
+for any reason:
+
+```
+patroni-01-db-gstg # postmaster=/var/opt/gitlab/postgresql/data/postmaster.pid;\
+  postpid=$(cat $postmaster | head -1);\
+  posttime=$(cat $postmaster | tail -n +3 | head -1);\
+  btime=$(cat /proc/stat | grep btime | cut -d' ' -f2);\
+  starttime=$(cat /proc/$postpid/stat | awk '{print $22}');\
+  clktck=$(getconf CLK_TCK);\
+  echo $((($starttime / $clktck + $btime) - $posttime))
+```
+
+If the command above returned a value higher than 3, then Patroni is going to
+have [trouble starting][patroni-is-postmaster], so it is advised to fix this
+issue with the help of a DBRE before restarting.
+
 ## Replica Maintenance
 
 If clients are connecting to replicas by means of [service discovery][service-discovery]
@@ -171,3 +191,4 @@ by running `sudo chef-client` across the cluster.
 [environment-variables]: https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/blob/989d22c9d15b75812d3d116a94513d34428c021e/environments/gstg/variables.tf#L382
 [pause-docs]: https://github.com/zalando/patroni/blob/v1.5.0/docs/pause.rst
 [service-discovery]: https://docs.gitlab.com/ee/administration/database_load_balancing.html#service-discovery
+[patroni-is-postmaster]: https://github.com/zalando/patroni/blob/13c88e8b7a27b68e5c554d83d14e5cf640871ccc/patroni/postmaster.py#L55-L58
