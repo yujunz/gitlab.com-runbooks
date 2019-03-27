@@ -29,7 +29,7 @@ where you can upgrade to newer versions via the UI. You need to be in the [admin
 
 To see who updated Discourse the last time look at the [staff actions log](https://forum.gitlab.com/admin/logs/staff_action_logs).
 
-Notifications for new Discourse versions are going to ops-notifications@gitlab.com.
+Notifications for new Discourse versions are going to `ops-notifications@gitlab.com`.
 We should watch them and act accordingly to fix security issues in a timely manner.
 
 Sometimes updating via admin web interface is not possible and the upgrade must be
