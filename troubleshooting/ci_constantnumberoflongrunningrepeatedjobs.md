@@ -5,6 +5,6 @@ Sometimes there are CI jobs that have the intent of using our machine time to ru
 
 This alert does not directly indicate a failure of the CI/CD system to work, but is designed to look for abuse or unusual use of the system.
 
-1. Examine the namespace information and try to determine what project, group, or user is causing the alert.
-2. Examine the cause to see if it appears unusual.
-3. If there is any doubt, or it appears to be abuse, report it to the abuse team.
+You can begin investigating the issue by looking up the namespace to see what projects to look through. Connect to the rails console and load the namespace: ```ns = Namespace.find(1234567)```. When you do this, you should see information about the namespace that can get you headed in the right direction.
+
+If there is any doubt, or it appears to be abuse, report it to the abuse team.
