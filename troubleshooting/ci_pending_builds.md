@@ -1,12 +1,7 @@
 ## Large CI pending builds
+Alert Name: CICDTooManyPendingJobsPerNamespace or CICDTooManyRunningJobsPerNamespaceOnSharedRunnersGitLabOrg
 
 The most comment problem is that we get a report that we have a large number of CI pending builds.
-
-You may be investigating one of these alerts:
-* CICDTooManyPendingJobsPerNamespace
-* CICDTooManyRunningJobsPerNamespaceOnSharedRunnersGitLabOrg
-
-These are some common steps to follow to investigate too many pending builds/jobs.
 
 1. Check `CI dashboard` and verify that we have a large number of CI builds,
 2. Verify graphs and potential outcomes out of the graphs as described in (CI graphs)[ci_graphs.md],
