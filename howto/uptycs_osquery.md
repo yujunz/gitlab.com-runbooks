@@ -73,3 +73,15 @@ If we're looking to remove the config files and ancillary data left by the packa
 ```
 sudo apt-get purge osquery
 ```
+
+## Updating Uptycs & OSQuery
+
+**WARNING:** Coordinate with Infra before deploying any changes to production as this might temporarily inversely impact the production environment.  
+
+Uptycs does offer a way to push updated packages directly to registered assets... but that only works for existing assets and we want new assets to get the same version as deployed across the environment so we should roll updates through Chef.
+
+1. Download the latest `asset package` from the [Uptycs Configuration](https://gitlab.uptycs.io/ui/config) page, selecting the `Ubuntu, Debian` package type and the appropiate asset group (this will likely be `gitlab-production`).  The file will appear as `osquery-<<VERSION>>-Uptycs.deb` making note of the version number for later.
+1. Upload the package into [gitlab-gprd-security\uptycs](https://console.cloud.google.com/storage/browser/gitlab-gprd-security/uptycs/?project=gitlab-production) bucket and folder in the `gitlab-production` GCP project.
+1. Submit an MR to the [GitLab-Uptycs](https://gitlab.com/gitlab-cookbooks/gitlab-uptycs/blob/master/attributes/default.rb) cookbook, updating the `default['uptycs']['version']` attribute to be the new version number (as noted in step 1!).
+
+**WARNING**: Once this change is merged _every_ Chef'd host using this cookbook will update Uptycs during the next Chef cycle (30 minutes).
