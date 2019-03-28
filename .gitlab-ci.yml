@@ -49,3 +49,13 @@ deploy_pingdom_checks:
       - master
     variables:
       - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
+
+check_alerts:
+  image: golang:1.12
+
+  script:
+    - cd alerts-checker
+    - go run alerts-checker.go ../rules $THANOS_URL $IGNORED_ALERTS
+  only:
+    variables:
+      - $PERFORM_ALERTS_CHECK
