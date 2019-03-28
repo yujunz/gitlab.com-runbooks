@@ -5,4 +5,6 @@ Sometimes there are CI jobs that have the intent of using our machine time to ru
 
 This alert does not directly indicate a failure of the CI/CD system to work, but is designed to look for abuse or unusual use of the system.
 
-Use the namespace information provided in the alert to find out 
+1. Examine the namespace information and try to determine what project, group, or user is causing the alert.
+2. Examine the cause to see if it appears unusual.
+3. If there is any doubt, or it appears to be abuse, report it to the abuse team.
