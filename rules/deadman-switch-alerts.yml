@@ -91,8 +91,8 @@ groups:
         expr: |
           max(deadman_15m_checkin) by (environment, tier, type, resource) < time() - 900
         labels:
-          pager: pagerduty
-          severity: critical
+          # pager: pagerduty
+          severity: warn
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
@@ -107,8 +107,8 @@ groups:
         expr: |
           max(deadman_30m_checkin) by (environment, tier, type, resource) < time() - 1800
         labels:
-          pager: pagerduty
-          severity: critical
+          # pager: pagerduty
+          severity: warn
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
@@ -123,8 +123,8 @@ groups:
         expr: |
           max(deadman_6h_checkin) by (environment, tier, type, resource) < time() - 21600
         labels:
-          pager: pagerduty
-          severity: critical
+          # pager: pagerduty
+          severity: warn
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
@@ -139,8 +139,8 @@ groups:
         expr: |
           max(deadman_1d_checkin) by (environment, tier, type, resource) < time() - 86400
         labels:
-          pager: pagerduty
-          severity: critical
+          # pager: pagerduty
+          severity: warn
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
@@ -155,8 +155,8 @@ groups:
         expr: |
           max(deadman_1d6h_checkin) by (environment, tier, type, resource) < time() - 108000
         labels:
-          pager: pagerduty
-          severity: critical
+          # pager: pagerduty
+          severity: warn
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: |
