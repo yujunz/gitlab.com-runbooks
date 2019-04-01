@@ -8,7 +8,6 @@ Requests for access should go through the existing [Access Request Process](http
 
 For the infrastructure and IT/ops teams, access can be provisioned by:
 
-1. Logging in to the Azure portal()
+1. Logging in to the [Azure portal](https://portal.azure.com)
 2. Going to All Services > Identity > Users > New Guest User
-Once the invite is accepted,
-3. Under Subscriptions, IAM, add the new user to the Contributor Role for the Pay-As-You-Go Testing Subscription
+3. Once the invite is accepted, under Subscriptions > IAM, add the new user to the Contributor Role for the Pay-As-You-Go Testing Subscription
