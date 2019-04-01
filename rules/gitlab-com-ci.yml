@@ -260,6 +260,7 @@ groups:
         Hey <!subteam^S940BK2TV|cicdops>! 90% of requests queued on Workhorse are longer than 30s for last 5 minutes.
 
         This should be considered as service degradation and the reason should be investigated.
+      runbook: troubleshooting/cicd/ci_workhorse-queuing.md
 
   - alert: CICDTooManyArchivingTraceFailures
     expr: (sum (rate(job_trace_archive_failed_total[5m])) by (job)) > 10
@@ -274,6 +275,7 @@ groups:
         Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&orgId=1&panelId=153&fullscreen,
         https://sentry.gitlab.net/gitlab/gitlabcom/?query=ArchiveTraceWorker, and
         https://sentry.gitlab.net/gitlab/gitlabcom/?query=ArchiveTracesCronWorker to find out more details
+      runbook: troubleshooting/cicd/ci_too_many_archiving_trace_failures.md
 
   - alert: CICDSidekiqQueuesTooBig
     expr: (sidekiq_queue_size{environment=~"gprd",name=~"pipeline.*"} and on (fqdn) gitlab:redis_master) > 1000
