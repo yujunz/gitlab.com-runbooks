@@ -221,6 +221,7 @@ groups:
       description: |
         Hey <!subteam^S940BK2TV|cicdops>! Namespace {{ $labels.namespace }} is running a constant number of jobs with
         repeated commands for more than 45 minutes.
+      runbook: troubleshooting/cicd/ci_constantnumberoflongrunningrepeatedjobs.md
 
   - alert: CICDJobQueueDurationUnderperformant
     expr: |
