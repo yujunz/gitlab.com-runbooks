@@ -10,7 +10,8 @@ See [troubleshooting](../troubleshooting/uptycs_osqueryd.md) for common problems
 
 ## Service Management
 
-The Uptycs service on endpoints runs as `osqueryd` and is controlled  as a systemd service:
+The Uptycs service on endpoints runs as `osqueryd` systemd service and is controlled by Chef. You have to set the chef attribute
+`"uptycs": {"enable": true}` to start the service on a node - else it will be stopped by the next `chef-client` run.
 
 ```
 [paul@pharrison-scan-target]~:  sudo service osqueryd status
