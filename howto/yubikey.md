@@ -5,6 +5,7 @@
 * `gpg2`
 * `yubikey-personalization` for Yubikey 4
 * `ykman` for Yubikey 5 (on macOS that's `brew install ykman`, on Linux the pkg name is `yubikey-manager`. ykman manual can be found [here](https://support.yubico.com/support/solutions/articles/15000012643-yubikey-manager-cli-ykman-user-manual))
+* `scdaemon`
 
 For this guide, when using linux, substitute `gpg` with `gpg2`
 
@@ -136,6 +137,7 @@ You can either perform the below actions using the **VeraCrypt** UI or by using 
   Done: 100.000%  Speed:   31 MB/s  Left: 0 s         
   The VeraCrypt volume has been successfully created.
   ```
+**Note:** The default (just hit Enter) for the PIM is probably fine, but if you want some extra security, put in a custom value.  Higher values will take longer to open the vault, lower ones will take less time but be less secure. See https://www.veracrypt.fr/en/Personal%20Iterations%20Multiplier%20%28PIM%29.html for further discussion including the default values.
 
 1. Mount the volume
 
@@ -229,6 +231,8 @@ pub   4096R/FAEFD83E 2017-08-25 [expires: 2021-08-25]
       Key fingerprint = 856B 1E1C FAD0 1FE4 5C4C  4E97 961F 703D B8EF B59D
 uid                  John Rando <rando@gitlab.com>
 ```
+
+Place a reminder in your calendar in about 3 years 11 months (if you chose 4y lifetime above; adjust as necessary) to extend the expiry of your master key.
 
 Now that we have a master key, a good practice is to generate a revocation
 certificate in the event that we lose the password or the key is compromised.
@@ -372,6 +376,8 @@ sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
 gpg> save
 ```
 
+Place a reminder in your calendar in about 11 months to extend the expiry of your sub-keys
+
 ## Backup and Publish your Public Key
 
 ```bash
@@ -390,7 +396,7 @@ Open up the GPG Keychain app and import the public key that you just created
 into your regular keychain. Set the Ownertrust to Ultimate on the public key
 you've imported.
 
-Or in a fresh terminal we can:
+Or in a fresh terminal (i.e. with the default GNUPGHOME env var, not the veracrypt mounted one) we can:
 
 ```bash
 > gpg --import $MOUNTPOINT/gpg_config/FAEFD83E.asc
@@ -522,7 +528,7 @@ echo "All done. Now unplug / replug the NEO token."
 echo
 ```
 
-On Linux modify the `gpg-agent --daemon` with the following: `gpg-connect-agent reloadagent /bye`
+On Linux reload the `gpg-agent --daemon` with the following: `gpg-connect-agent reloadagent /bye`
 
 
 ## Generate Your SSH Public Key
@@ -536,12 +542,36 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABA ... COMMENT
 
 ## Personal Cleanup
 
+* On linux:
+** Unmount the veracrypt volume:```sudo veracrypt -d ~/gitlab_secrets```
+** For backup purposes, copy the veracrypt volume file (~/gitlab_secrets) to an external USB device or elsewhere
 * If you have anything inside of your own dot files or system configuration that
   may startup the ssh-agent, disable it
 * If you have anything that starts up the `gpg-agent`, ensure the options reflect
   the work we've accomplished above
 * A good short test to validate all is well, when adding ssh keys (such as your
   git ssh key), should work just fine, as well as a listing `ssh-add -l`
+
+## Linux tips
+### gpg: selecting openpgp failed: No such device
+On recent Ubuntu/Mint releases (18.04+), GPG has a lot of quality-of-life enhancements, which have just bit you in the butt.   When you run gpg with a 'new' GNUPGHOME value, a dir is created in /run/user/<uid>/gnupg/, based in what looks to be a hash of the value of GNUPGHOME, and agents stated (gpg-agent, scdaemon, at least) with sockets in that directory, so there can be multiple running at once.  You've got this message because the scdaemon that you're accessing (via its socket) is not the one that has ownership of the Yubikey right now.  You can release the other one by executing
+```bash
+gpg-connect-agent "SCD KILLSCD" "SCD BYE" /bye
+```
+with GNUPGHOME set to the path of the instance that currently owns the card that you want to go away.  A simple 'kill' will not cause scdaemon to exit, and this is nicer than doing a kill -9.  You could also just kill (SIGTERM) the gpg-agent for the undesired GNUPGHOME, which will close all the things down for that config.
+
+**Note** GPG does *not* normalize the value of $GNUPGHOME to a path, so /media/Gitlab/gpg_config is not the same as /media/Gitlab//gpg_config (two slashes) and each will have its own directory and set of agents/sockets.  This is lightly surprising, and can be very confusing.
+
+### Linux Mint (GTK2) + Pinentry
+Noted on Mint 19 Mate edition, because it's GTK2 and the default pinentry install was for GNOME3, but may apply elsewhere:
+```bash
+sudo apt install pinentry-gtk2
+sudo update-alternatives --set pinentry /usr/bin/pinentry-gtk-2
+```
+Otherwise it falls back to curses, and picks whichever terminal/PTY it thinks is right (probably where you last tickled gpg-agent from), which is usually horribly wrong or dead.   It is also possible to explicitly call the binary as pinentry-program in gpg-agent.conf, but update-alternatives is a bit more blessed/proper for the Debian ecosystem.
+
+```gpg-connect-agent updatestartuptty /bye```
+can help too, but only temporarily (it'll set the TTY to the terminal where this command is run).  You could do this if you like the TTY/curses pin prompt, perhaps in an alias
 
 ## Reference Material
 
