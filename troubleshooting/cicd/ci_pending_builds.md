@@ -1,4 +1,5 @@
 ## Large CI pending builds
+Alert Name: CICDTooManyPendingJobsPerNamespace or CICDTooManyRunningJobsPerNamespaceOnSharedRunnersGitLabOrg
 
 The most comment problem is that we get a report that we have a large number of CI pending builds.
 

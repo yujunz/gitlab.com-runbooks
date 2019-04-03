@@ -34,6 +34,13 @@ Let's shortly describe data flow and most crucial components of Shared Runners s
 1. Runner reads received payload and creates a set of containers: helper (to clone sources, to download/upload artifacts and caches), build (to run user-provided script), services (provided in `.gitlab-ci.yml`),
 1. Once all containers do finish the result of the job is sent do GitLab,
 
+### Namespaces
+Jobs are bundled into namespaces. Usually, this is a user or group. But there is
+an exception: projects with less than 10 jobs are all lumped together into a
+common namespace. In prometheus this is an empty label `namespaces=""`, and in
+grafana this showes up as `namespace: namespace`. This helps ease the number of
+namespaces from being too large.
+
 ### Creating machines
 
 Runner Manager does manage Machines as described in this document: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/configuration/autoscale.md#autoscaling-algorithm-and-parameters.
