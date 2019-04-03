@@ -2532,9 +2532,15 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/runners_manager_is_down.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_errors.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_do_limits.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/runners_manager_is_down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_runner_manager_errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_runner_manager_do_limits.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_graphs.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_too_many_connections_on_runners_cache_server.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_constantnumberoflongrunningrepeatedjobs.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_pending_builds.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_too_many_archiving_trace_failures.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_workhorse-queuing.md
     playbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/create-runners-manager-node.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-gitlab-runner-on-managers.md
