@@ -34,8 +34,12 @@ Let's shortly describe data flow and most crucial components of Shared Runners s
 1. Runner reads received payload and creates a set of containers: helper (to clone sources, to download/upload artifacts and caches), build (to run user-provided script), services (provided in `.gitlab-ci.yml`),
 1. Once all containers do finish the result of the job is sent do GitLab,
 
-### Name Spaces
-Jobs are bundled into namespaces. Usually, this is a user or group. But there is an exception: projects with less than 10 jobs are all lumped together into a common namespace. This helps ease the number of name spaces from being too large.
+### Namespaces
+Jobs are bundled into namespaces. Usually, this is a user or group. But there is
+an exception: projects with less than 10 jobs are all lumped together into a
+common namespace. In prometheus this is an empty label `namespaces=""`, and in
+grafana this showes up as `namespace: namespace`. This helps ease the number of
+namespaces from being too large.
 
 ### Creating machines
 
