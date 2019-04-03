@@ -85,17 +85,6 @@ groups:
         errors per minute
       runbook: troubleshooting/postgres.md#errors
       title: Postgres detected deadlocks
-  - alert: PostgreSQL_ReplicationStopped
-    expr: pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"} != pg_stat_replication_pg_xlog_location_diff{job="gitlab-cluster-db"}
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: critical
-      channel: database
-    annotations:
-      description: PostgreSQL replication has stopped on {{$labels.instance}}.
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
-      title: PostgreSQL replication has stopped
   - alert: PostgreSQL_ReplicationLagTooLarge
     expr: (pg_replication_lag > 120) and ON(instance) (pg_replication_is_replica{type =~"postgres|patroni"} == 1)
     for: 5m
@@ -322,19 +311,6 @@ groups:
       description: This may indicate postgres_exporter is not running or a buggy query
         in query.yaml on {{$labels.fqdn}}
       title: Postgres exporter is showing errors for the last hour
-  - alert: PostgreSQL_DiskUtilizationMaxedOut
-    expr: rate(node_disk_io_time_seconds_total{device=~"dm-(0|1)",tier="db",type=~"postgres|patroni"}[1m])
-      / 10 > 97
-    for: 5m
-    labels:
-      severity: warn
-      channel: database
-    annotations:
-      description: Server {{$labels.fqdn}} disk {{$labels.device}} utilization is
-        {{$value | printf "%.1f"}}%
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
-      title: Postgres server disk utilization over 95% for over a minute. Expect
-        this to cause replication lag or user visible latency
   - alert: PostgreSQL_PGBouncer_Errors
     expr: rate(pgbouncer_errors_count{environment=~"gprd|gstg", errmsg!="server conn crashed?"}[10m]) > 5
     for: 5m

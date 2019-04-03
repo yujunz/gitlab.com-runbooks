@@ -1,17 +1,6 @@
 groups:
 - name: monitor-gitlab-net.rules
   rules:
-  - alert: MonitorGitlabNetPrometheusDown
-    expr: up{job="public-prometheus"} == 0
-    for: 30s
-    labels:
-      severity: critical
-      pager: pagerduty
-    annotations:
-      description: Prometheus instance for monitor.gitlab.net is down. Please check
-        the Prometheus service.
-      runbook: troubleshooting/monitor-gitlab-net-prometheus.md
-      title: Prometheus on monitor.gitlab.net is down
   - alert: MonitorGitlabNetNotAccessible
     expr: probe_success{instance="monitor.gitlab.net/dashboard/db/fleet-overview?refresh=5m"}
       == 0
