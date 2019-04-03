@@ -1,9 +1,8 @@
 groups:
 - name: monitor-gitlab-net.rules
   rules:
-  - alert: MonitorGitlabNetNotAccessible
-    expr: probe_success{instance="monitor.gitlab.net/dashboard/db/fleet-overview?refresh=5m"}
-      == 0
+  - alert: DashboardsGitlabNetNotAccessible
+    expr: probe_success{instance="https://dashboards.gitlab.net"} == 0
     for: 30s
     labels:
       severity: critical
