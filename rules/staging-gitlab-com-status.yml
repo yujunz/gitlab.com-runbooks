@@ -2,7 +2,7 @@ groups:
 - name: gitlab-com-status.rules
   rules:
   - alert: StagingGitlabComDown
-    expr: probe_http_status_code{instance="https://staging.gitlab.com",job="blackbox"} != 200
+    expr: probe_http_status_code{instance="https://staging.gitlab.com",job="blackbox-tls-redirect"} != 302
     for: 30m
     labels:
       pager: pagerduty

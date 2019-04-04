@@ -114,7 +114,7 @@ groups:
       runbook: troubleshooting/cicd/ci_graphs.md#runners-manager-auto-scaling
 
   - alert: CICDRunnersCacheDown
-    expr: (probe_success{instance=~"runners-cache.*:(5000/v2|9000/minio/login)"} == 0)
+    expr: (probe_success{instance=~"http://runners-cache.*:(5000/v2|9000/minio/login)"} == 0)
     for: 5m
     labels:
       channel: ci-cd
