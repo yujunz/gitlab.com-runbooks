@@ -140,10 +140,12 @@ func checkSelectorsPresence(alert string, selectors []string) (bool, error) {
 			return false, fmt.Errorf("Error getting results for '%s' (of alert %s): %v\n", selector, alert, err)
 		}
 
-		return hasResults, nil
+		if !hasResults {
+			return false, nil
+		}
 	}
 
-	return false, nil
+	return true, nil
 }
 
 func selectorHasResults(selector string) (bool, error) {
@@ -151,11 +153,10 @@ func selectorHasResults(selector string) (bool, error) {
 
 	log.Printf("Checking %s\n", selector)
 
-	requestUrl := fmt.Sprintf("%s/api/v1/query?query=%s&dedup=true&partial_response=true&start=%d&end=%d&step=14&max_source_resolution=0s",
+	requestUrl := fmt.Sprintf("%s/api/v1/query?query=%s&dedup=true&partial_response=true&time=%d",
 		prometheusHost,
-		url.PathEscape(selector),
+		url.QueryEscape(selector),
 		now,
-		now-24*60*60,
 	)
 
 	response, err := http.Get(requestUrl)
