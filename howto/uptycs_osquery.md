@@ -1,5 +1,7 @@
 # Overview
 
+**Questions? Contact @pharrison or @shanep
+
 Security is using the [Uptycs](https://www.uptycs.com/) Security Analytics Platform which is based on [osquery](https://osquery.io/).
 
 The osqueryd daemon is rolled out to staging and production by the [gitlab-uptycs cookbook](https://gitlab.com/gitlab-cookbooks/gitlab-uptycs) and is downloading it's configuration profile and sending query results from/to gitlab.uptycs.io which is controlled by the security team.
@@ -77,12 +79,19 @@ sudo apt-get purge osquery
 
 ## Updating Uptycs & OSQuery
 
-**WARNING:** Coordinate with Infra before deploying any changes to production as this might temporarily inversely impact the production environment.  
+**WARNING:** Coordinate with Infra before deploying any changes to production as this might temporarily inversely impact the production environment.
 
 Uptycs does offer a way to push updated packages directly to registered assets... but that only works for existing assets and we want new assets to get the same version as deployed across the environment so we should roll updates through Chef.
 
-1. Download the latest `asset package` from the [Uptycs Configuration](https://gitlab.uptycs.io/ui/config) page, selecting the `Ubuntu, Debian` package type and the appropiate asset group (this will likely be `gitlab-production`).  The file will appear as `osquery-<<VERSION>>-Uptycs.deb` making note of the version number for later.
-1. Upload the package into [gitlab-gprd-security\uptycs](https://console.cloud.google.com/storage/browser/gitlab-gprd-security/uptycs/?project=gitlab-production) bucket and folder in the `gitlab-production` GCP project.
-1. Submit an MR to the [GitLab-Uptycs](https://gitlab.com/gitlab-cookbooks/gitlab-uptycs/blob/master/attributes/default.rb) cookbook, updating the `default['uptycs']['version']` attribute to be the new version number (as noted in step 1!).
+1. Download the latest `asset package` from the [Uptycs Configuration](https://gitlab.uptycs.io/ui/config) page, selecting the `Ubuntu, Debian` package type and the appropiate asset group (this will likely be `gitlab-production`).  The file will appear as `osquery-<<VERSION>>-Uptycs.deb` making note of the version number for later.  **NOTE:** Download both the `gitlab-staging` and `gitlab-production` packages (making sure to differentiate between the two) so there isn't an Uptycs version bump between staging and production deployment.
+1. Upload the packages into the `gitlab-gstg-security\uptycs` and `gitlab-gprd-security\uptycs` buckets in the `gitlab-staging` and `gitlab-production` GCP projects.
+1. Submit an MR to the [gstg-base.json](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/roles/gstg-base.json), updating the `version` number and sha256 `hash` values to reflect the new package. This will then deploy the updated Uptycs package to GSTG within 30 minutes.
+1. Let the new Uptycs version bake for a time period (24hrs?).
+1. Assuming there's no issues with tne new Uptycs version, submit an MR to the [gprd-base.json](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/roles/gprd-base.json) with the `version` number and sha256 `hash` values similar to the staging information.
+1. Monitor in prometheus/production for 24 hours to confirm no issues.
 
 **WARNING**: Once this change is merged _every_ Chef'd host using this cookbook will update Uptycs during the next Chef cycle (30 minutes).
+
+## Failed Update & Rollback
+
+If the new Uptycs version causes issues in grpd or gstg, update the `gstg-base.json` or `gprd-base.json` (based on the deployment phase) back to the previous `version` number and sha256 `hash`.  This will grab and install the previous package from the storage buckets.
