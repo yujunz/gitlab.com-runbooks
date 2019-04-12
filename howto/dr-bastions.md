@@ -6,12 +6,10 @@ Add the following to your `~/.ssh/config` (specify your username and path to ssh
 # GCP staging bastion host
 Host lb-bastion.dr.gitlab.com
         User                            YOUR_SSH_USERNAME
-        IdentityFile                    /path/to/your/ssh/key
 
 # dr boxes
 Host *.gitlab-dr.internal
         PreferredAuthentications        publickey
-        IdentityFile                    /path/to/your/ssh/key
         ProxyCommand                    ssh lb-bastion.dr.gitlab.com -W %h:%p
 ```
 
