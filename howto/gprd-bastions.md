@@ -6,12 +6,10 @@ Add the following to your `~/.ssh/config` (specify your username and path to ssh
 # GCP production bastion host
 Host lb-bastion.gprd.gitlab.com
         User                            YOUR_SSH_USERNAME
-        IdentityFile                    /path/to/your/ssh/key
 
 # gprd boxes
 Host *.gitlab-production.internal
         PreferredAuthentications        publickey
-        IdentityFile                    /path/to/your/ssh/key
         ProxyCommand                    ssh lb-bastion.gprd.gitlab.com -W %h:%p
 ```
 
