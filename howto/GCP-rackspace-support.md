@@ -1,5 +1,9 @@
 # Getting going with GCP support and Rackspace
 
+## Tracker
+
+**Rackspace Vendor Tracker**: https://gitlab.com/gitlab-com/gl-infra/rackspace/issues
+
 ## Contacts
 
 Ben Garza is our TAM - reports to Sergio Gonzalez as support leader.
