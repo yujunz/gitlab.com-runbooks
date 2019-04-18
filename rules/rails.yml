@@ -8,8 +8,12 @@ groups:
     expr: sum(rate(rails_requests_started[1m])) without (verb)
   - record: status:rails_requests_completed:rate1m
     expr: sum(rate(rails_requests_completed[1m])) without (fqdn, instance)
+  - record: status:rails_requests_completed:rate1m
+    expr: sum(rate(rails_requests_completed_seconds_count[1m])) without (fqdn, instance)
   - record: instance:rails_requests_completed:rate1m
     expr: sum(rate(rails_requests_completed[1m])) without (status)
+  - record: instance:rails_requests_completed:rate1m
+    expr: sum(rate(rails_requests_completed_seconds_count[1m])) without (status)
   - record: status:rails_requests_completed_seconds:p50
     expr: histogram_quantile(0.5, sum(rate(rails_requests_completed_seconds_bucket[1m]))
       without (fqdn, instance))

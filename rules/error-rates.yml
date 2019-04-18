@@ -3,6 +3,13 @@ groups:
   rules:
   - record: environment_type:rails_request_errors:ratio
     expr: sum by (type,environment)(rate(rails_requests_completed{status=~"5.."}[1m])) / sum by (type,environment)(rate(rails_requests_completed[1m]))
+  - record: environment_type:rails_request_errors:ratio
+    expr: >
+      sum by (type,environment) (
+        rate(rails_requests_completed_seconds_count{status=~"5.."}[1m])
+      ) / sum by (type,environment) (
+        rate(rails_requests_completed_seconds_count[1m])
+      )
   - alert: HighRailsErrorRateCritical
     expr: environment_type:rails_request_errors:ratio * 100 > .5
     for: 5m
