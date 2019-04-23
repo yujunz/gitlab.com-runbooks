@@ -1,0 +1,20 @@
+groups:
+- name: GitLab Service Errors Ratios
+  interval: 1m
+  rules:
+  # The error ratio is the rate of errors divided by the rate of operations
+  - record: gitlab_service_errors:ratio
+    expr: >
+      gitlab_service_errors:rate / gitlab_service_ops:rate
+
+- name: GitLab Service Error Ratio Stats
+  interval: 5m
+  rules:
+  # Average values for each service, over a week
+  - record: gitlab_service_errors:ratio:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_service_errors:ratio[1w])
+  # Stddev for each service, over a week
+  - record: gitlab_service_errors:ratio:stddev_over_time_1w
+    expr: >
+      stddev_over_time(gitlab_service_errors:ratio[1w])
