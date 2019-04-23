@@ -4,6 +4,8 @@ groups:
   rules:
   # haproxy - treat each backend as a component
   - record: gitlab_component_errors:rate
+    labels:
+      type: 'haproxy'
     expr: >
       avg by (environment, tier, component) (
         label_replace(
