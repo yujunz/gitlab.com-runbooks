@@ -54,3 +54,28 @@ export PINGDOM_PASSWORD="..."
 export PINGDOM_APPKEY="..."
 export PINGDOM_ACCOUNT_EMAIL="..."
 ```
+
+## Extracing availability metrics from Pingdom for further analysis
+
+We can extract Pingdom availability metrics to CSV format using the `./pingdom/generate-availability-stats.sh` script.
+
+Currently, this script can be executed manually. As a next step we should automate this process.
+
+```shell
+export PINGDOM_APP_KEY="..."
+export PINGDOM_PASSWORD="..."
+export PINGDOM_ACCOUNT_EMAIL="..."
+
+$ ./pingdom/generate-availability-stats.sh
+
+#Check,Date,Availability
+"check:https://gitlab.com/","2018-10-24",1
+"check:https://gitlab.com/","2018-10-25",1
+"check:https://gitlab.com/","2018-10-26",1
+"check:https://gitlab.com/","2018-10-27",1
+```
+
+This will generate raw data in a CSV format. This data can then be analysed further using Google Sheets or other analysis tools.
+
+An example of this analysis is [Pingdom Availability Statistics](https://docs.google.com/spreadsheets/d/1Wn760s-neVJU5Jzd--24BwsoSkezF5vacBaHpxwgMpA/edit) spreadsheet, which pivots the data to generate availability
+[KPI values](https://docs.google.com/document/d/1NNne33rOtkrogqWRzdQZ4U3kiZdc2PC6B44WCpmQpNc/edit#) for GitLab.com.
