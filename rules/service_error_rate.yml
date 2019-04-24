@@ -2,6 +2,13 @@ groups:
 - name: GitLab Component Errors-per-Second Rates
   interval: 1m
   rules:
+  # Postgres/Patroni
+  - record: gitlab_component_errors:rate
+    labels:
+      component: 'service'
+    expr: >
+      sum by (environment, tier, type) (rate(pg_stat_database_xact_rollback{tier="db"}[1m]))
+
   # haproxy - treat each backend as a component
   - record: gitlab_component_errors:rate
     labels:

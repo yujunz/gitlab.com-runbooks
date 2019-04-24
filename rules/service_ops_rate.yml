@@ -7,9 +7,9 @@ groups:
     labels:
       component: 'service'
     expr: >
-      sum by (environment, tier, type) (rate(pg_stat_database_xact_commit{tier="db", type=~"postgres|patroni"}[1m]))
+      sum by (environment, tier, type) (rate(pg_stat_database_xact_commit{tier="db"}[1m]))
       +
-      sum by (environment, tier, type) (rate(pg_stat_database_xact_rollback{tier="db", type=~"postgres|patroni"}[1m]))
+      sum by (environment, tier, type) (rate(pg_stat_database_xact_rollback{tier="db"}[1m]))
   # Redis Service
   - record: gitlab_component_ops:rate
     labels:
