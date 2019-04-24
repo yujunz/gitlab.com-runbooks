@@ -24,6 +24,35 @@ groups:
         )
       )
 
+  # Registry Service
+  - record: gitlab_component_errors:rate
+    labels:
+      type: 'registry'
+      component: 'server'
+      tier: 'sv'
+    expr: >
+      sum by (environment) (rate(haproxy_backend_http_responses_total{code="5xx", backend="registry"}[1m]))
+
+  # pages:http - use http semantics
+  - record: gitlab_component_ops:rate
+    labels:
+      type: 'pages'
+      tier: 'sv'
+      component: 'http'
+    expr: >
+      sum by (environment) (rate(haproxy_backend_http_responses_total{code="5xx", backend="pages_http"}[1m]))
+      +
+      sum by (environment) (rate(haproxy_server_response_errors_total{backend="pages_http"}[1m]))
+
+  # pages:https - we can't use http semantics as haproxy only handles the encrypted HTTPS sessions
+  - record: gitlab_component_ops:rate
+    labels:
+      type: 'pages'
+      tier: 'sv'
+      component: 'https'
+    expr: >
+      sum by (environment) (rate(haproxy_server_response_errors_total{backend="pages_https"}[1m]))
+
   # api/web/sidekiq/git:workhorse
   - record: gitlab_component_errors:rate
     labels:
