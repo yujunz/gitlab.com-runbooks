@@ -23,7 +23,8 @@ groups:
       component: 'server'
       tier: 'sv'
     expr: >
-      sum by (environment) (haproxy_backend_current_session_rate{backend="registry"})
+      sum by (environment) (rate(haproxy_backend_http_responses_total{backend="registry"}[1m]))
+
   # gitlab_shell
   - record: gitlab_component_ops:rate
     labels:
@@ -75,14 +76,25 @@ groups:
       component: 'goserver'
     expr: >
       sum by (environment, tier, type) (rate(grpc_server_started_total{type="gitaly"}[1m]))
-  # pages
+
+  # pages:http - use http semantics
   - record: gitlab_component_ops:rate
     labels:
       type: 'pages'
       tier: 'sv'
-      component: 'service'
+      component: 'http'
     expr: >
-      sum by (environment) (haproxy_backend_current_session_rate{backend=~"pages_.*"})
+      sum by (environment) (rate(haproxy_backend_http_responses_total{backend="pages_http"}[1m]))
+
+  # pages:https - we can't use http semantics as haproxy only handles the encrypted HTTPS sessions
+  - record: gitlab_component_ops:rate
+    labels:
+      type: 'pages'
+      tier: 'sv'
+      component: 'https'
+    expr: >
+      sum by (environment) (rate(haproxy_backend_sessions_total{backend="pages_https"}[1m]))
+
   # HAProxy
   - record: gitlab_component_ops:rate
     labels:
