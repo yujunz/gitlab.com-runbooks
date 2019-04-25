@@ -36,5 +36,19 @@
     "linewidth": 1,
     "zindex": -2,
     "nullPointMode": "connected"
-  }
+  },
+  alertFiring:: {
+    "alias": "alert firing",
+    "color": "orange",
+    "zindex": -3,
+  },
+  alertPending:: {
+    "alias": "alert pending",
+    "color": "lightorange",
+    "zindex": -3,
+  },
+  goldenMetric(alias):: self {
+    "alias": alias,
+    "color": "yellow",
+  },
 }

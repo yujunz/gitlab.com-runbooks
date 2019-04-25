@@ -11,7 +11,7 @@ if ! [[ -d "${SCRIPT_DIR}/grafonnet-lib" ]]; then
 fi
 
 # Install dashboards
-find "${SCRIPT_DIR}" -name '*.dashboard.jsonnet'|while read line; do
+find "${SCRIPT_DIR}" -name '*.dashboard.jsonnet'|while read -r line; do
   relative=${line#"$SCRIPT_DIR/"}
   folder=$(dirname "$relative")
 
