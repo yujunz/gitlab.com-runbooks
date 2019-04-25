@@ -3,7 +3,6 @@ groups:
 - name: GitLab Component Errors Rate Max SLOs
   interval: 5m
   rules:
-
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'haproxy'
