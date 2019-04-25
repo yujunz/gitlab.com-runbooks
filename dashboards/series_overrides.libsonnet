@@ -34,21 +34,33 @@
     "legend": true,
     "lines": true,
     "linewidth": 1,
-    "zindex": -2,
+    "zindex": -3,
     "nullPointMode": "connected"
   },
   alertFiring:: {
     "alias": "alert firing",
     "color": "orange",
-    "zindex": -3,
+    "zindex": -4,
   },
   alertPending:: {
     "alias": "alert pending",
     "color": "lightorange",
-    "zindex": -3,
+    "zindex": -4,
   },
   goldenMetric(alias):: self {
     "alias": alias,
-    "color": "yellow",
+    "color": "#E7D551", // "Brilliant gold"
+  },
+  slo:: {
+    "alias": "SLO",
+    "color": "lightred",
+    "dashes": true,
+    "legend": true,
+    "lines": true,
+    "linewidth": 1,
+    "dashLength": 4,
+    "spaceLength": 4,
+    "nullPointMode": "connected",
+    "zindex": -2,
   },
 }

@@ -31,7 +31,8 @@ local generalGraphPanel(
   .addSeriesOverride(seriesOverrides.lower)
   .addSeriesOverride(seriesOverrides.lastWeek)
   .addSeriesOverride(seriesOverrides.alertFiring)
-  .addSeriesOverride(seriesOverrides.alertPending);
+  .addSeriesOverride(seriesOverrides.alertPending)
+  .addSeriesOverride(seriesOverrides.slo);
 
 dashboard.new(
   'TEST General Service Metrics',
@@ -60,6 +61,14 @@ dashboard.new(
       interval="1m",
       legendFormat='{{ type }} service',
     )
+  )
+  .addTarget( // Min error rate SLO for gitlab_service_errors:ratio metric
+    prometheus.target('
+        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type"})
+      ',
+      interval="5m",
+      legendFormat='SLO',
+    ),
   )
   .addTarget( // Last week
     prometheus.target('
@@ -137,6 +146,14 @@ dashboard.new(
       interval="1m",
       legendFormat='{{ type }} service',
     )
+  )
+  .addTarget( // Maximum error rate SLO for gitlab_service_errors:ratio metric
+    prometheus.target('
+        avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type"})
+      ',
+      interval="5m",
+      legendFormat='SLO',
+    ),
   )
   .addTarget( // Last week
     prometheus.target('
