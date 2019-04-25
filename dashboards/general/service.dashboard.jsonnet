@@ -62,9 +62,9 @@ dashboard.new(
       legendFormat='{{ type }} service',
     )
   )
-  .addTarget( // Min error rate SLO for gitlab_service_errors:ratio metric
+  .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
     prometheus.target('
-        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type"})
+        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type"}) or avg(slo:min:gitlab_service_apdex:ratio{type="$type"})
       ',
       interval="5m",
       legendFormat='SLO',
@@ -149,7 +149,7 @@ dashboard.new(
   )
   .addTarget( // Maximum error rate SLO for gitlab_service_errors:ratio metric
     prometheus.target('
-        avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type"})
+        avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type"}) or avg(slo:max:gitlab_service_errors:ratio{type="$type"})
       ',
       interval="5m",
       legendFormat='SLO',

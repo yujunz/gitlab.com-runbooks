@@ -53,11 +53,11 @@
   },
   slo:: {
     "alias": "SLO",
-    "color": "lightred",
+    "color": "#FF4500", // "Orange red"
     "dashes": true,
     "legend": true,
     "lines": true,
-    "linewidth": 1,
+    "linewidth": 2,
     "dashLength": 4,
     "spaceLength": 4,
     "nullPointMode": "connected",
