@@ -19,7 +19,7 @@ local template = grafana.template;
   type:: template.new(
     "type",
     "$PROMETHEUS_DS",
-    'label_values(gitlab_service_availability:ratio{environment="$environment"}, type)',
+    'label_values(gitlab_component_ops:rate{environment="$environment"}, type)',
     current="web",
     refresh='load',
     sort=1,
