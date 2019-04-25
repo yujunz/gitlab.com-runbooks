@@ -129,7 +129,7 @@ dashboard.new(
   .addTarget( // Primary metric
     prometheus.target('
       sum(
-        avg_over_time(
+        max_over_time(
           gitlab_service_errors:ratio{component="", service="", environment="$environment", type="$type"}[$__interval]
         )
       ) by (type)
@@ -141,7 +141,7 @@ dashboard.new(
   .addTarget( // Last week
     prometheus.target('
       sum(
-        avg_over_time(
+        max_over_time(
           gitlab_service_errors:ratio{component="", service="", environment="$environment", type="$type"}[$__interval] offset 1w
         )
       ) by (type)
