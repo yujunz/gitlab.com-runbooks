@@ -1,9 +1,9 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
+local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
-local prometheus = grafana.prometheus;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 
@@ -34,16 +34,77 @@ local generalGraphPanel(
   .addSeriesOverride(seriesOverrides.alertPending)
   .addSeriesOverride(seriesOverrides.slo);
 
+local activeAlertsPanel = grafana.tablePanel.new(
+    'Active Alerts',
+    styles=[{
+      "type": "hidden",
+      "pattern": "Time",
+      "alias": "Time",
+    }, {
+      "unit": "short",
+      "type": "string",
+      "alias": "Alert",
+      "decimals": 2,
+      "pattern": "alertname",
+      "mappingType": 2,
+      "link": true,
+      "linkUrl": "https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%2C%20type%3D%22${type}%22%7D",
+      "linkTooltip": "Open alertmanager",
+    },
+    {
+      "unit": "short",
+      "type": "number",
+      "alias": "Score",
+      "decimals": 0,
+      "colors": [
+        "#73BF69",
+        "#FADE2A",
+        "rgba(245, 54, 54, 0.9)"
+      ],
+      "colorMode": "row",
+      "pattern": "Value",
+      "thresholds": [
+        "2",
+        "3"
+      ],
+      "mappingType": 1
+    }
+  ],
+  )
+  .addTarget( // Alert scoring
+    promQuery.target('
+      sort(
+        max(
+        ALERTS{environment="$environment", type="$type", severity="critical", alertstate="firing"} * 3
+        or
+        ALERTS{environment="$environment", type="$type", severity="error", alertstate="firing"} * 2
+        or
+        ALERTS{environment="$environment", type="$type", severity="warn", alertstate="firing"}
+        ) by (alertname, severity)
+      )
+      ',
+      format="table",
+      instant=true
+    )
+  );
+
 dashboard.new(
-  'TEST General Service Metrics',
+  'Service Platform Metrics',
   schemaVersion=16,
   tags=['general'],
   timezone='UTC',
+  graphTooltip='shared_crosshair',
 )
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addTemplate(templates.type)
 .addTemplate(templates.sigma)
+.addPanel(activeAlertsPanel, gridPos={
+    x: 0,
+    y: 0,
+    w: 24,
+    h: 10,
+})
 .addPanel(
   generalGraphPanel(
     "Latency: Apdex",
@@ -51,19 +112,18 @@ dashboard.new(
   )
   .addSeriesOverride(seriesOverrides.goldenMetric("/ service$/"))
   .addTarget( // Primary metric
-    prometheus.target('
-      avg(
+    promQuery.target('
+      min(
         avg_over_time(
           gitlab_service_apdex:ratio{environment="$environment", type="$type"}[$__interval]
         )
       ) by (type)
       ',
-      interval="1m",
       legendFormat='{{ type }} service',
     )
   )
   .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
-    prometheus.target('
+    promQuery.target('
         avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type"}) or avg(slo:min:gitlab_service_apdex:ratio{type="$type"})
       ',
       interval="5m",
@@ -71,19 +131,18 @@ dashboard.new(
     ),
   )
   .addTarget( // Last week
-    prometheus.target('
-      avg(
+    promQuery.target('
+      min(
         avg_over_time(
           gitlab_service_apdex:ratio{environment="$environment", type="$type"}[$__interval] offset 1w
         )
       ) by (type)
       ',
-      interval="1m",
       legendFormat='last week',
     )
   )
   .addTarget(
-    prometheus.target('
+    promQuery.target('
       avg(
         clamp_max(
           gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type"} +
@@ -92,12 +151,11 @@ dashboard.new(
         )
       )
       ',
-      interval="1m",
       legendFormat='upper normal',
     ),
   )
   .addTarget(
-    prometheus.target('
+    promQuery.target('
       avg(
         clamp_min(
           gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type"} -
@@ -106,7 +164,6 @@ dashboard.new(
         )
       )
       ',
-      interval="1m",
       legendFormat='lower normal',
     ),
   )
@@ -136,19 +193,18 @@ dashboard.new(
   )
   .addSeriesOverride(seriesOverrides.goldenMetric("/ service$/"))
   .addTarget( // Primary metric
-    prometheus.target('
-      sum(
+    promQuery.target('
+      min(
         max_over_time(
           gitlab_service_errors:ratio{component="", service="", environment="$environment", type="$type"}[$__interval]
         )
       ) by (type)
       ',
-      interval="1m",
       legendFormat='{{ type }} service',
     )
   )
   .addTarget( // Maximum error rate SLO for gitlab_service_errors:ratio metric
-    prometheus.target('
+    promQuery.target('
         avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type"}) or avg(slo:max:gitlab_service_errors:ratio{type="$type"})
       ',
       interval="5m",
@@ -156,33 +212,31 @@ dashboard.new(
     ),
   )
   .addTarget( // Last week
-    prometheus.target('
-      sum(
+    promQuery.target('
+      min(
         max_over_time(
           gitlab_service_errors:ratio{component="", service="", environment="$environment", type="$type"}[$__interval] offset 1w
         )
       ) by (type)
       ',
-      interval="1m",
       legendFormat='last week',
     )
   )
   .addTarget(
-    prometheus.target('
-      sum(
+    promQuery.target('
+      avg(
         (
           gitlab_service_errors:ratio:avg_over_time_1w{component="", service="", environment="$environment", type="$type"} +
           $sigma * gitlab_service_errors:ratio:stddev_over_time_1w{component="", service="", environment="$environment", type="$type"}
         )
       )
       ',
-      interval="1m",
       legendFormat='upper normal',
     ),
   )
   .addTarget(
-    prometheus.target('
-      sum(
+    promQuery.target('
+      avg(
         clamp_min(
           gitlab_service_errors:ratio:avg_over_time_1w{component="", service="", environment="$environment", type="$type"} -
           $sigma * gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", type="$type"},
@@ -190,7 +244,6 @@ dashboard.new(
         )
       )
       ',
-      interval="1m",
       legendFormat='lower normal',
     ),
   )
@@ -219,46 +272,43 @@ dashboard.new(
     description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better."
   )
   .addTarget( // Primary metric
-    prometheus.target('
+    promQuery.target('
       min(
         min_over_time(
           gitlab_service_availability:ratio{environment="$environment", type="$type"}[$__interval]
         )
       ) by (tier, type)
       ',
-      interval="1m",
       legendFormat='{{ type }} service',
     )
   )
   .addTarget( // Last week
-    prometheus.target('
+    promQuery.target('
       min(
         min_over_time(
           gitlab_service_availability:ratio{environment="$environment", type="$type"}[$__interval] offset 1w
         )
       ) by (tier, type)
       ',
-      interval="1m",
       legendFormat='last week',
     )
   )
 
   .addTarget( // Upper sigma bound
-    prometheus.target('
-      min(
+    promQuery.target('
+      avg(
         clamp_max(
           gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", type="$type"} +
           $sigma * gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", type="$type"},
         1)
       )
       ',
-      interval="1m",
       legendFormat='upper normal',
     ),
   )
   .addTarget( // Lower sigma bound
-    prometheus.target('
-      min(
+    promQuery.target('
+      avg(
         clamp_min(
           gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", type="$type"} -
           $sigma * gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", type="$type"},
@@ -266,7 +316,6 @@ dashboard.new(
         )
       )
       ',
-      interval="1m",
       legendFormat='lower normal',
     ),
   )
@@ -295,41 +344,38 @@ dashboard.new(
     description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier."
   )
   .addTarget( // Primary metric
-    prometheus.target('
-      sum(
+    promQuery.target('
+      max(
         avg_over_time(
           gitlab_service_ops:rate{environment="$environment", type="$type"}[$__interval]
         )
       ) by (type)
       ',
-      interval="1m",
       legendFormat='{{ type }} service',
     )
   )
   .addTarget( // Last week
-    prometheus.target('
-      sum(
+    promQuery.target('
+      max(
         avg_over_time(
           gitlab_service_ops:rate{environment="$environment", type="$type"}[$__interval] offset 1w
         )
       ) by (type)
       ',
-      interval="1m",
       legendFormat='last week',
     )
   )
   .addTarget(
-    prometheus.target('
+    promQuery.target('
       gitlab_service_ops:rate:prediction{environment="$environment", type="$type"} +
       ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{component="", environment="$environment", type="$type"}
       ',
-      interval="1m",
       legendFormat='upper normal',
     ),
   )
   .addTarget(
-    prometheus.target('
-      sum(
+    promQuery.target('
+      avg(
         clamp_min(
           gitlab_service_ops:rate:prediction{environment="$environment", type="$type"} -
           ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{component="", environment="$environment", type="$type"},
@@ -337,7 +383,6 @@ dashboard.new(
         )
       )
       ',
-      interval="1m",
       legendFormat='lower normal',
     ),
   )

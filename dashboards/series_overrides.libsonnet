@@ -63,4 +63,15 @@
     "nullPointMode": "connected",
     "zindex": -2,
   },
+  sloViolation:: {
+    "alias": "/ SLO violation$/",
+    "color": "#00000088",
+    "dashes": true,
+    "legend": false,
+    "lines": true,
+    "fill": true,
+    "dashLength": 1,
+    "spaceLength": 4,
+  },
+
 }
