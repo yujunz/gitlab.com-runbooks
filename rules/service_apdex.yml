@@ -183,7 +183,7 @@ groups:
           (
             sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25",
               worker=~"CreateGpgSignatureWorker|WebHookWorker|PostReceive|StageUpdateWorker|ProjectDailyStatisticsWorker|ExpireJobCacheWorker|BuildHooksWorker|ProjectImportScheduleWorker|RepositoryUpdateMirrorWorker|ProcessCommitWorker|PostReceive|ArchiveTraceWorker"}[1m])) by (environment, stage, tier, type, worker) /
-            sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf"}[1m])) by (environment, stage, tier, type, worker)
+            sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf"}[1m])) by (environment, stage, tier, type, worker) > 0
           ),
           "component",
           "worker-$1",

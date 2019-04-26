@@ -1,0 +1,40 @@
+groups:
+## TODO: generate this from definitions in the service catalog
+- name: GitLab Component Apdex Score Min SLOs
+  interval: 5m
+  rules:
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'gitaly'
+      tier: 'stor'
+    expr: 0.995
+
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'sidekiq'
+      tier: 'sv'
+    expr: 0.9995
+
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'api'
+      tier: 'sv'
+    expr: 0.995
+
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'web'
+      tier: 'sv'
+    expr: 0.99
+
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'git'
+      tier: 'sv'
+    expr: 0.995
+
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'haproxy'
+      tier: 'lb'
+    expr: 0.90
