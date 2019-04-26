@@ -87,7 +87,7 @@ build_jsonnet_image:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
   script:
-    - apk add git
+    - apk add curl bash git jq
     - git clone https://github.com/google/jsonnet.git
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - cd jsonnet && docker build -t registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest .
