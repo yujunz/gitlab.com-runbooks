@@ -1,0 +1,16 @@
+groups:
+- name: remote-mirrors.rules
+  rules:
+  - alert: OutOfSyncGitHubMirrors
+    expr: >
+      project_remote_mirror_last_update_time_seconds{url=~".*github.com/gitlabhq.*"}
+        - project_remote_mirror_last_successful_update_time_seconds{url=~".*github.com/gitlabhq.*"}
+        > 21600
+    for: 10m
+    labels:
+      severity: warn
+    annotations:
+      title: 'Projects mirrored to github.com/gitlabhq are out of sync'
+      description: >
+        Project(s) {{ $labels.project_id }} has/have been out of sync with github.com/gitlabhq for over 6 hours.
+        Check the error under the project's Settings > Repository > Mirroring repositories page.
