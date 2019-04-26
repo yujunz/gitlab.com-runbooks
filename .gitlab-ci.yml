@@ -72,8 +72,8 @@ deploy_dashboards:
     - apk add curl bash git jq
     - ./dashboards/upload.sh
   only:
-    # refs:
-    #   - master
+    refs:
+      - master
     variables:
       - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
 
