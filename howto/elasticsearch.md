@@ -60,3 +60,41 @@ curl -XPUT localhost:9200/gitlab -d '{
   }
 }'
 ```
+
+### How to enable/disable ES integration in Gitlab
+
+#### ES integration admin page ####
+
+go to gitlab's admin panel, navigate to Settings -> [Integrations] -> Elasticsearch -> [Expand]
+
+#### enabling ES integration ####
+
+Before you make any changes to config and click save make sure you are aware of which namespaces will be indexed!
+
+If you enable elasticsearch integration using the "Elasticsearch indexing" checkbox, the entire instance will be indexed. If you only want to enable indexing for a specific namespace, use the limiting feature and only then click save. In order to allow for initial indexing to take place (which depending on the size of the instance can take a few hours/days) without breaking the search feature, do not enable searching with Elasticsearch. Do it after the initial indexing.
+
+#### disabling ES integration ####
+
+Disabling the elasticsearch integration (unticking the box and clicking save) will disable all integration related features in gitlab (e.g. there should be no further search requests to the ES cluster).
+
+However, disabling the integration does not kill the ongoing sidekiq jobs and does not remove them from the queue. This means that if for example you accidentally enabled the integration on a huge instance, which resulted in lots of sidekiq jobs being created and enqueued, and your cluster got overwhelmed, simply disabling the integration will only prevent creation of new namespace jobs, but will not get rid of existing jobs.
+
+to clean up any remaining sidekiq jobs:
+- make sure elastic integration is disabled
+- remove all indexed namespaces, this will prevent creation of new elastic_indexer and elastic_commit_indexer jobs. You shouldn't need to do this if everything was working as expected, this is a backup procedure that should cover all edge cases and potential problems. Connect to rails console (there is a [bug](https://gitlab.com/gitlab-org/gitlab-ee/issues/11225) which prevents removal of indexed namespaces from the admin panel, for this reason it has to be done from the console) :
+```
+ElasticsearchIndexedNamespace.all  # list indexed namespaces
+ElasticsearchIndexedNamespace.destroy_all  # remove all namespaces listed in the indexer config
+```
+- keep an eye on [logs in kibana](https://log.gitlab.net/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-1h,mode:quick,to:now))&_a=(columns:!(_source),index:AWNAA_n8NDuQHTm2s9ob,interval:auto,query:(query_string:(analyze_wildcard:!t,query:'elastic.*')),sort:!('@timestamp',desc))), in particular, you should stop seeing new elastic_namespace_indexer jobs being created (these jobs create elastic_indexer and elastic_commit_indexer)
+- at this stage, there should be
+
+
+
+#### disabling elastic backed search, but leaving the integration on ####
+
+you can prevent Gitlab from using ES integration for searching, but let the integration enabled. An example of when this might be useful is when searching was enabled before the initial indexing was finished.
+
+#### ES integration docs ####
+
+more detailed instructions and docs: https://docs.gitlab.com/ee/integration/elasticsearch.html
