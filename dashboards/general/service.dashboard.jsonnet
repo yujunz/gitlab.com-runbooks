@@ -2,6 +2,7 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
+local colors = import 'colors.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -57,9 +58,9 @@ local activeAlertsPanel = grafana.tablePanel.new(
       "alias": "Score",
       "decimals": 0,
       "colors": [
-        "#73BF69",
-        "#FADE2A",
-        "rgba(245, 54, 54, 0.9)"
+        colors.warningColor,
+        colors.errorColor,
+        colors.criticalColor
       ],
       "colorMode": "row",
       "pattern": "Value",
