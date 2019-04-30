@@ -3,8 +3,10 @@ image: registry.gitlab.com/gitlab-com/runbooks:2.2.0
 stages:
   - test
   - deploy
+  - images
 
 test:
+  stage: test
   script:
     - scripts/validate-service-mappings
     - find . -name \*.y*ml | xargs yaml-lint
@@ -28,6 +30,7 @@ deploy_elastic_watcher_updates:
       - $ES_URL
 
 dryrun_pingdom_checks:
+  stage: test
   image: golang:1.11
   script:
     - cd pingdom
@@ -40,6 +43,7 @@ dryrun_pingdom_checks:
       - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
 
 deploy_pingdom_checks:
+  stage: deploy
   image: golang:1.11
   script:
     - cd pingdom
@@ -52,10 +56,40 @@ deploy_pingdom_checks:
 
 check_alerts:
   image: golang:1.12
-
   script:
     - cd alerts-checker
     - go run alerts-checker.go ../rules $THANOS_URL $IGNORED_ALERTS
   only:
     variables:
       - $PERFORM_ALERTS_CHECK
+
+deploy_dashboards:
+  stage: deploy
+  image:
+    name: registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
+    entrypoint: ["/bin/sh", "-c"]
+  script:
+    - apk add curl bash git jq
+    - ./dashboards/upload.sh
+  only:
+    refs:
+      - master
+    variables:
+      - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
+
+build_jsonnet_image:
+  stage: images
+  image: docker:stable
+  services:
+    - docker:dind
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+  script:
+    - apk add curl bash git jq
+    - git clone https://github.com/google/jsonnet.git
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - cd jsonnet && docker build -t registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest .
+    - docker push registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
+  when: manual
