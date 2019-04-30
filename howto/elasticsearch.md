@@ -87,6 +87,14 @@ You might want to remove namespaces from the list of indexed namespaces (e.g. to
 *Note*
 when the integration is enabled, new jobs are scheduled even if no namespaces are on the list
 
+*Note*
+an example procedure that should cover all edge cases (nuclear option, will wipe out everything related to elastic):
+1. disable ES integration in the admin panel
+1. remove all namespace objects using console commands in the bug above
+1. recreate index using rake task
+1. clear index status using rake task
+1. watch ES monitoring and Kibana logs
+
 #### disabling elastic backed search, but leaving the integration on ####
 
 you can prevent Gitlab from using ES integration for searching, but leave the integration itself enabled. An example of when this is useful is during initial indexing.
