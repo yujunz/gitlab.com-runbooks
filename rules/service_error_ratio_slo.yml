@@ -50,3 +50,14 @@ groups:
       type: 'gitaly'
       tier: 'stor'
     expr: 0.001
+
+- name: GitLab Error-Rate SLO observance status
+  interval: 1m
+  rules:
+  - record: 'slo_observed:gitlab_service_errors'
+    expr: >
+      clamp_min(avg_over_time(gitlab_service_errors:ratio[1m]) <= ignoring(environment) group_left slo:max:gitlab_service_errors:ratio, 1)
+      or
+      clamp_max(avg_over_time(gitlab_service_errors:ratio[1m]) > ignoring(environment) group_left slo:max:gitlab_service_errors:ratio, 0)
+
+
