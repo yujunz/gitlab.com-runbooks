@@ -175,6 +175,17 @@ queue = Sidekiq::Queue.new('repository_import')
 queue.each { |job| job.delete if id_list.include?(job.args[0]) }
 ```
 
+### Kill running jobs (as opposed to removing them from a queue) ###
+
+to get a list of jobs that you want to kill:
+```ruby
+types_of_jobs_to_kill = ["elastic_indexer", "elastic_commit_indexer", "elastic_namespace_indexer"]
+workers = Sidekiq::Workers.new  # get an object holding references to all running jobs, see sidekiq docs for more info
+running_elastic_jobs = workers.to_enum(:each).select { |pid, tid, work| types_of_jobs_to_kill.include?(work["queue"]) }
+```
+
+At the moment of writing, we do not handle killing of running jobs.
+
 ## References
 
 * https://gitlab.com/gitlab-com/infrastructure/issues/677
