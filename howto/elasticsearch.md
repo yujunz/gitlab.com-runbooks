@@ -69,9 +69,10 @@ go to gitlab's admin panel, navigate to Settings -> [Integrations] -> Elasticsea
 
 #### enabling ES integration ####
 
-Before you make any changes to config and click save make sure you are aware of which namespaces will be indexed!
-
-If you enable elasticsearch integration using the "Elasticsearch indexing" checkbox, the entire instance will be indexed. If you only want to enable indexing for a specific namespace, use the limiting feature and only then click save. In order to allow for initial indexing to take place (which depending on the size of the instance can take a few hours/days) without breaking the search feature, do not enable searching with Elasticsearch. Do it after the initial indexing.
+Before you make any changes to config and click save, make sure you are aware of which namespaces will be indexed! consider:
+- if you enable elasticsearch integration by just using the "Elasticsearch indexing" checkbox and clicking save, the entire instance will be indexed
+- if you only want to enable indexing for a specific namespace, use the limiting feature and only then click save
+- in order to allow for initial indexing to take place (which depending on the size of the instance can take a few hours/days) without breaking the search feature, do not enable searching with Elasticsearch. Do it after the initial indexing.
 
 #### disabling ES integration ####
 
