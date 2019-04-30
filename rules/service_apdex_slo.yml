@@ -38,3 +38,12 @@ groups:
       type: 'haproxy'
       tier: 'lb'
     expr: 0.90
+
+- name: GitLab Apdex SLO observance status
+  interval: 1m
+  rules:
+  - record: 'slo_observed:gitlab_service_apdex'
+    expr: >
+      clamp_min(avg_over_time(gitlab_service_apdex:ratio[1m]) >= ignoring(environment) group_left slo:min:gitlab_service_apdex:ratio, 1)
+      or
+      clamp_max(avg_over_time(gitlab_service_apdex:ratio[1m]) < ignoring(environment) group_left slo:min:gitlab_service_apdex:ratio, 0)
