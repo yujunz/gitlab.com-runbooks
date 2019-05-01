@@ -35,7 +35,7 @@ local generalGraphPanel(
   .addSeriesOverride(seriesOverrides.alertPending)
   .addSeriesOverride(seriesOverrides.slo);
 
-local activeAlertsPanel = grafana.tablePanel.new(
+local activeAlertsPanel() = grafana.tablePanel.new(
     'Active Alerts',
     styles=[{
       "type": "hidden",
@@ -51,8 +51,7 @@ local activeAlertsPanel = grafana.tablePanel.new(
       "link": true,
       "linkUrl": "https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%2C%20type%3D%22${type}%22%7D",
       "linkTooltip": "Open alertmanager",
-    },
-    {
+    }, {
       "unit": "short",
       "type": "number",
       "alias": "Score",
@@ -89,25 +88,32 @@ local activeAlertsPanel = grafana.tablePanel.new(
     )
   );
 
-dashboard.new(
-  'Service Platform Metrics',
-  schemaVersion=16,
-  tags=['general'],
-  timezone='UTC',
-  graphTooltip='shared_crosshair',
-)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
-.addTemplate(templates.type)
-.addTemplate(templates.sigma)
-.addPanel(activeAlertsPanel, gridPos={
-    x: 0,
-    y: 0,
-    w: 24,
-    h: 10,
-})
-.addPanel(
-  generalGraphPanel(
+local latencySLOPanel() = grafana.singlestat.new(
+    '7d Latency SLO Error Budget',
+    format='percentunit',
+  )
+  .addTarget(
+    promQuery.target('
+        avg_over_time(slo_observed:gitlab_service_apdex{type="$type", environment="$environment"}[7d])
+      ',
+      instant=true
+    )
+  );
+
+local errorRateSLOPanel() = grafana.singlestat.new(
+    '7d Error Rate SLO Error Budget',
+    format='percentunit',
+  )
+  .addTarget(
+    promQuery.target('
+        avg_over_time(slo_observed:gitlab_service_errors{type="$type", environment="$environment"}[7d])
+      ',
+      instant=true
+    )
+  );
+
+
+local apdexPanel() = generalGraphPanel(
     "Latency: Apdex",
     description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
   )
@@ -115,7 +121,7 @@ dashboard.new(
   .addTarget( // Primary metric
     promQuery.target('
       min(
-        avg_over_time(
+        min_over_time(
           gitlab_service_apdex:ratio{environment="$environment", type="$type"}[$__interval]
         )
       ) by (type)
@@ -134,7 +140,7 @@ dashboard.new(
   .addTarget( // Last week
     promQuery.target('
       min(
-        avg_over_time(
+        min_over_time(
           gitlab_service_apdex:ratio{environment="$environment", type="$type"}[$__interval] offset 1w
         )
       ) by (type)
@@ -179,15 +185,9 @@ dashboard.new(
     max=1,
     min=0,
     show=false,
-  )
-  , gridPos={
-    x: 0,
-    y: 0,
-    w: 24,
-    h: 10,
-  }
-)
-.addPanel(
+  );
+
+local errorRatesPanel() =
   generalGraphPanel(
     "Error Ratios",
     description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better"
@@ -195,7 +195,7 @@ dashboard.new(
   .addSeriesOverride(seriesOverrides.goldenMetric("/ service$/"))
   .addTarget( // Primary metric
     promQuery.target('
-      min(
+      max(
         max_over_time(
           gitlab_service_errors:ratio{component="", service="", environment="$environment", type="$type"}[$__interval]
         )
@@ -214,7 +214,7 @@ dashboard.new(
   )
   .addTarget( // Last week
     promQuery.target('
-      min(
+      max(
         max_over_time(
           gitlab_service_errors:ratio{component="", service="", environment="$environment", type="$type"}[$__interval] offset 1w
         )
@@ -259,15 +259,9 @@ dashboard.new(
     max=1,
     min=0,
     show=false,
-  )
-  , gridPos={
-    x: 0,
-    y: 0,
-    w: 24,
-    h: 10,
-  }
-)
-.addPanel(
+  );
+
+local serviceAvailabilityPanel() =
   generalGraphPanel(
     "Service Availability",
     description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better."
@@ -294,7 +288,6 @@ dashboard.new(
       legendFormat='last week',
     )
   )
-
   .addTarget( // Upper sigma bound
     promQuery.target('
       avg(
@@ -331,17 +324,11 @@ dashboard.new(
     max=1,
     min=0,
     show=false,
-  )
-  , gridPos={
-    x: 0,
-    y: 0,
-    w: 24,
-    h: 10,
-  }
-)
-.addPanel(
+  );
+
+local qpsPanel() =
   generalGraphPanel(
-    "Service Operation Rates - per Second",
+    "QPS - Service Operation Rates - per Second",
     description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier."
   )
   .addTarget( // Primary metric
@@ -398,11 +385,73 @@ dashboard.new(
     max=1,
     min=0,
     show=false,
-  )
+  );
 
-  , gridPos={
+
+dashboard.new(
+  'Service Platform Metrics',
+  schemaVersion=16,
+  tags=['general'],
+  timezone='UTC',
+  graphTooltip='shared_crosshair',
+)
+.addTemplate(templates.ds)
+.addTemplate(templates.environment)
+.addTemplate(templates.type)
+.addTemplate(templates.sigma)
+.addPanel(latencySLOPanel(),
+  gridPos={
     x: 0,
     y: 0,
+    w: 6,
+    h: 4,
+})
+.addPanel(activeAlertsPanel(),
+  gridPos={
+    x: 6,
+    y: 0,
+    w: 18,
+    h: 8,
+})
+.addPanel(errorRateSLOPanel(),
+  gridPos={
+    x: 0,
+    y: 4,
+    w: 6,
+    h: 4,
+})
+.addPanel(
+  apdexPanel(),
+  gridPos={
+    x: 0,
+    y: 10,
+    w: 24,
+    h: 10,
+  }
+)
+.addPanel(
+  errorRatesPanel(),
+  gridPos={
+    x: 0,
+    y: 20,
+    w: 24,
+    h: 10,
+  }
+)
+.addPanel(
+  serviceAvailabilityPanel(),
+  gridPos={
+    x: 0,
+    y: 30,
+    w: 24,
+    h: 10,
+  }
+)
+.addPanel(
+  qpsPanel(),
+  gridPos={
+    x: 0,
+    y: 40,
     w: 24,
     h: 10,
   }
