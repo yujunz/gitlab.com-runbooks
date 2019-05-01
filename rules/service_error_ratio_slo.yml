@@ -53,8 +53,10 @@ groups:
 
 - name: GitLab Error-Rate SLO observance status
   interval: 1m
+  labels:
+    slo: 'error_ratio'
   rules:
-  - record: 'slo_observed:gitlab_service_errors'
+  - record: 'slo_observation_status'
     expr: >
       clamp_min(avg_over_time(gitlab_service_errors:ratio[1m]) <= ignoring(environment) group_left slo:max:gitlab_service_errors:ratio, 1)
       or

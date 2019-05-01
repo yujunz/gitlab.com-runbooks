@@ -94,19 +94,19 @@ local latencySLOPanel() = grafana.singlestat.new(
   )
   .addTarget(
     promQuery.target('
-        avg_over_time(slo_observed:gitlab_service_apdex{type="$type", environment="$environment"}[7d])
+        avg(avg_over_time(slo_observation_status{slo="error_ratio", type="$type", environment="$environment"}[7d]))
       ',
       instant=true
     )
   );
 
 local errorRateSLOPanel() = grafana.singlestat.new(
-    '7d Error Rate SLO Error Budget',
+    '7d Apdex Rate SLO Error Budget',
     format='percentunit',
   )
   .addTarget(
     promQuery.target('
-        avg_over_time(slo_observed:gitlab_service_errors{type="$type", environment="$environment"}[7d])
+        avg_over_time(slo_observation_status{slo="apdex_ratio", type="$type", environment="$environment"}[7d])
       ',
       instant=true
     )
