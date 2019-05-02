@@ -3,7 +3,7 @@ groups:
   rules:
 
   - alert: FeLoadBalancerLossOfRedundancy
-    expr: avg(up{tier="lb",job="node"} * 100) by (type) < 80
+    expr: avg(up{tier="lb",job="node"} * 100) by (type, environment) < 80
     for: 5m
     labels:
       pager: pagerduty
