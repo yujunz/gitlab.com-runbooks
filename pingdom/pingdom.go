@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -42,33 +43,35 @@ type PingdomChecks struct {
 	Checks []PingdomCheck
 }
 
+func decomposeURL(input string) (encryption bool, hostname string, path string, err error) {
+	u, err := url.Parse(input)
+	if err != nil {
+		return false, "", "", err
+	}
+
+	encryption = u.Scheme == "https"
+	hostname = u.Hostname()
+
+	// We specifically avoid using the URL parser for the path component,
+	// relying on a regular expression instead. This is because the Go parser will
+	// convert `%2f` characters into `/` characters in the path, but the GitLab
+	// API (somewhat unusually) treats these as different.
+	//
+	// For this reason, we avoid the URL parser and rely on a regular expression
+	// See https://gitlab.com/gitlab-com/runbooks/merge_requests/1063#note_166398758
+	// for more details
+	var unparsedURLPathMatcher = regexp.MustCompile(`^https?://[^/]+(/.*)?$`)
+	matches := unparsedURLPathMatcher.FindStringSubmatch(input)
+	if len(matches) != 2 {
+		return false, "", "", fmt.Errorf("Unable to parse URL path: %v", input)
+	}
+	path = matches[1]
+
+	return encryption, hostname, path, nil
+}
+
 func (c PingdomCheck) name() string {
 	return fmt.Sprintf("check:%v", c.URL)
-}
-
-func (c PingdomCheck) hostname() string {
-	u, err := url.Parse(c.URL)
-	if err != nil {
-		log.Fatalf("unable to parse URL: %v", err)
-	}
-	return u.Hostname()
-}
-
-func (c PingdomCheck) encryption() bool {
-	u, err := url.Parse(c.URL)
-	if err != nil {
-		log.Fatalf("unable to parse URL: %v", err)
-	}
-	return u.Scheme == "https"
-}
-
-func (c PingdomCheck) path() string {
-	u, err := url.Parse(c.URL)
-	if err != nil {
-		log.Fatalf("unable to parse URL: %v", err)
-	}
-
-	return u.Path + u.RawQuery
 }
 
 func (c PingdomCheck) getCheck(config PingdomChecks, teamMap map[string]pingdom.TeamResponse, integrationIDMap map[string]int) pingdom.Check {
@@ -119,17 +122,22 @@ func (c PingdomCheck) getCheck(config PingdomChecks, teamMap map[string]pingdom.
 		}
 	}
 
+	encryption, hostname, path, err := decomposeURL(c.URL)
+	if err != nil {
+		log.Fatalf("unable to parse URL: %v", err)
+	}
+
 	return &pingdom.HttpCheck{
 		Name:                  c.name(),
-		Hostname:              c.hostname(),
-		Url:                   c.path(),
-		Encryption:            c.encryption(),
+		Hostname:              hostname,
+		Url:                   path,
+		Encryption:            encryption,
 		Resolution:            resolutionMinutes,
 		ResponseTimeThreshold: timeoutMS,
-		Tags:             strings.Join(tags, ","),
-		TeamIds:          teamIds,
-		IntegrationIds:   integrationIDs,
-		NotifyWhenBackup: c.NotifyWhenRestored,
+		Tags:                  strings.Join(tags, ","),
+		TeamIds:               teamIds,
+		IntegrationIds:        integrationIDs,
+		NotifyWhenBackup:      c.NotifyWhenRestored,
 	}
 }
 
