@@ -170,27 +170,100 @@ groups:
       2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier) > 0)
 
   # Sidekiq jobs
-  # Apdex for selected jobs is calculated as percentage of jobs which run in under 25 seconds.
-  # The criteria for selecting the jobs is:
-  # 1: should be fairly active
-  # 2: should be spread across the queues
-  # 3: should have an observable impact for users if the queue is stalled
-  # 4: should take less than 25 seconds in normal situations
+  # See https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6670 for details
+  # We deliberately ignore the `import` queue for now
   - record: gitlab_component_apdex:ratio
+    labels:
+      component: 'pullmirror'
     expr: >
-      avg by (environment, tier, type, component) (
-        label_replace(
-          (
-            sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25",
-              worker=~"CreateGpgSignatureWorker|WebHookWorker|PostReceive|StageUpdateWorker|ProjectDailyStatisticsWorker|ExpireJobCacheWorker|BuildHooksWorker|ProjectImportScheduleWorker|RepositoryUpdateMirrorWorker|ProcessCommitWorker|PostReceive|ArchiveTraceWorker"}[1m])) by (environment, stage, tier, type, worker) /
-            sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf"}[1m])) by (environment, stage, tier, type, worker) > 0
-          ),
-          "component",
-          "worker-$1",
-          "worker",
-          "(.*)"
-        )
+      (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25", priority="pullmirror"}[1m])) by (environment, stage, tier, type)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pullmirror"}[1m])) by (environment, stage, tier, type)
       )
+      / 2
+      /
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pullmirror"}[1m])) by (environment, stage, tier, type)
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: 'besteffort'
+    expr: >
+      (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="besteffort"}[1m])) by (environment, stage, tier, type)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="10", priority="besteffort"}[1m])) by (environment, stage, tier, type)
+      )
+      / 2
+      /
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="besteffort"}[1m])) by (environment, stage, tier, type)
+
+  # Note: Uses a 5 minute interval as there is < 1 job per minute making the series bitty
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: 'pages'
+    expr: >
+      (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25", priority="pages"}[5m])) by (environment, stage, tier, type)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pages"}[5m])) by (environment, stage, tier, type)
+      )
+      / 2
+      /
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pages"}[5m])) by (environment, stage, tier, type)
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: 'realtime'
+    expr: >
+      (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="realtime"}[1m])) by (environment, stage, tier, type)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="realtime"}[1m])) by (environment, stage, tier, type)
+      )
+      / 2
+      /
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="realtime"}[1m])) by (environment, stage, tier, type)
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: 'asap'
+    expr: >
+      (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="asap"}[1m])) by (environment, stage, tier, type)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="asap"}[1m])) by (environment, stage, tier, type)
+      )
+      / 2
+      /
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="asap"}[1m])) by (environment, stage, tier, type)
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: 'pipeline'
+    expr: >
+      (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="1", priority="pipeline"}[1m])) by (environment, stage, tier, type)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="pipeline"}[1m])) by (environment, stage, tier, type)
+      )
+      / 2
+      /
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, stage, tier, type)
+
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: 'traces'
+    expr: >
+      (
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="1", priority="traces"}[1m])) by (environment, stage, tier, type)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="traces"}[1m])) by (environment, stage, tier, type)
+      )
+      / 2
+      /
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="traces"}[1m])) by (environment, stage, tier, type)
+
 
 - name: GitLab Service Apdex Scores
   interval: 1m
