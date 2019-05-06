@@ -186,7 +186,7 @@ running_elastic_jobs = workers.to_enum(:each).select { |pid, tid, work| types_of
 
 At the moment of writing, we do not handle killing of running jobs.
 
-Long running elastic jobs can be stopped by recreating the ES index (using a rake task, see [ES integration docs](https://docs.gitlab.com/ee/integration/elasticsearch.html)).
+You can do it by killing the sidekiq worker. Elastic jobs, can be stopped by recreating the ES index (using a rake task, see [ES integration docs](https://docs.gitlab.com/ee/integration/elasticsearch.html)).
 
 ## References
 
