@@ -1,5 +1,9 @@
 #!/usr/bin/env /opt/gitlab/embedded/bin/ruby
 # frozen_string_literal: true
+
+require 'bundler'
+Bundler.require
+
 require 'optparse'
 require 'open3'
 require 'rainbow/refinement'
