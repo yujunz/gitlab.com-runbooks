@@ -65,7 +65,7 @@ curl -XPUT localhost:9200/gitlab -d '{
 
 #### ES integration admin page ####
 
-go to gitlab's admin panel, navigate to Settings -> [Integrations] -> Elasticsearch -> [Expand]
+go to gitlab's admin panel, navigate to Settings -> [Integrations] -> Elasticsearch -> [Expand] (example URL: `https://gitlab.com/admin/application_settings/integrations`)
 
 #### enabling ES integration ####
 
