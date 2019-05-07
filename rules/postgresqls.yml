@@ -258,7 +258,7 @@ groups:
       title: Replicas have different upstream primary databases
 
   - alert: PostgreSQL_ServiceDown
-    expr: pg_up == 0
+    expr: min_over_time(pg_up[2m]) == 0
     for: 1m
     labels:
       channel: database
