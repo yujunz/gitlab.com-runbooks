@@ -1,4 +1,4 @@
-# Gitlab On Call Run Books
+# GitLab On Call Run Books
 
 The aim of this project is to have a quick guide of what to do when an emergency arrives
 
