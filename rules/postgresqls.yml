@@ -271,7 +271,7 @@ groups:
       title: |
         {{$labels.fqdn}} postgres service appears down
 
-   - alert: PostgreSQL_ServiceRestarted
+  - alert: PostgreSQL_ServiceRestarted
     expr: time() - pg_postmaster_start_time_seconds < 90
     for: 1m
     labels:
