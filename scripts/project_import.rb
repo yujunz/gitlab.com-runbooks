@@ -1,8 +1,10 @@
 #!/usr/bin/env /opt/gitlab/embedded/bin/ruby
 # frozen_string_literal: true
 
+require 'rubygems'
 require 'bundler'
-Bundler.require
+
+Bundler.setup
 
 require 'optparse'
 require 'open3'
