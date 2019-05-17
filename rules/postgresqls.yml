@@ -271,6 +271,19 @@ groups:
       title: |
         {{$labels.fqdn}} postgres service appears down
 
+  - alert: PostgreSQL_ServiceRestarted
+    expr: time() - pg_postmaster_start_time_seconds < 90
+    for: 1m
+    labels:
+      severity: warn
+      channel: database
+    annotations:
+      description: |
+        {{$labels.fqdn}} postgres service appears to be restarted
+      runbook: "troubleshooting/postgres.md"
+      title: |
+        {{$labels.fqdn}} postgres service appears to be restarted
+
   - alert: PostgreSQL_RoleChange
     expr: pg_replication_is_replica and changes(pg_replication_is_replica[5m]) > 0
     labels:
