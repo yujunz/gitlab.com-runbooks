@@ -26,10 +26,13 @@ Access to staging environment is treated the same as production as per
 
 ## Run a rails console in staging environment
 
-* SSH into any of the staging nodes, for example:
-  * `ssh web01.stg.gitlab.com`
-  * `ssh api01.stg.gitlab.com`
-* Start a rails console issuing the command `sudo gitlab-rails console`
+* Having [created your chef user data
+  bag](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/user-administration.md),
+  ensure that "rails-console" is one of your `groups`. See existing data bags
+  for examples.
+* After the data bag is uploaded you will have console access on instances that
+  chef-client has subsequently run on. This may take up to 30m.
+* Try to start a console. For example: `ssh yourname-rails@console-01-sv-gstg.c.gitlab-staging-1.internal`
 
 ## Run a redis console in staging environment
 
