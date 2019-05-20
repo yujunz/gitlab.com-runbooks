@@ -23,7 +23,7 @@ type PingdomCheckDefaults struct {
 
 // PingdomCheck represents an individual check
 type PingdomCheck struct {
-	URL                string
+	URL                string   `yaml:"url"`
 	TimeoutMS          int      `yaml:"timeout_ms"`
 	ResolutionMinutes  int      `yaml:"resolution_minutes"`
 	Teams              []string `yaml:"teams"`
@@ -34,13 +34,13 @@ type PingdomCheck struct {
 
 // PingdomChecks represents the YAML config structure
 type PingdomChecks struct {
-	UniqueTag    string `yaml:"unique_tag"`
-	Defaults     PingdomCheckDefaults
+	UniqueTag    string               `yaml:"unique_tag"`
+	Defaults     PingdomCheckDefaults `yaml:"defaults"`
 	Integrations []struct {
 		Name string `yaml:"name"`
 		ID   int    `yaml:"id"`
-	}
-	Checks []PingdomCheck
+	} `yaml:"integrations"`
+	Checks []PingdomCheck `yaml:"checks"`
 }
 
 func decomposeURL(input string) (encryption bool, hostname string, path string, err error) {
@@ -126,6 +126,7 @@ func (c PingdomCheck) getCheck(config PingdomChecks, teamMap map[string]pingdom.
 	if err != nil {
 		log.Fatalf("unable to parse URL: %v", err)
 	}
+	tagCSV := strings.Join(tags, ",")
 
 	return &pingdom.HttpCheck{
 		Name:                  c.name(),
@@ -134,7 +135,7 @@ func (c PingdomCheck) getCheck(config PingdomChecks, teamMap map[string]pingdom.
 		Encryption:            encryption,
 		Resolution:            resolutionMinutes,
 		ResponseTimeThreshold: timeoutMS,
-		Tags:                  strings.Join(tags, ","),
+		Tags:                  tagCSV,
 		TeamIds:               teamIds,
 		IntegrationIds:        integrationIDs,
 		NotifyWhenBackup:      c.NotifyWhenRestored,
