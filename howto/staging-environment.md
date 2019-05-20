@@ -32,7 +32,7 @@ Access to staging environment is treated the same as production as per
   for examples.
 * After the data bag is uploaded you will have console access on instances that
   chef-client has subsequently run on. This may take up to 30m.
-* Try to start a console. For example: `ss yourname-rails@console-01-sv-gstg.c.gitlab-staging-1.internal`
+* Try to start a console. For example: `ssh yourname-rails@console-01-sv-gstg.c.gitlab-staging-1.internal`
 
 ## Run a redis console in staging environment
 
