@@ -11,134 +11,201 @@ checks:
     resolution_minutes: 5
     notify_when_restored: true
     tags:
-      - gitaly
-      - database
+    - web
+    - gitaly
+    - patroni
     teams:
-      - Infrastructure
+    - Infrastructure
     integrations:
-      - pagerduty
+    - pagerduty
+
   - url: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/
     timeout_ms: 20000
     resolution_minutes: 5
     notify_when_restored: true
     tags:
-      - gitaly
-      - database
+    - web
+    - gitaly
+    - patroni
     teams:
-      - Infrastructure
+    - Infrastructure
     integrations:
-      - pagerduty
+    - pagerduty
+
   - url: https://gitlab.com/gitlab-org/gitlab-ce/tree/master
     timeout_ms: 20000
     resolution_minutes: 5
     notify_when_restored: true
     tags:
-      - gitaly
+    - web
+    - gitaly
     teams:
-      - Infrastructure
+    - Infrastructure
     integrations:
-      - pagerduty
+    - pagerduty
+
   - url: https://gitlab.com/gitlab-org/gitlab-ce/issues
     timeout_ms: 20000
     resolution_minutes: 5
     notify_when_restored: true
     tags:
-      - database
+    - web
+    - patroni
     teams:
-      - Infrastructure
+    - Infrastructure
     integrations:
-      - pagerduty
+    - pagerduty
+
+  - url: 'https://gitlab.com/api/v4/projects/13083' # GitLab-CE
+    timeout_ms: 20000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - api
+    - patroni
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
   - url: https://gitlab.com/
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
+    tags:
+    - web
     teams:
     - Infrastructure
     integrations:
     - pagerduty
+
   - url: https://gitlab.com/projects/new
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
+    tags:
+    - web
+    - patroni
     teams:
     - Infrastructure
     integrations:
     - pagerduty
+
   - url: https://gitlab.com/gitlab-com/gitlab-com-infrastructure/tree/master
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
+    tags:
+    - web
+    - gitaly
     teams:
     - Infrastructure
     integrations:
     - pagerduty
-  - url: https://about.gitlab.com/
-    timeout_ms: 30000
-    resolution_minutes: 5
-    notify_when_restored: true
-    teams:
-    - Infrastructure
-    integrations:
-  - url: http://gitlab.org/
-    timeout_ms: 30000
-    resolution_minutes: 5
-    notify_when_restored: true
-    teams:
-    - Infrastructure
-    integrations:
-    - pagerduty
-  - url: https://version.gitlab.com/
-    timeout_ms: 30000
-    resolution_minutes: 5
-    notify_when_restored: true
-    teams:
-    - Infrastructure
-    integrations:
-    - pagerduty
-  - url: https://gitlab-examples.gitlab.io/
-    timeout_ms: 30000
-    resolution_minutes: 5
-    notify_when_restored: true
-    teams:
-    - Infrastructure
-    integrations:
-    - pagerduty
-  - url: https://license.gitlab.com/users/sign_in
-    timeout_ms: 30000
-    resolution_minutes: 5
-    notify_when_restored: true
-    teams:
-    - Infrastructure
-    integrations:
-    - pagerduty
-  - url: https://forum.gitlab.com/
-    timeout_ms: 30000
-    resolution_minutes: 5
-    notify_when_restored: true
-    teams:
-    - Infrastructure
-    integrations:
-    - pagerduty
-  - url: https://deps.sec.gitlab.com/api/ping
-    timeout_ms: 30000
-    resolution_minutes: 5
-    notify_when_restored: true
-    teams:
-    - Infrastructure
-    integrations:
-    - pagerduty
+
   - url: https://gitlab.com/gitlab-org/gitlab-ce/issues/1
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
+    tags:
+    - web
+    - patroni
     teams:
     - Infrastructure
     integrations:
     - pagerduty
+
+  - url: http://gitlab.org/
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - haproxy
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
+#######################################
+# about.gitlab.com
+#######################################
+
+  - url: https://about.gitlab.com/
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - about-gitlab
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
   - url: http://about.gitlab.com/
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
+    tags:
+    - about-gitlab
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
+#######################################
+# Ancillary Properties
+#######################################
+
+  - url: https://version.gitlab.com/
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - version-gitlab
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
+  - url: https://gitlab-examples.gitlab.io/
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - pages
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
+  - url: https://license.gitlab.com/users/sign_in
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - licence-gitlab
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
+  - url: https://forum.gitlab.com/
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - forum-gitlab
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
+  - url: https://deps.sec.gitlab.com/api/ping
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - gemnasium
     teams:
     - Infrastructure
     integrations:
