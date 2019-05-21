@@ -7,10 +7,12 @@ groups:
     labels:
       type: 'posgres'
       component: 'server'
+      stage: 'main' # Postgres only exists in `main` stage
     expr: >
       avg by (environment, tier, type) (avg_over_time(up{geo_role!="secondary", job="postgres"}[1m]))
         and
       avg by (environment, tier, type) (avg_over_time(pg_up{geo_role!="secondary"}[1m]))
+
   # Registry Service
   # Note: currently we have no insight into the availability of the registry, so we
   # have to rely on the node_exporter
@@ -18,64 +20,79 @@ groups:
     labels:
       component: 'server'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="sv", type="registry", job="node"}[1m]))
+      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv", type="registry", job="node"}[1m]))
+
   # {web, api, sidekiq, git} , unicorn component
   - record: gitlab_component_availability:ratio
     labels:
       component: 'unicorn'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="sv",job="gitlab-unicorn"}[1m]))
+      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv",job="gitlab-unicorn"}[1m]))
+
   - record: gitlab_component_availability:ratio
     labels:
       component: 'workhorse'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="sv",job=~"gitlab-workhorse-.*"}[1m]))
+      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv",job=~"gitlab-workhorse-.*"}[1m]))
+
   # sidekiq, sidekiq_cluster component
   - record: gitlab_component_availability:ratio
     labels:
       component: 'sidekiq'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="sv", job="gitlab-sidekiq"}[1m]))
+      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv", job="gitlab-sidekiq"}[1m]))
+
   # pgbouncer
   - record: gitlab_component_availability:ratio
     labels:
       component: 'server'
+      stage: 'main'
     expr: >
       avg by (environment, tier, type) (avg_over_time(up{tier="db", type="pgbouncer", job="pgbouncer"}[1m]))
+
   # gitaly:goserver
   - record: gitlab_component_availability:ratio
     labels:
       component: 'goserver'
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="stor", type="gitaly", job="gitaly"}[1m]))
+      avg by (environment, tier, type, stage) (avg_over_time(up{tier="stor", type="gitaly", job="gitaly"}[1m]))
+
   # pages
   - record: gitlab_component_availability:ratio
     labels:
       component: 'service'
+      type: pages
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="sv", job="gitlab-pages"}[1m]))
+      avg by (environment, tier, stage) (avg_over_time(up{tier="sv", job="gitlab-pages"}[1m]))
+
   # haproxy backends
   - record: gitlab_component_availability:ratio
     labels:
       type: 'haproxy'
+      stage: 'main'
     expr: >
       avg by (environment, tier, component) (
         label_replace(
-          avg_over_time(haproxy_backend_up[1m]),
+          avg_over_time(haproxy_backend_up{backend!~"canary_.*"}[1m]),
           "component",
           "backend-$1",
           "backend",
           "(.*)"
         )
       )
-      or
+
+  - record: gitlab_component_availability:ratio
+    labels:
+      type: 'haproxy'
+      stage: 'cny'
+    expr: >
       avg by (environment, tier, component) (
         label_replace(
-          avg_over_time(haproxy_server_up[1m]),
+          avg_over_time(haproxy_backend_up{backend=~"canary_.*"}[1m]),
           "component",
-          "server-$1",
+          "backend-$1",
           "backend",
-          "(.*)"
+          "canary_(.*)"
         )
       )
 
@@ -88,7 +105,7 @@ groups:
   # TODO: using weighted averages
   - record: gitlab_service_availability:ratio
     expr: >
-      avg by (environment, tier, type) (gitlab_component_availability:ratio != NaN)
+      avg by (environment, tier, type, stage) (gitlab_component_availability:ratio != NaN)
 
 - name: GitLab Component Availability Stats
   interval: 5m

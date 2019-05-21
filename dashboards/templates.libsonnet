@@ -28,5 +28,11 @@ local template = grafana.template;
     "sigma",
     "0.5,1,1.5,2,2.5,3",
     "2",
-  )
+  ),
+  // Once the stage change is fully rolled out, change the default to main
+  stage:: template.custom(
+    "stage",
+    ",main,cny",
+    "",
+  ),
 }

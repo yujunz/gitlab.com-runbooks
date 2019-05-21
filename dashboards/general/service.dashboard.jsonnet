@@ -1,5 +1,6 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
+local commonAnnotations = import 'common_annotations.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
 local colors = import 'colors.libsonnet';
@@ -7,6 +8,7 @@ local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
+local annotation = grafana.annotation;
 
 local generalGraphPanel(
   title,
@@ -75,11 +77,11 @@ local activeAlertsPanel() = grafana.tablePanel.new(
     promQuery.target('
       sort(
         max(
-        ALERTS{environment="$environment", type="$type", severity="critical", alertstate="firing"} * 3
+        ALERTS{environment="$environment", type="$type", stage="$stage", severity="critical", alertstate="firing"} * 3
         or
-        ALERTS{environment="$environment", type="$type", severity="error", alertstate="firing"} * 2
+        ALERTS{environment="$environment", type="$type", stage="$stage", severity="error", alertstate="firing"} * 2
         or
-        ALERTS{environment="$environment", type="$type", severity="warn", alertstate="firing"}
+        ALERTS{environment="$environment", type="$type", stage="$stage", severity="warn", alertstate="firing"}
         ) by (alertname, severity)
       )
       ',
@@ -94,7 +96,7 @@ local latencySLOPanel() = grafana.singlestat.new(
   )
   .addTarget(
     promQuery.target('
-        avg(avg_over_time(slo_observation_status{slo="error_ratio", type="$type", environment="$environment"}[7d]))
+        avg(avg_over_time(slo_observation_status{slo="error_ratio", environment="$environment", type="$type", stage="$stage"}[7d]))
       ',
       instant=true
     )
@@ -106,7 +108,7 @@ local errorRateSLOPanel() = grafana.singlestat.new(
   )
   .addTarget(
     promQuery.target('
-        avg_over_time(slo_observation_status{slo="apdex_ratio", type="$type", environment="$environment"}[7d])
+        avg_over_time(slo_observation_status{slo="apdex_ratio",  environment="$environment", type="$type", stage="$stage"}[7d])
       ',
       instant=true
     )
@@ -122,7 +124,7 @@ local apdexPanel() = generalGraphPanel(
     promQuery.target('
       min(
         min_over_time(
-          gitlab_service_apdex:ratio{environment="$environment", type="$type"}[$__interval]
+          gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage", }[$__interval]
         )
       ) by (type)
       ',
@@ -131,7 +133,7 @@ local apdexPanel() = generalGraphPanel(
   )
   .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
     promQuery.target('
-        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type"}) or avg(slo:min:gitlab_service_apdex:ratio{type="$type"})
+        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}) or avg(slo:min:gitlab_service_apdex:ratio{type="$type"})
       ',
       interval="5m",
       legendFormat='SLO',
@@ -141,7 +143,7 @@ local apdexPanel() = generalGraphPanel(
     promQuery.target('
       min(
         min_over_time(
-          gitlab_service_apdex:ratio{environment="$environment", type="$type"}[$__interval] offset 1w
+          gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval] offset 1w
         )
       ) by (type)
       ',
@@ -152,8 +154,8 @@ local apdexPanel() = generalGraphPanel(
     promQuery.target('
       avg(
         clamp_max(
-          gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type"} +
-          $sigma * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type"},
+          gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type", stage="$stage"} +
+          $sigma * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"},
           1
         )
       )
@@ -165,8 +167,8 @@ local apdexPanel() = generalGraphPanel(
     promQuery.target('
       avg(
         clamp_min(
-          gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type"} -
-          2 * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type"},
+          gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type", stage="$stage"} -
+          2 * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"},
           0
         )
       )
@@ -197,7 +199,7 @@ local errorRatesPanel() =
     promQuery.target('
       max(
         max_over_time(
-          gitlab_service_errors:ratio{component="", service="", environment="$environment", type="$type"}[$__interval]
+          gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval]
         )
       ) by (type)
       ',
@@ -206,7 +208,7 @@ local errorRatesPanel() =
   )
   .addTarget( // Maximum error rate SLO for gitlab_service_errors:ratio metric
     promQuery.target('
-        avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type"}) or avg(slo:max:gitlab_service_errors:ratio{type="$type"})
+        avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}) or avg(slo:max:gitlab_service_errors:ratio{type="$type"})
       ',
       interval="5m",
       legendFormat='SLO',
@@ -216,7 +218,7 @@ local errorRatesPanel() =
     promQuery.target('
       max(
         max_over_time(
-          gitlab_service_errors:ratio{component="", service="", environment="$environment", type="$type"}[$__interval] offset 1w
+          gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval] offset 1w
         )
       ) by (type)
       ',
@@ -227,8 +229,8 @@ local errorRatesPanel() =
     promQuery.target('
       avg(
         (
-          gitlab_service_errors:ratio:avg_over_time_1w{component="", service="", environment="$environment", type="$type"} +
-          $sigma * gitlab_service_errors:ratio:stddev_over_time_1w{component="", service="", environment="$environment", type="$type"}
+          gitlab_service_errors:ratio:avg_over_time_1w{environment="$environment", type="$type", stage="$stage"} +
+          $sigma * gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"}
         )
       )
       ',
@@ -239,8 +241,8 @@ local errorRatesPanel() =
     promQuery.target('
       avg(
         clamp_min(
-          gitlab_service_errors:ratio:avg_over_time_1w{component="", service="", environment="$environment", type="$type"} -
-          $sigma * gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", type="$type"},
+          gitlab_service_errors:ratio:avg_over_time_1w{environment="$environment", type="$type", stage="$stage"} -
+          $sigma * gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"},
           0
         )
       )
@@ -270,7 +272,7 @@ local serviceAvailabilityPanel() =
     promQuery.target('
       min(
         min_over_time(
-          gitlab_service_availability:ratio{environment="$environment", type="$type"}[$__interval]
+          gitlab_service_availability:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval]
         )
       ) by (tier, type)
       ',
@@ -281,7 +283,7 @@ local serviceAvailabilityPanel() =
     promQuery.target('
       min(
         min_over_time(
-          gitlab_service_availability:ratio{environment="$environment", type="$type"}[$__interval] offset 1w
+          gitlab_service_availability:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval] offset 1w
         )
       ) by (tier, type)
       ',
@@ -292,8 +294,8 @@ local serviceAvailabilityPanel() =
     promQuery.target('
       avg(
         clamp_max(
-          gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", type="$type"} +
-          $sigma * gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", type="$type"},
+          gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", type="$type", stage="$stage"} +
+          $sigma * gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"},
         1)
       )
       ',
@@ -304,8 +306,8 @@ local serviceAvailabilityPanel() =
     promQuery.target('
       avg(
         clamp_min(
-          gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", type="$type"} -
-          $sigma * gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", type="$type"},
+          gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", type="$type", stage="$stage"} -
+          $sigma * gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"},
           0
         )
       )
@@ -335,7 +337,7 @@ local qpsPanel() =
     promQuery.target('
       max(
         avg_over_time(
-          gitlab_service_ops:rate{environment="$environment", type="$type"}[$__interval]
+          gitlab_service_ops:rate{environment="$environment", type="$type", stage="$stage"}[$__interval]
         )
       ) by (type)
       ',
@@ -346,7 +348,7 @@ local qpsPanel() =
     promQuery.target('
       max(
         avg_over_time(
-          gitlab_service_ops:rate{environment="$environment", type="$type"}[$__interval] offset 1w
+          gitlab_service_ops:rate{environment="$environment", type="$type", stage="$stage"}[$__interval] offset 1w
         )
       ) by (type)
       ',
@@ -355,8 +357,8 @@ local qpsPanel() =
   )
   .addTarget(
     promQuery.target('
-      gitlab_service_ops:rate:prediction{environment="$environment", type="$type"} +
-      ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{component="", environment="$environment", type="$type"}
+      gitlab_service_ops:rate:prediction{environment="$environment", type="$type", stage="$stage"} +
+      ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{component="", environment="$environment", type="$type", stage="$stage"}
       ',
       legendFormat='upper normal',
     ),
@@ -365,8 +367,8 @@ local qpsPanel() =
     promQuery.target('
       avg(
         clamp_min(
-          gitlab_service_ops:rate:prediction{environment="$environment", type="$type"} -
-          ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{component="", environment="$environment", type="$type"},
+          gitlab_service_ops:rate:prediction{environment="$environment", type="$type", stage="$stage"} -
+          ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{component="", environment="$environment", type="$type", stage="$stage"},
           0
         )
       )
@@ -395,9 +397,12 @@ dashboard.new(
   timezone='UTC',
   graphTooltip='shared_crosshair',
 )
+.addAnnotation(commonAnnotations.deploymentsForEnvironment)
+.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addTemplate(templates.type)
+.addTemplate(templates.stage)
 .addTemplate(templates.sigma)
 .addPanel(latencySLOPanel(),
   gridPos={
