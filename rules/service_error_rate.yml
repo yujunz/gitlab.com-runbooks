@@ -90,7 +90,7 @@ groups:
   # Aggregate over all components within a service
   - record: gitlab_service_errors:rate
     expr: >
-      sum by (environment, tier, type) (gitlab_component_errors:rate)
+      sum by (environment, tier, type) (gitlab_component_errors:rate != NaN)
 
 - name: GitLab Component Errors-per-Second Rate Stats
   interval: 5m

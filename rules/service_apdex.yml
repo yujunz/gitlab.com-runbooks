@@ -12,7 +12,7 @@ groups:
         label_replace(
           sum(rate(haproxy_http_response_duration_seconds_bucket{le="5"}[1m])) by (environment, backend_name)
           /
-          sum(rate(haproxy_http_response_duration_seconds_bucket{le="+Inf"}[1m])) by (environment, backend_name) > 0,
+          sum(rate(haproxy_http_response_duration_seconds_bucket{le="+Inf"}[1m])) by (environment, backend_name),
           "component",
           "backend-$1",
           "backend_name",
@@ -30,7 +30,7 @@ groups:
     expr: >
       sum(rate(haproxy_ssh_request_duration_seconds_bucket{le="8"}[1m])) by (environment)
       /
-      sum(rate(haproxy_ssh_request_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) > 0
+      sum(rate(haproxy_ssh_request_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
 
     # Note: As yet, there is no canary git+ssh traffic
 
@@ -43,7 +43,7 @@ groups:
     expr: >
       sum(rate(haproxy_http_response_duration_seconds_bucket{server_name=~"^registry-cny-\\d.*", le="5"}[1m])) by (environment)
       /
-      sum(rate(haproxy_http_response_duration_seconds_bucket{server_name=~"^registry-cny-\\d.*", le="+Inf"}[1m])) by (environment) > 0
+      sum(rate(haproxy_http_response_duration_seconds_bucket{server_name=~"^registry-cny-\\d.*", le="+Inf"}[1m])) by (environment)
 
   # web:workhorse
   # Satisfied -> 1 seconds
@@ -60,7 +60,7 @@ groups:
         sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="10", code=~"^[23].*"}[1m])) by (environment, type, tier)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier) > 0
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier)
 
   # api:workhorse
   # Satisfied -> 10 seconds
@@ -77,7 +77,7 @@ groups:
         sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="30", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", code=~"^[235].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier) > 0
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", code=~"^[235].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
 
   # git:workhorse
   # Satisfied -> 30 seconds
@@ -94,7 +94,7 @@ groups:
         sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="60", code=~"^[23].*"}[1m])) by (environment, type, tier)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier) > 0
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier)
 
   # gitaly:goserver
   # Satisfied -> 0.5 seconds
@@ -111,7 +111,7 @@ groups:
         sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier)
       )
       /
-      2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier) > 0)
+      2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier))
 
   # Sidekiq jobs
   # See https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6670 for details
@@ -218,7 +218,7 @@ groups:
   # TODO: using weighted averages
   - record: gitlab_service_apdex:ratio
     expr: >
-      avg by (environment, tier, type) (gitlab_component_apdex:ratio)
+      avg by (environment, tier, type) (gitlab_component_apdex:ratio != NaN)
 
 - name: GitLab Component Apdex Score Stats
   interval: 5m

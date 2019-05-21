@@ -88,7 +88,7 @@ groups:
   # TODO: using weighted averages
   - record: gitlab_service_availability:ratio
     expr: >
-      avg by (environment, tier, type) (gitlab_component_availability:ratio)
+      avg by (environment, tier, type) (gitlab_component_availability:ratio != NaN)
 
 - name: GitLab Component Availability Stats
   interval: 5m
