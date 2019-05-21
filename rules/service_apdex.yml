@@ -2,21 +2,41 @@ groups:
 - name: GitLab Component Apdex Scores
   interval: 1m
   rules:
-  # haproxy:http traffic
+  # haproxy:http traffic - NON-CANARY
   - record: gitlab_component_apdex:ratio
     labels:
       type: 'haproxy'
       tier: 'lb'
+      stage: 'main'
     expr: >
-      avg by (environment, tier, component) (
+      avg by (environment, component) (
         label_replace(
-          sum(rate(haproxy_http_response_duration_seconds_bucket{le="5"}[1m])) by (environment, backend_name)
+          sum(rate(haproxy_http_response_duration_seconds_bucket{backend_name!~"canary_.*", backend_name!="api_rate_limit", le="5"}[1m])) by (environment, backend_name)
           /
-          sum(rate(haproxy_http_response_duration_seconds_bucket{le="+Inf"}[1m])) by (environment, backend_name),
+          sum(rate(haproxy_http_response_duration_seconds_bucket{backend_name!~"canary_.*", backend_name!="api_rate_limit", le="+Inf"}[1m])) by (environment, backend_name),
           "component",
           "backend-$1",
           "backend_name",
           "(.*)"
+        )
+      )
+
+  # haproxy:http traffic - CANARY
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: 'haproxy'
+      tier: 'lb'
+      stage: 'cny'
+    expr: >
+      avg by (environment, component) (
+        label_replace(
+          sum(rate(haproxy_http_response_duration_seconds_bucket{backend_name=~"canary_.*", le="5"}[1m])) by (environment, backend_name)
+          /
+          sum(rate(haproxy_http_response_duration_seconds_bucket{backend_name=~"canary_.*", le="+Inf"}[1m])) by (environment, backend_name),
+          "component",
+          "backend-$1",
+          "backend_name",
+          "canary_(.*)"
         )
       )
 
@@ -34,17 +54,6 @@ groups:
 
     # Note: As yet, there is no canary git+ssh traffic
 
-  - record: gitlab_component_apdex:ratio
-    labels:
-      type: 'haproxy'
-      tier: 'lb'
-      stage: 'cny'
-      component: 'backend-registry'
-    expr: >
-      sum(rate(haproxy_http_response_duration_seconds_bucket{server_name=~"^registry-cny-\\d.*", le="5"}[1m])) by (environment)
-      /
-      sum(rate(haproxy_http_response_duration_seconds_bucket{server_name=~"^registry-cny-\\d.*", le="+Inf"}[1m])) by (environment)
-
   # web:workhorse
   # Satisfied -> 1 seconds
   # Acceptable -> 10 seconds
@@ -55,12 +64,12 @@ groups:
       component: 'workhorse'
     expr: >
       (
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="1", code=~"^[23].*"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="1", code=~"^[23].*"}[1m])) by (environment, type, tier, stage)
       +
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="10", code=~"^[23].*"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", type="web", tier="sv", le="10", code=~"^[23].*"}[1m])) by (environment, type, tier, stage)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier)
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier, stage)
 
   # api:workhorse
   # Satisfied -> 10 seconds
@@ -72,12 +81,12 @@ groups:
       component: 'workhorse'
     expr: >
       (
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="10", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="10", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
       +
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="30", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="30", code=~"^[23].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", code=~"^[235].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier)
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", code=~"^[235].*", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
 
   # git:workhorse
   # Satisfied -> 30 seconds
@@ -89,12 +98,12 @@ groups:
       component: 'workhorse'
     expr: >
       (
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="30", code=~"^[23].*"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="30", code=~"^[23].*"}[1m])) by (environment, type, tier, stage)
       +
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="60", code=~"^[23].*"}[1m])) by (environment, type, tier)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", tier="sv", le="60", code=~"^[23].*"}[1m])) by (environment, type, tier, stage)
       )
       /
-      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier)
+      2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", tier="sv", code=~"^[235].*"}[1m])) by (environment, type, tier, stage)
 
   # gitaly:goserver
   # Satisfied -> 0.5 seconds
@@ -106,12 +115,12 @@ groups:
       component: 'goserver'
     expr: >
       (
-        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier)
+        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage)
         +
-        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier)
+        sum(rate(grpc_server_handling_seconds_bucket{type="gitaly", tier="stor", grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage)
       )
       /
-      2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier))
+      2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage))
 
   # Sidekiq jobs
   # See https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6670 for details
@@ -121,26 +130,26 @@ groups:
       component: 'pullmirror'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25", priority="pullmirror"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25", priority="pullmirror"}[1m])) by (environment, tier, type, stage)
         +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pullmirror"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pullmirror"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pullmirror"}[1m])) by (environment, stage, tier, type)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pullmirror"}[1m])) by (environment, tier, type, stage)
 
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'besteffort'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="besteffort"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="besteffort"}[1m])) by (environment, tier, type, stage)
         +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="10", priority="besteffort"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="10", priority="besteffort"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="besteffort"}[1m])) by (environment, stage, tier, type)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="besteffort"}[1m])) by (environment, tier, type, stage)
 
   # Note: Uses a 5 minute interval as there is < 1 job per minute making the series bitty
   - record: gitlab_component_apdex:ratio
@@ -148,65 +157,65 @@ groups:
       component: 'pages'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25", priority="pages"}[5m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25", priority="pages"}[5m])) by (environment, tier, type, stage)
         +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pages"}[5m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pages"}[5m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pages"}[5m])) by (environment, stage, tier, type)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pages"}[5m])) by (environment, tier, type, stage)
 
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'realtime'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="realtime"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="realtime"}[1m])) by (environment, tier, type, stage)
         +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="realtime"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="realtime"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="realtime"}[1m])) by (environment, stage, tier, type)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="realtime"}[1m])) by (environment, tier, type, stage)
 
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'asap'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="asap"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="asap"}[1m])) by (environment, tier, type, stage)
         +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="asap"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="asap"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="asap"}[1m])) by (environment, stage, tier, type)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="asap"}[1m])) by (environment, tier, type, stage)
 
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'pipeline'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="1", priority="pipeline"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="1", priority="pipeline"}[1m])) by (environment, tier, type, stage)
         +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="pipeline"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="pipeline"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, stage, tier, type)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, tier, type, stage)
 
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'traces'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="1", priority="traces"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="1", priority="traces"}[1m])) by (environment, tier, type, stage)
         +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="traces"}[1m])) by (environment, stage, tier, type)
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="traces"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="traces"}[1m])) by (environment, stage, tier, type)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="traces"}[1m])) by (environment, tier, type, stage)
 
 
 - name: GitLab Service Apdex Scores
@@ -218,7 +227,7 @@ groups:
   # TODO: using weighted averages
   - record: gitlab_service_apdex:ratio
     expr: >
-      avg by (environment, tier, type) (gitlab_component_apdex:ratio != NaN)
+      avg by (environment, tier, type, stage) (gitlab_component_apdex:ratio != NaN)
 
 - name: GitLab Component Apdex Score Stats
   interval: 5m

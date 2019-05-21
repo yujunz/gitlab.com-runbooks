@@ -6,24 +6,38 @@ groups:
   - record: gitlab_component_ops:rate
     labels:
       component: 'service'
+      stage: 'main'
     expr: >
       sum by (environment, tier, type) (rate(pg_stat_database_xact_commit{tier="db"}[1m]))
       +
       sum by (environment, tier, type) (rate(pg_stat_database_xact_rollback{tier="db"}[1m]))
+
   # Redis Service
   - record: gitlab_component_ops:rate
     labels:
       component: 'server'
+      stage: 'main'
     expr: >
       sum by (environment, tier, type) (redis_instantaneous_ops_per_sec)
+
   # Registry Service
   - record: gitlab_component_ops:rate
     labels:
       type: 'registry'
       component: 'server'
       tier: 'sv'
+      stage: 'main'
     expr: >
       sum by (environment) (rate(haproxy_backend_http_responses_total{backend="registry"}[1m]))
+
+  - record: gitlab_component_ops:rate
+    labels:
+      type: 'registry'
+      component: 'server'
+      tier: 'sv'
+      stage: 'cny'
+    expr: >
+      sum by (environment) (rate(haproxy_backend_http_responses_total{backend="canary_registry"}[1m]))
 
   # gitlab_shell
   - record: gitlab_component_ops:rate
@@ -31,51 +45,60 @@ groups:
       tier: 'sv'
       type: 'git'
       component: 'gitlab_shell'
+      stage: 'main'
     expr: >
       sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
+
   # web:workhorse
   - record: gitlab_component_ops:rate
     labels:
       component: 'workhorse'
     expr: >
-      sum by (environment, tier, type) (rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web"}[1m]))
+      sum by (environment, tier, type, stage) (rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web"}[1m]))
+
   # api:workhorse
   - record: gitlab_component_ops:rate
     labels:
       component: 'workhorse'
     expr: >
-      sum by (environment, tier, type) (rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api"}[1m]))
+      sum by (environment, tier, type, stage) (rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api"}[1m]))
+
   # api/web/sidekiq/git:unicorn
   - record: gitlab_component_ops:rate
     labels:
       component: 'unicorn'
     expr: >
-      sum by (environment, tier, type) (rate(http_request_duration_seconds_count{job="gitlab-unicorn"}[1m]))
+      sum by (environment, tier, type, stage) (rate(http_request_duration_seconds_count{job="gitlab-unicorn"}[1m]))
+
   # sidekiq
   - record: gitlab_component_ops:rate
     labels:
       component: 'sidekiq'
     expr: >
-      sum by (environment, tier, type) (rate(gitlab_transaction_duration_seconds_count{type = "sidekiq"}[1m]))
+      sum by (environment, tier, type, stage) (rate(gitlab_transaction_duration_seconds_count{type = "sidekiq"}[1m]))
+
   # mailroom
   # TODO: zero placeholder as we have no metrics for mailroom at present
   - record: gitlab_component_ops:rate
     labels:
       component: 'service'
     expr: >
-      count by (environment, tier, type) (up{type="mailroom"}) - count by (environment, tier, type) (up{type="mailroom"})
+      count by (environment, tier, type, stage) (up{type="mailroom"}) - count by (environment, tier, type) (up{type="mailroom"})
+
   # pgbouncer
   - record: gitlab_component_ops:rate
     labels:
       component: 'service'
+      stage: main
     expr: >
       sum by (environment, tier, type) (rate(pgbouncer_stats_queries_total[1m]))
+
   # gitaly:goserver
   - record: gitlab_component_ops:rate
     labels:
       component: 'goserver'
     expr: >
-      sum by (environment, tier, type) (rate(grpc_server_started_total{type="gitaly"}[1m]))
+      sum by (environment, tier, type, stage) (rate(grpc_server_started_total{type="gitaly"}[1m]))
 
   # pages:http - use http semantics
   - record: gitlab_component_ops:rate
@@ -83,6 +106,7 @@ groups:
       type: 'pages'
       tier: 'sv'
       component: 'http'
+      stage: 'main'
     expr: >
       sum by (environment) (rate(haproxy_backend_http_responses_total{backend="pages_http"}[1m]))
 
@@ -92,6 +116,7 @@ groups:
       type: 'pages'
       tier: 'sv'
       component: 'https'
+      stage: 'main'
     expr: >
       sum by (environment) (rate(haproxy_backend_sessions_total{backend="pages_https"}[1m]))
 
@@ -99,9 +124,16 @@ groups:
   - record: gitlab_component_ops:rate
     labels:
       type: 'haproxy'
-      tier: 'lb'
+      stage: 'main'
     expr: >
-      sum by (environment) (haproxy_frontend_current_sessions)
+      sum(rate(haproxy_backend_http_responses_total{backend!~"canary_.*"}[1m])) by (environment, tier)
+
+  - record: gitlab_component_ops:rate
+    labels:
+      type: 'haproxy'
+      stage: 'cny'
+    expr: >
+      sum(rate(haproxy_backend_http_responses_total{backend=~"canary_.*"}[1m])) by (environment, tier)
 
 - name: GitLab Service Operations-per-Second Aggregated Rates
   interval: 1m
@@ -109,7 +141,7 @@ groups:
   # Aggregate over all components within a service
   - record: gitlab_service_ops:rate
     expr: >
-      sum by (environment, tier, type) (gitlab_component_ops:rate != NaN)
+      sum by (environment, tier, type, stage) (gitlab_component_ops:rate != NaN)
 
 - name: GitLab Component Operations-per-Second Rate Stats
   interval: 5m
