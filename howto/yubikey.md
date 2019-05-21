@@ -180,6 +180,9 @@ You can either perform the below actions using the **VeraCrypt** UI or by using 
 
 ## Master Key Creation
 
+We want to generate a key without the sign and encrypt capabilities, leaving
+only the certify capability.
+
 ```bash
 > gpg --expert --full-generate-key
 Please select what kind of key you want:
@@ -279,6 +282,12 @@ your machine might store the data and make it available to others!
 We'll use subkeys that are generated on the Yubikey device itself. Keys generated
 on the Yubikey cannot be copied off, so loss or destruction of the device will
 mean key rotation.
+
+Certain gpg operations can cause the usage of GPG SmartCards (i.e. the Yubikey)
+to become "pinned" to a particular gpg-agent instance. This can cause the
+`addcardkey` command to fail. If you run into this problem, kill any gpg-agent
+processes with a different `--homedir` flag value to your current $GNUPGHOME.
+Usually, there will be one running with `$HOME/.gnupg` that is the culprit.
 
 ```bash
 > gpg --edit-key FAEFD83E
@@ -477,15 +486,15 @@ pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pine
 
 ## Ensure your environment knows how to authenticate SSH
 
-* Insert one of the following into your `rc` file
+Insert one of the following into your `rc` file:
 
-* On OSX you'll need this:
+Macos:
 
 ```bash
 export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
 ```
 
-* On Linux you'll need this:
+Linux:
 
 ```bash
 unset SSH_AGENT_PID
@@ -495,6 +504,8 @@ fi
 ```
 
 and source the `rc` afterwards.
+
+Remove any automation you might have that starts `ssh-agent`.
 
 ## Script to Reset gpg-agent and ssh-agent
 
@@ -540,17 +551,52 @@ This generates a public key that you can paste into GitLab or use as a public ke
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABA ... COMMENT
 ```
 
-## Personal Cleanup
+## Testing
 
-* On linux:
-** Unmount the veracrypt volume:```sudo veracrypt -d ~/gitlab_secrets```
-** For backup purposes, copy the veracrypt volume file (~/gitlab_secrets) to an external USB device or elsewhere
-* If you have anything inside of your own dot files or system configuration that
-  may startup the ssh-agent, disable it
+Try encrypting and signing a message, e.g. to yourself:
+
+```
+$ echo foo | gpg --encrypt --armor --sign --recipient <keyid from `gpg --list-keys`>
+-----BEGIN PGP MESSAGE-----
+...
+-----END PGP MESSAGE-----
+```
+
+Exercise the ssh authentication functionality:
+
+```
+$ ssh-add -l
+... your public key ...
+
+# Assuming you have added your new public key to your gitlab.com profile
+$ ssh git@gitlab.com
+PTY allocation request failed on channel 0
+Welcome to GitLab, @user!
+Connection to gitlab.com closed.
+```
+
+## Troubleshooting
+
+### GPG cannot find the Yubikey
+
+This problem can manifest itself in a few ways:
+
+* Pinentry asking you to insert a SmartCard when it is already inserted
+* GPG failing to encrypt or sign messages
+* SSH failing to authenticate
+* No SSH keys visible with `ssh-add -l`
+
+The solution is to "kick" gpg-agent into checking for a SmartCard by running
+`gpg --card-status`.
+
+## Cleanup
+
+* Unmount the encrypted GPG master volume. Linux: `sudo veracrypt -d
+  ~/gitlab_secrets`. Macos: `umount /Volume/Gitlab`.
+* Ensure that the backing file for the GPG master volume is backed up, e.g. copy
+  it to a USB drive.
 * If you have anything that starts up the `gpg-agent`, ensure the options reflect
   the work we've accomplished above
-* A good short test to validate all is well, when adding ssh keys (such as your
-  git ssh key), should work just fine, as well as a listing `ssh-add -l`
 
 ## Linux tips
 ### gpg: selecting openpgp failed: No such device
