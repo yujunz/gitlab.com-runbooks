@@ -1,0 +1,15 @@
+groups:
+  - name: omnibus.rules
+    rules:
+      - alert: OmnibusPackageUpdatesDisabled
+        expr: count(omnibus_package_install{enable="true"}) / count(omnibus_package_install) < .25
+        for: 6h
+        labels:
+          severity: warn
+        annotations:
+          description: |
+            At least 75% of the fleet have omnibus package updates disabled.
+            This prevents automatic package installations for newly provisioned
+            VMs
+          runbook: troubleshooting/omnibus-package-updates.md
+          title: Omnibus package updates have been disabled for over 6 hours
