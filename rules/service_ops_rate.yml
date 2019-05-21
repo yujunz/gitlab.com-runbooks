@@ -109,7 +109,7 @@ groups:
   # Aggregate over all components within a service
   - record: gitlab_service_ops:rate
     expr: >
-      sum by (environment, tier, type) (gitlab_component_ops:rate)
+      sum by (environment, tier, type) (gitlab_component_ops:rate != NaN)
 
 - name: GitLab Component Operations-per-Second Rate Stats
   interval: 5m
