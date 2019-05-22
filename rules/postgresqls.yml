@@ -393,5 +393,5 @@ groups:
     annotations:
       description: >
         Too many locks acquired on the database instance {{ $labels.fqdn }}. 
-        If this alert happens frequently this may be an indication that need to increase pg_settings_max_locks_per_transaction.
+        If this alert happens frequently, we may need to increase the postgres setting max_locks_per_transaction.
       title: Too many locks acquired
