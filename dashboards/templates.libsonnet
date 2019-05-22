@@ -32,7 +32,7 @@ local template = grafana.template;
   // Once the stage change is fully rolled out, change the default to main
   stage:: template.custom(
     "stage",
-    ",main,cny",
-    "",
+    "main,cny,",
+    "main",
   ),
 }

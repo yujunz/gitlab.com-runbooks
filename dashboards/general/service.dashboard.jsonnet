@@ -119,16 +119,27 @@ local apdexPanel() = generalGraphPanel(
     "Latency: Apdex",
     description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
   )
-  .addSeriesOverride(seriesOverrides.goldenMetric("/ service$/"))
+  .addSeriesOverride(seriesOverrides.goldenMetric("/ service/"))
   .addTarget( // Primary metric
     promQuery.target('
       min(
         min_over_time(
-          gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage", }[$__interval]
+          gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval]
         )
       ) by (type)
       ',
       legendFormat='{{ type }} service',
+    )
+  )
+ .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      min(
+        min_over_time(
+          gitlab_service_apdex:ratio{environment="$environment", type="$type", stage=""}[$__interval]
+        )
+      ) by (type)
+      ',
+      legendFormat='{{ type }} service (legacy)',
     )
   )
   .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
@@ -194,7 +205,7 @@ local errorRatesPanel() =
     "Error Ratios",
     description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better"
   )
-  .addSeriesOverride(seriesOverrides.goldenMetric("/ service$/"))
+  .addSeriesOverride(seriesOverrides.goldenMetric("/ service/"))
   .addTarget( // Primary metric
     promQuery.target('
       max(
@@ -204,6 +215,17 @@ local errorRatesPanel() =
       ) by (type)
       ',
       legendFormat='{{ type }} service',
+    )
+  )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      max(
+        max_over_time(
+          gitlab_service_errors:ratio{environment="$environment", type="$type", stage=""}[$__interval]
+        )
+      ) by (type)
+      ',
+      legendFormat='{{ type }} service (legacy)',
     )
   )
   .addTarget( // Maximum error rate SLO for gitlab_service_errors:ratio metric
@@ -279,6 +301,17 @@ local serviceAvailabilityPanel() =
       legendFormat='{{ type }} service',
     )
   )
+  .addTarget( // Legacy metric
+    promQuery.target('
+      min(
+        min_over_time(
+          gitlab_service_availability:ratio{environment="$environment", type="$type", stage=""}[$__interval]
+        )
+      ) by (tier, type)
+      ',
+      legendFormat='{{ type }} service (legacy)',
+    )
+  )
   .addTarget( // Last week
     promQuery.target('
       min(
@@ -344,6 +377,17 @@ local qpsPanel() =
       legendFormat='{{ type }} service',
     )
   )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      max(
+        avg_over_time(
+          gitlab_service_ops:rate{environment="$environment", type="$type", stage=""}[$__interval]
+        )
+      ) by (type)
+      ',
+      legendFormat='{{ type }} service (legacy)',
+    )
+  )
   .addTarget( // Last week
     promQuery.target('
       max(
@@ -358,7 +402,7 @@ local qpsPanel() =
   .addTarget(
     promQuery.target('
       gitlab_service_ops:rate:prediction{environment="$environment", type="$type", stage="$stage"} +
-      ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{component="", environment="$environment", type="$type", stage="$stage"}
+      ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"}
       ',
       legendFormat='upper normal',
     ),
@@ -368,7 +412,7 @@ local qpsPanel() =
       avg(
         clamp_min(
           gitlab_service_ops:rate:prediction{environment="$environment", type="$type", stage="$stage"} -
-          ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{component="", environment="$environment", type="$type", stage="$stage"},
+          ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"},
           0
         )
       )
