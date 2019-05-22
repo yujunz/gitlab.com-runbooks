@@ -24,6 +24,31 @@
     "spaceLength": 8,
     "nullPointMode": "connected"
   },
+  upperLegacy:: {
+    "alias": "upper normal (legacy)",
+    "dashes": true,
+    "color": "#99440a",
+    "fillBelowTo": "lower normal (legacy)",
+    "legend": false,
+    "lines": false,
+    "linewidth": 1,
+    "zindex": -3,
+    "dashLength": 8,
+    "spaceLength": 8,
+    "nullPointMode": "connected"
+  },
+  lowerLegacy:: {
+    "alias": "lower normal (legacy)",
+    "dashes": true,
+    "color": "#99440a",
+    "legend": false,
+    "lines": false,
+    "linewidth": 1,
+    "zindex": -3,
+    "dashLength": 8,
+    "spaceLength": 8,
+    "nullPointMode": "connected"
+  },
   lastWeek:: {
     "alias": "last week",
     "dashes": true,
@@ -73,5 +98,12 @@
     "dashLength": 1,
     "spaceLength": 4,
   },
-
+  mainStage:: {
+    "alias": "main stage",
+    "color": "#5794F2",
+  },
+  cnyStage:: {
+    "alias": "cny stage",
+    "color": "#FADE2A",
+  },
 }
