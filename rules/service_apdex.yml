@@ -204,20 +204,6 @@ groups:
       /
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, tier, type, stage)
 
-  - record: gitlab_component_apdex:ratio
-    labels:
-      component: 'traces'
-    expr: >
-      (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="1", priority="traces"}[1m])) by (environment, tier, type, stage)
-        +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="traces"}[1m])) by (environment, tier, type, stage)
-      )
-      / 2
-      /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="traces"}[1m])) by (environment, tier, type, stage)
-
-
 - name: GitLab Service Apdex Scores
   interval: 1m
   rules:
