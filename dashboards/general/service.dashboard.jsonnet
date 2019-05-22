@@ -27,11 +27,12 @@ local generalGraphPanel(
     legend_total=false,
     legend_avg=true,
     legend_alignAsTable=true,
-    legend_rightSide=true,
     legend_hideEmpty=true,
   )
   .addSeriesOverride(seriesOverrides.upper)
   .addSeriesOverride(seriesOverrides.lower)
+  .addSeriesOverride(seriesOverrides.upperLegacy)
+  .addSeriesOverride(seriesOverrides.lowerLegacy)
   .addSeriesOverride(seriesOverrides.lastWeek)
   .addSeriesOverride(seriesOverrides.alertFiring)
   .addSeriesOverride(seriesOverrides.alertPending)
@@ -187,6 +188,32 @@ local apdexPanel() = generalGraphPanel(
       legendFormat='lower normal',
     ),
   )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      avg(
+        clamp_max(
+          gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type", stage=""} +
+          $sigma * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage=""},
+          1
+        )
+      )
+      ',
+      legendFormat='upper normal (legacy)',
+    ),
+  )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      avg(
+        clamp_min(
+          gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type", stage=""} -
+          2 * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage=""},
+          0
+        )
+      )
+      ',
+      legendFormat='lower normal (legacy)',
+    ),
+  )
   .resetYaxes()
   .addYaxis(
     format='percentunit',
@@ -272,6 +299,31 @@ local errorRatesPanel() =
       legendFormat='lower normal',
     ),
   )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      avg(
+        (
+          gitlab_service_errors:ratio:avg_over_time_1w{environment="$environment", type="$type", stage=""} +
+          $sigma * gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage=""}
+        )
+      )
+      ',
+      legendFormat='upper normal (legacy)',
+    ),
+  )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      avg(
+        clamp_min(
+          gitlab_service_errors:ratio:avg_over_time_1w{environment="$environment", type="$type", stage=""} -
+          $sigma * gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage=""},
+          0
+        )
+      )
+      ',
+      legendFormat='lower normal (legacy)',
+    ),
+  )
   .resetYaxes()
   .addYaxis(
     format='percentunit',
@@ -348,6 +400,32 @@ local serviceAvailabilityPanel() =
       legendFormat='lower normal',
     ),
   )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      avg(
+        clamp_max(
+          gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", type="$type", stage=""} +
+          $sigma * gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage=""},
+        1)
+      )
+      ',
+      legendFormat='upper normal (legacy)',
+    ),
+  )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      avg(
+        clamp_min(
+          gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", type="$type", stage=""} -
+          $sigma * gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage=""},
+          0
+        )
+      )
+      ',
+      legendFormat='lower normal (legacy)',
+    ),
+  )
+
   .resetYaxes()
   .addYaxis(
     format='percentunit',
@@ -420,6 +498,27 @@ local qpsPanel() =
       legendFormat='lower normal',
     ),
   )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      gitlab_service_ops:rate:prediction{environment="$environment", type="$type", stage=""} +
+      ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="$type", stage=""}
+      ',
+      legendFormat='upper normal (legacy)',
+    ),
+  )
+  .addTarget( // Legacy metric - remove 2020-01-01
+    promQuery.target('
+      avg(
+        clamp_min(
+          gitlab_service_ops:rate:prediction{environment="$environment", type="$type", stage=""} -
+          ($sigma / 2) * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="$type", stage=""},
+          0
+        )
+      )
+      ',
+      legendFormat='lower normal (legacy)',
+    ),
+  )
   .resetYaxes()
   .addYaxis(
     format='short',
@@ -474,16 +573,16 @@ dashboard.new(
   gridPos={
     x: 0,
     y: 10,
-    w: 24,
+    w: 12,
     h: 10,
   }
 )
 .addPanel(
   errorRatesPanel(),
   gridPos={
-    x: 0,
-    y: 20,
-    w: 24,
+    x: 12,
+    y: 10,
+    w: 12,
     h: 10,
   }
 )
@@ -491,17 +590,17 @@ dashboard.new(
   serviceAvailabilityPanel(),
   gridPos={
     x: 0,
-    y: 30,
-    w: 24,
+    y: 20,
+    w: 12,
     h: 10,
   }
 )
 .addPanel(
   qpsPanel(),
   gridPos={
-    x: 0,
-    y: 40,
-    w: 24,
+    x: 12,
+    y: 20,
+    w: 12,
     h: 10,
   }
 )
