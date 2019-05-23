@@ -213,7 +213,7 @@ groups:
   # TODO: using weighted averages
   - record: gitlab_service_apdex:ratio
     expr: >
-      avg by (environment, tier, type, stage) (gitlab_component_apdex:ratio != NaN)
+      avg by (environment, tier, type, stage) (gitlab_component_apdex:ratio >= 0)
 
 - name: GitLab Component Apdex Score Stats
   interval: 5m
