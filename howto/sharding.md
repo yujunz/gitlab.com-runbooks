@@ -1,4 +1,4 @@
-# Managing GitLab Storage Shards
+# Managing GitLab Storage Shards (Gitaly)
 
 ## Sharding Overview
 
@@ -56,6 +56,27 @@ marked the repository as writable to verify this.
 1. Utilize the `-srh` flag for details on how to use it
 1. See issue https://gitlab.com/gitlab-com/gl-infra/production/issues/664 for
    further inspiration
+1. Or use this guideline below on how to conduct a production issue repo move.
+   - Install the migration script on a common system (console server).
+   - Dry run the migration script and look for problems.
+   ```
+   time gitlab-rails runner /tmp/storage_rebalance.rb --current-file-server nfs-fileXX --target-file-server nfs-fileYY --dry-run true --wait 10800 --move-amount 1000 2>&1 | tee "migration.$(date +%Y-%m-%d_%H:%M).log"
+   ```
+   - Execute the migration script in a tmux session on the console server during low utilization time period.
+   ```
+   time gitlab-rails runner /tmp/storage_rebalance.rb --current-file-server nfs-fileXX --target-file-server nfs-fileYY --dry-run false --wait 10800 --move-amount 1000 2>&1 | tee "migration.$(date +%Y-%m-%d_%H:%M).log"
+   ```
+   - Review any timed out transactions and restore/repair any repositories to their proper writable status.
+   - Create a list of moved repositories to delete on file-XX.
+   ```
+   find /var/opt/gitlab/git-data/repositories/@hashed -mindepth 2 -maxdepth 3 -name *+moved*.git > files_to_remove.txt
+   < files_to_remove.txt xargs du -ch | tail -n1
+   ```
+   - Have another SRE review the files to be removed to avoid loss of data.
+   - Create GCP snapshot of disk on file-XX and include a link to the production issue in the snapshot description.
+   - Take a before df to show before disk space in use `df -h /dev/sdb`
+   - Remove the files `< files_to_remove.txt xargs -rn1 ionice -c 3 rm -fr`
+   - Take an after df to show after disk space in use `df -h /dev/sdb`
 
 #### Verify Information
 Via the rails console, we have a few easy lookups to see where a project lives,
@@ -95,11 +116,15 @@ what it's filepath is, and if it is writeable. For example:
 * Auto log to a file without the need for `tee`
 * Dynamic wait time
 * Error handling
-  * One example, we query all projects at the start, and then query each project
-    id later, if the project doesn't exist that second time, the script bails
+  - One example, we query all projects at the start, and then query each project id later, if the project doesn't exist that second time, the script bails
 * Detect job failures so we aren't waiting unnecessarily
 * https://gitlab.com/gitlab-org/gitlab-ee/issues/9563
 * https://gitlab.com/gitlab-org/gitlab-ee/issues/9534
+* Automate the script process with Ansible or similar. Even just having an automated script that can migrate 500GB at a time from the most used to least used gitaly node would help make this less of a chore.
+* Develop some find and du commands to look for:
+  - Repos larger than 20GB
+  - Repos that are growing very quickly
+* Ideally, the application could auto migrate repos over time.
 
 ## Gotchas
 
