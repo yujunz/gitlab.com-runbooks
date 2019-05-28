@@ -385,7 +385,7 @@ groups:
         which can be a result of an abuse or poorly-written query.
       title: High rate of temporary files creation
   - alert: PostgreSQL_TooManyLocksAcquired
-    expr: ((sum by(fqdn) (pg_locks_count)) / on (fqdn) ( pg_settings_max_locks_per_transaction * pg_settings_max_connections )) > 0.40
+    expr: ((sum by(fqdn) (pg_locks_count)) / on (fqdn) ( pg_settings_max_locks_per_transaction * pg_settings_max_connections )) > 0.20
     for: 5m
     labels:
       severity: warn
