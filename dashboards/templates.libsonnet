@@ -11,7 +11,7 @@ local template = grafana.template;
   environment:: template.new(
     "environment",
     "$PROMETHEUS_DS",
-    "label_values(up, environment)",
+    "label_values(gitlab_service_ops:rate, environment)",
     current="gprd",
     refresh='load',
     sort=1,
@@ -19,7 +19,7 @@ local template = grafana.template;
   type:: template.new(
     "type",
     "$PROMETHEUS_DS",
-    'label_values(gitlab_component_ops:rate{environment="$environment"}, type)',
+    'label_values(gitlab_service_ops:rate{environment="$environment"}, type)',
     current="web",
     refresh='load',
     sort=1,
