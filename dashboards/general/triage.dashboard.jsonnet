@@ -16,6 +16,7 @@ local generalGraphPanel(
   description=null
 ) = graphPanel.new(
     title,
+    datasource="$PROMETHEUS_DS",
     linewidth=2,
     fill=0,
     description=description,
@@ -35,6 +36,7 @@ local generalGraphPanel(
 local generateAnomalyPanel(title, query) =
   graphPanel.new(
     title,
+    datasource="$PROMETHEUS_DS",
     linewidth=1,
     fill=0,
     decimals=2,
@@ -66,6 +68,7 @@ local generateAnomalyPanel(title, query) =
 
 local activeAlertsPanel = grafana.tablePanel.new(
     'Active Alerts',
+    datasource="$PROMETHEUS_DS",
     styles=[{
       "type": "hidden",
       "pattern": "Time",

@@ -17,6 +17,7 @@ local generalGraphPanel(
     title,
     linewidth=1,
     fill=0,
+    datasource="$PROMETHEUS_DS",
     description=description,
     decimals=2,
     legend_show=true,
