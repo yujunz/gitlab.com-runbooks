@@ -20,11 +20,20 @@ The metric being higher than expected (an arbitrary threshold set by hand) for a
 
 1. An abuse blocking operation has caught too many users
 1. A bug in a release has caused a large number of users to be blocked, or to be interpreted as blocked
+1. Some sort of weirdness with an oAuth partner
 
 Check with #abuse (mostly automated notifications), #security (@abuse-team) for possible abuse related issues.
 
-Check with #releases if it looks like a release related issue
+An active release should show up in the dashboard as an annotation, and #announcements from the deployment tasks.  If it looks possibly related to a release, then check with the people in #releases about details, rollback, and other options.
+
+Other debugging ideas that may provide useful clues:
+ * Check whether you can log in to yourself, as your normal account, and/or as your high priv admin account
+ * See if the problem is specific to password, password + 2FA, or oAuth type logins.
+ * Confirm whether this affects just production, or potentially staging + ops as well (the latter suggesting some possible external trigger)
+ * Use the 'type' variable on the dashboard to see if this is specific to a type of backend (git, web, api)
+
+And as always the [Triage dashboard]( https://dashboards.gitlab.net/d/RZmbBr7mk/gitlab-triage?orgId=1) is an excellent place to look.
 
 There is unlikely to be any direct and immediate technical resolution steps that the on-call SRE can take here; mostly it will be alerting and then supporting other teams in diagnosing what's going on.
 
-This is still a somewhat experimental alert; please feel free to reconsider/discuss both the threshold value and the 'for' interval, particularly if this proves to be overly sensitive; the intention is that this should alert only in extreme and surprising situations. 
+This is still a somewhat experimental alert; please feel free to reconsider/discuss both the threshold value and the 'for' interval, particularly if this proves to be overly sensitive; the intention is that this should alert only in extreme and surprising situations.
