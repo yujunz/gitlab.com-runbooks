@@ -57,18 +57,25 @@ exist inside of 1Password, and even better, inside a chef vault.
 3. A backup copy of the old certificate field is stored locally. You may need to replace it if you run into trouble.
 4. A properly formatted version of the new cert is already made and formatted for JSON. This makes it easier for updating json cert fields.
   * ```awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' example.com.chained.crt > json.example.com.cert```
+5. Confirm using a knife command that the hosts you'll target are the ones you expect: `knife search -i node 'roles:<role name> AND chef_environment:<env name>'`
 5. If you are updating the internal ```*.gprd.gitlab.net``` certificate, be aware that there are extra steps required in the google console to update a load balancer certificate.
 
 #### Execution of the update
+1. Check the state of chef-client: `knife ssh "roles:<role name> AND chef_environment:<env name>" "ps -aux | grep chef-client | grep -v grep"`
 1. Stop chef on the haproxy fleet that serves the cert in question.
   * ```knife ssh "role:<role name>" "sudo service chef-client stop"```
 2. Edit the vaults that contain the cert using comands like this:
   * ```./bin/gkms-vault-edit frontend-loadbalancer gprd```
   * ```./bin/gkms-vault-edit gitlab-omnibus-secrets gprd```
 3. Find and replace the cert field identified earlier in the JSON and save the changes. Document in the issue the specific fields you are updating.
+4. Inspect changes that would be applied on one of the nodes: `sudo chef-client --why-run`
 4. Force a chef-run on one of the nodes for verification. You should be able to simply run ```sudo chef-client``` and see the updated certificate in the output.
 5. Use openssl to verify the correct certificate is in place:
   * ```echo | openssl s_client -connect <NODE IP ADDRESS>:443 -servername <HOSTNAME> 2>/dev/null | openssl x509 -noout -dates```
+6. Use your web browser to verify the certificate
+  * edit `/etc/hosts` on your laptop and add an overwrite for the hostname of your service
+  * in your browser, go to the hostname of your service
+  * make sure you don't get any errors, e.g. about intermediate certs missing, and that you can see the new expiry date
 6. Restart chef on the nodes from the first step.
   * ```knife ssh "role:gprd-base-lb-fe" "sudo service chef-client start"```
 
