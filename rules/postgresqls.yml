@@ -161,7 +161,7 @@ groups:
       title: Unused Replication Slots for {{$labels.fqdn}}
   - alert: PostgreSQL_ReplicaStaleXmin
     expr: pg_replication_slots_xmin_age{slot_name=~"^patroni_[0-9]+.*"} > 20000
-    for: 30m
+    for: 45m
     labels:
       severity: critical
       channel: database
