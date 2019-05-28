@@ -2,7 +2,7 @@
 
 This document tracks the subnet allocation across multiple infrastructure
 projects related to GitLab.com. Any project that requires centralized monitoring
-or maintenance from ops runners should be configured to not overlap with the 
+or maintenance from ops runners should be configured to not overlap with the
 gitlab-ops project for network peering.
 
 * This doc replaces the previous [tracking spreadsheet on google docs](https://docs.google.com/spreadsheets/d/1l-Oxx8dqHqGnrQ23iVP9XGYariFGPFDuZkqFj4KOe5A/edit#gid=0)
@@ -19,7 +19,14 @@ gitlab-ops project for network peering.
 | First IP | Last IP | Subnet | Project | Description
 | -------  | ------  | -----  | ------  | --------
 | `10.0.0.0`      | `10.31.255.255`    | `10.0.0.0/11`    | N/A              | RESERVED
-| `10.32.0.0`     | `10.63.255.255`    | `10.32.0.0/11`   | N/A              | Legacy Azure
+| `10.32.0.0`     | `10.32.255.255`    | `10.32.0.0/16`   | SnowPlow         | AWS-SnowPlow
+| `10.33.0.0`     | `10.33.255.255`    | `10.33.0.0/16`   | N/A              | Legacy Azure
+| `10.34.0.0`     | `10.34.255.255`    | `10.34.0.0/16`   | N/A              | Legacy Azure
+| `10.35.0.0`     | `10.35.255.255`    | `10.35.0.0/16`   | N/A              | Legacy Azure
+| `10.36.0.0`     | `10.39.255.255`    | `10.36.0.0/14`   | N/A              | Legacy Azure
+| `10.40.0.0`     | `10.43.255.255`    | `10.40.0.0/14`   | N/A              | Legacy Azure
+| `10.44.0.0`     | `10.47.255.255`    | `10.44.0.0/14`   | N/A              | Legacy Azure
+| `10.48.0.0`     | `10.63.255.255`    | `10.48.0.0/12`   | N/A              | Legacy Azure
 | `10.64.0.0`     | `10.95.255.255`    | `10.64.0.0/11`   | N/A              | Legacy Azure
 | `10.96.0.0`     | `10.127.255.255`   | `10.96.0.0/11`   | N/A              | Legacy Azure
 | `10.128.0.0`    | `10.159.255.255`   | `10.28.0.0/11`   | N/A              | Legacy Azure
