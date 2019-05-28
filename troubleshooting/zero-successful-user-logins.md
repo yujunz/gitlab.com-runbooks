@@ -21,4 +21,10 @@ There are two broad scenarios where this could alert:
 
 In the latter case, we expect many other alerts to be going off and the root cause to be clear; this alert is largely for the former case.
 
-In the event the site is up, and it's only logins that are failing, check for action in #releases or #security (@abuse-team) team.  In particular, if blocked user login attempts is large, treat this as though [BlockedUserAttemptsIsHigh](blocked-user-logins.md) was firing.
+In the event the site is up, and it's only logins that are failing, check for action in #announcements, #releases, or #security (@abuse-team) team.  In particular, if blocked user login attempts is large, treat this as though [BlockedUserAttemptsIsHigh](blocked-user-logins.md) was firing.
+
+Other debugging ideas that may provide useful clues:
+ * Check whether you can log in to yourself, as your normal account, and as your high priv admin account
+ * Confirm whether this affects just production, or potentially staging + ops as well (the latter suggesting some possible external trigger)
+
+And as always the [Triage dashboard]( https://dashboards.gitlab.net/d/RZmbBr7mk/gitlab-triage?orgId=1) is an excellent place to look.
