@@ -17,6 +17,7 @@ local generalGraphPanel(
     title,
     linewidth=2,
     fill=0,
+    datasource="$PROMETHEUS_DS",
     description=description,
     decimals=2,
     legend_show=true,
@@ -40,6 +41,7 @@ local generalGraphPanel(
 
 local activeAlertsPanel() = grafana.tablePanel.new(
     'Active Alerts',
+    datasource="$PROMETHEUS_DS",
     styles=[{
       "type": "hidden",
       "pattern": "Time",
@@ -93,6 +95,7 @@ local activeAlertsPanel() = grafana.tablePanel.new(
 
 local latencySLOPanel() = grafana.singlestat.new(
     '7d Latency SLO Error Budget',
+    datasource="$PROMETHEUS_DS",
     format='percentunit',
   )
   .addTarget(
@@ -105,6 +108,7 @@ local latencySLOPanel() = grafana.singlestat.new(
 
 local errorRateSLOPanel() = grafana.singlestat.new(
     '7d Apdex Rate SLO Error Budget',
+    datasource="$PROMETHEUS_DS",
     format='percentunit',
   )
   .addTarget(
