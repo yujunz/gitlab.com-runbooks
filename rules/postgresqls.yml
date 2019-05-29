@@ -174,8 +174,7 @@ groups:
         The replication slot {{$labels.slot_name}} on {{$labels.fqdn}} is using
         a minimum transaction ID that is {{$value | humanize}} transactions old.
         This can cause an increase in dead tuples on the primary. This can be
-        caused by long-running queries or transactions, or unused replication
-        slots on a secondary.
+        caused by long-running transactions on the master or any standby, or unused replication.
       runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
   - alert: PostgreSQL_LongLivedTransaction
     expr: pg_stat_activity_max_tx_duration > 3600
