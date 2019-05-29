@@ -384,3 +384,14 @@ groups:
         Database {{ $labels.fqdn }} has a high rate of temporary files creation,
         which can be a result of an abuse or poorly-written query.
       title: High rate of temporary files creation
+  - alert: PostgreSQL_TooManyLocksAcquired
+    expr: ((sum by(fqdn) (pg_locks_count)) / on (fqdn) ( pg_settings_max_locks_per_transaction * pg_settings_max_connections )) > 0.20
+    for: 5m
+    labels:
+      severity: warn
+      channel: database
+    annotations:
+      description: >
+        Too many locks acquired on the database instance {{ $labels.fqdn }}. 
+        If this alert happens frequently, we may need to increase the postgres setting max_locks_per_transaction.
+      title: Too many locks acquired
