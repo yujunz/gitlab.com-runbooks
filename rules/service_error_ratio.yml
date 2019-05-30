@@ -2,7 +2,7 @@ groups:
 - name: GitLab Service Errors Ratios
   interval: 1m
   rules:
-  # The error ratio is the rate of errors divided by the rate of operations
+  # The error ratio is the rate of errors divided by the rate of requests
   - record: gitlab_service_errors:ratio
     expr: >
       gitlab_service_errors:rate / gitlab_service_ops:rate
