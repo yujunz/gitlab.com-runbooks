@@ -1,8 +1,10 @@
+local colors = import 'colors.libsonnet';
+
 {
   upper:: {
     "alias": "upper normal",
     "dashes": true,
-    "color": "#99440a",
+    "color": colors.normalRangeColor,
     "fillBelowTo": "lower normal",
     "legend": false,
     "lines": false,
@@ -15,7 +17,7 @@
   lower:: {
     "alias": "lower normal",
     "dashes": true,
-    "color": "#99440a",
+    "color": colors.normalRangeColor,
     "legend": false,
     "lines": false,
     "linewidth": 1,
@@ -27,7 +29,7 @@
   upperLegacy:: {
     "alias": "upper normal (legacy)",
     "dashes": true,
-    "color": "#99440a",
+    "color": colors.normalRangeColor,
     "fillBelowTo": "lower normal (legacy)",
     "legend": false,
     "lines": false,
@@ -40,7 +42,7 @@
   lowerLegacy:: {
     "alias": "lower normal (legacy)",
     "dashes": true,
-    "color": "#99440a",
+    "color": colors.normalRangeColor,
     "legend": false,
     "lines": false,
     "linewidth": 1,

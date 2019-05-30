@@ -30,6 +30,7 @@ local generalGraphPanel(
     legend_alignAsTable=true,
     legend_hideEmpty=true,
   )
+  .addSeriesOverride(seriesOverrides.goldenMetric("/ service/"))
   .addSeriesOverride(seriesOverrides.upper)
   .addSeriesOverride(seriesOverrides.lower)
   .addSeriesOverride(seriesOverrides.upperLegacy)
@@ -124,7 +125,6 @@ local apdexPanel() = generalGraphPanel(
     "Latency: Apdex",
     description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
   )
-  .addSeriesOverride(seriesOverrides.goldenMetric("/ service/"))
   .addTarget( // Primary metric
     promQuery.target('
       min(
@@ -184,7 +184,7 @@ local apdexPanel() = generalGraphPanel(
       avg(
         clamp_min(
           gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type", stage="$stage"} -
-          2 * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"},
+          $sigma * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage="$stage"},
           0
         )
       )
@@ -210,7 +210,7 @@ local apdexPanel() = generalGraphPanel(
       avg(
         clamp_min(
           gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", type="$type", stage=""} -
-          2 * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage=""},
+          $sigma * gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", type="$type", stage=""},
           0
         )
       )
@@ -236,7 +236,6 @@ local errorRatesPanel() =
     "Error Ratios",
     description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better"
   )
-  .addSeriesOverride(seriesOverrides.goldenMetric("/ service/"))
   .addTarget( // Primary metric
     promQuery.target('
       max(
@@ -445,7 +444,7 @@ local serviceAvailabilityPanel() =
 
 local qpsPanel() =
   generalGraphPanel(
-    "QPS - Service Operation Rates - per Second",
+    "RPS - Service Requests per Second",
     description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier."
   )
   .addTarget( // Primary metric

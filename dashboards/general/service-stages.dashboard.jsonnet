@@ -145,7 +145,7 @@ local serviceAvailabilityPanel() =
 
 local qpsPanel() =
   generalGraphPanel(
-    "QPS - Service Operation Rates - per Second",
+    "RPS - Service Requests per Second",
     description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier."
   )
   .addSeriesOverride(seriesOverrides.mainStage)
