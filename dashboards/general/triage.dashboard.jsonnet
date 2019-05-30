@@ -46,7 +46,9 @@ local generateAnomalyPanel(
   title,
   query,
   minY=6,
-  maxY=6
+  maxY=6,
+  errorThreshold=8,
+  warningThreshold=6,
   ) =
   graphPanel.new(
     title,
@@ -65,10 +67,10 @@ local generateAnomalyPanel(
     legend_alignAsTable=false,
     legend_hideEmpty=true,
     thresholds=[
-      thresholds.errorLevel("gt", 4),
-      thresholds.warningLevel("gt", 3),
-      thresholds.warningLevel("lt", -3),
-      thresholds.errorLevel("lt", -4),
+      thresholds.errorLevel("gt", errorThreshold),
+      thresholds.warningLevel("gt", warningThreshold),
+      thresholds.warningLevel("lt", -warningThreshold),
+      thresholds.errorLevel("lt", -errorThreshold),
     ]
   )
   .addTarget(
@@ -224,7 +226,7 @@ dashboard.new(
       gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
   ',
   maxY=0.5,
-  minY=-6
+  minY=-12
   )
   ,
   gridPos=genGridPos(1, 0.5)
@@ -283,7 +285,7 @@ dashboard.new(
       /
       gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
   ',
-  maxY=6,
+  maxY=12,
   minY=-0.5
   )
   , gridPos=genGridPos(1, 1.5)
@@ -332,7 +334,10 @@ dashboard.new(
       gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", stage="$stage"}
   ',
   maxY=6,
-  minY=-3
+  minY=-3,
+  errorThreshold=4,
+  warningThreshold=3,
+
   )
   , gridPos=genGridPos(1, 2.5)
 )
@@ -379,7 +384,7 @@ dashboard.new(
       gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
   ',
   maxY=0.5,
-  minY=-6
+  minY=-12
   )
   , gridPos=genGridPos(1, 3.5)
 )
