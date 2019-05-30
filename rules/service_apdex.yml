@@ -156,12 +156,7 @@ groups:
     labels:
       component: 'pages'
     expr: >
-      (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="25", priority="pages"}[5m])) by (environment, tier, type, stage)
-        +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pages"}[5m])) by (environment, tier, type, stage)
-      )
-      / 2
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pages"}[5m])) by (environment, tier, type, stage)
       /
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pages"}[5m])) by (environment, tier, type, stage)
 
@@ -170,9 +165,9 @@ groups:
       component: 'realtime'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="realtime"}[1m])) by (environment, tier, type, stage)
-        +
         sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="realtime"}[1m])) by (environment, tier, type, stage)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="10", priority="realtime"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
@@ -183,9 +178,9 @@ groups:
       component: 'asap'
     expr: >
       (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="2.5", priority="asap"}[1m])) by (environment, tier, type, stage)
-        +
         sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="asap"}[1m])) by (environment, tier, type, stage)
+        +
+        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="10", priority="asap"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /

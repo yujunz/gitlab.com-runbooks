@@ -8,7 +8,7 @@ groups:
       component: 'service'
       stage: 'main'
     expr: >
-      sum by (environment, tier, type) (rate(pg_stat_database_xact_rollback{tier="db"}[1m]))
+      sum by (environment, tier, type) (rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m]))
 
   # haproxy - treat each backend as a component - Main stage
   - record: gitlab_component_errors:rate
