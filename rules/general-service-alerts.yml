@@ -149,7 +149,7 @@ groups:
             gitlab_service_ops:rate:stddev_over_time_1w
           )
           >
-          2
+          3
         for: 5m
         labels:
           rules_domain: general
@@ -157,7 +157,7 @@ groups:
           severity: warn
           period: 5m
           bound: upper
-          threshold_sigma: "2"
+          threshold_sigma: "3"
         annotations:
           description: |
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving more requests than normal.
@@ -189,7 +189,7 @@ groups:
             gitlab_service_ops:rate:stddev_over_time_1w
           )
           <
-          -2
+          -3
         for: 5m
         labels:
           rules_domain: general
@@ -197,7 +197,7 @@ groups:
           severity: warn
           period: 5m
           bound: lower
-          threshold_sigma: "2"
+          threshold_sigma: "3"
         annotations:
           description: |
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving fewer requests than normal.
@@ -215,77 +215,3 @@ groups:
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
           promql_template_1: 'gitlab_service_ops:rate{type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_ops:rate{type="$type", stage="$stage"}'
-
-      ################################################
-      # Apdex: what ratio of the service operations are completing with an acceptable amount of time?
-      ################################################
-
-      # Error: Apdex lower than 4 sigma
-      - alert: service_apdex_out_of_bounds_lower_5m
-        expr: |
-          gitlab_service_apdex:ratio
-          <
-          gitlab_service_apdex:ratio:avg_over_time_1w - 4 * gitlab_service_apdex:ratio:stddev_over_time_1w
-        for: 5m
-        labels:
-          rules_domain: general
-          metric: gitlab_service_apdex:ratio
-          severity: warn
-          period: 5m
-          bound: lower
-          threshold_sigma: "4"
-        annotations:
-          description: |
-            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is operating at a slower rate than normal.
-
-            The service is taking longer to respond to requests than usual. This could be caused by
-            user abuse, application changes in upstream services that lead to higher request rates or slower
-            requested, or slowdown in downstream services. Check operation rates in upstream and downstream
-            services, error rates and check ELK for abuse.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
-          title: "`{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is operating at a slower rate than normal"
-          grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
-          grafana_panel_id: "5"
-          grafana_variables: "environment,type,stage"
-          grafana_min_zoom_hours: 12
-          link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
-          promql_template_1: 'gitlab_service_apdex:ratio{type="$type", stage="$stage"}'
-          promql_template_2: 'gitlab_component_apdex:ratio{type="$type", stage="$stage"}'
-          promql_template_3: 'gitlab_component_node_apdex:ratio{type="$type", stage="$stage"}'
-
-      ################################################
-      # Error rate: how many exception events is this service generating per second?
-      ################################################
-
-      # Warn: Anomaly detection: Error rate exceeds 4 sigma
-      - alert: service_errors_out_of_bounds_upper_5m
-        expr: |
-          gitlab_service_errors:rate
-          >
-          gitlab_service_errors:rate:avg_over_time_1w + 4 * gitlab_service_errors:rate:stddev_over_time_1w
-        for: 5m
-        labels:
-          rules_domain: general
-          metric: gitlab_service_errors
-          severity: warn
-          period: 5m
-          bound: upper
-          threshold_sigma: "4"
-        annotations:
-          description: |
-            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is generating more errors than normal.
-
-            The service is generating more errors than usual. This could be caused by application changes,
-            downstream service failures or user-invoked failures.
-            Review sentry errors, ELK and downstream service alerts.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
-          title: "Anomaly detection: {{ $labels.type }} service (`{{ $labels.stage }}` stage) error alert"
-          grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
-          grafana_panel_id: "6"
-          grafana_variables: "environment,type,stage"
-          grafana_min_zoom_hours: 12
-          link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-errors.md"
-          promql_template_1: 'gitlab_service_errors:rate{type="$type", stage="$stage"}'
-          promql_template_2: 'gitlab_component_errors:rate{type="$type", stage="$stage"}'
