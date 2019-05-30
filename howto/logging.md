@@ -114,6 +114,7 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | registry | /var/log/gitlab/registry/current | lines | pubsub-registry-inf | |
 | system.auth | /var/log/auth.log | syslog | pubsub-system-inf | |
 | system.syslog | /var/log/syslog | syslog | pubsub-system-inf | |
+| rails.graphql | /var/log/gitlab/gitlab-rails/graphql_json.log | JSON | pubsub-rails-inf ||
 | history.psql | /home/*-db/.psql_history  | | |
 | history.irb | /var/log/irb_history/*.log  | | |
 
