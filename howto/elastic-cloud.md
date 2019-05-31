@@ -30,3 +30,28 @@ PUT _cluster/settings
   }
 }
 ```
+
+
+## Resizing cluster ##
+
+### adding new availability zones ###
+
+https://www.elastic.co/guide/en/cloud-enterprise/current/ece-resize-deployment.html
+
+adding and removing availability zones was tested. elastic.co decides whether to have a dedicated VM for master or to nominate master from among the data nodes. The number of availability zones determines in how many zones there will be data nodes (you might actually end up with more VMs if elastic.co decides to run master on a dedicated node).
+
+### resizing instances ###
+
+The way it works is new machines are created with the desired spec, they are then brought online, shards are moved across and once that is complete the old ones are taken offline and removed. This worked very smoothly.
+
+we can scale up and down. resizing is done live.
+
+## Monitoring ##
+
+Because Elastic Cloud is running on infrastructure that we do not manage or have access to, we cannot use our exporters/Prometheus/Thanos/Alertmanager setup. For this reason, the only available option is to use Elasticsearch built-in monitoring that is storing monitoring metrics in Elasticsearch indices. In production environment, it makes sense to use a separate cluster for storing monitoring metrics (if metrics were stored on the same cluster, we wouldn't know the cluster is down because monitoring would be down as well).
+
+## Alerting ##
+
+Since we cannot use our Alertmanager, Elasticsearch Watchers have to be used for alerting. They will be configured on the Elastic cluster used for storing monitoring indices.
+
+blackbox probes cannot provide us with sufficient granularity of state reporting.
