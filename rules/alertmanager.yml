@@ -3,6 +3,7 @@ groups:
   rules:
   - alert: AlertmanagerNotificationsFailing
     expr: rate(alertmanager_notifications_failed_total[1m]) > 0
+    for: 1m
     labels:
       pager: pagerduty
       service: alertmanager
