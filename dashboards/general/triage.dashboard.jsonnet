@@ -79,12 +79,13 @@ local generateAnomalyPanel(
       clamp_min(
         clamp_max(
           avg(
-                avg_over_time((' + query + ')[$__interval:1m])
+                ' + query + '
             ) by (type),
           ' + maxY + '),
         ' + minY + ')
       ',
-          legendFormat='{{ type }} service'
+      legendFormat='{{ type }} service',
+      intervalFactor=3,
     )
   )
   .resetYaxes()
@@ -179,25 +180,23 @@ dashboard.new(
   .addTarget( // Primary metric
     promQuery.target('
       avg(
-        avg_over_time(
-          gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}[$__interval]
-        )
+        gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
       ) by (type)
       ',
       legendFormat='{{ type }} service',
+      intervalFactor=3,
     )
   )
   .addTarget( // SLO Violations
     promQuery.target('
       avg(
-        avg_over_time(
-          gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}[$__interval]
-        )
+          gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
       ) by (type)
       <= on(type) group_left
       avg(slo:min:gitlab_service_apdex:ratio) by (type)
       ',
       legendFormat='{{ type }} SLO violation',
+      intervalFactor=3,
     )
   )
   .resetYaxes()
@@ -245,19 +244,19 @@ dashboard.new(
       ) by (type)
       ',
       legendFormat='{{ type }} service',
+      intervalFactor=3,
     )
   )
   .addTarget( // SLO Violations
     promQuery.target('
       avg(
-        avg_over_time(
-          gitlab_service_errors:ratio{environment="$environment", stage="$stage"}[$__interval]
-        )
+        gitlab_service_errors:ratio{environment="$environment", stage="$stage"}
       ) by (type)
       >= on(type) group_left
       avg(slo:max:gitlab_service_errors:ratio) by (type)
       ',
       legendFormat='{{ type }} SLO violation',
+      intervalFactor=3,
     )
   )
   .resetYaxes()
@@ -298,12 +297,11 @@ dashboard.new(
   .addTarget( // Primary metric
     promQuery.target('
       sum(
-        avg_over_time(
-          gitlab_service_ops:rate{environment="$environment", stage="$stage"}[$__interval]
-        )
+        gitlab_service_ops:rate{environment="$environment", stage="$stage"}
       ) by (type)
       ',
       legendFormat='{{ type }} service',
+      intervalFactor=3,
     )
   )
   .resetYaxes()
@@ -355,6 +353,7 @@ dashboard.new(
       ) by (type)
       ',
       legendFormat='{{ type }} service',
+      intervalFactor=3,
     )
   )
   .resetYaxes()
