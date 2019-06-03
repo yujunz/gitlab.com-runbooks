@@ -1,31 +1,3 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
-- [ES integration](#es-integration)
-    - [ES integration docs](#es-integration-docs)
-    - [ES integration admin page](#es-integration-admin-page)
-    - [enabling ES integration](#enabling-es-integration)
-    - [disabling ES integration](#disabling-es-integration)
-    - [when disabling ES integration did not help](#when-disabling-es-integration-did-not-help)
-    - [disabling elastic backed search, but leaving the integration on](#disabling-elastic-backed-search-but-leaving-the-integration-on)
-    - [creating and removing indexes](#creating-and-removing-indexes)
-        - [TLDR](#tldr)
-        - [Recreating an index](#recreating-an-index)
-        - [creating an index (shards considerations)](#creating-an-index-shards-considerations)
-    - [shards management](#shards-management)
-    - [cleaning up index](#cleaning-up-index)
-- [Indexer](#indexer)
-    - [overview](#overview)
-    - [Sidekiq jobs](#sidekiq-jobs)
-    - [elastic_indexer_worker.rb](#elasticindexerworkerrb)
-    - [elastic_commit_indexer_worker.rb](#elasticcommitindexerworkerrb)
-    - [triggering indexing](#triggering-indexing)
-    - [Impact on gitlab](#impact-on-gitlab)
-    - [Impact on Elastic cluster](#impact-on-elastic-cluster)
-
-<!-- markdown-toc end -->
-
-
 # ES integration #
 
 ## ES integration docs ##
