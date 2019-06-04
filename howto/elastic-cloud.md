@@ -34,17 +34,17 @@ PUT _cluster/settings
 
 ## Resizing cluster ##
 
-### adding new availability zones ###
+### Adding new availability zones ###
 
 https://www.elastic.co/guide/en/cloud-enterprise/current/ece-resize-deployment.html
 
-adding and removing availability zones was tested. elastic.co decides whether to have a dedicated VM for master or to nominate master from among the data nodes. The number of availability zones determines in how many zones there will be data nodes (you might actually end up with more VMs if elastic.co decides to run master on a dedicated node).
+Adding and removing availability zones was tested. elastic.co decides whether to have a dedicated VM for master or to nominate master from among the data nodes. The number of availability zones determines in how many zones there will be data nodes (you might actually end up with more VMs if elastic.co decides to run master on a dedicated node).
 
-### resizing instances ###
+### Resizing instances ###
 
 The way it works is new machines are created with the desired spec, they are then brought online, shards are moved across and once that is complete the old ones are taken offline and removed. This worked very smoothly.
 
-we can scale up and down. resizing is done live.
+We can scale up and down. Resizing is done live.
 
 ## Monitoring ##
 
@@ -59,4 +59,4 @@ There are 3 places where you check cluster performance:
 
 Since we cannot use our Alertmanager, Elasticsearch Watchers have to be used for alerting. They will be configured on the Elastic cluster used for storing monitoring indices.
 
-blackbox probes cannot provide us with sufficient granularity of state reporting.
+Blackbox probes cannot provide us with sufficient granularity of state reporting.

@@ -175,9 +175,9 @@ queue = Sidekiq::Queue.new('repository_import')
 queue.each { |job| job.delete if id_list.include?(job.args[0]) }
 ```
 
-### Kill running jobs (as opposed to removing them from a queue) ###
+### Kill running jobs (as opposed to removing jobs from a queue) ###
 
-to get a list of jobs that you want to kill:
+To get a list of jobs that you want to kill you'll need to use the rails console. Here's an example of getting a list of jobs of specific, elastic search indexer types:
 ```ruby
 types_of_jobs_to_kill = ["elastic_indexer", "elastic_commit_indexer", "elastic_namespace_indexer"]
 workers = Sidekiq::Workers.new  # get an object holding references to all running jobs, see sidekiq docs for more info
