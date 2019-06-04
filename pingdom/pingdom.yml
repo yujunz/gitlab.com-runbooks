@@ -189,7 +189,7 @@ checks:
     integrations:
     - pagerduty
 
-  - url: https://forum.gitlab.com/
+  - url: https://forum.gitlab.com/srv/status
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
