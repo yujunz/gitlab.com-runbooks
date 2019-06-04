@@ -84,7 +84,7 @@ local colors = import 'colors.libsonnet';
     "dashes": true,
     "legend": true,
     "lines": true,
-    "linewidth": 2,
+    "linewidth": 4,
     "dashLength": 4,
     "spaceLength": 4,
     "nullPointMode": "connected",
