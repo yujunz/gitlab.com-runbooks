@@ -50,6 +50,11 @@ we can scale up and down. resizing is done live.
 
 Because Elastic Cloud is running on infrastructure that we do not manage or have access to, we cannot use our exporters/Prometheus/Thanos/Alertmanager setup. For this reason, the only available option is to use Elasticsearch built-in monitoring that is storing monitoring metrics in Elasticsearch indices. In production environment, it makes sense to use a separate cluster for storing monitoring metrics (if metrics were stored on the same cluster, we wouldn't know the cluster is down because monitoring would be down as well).
 
+There are 3 places where you check cluster performance:
+- ElasticCloud interface (on the deployment page -> Performance)
+- in Kibana, in cluster itself (provided monitoring is enabled)
+- in Kibana, in the monitoring cluster (provided monitoring is configured to forward metrics to another cluster)
+
 ## Alerting ##
 
 Since we cannot use our Alertmanager, Elasticsearch Watchers have to be used for alerting. They will be configured on the Elastic cluster used for storing monitoring indices.
