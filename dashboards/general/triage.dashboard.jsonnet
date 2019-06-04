@@ -307,7 +307,6 @@ dashboard.new(
   .resetYaxes()
   .addYaxis(
     format='short',
-    min=1,
     label="Operations per Second",
     logBase=10,
   )
