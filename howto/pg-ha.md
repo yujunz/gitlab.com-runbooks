@@ -211,7 +211,7 @@ This includes the topology (who is a slave of whom), the replication slot names 
 
 Will also show a quick overview of this information.
 
-repmgr keeps track of these things while repmgrd is responsible for ensuring the master is availible.
+repmgr keeps track of these things while repmgrd is responsible for ensuring the master is available.
 If it detects a failure, it will cause an internal election, promote one of the standby nodes, and
 reconfigure the other nodes to follow the new master. On the new master, it will setup the
 replication slots in accordance with the `slot_name` column above:

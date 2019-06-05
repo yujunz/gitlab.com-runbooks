@@ -329,7 +329,7 @@ buggy web or api endpoint (or if it can't be determined at all.)
 
 If the source is determined and it's necessary and expected that it
 perform a high rate of updates or deletes on a table then it can be
-accomodated by adjusting the autovacuum settings. Typically this is
+accommodated by adjusting the autovacuum settings. Typically this is
 necessary for small frequently updated state tables which are better
 handled using Redis variables.
 

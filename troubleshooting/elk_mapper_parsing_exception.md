@@ -18,7 +18,7 @@ Existing fields mappings [cannot be updated](https://www.elastic.co/guide/en/ela
 but since [set our indexes name with the current day](https://gitlab.com/gitlab-cookbooks/gitlab-elk/blob/3cfa7707a99b8b23a795e4104c564b39e94e2c23/attributes/default.rb#L62)
 the following day's index should create the mapping matching the new log
 structure and logging should resume working correctly. If you need to fix the
-issue before that you can override the index name on the appropiate pubsub
+issue before that you can override the index name on the appropriate pubsub
 node's `/opt/pubsubbeat/pubsubbeat.yml` (property `output.elasticsearch.index`)
 and restart the pubsub service on that node. You should rollback that change
 afterwards.

@@ -108,7 +108,7 @@ groups:
       pager: pagerduty
       severity: critical
     annotations:
-      description: We are having a high rate of 5xx accross other backends (web(sockets)?/api/registry/etc, anything except https_git). It's likely that customers are impacted.
+      description: We are having a high rate of 5xx across other backends (web(sockets)?/api/registry/etc, anything except https_git). It's likely that customers are impacted.
       runbook: troubleshooting/high-error-rate.md
       title: Increased Error Rate Across Fleet
   - alert: IncreasedBackendConnectionErrors

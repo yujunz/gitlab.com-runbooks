@@ -35,7 +35,7 @@ def validate(service_catalog_path)
     service_label = service["label"]
     raise "'#{service_name}' | label field must be string" unless service_label.is_a? String
 
-    # Bussiness
+    # Business
     # =========
 
     # requirement

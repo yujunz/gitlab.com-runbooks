@@ -4,7 +4,7 @@ At GitLab, we define the availability of a service as a ratio of: `the number of
 
 It is a measure of the health-check status of a service.
 
-For example, if we expect there to be 20 `unicorn` processes in the `web` fleet and 15 are available and reporting as healthy, then the availablity of the `unicorn` _component_ of the `web` _service_ is 0.75, or 75%.
+For example, if we expect there to be 20 `unicorn` processes in the `web` fleet and 15 are available and reporting as healthy, then the availability of the `unicorn` _component_ of the `web` _service_ is 0.75, or 75%.
 
 ## Determining availability
 
@@ -16,6 +16,6 @@ This is usually done in one of three ways:
 
 1. For services that provide neither a Prometheus exporter sidecar, nor an internal scrape endpoint, we may rely on an external service health check, for example, for services HAProxy metrics can provide an insight into the status of the service. This is the least desirable approach.
 
-## Service Availablity Definitions
+## Service Availability Definitions
 
 The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/rules/service_availability.yml

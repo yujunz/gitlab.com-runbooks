@@ -97,7 +97,7 @@ Notice that:
 - `fqdn` should contain only a domain name (without scheme, port or path parts that are present in URL) and be set
   to the FQDN under which the application is accessible, e.g. `prometheus.gitlab.com`.
 
-The last step is to update `run_list` array of the specifed role with `"recipe[gitlab-oauth2-proxy]"`:
+The last step is to update `run_list` array of the specified role with `"recipe[gitlab-oauth2-proxy]"`:
 
 ```json
 (...)

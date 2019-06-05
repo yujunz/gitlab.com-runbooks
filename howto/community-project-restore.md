@@ -36,7 +36,7 @@ Typically, we're interested in locating project meta data in the `projects` tabl
 
 #### Export project from database backup and import into GitLab
 
-Here, we use the restored database instance with a GitLab install to export the project through the standard import/export mechanism. We want to avoid starting a full GitLab instance (to perform the export throught the UI) because this sits on a full-sized production database. Instead, we use a rails console to trigger the export.
+Here, we use the restored database instance with a GitLab install to export the project through the standard import/export mechanism. We want to avoid starting a full GitLab instance (to perform the export throughout the UI) because this sits on a full-sized production database. Instead, we use a rails console to trigger the export.
 
 1. Start Redis: `gitlab-ctl start redis` (Redis is not going to be used really, but it's a required dependency)
 2. Start Rails: `gitlab-rails c`
