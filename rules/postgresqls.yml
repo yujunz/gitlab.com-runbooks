@@ -300,7 +300,7 @@ groups:
       channel: database
     annotations:
       description: Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}
-      title: Postgres Database configuration change has occured on "{{$labels.fqdn}}"
+      title: Postgres Database configuration change has occurred on "{{$labels.fqdn}}"
   - alert: PostgreSQL_TooFewPrometheusScrapes
     expr: rate(pg_exporter_scrapes_total[1m]) < 1 / 60
     for: 5m

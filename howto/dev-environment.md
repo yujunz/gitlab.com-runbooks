@@ -19,7 +19,7 @@ You have to be a GitLab employee to have access to it.
 * ssh into the host
 * turn into root
 * run `ls -latr /var/opt/gitlab/gitlab-rails/upgrade-status`
-* you will get an ouput like this:
+* you will get an output like this:
 ```
 -rw------- 1 root root    2 Jun 27 07:17 db-migrate-6acdf1f
 -rw------- 1 root root    2 Jun 28 07:24 db-migrate-c9a4626

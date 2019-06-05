@@ -11,7 +11,7 @@
 
 ### ReactiveCachingWorker
 * This one likes to fire when end users might have misconfigured an integration
-  with thier project.
+  with their project.
   * As a quick example, if they utilize the Bamboo CI Integration, they are
     required to input a server fqdn.  Should this be incorrect, or if their
     Bamboo server is down, the integration might fail.
@@ -23,7 +23,7 @@
 Errno::EHOSTUNREACHSidekiq/ReactiveCachingWorker
 Failed to open TCP connection to 192.0.2.188:8089 (No route to host -connect(2)...
 ```
-* In this case we can quickly discern that some integration is not successfullly
+* In this case we can quickly discern that some integration is not successfully
   connecting to this IP address
   * Browse into that error 
   * In the "additional data", subsection "sidekiq", you'll find something

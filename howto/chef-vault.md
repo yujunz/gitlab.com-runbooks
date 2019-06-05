@@ -70,7 +70,7 @@ task in the chef-repo with `rake -T`.
 
 # Caveats when using `Gitlab::Vault`
 
-Using the `Gitlab::Vault` to access secrets, may lead to confussion since
+Using the `Gitlab::Vault` to access secrets, may lead to confusion since
 it masks what it is [actually doing](https://gitlab.com/gitlab-cookbooks/gitlab-vault/blob/master/libraries/vault.rb).
 
 ## Mixing

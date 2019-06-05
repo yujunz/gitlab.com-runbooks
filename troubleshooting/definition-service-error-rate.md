@@ -10,6 +10,6 @@ This is probably best explained with an example: The `web` service is comprised 
 A single error in the `unicorn` component may bubble up and may be reported as three `500` errors - one in `unicorn`, one in `workhorse` and one in `nginx`. The
 error rate of the service is the sum of these values, so would report 3 for a single error bubbling up through the layers.
 
-## Service Availablity Definitions
+## Service Availability Definitions
 
 The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/rules/service_error_rate.yml

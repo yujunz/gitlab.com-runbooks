@@ -21,7 +21,7 @@
 * A S2 level incident lasting 3 days, led to disruption to git clones, in particular for the `www-gitlab-com`, `gitlab-ee`, `gitlab-ce`
   although many others were affected to.
 * Diagnosis went around in circles:
-   * Initially targetted abuse
+   * Initially targeted abuse
    * High CI activity rates
    * Workhorse throughput
    * Network issues

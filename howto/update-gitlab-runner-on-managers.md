@@ -279,7 +279,7 @@ time wait
 ```
 
 > **NOTICE:**
-Be aware, that gracefull restart of whole CI Runners fleet may take up to several hours!
+Be aware, that graceful restart of whole CI Runners fleet may take up to several hours!
 6-8 hours is the usual timing. Until we'll finish our plan to
 [use K8S to deploy Runner Managers][k8s-deployment] anyone that needs to update/restart
 Runner on our CI fleet should expect, that the operation will be **really long**.

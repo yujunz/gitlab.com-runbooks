@@ -108,7 +108,7 @@ internal projects. For more information see the
 ## Tooling
 
 * There are helper scripts in [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo) to assist setting server statuses. In general, it is advised to always drain active connections from a server before rebooting.
-* For controling traffic to canary there are chatops commands, for more
+* For controlling traffic to canary there are chatops commands, for more
   information see the
   [canary chatops documentation](https://gitlab.com/gitlab-org/release/docs/blob/master/general/deploy/canary.md#canary-chatops)
 

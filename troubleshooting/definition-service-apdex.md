@@ -31,6 +31,6 @@ request latency is a function of repository size and time since last GC. In norm
 Including this in the apdex score is unhelpful and does not provide insight into the state of the service, so it is excluded from
 the metric.
 
-## Service Availablity Definitions
+## Service Availability Definitions
 
 The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/rules/service_apdex.yml

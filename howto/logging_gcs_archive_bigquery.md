@@ -22,14 +22,14 @@ log messages are expired in SD, but remain in GCS.
 
 ## Using the UI
 
-These instructions are similiar in both the new style (within `console.cloud.google.com`)
+These instructions are similar in both the new style (within `console.cloud.google.com`)
 and the old style (external page), but the screen shots may appear with
 differing styles.
 
 1. Create a dataset if necessary to group related tables.
 2. Click on a control to "Add a new table".
 3. Choose "Google Cloud Storage" with "JSON (Newline Delimted)" as the `Source data`.
-4. Using the browse functionality to find an apropriate bucket is not always an option, as only buckets in the same project are listed  and data is usually imported from,
+4. Using the browse functionality to find an appropriate bucket is not always an option, as only buckets in the same project are listed  and data is usually imported from,
     for example, gitlab-production or gitlab-internal. Go to the ["Google Cloud Storage" browser](https://console.cloud.google.com/storage/browser/) and find the data you want to load.
 5. Insert the bucket URI as follows: `bucket/folder/folder/myfile.JSON` for a single file or `bucket/folder/folder/*` for all files in that folder. 
 

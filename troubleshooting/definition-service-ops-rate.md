@@ -13,6 +13,6 @@ therefore reflect three requests, rather than one.
 Since each component is reporting metrics separately, it's easier to handle things in this manner, than attempting to correlate multiple
 sources to a single request.
 
-## Service Availablity Definitions
+## Service Availability Definitions
 
 The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/rules/service_ops_rate.yml
