@@ -1,14 +1,38 @@
-### How to check WAL-E backups are running
+### How to check if WAL-E backups are running
 
-1. Log into `db1.cluster.gitlab.com`
-1. Run `sudo tail -f /var/log/gitlab/postgresql/current | grep --line-buffered wal_`.
+WAL-E is running on all machines in the patroni cluster. However, backups are actually happening only from the master. In order to find out which machine is the master, go to the [relevant Grafana dashboard](https://dashboards.gitlab.net/d/000000244/postgresql-replication-overview?orgId=1)
 
-Normally, WAL-E will output log lines like the following:
+you can check wale logs in two ways:
+1. using Kibana (bear in mind that there were cases in the past when logs where not shipped):
+  - [`log.gitlab.net`](log.gitlab.net)
+  - index: `pubsub-postgres-inf-gprd`
+  - document field: `json.tag` with value `db.wale`
+2. by logging directly into the VM:
+  - ssh to the patroni master
+  - logs are located in `/var/log/gitlab/postgresql/`, the latest log file is most likely called: `wale.log.1` (assumming rotation is happening correctly)
+
+
+Example of a log entry on a master working correctly:
 ```
-2017-07-18_09:35:14.61149 db1 postgresql: wal_e.worker.upload INFO     MSG: completed archiving to a file
-2017-07-18_09:35:14.61171 db1 postgresql:         DETAIL: Archiving to "s3://foo/db1/wal_005/0000000200001AAB00000036.lzo" complete at 11884.8KiB/s.
-2017-07-18_09:35:14.61179 db1 postgresql:         STRUCTURED: time=2017-07-18T09:35:14.610853-00 pid=15626 action=push-wal key=s3://foo/db1/wal_005/0000000200001AAB00000036.lzo prefix=db1/ rate=11884.8 seg=0000000200001AAB00000036 state=complete
+2019-06-07_16:50:42 patroni-04-db-gprd wal_e.worker.upload  INFO     MSG: begin archiving a file#012        DETAIL: Uploading "pg_xlog/000000140001003100000077" to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/000000140001003100000077.lzo".#012        STRUCTURED: time=2019-06-07T16:50:42.145335-00 pid=35067 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/000000140001003100000077.lzo prefix=pitr-wale-v1/ seg=000000140001003100000077 state=begin
 ```
+
+Example of log entries on a slave working correctly (no backups are actually happening from slaves):
+```
+2019-06-07_00:00:03 patroni-01-db-gprd wal_e.main    INFO     MSG: starting WAL-E#012        DETAIL: The subcommand is "backup-push".#012        STRUCTURED: time=2019-06-07T00:00:03.077171-00 pid=37922
+2019-06-07_00:00:05 patroni-01-db-gprd wal_e.operator.backup  WARNING  MSG: blocking on sending WAL segments#012        DETAIL: The backup was not completed successfully, but we have to wait anyway.  See README: TODO about pg_cancel_backup#012        STRUCTURED: time=2019-06-07T00:00:05.263203-00 pid=37922
+2019-06-07_00:00:05 patroni-01-db-gprd wal_e.main    ERROR    MSG: Could not stop hot backup#012        STRUCTURED: time=2019-06-07T00:00:05.296652-00 pid=37922
+```
+
+### WAL-E is not working
+
+#### WAL-E process stuck ####
+
+WAL-E works by uploading files to a GCS bucket every few seconds. For each upload there should be a log entry.
+
+If you don't see any log entries and there is a wal-e upload process hanging for a long time, consider checking the state of the process with `strace`. If it's not doing anything, consider killing the wal-e upload process. BE EXTREMELY CAREFUL! After killing the process the backups should resume immediately.
+
+#### Other ####
 
 If WAL-E is not working, it will probably be something related with the network or S3.
 
@@ -19,7 +43,8 @@ PostgreSQL is configured to archive to WAL-E upon some conditions, as specified 
         archive_command:              /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-push %p
 ```
 
-### I got an alert but WAL-E is working
+### WAL-E is working (but I still got paged)
+
 The problem might be `mtail`.
 
 1. Check `mtail` is working with `sudo sv status mtail`
