@@ -30,6 +30,11 @@ Example of log entries on a slave working correctly (no backups are actually hap
 
 WAL-E works by uploading files to a GCS bucket every few seconds. For each upload there should be a log entry.
 
+at the moment of writing, the output from ps that contains the wall-e upload process looks similar to:
+```
+(...) /opt/wal-e/bin/python /opt/wal-e/bin/wal-e wal-push (...)
+```
+
 If you don't see any log entries and there is a wal-e upload process hanging for a long time, consider checking the state of the process with `strace`. If it's not doing anything, consider killing the wal-e upload process. BE EXTREMELY CAREFUL! After killing the process the backups should resume immediately.
 
 #### Other ####
