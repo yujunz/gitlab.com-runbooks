@@ -179,9 +179,12 @@ dashboard.new(
   )
   .addTarget( // Primary metric
     promQuery.target('
-      avg(
-        gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
-      ) by (type)
+      clamp_min(
+        avg(
+          gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
+        ) by (type),
+        0.85
+      )
       ',
       legendFormat='{{ type }} service',
       intervalFactor=3,
@@ -189,11 +192,14 @@ dashboard.new(
   )
   .addTarget( // SLO Violations
     promQuery.target('
-      avg(
-          gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
-      ) by (type)
-      <= on(type) group_left
-      avg(slo:min:gitlab_service_apdex:ratio) by (type)
+      clamp_min(
+        avg(
+            gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
+        ) by (type)
+        <= on(type) group_left
+        avg(slo:min:gitlab_service_apdex:ratio) by (type),
+        0.85
+      )
       ',
       legendFormat='{{ type }} SLO violation',
       intervalFactor=3,
@@ -237,11 +243,14 @@ dashboard.new(
   )
   .addTarget( // Primary metric
     promQuery.target('
-      avg(
-        max_over_time(
-          gitlab_service_errors:ratio{environment="$environment", stage="$stage"}[$__interval]
-        )
-      ) by (type)
+      clamp_max(
+        avg(
+          max_over_time(
+            gitlab_service_errors:ratio{environment="$environment", stage="$stage"}[$__interval]
+          )
+        ) by (type),
+        0.15
+      )
       ',
       legendFormat='{{ type }} service',
       intervalFactor=3,
@@ -249,11 +258,14 @@ dashboard.new(
   )
   .addTarget( // SLO Violations
     promQuery.target('
-      avg(
-        gitlab_service_errors:ratio{environment="$environment", stage="$stage"}
-      ) by (type)
-      >= on(type) group_left
-      avg(slo:max:gitlab_service_errors:ratio) by (type)
+      clamp_max(
+        avg(
+          gitlab_service_errors:ratio{environment="$environment", stage="$stage"}
+        ) by (type)
+        >= on(type) group_left
+        avg(slo:max:gitlab_service_errors:ratio) by (type),
+        0.15
+      )
       ',
       legendFormat='{{ type }} SLO violation',
       intervalFactor=3,
