@@ -150,6 +150,10 @@ if $PROGRAM_NAME == __FILE__
   options = parse_options(ARGV)
   configure_sidekiq(options)
 
+  if options.dry_run
+    puts "Running dry run:"
+  end
+
   show_sidekiq_data unless options.command.length > 0
 
   case options.command[0]
