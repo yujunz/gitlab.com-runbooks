@@ -91,9 +91,6 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
 * [Too many connections on Runner's cache server](troubleshooting/ci_too_many_connections_on_runners_cache_server.md)
 
-### ELK
-* [`mapper_parsing_exception` errors](troubleshooting/elk_mapper_parsing_exception.md)
-
 ## Non-Critical
 * [SSL certificate expires](troubleshooting/ssl_cert.md)
 * [Troubleshoot git stuck processes](troubleshooting/git-stuck-processes.md)
@@ -197,6 +194,10 @@ The aim of this project is to have a quick guide of what to do when an emergency
 
 ### Elasticsearch
 * [How to work with ES](howto/elasticsearch.md)
+* [Elastic Cloud](howto/elastic-cloud.md)
+* [ES integration in gitlab](howto/elasticsearch-integration-in-gitlab.md)
+* [`mapper_parsing_exception` errors](troubleshooting/elk_mapper_parsing_exception.md)
+* [elastic-watcher](https://gitlab.com/gitlab-com/runbooks/tree/master/elastic-watcher)
 
 ### Internal DNS
 * [Managing internal DNS](howto/internal_dns.md)
