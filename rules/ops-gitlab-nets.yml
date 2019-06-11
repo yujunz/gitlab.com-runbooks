@@ -6,7 +6,7 @@ groups:
     for: 10m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: The ops GitLab instance is returning errors for more than 10 minutes.
       title: ops.gitlab.net is returning errors for 10m

@@ -7,7 +7,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       title: GitLab pages is down for 1 minute
       description: GitLab pages is down for 1 minute! Consider !tweet 'GitLab pages
@@ -18,7 +18,7 @@ groups:
     for: 5m
     labels:
       channel: alerts
-      severity: warn
+      severity: s4
     annotations:
       title: GitLab pages servers are failing
       description: "{{ $value }}% of pages servers have been down for 5 minutes"
@@ -29,7 +29,7 @@ groups:
     for: 5m
     labels:
       channel: alerts
-      severity: warn
+      severity: s4
     annotations:
       title: GitLab pages servers are returning errors
       description: "{{ $value }}% of pages responses have been errors for 5 minutes"
@@ -40,7 +40,7 @@ groups:
     for: 5m
     labels:
       channel: alerts
-      severity: warn
+      severity: s4
     annotations:
       title: GitLab Pages server(s) have low number of hosted domains
       description: |
@@ -53,7 +53,7 @@ groups:
     for: 1m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       title: GitLab Pages production front-end IP could've been changed
       description: A pages site (https://prod.pages-check.gitlab.net/) that points to Pages front-end IP
@@ -65,7 +65,7 @@ groups:
     for: 1m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       title: GitLab Pages staging front-end IP could've been changed
       description: A pages site (https://staging.pages-check.gitlab.net/) that points to Pages front-end IP

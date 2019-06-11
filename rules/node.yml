@@ -54,7 +54,7 @@ groups:
     for: 2h
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
         }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
@@ -121,7 +121,7 @@ groups:
     expr: predict_linear(node_filesystem_avail_bytes{fstype=~"(ext.|xfs)"}[6h], 24 * 3600) < 0
     for: 30m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       title: 'Filesystem will be full SOON'
       description: |
@@ -134,7 +134,7 @@ groups:
     expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs)",job="node"} * 100 <= 10
     for: 15m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       title: 'Less than 10% disk space left'
       description: |
@@ -149,7 +149,7 @@ groups:
     for: 15m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       title: '1% disk space left'
       description: "There's only 1% disk space left"
@@ -163,7 +163,7 @@ groups:
     for: 15m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       title: "High number of inode usage"
       description: |
@@ -183,7 +183,7 @@ groups:
     for: 15m
     labels:
       channel: production
-      severity: warn
+      severity: s4
     annotations:
       description: The {{ $labels.type }} fleet has changed, this can be due to having
         more or less, if it's the latter it can be because nodes went down silently
@@ -193,7 +193,7 @@ groups:
     for: 15m
     labels:
       channel: production
-      severity: warn
+      severity: s4
     annotations:
       description: The node is under heavy memory pressure.  The available memory is under 5% and
         there is a high rate of major page faults.
@@ -209,7 +209,7 @@ groups:
       ) > 1
     for: 30m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       description: Kernel versions are deviating across fleet, see https://dashboards.gitlab.net/d/6xx-DC7ik/gitlab-kernel-versions for details. https://gitlab.com/gitlab-com/infrastructure/issues/4221
       title: 'Different kernel versions are running in production for an hour'
@@ -218,7 +218,7 @@ groups:
     for: 10m
     labels:
       channel: production
-      severity: warn
+      severity: s4
     annotations:
       description: The node is encountering RCU CPU stall warnings, which may cause the node to lock up occasionally.
         Check `/var/log/kern.log` for more details. You may need to contact the cloud provider and possibly redeploy the VM.

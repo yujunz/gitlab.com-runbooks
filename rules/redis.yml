@@ -35,7 +35,7 @@ groups:
     for: 1m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: Changes have been detected in Redis replica connection. 
         This can occur when replica nodes loose connection to the master and 

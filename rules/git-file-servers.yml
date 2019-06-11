@@ -6,7 +6,7 @@ groups:
     for: 5m
     labels:
       channel: production
-      severity: warn
+      severity: s4
     annotations:
       description: '{{ $labels.fqdn }} is more than {{$value}}%. 
         We need to build new file servers or rebalance repos.'

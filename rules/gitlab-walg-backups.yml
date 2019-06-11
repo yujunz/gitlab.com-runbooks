@@ -10,7 +10,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: walg syncs to GCS might be not working. Please follow the runbook
         to review the problem.
@@ -21,7 +21,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: walg basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.

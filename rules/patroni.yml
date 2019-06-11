@@ -6,7 +6,7 @@ groups:
         for: 5m
         labels:
           pager: pagerduty
-          severity: critical
+          severity: s1
         annotations:
           description: Patroni on {{$labels.fqdn}} is logging errors, this can mean it can't start PostgreSQL.
           title: Patroni is logging errors
@@ -16,7 +16,7 @@ groups:
         for: 5m
         labels:
           pager: pagerduty
-          severity: critical
+          severity: s1
         annotations:
           description: Patroni on {{$labels.fqdn}} seems to be down, which means that PostgreSQL is probably down there as well.
           title: Patroni is down

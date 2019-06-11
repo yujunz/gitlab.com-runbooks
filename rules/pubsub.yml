@@ -8,7 +8,7 @@ groups:
     for: 5m
     labels:
       channel: production
-      severity: warn
+      severity: s4
     annotations:
       description: |
         PubSub messages are queuing up.  Unacked messages older than 60 seconds exist in the queue

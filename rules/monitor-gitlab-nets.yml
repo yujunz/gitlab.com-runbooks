@@ -5,7 +5,7 @@ groups:
     expr: probe_success{instance="https://dashboards.gitlab.net"} == 0
     for: 30s
     labels:
-      severity: critical
+      severity: s1
       pager: pagerduty
     annotations:
       description: monitor.gitlab.net is down. nginx or/and grafana services are down.

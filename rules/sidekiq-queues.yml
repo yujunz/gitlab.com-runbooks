@@ -5,7 +5,7 @@ groups:
     expr: max(sidekiq_queue_size{name!~"pages_domain_verification"}) by (environment) > 20000
     for: 20m
     labels:
-      severity: warn
+      severity: s4
       channel: backend
     annotations:
       description: There have been over 20,000 Sidekiq queued jobs for the last 20 minutes. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
@@ -16,7 +16,7 @@ groups:
     expr: max(sidekiq_queue_size{name="new_note"}) by (environment) > 5000
     for: 20m
     labels:
-      severity: critical
+      severity: s1
       pager: pagerduty
     annotations:
       description: The new_note sidekiq queue is piling up. This likely means that users are not receiving email notifications
@@ -27,7 +27,7 @@ groups:
     expr: max(sidekiq_queue_size) by (environment) > 50000
     for: 30m
     labels:
-      severity: critical
+      severity: s1
       pager: pagerduty
     annotations:
       description: There have been over 50,000 Sidekiq jobs queued for the last half hour.

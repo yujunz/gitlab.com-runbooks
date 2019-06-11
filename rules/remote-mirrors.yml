@@ -8,7 +8,7 @@ groups:
         > 21600
     for: 10m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       title: 'Projects mirrored to github.com/gitlabhq are out of sync'
       description: >

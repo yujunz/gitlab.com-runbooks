@@ -8,7 +8,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: GitLab registry is down for 1 minute! Consider !tweet 'GitLab Registry
         is not responding, we are investigating the root cause.' if problem exists.
@@ -21,7 +21,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: |
         Haproxy is seeing/reporting 5xx HTTP responses.  Investigate the following
@@ -40,7 +40,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing across
         all backends, more than 75% of http requests and more than 5 errors per second for at least 5 minutes. Check the registry nodes

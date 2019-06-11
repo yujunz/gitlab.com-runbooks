@@ -20,13 +20,13 @@ def validate_rule(alert_file_path, rule)
   LOGGER.warn "#{alert_file_path}: #{alert}: Rules should contain a `description` annotation" unless annotations["description"]
 
   raise StandardError, " #{alert}: rules must contain a `severity` label" unless labels["severity"]
-  raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels["severity"]}" unless ["warn", "error", "critical"].include?(labels["severity"])
+  raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels["severity"]}" unless ["s1", "s2", "s3", "s4"].include?(labels["severity"])
 
   if labels["pager"]
     raise StandardError, " #{alert}: rules contains an invalid `pager` label: #{labels["pager"]}" unless labels["pager"] == "pagerduty"
-    raise StandardError, " #{alert}: only severity critical errors should page" unless labels["severity"] == "critical"
+    raise StandardError, " #{alert}: only severity s1 and s2 errors should page" unless labels["severity"] == "s1" or labels["severity"] == "s2"
   else
-    raise StandardError, " #{alert}: critical alerts should be configured to send to pagerduty" if labels["severity"] == "critical"
+    raise StandardError, " #{alert}: s1 and s2 alerts must be configured to send to pagerduty" if labels["severity"] == "s1" or labels["severity"] == "s2"
   end
 
   if annotations["runbook"]

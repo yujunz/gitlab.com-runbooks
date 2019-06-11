@@ -5,7 +5,7 @@ groups:
       expr: rate(pubsubbeat_warnings_total[1m]) > 1
       for: 5m
       labels:
-        severity: warn
+        severity: s4
       annotations:
         title: Pubsubbeat is logging a lot of warnings
         description: |
@@ -17,7 +17,7 @@ groups:
       expr: rate(pubsubbeat_errors_total[1m]) > 1
       for: 5m
       labels:
-        severity: warn
+        severity: s4
       annotations:
         title: Pubsubbeat is logging a lot of errors
         description: |

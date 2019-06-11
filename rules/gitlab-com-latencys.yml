@@ -5,7 +5,7 @@ groups:
     expr: status:rails_requests_completed_seconds:p95{type="web", status="200", stage="main"} > 2.0
     for: 1m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -15,7 +15,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -24,7 +24,7 @@ groups:
     expr: status:rails_requests_completed_seconds:p95{type="api", status="200", stage="main"} > 1.5
     for: 1m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -34,7 +34,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -43,7 +43,7 @@ groups:
     expr: status:rails_requests_completed_seconds:p95{type="git", status="200", stage="main"} > 4.5
     for: 1m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -52,7 +52,7 @@ groups:
     expr: status:rails_requests_completed_seconds:p95{type="git", status="200", stage="main"} > 4.5
     for: 5m
     labels:
-      severity: critical
+      severity: s1
       pager: pagerduty
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.

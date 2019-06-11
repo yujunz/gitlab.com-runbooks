@@ -5,7 +5,7 @@ groups:
     expr: quantile(0.5, gitlab_database_rows{query_name="mirrors_ready_to_sync"}) by (environment) > 5000
     for: 10m
     labels:
-      severity: critical
+      severity: s1
       channel: backend
       pager: pagerduty
     annotations:
