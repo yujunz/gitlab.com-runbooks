@@ -86,10 +86,7 @@ groups:
            /
          rate(grpc_server_handling_seconds_count[5m]) > 0
        )
-  - record: gitaly:grpc_server_handling_seconds:avg24h
-    expr: avg_over_time(gitaly:grpc_server_handling_seconds:avg5m[1d])
-  - record: gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h
-    expr: stddev_over_time(gitaly:grpc_server_handling_seconds:avg5m[1d])
+
   - record: gitaly:grpc_server_handling_seconds:p95
     expr: >
       histogram_quantile(0.95,
@@ -109,28 +106,6 @@ groups:
       sum without (grpc_method, grpc_type, grpc_service, grpc_code) (
         rate(grpc_server_handled_total{grpc_code!="OK"}[1m])
       )
-  - alert: GitalyLatencyOutlier
-    expr: >
-      avg by (environment, grpc_method) (
-        gitaly:grpc_server_handling_seconds:avg5m{job="gitaly",tier="stor",type="gitaly"}
-      ) > ON(environment, grpc_method) GROUP_LEFT() (
-        avg by (environment, grpc_method) (
-          gitaly:grpc_server_handling_seconds:avg24h{job="gitaly",tier="stor",type="gitaly"}
-        )
-        + 2 * avg by (environment, grpc_method) (gitaly:grpc_server_handling_seconds:avg5m_stddev_over_time24h
-        )
-      )
-    for: 5m
-    labels:
-      channel: gitaly
-      severity: s4
-    annotations:
-      description: The error rate on the {{ $labels.grpc_method }} endpoint is outside
-        normal values over a 12 hour period (95% confidence). Check https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{
-        $labels.grpc_method }}&var-tier=stor&var-type=gitaly&var-environment={{ $labels.environment }}&refresh=5m
-      runbook: troubleshooting/gitaly-error-rate.md
-      title: 'Gitaly: Latency on the Gitaly {{ $labels.grpc_method }} is unusually
-        high compared with a 24 hour average'
 
 - name: Gitaly rate limiting
   rules:
