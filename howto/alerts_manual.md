@@ -18,7 +18,7 @@ groups:
     expr: node_load1{environment="gprd",job="node",type="git"} > 1
     for: 1m
     labels:
-      severity: critical
+      severity: s1
     annotations:
       title: "Emergency Alert"
       description: |

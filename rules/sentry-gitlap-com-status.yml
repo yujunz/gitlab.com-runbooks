@@ -6,7 +6,7 @@ groups:
       != 200
     for: 5m
     labels:
-      severity: critical
+      severity: s1
       pager: pagerduty
     annotations:
       description: GitLab sentry has been down for 1 minute!

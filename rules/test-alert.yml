@@ -6,7 +6,7 @@ groups:
     for: 1m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       title: The alert test file is missing!
       description: |

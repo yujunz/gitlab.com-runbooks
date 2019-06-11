@@ -58,7 +58,7 @@ groups:
     for: 15s
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are having more 5xx returns than any other reply. Web traffic
         is being impacted and the service is probably down. Have you thought about
@@ -72,7 +72,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing api
         rate limiting backend, more than 10% of http requests for at least 5 minutes.
@@ -85,7 +85,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing across
         all backends, more than 25% of http requests for at least 5 minutes.
@@ -96,7 +96,7 @@ groups:
     for: 15s
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are having a high rate of 5xx on https_git backend. It's likely that customers are impacted.
       runbook: troubleshooting/high-error-rate.md
@@ -106,7 +106,7 @@ groups:
     for: 15s
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are having a high rate of 5xx across other backends (web(sockets)?/api/registry/etc, anything except https_git). It's likely that customers are impacted.
       runbook: troubleshooting/high-error-rate.md
@@ -116,7 +116,7 @@ groups:
     for: 2m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are seeing an increase in backend connection errors on {{$labels.fqdn}} for backend {{$labels.backend}}.
         This likely indicates that requests are being sent to servers in a backend that are unable to fulfil them which will
@@ -128,7 +128,7 @@ groups:
     for: 2m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are seeing an increase in server response errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.
         This likely indicates that requests are being sent to servers and there are errors reported to users.
@@ -139,7 +139,7 @@ groups:
     for: 2m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: We are seeing an increase in server connection errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.
         This likely indicates that requests are being sent to servers and there are errors reported to users.
@@ -150,7 +150,7 @@ groups:
     for: 15m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: HAProxy process high CPU usage on {{ $labels.fqdn }}
       runbook: troubleshooting/haproxy.md

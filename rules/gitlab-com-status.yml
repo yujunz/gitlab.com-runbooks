@@ -6,7 +6,7 @@ groups:
     for: 2m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: GitLab.com is down for more than 2 minutes! Consider !tweet 'GitLab.com
         is currently down, we are investigating the root cause, apologies for the
@@ -18,7 +18,7 @@ groups:
     for: 2m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: GitLab.com is down for more than 2 minutes! Consider !tweet 'GitLab.com
         is currently down, we are investigating the root cause, apologies for the
@@ -30,7 +30,7 @@ groups:
     for: 2m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: www.GitLab.com is down for more than 1 minute! Consider !tweet 'GitLab.com
         is currently down, we are investigating the root cause, apologies for the

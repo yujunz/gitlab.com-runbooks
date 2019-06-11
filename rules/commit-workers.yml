@@ -6,7 +6,7 @@ groups:
     for: 10m
     labels:
       channel: production
-      severity: critical
+      severity: s1
       pager: pagerduty
     annotations:
       description: ProcessCommitWorker sidekiq jobs are piling up for the last 10

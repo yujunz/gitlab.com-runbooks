@@ -5,7 +5,7 @@ groups:
     expr: up{job="sidekiq-redis"}==0
     for: 1m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       runbook: troubleshooting/sidekiq_stats_no_longer_showing.md
       title: Sidekiq stats failed to be scraped for the last minute
@@ -13,7 +13,7 @@ groups:
     expr: absent(sidekiq_jobs_completion_time_seconds_bucket)
     for: 2h
     labels:
-      severity: warn
+      severity: s4
     annotations:
       description: Sidekiq jobs metrics have not been reported for some time. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
       runbook: troubleshooting/service-sidekiq.md

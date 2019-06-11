@@ -6,7 +6,7 @@ groups:
     for: 30m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: GitLab.com is down for more than 30 minutes!
       runbook: troubleshooting/gitlab-com-is-down.md
@@ -16,7 +16,7 @@ groups:
     for: 30m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: GitLab.com is down for more than 30 minutes!
       runbook: troubleshooting/gitlab-com-is-down.md

@@ -5,7 +5,7 @@ groups:
         expr: count(omnibus_package_install{enable="true"}) / count(omnibus_package_install) < .25
         for: 6h
         labels:
-          severity: warn
+          severity: s4
         annotations:
           description: |
             At least 75% of the fleet have omnibus package updates disabled.

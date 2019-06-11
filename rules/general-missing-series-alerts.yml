@@ -10,7 +10,7 @@ groups:
         for: 10m
         labels:
           rules_domain: general
-          severity: warn
+          severity: s4
         annotations:
           title: "Availability data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service is missing"
           description: |
@@ -31,7 +31,7 @@ groups:
         for: 10m
         labels:
           rules_domain: general
-          severity: warn
+          severity: s4
         annotations:
           title: "Operation rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service is missing"
           description: |
@@ -52,7 +52,7 @@ groups:
         for: 10m
         labels:
           rules_domain: general
-          severity: warn
+          severity: s4
         annotations:
           title: "Apdex for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service is missing"
           description: |
@@ -73,7 +73,7 @@ groups:
         for: 10m
         labels:
           rules_domain: general
-          severity: warn
+          severity: s4
         annotations:
           title: "Error rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service is missing"
           description: |

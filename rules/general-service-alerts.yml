@@ -11,7 +11,7 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_apdex:ratio
-          severity: warn
+          severity: s4
           period: 5m
           bound: lower
         annotations:
@@ -43,7 +43,7 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_errors:ratio
-          severity: warn
+          severity: s4
           period: 5m
           bound: lower
         annotations:
@@ -79,7 +79,7 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_availability:ratio
-          severity: warn
+          severity: s4
           period: 5m
           bound: lower
           threshold_value: "0.75"
@@ -111,7 +111,8 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_availability:ratio
-          severity: error
+          severity: s2
+          pager: pagerduty
           period: 5m
           bound: lower
           threshold_value: "0.5"
@@ -154,7 +155,7 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_ops:rate
-          severity: warn
+          severity: s4
           period: 5m
           bound: upper
           threshold_sigma: "3"
@@ -194,7 +195,7 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_ops:rate
-          severity: warn
+          severity: s4
           period: 5m
           bound: lower
           threshold_sigma: "3"

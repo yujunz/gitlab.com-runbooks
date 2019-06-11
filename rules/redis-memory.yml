@@ -6,7 +6,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       title: Redis memory usage is too high
       description: Redis node {{$labels.fqdn}} is using over 80% of the host memory for the last 5 minutes.

@@ -5,7 +5,7 @@ groups:
     expr: pgbouncer_pools_server_active_connections{database="gitlabhq_production_sidekiq"} > 140
     for: 10m
     labels:
-      severity: critical
+      severity: s1
       channel: database
       pager: pagerduty
     annotations:

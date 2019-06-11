@@ -29,7 +29,7 @@ groups:
     labels:
       channel: gitaly
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: Gitaly {{$labels.grpc_code}} error rate for the last 5 minutes is over 2 for {{$labels.grpc_method}}.
         Check Gitaly logs and consider disabling that method.
@@ -41,7 +41,7 @@ groups:
     labels:
       channel: gitaly
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: Gitaly error rate for the last 5 minutes is over 5 on {{$labels.instance}}.
         Check Gitaly logs and consider disabling it on that host.
@@ -58,7 +58,7 @@ groups:
     for: 5m
     labels:
       channel: gitaly
-      severity: warn
+      severity: s4
     annotations:
       description: >
         The {{$labels.grpc_code}} error rate on {{ $labels.grpc_method }} is outside normal
@@ -123,7 +123,7 @@ groups:
     for: 5m
     labels:
       channel: gitaly
-      severity: warn
+      severity: s4
     annotations:
       description: The error rate on the {{ $labels.grpc_method }} endpoint is outside
         normal values over a 12 hour period (95% confidence). Check https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{
@@ -145,7 +145,7 @@ groups:
     labels:
       channel: gitaly
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: Gitaly has been marked as down for the past minute on {{$labels.instance}}.
         Check Gitaly logs and restart the process if necessary
@@ -163,7 +163,7 @@ groups:
     labels:
       channel: gitaly
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: 'Gitaly has been using more than 50% of total available CPU on
         {{$labels.fqdn}} for the past minute. This may affect the stability of the
@@ -181,7 +181,7 @@ groups:
     labels:
       channel: gitaly
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: During a deployment, two distinct versions of Gitaly may be running
         alongside one another, but this should not be the case for more than 30m.
@@ -201,7 +201,7 @@ groups:
     labels:
       channel: gitaly
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: Three of more versions of Gitaly are currently running alongside
         one another in production. This should never occur and indicates serious deployment
@@ -218,7 +218,7 @@ groups:
     for: 5m
     labels:
       channel: g_gitaly
-      severity: warn
+      severity: s4
     annotations:
       description: |
         Reach out to the Gitaly team, ensure logging is set properly.
@@ -230,39 +230,12 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: Reach out to the Gitaly team and mitigate the problem restarting
         gitaly on the affected node if it's causing a partial outage.
       runbook: troubleshooting/gitaly-latency.md
       title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last 5m
-
-  - alert: gitaly_lock_acquisition_rates
-    expr: |
-      1 - (
-        sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{le="60"}[10m])) by (environment, tier, type, stage, fqdn, grpc_method)
-        /
-        sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{le="+Inf"}[10m])) by (environment, tier, type, stage, fqdn, grpc_method)
-      ) > 0.1
-    for: 10m
-    labels:
-      rules_domain: general
-      type: gitaly
-      metric: gitaly_rate_limiting_acquiring_seconds_bucket
-      severity: error
-      period: 10m
-    annotations:
-      title: "More than 10% of Gitaly {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are queueing for more than 60s"
-      description: |
-        A very high proportion of Gitaly  {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are being queued up for an extended period.
-
-        This issue is likely to be immediately client-impacting.
-      grafana_dashboard_id: "VBaSC9aik/gitaly-rate-limiting-alerting"
-      grafana_panel_id: "2"
-      grafana_variables: "environment,stage,grpc_method"
-      grafana_min_zoom_hours: 6
-      runbook: "troubleshooting/gitaly-rate-limiting.md"
-      promql_template_1: 'histogram_quantile(0.90, sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{stage="$stage",grpc_method="$grpc_method"}[1m])) by (fqdn, grpc_method, le))'
 
   - alert: gitaly_lock_acquisition_rates
     expr: |
@@ -276,8 +249,7 @@ groups:
       rules_domain: general
       type: gitaly
       metric: gitaly_rate_limiting_acquiring_seconds_bucket
-      pager: pagerduty
-      severity: critical
+      severity: s4
       period: 10m
     annotations:
       title: "More than 20% of Gitaly {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are queueing for more than 60s"

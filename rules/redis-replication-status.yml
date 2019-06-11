@@ -6,7 +6,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: Redis not replicating for all slaves for more than 5 minutes! Consider
         reviewing the redis replication status

@@ -5,7 +5,7 @@ groups:
     expr: instance:rails_no_repository_for_path:rate1m >= 10
     for: 1m
     labels:
-      severity: critical
+      severity: s1
       pager: pagerduty
     annotations:
       description: This usually means that we lost an NFS mount somewhere in the fleet,

@@ -7,7 +7,7 @@ groups:
     for: 5m
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: |
         {{ $labels.type }} has lost redundancy. Only {{ $value }}% of servers are online.
@@ -19,7 +19,7 @@ groups:
       > 0
     labels:
       pager: pagerduty
-      severity: critical
+      severity: s1
     annotations:
       description: |
         {{ $labels.type }} have no instances online to serve traffic.

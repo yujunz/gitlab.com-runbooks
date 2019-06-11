@@ -5,7 +5,7 @@ groups:
       expr: up{job="fluentd"} == 0
       for: 5m
       labels:
-        severity: warn
+        severity: s4
       annotations:
         title: td-agent is down on {{$labels.instance}}
         description: |

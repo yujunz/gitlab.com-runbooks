@@ -13,6 +13,6 @@ For example, label matching problems can cause alerts to not fire.
   component="rule manager"
   group=postgresql.rules
   msg="Evaluating rule failed"
-  rule="alert: PostgreSQL_ReplicationLagBytesTooLarge\nexpr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - on(environment)\n  group_right(instance) (pg_xlog_position_bytes and pg_replication_is_replica{type=\"postgres\"}\n  == 1) > 1e+09\nfor: 5m\nlabels:\n  channel: database\n  pager: pagerduty\n  severity: critical\nannotations:\n  description: Replication lag on server {{$labels.instance}} is currently {{ $value\n    | humanize1024}}B\n  runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped\n  title: Postgres Replication lag (in bytes) is high\n"
+  rule="alert: PostgreSQL_ReplicationLagBytesTooLarge\nexpr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - on(environment)\n  group_right(instance) (pg_xlog_position_bytes and pg_replication_is_replica{type=\"postgres\"}\n  == 1) > 1e+09\nfor: 5m\nlabels:\n  channel: database\n  pager: pagerduty\n  severity: s1\nannotations:\n  description: Replication lag on server {{$labels.instance}} is currently {{ $value\n    | humanize1024}}B\n  runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped\n  title: Postgres Replication lag (in bytes) is high\n"
   err="many-to-many matching not allowed: matching labels must be unique on one side"
 ```

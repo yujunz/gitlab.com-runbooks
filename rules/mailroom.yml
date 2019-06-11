@@ -5,7 +5,7 @@ groups:
     expr: max(imap_nb_unread_messages_in_mailbox) >= 25
     for: 5m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       description: Mailroom doesn't seem to be processing incoming emails,
         check if mailroom is running (`sudo gitlab-ctl status mailroom`) and is
@@ -15,7 +15,7 @@ groups:
     expr: imap_up == 0
     for: 5m
     labels:
-      severity: warn
+      severity: s4
     annotations:
       description: IMAP Mailbox exporter doesn't seem to be running on the mailroom nodes.
         This hides our visibility into mailroom processing emails.
