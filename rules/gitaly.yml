@@ -14,10 +14,6 @@ groups:
       )
   - record: gitaly:grpc_server_handled_total:error_rate1m
     expr: gitaly_grpc:grpc_server_handled_total:rate1m{grpc_code!="OK",grpc_code!="Canceled",grpc_code!="NotFound"}
-  - record: gitaly:grpc_server_handled_total:error_avg_rate12h
-    expr: avg_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
-  - record: gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h
-    expr: stddev_over_time(gitaly:grpc_server_handled_total:error_rate1m[12h])
   - record: gitaly:grpc_server_handled_total:instance_error_rate1m
     expr: >
       sum without (grpc_code, grpc_method, grpc_service, grpc_type) (
@@ -47,25 +43,6 @@ groups:
         Check Gitaly logs and consider disabling it on that host.
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
-  - alert: GitalyMethodErrorRateOutlier
-    expr: >
-      gitaly:grpc_server_handled_total:error_rate1m >
-      (
-        gitaly:grpc_server_handled_total:error_avg_rate12h
-          +
-        (2 * gitaly:grpc_server_handled_total:error_rate1m_stddev_over_time12h)
-      )
-    for: 5m
-    labels:
-      channel: gitaly
-      severity: s4
-    annotations:
-      description: >
-        The {{$labels.grpc_code}} error rate on {{ $labels.grpc_method }} is outside normal
-        values over a 12 hour period (95% confidence).
-      dashboard: "https://dashboards.gitlab.net/dashboard/db/gitaly-feature-status?var-method={{ $labels.grpc_method }}&var-environment={{ $labels.environment }}"
-      runbook: troubleshooting/gitaly-error-rate.md
-      title: 'Gitaly: Error rate on {{ $labels.grpc_method }} is unusually high compared with a 12 hour average'
 
 - name: Gitaly grpc buckets
   rules:
