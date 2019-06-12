@@ -14,7 +14,12 @@ servers in the variables.tf. DO NOT increase the number of `stor` servers. We sh
 
 Thanks to our bootstrap script, no manual configuration is needed. However,
 it does NOT automatically create `/var/opt/gitlab/git-data/repositories`.
-You will need to manually create the directory (`sudo mkdir -p /var/opt/gitlab/git-data/repositories`).
+You will need to manually create the directory:
+```
+$ sudo mkdir -p /var/opt/gitlab/git-data/repositories
+$ sudo chown git:git /var/opt/gitlab/git-data/
+$ sudo chown git:git /var/opt/gitlab/git-data/repositories/
+```
 
 ## Deploying
 
