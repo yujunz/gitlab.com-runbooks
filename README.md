@@ -1,6 +1,147 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
 # GitLab On Call Run Books
+=======
+=======
+>>>>>>> a39b7f50b38e3701f5b8f889dbf6ff1f23f27cb0
+# Gitlab On-call Run Books
 
-The aim of this project is to have a quick guide of what to do when an emergency arrives
+This project provides a guidance for Infrastructure Reliability Engineers and Managers who are starting an on-call shift or responding to an incident. If you haven't yet, review the [Incident Management](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/index.html) page in the handbook before reading on.
+
+## On-Call
+
+GitLab Reliability Engineers and Managers provide 24x7 on-call coverage to ensure incidents are responded to promptly and resolved as quickly as possible.
+
+### Shifts
+
+We use [PagerDuty](https://gitlab.pagerduty.com) to manage our on-call
+schedule and incident alerting. We currently have two escalation policies for , one for [Production Incidents](https://gitlab.pagerduty.com/escalation_policies#P7IG7DS) and the other for [Production Database Assistance](https://gitlab.pagerduty.com/escalation_policies#P1SMG60). They are staffed by SREs and DBREs, respectively, and Reliability Engineering Managers.
+
+Currently, rotations are weekly and the day's schedule is split 12/12 hours with engineers
+on call as close to daytime hours as their geographical region allows. We hope to hire so that shifts are an 8/8/8 hours split, but we're not staffed sufficiently yet across timezones.
+
+### Joining the On-Call Rotation
+
+When a new engineer joins the team and is ready to start shadowing for an on-call rotation,
+[overrides][pagerduty-overrides] should be enabled for the relevant on-call hours during that
+rotation. Once they have completed shadowing and are comfortable/ready to be inserted into the
+primary rotations, update the membership list for the appropriate schedule to [add the new team
+member][pagerduty-add-user].
+
+This [pagerduty forum post][pagerduty-shadow-schedule] was referenced when setting up the [blank
+shadow schedule][pagerduty-blank-schedule] and initial [overrides][pagerduty-overrides] for
+on-boarding new team member
+
+
+## Checklists
+
+- [EMOC](on-call/eoc.md)
+- [IMOC](on-call/imoc.md)
+
+To start with the right foot let's define a set of tasks that are nice things to do before you go any further in your week
+
+By performing these tasks we will keep the [broken window
+effect](https://en.wikipedia.org/wiki/Broken_windows_theory) under control, preventing future pain
+and mess.
+
+## Things to keep an eye on
+
+### Issues
+
+First check [the on-call issues][on-call-issues] to familiarize yourself with what has been
+happening lately. Also, keep an eye on the [#production][slack-production] and
+[#incident-management][slack-incident-management] channels for discussion around any on-going
+issues.
+
+### Alerts
+
+Start by checking how many alerts are in flight right now
+
+-   go to the [fleet overview dashboard](https://dashboards.gitlab.net/dashboard/db/fleet-overview) and check the number of Active Alerts, it should be 0. If it is not 0
+    -   go to the alerts dashboard and check what is being triggered
+        -   [azure][prometheus-azure]
+        -   [gprd prometheus][prometheus-gprd]
+        -   [gprd prometheus-app][prometheus-app-gprd]
+    -   watch the [#alerts][slack-alerts], [#alerts-general][slack-alerts-general], and [#alerts-gstg][slack-alerts-gstg] channels for alert notifications; each alert here should point you to the right [runbook][runbook-repo] to fix it.
+    -   if they don't, you have more work to do.
+    -   be sure to create an issue, particularly to declare toil so we can work on it and suppress it.
+
+### Prometheus targets down
+
+Check how many targets are not scraped at the moment. alerts are in flight right now, to do this:
+
+-   go to the [fleet overview dashboard](https://dashboards.gitlab.net/dashboard/db/fleet-overview) and check the number of Targets down. It should be 0. If it is not 0
+    -   go to the [targets down list] and check what is.
+        -   [azure][prometheus-azure-targets-down]
+        -   [gprd prometheus][prometheus-gprd-targets-down]
+        -   [gprd prometheus-app][prometheus-app-gprd-targets-down]
+    -   try to figure out why there is scraping problems and try to fix it. Note that sometimes there can be temporary scraping problems because of exporter errors.
+    -   be sure to create an issue, particularly to declare toil so we can work on it and suppress it.
+
+## Incidents
+
+First: don't panic.
+
+If you are feeling overwhelmed, escalate to the [IMOC or CMOC](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#roles).  
+Whoever is in that role can help you get other people to help with whatever is needed.  Our goal is to resolve the incident in a timely manner, but sometimes that means slowing down and making sure we get the right people involved.  Accuracy is as important or more than speed.
+
+Roles for an incident can be found in the [incident management section of the handbook](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/)
+
+If you need to start an incident, you can post in the #incident channel(https://gitlab.slack.com/messages/CB7P5CJS1)
+If you use /start-incident - a bot will make and issue/google doc and zoom link for you.
+
+## Communication Tools
+
+If you do end up needing to post and update about an incident, we use [Status.io](https://status.io)
+
+On status.io, you can [Make an incident](https://app.status.io/dashboard/5b36dc6502d06804c08349f7/incident/create) and Tweet, post to Slack, IRC, Webhooks, and email via checkboxes on creating or updating the incident.
+
+The incident will also have an affected infrastructure section where you can pick components of the GitLab.com application and the underlying services/containers should we have an incident due to a provider.
+
+You can update incidents with the Update Status button on an existing incident, again you can tweet, etc from that update point.
+
+Remember to close out the incident when the issue is resolved.  Also, when possible, put the issue and/or google doc in the post mortem link.
+
+# Production Incidents
+
+## Roles
+
+During an incident there are at least 2 roles, and one more optional
+
+* Production engineers will
+  * Open a war room on Zoom immediately to have high a bandwidth communication channel.
+  * Create a [Google Doc](https://docs.google.com) to gather the timeline of events.
+  * Publish this document using the _File_, _Publish to web..._ function.
+  * Make this document GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitLab_.
+  * Tweet `GitLab.com is having a major outage, we're working on resolving it in a Google Doc LINK` with a link to this document to make the community aware.
+  * Redact the names to remove the blame. Only use team-member-1, -2, -3, etc.
+  * Document partial findings or guessing as we learn.
+  * Write a post mortem issue when the incident is solved, and label it with `outage`
+
+* The point person will
+  * Handle updating the @gitlabstatus account explaining what is going on in a simple yet reassuring way.
+  * Synchronize efforts accross the production engineering team
+  * Pull other people in when consultation is needed.
+  * Declare a major outage when we are meeting the definition.
+  * Post `@channel, we have a major outage and need help creating a live streaming war room, refer to [runbooks-production-incident]` into the #general slack channel.
+  * Post `@channel, we have a major outage and need help reviewing public documents` into the #marketing slack channel.
+  * Post `@channel, we have a major outage and are working to solve it, you can find the public doc <here>` into the #devrel slack channel.
+  * Move the war room to a paid account so the meeting is not time limited.
+  * Coordinate with the security team and the communications manager and use the [breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) to determine if a breach of user data has occurred and notify any affected users.
+
+* The communications manager will
+  * Setup a not time limited Zoom war room and provide it to the point person to move all the production engineers there.
+  * Setup Youtube Live Streaming int the war room following [this Zoom guide](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live) (for this you will need to have access to the GitLab Youtube account, ask someone from People Ops to grant you so)
+
+* The Marketing representative will
+  * Review the Google Doc to provide proper context when needed.
+  * Include a note about how is this outage impacting customers in the document.
+  * Decide how to handle further communications when the outage is already handled.
+<<<<<<< HEAD
+>>>>>>> WIP: restructuring README to foucs on On-Call
+=======
+>>>>>>> a39b7f50b38e3701f5b8f889dbf6ff1f23f27cb0
+
 
 ## General guidelines for production incidents.
 
@@ -38,6 +179,8 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * Keep in mind [GitLab's data breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) and work with the security team to determine if a user data breach has occurred and if notification needs to be provided.
 * Once the incident is resolved, [Tweet](howto/tweeting-guidelines.md)  an update and let users know the issue is resolved.
 
+# References
+
 ## Communication Guidelines
 * [When the lead is away](howto/lead-away.md)
 * [Tweeting Guidelines](howto/tweeting-guidelines.md)
@@ -60,6 +203,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Database backups restore testing](https://gitlab.com/gitlab-restore/postgres-01.db.prd.gitlab.com/)
 
 ### Frontend Services
+
 * [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
 * [HAProxy is missing workers](troubleshooting/chef.md)
 * [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
@@ -70,10 +214,12 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Blocking a project causing high load](howto/block-high-load-project.md)
 
 ### Supporting Services
+
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
 * [Sentry is down](troubleshooting/sentry-is-down.md)
 
 ### Gitaly
+
 * [Gitaly error rate is too high](troubleshooting/gitaly-error-rate.md)
 * [Gitaly latency is too high](troubleshooting/gitaly-latency.md)
 * [Sidekiq Queues are out of control](troubleshooting/large-sidekiq-queue.md)
@@ -83,6 +229,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Debugging gitaly with gitaly-debug](howto/gitaly-debugging-tool.md)
 
 ### CI
+
 * [Large number of CI pending builds](troubleshooting/ci_pending_builds.md)
 * [The CI runner manager report a high DO Token Rate Limit usage](troubleshooting/ci_runner_manager_do_limits.md)
 * [The CI runner manager report a high number of errors](troubleshooting/ci_runner_manager_errors.md)
@@ -91,7 +238,15 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
 * [Too many connections on Runner's cache server](troubleshooting/ci_too_many_connections_on_runners_cache_server.md)
 
+<<<<<<< HEAD
+=======
+### ELK
+
+* [`mapper_parsing_exception` errors](troubleshooting/elk_mapper_parsing_exception.md)
+
+>>>>>>> WIP: restructuring README to foucs on On-Call
 ## Non-Critical
+
 * [SSL certificate expires](troubleshooting/ssl_cert.md)
 * [Troubleshoot git stuck processes](troubleshooting/git-stuck-processes.md)
 
@@ -101,6 +256,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Error executing action `create` on resource 'directory[/some/path]'](troubleshooting/stale-file-handles.md)
 
 ## Learning
+
 ### Alerting and monitoring
 * [GitLab monitoring overview](howto/monitoring-overview.md)
 * [How to add alerts: Alerts manual](howto/alerts_manual.md)
@@ -113,16 +269,16 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Use mtail to capture metrics from logs](howto/mtail.md)
 
 ### CI
+
 * [Introduction to Shared Runners](troubleshooting/ci_introduction.md)
 * [Understand CI graphs](troubleshooting/ci_graphs.md)
 
-### On Call
-* [Common tasks to perform while on-call](howto/oncall.md)
-
 ### Access Requests
+
 * [Deal with various kinds of access requests](howto/access-requests.md)
 
 ### Deploy
+
 * [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
 * [Deploy GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/deploying.md)
 * [Rollback GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/deploying.md#rolling-back-gitlabcom)
@@ -130,6 +286,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Refresh data on staging.gitlab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/staging.md)
 
 ### Work with the fleet and the rails app
+
 * [Reload unicorn with zero downtime](howto/manage-workers.md#reload-unicorn-with-zero-downtime)
 * [How to perform zero downtime frontend host reboot](howto/manage-workers.md#how-to-perform-zero-downtime-frontend-host-reboot)
 * [Gracefully restart sidekiq jobs](howto/manage-workers.md#gracefully-restart-sidekiq-jobs)
@@ -143,6 +300,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [Access hosts in GCP](howto/access-gcp-hosts.md)
 
 ### Restore Backups
+
 * [Community Project Restoration](howto/community-project-restore.md)
 * [Database Backups and Replication with Encrypted WAL-E](howto/using-wale-gpg.md)
 * [Work with Azure Snapshots](howto/azure-snapshots.md)
@@ -150,6 +308,7 @@ The aim of this project is to have a quick guide of what to do when an emergency
 * [PackageCloud Infrastructure And Recovery](howto/packagecloud-infrastructure.md)
 
 ### Work with storage
+
 * [Understanding GitLab Storage Shards](howto/sharding.md)
 * [Build and Deploy New Storage Servers](howto/storage-servers.md)
 
@@ -245,3 +404,32 @@ Please see the [contribution guidelines](CONTRIBUTING.md)
 # But always remember!
 
 ![Dont Panic](img/dont_panic_towel.jpg)
+
+
+<!-- Links -->
+[on-call-issues]:                   https://gitlab.com/gitlab-com/infrastructure/issues?scope=all&utf8=%E2%9C%93&state=all&label_name[]=oncall
+
+[pagerduty-add-user]:               https://support.pagerduty.com/docs/editing-schedules#section-adding-users
+[pagerduty-amer]:                   https://gitlab.pagerduty.com/schedules#PKN8L5Q
+[pagerduty-amer-shadow]:            https://gitlab.pagerduty.com/schedules#P0HRY7O
+[pagerduty-blank-schedule]:         https://community.pagerduty.com/t/creating-a-blank-schedule/212
+[pagerduty-emea]:                   https://gitlab.pagerduty.com/schedules#PWDTHYI
+[pagerduty-emea-shadow]:            https://gitlab.pagerduty.com/schedules#PSWRHSH
+[pagerduty-overrides]:              https://support.pagerduty.com/docs/editing-schedules#section-create-and-delete-overrides
+[pagerduty-shadow-schedule]:        https://community.pagerduty.com/t/creating-a-shadow-schedule-to-onboard-new-employees/214
+
+[prometheus-azure]:                 https://prometheus.gitlab.com/alerts
+[prometheus-azure-targets-down]:    https://prometheus.gitlab.com/consoles/up.html
+[prometheus-gprd]:                  https://prometheus.gprd.gitlab.net/alerts
+[prometheus-gprd-targets-down]:     https://prometheus.gprd.gitlab.net/consoles/up.html
+[prometheus-app-gprd]:              https://prometheus-app.gprdgitlab.net/alerts
+[prometheus-app-gprd-targets-down]: https://prometheus-app.gprd.gitlab.net/consoles/up.html
+
+[runbook-repo]:                     https://gitlab.com/gitlab-com/runbooks
+
+[slack-alerts]:                     https://gitlab.slack.com/channels/alerts
+[slack-alerts-general]:             https://gitlab.slack.com/channels/alerts-general
+[slack-alerts-gstg]:                https://gitlab.slack.com/channels/alerts-gstg
+[slack-incident-management]:        https://gitlab.slack.com/channels/incident-management
+[slack-production]:                 https://gitlab.slack.com/channels/production
+
