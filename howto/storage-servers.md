@@ -3,10 +3,12 @@
 Currently, we run 24 storage servers for git repository data, with 4 of them being used for new projects.
 Once the 4 servers for new projects reach 60% capacity, we build 4 new ones and set them to be the default.
 
+here's a [recording](https://drive.google.com/file/d/1d2OnABnaMKVlBCQWj_GLpaNN4N4Z1v7R/view) from one time when we had to add new nodes
+
 
 ## Building
 
-In order to build a new storage server, you will add the necessary definitions to the [GitLab terraform repository](https://gitlab.com/gitlab-com/gitlab-com-infrastructure). 
+In order to build a new storage server, you will add the necessary definitions to the [GitLab terraform repository](https://gitlab.com/gitlab-com/gitlab-com-infrastructure).
 With the move to GCP, this is quite simple. All you must do is bump the number of `multizone-stor`
 servers in the variables.tf. DO NOT increase the number of `stor` servers. We should only build multi-zone servers from now on.
 
@@ -38,3 +40,35 @@ Now that the project is moved, push some data to it and ensure that everything w
 web interface updates with the data you've pushed.
 
 If all of the above works, use your admin account to change [where new projects are stored](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-project-repositories-will-be-stored)!
+
+
+  * [x] run `chef-client` until there's no errors. If the `gitlab-ee` packages is not installed try using `apt-get update` command. (see comments below for more info)
+  * [x] create `/var/opt/gitlab/git-data/repositories` manually
+  * [ ] from the console machine, tmux, stop chef-client on prod machines that had their roles edited in the chef MR
+
+```bash
+$ knife ssh -C 5 "roles:gprd-base-stor-gitaly OR roles:gprd-base" "sudo service chef-client stop"
+```
+
+  * [ ] update chef-config: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/1202
+  * [ ] do a dry run on one old gitaly machine, one new gitaly machine, one web machine, confirm the changes are as desired:
+```bash
+$ knife ssh 'name:web-cny-01-sv-gprd.c.gitlab-production.internal' 'sudo chef-client --why-run'
+$ knife ssh 'name:file-01-stor-gprd.c.gitlab-production.internal' 'sudo chef-client --why-run'
+$ knife ssh 'name:file-33-stor-gprd.c.gitlab-production.internal' 'sudo chef-client --why-run'
+```
+  * [ ] force a chef-client run on gitaly nodes (if you run chef on web/api nodes, they would be trying to connect to gitaly nodes before they were ready):
+```bash
+$ knife ssh -C 2 "roles:gprd-base-stor-gitaly" "sudo chef-client"
+```
+  * [ ] check gitaly logs to confirm they are fine
+  * [ ] run chef-client on remaining machines, gradually:
+```bash
+$ knife ssh -C 2 "roles:gprd-base" "sudo chef-client"
+```
+  * [ ] verify new storage nodes are operational ([doc](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/storage-servers.md#deploying)):
+    - create project on gitlab.com
+    - using GL api ([doc](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/sharding.md#manual-method)), move it to new storage node
+    - push some date to the new project
+    - check in the web UI if everything is ok
+  * [ ] change where new projects are stored (set 3 new nodes as defaults, leave 1 for rebalancing of old nodes): https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-project-repositories-will-be-stored
