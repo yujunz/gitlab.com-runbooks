@@ -186,3 +186,14 @@ Fetching server state...
    3 ssh/git-01-sv-gstg : DRAIN
    3 websockets/git-01-sv-gstg : DRAIN
 ```
+
+### Admin console for haproxy (single node)
+haproxy has a built-in web admin console; this is not terribly useful for managing a fleet of haproxy nodes, but if just one is misbehaving then it might be handy.  To access it, ssh port forward to port 7331, e.g.:
+
+`ssh -L 7331:localhost:7331 fe-01-lb-gstg.c.gitlab-staging-1.internal`
+
+then access http://localhost:7331/ in  your browser.
+
+The username is admin, the password is most easily obtained from haproxy.cfg on the server itself (look for 'stats auth' section), but can also be obtained by looking for the admin_password value in gkms vault, e.g.
+
+`gkms-vault-show frontend-loadbalancer gstg`
