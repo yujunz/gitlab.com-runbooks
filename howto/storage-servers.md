@@ -40,9 +40,13 @@ will not know about the new servers which will cause strange errors.
 
 In order to roll out new config:
 1. prepare an MR in the `chef-repo` with the relevant changes
-1. from the console machine, tmux, stop chef-client on prod machines that had their roles edited in the chef MR
+1. from the console machine, tmux, check status of chef on prod machines that had their roles edited in the chef MR
 ```bash
-$ knife ssh -C 5 "roles:gprd-base-stor-gitaly OR roles:gprd-base" "sudo service chef-client stop"
+$ knife ssh -C 5 "roles:gprd-base-stor-gitaly OR roles:gprd-base" "sudo systemctl is-active chef-client.service"
+```
+1. now stop chef-client on those nodes:
+```bash
+$ knife ssh -C 5 "roles:gprd-base-stor-gitaly OR roles:gprd-base" "sudo systemctl stop chef-client.service"
 ```
 1. merge the MR in the `chef-repo` that you prepared earlier
 1. do a dry run on one old gitaly machine, one new gitaly machine, one web machine and confirm the changes are as desired, for example:
