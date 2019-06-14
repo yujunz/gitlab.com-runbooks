@@ -362,6 +362,7 @@ During an incident there are at least 2 roles, and one more optional
 * [Setup oauth2-proxy protection for web based application](howto/setup-oauth2-proxy-protected-application.md)
 * [Register new domain(s)](howto/domain-registration.md)
 * [Setup and Use my Yubikey](howto/yubikey.md)
+* [Purge Git data](howto/purge-git-data.md)
 
 ### Gitter
 * [MongoDB operations](howto/gitter/mongodb-operations.md)
