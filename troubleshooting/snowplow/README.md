@@ -29,7 +29,7 @@ This can be altered if needed in a dire situation.
 1. A quick curl check should give you a good response of **OK**. This same URL
 is used for individual collector nodes to check health against port 8000.
   - ```curl https://snowplow.trx.gitlab.net/health```
-1. Log into AWS and verify that there are collector nodes in the
+1. Log into GPRD AWS and verify that there are collector nodes in the
   **SnowPlowNLBTargetGroup** target group. If not, something has gone wrong
   with the **SnowPlowCollector** auto scaling group.
 1. Check Route53 in AWS and verify that snowplow.trx.gitlab.net is still
