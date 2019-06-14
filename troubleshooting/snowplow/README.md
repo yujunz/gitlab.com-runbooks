@@ -4,8 +4,14 @@ SnowPlow is a pipeline of nodes and streams that is used to accept events from
 the GitLab.com front-end web tracker. The tracker is javascript that is
 executed by a user's browser.
 
+All of the SnowPlow pipeline components live in AWS GPRD account: 855262394183
+
 * [Design Document](https://about.gitlab.com/handbook/engineering/infrastructure/design/snowplow/)
 * [Terraform Configuration](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/tree/master/environments/aws-snowplow)
+* [CloudWatch Dashboard](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=SnowPlow)
+
+## The Pipeline Diagram
+![SnowPlow Diagram](../../img/snowplow/snowplowdiagram.png "SnowPlow Diagram")
 
 ## What is important?
 If you are reading this, most likely one of two things has gone wrong. Either
@@ -16,7 +22,8 @@ synchronous process.
 
 Processing events and writing them out is important, but not as time sensitive.
 There is some slack in the queue to allow a events to stack up before being
-written. Usually about 24 hours worth might be ok.
+written. The raw events Kinesis stream has a data retention period of 48 hours.
+This can be altered if needed in a dire situation.
 
 ## Not accepting requests
 1. A quick curl check should give you a good response of **OK**. This same URL
@@ -48,3 +55,7 @@ is used for individual collector nodes to check health against port 8000.
   streams are processing events. You may want to turn on CloudWatch logging
   if you are stuck and can't seem to figure out what's wrong.
 1. Check the Lambda function that is used to process events in Firehose.
+
+## SSH Access to nodes
+You will need the ```snowplow.pem``` file from 1Password and you will connect to
+the nodes as the ```ec2-user```.
