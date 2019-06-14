@@ -379,9 +379,10 @@ connections (2 currently).
 
 If this is for the label `no more connections allowed
 (max_client_conn)` then the number of incoming connections from all
-clients is larger than `max_client_conn`. If this is the main
-pgbouncer node then this means all connections from all processes and
-threads on all hosts.
+clients is larger than `max_client_conn`. PGBouncer runs on `patroni` 
+fleet. The alert should tell you which patroni host the alert triggered on. 
+If this is the main patroni node, then this means all connections from 
+all processes and threads on all hosts.
 
 You can raise the `max_client_conn` temporarily by logging into the
 pgbouncer console and issuing a command. First verify that the `ulimit
@@ -397,11 +398,7 @@ gitlab-+ 109886 34.4  0.6  28888 12836 ?        Rs   Mar19 13929:17 /opt/gitlab/
 RESOURCE DESCRIPTION               SOFT  HARD UNITS
 NOFILE   max number of open files 50000 50000
 
-# sudo gitlab-ctl pgb-console
-Password for user pgbouncer: ...
-
-psql (9.6.5, server 1.7.2/bouncer)
-Type "help" for help.
+# sudo -u gitlab-psql psql -h /var/opt/gitlab/pgbouncer -p 6432 -d pgbouncer -U pgbouncer
 
 pgbouncer=# show config;
             key            |                           value                            | changeable
