@@ -10,7 +10,7 @@ groups:
       runbook: troubleshooting/sidekiq_stats_no_longer_showing.md
       title: Sidekiq stats failed to be scraped for the last minute
   - alert: SidekiqJobsMetricsMissing
-    expr: absent(sidekiq_jobs_completion_time_seconds_bucket)
+    expr: up{job="mtail", type="sidekiq"} == 1 unless ignoring(le, prog, worker) sidekiq_jobs_completion_time_seconds_bucket
     for: 2h
     labels:
       severity: s4
