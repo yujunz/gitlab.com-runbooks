@@ -62,6 +62,14 @@ teams:
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
+- name: support
+  url: https://about.gitlab.com/handbook/support/
+  manager_slug: tcooney
+  slack_channel: support_gitlab-com
+  engagement_policy: # Link to doc that talks about engagement 
+                     # and escalation policy
+  oncall_schedule: https://gitlab.pagerduty.com/schedules#PIQ317K
+
 - name: infrastructure
   url: https://about.gitlab.com/handbook/engineering/infrastructure/
   manager_slug: 
@@ -579,6 +587,67 @@ services:
   observability:
     monitors:
       primary_grafana_dashboard: "USVj3qHmk/logging"
+      sentry_slug:
+
+- name: forum
+  tier: sv
+  teams:
+    - support
+  label: forum.gitlab.com
+  business:
+    requirement: |
+      We want to provide a way for our community to discuss about GitLab and ask questions.
+    customers:
+      - Community
+    business_value: |
+      Public Community Forum for GitLab users to discuss about anything GitLab related. It is run by Community members, whereas the hosting is graciously donated by GitLab using Discourse.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 4
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+        - https://github.com/discourse/discourse_docker
+      security:
+    dependencies:
+    configurations:
+      - config_name: discourse
+        location: /var/discourse/containers/app.yml
+    chef_roles:
+    scalability:
+      note: One-off Singleton running in a docker container.
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: production.log
+        permalink: /var/discourse/shared/standalone/log/rails
+  infrastructure:
+    provider: DO
+    architecture:
+    provisioning:
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance: 
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/discourse-forum.md
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      grafana_folder:
+      primary_grafana_dashboard: https://dashboards.gitlab.net/d/bd2Kl9Imk/host-stats?orgId=1&refresh=1m&var-environment=ops&var-node=forum.gitlab.com
       sentry_slug:
 
 - name: logging
