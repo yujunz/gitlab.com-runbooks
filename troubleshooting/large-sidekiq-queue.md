@@ -123,6 +123,8 @@ If you need to drop an entire queue (e.g. `expire_build_instance_artifacts`):
 1. Visit https://gitlab.com/admin/sidekiq/queues
 2. Find the queue you want to drop and click "Delete"
 
+Dropped queues will be automatically recreated as needed.
+
 ## Dropping specific workers in the queue
 
 In GitLab, it's possible that there are multiple workers that share the same
