@@ -23,7 +23,7 @@ synchronous process.
 Processing events and writing them out is important, but not as time sensitive.
 There is some slack in the queue to allow a events to stack up before being
 written. The raw events Kinesis stream has a data retention period of 48 hours.
-This can be altered if needed in a dire situation.
+This can be altered if needed in a dire situation. [Kinesis Stream Configuration](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/blob/master/environments/aws-snowplow/main.tf#L384-443)
 
 ## Not accepting requests
 1. A quick curl check should give you a good response of **OK**. This same URL
@@ -54,7 +54,9 @@ is used for individual collector nodes to check health against port 8000.
 1. Check that the Kinesis Firehose monitoring for the enriched (good and bad)
   streams are processing events. You may want to turn on CloudWatch logging
   if you are stuck and can't seem to figure out what's wrong.
-1. Check the Lambda function that is used to process events in Firehose.
+1. Check the Lambda function that is used to process events in Firehose. There
+  should be plenty of invocations at any time of day. A graph of invocations
+  is on the [CloudWatch SnowPlow dashboard](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=SnowPlow).
 
 ## SSH Access to nodes
 You will need the ```snowplow.pem``` file from 1Password and you will connect to
