@@ -23,38 +23,33 @@ omnibus package contains:
 Most notably, PackageCloud uses MySQL, not PostgreSQL like most of our
 applications.
 
-We have configured PackageCloud to send all of the packages to an S3
-bucket. When a package is pushed to the repo, it is automatically uploaded
-to S3. The credentials for the S3 bucket are located in chef-vault.
+We have configured PackageCloud to send all of the packages to an S3 bucket.
+When a package is pushed to the repo, it is automatically uploaded to S3. We use
+CloudFront to put package downloads behind a CDN. The configuration of
+CloudFront and all associated services was done by PackageCloud itself via
+`packagecloud-ctl`. The credentials for CloudFront and the S3 bucket are stored
+in the `chef-vault`
 
 ## What Is Backed Up?
 
 PackageCloud is currently set up to back up its database only, once per day.
-These backups are placed in `/var/opt/packagecloud/backups/packagecloud-database-backup.<unix_timestamp>.tgz`
+These backups are placed in `/var/opt/packagecloud/backups/packagecloud-streamed-database-backup.<unix timestamp>.xbstream`,
+and are also uploaded to the `gitlab-packagecloud-db-backups` S3 bucket. Backups
+are kept for 14 days.
+
 The config is not backed up as it is safely in Chef.
-The backups are kept for 10 days on disk. However, because of the absolutely massive
-size of the database, PackageCloud itself cannot upload the backups to S3. Thus,
-all of the backups are stored on disk at this time. We are working on this problem, but
-as of now there are several backups in S3 that can be used in case of a catastrophic
-event.
 
 There is no need to back up the packages themselves as they are already stored in S3.
 It is unlikely that we will ever have the need to restore packages, but the packages
 bucket uses Amazon's [cross-region replication](http://docs.aws.amazon.com/AmazonS3/latest/dev/crr.html)
-so that we can have extra certainty that the packages will survive. Additionally,
-we hope to eventually be able to switch the bucket on the fly should there ever
-be a [large scale S3 outage](https://aws.amazon.com/message/41926/).
+so that we can have extra certainty that the packages will survive.
 
 
 ## How Is the DB Backed Up?
 
-The native PackageCloud backups use [innobackupex](https://www.percona.com/doc/percona-xtrabackup/2.4/innobackupex/creating_a_backup_ibk.html).
+The native PackageCloud backups use [xbstream](https://www.percona.com/doc/percona-xtrabackup/LATEST/xbstream/xbstream.html).
 This creates a full backup of the MySQL data without locking the database for the
-entire backup. Additionally, the backup/restore of the database is also much faster
-than a normal mysqldump/SQL file import.
-You can read more about how innobackupex works in Percona's [innobackupex documentation](https://www.percona.com/doc/percona-xtrabackup/2.4/innobackupex/how_innobackupex_works.html).
-As of this writing, the database is over 600GB in size and takes multiple hours to back
-up.
+entire backup.
 
 ## So How Do We Actually Restore?
 
