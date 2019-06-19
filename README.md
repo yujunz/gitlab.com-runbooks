@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# GitLab On Call Run Books
-=======
-=======
->>>>>>> a39b7f50b38e3701f5b8f889dbf6ff1f23f27cb0
 # Gitlab On-call Run Books
 
 This project provides a guidance for Infrastructure Reliability Engineers and Managers who are starting an on-call shift or responding to an incident. If you haven't yet, review the [Incident Management](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/index.html) page in the handbook before reading on.
@@ -137,11 +131,6 @@ During an incident there are at least 2 roles, and one more optional
   * Review the Google Doc to provide proper context when needed.
   * Include a note about how is this outage impacting customers in the document.
   * Decide how to handle further communications when the outage is already handled.
-<<<<<<< HEAD
->>>>>>> WIP: restructuring README to foucs on On-Call
-=======
->>>>>>> a39b7f50b38e3701f5b8f889dbf6ff1f23f27cb0
-
 
 ## General guidelines for production incidents.
 
@@ -238,13 +227,10 @@ During an incident there are at least 2 roles, and one more optional
 * [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
 * [Too many connections on Runner's cache server](troubleshooting/ci_too_many_connections_on_runners_cache_server.md)
 
-<<<<<<< HEAD
-=======
 ### ELK
 
 * [`mapper_parsing_exception` errors](troubleshooting/elk_mapper_parsing_exception.md)
 
->>>>>>> WIP: restructuring README to foucs on On-Call
 ## Non-Critical
 
 * [SSL certificate expires](troubleshooting/ssl_cert.md)
@@ -376,6 +362,7 @@ During an incident there are at least 2 roles, and one more optional
 * [Setup oauth2-proxy protection for web based application](howto/setup-oauth2-proxy-protected-application.md)
 * [Register new domain(s)](howto/domain-registration.md)
 * [Setup and Use my Yubikey](howto/yubikey.md)
+* [Purge Git data](howto/purge-git-data.md)
 
 ### Gitter
 * [MongoDB operations](howto/gitter/mongodb-operations.md)

@@ -19,6 +19,10 @@ settings are applied via the `gitlab-base` chef role [internal link](https://ops
 
 ## Moving Repositories between Shards
 
+### Overview ###
+
+Repositories are moved by scheduling sidekiq jobs called `project_update_repository_storage` (you can check logs for it in Kibana, see job implementation in gitlab repo, etc).
+
 ### Manual Method
 Git repositories can me moved between shards using an administrative API command:
 

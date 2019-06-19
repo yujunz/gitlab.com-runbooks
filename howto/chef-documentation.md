@@ -67,6 +67,15 @@ To apply this uploaded cookbook to a new environment follow the steps [below](#c
 
 For cookbooks with Makefiles in them, see the README.md for testing instructions.
 
+Some points that might not be in the README.md, for historical reasons:
+Builds happen in the "GitLab Dev" project.  When running from your own machine for initial testing, you need to export `DIGITALOCEAN_ACCESS_TOKEN` and `DIGITALOCEAN_SSH_KEY_IDS`.  To get values for these:
+* Look in 1password for "DIGITALOCEAN_ACCESS_TOKEN for gitlab-cookbooks CICD".
+* Upload your SSH key to the GitLab Dev project, then  and obtain the ID value with: `curl -s -S -X GET https://api.digitalocean.com/v2/account/keys/<fingerprint>  -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN" | jq .ssh_key.id`.  The fingerprint is visible in the web UI after upload, and can be copy/pasted as is into the API URL.  The ID returned is what you put into DIGITALOCEAN_SSH_KEY_IDS; if it outputs 'null', remove the pipe to jq, and see what the API is saying.
+
+If you're using a Yubikey, you probably also want to
+`export GITLAB_DO_SSH_KEY=`
+to set it explicitly to null, so it doesn't try and use a non-existent SSH key off disk, and just use your ssh-agent/gpg-agent/whatever you've got
+
 ### ChefSpec
 
 ChefSpec and test kitchen are two ways that you can test your cookbook before you
