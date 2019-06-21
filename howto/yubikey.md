@@ -589,6 +589,10 @@ This problem can manifest itself in a few ways:
 The solution is to "kick" gpg-agent into checking for a SmartCard by running
 `gpg --card-status`.
 
+### ssh connections hang
+
+add `disable-ccid` to `~/.gnupg/scdaemon.conf` and use the restart script to restart `gpg-agent` (which manages scdaemon)
+
 ## Cleanup
 
 * Unmount the encrypted GPG master volume. Linux: `sudo veracrypt -d
