@@ -151,14 +151,13 @@ groups:
       /
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="besteffort"}[1m])) by (environment, tier, type, stage)
 
-  # Note: Uses a 5 minute interval as there is < 1 job per minute making the series bitty
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'pages'
     expr: >
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pages"}[5m])) by (environment, tier, type, stage)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="pages"}[1m])) by (environment, tier, type, stage)
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pages"}[5m])) by (environment, tier, type, stage)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pages"}[1m])) by (environment, tier, type, stage)
 
   - record: gitlab_component_apdex:ratio
     labels:
