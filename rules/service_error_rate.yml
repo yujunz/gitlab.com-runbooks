@@ -98,11 +98,10 @@ groups:
     expr: >
       sum by (environment, tier, type, stage) (rate(http_request_duration_seconds_count{job="gitlab-unicorn", status=~"^5.*"}[1m]))
 
-  # sidekiq
+  # sidekiq: job failure rate
   - record: gitlab_component_errors:rate
     labels:
-      type: sidekiq
-      component: 'sidekiq'
+      component: 'jobs'
     expr: >
       sum by (environment, tier, type, stage) (rate(sidekiq_jobs_failed_total{type = "sidekiq"}[1m]))
 
