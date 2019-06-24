@@ -38,7 +38,7 @@ will not know about the new servers which will cause strange errors.
 
 In order to roll out new config:
 1. prepare an MR in the `chef-repo` with the relevant changes
-1. from the console machine, tmux, check status of chef on prod machines that had their roles edited in the chef MR
+1. check status of chef on prod machines that had their roles edited in the chef MR
 ```bash
 $ knife ssh -C 5 "roles:gprd-base-stor-gitaly OR roles:gprd-base NOT name:bastion-01-inf-gprd.c.gitlab-production.internal NOT name:bastion-02-inf-gprd.c.gitlab-production.internal NOT name:bastion-03-inf-gprd.c.gitlab-production.internal" "sudo systemctl is-active chef-client.service"
 ```
