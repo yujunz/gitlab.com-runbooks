@@ -13,7 +13,7 @@ groups:
     labels:
       type: 'sidekiq'
       tier: 'sv'
-    expr: 0.9995
+    expr: 0.995
 
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:
