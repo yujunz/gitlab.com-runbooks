@@ -43,3 +43,16 @@ groups:
       runbook: troubleshooting/redis_replication.md
       title: Connection of Redis replicas to the master is flapping! 
         Look at `{{ $labels.instance }}` and its replicas.
+  - alert: RedisProcessDown
+    expr: redis_up < 1
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: s1
+    annotations:
+      description: The redis process has been down for more than 5 minutes. Check the status of
+        redis and sentinel on `{{ $labels.instance }}` with `gitlab-ctl status` and restart with
+        `gitlab-ctl restart redis` (and `gitlab-ctl restart sentinel` if it's down too).
+      runbook: troubleshooting/redis_replication.md
+      title: Redis process is down
+        Check the status of redis on`{{ $labels.instance }}` with `gitlab-ctl status`.
