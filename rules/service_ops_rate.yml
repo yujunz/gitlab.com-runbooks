@@ -70,12 +70,12 @@ groups:
     expr: >
       sum by (environment, tier, type, stage) (rate(http_request_duration_seconds_count{job="gitlab-unicorn"}[1m]))
 
-  # sidekiq
+  # sidekiq: job RPS rate
   - record: gitlab_component_ops:rate
     labels:
-      component: 'sidekiq'
+      component: 'jobs'
     expr: >
-      sum by (environment, tier, type, stage) (rate(gitlab_transaction_duration_seconds_count{type = "sidekiq"}[1m]))
+      sum by (environment, tier, type, stage) (rate(sidekiq_jobs_completion_time_seconds_count{type = "sidekiq"}[1m]))
 
   # mailroom
   # TODO: zero placeholder as we have no metrics for mailroom at present
