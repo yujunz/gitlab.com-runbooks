@@ -67,10 +67,10 @@ $ knife ssh -C 2 "roles:gprd-base" "sudo chef-client"
 
 To confirm new storage nodes are operational:
 1. Create a NEW project, do not push any data to it
-1. Use the API to [move it to a new storage server](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/sharding.md) before pushing any data to it
+1. Use the API to [move it to a new storage server](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/sharding.md#manual-method) before pushing any data to it
 1. Now that the project is moved, push some data to it and ensure that everything works. Namely, be sure that the
 web interface updates with the data you've pushed.
 
 ## Configuring Gitlab to use new storage nodes ##
 
-If all of the above works, use your admin account to change [where new projects are stored](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-project-repositories-will-be-stored)!
+If all of the above works, use your admin account to change where new projects are stored. In Admin Panel -> Settings -> Repository -> Repository storage , you'll see a list of storage nodes. The ones that are highglighted are the ones that will receive new projects. For more information see [gitlab docs](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-project-repositories-will-be-stored).
