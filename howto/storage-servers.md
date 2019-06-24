@@ -73,4 +73,4 @@ web interface updates with the data you've pushed.
 
 ## Configuring Gitlab to use new storage nodes ##
 
-If all of the above works, use your admin account to change where new projects are stored. In Admin Panel -> Settings -> Repository -> Repository storage , you'll see a list of storage nodes. The ones that are highglighted are the ones that will receive new projects. For more information see [gitlab docs](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-project-repositories-will-be-stored).
+If all of the above works, use your admin account to change where new projects are stored. In Admin Panel -> Settings -> Repository -> Repository storage (https://staging.gitlab.com/admin/application_settings/repository) , you'll see a list of storage nodes. The ones that are highglighted are the ones that will receive new projects. For more information see [gitlab docs](https://docs.gitlab.com/ee/administration/repository_storage_paths.html#choose-where-new-project-repositories-will-be-stored).
