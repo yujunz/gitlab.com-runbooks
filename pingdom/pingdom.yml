@@ -167,6 +167,17 @@ checks:
     integrations:
     - pagerduty
 
+  - url: https://snowplow.trx.gitlab.net/health
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - snowplow
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
   - url: https://gitlab-examples.gitlab.io/
     timeout_ms: 30000
     resolution_minutes: 5
