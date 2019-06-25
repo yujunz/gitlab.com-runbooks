@@ -29,6 +29,12 @@ groups:
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
+      type: 'sidekiq'
+      tier: 'sv'
+    expr: 0.01
+
+  - record: 'slo:max:gitlab_service_errors:ratio'
+    labels:
       type: 'registry'
       tier: 'sv'
     expr: 0.0005
