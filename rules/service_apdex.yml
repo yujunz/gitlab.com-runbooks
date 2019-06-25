@@ -21,6 +21,22 @@ groups:
         )
       )
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: 'haproxy'
+      tier: 'lb'
+      stage: 'main'
+    expr: >
+      avg by (environment, component) (
+        label_replace(
+          sum(rate(haproxy_http_response_duration_seconds_count{backend_name!~"canary_.*", backend_name!="api_rate_limit"}[1m])) by (environment, backend_name),
+          "component",
+          "backend-$1",
+          "backend_name",
+          "(.*)"
+        )
+      )
+
   # haproxy:http traffic - CANARY
   - record: gitlab_component_apdex:ratio
     labels:
@@ -40,6 +56,22 @@ groups:
         )
       )
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: 'haproxy'
+      tier: 'lb'
+      stage: 'cny'
+    expr: >
+      avg by (environment, component) (
+        label_replace(
+          sum(rate(haproxy_http_response_duration_seconds_count{backend_name=~"canary_.*"}[1m])) by (environment, backend_name),
+          "component",
+          "backend-$1",
+          "backend_name",
+          "canary_(.*)"
+        )
+      )
+
   # haproxy:ssh traffic
   - record: gitlab_component_apdex:ratio
     labels:
@@ -51,6 +83,15 @@ groups:
       sum(rate(haproxy_ssh_request_duration_seconds_bucket{le="8"}[1m])) by (environment)
       /
       sum(rate(haproxy_ssh_request_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
+
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: 'haproxy'
+      tier: 'lb'
+      stage: 'main'
+      component: 'backend-ssh'
+    expr: >
+      sum(rate(haproxy_ssh_request_duration_seconds_count[1m])) by (environment)
 
     # Note: As yet, there is no canary git+ssh traffic
 
@@ -71,6 +112,14 @@ groups:
       /
       2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", route!="^/([^/]+/){1,}[^/]+/uploads\\z"}[1m])) by (environment, type, tier, stage)
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: web
+      tier: sv
+      component: 'workhorse'
+    expr: >
+      sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", route!="^/([^/]+/){1,}[^/]+/uploads\\z"}[1m])) by (environment, type, tier, stage)
+
   # api:workhorse
   # Satisfied -> 10 seconds
   # Acceptable -> 30 seconds
@@ -87,6 +136,14 @@ groups:
       )
       /
       2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
+
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: api
+      tier: sv
+      component: 'workhorse'
+    expr: >
+      sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
 
   # git:workhorse
   # Satisfied -> 30 seconds
@@ -105,6 +162,14 @@ groups:
       /
       2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", tier="sv", route!="^/([^/]+/){1,}[^/]+/uploads\\z"}[1m])) by (environment, type, tier, stage)
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: git
+      tier: sv
+      component: 'workhorse'
+    expr: >
+      sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-git", type="git", tier="sv", route!="^/([^/]+/){1,}[^/]+/uploads\\z"}[1m])) by (environment, type, tier, stage)
+
   # gitaly:goserver
   # Satisfied -> 0.5 seconds
   # Acceptable -> 1 seconds
@@ -121,6 +186,14 @@ groups:
       )
       /
       2 / (sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage))
+
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: gitaly
+      tier: stor
+      component: 'goserver'
+    expr: >
+      sum(rate(grpc_server_handling_seconds_count{type="gitaly", tier="stor", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage)
 
   # Sidekiq jobs
   # See https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6670 for details
@@ -197,6 +270,18 @@ groups:
       / 2
       /
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, tier, type, stage)
+
+  - record: gitlab_component_apdex:weight:score
+    expr: >
+      avg by (environment, tier, type, stage, component) (
+        label_replace(
+          sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf"}[1m])) by (environment, tier, type, stage, priority),
+          "component",
+          "$1",
+          "priority",
+          "(.*)"
+        )
+      )
 
 - name: GitLab Service Apdex Scores
   interval: 1m
