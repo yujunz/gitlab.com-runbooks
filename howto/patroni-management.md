@@ -149,7 +149,7 @@ Wait until all client connections are drained from the replica (it depends on th
 use this command to track number of client connections:
 
 ```
-patroni-01-db-gstg $ while true; do sudo pgb-console -c 'SHOW CLIENTS;' | grep gitlabhq_production | wc -l; sleep 5; done
+patroni-01-db-gstg $ while true; do sudo pgb-console -c 'SHOW CLIENTS;' | grep gitlabhq_production | cut -d '|' -f 2 | awk '{$1=$1};1' | grep -v gitlab-monitor | wc -l; sleep 5; done
 ```
 
 After you're done with the maintenance, disable Consul service maintenance and verify it:
