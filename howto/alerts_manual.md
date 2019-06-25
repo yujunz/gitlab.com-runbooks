@@ -115,6 +115,7 @@ mountpoint              /var/opt/gitlab
 
 ## References
 
+* [Alertmanager configuration](./alertmanager/README.md)
 * [Prometheus template source code](https://github.com/prometheus/prometheus/blob/master/template/template.go#L115)
 * [Prometheus default alert manager expansion template](https://github.com/prometheus/alertmanager/blob/master/template/default.tmpl)
 * [Go text/template documentation](https://golang.org/pkg/text/template/)

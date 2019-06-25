@@ -1,9 +1,24 @@
-image: registry.gitlab.com/gitlab-com/runbooks:2.2.0
+image: registry.gitlab.com/gitlab-com/runbooks:3.0.0
 
 stages:
   - test
   - deploy
   - images
+  - alertmanager
+
+update-alert-manager:
+  stage: alertmanager
+  script:
+    - cd alertmanager
+    - template.rb
+    - update.sh
+  only:
+    refs:
+      - master
+    changes:
+      - alertmanager/*
+    variables:
+      - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
 
 test:
   stage: test
