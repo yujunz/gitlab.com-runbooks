@@ -10,8 +10,8 @@ update-alert-manager:
   stage: alertmanager
   script:
     - cd alertmanager
-    - template.rb
-    - update.sh
+    - ./template.rb
+    - ./update.sh
   only:
     refs:
       - master
