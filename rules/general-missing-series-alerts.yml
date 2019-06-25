@@ -7,19 +7,19 @@ groups:
           (gitlab_component_availability:ratio offset 1d)
           unless
           gitlab_component_availability:ratio
-        for: 10m
+        for: 1h
         labels:
           rules_domain: general
           severity: s4
         annotations:
-          title: "Availability data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service is missing"
+          title: "Availability data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
           description: |
             The data used to generate the `gitlab_component_availability:ratio` metrics are missing for the
             `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
             might indicate that our observability has been affected.
           grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
           grafana_panel_id: "4"
-          grafana_variables: "environment,type,component"
+          grafana_variables: "environment,type,component,stage"
           grafana_min_zoom_hours: 24
 
       # Ops Rate
@@ -28,19 +28,19 @@ groups:
           (gitlab_component_ops:rate offset 1d)
           unless
           gitlab_component_ops:rate
-        for: 10m
+        for: 1h
         labels:
           rules_domain: general
           severity: s4
         annotations:
-          title: "Operation rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service is missing"
+          title: "Operation rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
           description: |
             The data used to generate the `gitlab_component_ops:rate` metrics are missing for the
             `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
             might indicate that our observability has been affected.
           grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
           grafana_panel_id: "42"
-          grafana_variables: "environment,type,component"
+          grafana_variables: "environment,type,component,stage"
           grafana_min_zoom_hours: 24
 
       # Apdex
@@ -49,19 +49,19 @@ groups:
           (gitlab_component_apdex:ratio offset 1d)
           unless
           gitlab_component_apdex:ratio
-        for: 10m
+        for: 1h
         labels:
           rules_domain: general
           severity: s4
         annotations:
-          title: "Apdex for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service is missing"
+          title: "Apdex for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
           description: |
             The data used to generate the `gitlab_component_apdex:ratio` metrics are missing for the
             `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
             might indicate that our observability has been affected.
           grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
           grafana_panel_id: "19"
-          grafana_variables: "environment,type,component"
+          grafana_variables: "environment,type,component,stage"
           grafana_min_zoom_hours: 24
 
       # Error Rate
@@ -70,17 +70,17 @@ groups:
           (gitlab_component_errors:rate offset 1d)
           unless
           gitlab_component_errors:rate
-        for: 10m
+        for: 1h
         labels:
           rules_domain: general
           severity: s4
         annotations:
-          title: "Error rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service is missing"
+          title: "Error rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
           description: |
             The data used to generate the `gitlab_component_errors:rate` metrics are missing for the
             `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
             might indicate that our observability has been affected.
           grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
           grafana_panel_id: "27"
-          grafana_variables: "environment,type,component"
+          grafana_variables: "environment,type,component,stage"
           grafana_min_zoom_hours: 24
