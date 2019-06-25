@@ -34,7 +34,7 @@ def render_for_k8s
                           .each(&:chomp)
                           .join('    ')
 
-  template_locations = ['/etc/alertmanager/config/*.tmpl']
+  @template_locations = ['/etc/alertmanager/config/*.tmpl']
 
   initial_renderer_for_k8s = ERB.new(alertmanager_template)
   @k8s_alertmanager_template = initial_renderer_for_k8s.result
