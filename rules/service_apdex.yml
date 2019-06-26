@@ -283,16 +283,21 @@ groups:
         )
       )
 
-- name: GitLab Service Apdex Scores
-  interval: 1m
-  rules:
-  # Aggregate over all components within a service
-  # Note that since this aggregates on average, the values are
-  # not weighted.
-  # TODO: using weighted averages
+  ######################
+  # Aggregation Stage
+  ######################
+
+  # Aggregate over all components within a service using a weighted average
+  # Why use the avg_over_time[1h] value for the weight? This is because
+  # if a component suddenly stops working, its RPS will drop to zero and
+  # therefore its weight will also drop to zero, meaning that it won't affect
+  # the apdex. Using a 1h average is an attempt at resolving this, although
+  # 1hr may not be enough.
   - record: gitlab_service_apdex:ratio
     expr: >
-      avg by (environment, tier, type, stage) (gitlab_component_apdex:ratio >= 0)
+      sum by (environment, tier, type, stage) ((gitlab_component_apdex:ratio >= 0) * (avg_over_time(gitlab_component_apdex:weight:score[1h]) >= 0))
+      /
+      sum by (environment, tier, type, stage) (avg_over_time(gitlab_component_apdex:weight:score[1h]) >= 0)
 
 - name: GitLab Component Apdex Score Stats
   interval: 5m
