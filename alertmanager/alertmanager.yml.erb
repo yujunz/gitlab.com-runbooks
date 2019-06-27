@@ -1,3 +1,8 @@
+################################################
+# This file needs to be kept in sync with gitlab-cookbooks/gitlab-alertmanager/templates/default/alertmanager.yml.erb
+# It's a temporary state until all config is moved here, see: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7071
+################################################
+
 templates:<% @template_locations.each do |location| %>
    - <%= location %>
 <% end %>
@@ -28,9 +33,17 @@ route:
 
   - match:
       rules_domain: general
-    receiver: slack_alerts_general
+      pager: ""
     group_by: ['environment', 'tier', 'type', 'alertname']
+    receiver: slack_alerts_general
     continue: false
+
+  - match:
+      rules_domain: general
+      pager: pagerduty
+    group_by: ['environment', 'tier', 'type', 'alertname']
+    receiver: slack_alerts_general
+    continue: true
 
   ################################################
   # Team Alerts
@@ -115,6 +128,27 @@ route:
         environment: gstg|dr|pre
       group_by: ['environment', 'alertname']
       continue: false
+    - receiver: slo_dr
+      match:
+        slo_alert: yes
+        environment: dr
+      continue: false
+    - receiver: slo_gprd_cny
+      match:
+        slo_alert: yes
+        environment: gprd
+        stage: cny
+      continue: false
+    - receiver: slo_gprd_main
+      match:
+        slo_alert: yes
+        environment: gprd
+        stage: main
+      continue: false
+    - receiver: slo_non_prod
+      match:
+        slo_alert: yes
+      continue: false
     - receiver: prod_pagerduty
       group_by: ['environment', 'alertname']
       continue: true
@@ -145,6 +179,38 @@ receivers:
 - name: non_prod_pagerduty
   pagerduty_configs:
   - service_key: "<%= non_prod_pagerduty %>"
+    description: '{{ template "slack.title" . }}'
+    client: 'GitLab Alertmanager'
+    client_url: '{{ template "slack.link" . }}'
+    details: { note : '{{ template "slack.text" . }}'}
+    send_resolved: true
+- name: slo_dr
+  pagerduty_configs:
+  - service_key: "<%= slo_dr %>"
+    description: '{{ template "slack.title" . }}'
+    client: 'GitLab Alertmanager'
+    client_url: '{{ template "slack.link" . }}'
+    details: { note : '{{ template "slack.text" . }}'}
+    send_resolved: true
+- name: slo_gprd_cny
+  pagerduty_configs:
+  - service_key: "<%= slo_gprd_cny %>"
+    description: '{{ template "slack.title" . }}'
+    client: 'GitLab Alertmanager'
+    client_url: '{{ template "slack.link" . }}'
+    details: { note : '{{ template "slack.text" . }}'}
+    send_resolved: true
+- name: slo_gprd_main
+  pagerduty_configs:
+  - service_key: "<%= slo_gprd_main %>"
+    description: '{{ template "slack.title" . }}'
+    client: 'GitLab Alertmanager'
+    client_url: '{{ template "slack.link" . }}'
+    details: { note : '{{ template "slack.text" . }}'}
+    send_resolved: true
+- name: slo_non_prod
+  pagerduty_configs:
+  - service_key: "<%= slo_non_prod %>"
     description: '{{ template "slack.title" . }}'
     client: 'GitLab Alertmanager'
     client_url: '{{ template "slack.link" . }}'

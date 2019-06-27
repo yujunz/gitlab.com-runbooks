@@ -6,6 +6,10 @@ slack_hook = ENV['AM_SLACK_HOOK_URL']
 snitch_hook = ENV['AM_SNITCH_HOOK_URL']
 prod_pagerduty = ENV['AM_PAGERDUTY_PROD']
 non_prod_pagerduty = ENV['AM_PAGERDUTY_NON_PROD']
+slo_dr = ENV['AM_SLO_DR']
+slo_gprd_cny = ENV['AM_SLO_GPRD_CNY']
+slo_gprd_main = ENV['AM_SLO_GPRD_MAIN']
+slo_non_prod = ENV['AM_SLO_NON_PROD']
 
 def render_for_chef
   @template_locations = ['/opt/prometheus/alertmanager/templates/*.tmpl']
