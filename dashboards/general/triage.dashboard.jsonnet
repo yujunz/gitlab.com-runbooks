@@ -5,6 +5,7 @@ local commonAnnotations = import 'common_annotations.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local colors = import 'colors.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -397,4 +398,6 @@ dashboard.new(
   minY=-12
   )
   , gridPos=genGridPos(1, 3.5)
-)
+) + {
+  links+: platformLinks.services,
+}
