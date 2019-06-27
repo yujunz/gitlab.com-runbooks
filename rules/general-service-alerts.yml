@@ -11,9 +11,11 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_apdex:ratio
-          severity: s4
+          severity: s2
+          slo_alert: yes
           period: 5m
           bound: lower
+          pager: pagerduty
         annotations:
           description: |
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is not meeting its latency SLOs
@@ -43,9 +45,11 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_errors:ratio
-          severity: s4
+          severity: s2
+          slo_alert: yes
           period: 5m
           bound: lower
+          pager: pagerduty
         annotations:
           description: |
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio higher than SLOs
