@@ -22,7 +22,7 @@ groups:
       runbook: troubleshooting/gitlab-com-wale-backups.md
       title: Last WALE backup was seen {{ .Value | humanizeDuration }} ago.
   - alert: WALEBaseBackupDelayed
-    expr: gitlab_com:last_walg_successful_basebackup_age_in_hours >= 48
+    expr: gitlab_com:last_wale_successful_basebackup_age_in_hours >= 48
     for: 5m
     labels:
       pager: pagerduty
