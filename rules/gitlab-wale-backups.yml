@@ -5,6 +5,11 @@ groups:
     expr: (min(time() - wale_backup_last_completed_time_seconds{environment="gprd"}))
   - record: gitlab_com:last_wale_basebackup_age_in_hours
     expr: (min(time() - wale_basebackup_last_completed_time_seconds{environment="gprd"}) / 3600)
+  - record: gitlab_com:last_wale_successful_basebackup_age_in_hours
+    expr: min(time()-push_time_seconds{job='wale-basebackup',status="1",environment="gprd"}) / 3600
+  - record: gitlab_com:last_wale_failed_basebackup_age_in_hours
+    expr: min(time()-push_time_seconds{job='wale-basebackup',status="-1",environment="gprd"}) / 3600
+
   - alert: WALEBackupDelayed
     expr: gitlab_com:last_wale_backup_age_in_seconds >= 60 * 15
     for: 5m
@@ -17,7 +22,7 @@ groups:
       runbook: troubleshooting/gitlab-com-wale-backups.md
       title: Last WALE backup was seen {{ .Value | humanizeDuration }} ago.
   - alert: WALEBaseBackupDelayed
-    expr: gitlab_com:last_wale_basebackup_age_in_hours >= 48
+    expr: gitlab_com:last_walg_successful_basebackup_age_in_hours >= 48
     for: 5m
     labels:
       pager: pagerduty
@@ -26,4 +31,4 @@ groups:
       description: WALE basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: troubleshooting/gitlab-com-wale-backups.md
-      title: Last WALE basebackup was seen {{ .Value | humanizeDuration }} ago.
+      title: Last successful WALE basebackup was seen {{ .Value | humanizeDuration }} ago.
