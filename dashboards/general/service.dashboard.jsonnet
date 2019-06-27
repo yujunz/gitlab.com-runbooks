@@ -4,6 +4,7 @@ local commonAnnotations = import 'common_annotations.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
 local colors = import 'colors.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -453,4 +454,7 @@ dashboard.new(
     w: 12,
     h: 10,
   }
-)
+) + {
+  links+: platformLinks.services + platformLinks.triage,
+}
+
