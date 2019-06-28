@@ -108,4 +108,8 @@ local colors = import 'colors.libsonnet';
     "alias": "cny stage",
     "color": "#FADE2A",
   },
+  networkReceive:: {
+    "alias": "/receive .*/",
+    "transform": "negative-Y"
+  },
 }

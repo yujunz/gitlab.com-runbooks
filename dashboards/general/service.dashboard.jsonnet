@@ -13,10 +13,11 @@ local annotation = grafana.annotation;
 
 local generalGraphPanel(
   title,
-  description=null
+  description=null,
+  linewidth=2,
 ) = graphPanel.new(
     title,
-    linewidth=2,
+    linewidth=linewidth,
     fill=0,
     datasource="$PROMETHEUS_DS",
     description=description,
@@ -40,6 +41,23 @@ local generalGraphPanel(
   .addSeriesOverride(seriesOverrides.alertFiring)
   .addSeriesOverride(seriesOverrides.alertPending)
   .addSeriesOverride(seriesOverrides.slo);
+
+local nodePanel(
+  title,
+  description=null,
+) = graphPanel.new(
+    title,
+    linewidth=1,
+    fill=0,
+    datasource="$PROMETHEUS_DS",
+    description=description,
+    decimals=2,
+    legend_show=false,
+    legend_values=false,
+    legend_alignAsTable=false,
+    legend_hideEmpty=true,
+  )
+  .addSeriesOverride(seriesOverrides.networkReceive);
 
 local activeAlertsPanel() = grafana.tablePanel.new(
     'Active Alerts',
@@ -180,6 +198,45 @@ local apdexPanel() = generalGraphPanel(
     show=false,
   );
 
+
+local componentApdexPanel() = generalGraphPanel(
+    "Component Latency: Apdex",
+    description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+    linewidth=1,
+  )
+  .addTarget( // Primary metric
+    promQuery.target('
+      min(
+        min_over_time(
+          gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval]
+        )
+      ) by (component)
+      ',
+      legendFormat='{{ component }} component',
+    )
+  )
+  .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
+    promQuery.target('
+        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}) or avg(slo:min:gitlab_service_apdex:ratio{type="$type"})
+      ',
+      interval="5m",
+      legendFormat='SLO',
+    ),
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    max=1,
+    label="Apdex %",
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
+
 local errorRatesPanel() =
   generalGraphPanel(
     "Error Ratios",
@@ -239,6 +296,40 @@ local errorRatesPanel() =
     show=false,
   );
 
+local componentErrorRates() =
+  generalGraphPanel(
+    "Component Error Rates - modified scale: (1 + n) log10",
+    description="Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+    linewidth=1,
+  )
+  .addTarget( // Primary metric
+    promQuery.target('
+      1 +
+      (
+        60 *
+        max(
+          max_over_time(
+            gitlab_component_errors:rate{environment="$environment", type="$type", stage="$stage"}[$__interval]
+          )
+        ) by (component)
+      )
+      ',
+      legendFormat='{{ component }} component',
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='short',
+    label="Errors per Minute",
+    logBase=10,
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
 local serviceAvailabilityPanel() =
   generalGraphPanel(
     "Service Availability",
@@ -275,6 +366,36 @@ local serviceAvailabilityPanel() =
       ) by (tier, type)
       ',
       legendFormat='last week',
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    max=1,
+    label="Availability %",
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
+local componentAvailabilityPanel() =
+  generalGraphPanel(
+    "Component Availability",
+    description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.",
+    linewidth=1,
+  )
+  .addTarget( // Primary metric
+    promQuery.target('
+      min(
+        min_over_time(
+          gitlab_component_availability:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval]
+        )
+      ) by (component)
+      ',
+      legendFormat='{{ component }} component',
     )
   )
   .resetYaxes()
@@ -383,6 +504,94 @@ local qpsPanel() =
     show=false,
   );
 
+local componentQpsPanel() =
+  generalGraphPanel(
+    "Component RPS - Requests per Second",
+    description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+    linewidth=1,
+  )
+  .addTarget( // Primary metric
+    promQuery.target('
+      1 +
+      max(
+        avg_over_time(
+          gitlab_component_ops:rate{environment="$environment", type="$type", stage="$stage"}[$__interval]
+        )
+      ) by (component)
+      ',
+      legendFormat='{{ component }} component',
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='reqps',
+    label="Requests per Second",
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
+local nodeCPU() =
+  nodePanel(
+    "Node CPU",
+    description="The amount of non-idle time consumed by nodes for this service",
+  )
+  .addTarget( // Primary metric
+    promQuery.target('
+      avg(instance:node_cpu_utilization:ratio{environment="$environment", stage=~"|$stage", type="$type"}) by (fqdn)
+      ',
+      legendFormat='{{ fqdn }}',
+      intervalFactor=5,
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    label="Average Non-Idle Time",
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
+
+local nodeNetwork() =
+  nodePanel(
+    "Node Network Utilization",
+    description="Network utilization for nodes for this service",
+  )
+  .addTarget(
+    promQuery.target('
+      sum(rate(node_network_transmit_bytes_total{environment="$environment", stage=~"|$stage", type="$type"}[$__interval])) by (fqdn)
+      ',
+      legendFormat='send {{ fqdn }}',
+      intervalFactor=5,
+    )
+  )
+  .addTarget(
+    promQuery.target('
+      sum(rate(node_network_receive_bytes_total{environment="$environment", stage=~"|$stage", type="$type"}[$__interval])) by (fqdn)
+      ',
+      legendFormat='receive {{ fqdn }}',
+      intervalFactor=5,
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='Bps',
+    label="Network utilization",
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
 
 dashboard.new(
   'Service Platform Metrics',
@@ -454,7 +663,63 @@ dashboard.new(
     w: 12,
     h: 10,
   }
-) + {
+)
+.addPanel( // Would be great to move these into a row
+  componentApdexPanel(),
+  gridPos={
+    x: 0,
+    y: 30,
+    w: 12,
+    h: 10,
+  }
+)
+.addPanel(
+  componentErrorRates(),
+  gridPos={
+    x: 12,
+    y: 30,
+    w: 12,
+    h: 10,
+  }
+)
+.addPanel(
+  componentAvailabilityPanel(),
+  gridPos={
+    x: 0,
+    y: 40,
+    w: 12,
+    h: 10,
+  }
+)
+.addPanel(
+  componentQpsPanel(),
+  gridPos={
+    x: 12,
+    y: 40,
+    w: 12,
+    h: 10,
+  }
+)
+.addPanel( // Would be great to move these into a row
+  nodeCPU(),
+  gridPos={
+    x: 0,
+    y: 50,
+    w: 12,
+    h: 10,
+  }
+)
+.addPanel(
+  nodeNetwork(),
+  gridPos={
+    x: 12,
+    y: 50,
+    w: 12,
+    h: 10,
+  }
+)
++ {
   links+: platformLinks.services + platformLinks.triage,
 }
+
 
