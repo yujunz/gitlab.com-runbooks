@@ -6,6 +6,12 @@
 
 [draw.io source](../graphs/gitlab-monitoring.xml) for later modifications.
 
+[video: delivery: intro to monitoring at gitlab.com](https://www.youtube.com/watch?reload=9&v=fDeeYqCnuoM&list=PL05JrBw4t0KoPzC03-4yXuJEWdUo7VZfX&index=13&t=0s)
+
+[epic about figuring out and documenting monitoring](https://gitlab.com/groups/gitlab-com/gl-infra/-/epics/75)
+
+[video: General metrics and anomaly detection](https://www.youtube.com/watch?reload=9&v=Oq5PHtgEM1g&feature=youtu.be)
+
 
 GitLab monitoring consist of the following parts:
 

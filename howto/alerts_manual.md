@@ -1,14 +1,52 @@
 # Alerting
 
+## Overview ##
+
+videos and materials in `./runbooks/howto/monitoring-overview.md`
+
+[part V (chapters 18 and 19) of O'Reilly's "Prometheus up and running" book](https://learning.oreilly.com/library/view/prometheus-up/9781492034131/part05.html#part5)
+
+[sre workbook, chapter 5](https://landing.google.com/sre/workbook/chapters/alerting-on-slos/#ch05fn5)
+
+```mermaid
+graph TD
+A[exporters] -->|scraping /metrics endpoint| B(Prometheus)
+subgraph Prometheus
+B --> C{alerting rules}
+B --> D{recording rules}
+D --> B
+C -->E[alertmanager configured endpoints]
+end
+subgraph alertmanager
+E --> H[routing rules]
+H --> I["pagerduty receiver (its config includes a PD service key)"]
+H --> J[slack receiver]
+H --> M[other receivers]
+end
+subgraph Pagerduty
+I --> |PD Prometheus service integration| K[PD service]
+K --> O["PD Escalation policy (e.g. if no response in 5 mins send a text)"]
+O --> P[individual PD users]
+O --> R[PD schedules: SRE, DBRE, Support, etc]
+end
+subgraph Slack
+J --> L[Slack channels]
+end
+subgraph other
+M --> N[other]
+end
+
+```
+
 ## Prometheus
 
 Generally speaking alerts are triggered by prometheus, and then grouped by label, prioritized and deduped by the alert manager.
 
 Currently most alerts are being grouped by environment and alert name. These alerts are then shipped to the alert manager which applies a template to them to ship them to slack or pagerduty, depending on the `pager` label.
 
-## Alert sample
+## Alert rule sample
 
-This sample alert would trigger pretty much all the time,
+Alert rules, alongside other config such as alertmanager's URL endpoint, are part of Prometheus config. This sample alert rule would trigger pretty much all the time,
 
 ```yaml
 groups:
@@ -54,8 +92,12 @@ for example, in the previous alert, there will be one line for each node that
 matches the expression and it will include the text `node_load = X` once per
 each host.
 
+## Alertmanager
 
-## How to add new alerts
+Alerts raised by Prometheus, as defined by alert rules, are sent to alertmanager. Alertmanager is configured with routing rules and receivers. Incoming alerts from Prometheus are routed to receivers based on routing rules.
+
+
+## How to add new alerts (alert rules in Prometheus config)
 
 Create a new yml file under `/rules` in this repo, and submit a MR. Once the MR has been approved &
 merged, trigger a chef converge on the `[gstg|gprd|ops]-infra-alerts` roles.
@@ -72,11 +114,14 @@ bundle exec knife ssh 'roles:ops-infra-alerts'
 
 ### Prometheus
 
-We have 3 of those, 1 and 2 are internal to GitLab.com, 3 is used for the public monitor.gitlab.net site.
+~~We have 3 of those, 1 and 2 are internal to GitLab.com, 3 is used for the public monitor.gitlab.net site.~~ this is outdated, see monitoring overview for more info
 
 ### Alert Manager
 
-The alert manager is running on prometheus 1, it can be found chasing the `gitlab-alertmanager` role.
+We have three alermanagers. Two of them are configured in HA setup (there are two instances running in a "cluster"):
+- prometheus.gitlab.com (the VM is in Azure, alertmanager is running on the same machine as Prometheus, legacy)
+- alerts-0[1,2]-inf-gprd.c.gitlab-production.internal (old, secrets in Chef Vault, https://alerts.gprd.gitlab.net/)
+- alerts-0[1,2]-inf-ops.c.gitlab-ops.internal (latest, secrets in GKMS, https://alerts.ops.gitlab.net/)
 
 The cookbook that holds all the setup for the alert manager can be found in [this repo](https://gitlab.com/gitlab-cookbooks/gitlab-alertmanager)
 
@@ -112,6 +157,8 @@ mountpoint              /var/opt/gitlab
 * Route new alerts to a testing channel by adding `channel: "#testing"` where the channel is something you know and have agreed. This will reduce noise when developing alerts.
 * Trigger alerts to see how they work by writing a condition that will always be true.
 * Print the whole alerting data and model using go template printf, with a text such as: `text: '{{ printf "%#v" . }}'` in the alert receiver configuration on the alert manager.
+* Verify alertmanager config using https://prometheus.io/webtools/alerting/routing-tree-editor/ . It will also visualize the routing tree for you. When pasting config, remove any ruby templated strings and do not paste any secrets!
+* Test changes to routing rules in alertmanager's config using routing tree editor and alerts which can be [easily found in Thanos](https://thanos-query.ops.gitlab.net/graph?g0.range_input=1h&g0.expr=ALERTS&g0.tab=1)
 
 ## References
 
@@ -119,3 +166,5 @@ mountpoint              /var/opt/gitlab
 * [Prometheus template source code](https://github.com/prometheus/prometheus/blob/master/template/template.go#L115)
 * [Prometheus default alert manager expansion template](https://github.com/prometheus/alertmanager/blob/master/template/default.tmpl)
 * [Go text/template documentation](https://golang.org/pkg/text/template/)
+* [part V (chapters 18 and 19) of O'Reilly's "Prometheus up and running" book](https://learning.oreilly.com/library/view/prometheus-up/9781492034131/part05.html#part5)
+* [sre workbook, chapter 5](https://landing.google.com/sre/workbook/chapters/alerting-on-slos/#ch05fn5)
