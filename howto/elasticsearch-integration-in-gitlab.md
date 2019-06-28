@@ -1,8 +1,9 @@
 # ES integration #
 
-## ES integration docs ##
+## ES integration docs & video ##
 
 More detailed instructions and docs: https://docs.gitlab.com/ee/integration/elasticsearch.html
+ES integration deep dive video: https://www.youtube.com/watch?reload=9&v=vrvl-tN2EaA
 
 ## ES integration admin page ##
 
