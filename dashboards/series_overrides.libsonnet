@@ -57,10 +57,10 @@ local colors = import 'colors.libsonnet';
     "dashLength": 2,
     "spaceLength": 2,
     "fill": 0,
-    "color": "#dddddd80",
+    "color": "#dddddd40",
     "legend": true,
     "lines": true,
-    "linewidth": 2,
+    "linewidth": 1,
     "zindex": -3,
     "nullPointMode": "connected"
   },
