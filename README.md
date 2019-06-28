@@ -363,6 +363,7 @@ During an incident there are at least 2 roles, and one more optional
 * [Register new domain(s)](howto/domain-registration.md)
 * [Setup and Use my Yubikey](howto/yubikey.md)
 * [Purge Git data](howto/purge-git-data.md)
+* [Getting Started with Kubernetes and GitLab.com](howto/k8s-gitlab.md)
 
 ### Gitter
 * [MongoDB operations](howto/gitter/mongodb-operations.md)
