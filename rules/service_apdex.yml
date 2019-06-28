@@ -198,6 +198,8 @@ groups:
   # Sidekiq jobs
   # See https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6670 for details
   # We deliberately ignore the `import` queue for now
+
+  # Sidekiq pullmirror Queue
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'pullmirror'
@@ -211,19 +213,28 @@ groups:
       /
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pullmirror"}[1m])) by (environment, tier, type, stage)
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: 'pullmirror'
+    expr: >
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pullmirror"}[1m])) by (environment, tier, type, stage)
+
+  # Sidekiq besteffort Queue
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'besteffort'
     expr: >
-      (
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="5", priority="besteffort"}[1m])) by (environment, tier, type, stage)
-        +
-        sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="10", priority="besteffort"}[1m])) by (environment, tier, type, stage)
-      )
-      / 2
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="50", priority="besteffort", worker!~"ProjectExportWorker|GitGarbageCollectWorker"}[1m])) by (environment, tier, type, stage)
       /
-      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="besteffort"}[1m])) by (environment, tier, type, stage)
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="besteffort", worker!~"ProjectExportWorker|GitGarbageCollectWorker"}[1m])) by (environment, tier, type, stage)
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: 'besteffort'
+    expr: >
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="besteffort", worker!~"ProjectExportWorker|GitGarbageCollectWorker"}[1m])) by (environment, tier, type, stage)
+
+  # Sidekiq Pages Queue
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'pages'
@@ -232,6 +243,13 @@ groups:
       /
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pages"}[1m])) by (environment, tier, type, stage)
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: 'pages'
+    expr: >
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pages"}[1m])) by (environment, tier, type, stage)
+
+  # Sidekiq Realtime Queue
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'realtime'
@@ -245,6 +263,13 @@ groups:
       /
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="realtime"}[1m])) by (environment, tier, type, stage)
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: 'realtime'
+    expr: >
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="realtime"}[1m])) by (environment, tier, type, stage)
+
+  # Sidekiq ASAP Queue
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'asap'
@@ -258,6 +283,13 @@ groups:
       /
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="asap"}[1m])) by (environment, tier, type, stage)
 
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: 'asap'
+    expr: >
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="asap"}[1m])) by (environment, tier, type, stage)
+
+  # Sidekiq Pipeline Queue
   - record: gitlab_component_apdex:ratio
     labels:
       component: 'pipeline'
@@ -272,16 +304,10 @@ groups:
       sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, tier, type, stage)
 
   - record: gitlab_component_apdex:weight:score
+    labels:
+      component: 'pipeline'
     expr: >
-      avg by (environment, tier, type, stage, component) (
-        label_replace(
-          sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf"}[1m])) by (environment, tier, type, stage, priority),
-          "component",
-          "$1",
-          "priority",
-          "(.*)"
-        )
-      )
+      sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, tier, type, stage)
 
   # patroni: indirectly measured with rails database durations
   # We don't have latency histograms for patroni but for now we will
