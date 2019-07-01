@@ -40,3 +40,37 @@ groups:
     expr: rate(rails_git_no_repository_for_such_path[1m])
   - record: type:rails_no_repository_for_path:rate1m
     expr: sum(instance:rails_no_repository_for_path:rate1m) without (instance, fqdn)
+
+- name: Rails Redis Cache
+  interval: 1m
+  rules:
+  - record: instance:gitlab_cache_operation_duration_seconds_count:rate1m
+    expr: >
+      sum without (controller,action) (
+        rate(gitlab_cache_operation_duration_seconds_count[1m])
+      )
+  - record: instance:gitlab_cache_operation_duration_seconds_sum:rate1m
+    expr: >
+      sum without (controller,action) (
+        rate(gitlab_cache_operation_duration_seconds_sum[1m])
+      )
+  - record: instance:gitlab_cache_operation_duration_seconds_bucket:rate1m
+    expr: >
+      sum without (controller,action) (
+        rate(gitlab_cache_operation_duration_seconds_bucket[1m])
+      )
+  - record: job:gitlab_cache_operation_duration_seconds_count:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        instance:gitlab_cache_operation_duration_seconds_count:rate1m
+      )
+  - record: job:gitlab_cache_operation_duration_seconds_sum:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        instance:gitlab_cache_operation_duration_seconds_sum:rate1m
+      )
+  - record: job:gitlab_cache_operation_duration_seconds_bucket:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        instance:gitlab_cache_operation_duration_seconds_bucket:rate1m
+      )
