@@ -69,3 +69,46 @@ I have a few advices for you:
 
 $ /opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH CONFIG SET latency-monitor-threshold 0
 ```
+
+## Using latency-history
+
+`redis-cli` has a useful command-line argument `--latency-history` that
+issues PING commands to a Redis server to measure its
+responsiveness. For example:
+
+```
+$ /opt/gitlab/embedded/bin/redis-cli --latency-history  -h 10.217.5.102
+min: 0, max: 67, avg: 8.65 (799 samples) -- 15.00 seconds range
+min: 0, max: 62, avg: 9.03 (783 samples) -- 15.01 seconds range
+min: 0, max: 50, avg: 8.53 (802 samples) -- 15.00 seconds range
+min: 0, max: 61, avg: 7.96 (830 samples) -- 15.02 seconds range
+min: 0, max: 110, avg: 7.32 (860 samples) -- 15.01 seconds range
+min: 0, max: 30, avg: 2.28 (1206 samples) -- 15.00 seconds range
+min: 0, max: 82, avg: 5.39 (966 samples) -- 15.01 seconds range
+min: 0, max: 108, avg: 19.62 (504 samples) -- 15.00 seconds range
+min: 0, max: 57, avg: 13.87 (625 samples) -- 15.01 seconds range
+min: 0, max: 57, avg: 7.82 (836 samples) -- 15.03 seconds range
+min: 0, max: 45, avg: 5.28 (972 samples) -- 15.00 seconds range
+```
+
+This test will run indefinitely until you kill it, but the `avg` time here
+is important. The first line shows that on average, a single Redis command
+took 8 ms to respond--too slow! A healthy looking run returns averages well
+under a millisecond:
+
+```
+$ /opt/gitlab/embedded/bin/redis-cli --latency-history  -h  10.217.5.101
+min: 0, max: 1, avg: 0.10 (1472 samples) -- 15.01 seconds range
+min: 0, max: 1, avg: 0.10 (1470 samples) -- 15.00 seconds range
+min: 0, max: 2, avg: 0.10 (1470 samples) -- 15.00 seconds range
+min: 0, max: 2, avg: 0.11 (1470 samples) -- 15.01 seconds range
+min: 0, max: 2, avg: 0.11 (1471 samples) -- 15.01 seconds range
+```
+
+There may be a number of causes for the latency:
+
+1. Number of client connections: check the number of active TCP connections on the Redis host.
+2. Slow background saves
+3. Key evictions
+
+See https://tech.trivago.com/2017/01/25/learn-redis-the-hard-way-in-production/ more information.
