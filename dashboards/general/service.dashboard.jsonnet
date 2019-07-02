@@ -15,6 +15,7 @@ local generalGraphPanel(
   title,
   description=null,
   linewidth=2,
+  sort="increasing",
 ) = graphPanel.new(
     title,
     linewidth=linewidth,
@@ -22,6 +23,7 @@ local generalGraphPanel(
     datasource="$PROMETHEUS_DS",
     description=description,
     decimals=2,
+    sort=sort,
     legend_show=true,
     legend_values=true,
     legend_min=true,
@@ -45,6 +47,7 @@ local generalGraphPanel(
 local nodePanel(
   title,
   description=null,
+  sort="increasing",
 ) = graphPanel.new(
     title,
     linewidth=1,
@@ -52,6 +55,7 @@ local nodePanel(
     datasource="$PROMETHEUS_DS",
     description=description,
     decimals=2,
+    sort=sort,
     legend_show=false,
     legend_values=false,
     legend_alignAsTable=false,
@@ -143,6 +147,7 @@ local errorRateSLOPanel() = grafana.singlestat.new(
 local apdexPanel() = generalGraphPanel(
     "Latency: Apdex",
     description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+    sort=0,
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -198,11 +203,11 @@ local apdexPanel() = generalGraphPanel(
     show=false,
   );
 
-
 local componentApdexPanel() = generalGraphPanel(
     "Component Latency: Apdex",
     description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
     linewidth=1,
+    sort="increasing",
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -240,7 +245,8 @@ local componentApdexPanel() = generalGraphPanel(
 local errorRatesPanel() =
   generalGraphPanel(
     "Error Ratios",
-    description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better"
+    description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better",
+    sort=0,
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -301,6 +307,7 @@ local componentErrorRates() =
     "Component Error Rates - modified scale: (1 + n) log10",
     description="Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
     linewidth=1,
+    sort="decreasing",
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -333,7 +340,8 @@ local componentErrorRates() =
 local serviceAvailabilityPanel() =
   generalGraphPanel(
     "Service Availability",
-    description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better."
+    description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.",
+    sort=0,
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -386,6 +394,7 @@ local componentAvailabilityPanel() =
     "Component Availability",
     description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.",
     linewidth=1,
+    sort="decreasing",
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -414,7 +423,8 @@ local componentAvailabilityPanel() =
 local qpsPanel() =
   generalGraphPanel(
     "RPS - Service Requests per Second",
-    description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier."
+    description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+    sort=0,
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -504,11 +514,13 @@ local qpsPanel() =
     show=false,
   );
 
+
 local componentQpsPanel() =
   generalGraphPanel(
     "Component RPS - Requests per Second",
     description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
     linewidth=1,
+    sort="decreasing",
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -526,6 +538,83 @@ local componentQpsPanel() =
   .addYaxis(
     format='reqps',
     label="Requests per Second",
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
+local saturationPanel() = generalGraphPanel(
+    "Saturation",
+    description="Saturation is a measure of the most saturated component of the service. Lower is better.",
+    sort=0,
+  )
+  .addTarget( // Primary metric
+    promQuery.target('
+      max(
+        max_over_time(
+          gitlab_service_saturation:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval]
+        )
+      ) by (type)
+      ',
+      legendFormat='{{ type }} service',
+    )
+  )
+  .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
+    promQuery.target('
+        avg(slo:max:gitlab_service_saturation:ratio{environment="$environment", type="$type", stage="$stage"}) or avg(slo:max:gitlab_service_saturation:ratio{type="$type"})
+      ',
+      interval="5m",
+      legendFormat='SLO',
+    ),
+  )
+  .addTarget( // Last week
+    promQuery.target('
+        max(
+          max_over_time(
+            gitlab_service_saturation:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval] offset 1w
+          )
+        ) by (type)
+      ',
+      legendFormat='last week',
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    max=1,
+    label="Saturation %",
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
+local componentSaturationPanel() = generalGraphPanel(
+    "Saturation",
+    description="Saturation is a measure of what ratio of a finite resource is currently being utilized. Lower is better.",
+    sort="decreasing",
+  )
+  .addTarget( // Primary metric
+    promQuery.target('
+      max(
+        max_over_time(
+          gitlab_component_saturation:ratio{environment="$environment", type="$type", stage="$stage"}[$__interval]
+        )
+      ) by (component)
+      ',
+      legendFormat='{{ component }} component',
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    max=1,
+    label="Saturation %",
   )
   .addYaxis(
     format='short',
@@ -680,12 +769,21 @@ dashboard.new(
     h: 10,
   }
 )
+.addPanel(
+  saturationPanel(),
+  gridPos={
+    x: 0,
+    y: 32,
+    w: 12,
+    h: 10,
+  }
+)
 .addPanel(row.new(title="🔩 Service Component Metrics", collapse=true)
   .addPanel(
     componentApdexPanel(),
     gridPos={
       x: 0,
-      y: 33,
+      y: 43,
       w: 12,
       h: 10,
     }
@@ -694,7 +792,7 @@ dashboard.new(
     componentErrorRates(),
     gridPos={
       x: 12,
-      y: 33,
+      y: 43,
       w: 12,
       h: 10,
     }
@@ -703,7 +801,7 @@ dashboard.new(
     componentAvailabilityPanel(),
     gridPos={
       x: 0,
-      y: 43,
+      y: 53,
       w: 12,
       h: 10,
     }
@@ -712,14 +810,24 @@ dashboard.new(
     componentQpsPanel(),
     gridPos={
       x: 12,
-      y: 43,
+      y: 53,
       w: 12,
       h: 10,
     }
-  ),
+  )
+  .addPanel(
+    componentSaturationPanel(),
+    gridPos={
+      x: 0,
+      y: 63,
+      w: 12,
+      h: 10,
+    }
+  )
+  ,
   gridPos={
       x: 0,
-      y: 32,
+      y: 42,
       w: 24,
       h: 1,
   }
@@ -729,7 +837,7 @@ dashboard.new(
     nodeCPU(),
     gridPos={
       x: 0,
-      y: 54,
+      y: 74,
       w: 12,
       h: 10,
     }
@@ -738,14 +846,14 @@ dashboard.new(
     nodeNetwork(),
     gridPos={
       x: 12,
-      y: 54,
+      y: 74,
       w: 12,
       h: 10,
     }
   ),
   gridPos={
       x: 0,
-      y: 53,
+      y: 73,
       w: 24,
       h: 1,
   }
