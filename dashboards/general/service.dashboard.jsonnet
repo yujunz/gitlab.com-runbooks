@@ -607,32 +607,48 @@ dashboard.new(
 .addTemplate(templates.type)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)
-.addPanel(latencySLOPanel(),
+.addPanel(row.new(title="👩‍⚕️ Service Health", collapse=true)
+  .addPanel(latencySLOPanel(),
+    gridPos={
+      x: 0,
+      y: 1,
+      w: 6,
+      h: 4,
+  })
+  .addPanel(activeAlertsPanel(),
+    gridPos={
+      x: 6,
+      y: 1,
+      w: 18,
+      h: 8,
+  })
+  .addPanel(errorRateSLOPanel(),
+    gridPos={
+      x: 0,
+      y: 5,
+      w: 6,
+      h: 4,
+  }),
   gridPos={
-    x: 0,
-    y: 0,
-    w: 6,
-    h: 4,
-})
-.addPanel(activeAlertsPanel(),
+      x: 0,
+      y: 0,
+      w: 24,
+      h: 1,
+  }
+)
+.addPanel(row.new(title="🏅 Key Service Metrics"),
   gridPos={
-    x: 6,
-    y: 0,
-    w: 18,
-    h: 8,
-})
-.addPanel(errorRateSLOPanel(),
-  gridPos={
-    x: 0,
-    y: 4,
-    w: 6,
-    h: 4,
-})
+      x: 0,
+      y: 11,
+      w: 24,
+      h: 1,
+  }
+)
 .addPanel(
   apdexPanel(),
   gridPos={
     x: 0,
-    y: 10,
+    y: 12,
     w: 12,
     h: 10,
   }
@@ -641,7 +657,7 @@ dashboard.new(
   errorRatesPanel(),
   gridPos={
     x: 12,
-    y: 10,
+    y: 12,
     w: 12,
     h: 10,
   }
@@ -650,7 +666,7 @@ dashboard.new(
   serviceAvailabilityPanel(),
   gridPos={
     x: 0,
-    y: 20,
+    y: 22,
     w: 12,
     h: 10,
   }
@@ -659,63 +675,79 @@ dashboard.new(
   qpsPanel(),
   gridPos={
     x: 12,
-    y: 20,
+    y: 22,
     w: 12,
     h: 10,
   }
 )
-.addPanel( // Would be great to move these into a row
-  componentApdexPanel(),
+.addPanel(row.new(title="🔩 Service Component Metrics", collapse=true)
+  .addPanel(
+    componentApdexPanel(),
+    gridPos={
+      x: 0,
+      y: 33,
+      w: 12,
+      h: 10,
+    }
+  )
+  .addPanel(
+    componentErrorRates(),
+    gridPos={
+      x: 12,
+      y: 33,
+      w: 12,
+      h: 10,
+    }
+  )
+  .addPanel(
+    componentAvailabilityPanel(),
+    gridPos={
+      x: 0,
+      y: 43,
+      w: 12,
+      h: 10,
+    }
+  )
+  .addPanel(
+    componentQpsPanel(),
+    gridPos={
+      x: 12,
+      y: 43,
+      w: 12,
+      h: 10,
+    }
+  ),
   gridPos={
-    x: 0,
-    y: 30,
-    w: 12,
-    h: 10,
+      x: 0,
+      y: 32,
+      w: 24,
+      h: 1,
   }
 )
-.addPanel(
-  componentErrorRates(),
+.addPanel(row.new(title="🖥️ Node Metrics", collapse=true)
+  .addPanel(
+    nodeCPU(),
+    gridPos={
+      x: 0,
+      y: 54,
+      w: 12,
+      h: 10,
+    }
+  )
+  .addPanel(
+    nodeNetwork(),
+    gridPos={
+      x: 12,
+      y: 54,
+      w: 12,
+      h: 10,
+    }
+  ),
   gridPos={
-    x: 12,
-    y: 30,
-    w: 12,
-    h: 10,
-  }
-)
-.addPanel(
-  componentAvailabilityPanel(),
-  gridPos={
-    x: 0,
-    y: 40,
-    w: 12,
-    h: 10,
-  }
-)
-.addPanel(
-  componentQpsPanel(),
-  gridPos={
-    x: 12,
-    y: 40,
-    w: 12,
-    h: 10,
-  }
-)
-.addPanel( // Would be great to move these into a row
-  nodeCPU(),
-  gridPos={
-    x: 0,
-    y: 50,
-    w: 12,
-    h: 10,
-  }
-)
-.addPanel(
-  nodeNetwork(),
-  gridPos={
-    x: 12,
-    y: 50,
-    w: 12,
-    h: 10,
+      x: 0,
+      y: 53,
+      w: 24,
+      h: 1,
   }
 )
 + {
