@@ -99,6 +99,7 @@ local colors = import 'colors.libsonnet';
     "fill": true,
     "dashLength": 1,
     "spaceLength": 4,
+    "hideTooltip": true,
   },
   mainStage:: {
     "alias": "main stage",

@@ -23,7 +23,8 @@ local genGridPos(x,y,h=1,w=1) = {
 
 local generalGraphPanel(
   title,
-  description=null
+  description=null,
+  sort="increasing",
 ) = graphPanel.new(
     title,
     datasource="$PROMETHEUS_DS",
@@ -31,6 +32,7 @@ local generalGraphPanel(
     fill=0,
     description=description,
     decimals=2,
+    sort=sort,
     legend_show=true,
     legend_values=true,
     legend_min=true,
@@ -50,6 +52,7 @@ local generateAnomalyPanel(
   maxY=6,
   errorThreshold=8,
   warningThreshold=6,
+  sort="increasing",
   ) =
   graphPanel.new(
     title,
@@ -58,6 +61,7 @@ local generateAnomalyPanel(
     linewidth=2,
     fill=0,
     decimals=2,
+    sort=sort,
     legend_show=true,
     legend_values=false,
     legend_min=false,
@@ -177,6 +181,7 @@ dashboard.new(
   generalGraphPanel(
     "Latency: Apdex",
     description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+    sort="increasing",
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -232,7 +237,8 @@ dashboard.new(
       gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
   ',
   maxY=0.5,
-  minY=-12
+  minY=-12,
+  sort="increasing",
   )
   ,
   gridPos=genGridPos(1, 0.5)
@@ -240,7 +246,8 @@ dashboard.new(
 .addPanel(
   generalGraphPanel(
     "Error Ratios",
-    description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better"
+    description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better",
+    sort="decreasing",
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -298,14 +305,16 @@ dashboard.new(
       gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
   ',
   maxY=12,
-  minY=-0.5
+  minY=-0.5,
+  sort="decreasing",
   )
   , gridPos=genGridPos(1, 1.5)
 )
 .addPanel(
   generalGraphPanel(
     "Service Requests per Second",
-    description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier."
+    description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+    sort="decreasing",
   )
   .addTarget( // Primary metric
     promQuery.target('
@@ -347,7 +356,7 @@ dashboard.new(
   minY=-3,
   errorThreshold=4,
   warningThreshold=3,
-
+  sort="decreasing",
   )
   , gridPos=genGridPos(1, 2.5)
 )
@@ -398,6 +407,39 @@ dashboard.new(
   minY=-12
   )
   , gridPos=genGridPos(1, 3.5)
-) + {
+)
+.addPanel(
+  generalGraphPanel(
+    "Saturation",
+    description="Saturation is a measure of the most saturated component of the service. Lower is better.",
+    sort="decreasing",
+  )
+  .addTarget( // Primary metric
+    promQuery.target('
+      max(
+        max_over_time(
+          gitlab_service_saturation:ratio{environment="$environment", stage="$stage"}[$__interval]
+        )
+      ) by (type)
+      ',
+      legendFormat='{{ type }} service',
+      intervalFactor=3,
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    max=1,
+    label="Availability %",
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  )
+  , gridPos=genGridPos(0, 4.5, w=2)
+)
+ + {
   links+: platformLinks.services,
 }
