@@ -1,0 +1,72 @@
+groups:
+- name: GitLab Saturation Ratios
+  interval: 1m
+  rules:
+  # type: *, component: cpu
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'cpu'
+    expr: >
+      avg(1 - rate(node_cpu_seconds_total{mode="idle", tier!="", type!="", type!~"console-node|deploy-node"}[1m])) by (type, tier, stage, environment)
+
+  # type: web/api/git, component: unicorn_workers
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'unicorn_workers'
+    expr: > # For some reason, unicorn_active_connections sometimes exceeds the number of unicorns, clamp_max on the value
+      clamp_max(
+        sum(avg_over_time(unicorn_active_connections{job="gitlab-unicorn"}[1m])) by (type, tier, stage, environment)
+        /
+        count(ruby_memory_bytes{job="gitlab-unicorn"}) by (type, tier, stage, environment),
+        1
+      )
+
+  # type: redis/redis cache, component: single_threaded_cpu
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'single_threaded_cpu'
+    expr: >
+      clamp_max(
+        max(rate(redis_used_cpu_user[1m]) + rate(redis_used_cpu_sys[1m]) ) by (type, tier, stage, environment),
+        1
+      )
+
+  # type: pgbouncer, component: single_threaded_cpu
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'single_threaded_cpu'
+    expr: >
+      max(1 - rate(node_cpu_seconds_total{type="pgbouncer", mode="idle"}[1m])) by (type, tier, stage, environment)
+
+  # type: pgbouncer, component: server_connections_pools
+  - record: gitlab_component_saturation:ratio
+    expr: >
+      avg(
+        label_replace(
+          clamp_max(
+            max(
+              max_over_time(pgbouncer_pools_server_active_connections{user="gitlab"}[1m]) /
+              (
+                (
+                  pgbouncer_pools_server_idle_connections{user="gitlab"} +
+                  pgbouncer_pools_server_active_connections{user="gitlab"} +
+                  pgbouncer_pools_server_testing_connections{user="gitlab"} +
+                  pgbouncer_pools_server_used_connections{user="gitlab"} +
+                  pgbouncer_pools_server_login_connections{user="gitlab"}
+                )
+                > 0
+              )
+            ) by (database, type, tier, stage, environment),
+            1
+          ),
+          "component",
+          "server_connections_pool_$0",
+          "database",
+          ".*"
+        )
+      ) without (database)
+
+  # Aggregate over all components within a service using max
+  - record: gitlab_service_saturation:ratio
+    expr: >
+      max by (environment, tier, type, stage) (gitlab_component_saturation:ratio)
