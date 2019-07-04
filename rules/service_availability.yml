@@ -96,6 +96,25 @@ groups:
         )
       )
 
+  # metrics
+  - record: gitlab_component_availability:ratio
+    labels:
+      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      tier: inf
+      stage: main
+      component: thanos
+    expr: >
+      avg by (environment) (avg_over_time(up{job="thanos"}[1m]))
+
+  - record: gitlab_component_availability:ratio
+    labels:
+      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      tier: inf
+      stage: main
+      component: prometheus
+    expr: >
+      avg by (environment) (avg_over_time(up{job="prometheus"}[1m]))
+
 - name: GitLab Service Availability Aggregated Rates
   interval: 1m
   rules:

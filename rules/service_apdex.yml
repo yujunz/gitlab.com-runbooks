@@ -369,6 +369,83 @@ groups:
     expr: >
       sum(job:gitlab_cache_operation_duration_seconds_bucket:rate1m{le="+Inf"}) by (environment)
 
+  # metrics: thanos_instant_query
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      tier: inf
+      stage: main
+      component: 'thanos_instant_query'
+    expr: >
+      (
+        sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="3.5"}[1m])) by (environment)
+        +
+        sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="10"}[1m])) by (environment)
+      )
+      / 2
+      /
+      sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) >= 0
+
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      tier: inf
+      stage: main
+      component: 'thanos_instant_query'
+    expr: >
+      sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
+
+  # metrics: thanos_range_query
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      tier: inf
+      stage: main
+      component: 'thanos_range_query'
+    expr: >
+      (
+        sum(rate(thanos_query_api_range_query_duration_seconds_bucket{le="5"}[1m])) by (environment)
+        +
+        sum(rate(thanos_query_api_range_query_duration_seconds_bucket{le="10"}[1m])) by (environment)
+      )
+      / 2
+      /
+      sum(rate(thanos_query_api_range_query_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) >= 0
+
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      tier: inf
+      stage: main
+      component: 'thanos_range_query'
+    expr: >
+      sum(rate(thanos_query_api_range_query_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
+
+  # metrics: prometheus http request
+  - record: gitlab_component_apdex:ratio
+    labels:
+      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      tier: inf
+      stage: main
+      component: 'prometheus_http'
+    expr: >
+      (
+        sum(rate(prometheus_http_request_duration_seconds_bucket{le="1"}[1m])) by (environment)
+        +
+        sum(rate(prometheus_http_request_duration_seconds_bucket{le="0.4"}[1m])) by (environment)
+      )
+      / 2
+      /
+      sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) >= 0
+
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      tier: inf
+      stage: main
+      component: 'prometheus_http'
+    expr: >
+      sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
 
   ######################
   # Aggregation Stage
