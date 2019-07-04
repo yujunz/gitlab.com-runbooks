@@ -113,45 +113,6 @@ groups:
         the auto-scaling provider. Check http://dashboards.gitlab.net/dashboard/db/ci.'
       runbook: troubleshooting/cicd/ci_graphs.md#runners-manager-auto-scaling
 
-  - alert: CICDRunnersCacheDown
-    expr: (probe_success{instance=~"http://runners-cache.*:(5000/v2|9000/minio/login)"} == 0)
-    for: 5m
-    labels:
-      channel: ci-cd
-      severity: s3
-    annotations:
-      title: Runners cache service {{ $labels.instance }} on {{ $labels.fqdn }} has been down for more than 5 minutes.
-      description: 'This impacts CI execution builds, consider tweeting: !tweet ''CI
-        executions are being delayed due to our runners cache being down at GitLab.com,
-        we are investigating the root cause'''
-      runbook: troubleshooting/runners_cache_is_down.md
-
-  - alert: CICDRunnersCacheNginxDown
-    expr: up{job="runners-cache-server"} == 0
-    for: 5m
-    labels:
-      channel: ci-cd
-      severity: s3
-    annotations:
-      title: Runners cache nginx service on {{ $labels.fqdn }} has been down for more than 5 minutes.
-      description: 'This impacts CI execution builds, consider tweeting: !tweet ''CI
-        executions are being delayed due to our runners cache being down at GitLab.com,
-        we are investigating the root cause'''
-      runbook: troubleshooting/runners_cache_is_down.md
-
-  - alert: CICDRunnersCacheServerHasTooManyConnections
-    expr: node_netstat_Tcp_CurrEstab{fqdn=~"runners-cache-.*.gitlab.com"} > 500
-    for: 20m
-    labels:
-      channel: ci-cd
-      severity: s3
-    annotations:
-      title: Number of established connections for {{ $labels.instance }} is too high
-      description: 'This impacts CI execution builds, consider tweeting: !tweet ''CI
-        jobs are being delayed due to issues with Shared Runners cache server. We
-        are restarting it to restore the service.''. Hosts impacted - {{ $labels.instance }}'
-      runbook: troubleshooting/cicd/ci_too_many_connections_on_runners_cache_server.md
-
   - alert: CICDTooManyUsedFDs
     expr: process_open_fds{job=~"(omnibus-runners|private-runners|shared-runners|shared-runners-(gitlab-org|high-cpu))"}
       / process_max_fds{job=~"(omnibus-runners|private-runners|shared-runners|shared-runners-(gitlab-org|high-cpu))"} > 0.8
@@ -165,15 +126,15 @@ groups:
         since 10 minutes. This may affect Runner''s stability. Please look at https://dashboards.gitlab.net/dashboard/db/ci
         for more data.'
 
-  - alert: CICDDegradatedCIConsulPrometheusCluster
-    expr: up{job="ci-node",fqdn=~"(prometheus|consul)-.*(nyc1|us-east1-(c|d)).*"} == 0
+  - alert: CICDPrometheusDown
+    expr: up{job="ci-node",fqdn=~"prometheus-.*us-east1-(c|d).*"} == 0
     for: 5m
     labels:
       channel: ci-cd
       severity: s4
     annotations:
-      title: CI Consul+Prometheus cluster is degradated, {{ $labels.instance }} is down
-      description: 'One or more of hosts from CI Consul+Prometheus cluster is down: {{ $labels.instance }}.'
+      title: CI Prometheus server {{ $labels.instance }} is down
+      description: 'One or more of CI Prometheus servers is down: {{ $labels.instance }}.'
 
   - alert: CICDGCPQuotaHighUsage
     expr: |
