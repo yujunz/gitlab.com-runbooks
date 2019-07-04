@@ -6,85 +6,52 @@ Unfortunately, this is not suitable for production, as it can have up to a 50% i
 
 ## Monitoring a Redis Instance without using MONITOR
 
-This guide describes a technique that will not have a major performance impact. It uses `tcpdump` to analyze network traffic bound for Redis,
-and a tool called [`redis-traffic-stats`](https://github.com/hirose31/redis-traffic-stats) to perform an analysis of the dumped traffic.
+This guide describes a technique that will not have a major performance
+impact. It does the following:
 
-Visit https://github.com/hirose31/redis-traffic-stats#recommended-installation for full details of how to install `redis-traffic-stats` on your workstation.
+1. Captures Redis traffic via `tcpdump`.
+2. Uses [tcp-flow](https://github.com/simsong/tcpflow/) to read the
+packet capture data and to save a separate file for each TCP flow.
+3. Runs a custom script to aggregate the results.
 
-### Capturing traffic
+### Capturing traffic and downloading it to your local machine
 
-On the master Redis server, capture TCP packets using the following command.
+On the *master* Redis server, capture TCP packets and compress them with the following commands:
 
 ```shell
-$ sudo tcpdump -s 65535 tcp port 6379 -w redis.pcap -i ens4
+$ sudo timeout 30 tcpdump -s 65535 tcp port 6379 -w redis.pcap -i ens4
 tcpdump: listening on ens4, link-type EN10MB (Ethernet), capture size 65535 bytes
-^C676 packets captured
+676 packets captured
 718 packets received by filter
 0 packets dropped by kernel
 
 $ gzip redis.pcap
 ```
 
+now download and decompress the capture with:
+```shell
+$ scp redis-cache-01-db-gstg.c.gitlab-staging-1.internal:redis.pcap.gz .
+$ gunzip redis.pcap.gz
+```
+
+remember to remove the pcap file once you're done!
+
 ### Analyzing Redis traffic
 
-Once you have the pcap file, transfer it to your local instance for further analysis.
+#### get the number of commands sent to redis ####
 
+1. install tcpflow (on MacOS: `brew install tcpflow`)
+1. get the number of commands that are issued to redis with:
 ```shell
-$  scp redis-cache-01-db-gstg.c.gitlab-staging-1.internal:redis.pcap.gz .
-$ gunzip redis.pcap.gz
-$ # Now, run redis-traffic-stats ....
-$ redis-traffic-stats -r redis.pcap
-# redis-traffic-stats
-
-## Summary
-
-* Duration:
-    * 2019-07-02 14:17:13 - 2019-07-02 14:17:31 (18s)
-* Total Traffic:
-    * 474 bytes (26.33 bytes/sec)
-* Total Requests:
-    * 98 requests (Avg 5.44 req/sec, Peak 98.00 req/sec)
-
-## Top Commands
-
-### By count
-Command          | Count  | Pct    | Req/sec
------------------|-------:|-------:|---------:
-PING             |     50 |  51.02 |     2.78
-PUBLISH          |     42 |  42.86 |     2.33
-INFO             |      6 |   6.12 |     0.33
-
-### By traffic
-Command          | Bytes     | Byte/sec
------------------|----------:|-------------:
-PUBLISH          |       365 |        20.28
-PING             |        85 |         4.72
-INFO             |        24 |         1.33
-
-## Command Detail
-
-### PUBLISH
-Key                | Bytes     | Byte/sec     | Count  | Pct    | Req/sec
--------------------|----------:|-------------:|-------:|-------:|---------:
-__sentinel__:hello |       365 |        20.28 |     42 | 100.00 |     2.33
-
-### PING
-Key                | Bytes     | Byte/sec     | Count  | Pct    | Req/sec
--------------------|----------:|-------------:|-------:|-------:|---------:
-
-### INFO
-Key                | Bytes     | Byte/sec     | Count  | Pct    | Req/sec
--------------------|----------:|-------------:|-------:|-------:|---------:
-
-## Slow Commands
-
-Time   | Command
-------:|------------------------------------------------------------------------
-18.073 | PUBLISH __sentinel__:hello 10.224.8.121,26379,be4a8e32252f7e399d2d33d6...
-18.073 | PING
-18.073 | PUBLISH __sentinel__:hello 10.224.8.121,26379,be4a8e32252f7e399d2d33d6...
-18.073 | PING
-18.073 | INFO
+$ tcpflow -o redis-analysis -r redis.pcap
+$ cd ./redis-analysis/
+$ find . -name '*.06379'|xargs -n 1 perl -0777  -pe 's/\*\d+\r\n\$\d+\r\n(\w+)\r\n\$\d+\r\n([\w\d:]+)/command: $1 $2/gsx;'|grep ^command|grep -v "command: auth "|sort|uniq -c|sort -nr > ./script_report
+$ less ./script_report
+70334 command: setex peek:requests:
+69205 command: get cache:gitlab:geo:current_node:12.0.0-pre:5.1.7
+69178 command: get cache:gitlab:geo:node_enabled:12.0.0-pre:5.1.7
+65642 command: get cache:gitlab:flipper/v1/feature/enforced_sso_requires_session
+(...)
 ```
 
 # Please remember to delete the `pcap` file immediately after performing the analysis
