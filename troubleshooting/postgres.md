@@ -254,8 +254,10 @@ conditions which will lead to dead tuple bloat:
 
 ### Possible Checks
 
-Check on Grafana dashboards, in particular the "Postgres Tuple Stats"
-and the "Vacumming" and "Dead Tuples" tabs.
+Check on [Grafana dashboards](https://dashboards.gitlab.net/d/000000167/postgresql-tuple-statistics?orgId=1&refresh=1m), in 
+particular the "PostgreSQL Tuple Statistics" and the "Vacumming" 
+and "Dead Tuples" tabs. Note that this is currently only visible 
+on the internal dashboards
 
 In the "Autovacuum Per Table" chart expect `project_mirror_data` and
 `ci_runners` to be showing about 0.5 vacuums per minute and other
@@ -272,14 +274,18 @@ If the alert is for dead tuples then it will list which table has a
 high number of dead tuples however note that sometimes when one table
 has this problem there are other tables not far behind that just
 haven't alerted yet. Run
-`sort_desc(pg_stat_table_n_dead_tup{environment="gprd"})` in prometheus
-to see what the top offenders are.
+`sort_desc(pg_stat_user_tables_n_dead_tup)` [in prometheus](https://prometheus-db.gprd.gitlab.net/graph?g0.range_input=1h&g0.expr=sort_desc(pg_stat_user_tables_n_dead_tup)&g0.tab=1)  to see what the top offenders are.
 
 *Check that statistics are up to date for those offenders:*
 
-Log into the primary and check that statistics are present. If the
-below query does not yield any results for a particular table,
-consider running `ANALYZE $table` to update statistics.
+Log into the primary and check that statistics are present. If logging in 
+through the console server, use `(your_username)-db-primary@console...`. 
+`(your_username)-db@console...` will give you a secondary.  In case the 
+primary has changed and the console server doesn't know the new location yet, 
+it may be necessary to identify the primary and log in directly.
+
+If the below query does not yield any results for a particular table,
+consider running `ANALYZE $table` to update statistics and try again.
 
 Example for table `ci_builds`:
 
