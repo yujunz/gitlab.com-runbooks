@@ -45,7 +45,7 @@ remember to remove the pcap file once you're done!
 ```shell
 $ tcpflow -o redis-analysis -r redis.pcap
 $ cd ./redis-analysis/
-$ find . -name '*.06379'|xargs -n 1 perl -0777  -pe 's/\*\d+\r\n\$\d+\r\n(\w+)\r\n\$\d+\r\n([\w\d:]+)/command: $1 $2/gsx;'|grep ^command|grep -v "command: auth "|sort|uniq -c|sort -nr > ./script_report
+$ find . -name '*.06379'|xargs -n 1 perl -0777  -pe 's/\*\d+\r\n\$\d+\r\n(\w+)\r\n\$\d+\r\n([\w\d:]+)/command: $1 $2/gsx;'|grep -a '^command'|grep -v "command: auth "|sort|uniq -c|sort -nr > ./script_report
 $ less ./script_report
 70334 command: setex peek:requests:
 69205 command: get cache:gitlab:geo:current_node:12.0.0-pre:5.1.7
