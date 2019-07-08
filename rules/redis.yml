@@ -2,7 +2,10 @@ groups:
 - name: redis.rules
   rules:
   - record: cmd:redis_command_call_duration_seconds_count:irate1m
-    expr: sum(irate(redis_command_call_duration_seconds_count[1m])) BY (cmd, environment)
+    expr: >
+      sum by (cmd,environment) (
+        irate(redis_command_call_duration_seconds_count[1m])
+      )
   - record: redis:keyspace_hits:irate1m
     expr: irate(redis_keyspace_hits_total[1m])
   - record: redis:keyspace_misses:irate1m
@@ -11,10 +14,6 @@ groups:
     expr: irate(redis_net_input_bytes_total[1m])
   - record: redis:net_output_bytes:irate1m
     expr: irate(redis_net_output_bytes_total[1m])
-  - record: redis:db_keys:irate1m
-    expr: irate(redis_db_keys[1m])
-  - record: redis:db_keys_expiring:irate1m
-    expr: irate(redis_db_keys_expiring[1m])
   - record: redis:expired_keys:irate1m
     expr: irate(redis_expired_keys_total[1m])
   - record: redis:evicted_keys:irate1m
@@ -24,10 +23,16 @@ groups:
   - record: redis:connections_received:irate1m
     expr: irate(redis_connections_received_total[1m])
   - record: gitlab:redis_disconnected_slaves
-    expr: count(redis_connected_slaves) WITHOUT (fqdn, instance, job) - sum(redis_connected_slaves)
-      WITHOUT (fqdn, instance, job) - 1
+    expr: >
+      count without (fqdn, instance, job) (redis_connected_slaves) -
+      sum without (fqdn, instance, job) (redis_connected_slaves) -
+      1
   - record: gitlab:redis_master
     expr: redis_connected_slaves > 1
+  - record: instance:redis_cpu_usage:rate1m
+    expr: >
+      (rate(redis_cpu_user_seconds_total[1m]) + rate(redis_cpu_sys_seconds_total[1m])) or
+      (rate(redis_used_cpu_user[1m]) + rate(redis_used_cpu_sys[1m]))
 - name: Redis Alerts
   rules:
   - alert: RedisReplicasFlapping
@@ -60,3 +65,18 @@ groups:
       title: Failed to collect Redis metrics
         Check the status of redis on `{{ $labels.instance }}` with `gitlab-ctl
         status`.
+  - alert: RedisMemoryUsageTooHigh
+    expr: >
+      (
+        redis_memory_used_rss_bytes
+        / on(fqdn, tier, type, environment)
+        node_memory_MemTotal_bytes
+      ) > 0.90
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: s1
+    annotations:
+      title: Redis memory usage is too high
+      description: Redis node {{$labels.fqdn}} is using over 80% of the host memory for the last 5 minutes.
+      runbook: howto/clear_anonymous_sessions.md

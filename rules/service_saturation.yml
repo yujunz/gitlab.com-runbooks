@@ -27,7 +27,9 @@ groups:
       component: 'single_threaded_cpu'
     expr: >
       clamp_max(
-        max(rate(redis_used_cpu_user[1m]) + rate(redis_used_cpu_sys[1m]) ) by (type, tier, stage, environment),
+        max by (type, tier, stage, environment) (
+          instance:redis_cpu_usage:rate1m
+        ),
         1
       )
 
