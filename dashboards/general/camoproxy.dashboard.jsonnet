@@ -77,6 +77,44 @@ local trafficPanel() = generalGraphPanel(
     show=false,
   );
 
+local eventPanel() = generalGraphPanel(
+    "Log Events",
+    description="Events detected from logs",
+  )
+  .addTarget(
+    promQuery.target(
+      'sum(rate(camoproxy_content_length_exceeded_count{environment="$environment"}[1m]))',
+      interval="30s",
+      intervalFactor=3,
+      legendFormat="Content Length Exceeded -  --max-size exceeded",
+    )
+  )
+  .addTarget(
+    promQuery.target(
+      'sum(rate(camoproxy_could_not_connect_count{environment="$environment"}[1m]))',
+      interval="30s",
+      intervalFactor=3,
+      legendFormat="Could not connect - maybe --timeout exceeded",
+    )
+  )
+  .addTarget(
+    promQuery.target(
+      'sum(rate(camoproxy_timeout_expired_count{environment="$environment"}[1m]))',
+      interval="30s",
+      intervalFactor=3,
+      legendFormat="Timeout Expired - --timeout exceeded",
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='short',
+    min=0,
+    label="Events/s",
+  )
+  .addYaxis(
+    format='short',
+    show=false,
+  );
 
 local envTemplate = template.new(
   "environment",
@@ -112,6 +150,15 @@ dashboard.new(
   gridPos={
     x: 0,
     y: 20,
+    w: 24,
+    h: 10,
+  }
+)
+.addPanel(
+  eventPanel(),
+  gridPos={
+    x: 0,
+    y: 30,
     w: 24,
     h: 10,
   }
