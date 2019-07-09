@@ -72,3 +72,22 @@ groups:
   - record: gitlab_service_saturation:ratio
     expr: >
       max by (environment, tier, type, stage) (gitlab_component_saturation:ratio)
+
+# Unlike other service metrics, we record the stats for each component independently
+- name: GitLab Saturation Ratios Stats
+  interval: 5m
+  rules:
+  # Average values for each service, over a week
+  - record: gitlab_component_saturation:ratio:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_component_saturation:ratio[1w])
+
+  # Using linear week-on-week growth, what prediction to we have for 2w from now?
+  - record: gitlab_component_saturation:ratio:predict_linear_2w
+    expr: >
+      predict_linear(gitlab_component_saturation:ratio[1w], 86400 * 14)
+
+  # Using linear week-on-week growth, what prediction to we have for 30d from now?
+  - record: gitlab_component_saturation:ratio:predict_linear_30d
+    expr: >
+      predict_linear(gitlab_component_saturation:ratio[1w], 86400 * 30)
