@@ -9,6 +9,22 @@ groups:
     expr: >
       avg(1 - rate(node_cpu_seconds_total{mode="idle", tier!="", type!="", type!~"console-node|deploy-node"}[1m])) by (type, tier, stage, environment)
 
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_space'
+    expr: >
+      max(
+        (
+          (
+            node_filesystem_size_bytes{type!="", tier!="", fstype=~"ext.|xfs"}
+            -
+            node_filesystem_free_bytes{type!="", tier!="", fstype=~"ext.|xfs"}
+          )
+          /
+          node_filesystem_size_bytes{type!="", tier!="", fstype=~"ext.|xfs"}
+        )
+      ) by (type, tier, stage, environment)
+
   # type: web/api/git, component: unicorn_workers
   - record: gitlab_component_saturation:ratio
     labels:
