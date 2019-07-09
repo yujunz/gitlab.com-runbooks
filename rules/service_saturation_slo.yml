@@ -1,0 +1,16 @@
+groups:
+## TODO: generate this from definitions in the service catalog
+- name: GitLab Component Saturation Max SLOs
+  interval: 5m
+  rules:
+  # The soft limit is used to predict when we will reach saturation.
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'single_threaded_cpu'
+    expr: 0.70
+
+  # The hard limit is the limit at which we send out an alert
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'single_threaded_cpu'
+    expr: 0.90
