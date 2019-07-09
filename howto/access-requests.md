@@ -19,5 +19,6 @@ chef-server-ctl org-user-add gitlab <username>
 1. !group-member-add <group> <user>
 
 ## Ops Instance Access
-Generally we are concerned with chatops access, which requires developer on `gitlab-com` group.
+Generally when developers ask for access to the ops instance, we are concerned
+with chatops access, which requires developer on `gitlab-com` group.
 If access to any other groups are needed, please clarify with the requester.
