@@ -73,7 +73,10 @@ marked the repository as writable to verify this.
    - Review any timed out transactions and restore/repair any repositories to their proper writable status.
    - Create a list of moved repositories to delete on file-XX.
    ```
-   find /var/opt/gitlab/git-data/repositories/@hashed -mindepth 2 -maxdepth 3 -name *+moved*.git > files_to_remove.txt
+   # It looks like there is a scenario where there already are repo files named *+moved*.git so we don't want to 
+   # include them in the rebalancing. Therefore, use -ctime to filter for repo files changed within the short period of time. 
+   # Here, we are using -ctime as within 2 days. (Feel free to change it)
+   find /var/opt/gitlab/git-data/repositories/@hashed -mindepth 2 -maxdepth 3 -ctime -2 -name *+moved*.git > files_to_remove.txt
    < files_to_remove.txt xargs du -ch | tail -n1
    ```
    - Have another SRE review the files to be removed to avoid loss of data.
