@@ -27,18 +27,6 @@ As GitLab.com grows, the number of mirrored project is going to grow as well. We
 1. This alert may just be a symptom of slow Sidekiq jobs. If there are many jobs in the queue (i.e. over 10,000 and growing),
    you may want to [investigate the state of PgBouncer](pgbouncer.md).
 1. View the [pull mirror dashboard](https://dashboards.gitlab.net/d/_MKRXrSmk/pull-mirrors).
-1. In a Rails console run:
-
-    ```ruby
-    # Maximum number of overdue mirrors per minute
-    # SLOW QUERY! Run in postgres-dr-archvie
-    Project.mirror.joins_import_state.group("date_trunc('minute', next_execution_timestamp)").count.values.max
-    ```
-
-   Compare the value to [maximum mirroring capacity][maximum-mirroring-capacity], if the difference is big (e.g. 1K or more), consider bumping the maximum
-   capacity.
-    * **Caution:** Bumping the capacity too high may put Redis and Sidekiq under stress. Bump in small increments and evaluate.
-
 1. Under "Running Jobs", pay attention to the `UpdateAllMirrorsWorker`. If that has gone flat, then
 you may need to log the state of the pending pull mirror queue.
 1. Check [Sentry](https://sentry.gitlab.net/gitlab/gitlabcom/) for new 500 errors relating to `UpdateAllMirrorsWorker`.
