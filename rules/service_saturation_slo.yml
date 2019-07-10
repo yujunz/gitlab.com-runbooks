@@ -26,3 +26,47 @@ groups:
     labels:
       component: 'memory'
     expr: 0.95
+
+  ## Worker Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'workers'
+    expr: 0.85
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'workers'
+    expr: 0.90
+
+  ## CPU Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'cpu'
+    expr: 0.80
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'cpu'
+    expr: 0.90
+
+  ## Disk Space Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_space'
+    expr: 0.85
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_space'
+    expr: 0.90
+
+  ## Connection Pool Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'connection_pool'
+    expr: 0.85
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'connection_pool'
+    expr: 0.95
