@@ -3,6 +3,7 @@ groups:
 - name: GitLab Component Saturation Max SLOs
   interval: 5m
   rules:
+  ## Single Threaded CPU saturation
   # The soft limit is used to predict when we will reach saturation.
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
@@ -14,3 +15,14 @@ groups:
     labels:
       component: 'single_threaded_cpu'
     expr: 0.90
+
+  ## Memory Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'memory'
+    expr: 0.90
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'memory'
+    expr: 0.95
