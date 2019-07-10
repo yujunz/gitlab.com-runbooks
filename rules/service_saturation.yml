@@ -89,6 +89,15 @@ groups:
     expr: >
       max by (environment, tier, type, stage) (gitlab_component_saturation:ratio)
 
+  # Calculate the "sapdex" - the saturation apdex for the metric. 1 < less then soft limit, 0.5 < hard limit, else 0
+  - record: gitlab_component_saturation:ratio:sapdex
+    expr: >
+      clamp_min(gitlab_component_saturation:ratio <= on(component) group_left slo:max:soft:gitlab_component_saturation:ratio, 1)
+      or
+      clamp_min(clamp_max(gitlab_component_saturation:ratio > on(component) group_left slo:max:soft:gitlab_component_saturation:ratio, 0.5), 0.5)
+      or
+      clamp_max(gitlab_component_saturation:ratio > on(component) group_left slo:max:hard:gitlab_component_saturation:ratio, 0)
+
 # Unlike other service metrics, we record the stats for each component independently
 - name: GitLab Saturation Ratios Stats
   interval: 5m
@@ -101,9 +110,20 @@ groups:
   # Using linear week-on-week growth, what prediction to we have for 2w from now?
   - record: gitlab_component_saturation:ratio:predict_linear_2w
     expr: >
-      predict_linear(gitlab_component_saturation:ratio[1w], 86400 * 14)
+      predict_linear(gitlab_component_saturation:ratio:avg_over_time_1w[1w], 86400 * 14)
 
   # Using linear week-on-week growth, what prediction to we have for 30d from now?
   - record: gitlab_component_saturation:ratio:predict_linear_30d
     expr: >
-      predict_linear(gitlab_component_saturation:ratio[1w], 86400 * 30)
+      predict_linear(gitlab_component_saturation:ratio:avg_over_time_1w[1w], 86400 * 30)
+
+  # Sapdex, average for week
+  - record: gitlab_component_saturation:ratio:sapdex:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_component_saturation:ratio:sapdex[1w])
+
+  # Sapdex long term trend forecasting
+  # Using linear week-on-week growth, what prediction to we have for 30d from now?
+  - record: gitlab_component_saturation:ratio:sapdex:avg_over_time_1w:predict_linear_30d
+    expr: >
+      predict_linear(gitlab_component_saturation:ratio:sapdex:avg_over_time_1w[1w], 86400 * 30)
