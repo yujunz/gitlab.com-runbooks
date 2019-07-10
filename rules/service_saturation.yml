@@ -25,6 +25,14 @@ groups:
         )
       ) by (type, tier, stage, environment)
 
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'memory'
+    expr: >
+      max by (type, tier, stage, environment) (
+        instance:node_memory_utilization:ratio{type!=""}
+      )
+
   # type: web/api/git, component: unicorn_workers
   - record: gitlab_component_saturation:ratio
     labels:
