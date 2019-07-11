@@ -3,11 +3,23 @@ groups:
   interval: 1m
   rules:
   # type: *, component: cpu
+  # this measures average CPU across all the cores for the entire fleet for the given service
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'cpu'
     expr: >
-      avg(1 - rate(node_cpu_seconds_total{mode="idle", tier!="", type!="", type!~"console-node|deploy-node"}[1m])) by (type, tier, stage, environment)
+      avg(1 - rate(node_cpu_seconds_total{mode="idle", type!="", type!~"console-node|deploy-node"}[1m])) by (type, tier, stage, environment)
+
+  # type: *, component: single_node_cpu
+  # this measures the maximum cpu availability across all the codes on a single server
+  # this can be helpful if CPU is not even distributed across the fleet.
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'single_node_cpu'
+    expr: >
+      max(
+        avg(1 - rate(node_cpu_seconds_total{mode="idle", type!="", type!~"console-node|deploy-node"}[1m])) by (fqdn, type, tier, stage, environment)
+      ) without (fqdn)
 
   - record: gitlab_component_saturation:ratio
     labels:
