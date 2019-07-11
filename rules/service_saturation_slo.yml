@@ -70,3 +70,14 @@ groups:
     labels:
       component: 'connection_pool'
     expr: 0.95
+
+  ## Redis Client Slot Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'redis_clients'
+    expr: 0.80
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'redis_clients'
+    expr: 0.90
