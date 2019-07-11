@@ -49,6 +49,17 @@ groups:
       component: 'cpu'
     expr: 0.90
 
+  ## Single Node CPU Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'single_node_cpu'
+    expr: 0.90
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'single_node_cpu'
+    expr: 0.95
+
   ## Disk Space Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
