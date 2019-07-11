@@ -84,6 +84,18 @@ groups:
           )
       ) by (type, tier, stage, environment), 1)
 
+  # type: redis, redis-cache, component: redis_clients
+  # Records the saturation of redis client connections against a redis fleet
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'redis_clients'
+    expr: >
+      max(
+        max_over_time(redis_connected_clients[1m])
+        /
+        redis_config_maxclients
+      ) by (environment, tier, type, stage)
+
   # Aggregate over all components within a service using max
   - record: gitlab_service_saturation:ratio
     expr: >
