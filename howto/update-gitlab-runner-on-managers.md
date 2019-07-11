@@ -11,7 +11,6 @@ graph LR
     r::builder(gitlab-runner-builder)
 
     r::gsrm(gitlab-runner-gsrm)
-    r::gsrm-do(gitlab-runner-gsrm-do)
     r::gsrm-gce(gitlab-runner-gsrm-gce)
     r::gsrm-gce-us-east1-c(gitlab-runner-gsrm-gce-us-east1-c)
     r::gsrm3(gitlab-runner-gsrm3)
@@ -21,7 +20,6 @@ graph LR
     r::gsrm6(gitlab-runner-gsrm6)
 
     r::prm(gitlab-runner-prm)
-    r::prm-do(gitlab-runner-prm-do)
     r::prm-gce(gitlab-runner-prm-gce)
     r::prm-gce-us-east1-c(gitlab-runner-prm-gce-us-east1-c)
     r::prm3(gitlab-runner-prm3)
@@ -29,7 +27,6 @@ graph LR
     r::prm4(gitlab-runner-prm4)
 
     r::srm(gitlab-runner-srm)
-    r::srm-do(gitlab-runner-srm-do)
     r::srm-gce(gitlab-runner-srm-gce)
     r::srm-gce-us-east1-c(gitlab-runner-srm-gce-us-east1-c)
     r::srm3(gitlab-runner-srm3)
@@ -45,20 +42,14 @@ graph LR
 
     n::grb[gitlab-runner-builder.gitlap.com]
 
-    n::gsrm1[gitlab-shared-runners-manager-1.gitlab.com]
-    n::gsrm2[gitlab-shared-runners-manager-2.gitlab.com]
     n::gsrm3[gitlab-shared-runners-manager-3.gitlab.com]
     n::gsrm4[gitlab-shared-runners-manager-4.gitlab.com]
     n::gsrm5[gitlab-shared-runners-manager-5.gitlab.com]
     n::gsrm6[gitlab-shared-runners-manager-6.gitlab.com]
 
-    n::prm1[private-runners-manager-1.gitlab.com]
-    n::prm2[private-runners-manager-2.gitlab.com]
     n::prm3[private-runners-manager-3.gitlab.com]
     n::prm4[private-runners-manager-4.gitlab.com]
 
-    n::srm1[shared-runners-manager-1.gitlab.com]
-    n::srm2[shared-runners-manager-2.gitlab.com]
     n::srm3[shared-runners-manager-3.gitlab.com]
     n::srm4[shared-runners-manager-4.gitlab.com]
     n::srm5[shared-runners-manager-5.gitlab.com]
@@ -71,9 +62,6 @@ graph LR
     r::builder ==> n::grb
 
     r::base --> r::gsrm
-    r::gsrm --> r::gsrm-do
-    r::gsrm-do ==> n::gsrm1
-    r::gsrm-do ==> n::gsrm2
     r::gsrm --> r::gsrm-gce
     r::gsrm-gce --> r::gsrm-gce-us-east1-c
     r::gsrm-gce-us-east1-c --> r::gsrm4
@@ -87,9 +75,6 @@ graph LR
     r::gsrm5 ==> n::gsrm5
 
     r::base --> r::prm
-    r::prm --> r::prm-do
-    r::prm-do ==> n::prm1
-    r::prm-do ==> n::prm2
     r::prm --> r::prm-gce
     r::prm-gce --> r::prm-gce-us-east1-c
     r::prm-gce-us-east1-c --> r::prm4
@@ -99,9 +84,6 @@ graph LR
     r::prm3 ==> n::prm3
 
     r::base --> r::srm
-    r::srm --> r::srm-do
-    r::srm-do ==> n::srm1
-    r::srm-do ==> n::srm2
     r::srm --> r::srm-gce
     r::srm-gce --> r::srm-gce-us-east1-c
     r::srm-gce-us-east1-c --> r::srm4
