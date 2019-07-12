@@ -31,6 +31,7 @@ Our current application configuration components:
     * Repos:
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/settings/ci_cd
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/monitoring/-/settings/ci_cd
+      * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/common/-/settings/ci_cd
     * ENV Vars:
       * `SERVICE_KEY`
 1. Create the application configurations
@@ -46,8 +47,10 @@ Our current application configuration components:
 1. Take care of any manual actions from our new configuration:
     * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/d8daab846f440d1f0aff63c47c4d1aec62632ce7/HELM_README.md
 1. Perform the installation of each of our components
+    * Start off with the common repo first, it contains components required by
+      other repos
     * Locally we'll perform the install, `cd` into each of the components' repo
-      and then run: `./bin/install -e <ENVIRONMENT>`
+      and then run: `./bin/k-ctl -e <ENVIRONMENT> install`
     * Troubleshoot where necessary
 1. We can now merge any commits associated with these repos, and CI/CD should
    work successfully
@@ -64,3 +67,5 @@ Our current application configuration components:
     * Name: <NAME OF CLUSTER>
     * URL: `http://<IP OF PROMETHEUS SERVICE>:9090` - this is a class A IP address as defined by our terraform configs
     * Save and test
+1. Add the thanos side cars to our thanos-query ops instance
+    * Example MR: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/1430
