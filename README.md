@@ -205,6 +205,7 @@ During an incident there are at least 2 roles, and one more optional
 ### Supporting Services
 
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
+* [Redis replication setup](howto/redis-new-cluster-replication.md)
 * [Sentry is down](troubleshooting/sentry-is-down.md)
 
 ### Gitaly
