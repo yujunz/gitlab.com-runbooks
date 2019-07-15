@@ -42,6 +42,8 @@ local generalGraphPanel(
   .addSeriesOverride(seriesOverrides.lastWeek)
   .addSeriesOverride(seriesOverrides.alertFiring)
   .addSeriesOverride(seriesOverrides.alertPending)
+  .addSeriesOverride(seriesOverrides.degradationSlo)
+  .addSeriesOverride(seriesOverrides.outageSlo)
   .addSeriesOverride(seriesOverrides.slo);
 
 local nodePanel(
@@ -176,7 +178,15 @@ local apdexPanel() = generalGraphPanel(
         avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}) or avg(slo:min:gitlab_service_apdex:ratio{type="$type"})
       ',
       interval="5m",
-      legendFormat='SLO',
+      legendFormat='Degradation SLO',
+    ),
+  )
+  .addTarget( // Double apdex SLO is Outage-level SLO
+    promQuery.target('
+        2 * (avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}) or avg(slo:min:gitlab_service_apdex:ratio{type="$type"})) - 1
+      ',
+      interval="5m",
+      legendFormat='Outage SLO',
     ),
   )
   .addTarget( // Last week
@@ -275,7 +285,15 @@ local errorRatesPanel() =
         avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}) or avg(slo:max:gitlab_service_errors:ratio{type="$type"})
       ',
       interval="5m",
-      legendFormat='SLO',
+      legendFormat='Degradation SLO',
+    ),
+  )
+  .addTarget( // Outage level SLO
+    promQuery.target('
+        2 * (avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}) or avg(slo:max:gitlab_service_errors:ratio{type="$type"}))
+      ',
+      interval="5m",
+      legendFormat='Outage SLO',
     ),
   )
   .addTarget( // Last week

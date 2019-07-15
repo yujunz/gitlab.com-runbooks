@@ -90,6 +90,30 @@ local colors = import 'colors.libsonnet';
     "nullPointMode": "connected",
     "zindex": -2,
   },
+  degradationSlo:: {
+    "alias": "Degradation SLO",
+    "color": "#FF4500", // "Orange red"
+    "dashes": true,
+    "legend": true,
+    "lines": true,
+    "linewidth": 2,
+    "dashLength": 4,
+    "spaceLength": 10,
+    "nullPointMode": "connected",
+    "zindex": -2,
+  },
+  outageSlo:: {
+    "alias": "Outage SLO",
+    "color": "#F2495C", // "Red"
+    "dashes": true,
+    "legend": true,
+    "lines": true,
+    "linewidth": 4,
+    "dashLength": 4,
+    "spaceLength": 4,
+    "nullPointMode": "connected",
+    "zindex": -2,
+  },
   sloViolation:: {
     "alias": "/ SLO violation$/",
     "color": "#00000088",
