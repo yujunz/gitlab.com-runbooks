@@ -5,52 +5,40 @@ IFS=$'\n\t'
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+find_dashboards() {
+  if [[ $# == 0 ]]; then
+    find "${SCRIPT_DIR}" '(' -name '*.dashboard.jsonnet' -o -name '*.dashboard.json' ')'
+  else
+    for var in "$@"
+    do
+      echo "${var}"
+    done
+  fi
+}
+
 # Install dependencies
 if ! [[ -d "${SCRIPT_DIR}/grafonnet-lib" ]]; then
   git clone https://github.com/grafana/grafonnet-lib.git "${SCRIPT_DIR}/grafonnet-lib"
 fi
 
 # Install jsonnet dashboards
-find "${SCRIPT_DIR}" -name '*.dashboard.jsonnet'|while read -r line; do
+find_dashboards "$@"|while read -r line; do
   relative=${line#"$SCRIPT_DIR/"}
   folder=$(dirname "$relative")
 
+  # Note: create folders with `create-grafana-folder.sh` to configure the UID
   folderId=$(curl --silent --fail \
     -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
     -H "Accept: application/json" \
     -H "Content-Type: application/json" \
     "https://dashboards.gitlab.net/api/folders/${folder}" | jq '.id')
 
-  dashboard=$(jsonnet -J "${SCRIPT_DIR}" -J "${SCRIPT_DIR}/grafonnet-lib" "${line}")
-
-  url=$(curl --silent --fail \
-    -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
-    -H "Accept: application/json" \
-    -H "Content-Type: application/json" \
-    https://dashboards.gitlab.net/api/dashboards/db \
-    -d"{
-    \"dashboard\": ${dashboard},
-    \"folderId\": ${folderId},
-    \"overwrite\": true
-  }" | jq -r '.url')
-
-  echo "Installed https://dashboards.gitlab.net${url}"
-done
-
-# Install json dashboards
-find "${SCRIPT_DIR}" -name '*.dashboard.json'|while read -r line; do
-  relative=${line#"$SCRIPT_DIR/"}
-  folder=$(dirname "$relative")
-
-  echo "${line}"
-
-  folderId=$(curl --silent --fail \
-    -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
-    -H "Accept: application/json" \
-    -H "Content-Type: application/json" \
-    "https://dashboards.gitlab.net/api/folders" | jq '.[] | select(.title=='\""${folder}"\"') | .id')
-
-  dashboard=$(cat "${line}")
+  extension="${relative##*.}"
+  if [[ "$extension" == "jsonnet" ]]; then
+    dashboard=$(jsonnet -J "${SCRIPT_DIR}" -J "${SCRIPT_DIR}/grafonnet-lib" "${line}")
+  else
+    dashboard=$(cat "${line}")
+  fi
 
   url=$(curl --silent --fail \
     -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
