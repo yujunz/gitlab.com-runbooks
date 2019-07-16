@@ -12,7 +12,7 @@ and mess.
 Here is a suggested checklist of things to do at the start of an on-call shift:
 
 - *Change Slack Icon*: Click name. Click `Set status`. Click grey smile face. Type `:pagerduty:`. Set `Clear after` to end of on-call shift. Click `Save`
-- *Add On-Call Feed*: PM yourself in slack `/feed add https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues.atom?feed_token=(TOKEN)&label_name%5B%5D=oncall&scope=all&state=opened&utf8=%E2%9C%93`
+- *Add On-Call Feed*: PM yourself in slack `/feed add https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues.atom?feed_token=(TOKEN)&label_name%5B%5D=SRE%3AOn-call&scope=all&state=opened&utf8=%E2%9C%93`
 - *Add Production Feed*: PM yourself in slack `/feed add https://gitlab.com/gitlab-com/gl-infra/production/issues.atom?feed_token=(TOKEN)&label_name%5B%5D=incident&state=opened`
 - *Join alert channels*: If not already a member, `/join` `#alerts`, `#alerts-general`, `#alerts-prod-abuse`, `#alerts-ops`
 - *Turn on slack channel notifications*: Open `#production` Notification Preferences (and optionally #infra-lounge). Set Desktop and Mobile to `All new messages`
