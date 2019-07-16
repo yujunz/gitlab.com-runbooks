@@ -1,13 +1,13 @@
 ## Building a new redis cluster and starting replication
 
-From time to time you may have to build (or rebuild) a redis cluster.  While the omnibus documentation (https://docs.gitlab.com/ee/administration/high_availability/redis.html) suggests it should start replicating by magic, it doesn't in our builds (reasons unclear)
+From time to time you may have to build (or rebuild) a redis cluster.  While the omnibus documentation (https://docs.gitlab.com/ee/administration/high_availability/redis.html) says everything should start replicating by magic, it doesn't in our builds because we touch /etc/gitlab/skip-autoreconfigure on redis nodes, so that restarts during upgrades can be done in a more controlled fashion across multiple nodes.
 
 So, after building the nodes, there are some manual steps to take:
 
 1. On all nodes, `sudo gitlab-ctl reconfigure`
-  * This will actually reconfigure/start up redis, but not sentinel
+  * This will reconfigure/start up redis, but not sentinel
 1. On all nodes, `sudo gitlab-ctl start sentinel`
-  * Unclear why this doesn't happen automatically, but it's a one-off
+  * Not sure why, but it's minor
 1. On the replicas, start replicating from the master:
   1. REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
   1. /opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH
