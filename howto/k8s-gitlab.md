@@ -35,8 +35,6 @@ Our current application configuration components:
     * ENV Vars:
       * `SERVICE_KEY`
 1. Create the application configurations
-    * We'll need the IP address created from above, until: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7108
-    * the monitoring repo will readily take the internal IP provisioned above automatically
     * Adjust any necessary configurations or additions by following the README's
       in each of our application configuration repos.
     * Example Merge Requests:
@@ -46,6 +44,7 @@ Our current application configuration components:
       to hold off until after the next few steps
 1. Take care of any manual actions from our new configuration:
     * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/d8daab846f440d1f0aff63c47c4d1aec62632ce7/HELM_README.md
+    * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/monitoring#manual-actions
 1. Perform the installation of each of our components
     * Start off with the common repo first, it contains components required by
       other repos
