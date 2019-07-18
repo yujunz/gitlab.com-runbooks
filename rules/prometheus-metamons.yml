@@ -186,3 +186,12 @@ groups:
       description: 'Prometheus at {{$labels.instance}} has very high ({{$value}}%) system memory utilization.'
       runbook: troubleshooting/prometheus-high-memory.md
       title: 'Prometheus High Memory Utilization'
+  - alert: PrometheusWALCorruption
+    expr: increase(prometheus_tsdb_wal_corruptions_total[5m]) > 0
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      description: 'Prometheus at {{$labels.instance}} has {{$value}} WAL Corruptions.'
+      runbook: troubleshooting/prometheus-wal-corruption.md
+      title: 'Prometheus WAL Corruption'
