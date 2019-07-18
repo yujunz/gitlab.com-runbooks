@@ -23,27 +23,17 @@ As GitLab.com grows, the number of mirrored project is going to grow as well. We
 
 ## Troubleshoot
 
+1. View the [pull mirror dashboard](https://dashboards.gitlab.net/d/_MKRXrSmk/pull-mirrors).
 1. View the [Sidekiq Queue size graph][sidekiq-queue-sizes].
 1. This alert may just be a symptom of slow Sidekiq jobs. If there are many jobs in the queue (i.e. over 10,000 and growing),
    you may want to [investigate the state of PgBouncer](pgbouncer.md).
-1. View the [pull mirror dashboard](https://dashboards.gitlab.net/d/_MKRXrSmk/pull-mirrors).
 1. Under "Running Jobs", pay attention to the `UpdateAllMirrorsWorker`. If that has gone flat, then
 you may need to log the state of the pending pull mirror queue.
 1. Check [Sentry](https://sentry.gitlab.net/gitlab/gitlabcom/) for new 500 errors relating to `UpdateAllMirrorsWorker`.
-1. Get the state of the Redis queue that holds which project IDs should be processed. In a Rails console run:
-
-    ```ruby
-    projects = Gitlab::Redis::SharedState.with { |redis| redis.smembers(Gitlab::Mirror::PULL_CAPACITY_KEY) }
-    states = ProjectImportState.where(project_id: projects).order(:last_update_started_at).map(&:last_error)
-    ```
-
-1. If necessary, clear this set:
-
-    ```ruby
-    Gitlab::Redis::SharedState.with { |redis| redis.del(Gitlab::Mirror::PULL_CAPACITY_KEY) }
-    ````
-
-1. If the problem persists send a channel wide notification in `#backend`.
+1. Check if Redis cpu usage is high using [the redis dashboard](https://dashboards.gitlab.net/d/wccEP9Imk/redis?orgId=1&refresh=1m). If it is, the sidekiq slow down is likely related to [this issue](https://gitlab.com/gitlab-com/gl-infra/production/issues/937). Follow the instructions in [this
+   snippet](https://gitlab.com/gitlab-com/gl-infra/infrastructure/snippets/1873154)
+   to aggressively enqueue pull mirror jobs. This will continue to be necessary
+   until a long-term solution is implemented.
 
 [maximum-mirroring-capacity]: https://gitlab.com/admin/application_settings/repository#js-mirror-settings
 [sidekiq-queue-sizes]: https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?orgId=1&panelId=3&fullscreen
