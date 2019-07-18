@@ -124,7 +124,7 @@ local activeAlertsPanel = grafana.tablePanel.new(
       "dateFormat": "YYYY-MM-DD HH:mm:ss",
       "mappingType": 2,
       "link": true,
-      "linkUrl": "https://dashboards.gitlab.net/d/26q8nTzZz/service-platform-metrics?orgId=1&var-type=${__cell}&var-environment=$environment",
+      "linkUrl": "https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=${__cell}&var-environment=$environment",
       "linkTooltip": "Open dashboard",
     },
     {

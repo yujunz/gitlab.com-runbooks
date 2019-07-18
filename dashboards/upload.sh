@@ -26,6 +26,8 @@ find_dashboards "$@"|while read -r line; do
   relative=${line#"$SCRIPT_DIR/"}
   folder=$(dirname "$relative")
 
+  uid="${folder}-$(basename "$line"|sed -e 's/\..*//')"
+
   # Note: create folders with `create-grafana-folder.sh` to configure the UID
   folderId=$(curl --silent --fail \
     -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
@@ -38,6 +40,11 @@ find_dashboards "$@"|while read -r line; do
     dashboard=$(jsonnet -J "${SCRIPT_DIR}" -J "${SCRIPT_DIR}/grafonnet-lib" "${line}")
   else
     dashboard=$(cat "${line}")
+  fi
+
+  if [[ -z $(echo "${dashboard}" | jq ".uid") ]]; then
+    # If the dashboard doesn't have a uid, configure one
+    dashboard=$(echo "${dashboard}" | jq ".uid = \"$uid\"")
   fi
 
   url=$(curl --silent --fail \
