@@ -8,87 +8,87 @@ groups:
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'single_threaded_cpu'
-    expr: 0.70
+    expr: '0.70'
 
   # The hard limit is the limit at which we send out an alert
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'single_threaded_cpu'
-    expr: 0.90
+    expr: '0.90'
 
   ## Memory Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'memory'
-    expr: 0.90
+    expr: '0.90'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'memory'
-    expr: 0.95
+    expr: '0.95'
 
   ## Worker Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'workers'
-    expr: 0.85
+    expr: '0.85'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'workers'
-    expr: 0.90
+    expr: '0.90'
 
   ## CPU Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'cpu'
-    expr: 0.80
+    expr: '0.80'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'cpu'
-    expr: 0.90
+    expr: '0.90'
 
   ## Single Node CPU Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'single_node_cpu'
-    expr: 0.90
+    expr: '0.90'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'single_node_cpu'
-    expr: 0.95
+    expr: '0.95'
 
   ## Disk Space Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'disk_space'
-    expr: 0.85
+    expr: '0.85'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'disk_space'
-    expr: 0.90
+    expr: '0.90'
 
   ## Connection Pool Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'connection_pool'
-    expr: 0.85
+    expr: '0.85'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'connection_pool'
-    expr: 0.95
+    expr: '0.95'
 
   ## Redis Client Slot Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'redis_clients'
-    expr: 0.80
+    expr: '0.80'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'redis_clients'
-    expr: 0.90
+    expr: '0.90'

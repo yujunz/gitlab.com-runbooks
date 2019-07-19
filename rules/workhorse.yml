@@ -56,7 +56,7 @@ groups:
       grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
       grafana_panel_id: "2"
       grafana_variables: "environment,type,stage"
-      grafana_min_zoom_hours: 12
+      grafana_min_zoom_hours: "12"
       promql_template_1: 'gitlab_workhorse_git_http_sessions_active:total{stage="$stage"}'
       promql_template_2: 'avg_over_time(gitlab_workhorse_git_http_sessions_active{type="git", tier="sv", stage="$stage"}[1m])'
 
@@ -91,7 +91,7 @@ groups:
       grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
       grafana_panel_id: "2"
       grafana_variables: "environment,type,stage"
-      grafana_min_zoom_hours: 12
+      grafana_min_zoom_hours: "12"
       promql_template_1: 'gitlab_workhorse_git_http_sessions_active:total{stage="$stage"}'
       promql_template_2: 'avg_over_time(gitlab_workhorse_git_http_sessions_active{type="git", tier="sv", stage="$stage"}[1m])'
 

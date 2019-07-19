@@ -7,55 +7,55 @@ groups:
     labels:
       type: 'haproxy'
       tier: 'fe'
-    expr: 0.0005
+    expr: '0.0005'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'web'
       tier: 'sv'
-    expr: 0.005
+    expr: '0.005'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'api'
       tier: 'sv'
-    expr: 0.005
+    expr: '0.005'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'git'
       tier: 'sv'
-    expr: 0.005
+    expr: '0.005'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'sidekiq'
       tier: 'sv'
-    expr: 0.01
+    expr: '0.01'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'registry'
       tier: 'sv'
-    expr: 0.0005
+    expr: '0.0005'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'pages'
       tier: 'sv'
-    expr: 0.005
+    expr: '0.005'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'patroni'
       tier: 'db'
-    expr: 0.005
+    expr: '0.005'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
       type: 'gitaly'
       tier: 'stor'
-    expr: 0.001
+    expr: '0.001'
 
 - name: GitLab Error-Rate SLO observance status
   interval: 1m

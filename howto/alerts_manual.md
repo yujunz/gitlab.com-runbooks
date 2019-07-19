@@ -110,6 +110,11 @@ bundle exec knife ssh 'roles:gprd-infra-alerts'
 bundle exec knife ssh 'roles:ops-infra-alerts'
 ```
 
+In order to get rules deployed into Kubernetes, follow the above and watch the
+CI/CD pipeline on the ops instance.  The `./bin/create_kubernetes_rules` script
+will take the generated file and convert it to a PrometheusRules object.
+https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#prometheusrule
+
 ## Where to find things
 
 ### Prometheus

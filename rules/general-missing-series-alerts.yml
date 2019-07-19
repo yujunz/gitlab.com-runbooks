@@ -20,7 +20,7 @@ groups:
           grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
           grafana_panel_id: "4"
           grafana_variables: "environment,type,component,stage"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Ops Rate
       - alert: gitlab_component_opsrate_missing_series
@@ -41,7 +41,7 @@ groups:
           grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
           grafana_panel_id: "42"
           grafana_variables: "environment,type,component,stage"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Apdex
       - alert: gitlab_component_apdex_missing_series
@@ -62,7 +62,7 @@ groups:
           grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
           grafana_panel_id: "19"
           grafana_variables: "environment,type,component,stage"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Error Rate
       - alert: gitlab_component_error_missing_series
@@ -83,4 +83,4 @@ groups:
           grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
           grafana_panel_id: "27"
           grafana_variables: "environment,type,component,stage"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
