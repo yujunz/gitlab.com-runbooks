@@ -170,6 +170,78 @@ Failover and Switchover are similar in their end-result, still there are slight 
 That said, you can initiate any of them using `gitlab-patronictl switchover` or `gitlab-patronictl failover`
 and entering values when prompted.
 
+### Unhealthy nodes after failover
+
+Sometimes, after a failover, the old primary's timeline will have continued and
+diverged from the new primary's timeline. Patroni will automatically attempt to
+`pg_rewind` the timeline of the old primary to a point at which it can begin
+replicating from the new primary, becoming healthy again. We have occasionally
+seen this fail, for example with a statement timeout.
+
+If for whatever reason you can't get the node to a healthy state and don't mind
+waiting several hours, you can reinitialise the node:
+
+```
+root@pg$ gitlab-patronictl reinit pg-ha-cluster patroni-XX-db-gprd.c.gitlab-production.internal
+```
+
+This command can be run from any member of the patroni cluster. It wipes the
+data directory, takes a pg_basebackup from the new primary, and begins
+replicating again.
+
+### Diverged timeline WAL segments in GCS after failover
+
+Our primary Postgres node is configured to archive WAL segments to GCS. These
+segments are pulled by wal-e on another node in recovery mode, and replayed.
+This process acts as a continuous test of our ability to restore our database
+state from archived WAL segments. Sometimes, during a failover, both the old
+master and the new will have uploaded WAL segments, causing the DR archive that
+is consuming these segments from GCS to not be able to replay the diverged
+timeline. In the past we have solved this by rolling back the DR archive to an
+earlier state:
+
+1. In the GCE console: stop the machine
+1. Edit the machine: write down (or take a screenshot) of the attachment details
+   of **all** extra disks. Specfically, we want the custom name (if any) and the
+   order they are attached in.
+1. Detach the data disk and save the machine.
+1. In the GCE console, find the most recent snapshot of the data disk before the
+   incident occurred. Copy its ID.
+1. Find the data disk in GCE. Write down its name, zone, type (standard/SSD),
+   and labels.
+1. Delete the data disk.
+1. Create a new GCE disk with the same name, zone, and type as the old data
+   disk. Select the "snapshot" option as source and enter the snapshot ID.
+1. When the disk has finished creating, attach it to the stopped machine using
+   the GCE console.
+1. Save the machine and examine the order of attached disks. If they are not in
+   the same order as before, you will have to detach and reattach disks as
+   appropriate. This is necessary because unfortunately we still have code that
+   makes assumptions about the udev-ordering of disks (sdb, sdc etc).
+1. Start the machine.
+1. `ssh` to the machine and start postgres: `gitlab-ctl start postgresql`.
+1. Tail the log file at `/var/log/gitlab/postgresql/current`. You should see it
+   successfuly ingesting WAL segments in sequential order, e.g.: `LOG:  restored
+   log file "00000017000128AC00000087" from archive`.
+1. You should also see a message "FATAL:  the database system is starting up"
+   every 15s. These are due to attempted scrapes by the postgres exporter. After
+   a few minutes, these messages should stop and metrics from the machine should
+   be observable again.
+1. In prometheus, you should see the `pg_replication_lag` metric for this
+   instance begin to decrease. Recovery from GCS WAL segments is slow, and
+   during times of high traffic (when the postgres data ingestion rate is high)
+   recovery will slow. It might take days to recover, so be sure to silence any
+   replication lag alerts for enough time not to rudely wake the on-call.
+1. Check there is no terraform plan diff for the archival replicas. Run the
+   following for the gprd environment:
+
+   ```
+   tf plan -out plan -target module.postgres-dr-archive -target
+   ```
+
+This procedure is rather manual and lengthy, but this does not happen often and
+has no directly user-facing impact.
+
 ## Replacing a cluster with a new one
 
 **Take care when doing these steps, results can be catastrophic**
