@@ -16,7 +16,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Availability for 30 minutes deadman
       - alert: deadman_30m_missing_series
@@ -33,7 +33,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Availability for 6 hours deadman
       - alert: deadman_6h_missing_series
@@ -50,7 +50,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Availability for 1 day deadman
       - alert: deadman_1d_missing_series
@@ -67,7 +67,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 168
+          grafana_min_zoom_hours: "168"
 
       # Availability for 1 day 6 hours deadman
       - alert: deadman_1d6h_missing_series
@@ -84,7 +84,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 168
+          grafana_min_zoom_hours: "168"
 
       # Timestamp comparison for 15 minutes deadman
       - alert: deadman_15m_expired
@@ -100,7 +100,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Timestamp comparison for 30 minutes deadman
       - alert: deadman_30m_expired
@@ -116,7 +116,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Timestamp comparison for 6 hours deadman
       - alert: deadman_6h_expired
@@ -132,7 +132,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 24
+          grafana_min_zoom_hours: "24"
 
       # Timestamp comparison for 1 day deadman
       - alert: deadman_1d_expired
@@ -148,7 +148,7 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 168
+          grafana_min_zoom_hours: "168"
 
       # Timestamp comparison for 1 day 6 hours deadman
       - alert: deadman_1d6h_expired
@@ -164,4 +164,4 @@ groups:
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
           grafana_variables: "resource,environment,tier,type"
-          grafana_min_zoom_hours: 168
+          grafana_min_zoom_hours: "168"

@@ -1,10 +1,66 @@
-image: registry.gitlab.com/gitlab-com/runbooks:3.0.0
+---
+
+image: registry.gitlab.com/gitlab-com/runbooks:3.0.2
 
 stages:
   - test
   - deploy
   - images
   - alertmanager
+  - deploy-rules-gstg
+  - deploy-rules-pre
+
+.deploy-rules:
+  extends: .rules-artifacts
+  stage: deploy-rules
+  script:
+    - gcloud auth activate-service-account --key-file ${SERVICE_KEY}
+    - gcloud config set project ${PROJECT}
+    - gcloud container cluster get-credentials ${CLUSTER} --region ${REGION}
+    - kubectl apply --namespace monitoring --filename ${CI_PROJECT_DIR}/rules-k8s/
+  only:
+    refs:
+      - master
+    variables:
+      - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
+
+.rules-artifacts:
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - rules-k8s
+
+test-rules:
+  extends: .rules-artifacts
+  stage: test
+  script:
+    - gem install bundler --no-document
+    - bundle
+    - ./bin/create_kubernetes_rules.rb --create --validate
+
+rubocop:
+  stage: test
+  script:
+    - gem install bundler etc json --no-document
+    - bundle
+    - rubocop ./bin/create_kubernetes_rules.rb ./lib/* ./spec/*
+
+rspec:
+  stage: test
+  script:
+    - gem install bundler --no-document
+    - bundle
+    - bundle exec rspec
+
+deploy-rules-gstg:
+  environment: gstg
+  extends: .deploy-rules
+  stage: deploy-rules-gstg
+
+deploy-rules-pre:
+  environment: pre
+  extends: .deploy-rules
+  stage: deploy-rules-pre
 
 update-alert-manager:
   stage: alertmanager

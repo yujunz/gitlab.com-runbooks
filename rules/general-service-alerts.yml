@@ -12,7 +12,7 @@ groups:
           rules_domain: general
           metric: gitlab_service_apdex:ratio
           severity: s2
-          slo_alert: yes
+          slo_alert: 'yes'
           period: 5m
           bound: lower
           pager: pagerduty
@@ -29,7 +29,7 @@ groups:
           grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
           grafana_panel_id: "5"
           grafana_variables: "environment,type,stage"
-          grafana_min_zoom_hours: 6
+          grafana_min_zoom_hours: "6"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
           promql_template_1: 'gitlab_service_apdex:ratio{type="$type", stage="$stage"}'
@@ -46,7 +46,7 @@ groups:
           rules_domain: general
           metric: gitlab_service_errors:ratio
           severity: s2
-          slo_alert: yes
+          slo_alert: 'yes'
           period: 5m
           bound: lower
           pager: pagerduty
@@ -61,7 +61,7 @@ groups:
           grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
           grafana_panel_id: "6"
           grafana_variables: "environment,type,stage"
-          grafana_min_zoom_hours: 6
+          grafana_min_zoom_hours: "6"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
           promql_template_1: 'gitlab_service_errors:ratio{type="$type", stage="$stage"}'
@@ -99,7 +99,7 @@ groups:
           grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
           grafana_panel_id: "7"
           grafana_variables: "environment,type,stage"
-          grafana_min_zoom_hours: 12
+          grafana_min_zoom_hours: "12"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
           promql_template_1: 'gitlab_service_availability:ratio{type="$type", stage="$stage"}'
@@ -132,7 +132,7 @@ groups:
           grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
           grafana_panel_id: "7"
           grafana_variables: "environment,type,stage"
-          grafana_min_zoom_hours: 12
+          grafana_min_zoom_hours: "12"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
           promql_template_1: 'gitlab_service_availability:ratio{type="$type", stage="$stage"}'
@@ -176,7 +176,7 @@ groups:
           grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
           grafana_panel_id: "8"
           grafana_variables: "environment,type,stage"
-          grafana_min_zoom_hours: 12
+          grafana_min_zoom_hours: "12"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
           promql_template_1: 'gitlab_service_ops:rate{type="$type", stage="$stage"}'
@@ -215,7 +215,7 @@ groups:
           grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
           grafana_panel_id: "8"
           grafana_variables: "environment,type,stage"
-          grafana_min_zoom_hours: 12
+          grafana_min_zoom_hours: "12"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
           promql_template_1: 'gitlab_service_ops:rate{type="$type", stage="$stage"}'
