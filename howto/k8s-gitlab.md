@@ -53,6 +53,11 @@ Our current application configuration components:
     * Troubleshoot where necessary
 1. We can now merge any commits associated with these repos, and CI/CD should
    work successfully
+1. Prometheus rules:
+    * Inside of our `runbooks` repo, we need to add a configuration inside of
+      `.gitlab-ci.yaml` to deploy to our new cluster.
+    * ensure the appropriate variables are added to the ops instance
+    * Utilize this MR as a guideline: https://gitlab.com/gitlab-com/runbooks/merge_requests/1200
 1. Validate the registry is working properly
     * Using the above DNS record you should be able to log into the docker
       registry, example: `docker login registry.gke.staging.gitlab.com`
