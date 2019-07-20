@@ -17,7 +17,20 @@ GitLab registry is not responding or returns not 200 OK statuses.
 ### Broken images - empty/null/just now, "invalid checksum digest format"
 From the error logs, you should see a URI in the form '/v2/<group>/<nestedgroup>/<project>/<imagename>/manifests/<tag>.
 
-There are two ways to fix it:
+You can also check the haproxy logs on the frontend load balancers `fe-registry-0[1|2]-lb-gprd.c.gitlab-production.internal` for the paths which are returning 5xx errors, sorted by frequency.
+
+```
+$ sudo su -
+# cd /var/log
+# grep ' 500 ' haproxy.log <(zcat haproxy.log.1.gz)|sed 's/.*} "GET \(.*\) HTTP.*$/\1/'|sort|uniq -c|sort -nr|head -5
+    174 /v2/someuser/really-awesome-project/manifests/even-awesomer-build
+    141 /v2/otheruser/backend/backup/manifests/latest
+     80 /v2/popular-opensource-project/app-name/other-qualifier/manifests/latest
+     67 /v2/anotheruser/dev/image/manifests/ecec8e83437ef4bf5a161eb47cce4cdfe285b87e
+     40 /v2/fakeorg/fakeproject/fakeimage/manifests/8feaca0e4ac8710fc8e966fcaaf038f656db4571
+```
+
+Once the failing image is identified, there are two ways to fix it:
 1. Re-push an image to the tag; this seems to just overwrite and clears the problem.  Often can be done by simply re-running the CI job, if such exists
 1. Delete the tag entirely, from the underlying object storage.
 
