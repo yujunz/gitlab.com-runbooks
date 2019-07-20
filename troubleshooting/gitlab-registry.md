@@ -15,7 +15,7 @@ GitLab registry is not responding or returns not 200 OK statuses.
 1. Try restart service with the command `sudo gitlab-ctl restart registry` if it is down.
 
 ### Broken images - empty/null/just now, "invalid checksum digest format"
-From the error logs, you should see a URI in the form '/v2/<group>/<nestedgroup>/<project>/<imagename>/manifests/<tag>.
+From the error logs, you should see a URI in the form `/v2/<group>/<nestedgroup>/<project>/<imagename>/manifests/<tag>`.
 
 You can also check the haproxy logs on the frontend load balancers `fe-registry-0[1|2]-lb-gprd.c.gitlab-production.internal` for the paths which are returning 5xx errors, sorted by frequency.
 
