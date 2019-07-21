@@ -36,7 +36,7 @@ Once the failing image is identified, there are two ways to fix it:
 
 We should usually ask the customer nicely to try the first option themselves; contact support and get them to reach out.  However, the image is fundamentally broken, and won't magically fix itself, so retain the option to Just Do It if circumstances feel right, e.g. long delay in getting a response, or the issue is super widespread and we're drowning in fail logs.  To do the deletion:
 
-Goto https://console.cloud.google.com/storage/browser in the gitlab-production project, and navigate into the registry bucket (gitlab-prd-registry), then down into docker/registry/v2/repositories/.  From there, follow the (nested) group names, to the image name, then into \_manifests/tags.  There should be a folder with the <tag> from the original error log.  Optionally have a poke in that folder (if you're interested in exact failure modes), but then just delete the <tag> folder.
+Goto https://console.cloud.google.com/storage/browser in the gitlab-production project, and navigate into the registry bucket (gitlab-prd-registry), then down into `docker/registry/v2/repositories/`.  From there, follow the (nested) group names, to the image name, then into `\_manifests/tags`.  There should be a folder with the tag from the original error log.  Optionally have a poke in that folder (if you're interested in exact failure modes), but then just delete the tag folder.
 
 #### Failure modes
 If you're investigating further, there's at least two cases seen so far:
