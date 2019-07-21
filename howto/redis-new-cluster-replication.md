@@ -11,13 +11,13 @@ So, after building the nodes, there are some manual steps to take:
 1. On the replicas, start replicating from the master:
   1. REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
   1. /opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH
-  1. 127.0.0.1:6379> slaveof <master ip> 6379
+  1. 127.0.0.1:6379> slaveof MASTER_IP 6379
   1. 127.0.0.1:6379> info replication
 
 You're now expecting the replica to report something like:
 ```
 role:slave
-master_host:<masterip>
+master_host:MASTER_IP
 master_port:6379
 ```
 
