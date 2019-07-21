@@ -9,7 +9,7 @@ So, after building the nodes, there are some manual steps to take:
 1. On all nodes, `sudo gitlab-ctl start sentinel`
   * Not sure why, but it's minor
 1. On the replicas, start replicating from the master:
-  1. REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
+  1. REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\\" -f2)
   1. /opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH
   1. 127.0.0.1:6379> slaveof MASTER_IP 6379
   1. 127.0.0.1:6379> info replication
