@@ -298,6 +298,7 @@ During an incident there are at least 2 roles, and one more optional
 
 * [Understanding GitLab Storage Shards](howto/sharding.md)
 * [Build and Deploy New Storage Servers](howto/storage-servers.md)
+* [Manage uploads](howto/uploads.md)
 
 ### Mangle front end load balancers
 * [Isolate a worker by disabling the service in the LBs](howto/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
