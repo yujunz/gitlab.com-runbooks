@@ -26,17 +26,17 @@ groups:
             services, error rates and check ELK for abuse.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has a apdex score (latency) below SLO"
-          grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
-          grafana_panel_id: "5"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
+          grafana_panel_id: "7"
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
-          promql_template_1: 'gitlab_service_apdex:ratio{type="$type", stage="$stage"}'
-          promql_template_2: 'gitlab_component_apdex:ratio{type="$type", stage="$stage"}'
+          promql_template_1: 'gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
 
       # Warn: Error ratio SLO not being met
-      - alert: service_apdex_slo_out_of_bounds_lower_5m
+      - alert: service_error_ratio_slo_out_of_bounds_upper_5m
         expr: |
           avg(gitlab_service_errors:ratio) by (environment, tier, type, stage)
           > ignoring(environment, stage) group_left
@@ -58,14 +58,14 @@ groups:
             This ratio is higher than the defined SLO for the service.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio exceeding SLO"
-          grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
-          grafana_panel_id: "6"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
+          grafana_panel_id: "8"
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
-          promql_template_1: 'gitlab_service_errors:ratio{type="$type", stage="$stage"}'
-          promql_template_2: 'gitlab_component_errors:ratio{type="$type", stage="$stage"}'
+          promql_template_1: 'gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
 
   - name: service_availability.rules
     rules:
@@ -96,14 +96,14 @@ groups:
             application errors. Check error rate metrics, application logs, sentry for root cause.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is less available than normal"
-          grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "7"
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "12"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
-          promql_template_1: 'gitlab_service_availability:ratio{type="$type", stage="$stage"}'
-          promql_template_2: 'gitlab_component_availability:ratio{type="$type", stage="$stage"}'
+          promql_template_1: 'gitlab_service_availability:ratio{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_availability:ratio{environment="$environment", type="$type", stage="$stage"}'
 
       # Error: Availability below 50%
       - alert: service_availability_out_of_bounds_lower_5m
@@ -129,14 +129,14 @@ groups:
             application errors. Check error rate metrics, application logs, sentry for root cause.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service is less available than normal"
-          grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "7"
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "12"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-availability.md"
-          promql_template_1: 'gitlab_service_availability:ratio{type="$type", stage="$stage"}'
-          promql_template_2: 'gitlab_component_availability:ratio{type="$type", stage="$stage"}'
+          promql_template_1: 'gitlab_service_availability:ratio{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_availability:ratio{environment="$environment", type="$type", stage="$stage"}'
 
       ################################################
       # Operation Rate: how many operations is this service handling per second?
@@ -173,14 +173,14 @@ groups:
             error rates (possibly on upstream services) for root cause.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
           title: "Anomaly detection: The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving more requests than normal"
-          grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "8"
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "12"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
-          promql_template_1: 'gitlab_service_ops:rate{type="$type", stage="$stage"}'
-          promql_template_2: 'gitlab_component_ops:rate{type="$type", stage="$stage"}'
+          promql_template_1: 'gitlab_service_ops:rate{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_ops:rate{environment="$environment", type="$type", stage="$stage"}'
 
       # ------------------------------------
       # Lower bound thresholds exceeded
@@ -212,11 +212,11 @@ groups:
             upstream services for errors that may be leading to traffic flow issues in downstream services.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
           title: "Anomaly detection: The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving fewer requests than normal"
-          grafana_dashboard_id: "26q8nTzZz/service-platform-metrics"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "8"
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "12"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
-          promql_template_1: 'gitlab_service_ops:rate{type="$type", stage="$stage"}'
-          promql_template_2: 'gitlab_component_ops:rate{type="$type", stage="$stage"}'
+          promql_template_1: 'gitlab_service_ops:rate{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_ops:rate{environment="$environment", type="$type", stage="$stage"}'
