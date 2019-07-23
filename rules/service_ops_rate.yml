@@ -165,6 +165,16 @@ groups:
     expr: >
       sum(rate(prometheus_http_request_duration_seconds_count[1m])) by (environment)
 
+  # ci-runners
+  - record: gitlab_component_ops:rate
+    labels:
+      type: ci-runners
+      component: 'polling'
+      tier: runners
+    # See https://gitlab.com/gitlab-org/gitlab-workhorse/blob/master/internal/builds/register.go for details of each status label
+    expr: >
+      sum by (environment, stage) (rate(gitlab_workhorse_builds_register_handler_requests[1m]))
+
 - name: GitLab Service Operations-per-Second Aggregated Rates
   interval: 1m
   rules:
