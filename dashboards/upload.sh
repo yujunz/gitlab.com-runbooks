@@ -42,12 +42,13 @@ find_dashboards "$@"|while read -r line; do
     dashboard=$(cat "${line}")
   fi
 
-  if [[ -z $(echo "${dashboard}" | jq ".uid") ]]; then
+  current_uid=$(echo "${dashboard}" | jq -r ".uid")
+  if [[ -z ${current_uid} ]] || [[ ${current_uid}  == "null" ]]; then
     # If the dashboard doesn't have a uid, configure one
     dashboard=$(echo "${dashboard}" | jq ".uid = \"$uid\"")
   fi
 
-  url=$(curl --silent --fail \
+  response=$(curl --silent --fail \
     -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
     -H "Accept: application/json" \
     -H "Content-Type: application/json" \
@@ -56,7 +57,11 @@ find_dashboards "$@"|while read -r line; do
     \"dashboard\": ${dashboard},
     \"folderId\": ${folderId},
     \"overwrite\": true
-  }" | jq -r '.url')
+  }") || {
+    echo "Unable to install $relative"
+    exit 1
+  }
 
+  url=$(echo "${response}"| jq -r '.url')
   echo "Installed https://dashboards.gitlab.net${url}"
 done

@@ -137,4 +137,28 @@ local colors = import 'colors.libsonnet';
     "alias": "/receive .*/",
     "transform": "negative-Y"
   },
+  softSlo:: {
+    "alias": "Soft SLO",
+    "color": "#FF4500", // "Orange red"
+    "dashes": true,
+    "legend": true,
+    "lines": true,
+    "linewidth": 2,
+    "dashLength": 4,
+    "spaceLength": 10,
+    "nullPointMode": "connected",
+    "zindex": -2,
+  },
+  hardSlo:: {
+    "alias": "Hard SLO",
+    "color": "#F2495C", // "Red"
+    "dashes": true,
+    "legend": true,
+    "lines": true,
+    "linewidth": 4,
+    "dashLength": 4,
+    "spaceLength": 4,
+    "nullPointMode": "connected",
+    "zindex": -2,
+  },
 }

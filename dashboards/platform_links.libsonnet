@@ -19,5 +19,8 @@ local link = grafana.link;
     link.dashboards('registry service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=registry'),
     link.dashboards('sidekiq service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=sidekiq'),
     link.dashboards('web service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=web'),
-  ]
+  ],
+  parameterizedServiceLink: [
+    link.dashboards('$type service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=$type'),
+  ],
 }

@@ -48,7 +48,7 @@ groups:
           severity: s2
           slo_alert: 'yes'
           period: 5m
-          bound: lower
+          bound: upper
           pager: pagerduty
         annotations:
           description: |
@@ -66,6 +66,32 @@ groups:
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
           promql_template_1: 'gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
+
+      # Saturation: Hard SLO exceeded
+      - alert: component_saturation_slo_out_of_bounds_upper_5m
+        expr: |
+          gitlab_component_saturation:ratio > on(component) group_left slo:max:hard:gitlab_component_saturation:ratio
+        for: 5m
+        labels:
+          rules_domain: general
+          metric: gitlab_component_saturation:ratio
+          severity: s3
+          # slo_alert: 'yes' Uncomment after trial period
+          period: 5m
+          bound: upper
+          # pager: pagerduty Uncomment after trial period
+        annotations:
+          description: |
+            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
+
+            This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit."
+          grafana_dashboard_id: "alerts-saturation_component/saturation-component-alert"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type,stage,component"
+          grafana_min_zoom_hours: "6"
+          promql_template_1: 'gitlab_component_saturation:ratio{component="$component",environment="$environment",stage="$stage",type="$type"}'
 
   - name: service_availability.rules
     rules:
