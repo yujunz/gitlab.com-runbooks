@@ -35,4 +35,12 @@ local template = grafana.template;
     "main,cny,",
     "main",
   ),
+  saturationComponent:: template.new(
+    "component",
+    "$PROMETHEUS_DS",
+    'label_values(gitlab_component_saturation:ratio{environment="$environment", type="$type"}, component)',
+    current="cpu",
+    refresh='load',
+    sort=1,
+  ),
 }
