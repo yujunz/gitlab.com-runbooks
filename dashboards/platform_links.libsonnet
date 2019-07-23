@@ -7,6 +7,7 @@ local link = grafana.link;
   ],
   services:: [
     link.dashboards('api service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=api'),
+    link.dashboards('ci-runners service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=ci-runners'),
     link.dashboards('git service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=git'),
     link.dashboards('gitaly service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=gitaly'),
     link.dashboards('haproxy service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=haproxy'),
