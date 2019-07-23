@@ -12,6 +12,11 @@ In Kibana `program` stands for application and `hostname` for machine where it r
 
 Queries can be constructed via constructor, but there is only top 5 values to select for each parameter for specified amount of time. By default it is last 15 minutes.
 
+## Kubernetes
+
+Look for assistance with Kubernetes Logs here:
+[../troubleshooting/kubernetes.md](../troubleshooting/kubernetes.md)
+
 
 ## Adding new log patterns to parse
 
