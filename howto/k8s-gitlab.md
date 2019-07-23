@@ -10,7 +10,7 @@ Our current application configuration components:
 1. Create the cluster configuration in terraform, we'll need the following
    items:
     * IP address for Cloud NAT
-    * IP address for ingress into GitLab product (nginx ingress)
+    * Internal IP address for Service running GitLab Container Registry
     * Internal IP address for prometheus service
     * Cloud NAT device
     * Router for the Cloud NAT
@@ -24,9 +24,6 @@ Our current application configuration components:
     * Example of all the above via terraform: https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/merge_requests/839
 1. Set IAM user permissions on cluster
     * This is manual, documented here: https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/master/README.md#service-account
-1. Create a DNS record for the new registry
-    * This is in route53, use the `gitlab-com` external static IP and create an
-      A record like so: `registry.gke.<ENVIRONMENT>.gitlab.com`
 1. Set the appropriate environment variables in the application configuration repos
     * Repos:
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/settings/ci_cd
@@ -58,12 +55,12 @@ Our current application configuration components:
       `.gitlab-ci.yaml` to deploy to our new cluster.
     * ensure the appropriate variables are added to the ops instance
     * Utilize this MR as a guideline: https://gitlab.com/gitlab-com/runbooks/merge_requests/1200
+1. Create the chef configuration for registry traffic
+    * Example Merge Request: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/1452
 1. Validate the registry is working properly
-    * Using the above DNS record you should be able to log into the docker
-      registry, example: `docker login registry.gke.staging.gitlab.com`
-    * And you should also be able to successfully push and pull images
-1. Create the chef configuration for ingress traffic and enable it (sends all registry traffic to GKE)
-    * Example Merge Request: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/131
+    * Inside of the haproxy nodes, set the VM's to `MAINT` such that the only
+      available registry backend server is our Kubernetes Service endpoint
+    * And you should also be able to successfully utilize docker to login, push, and pull images
 1. Add data source to grafana to our new GKE cluster
     * This is currently done by hand: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6955
     * Login as an admin into https://dashboards.gitlab.net
