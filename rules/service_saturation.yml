@@ -49,13 +49,10 @@ groups:
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'workers'
-    expr: > # For some reason, unicorn_active_connections sometimes exceeds the number of unicorns, clamp_max on the value
-      clamp_max(
-        sum(avg_over_time(unicorn_active_connections{job="gitlab-unicorn"}[1m])) by (type, tier, stage, environment)
-        /
-        count(ruby_memory_bytes{job="gitlab-unicorn"}) by (type, tier, stage, environment),
-        1
-      )
+    expr: >
+      sum(avg_over_time(unicorn_active_connections{job="gitlab-unicorn"}[1m])) by (type, tier, stage, environment)
+      /
+      sum(max(unicorn_workers) without (pid)) by (type, tier, stage, environment)
 
   # type: redis/redis cache, component: single_threaded_cpu
   - record: gitlab_component_saturation:ratio
