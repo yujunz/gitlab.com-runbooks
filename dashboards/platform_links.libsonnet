@@ -3,7 +3,7 @@ local link = grafana.link;
 
 {
   triage:: [
-    link.dashboards('Platform Triage', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/XufqmIGWk/platform-triage?orgId=1'),
+    link.dashboards('Platform Triage', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-triage/platform-triage?orgId=1'),
   ],
   services:: [
     link.dashboards('api service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=api'),
