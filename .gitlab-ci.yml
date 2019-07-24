@@ -30,6 +30,20 @@ stages:
     paths:
       - rules-k8s
 
+.dashboards:
+  image:
+    name: registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
+    entrypoint: ["/bin/sh", "-c"]
+  before_script:
+    - apk add curl bash git jq alpine-sdk go
+    - GOPATH=/usr/local go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb
+    - cd dashboards
+    # Install jsonnet dependencies into the vendor/ directory
+    - jb install
+  only:
+    variables:
+      - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
+
 test-rules:
   extends: .rules-artifacts
   stage: test
@@ -134,23 +148,20 @@ check_alerts:
     variables:
       - $PERFORM_ALERTS_CHECK
 
-deploy_dashboards:
-  stage: deploy
-  image:
-    name: registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
-    entrypoint: ["/bin/sh", "-c"]
+test_dashboards:
+  extends: .dashboards
+  stage: test
   script:
-    - apk add curl bash git jq alpine-sdk go
-    - GOPATH=/usr/local go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb
-    - cd dashboards
-    # Install jsonnet dependencies into the vendor/ directory
-    - jb install
+    - ./upload.sh -D
+
+deploy_dashboards:
+  extends: .dashboards
+  stage: deploy
+  script:
     - ./upload.sh
   only:
     refs:
       - master
-    variables:
-      - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
 
 build_jsonnet_image:
   stage: images
