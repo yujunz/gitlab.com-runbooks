@@ -39,6 +39,12 @@ groups:
       tier: 'lb'
     expr: '0.90'
 
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'redis-cache'
+      tier: 'db'
+    expr: '0.95'
+
 - name: GitLab Apdex SLO observance status
   interval: 1m
   rules:
