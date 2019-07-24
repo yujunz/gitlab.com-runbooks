@@ -44,18 +44,18 @@ groups:
 - name: Rails Redis Cache
   interval: 1m
   rules:
-  # Controller/action level summary.
-  - record: controller_action:gitlab_cache_operation_duration_seconds_count:rate1m
+  # Operation level summary.
+  - record: operation:gitlab_cache_operation_duration_seconds_count:rate1m
     expr: >
       sum without (instance,fqdn,operation) (
         rate(gitlab_cache_operation_duration_seconds_count[1m])
       )
-  - record: controller_action:gitlab_cache_operation_duration_seconds_sum:rate1m
+  - record: operation:gitlab_cache_operation_duration_seconds_sum:rate1m
     expr: >
       sum without (instance,fqdn,operation) (
         rate(gitlab_cache_operation_duration_seconds_sum[1m])
       )
-  - record: controller_action:gitlab_cache_operation_duration_seconds_bucket:rate1m
+  - record: operation:gitlab_cache_operation_duration_seconds_bucket:rate1m
     expr: >
       sum without (instance,fqdn,operation) (
         rate(gitlab_cache_operation_duration_seconds_bucket[1m])
@@ -63,35 +63,35 @@ groups:
   # Job-level summary
   - record: job:gitlab_cache_operation_duration_seconds_count:rate1m
     expr: >
-      sum without (controller,action) (
-        controller_action:gitlab_cache_operation_duration_seconds_count:rate1m
+      sum without (operation) (
+        operation:gitlab_cache_operation_duration_seconds_count:rate1m
       )
   - record: job:gitlab_cache_operation_duration_seconds_sum:rate1m
     expr: >
-      sum without (controller,action) (
-        controller_action:gitlab_cache_operation_duration_seconds_sum:rate1m
+      sum without (operation) (
+        operation:gitlab_cache_operation_duration_seconds_sum:rate1m
       )
   - record: job:gitlab_cache_operation_duration_seconds_bucket:rate1m
     expr: >
-      sum without (controller,action) (
-        controller_action:gitlab_cache_operation_duration_seconds_bucket:rate1m
+      sum without (operation) (
+        operation:gitlab_cache_operation_duration_seconds_bucket:rate1m
       )
     # Quantiles
-  - record: controller_action:gitlab_cache_operation_duration_seconds:p95
-    expr: histogram_quantile(0.95, controller_action:gitlab_cache_operation_duration_seconds_bucket:rate1m)
-  - record: controller_action:gitlab_cache_operation_duration_seconds:p99
-    expr: histogram_quantile(0.99, controller_action:gitlab_cache_operation_duration_seconds_bucket:rate1m)
+  - record: operation:gitlab_cache_operation_duration_seconds:p95
+    expr: histogram_quantile(0.95, operation:gitlab_cache_operation_duration_seconds_bucket:rate1m)
+  - record: operation:gitlab_cache_operation_duration_seconds:p99
+    expr: histogram_quantile(0.99, operation:gitlab_cache_operation_duration_seconds_bucket:rate1m)
 
 - name: Unicorn Cache 5m
   interval: 1m
   rules:
-  # Cache data, per controller/action.
-  - record: controller_action:gitlab_cache_operation_duration_seconds_bucket:rate5m
+  # Cache data, per operation.
+  - record: operation:gitlab_cache_operation_duration_seconds_bucket:rate5m
     expr: >
       sum without (fqdn,instance,operation) (
         rate(gitlab_cache_operation_duration_seconds_bucket[5m])
       )
-  - record: controller_action:gitlab_cache_operation_duration_seconds:p95
-    expr: histogram_quantile(0.95, controller_action:gitlab_cache_operation_duration_seconds_bucket:rate5m)
-  - record: controller_action:gitlab_cache_operation_duration_seconds:p99
-    expr: histogram_quantile(0.99, controller_action:gitlab_cache_operation_duration_seconds_bucket:rate5m)
+  - record: operation:gitlab_cache_operation_duration_seconds:p95
+    expr: histogram_quantile(0.95, operation:gitlab_cache_operation_duration_seconds_bucket:rate5m)
+  - record: operation:gitlab_cache_operation_duration_seconds:p99
+    expr: histogram_quantile(0.99, operation:gitlab_cache_operation_duration_seconds_bucket:rate5m)
