@@ -140,8 +140,12 @@ deploy_dashboards:
     name: registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
     entrypoint: ["/bin/sh", "-c"]
   script:
-    - apk add curl bash git jq
-    - ./dashboards/upload.sh
+    - apk add curl bash git jq alpine-sdk go
+    - GOPATH=/usr/local go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb
+    - cd dashboards
+    # Install jsonnet dependencies into the vendor/ directory
+    - jb install
+    - ./upload.sh
   only:
     refs:
       - master
