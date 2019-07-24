@@ -12,8 +12,12 @@ The dashboards are kept in [`grafonnet`](https://github.com/grafana/grafonnet-li
 * Install `jsonnet`, `jq` and `curl`
   * On a Mac, `jsonnet` can be installed with `brew install jsonnet`
   * On Linux, you'll need to build the binary yourself, or use the docker image: `docker run --rm registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest`
+* Install `jb` [jsonet bundler](https://github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb)
+  * `go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb`
+* Update vendor dependencies
+  * `(cd dashboards && jb install)`
 
-# Editting Files
+# Editing Files
 
 * Dashboards should be kept in files with the following name: `/dashboards/[grafana_folder_name]/[name].dashboard.jsonnet`
   * `grafana_folder_name` refers to the grafana folder where the files will be uploaded to. Note that the folder must already be created.
@@ -26,5 +30,3 @@ The dashboards are kept in [`grafonnet`](https://github.com/grafana/grafonnet-li
 * Google does not maintain official docker images for jsonnet.
 * For this reason, we have a manual build step to build the `registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest` image.
 * To update the image, run this job in the CI build manually
-
-

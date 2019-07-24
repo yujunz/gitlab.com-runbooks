@@ -16,11 +16,6 @@ find_dashboards() {
   fi
 }
 
-# Install dependencies
-if ! [[ -d "${SCRIPT_DIR}/grafonnet-lib" ]]; then
-  git clone https://github.com/grafana/grafonnet-lib.git "${SCRIPT_DIR}/grafonnet-lib"
-fi
-
 # Install jsonnet dashboards
 find_dashboards "$@"|while read -r line; do
   relative=${line#"$SCRIPT_DIR/"}
@@ -37,7 +32,7 @@ find_dashboards "$@"|while read -r line; do
 
   extension="${relative##*.}"
   if [[ "$extension" == "jsonnet" ]]; then
-    dashboard=$(jsonnet -J "${SCRIPT_DIR}" -J "${SCRIPT_DIR}/grafonnet-lib" "${line}")
+    dashboard=$(jsonnet -J "${SCRIPT_DIR}" -J "${SCRIPT_DIR}/vendor" "${line}")
   else
     dashboard=$(cat "${line}")
   fi
