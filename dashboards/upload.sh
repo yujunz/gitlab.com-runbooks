@@ -1,26 +1,29 @@
 #!/usr/bin/env bash
+# vim: ai:ts=2:sw=2:expandtab
 
 set -euo pipefail
 
 IFS=$'\n\t'
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+cd "${SCRIPT_DIR}"
 
 usage() {
-    cat <<-EOF
-    Usage $0 [Dh]
+  cat <<-EOF
+  Usage $0 [Dh]
 
-    DESCRIPTION
-        This script generates dashboards and uploads
-        them to dashboards.gitlab.net
+  DESCRIPTION
+    This script generates dashboards and uploads
+    them to dashboards.gitlab.net
 
-        GRAFANA_API_TOKEN must be set in the environment
+    GRAFANA_API_TOKEN must be set in the environment
 
-    FLAGS
-        -D  run in Dry-run
-        -h  help
+  FLAGS
+    -D  run in Dry-run
+    -h  help
 
-	EOF
+EOF
 }
-
 
 while getopts ":Dh" o; do
     case "${o}" in
@@ -38,7 +41,6 @@ done
 
 shift $((OPTIND-1))
 
-
 dry_run=${dry_run:-}
 
 if [[ -z $dry_run && -z ${GRAFANA_API_TOKEN:-} ]]; then
@@ -47,16 +49,29 @@ if [[ -z $dry_run && -z ${GRAFANA_API_TOKEN:-} ]]; then
     exit 1
 fi
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-if [[ ! -d "${SCRIPT_DIR}/vendor" ]]; then
-  >&2 echo "vendor directory not founder, running bundler.sh to install dependencies..."
+if [[ ! -d "vendor" ]]; then
+  >&2 echo "vendor directory not found, running bundler.sh to install dependencies..."
   "${SCRIPT_DIR}/bundler.sh"
 fi
 
 find_dashboards() {
+  local find_opts
+  find_opts=(
+    "."
+    # All *.jsonnet and *.json dashboards...
+    "("
+      "-name" '*.jsonnet'
+    "-o"
+      "-name" '*.json'
+    ")"
+    -not -name '.*'          # Exclude dot files
+    -not -path "**/.*"       # Exclude dot dirs
+    -not -path "./vendor/*"  # Exclude vendored files
+    -mindepth 2              # Exclude files in the root folder
+  )
+
   if [[ $# == 0 ]]; then
-    find "${SCRIPT_DIR}" '(' -name '*.dashboard.jsonnet' -o -name '*.dashboard.json' ')'
+    find "${find_opts[@]}"
   else
     for var in "$@"
     do
@@ -67,14 +82,13 @@ find_dashboards() {
 
 # Install jsonnet dashboards
 find_dashboards "$@"|while read -r line; do
-  relative=${line#"$SCRIPT_DIR/"}
+  relative=${line#"./"}
   folder=$(dirname "$relative")
-
   uid="${folder}-$(basename "$line"|sed -e 's/\..*//')"
-
   extension="${relative##*.}"
+
   if [[ "$extension" == "jsonnet" ]]; then
-    dashboard=$(jsonnet -J "${SCRIPT_DIR}" -J "${SCRIPT_DIR}/vendor" -J "${SCRIPT_DIR}/vendor/grafonnet-lib" "${line}")
+    dashboard=$(jsonnet -J . -J vendor "${line}")
   else
     dashboard=$(cat "${line}")
   fi
@@ -86,8 +100,8 @@ find_dashboards "$@"|while read -r line; do
   fi
 
   if [[ -n $dry_run ]]; then
-      echo "Running in dry run mode, would create $line in folder $folder with uid $uid"
-      continue
+    echo "Running in dry run mode, would create $line in folder $folder with uid $uid"
+    continue
   fi
 
   # Note: create folders with `create-grafana-folder.sh` to configure the UID
@@ -96,7 +110,6 @@ find_dashboards "$@"|while read -r line; do
     -H "Accept: application/json" \
     -H "Content-Type: application/json" \
     "https://dashboards.gitlab.net/api/folders/${folder}" | jq '.id')
-
 
   response=$(curl --silent --fail \
     -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
@@ -109,6 +122,7 @@ find_dashboards "$@"|while read -r line; do
     \"overwrite\": true
   }") || {
     echo "Unable to install $relative"
+
     exit 1
   }
 
