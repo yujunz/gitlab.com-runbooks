@@ -9,6 +9,7 @@ local layout = import 'layout.libsonnet';
 local basic = import 'basic.libsonnet';
 local nodeMetrics = import 'node_metrics.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
+local serviceCatalog = import 'service_catalog.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -108,7 +109,7 @@ dashboard.new(
 .addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 2000, })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="pgbouncer", environment="$environment"'), gridPos={ x: 0, y: 3000, })
 + {
-  links+: platformLinks.triage,
+  links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer'),
 }
 
 
