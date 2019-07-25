@@ -12,7 +12,7 @@ route:
 
   # Route most alerts to the main alerts channel in slack
   receiver: main_alerts_channel
-  group_by: ['environment', 'tier', 'type', 'alertname']
+  group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
 
   routes:
   ################################################
@@ -34,14 +34,14 @@ route:
   - match:
       rules_domain: general
       pager: ""
-    group_by: ['environment', 'tier', 'type', 'alertname']
+    group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
     receiver: slack_alerts_general
     continue: false
 
   - match:
       rules_domain: general
       pager: pagerduty
-    group_by: ['environment', 'tier', 'type', 'alertname']
+    group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
     receiver: slack_alerts_general
     continue: true
 
@@ -53,7 +53,7 @@ route:
   - match:
       channel: gitaly
       severity: warn
-    group_by: ['environment', 'alertname','instance','job']
+    group_by: ['environment', 'alertname','instance','job', 'stage']
     receiver: gitaly_low_priority_alerts_channel
     continue: false
 
@@ -61,13 +61,13 @@ route:
   - match:
       channel: gitaly
       severity: error
-    group_by: ['environment', 'alertname','instance','job']
+    group_by: ['environment', 'alertname','instance','job', 'stage']
     receiver: gitaly_alerts_channel
     continue: false
 
   - match:
       channel: gitaly
-    group_by: ['environment', 'alertname','instance','job']
+    group_by: ['environment', 'alertname','instance','job', 'stage']
     receiver: gitaly_alerts_channel
     continue: true
 
@@ -75,7 +75,7 @@ route:
   - match:
       channel: ci-cd
       severity: warn
-    group_by: ['environment', 'alertname']
+    group_by: ['environment', 'alertname', 'stage']
     receiver: cicd_alerts_channel
     continue: false
 
@@ -83,13 +83,13 @@ route:
   - match:
       channel: ci-cd
       severity: error
-    group_by: ['environment', 'alertname']
+    group_by: ['environment', 'alertname', 'stage']
     receiver: cicd_alerts_channel
     continue: false
 
   - match:
       channel: ci-cd
-    group_by: ['environment', 'alertname']
+    group_by: ['environment', 'alertname', 'stage']
     receiver: cicd_alerts_channel
     continue: true
 
@@ -97,7 +97,7 @@ route:
   - match:
       channel: database
       severity: warn
-    group_by: ['environment', 'alertname']
+    group_by: ['environment', 'alertname', 'stage']
     receiver: database_low_priority_alerts_channel
     continue: false
 
@@ -105,13 +105,13 @@ route:
   - match:
       channel: database
       severity: error
-    group_by: ['environment', 'alertname']
+    group_by: ['environment', 'alertname', 'stage']
     receiver: database_alerts_channel
     continue: false
 
   - match:
       channel: database
-    group_by: ['environment', 'alertname']
+    group_by: ['environment', 'alertname', 'stage']
     receiver: database_alerts_channel
     continue: true
 
@@ -126,7 +126,7 @@ route:
     - receiver: non_prod_pagerduty
       match_re:
         environment: gstg|dr|pre
-      group_by: ['environment', 'alertname']
+      group_by: ['environment', 'alertname', 'stage']
       continue: false
     - receiver: slo_dr
       match:
@@ -138,22 +138,27 @@ route:
         slo_alert: yes
         environment: gprd
         stage: cny
-      continue: false
+      continue: true
     - receiver: slo_gprd_main
       match:
         slo_alert: yes
         environment: gprd
         stage: main
+      continue: true
+    - receiver: pager_alerts_channel
+      match:
+        slo_alert: yes
+      group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
       continue: false
     - receiver: slo_non_prod
       match:
         slo_alert: yes
       continue: false
     - receiver: prod_pagerduty
-      group_by: ['environment', 'alertname']
+      group_by: ['environment', 'alertname', 'stage']
       continue: true
     - receiver: pager_alerts_channel
-      group_by: ['environment', 'tier', 'type', 'alertname']
+      group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
       continue: true
 
     continue: false
@@ -161,7 +166,7 @@ route:
   # Everything else goes to #alerts
   # NOTE: Make sure this is the last matcher
   - receiver: main_alerts_channel
-    group_by: ['environment', 'tier', 'type', 'alertname']
+    group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
     continue: false
 
 receivers:
