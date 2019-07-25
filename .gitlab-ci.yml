@@ -37,9 +37,7 @@ stages:
   before_script:
     - apk add curl bash git jq alpine-sdk go
     - GOPATH=/usr/local go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb
-    - cd dashboards
-    # Install jsonnet dependencies into the vendor/ directory
-    - jb install
+    - dashboards/bundler.sh # Install jsonnet bundles
   only:
     variables:
       - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
@@ -152,13 +150,13 @@ test_dashboards:
   extends: .dashboards
   stage: test
   script:
-    - ./upload.sh -D
+    - dashboards/upload.sh -D
 
 deploy_dashboards:
   extends: .dashboards
   stage: deploy
   script:
-    - ./upload.sh
+    - dashboards/upload.sh
   only:
     refs:
       - master

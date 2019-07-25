@@ -49,6 +49,11 @@ fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+if [[ ! -d "${SCRIPT_DIR}/vendor" ]]; then
+  >&2 echo "vendor directory not founder, running bundler.sh to install dependencies..."
+  "${SCRIPT_DIR}/bundler.sh"
+fi
+
 find_dashboards() {
   if [[ $# == 0 ]]; then
     find "${SCRIPT_DIR}" '(' -name '*.dashboard.jsonnet' -o -name '*.dashboard.json' ')'
