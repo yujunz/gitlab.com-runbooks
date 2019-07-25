@@ -5,6 +5,7 @@ local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
 local colors = import 'colors.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
+local layout = import 'layout.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -84,15 +85,9 @@ dashboard.new(
 .addTemplate(templates.type)
 .addTemplate(templates.stage)
 .addTemplate(templates.saturationComponent)
-.addPanel(
-  componentSaturationPanel(),
-  gridPos={
-    x: 0,
-    y: 0,
-    w: 24,
-    h: 10,
-  }
-)
+.addPanels(layout.grid([
+    componentSaturationPanel(),
+  ], cols=1,rowHeight=10))
 + {
   links+: platformLinks.parameterizedServiceLink + platformLinks.triage,
 }
