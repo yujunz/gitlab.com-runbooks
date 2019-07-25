@@ -7,26 +7,29 @@ groups:
     labels:
       severity: s4
     annotations:
-      description: Check failed chef executions on host {{ $labels.fqdn }} in https://prometheus.gitlab.com/graph?g0.range_input=8w&g0.expr=chef_client_error+%3D%3D+1&g0.tab=1
+      description: Check failed chef executions on host {{ $labels.fqdn }}
+      grafana_dashboard_id: "000000231/chef-client"
       runbook: troubleshooting/chef.md
       title: Chef client failed for more than 5hs
   - alert: ChefClientStale
-    expr: time() - chef_client_last_run_timestamp_seconds > 5 * 3600 + time() % 3600
+    expr: time() - chef_client_last_run_timestamp_seconds > 5 * 3600
     labels:
       severity: s4
     annotations:
       description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration }} ago
+      grafana_dashboard_id: "000000231/chef-client"
       runbook: troubleshooting/chef.md
       title: Chef client hasn't run for longer than expected
   - alert: ChefClientErrorCritical
-    expr: count(chef_client_error == 1) / count(chef_client_error) > .25
-    for: 5m
+    expr: avg(chef_client_error) by (type) * 100 > 10
+    for: 1h
     labels:
       severity: s1
       pager: pagerduty
     annotations:
       description: |
-        At least 25% of the fleet are failing chef-runs, this likely points to a configuration
+        At least 10% of type {{ $labels.type }} are failing chef-runs, this likely points to a configuration
         error. Check the syslog of the failing hosts to see the reasons
+      grafana_dashboard_id: "000000231/chef-client"
       runbook: troubleshooting/chef.md
       title: Chef client failures have reached critical levels
