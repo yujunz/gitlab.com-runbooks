@@ -38,6 +38,7 @@ stages:
     - apk add curl bash git jq alpine-sdk go
     - GOPATH=/usr/local go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb
     - dashboards/bundler.sh # Install jsonnet bundles
+    - dashboards/generate-mixins.sh # Generate dashboards from mixins
   only:
     variables:
       - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/

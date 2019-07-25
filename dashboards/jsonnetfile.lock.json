@@ -9,6 +9,36 @@
                 }
             },
             "version": "69bc267211790a1c3f4ea6e6211f3e8ffe22f987"
+        },
+        {
+            "name": "kubernetes-mixin",
+            "source": {
+                "git": {
+                    "remote": "https://github.com/kubernetes-monitoring/kubernetes-mixin",
+                    "subdir": ""
+                }
+            },
+            "version": "5107f34c39baf5360ed0be84ea9a0cc5fb25fabc"
+        },
+        {
+            "name": "grafonnet",
+            "source": {
+                "git": {
+                    "remote": "https://github.com/grafana/grafonnet-lib",
+                    "subdir": "grafonnet"
+                }
+            },
+            "version": "69bc267211790a1c3f4ea6e6211f3e8ffe22f987"
+        },
+        {
+            "name": "grafana-builder",
+            "source": {
+                "git": {
+                    "remote": "https://github.com/kausalco/public",
+                    "subdir": "grafana-builder"
+                }
+            },
+            "version": "dbc94ab71afa538b2cf467f06751b1836920dce9"
         }
     ]
 }
