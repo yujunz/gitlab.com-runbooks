@@ -18,6 +18,9 @@ usage() {
 
     GRAFANA_API_TOKEN must be set in the environment
 
+    GRAFANA_FOLDER (optional): Override folder.
+    Useful for testing.
+
   FLAGS
     -D  run in Dry-run
     -h  help
@@ -101,7 +104,7 @@ call_grafana_api() {
 # Install jsonnet dashboards
 find_dashboards "$@"|while read -r line; do
   relative=${line#"./"}
-  folder=$(dirname "$relative")
+  folder=${GRAFANA_FOLDER:-$(dirname "$relative")}
   uid="${folder}-$(basename "$line"|sed -e 's/\..*//')"
   extension="${relative##*.}"
 
