@@ -1,2 +1,3 @@
 vendor/
 kubernetes/
+service_catalog.json

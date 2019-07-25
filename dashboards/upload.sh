@@ -54,6 +54,9 @@ if [[ ! -d "vendor" ]]; then
   "${SCRIPT_DIR}/bundler.sh"
 fi
 
+# Convert the service catalog yaml into a JSON file in a format thats consumable by jsonnet
+ruby -rjson -ryaml -e "puts YAML.load(ARGF.read).to_json"  ../services/service-catalog.yml > service_catalog.json
+
 find_dashboards() {
   local find_opts
   find_opts=(

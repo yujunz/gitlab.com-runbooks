@@ -3,9 +3,9 @@
 image: registry.gitlab.com/gitlab-com/runbooks:3.0.2
 
 stages:
+  - images
   - test
   - deploy
-  - images
   - alertmanager
   - deploy-rules-gstg
   - deploy-rules-pre
@@ -35,8 +35,6 @@ stages:
     name: registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
     entrypoint: ["/bin/sh", "-c"]
   before_script:
-    - apk add curl bash git jq alpine-sdk go
-    - GOPATH=/usr/local go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb
     - dashboards/bundler.sh # Install jsonnet bundles
     - dashboards/generate-mixins.sh # Generate dashboards from mixins
   only:
@@ -168,13 +166,14 @@ build_jsonnet_image:
   services:
     - docker:dind
   variables:
-    GIT_STRATEGY: none
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
   script:
-    - apk add curl bash git jq
+    - apk add curl git
     - git clone https://github.com/google/jsonnet.git
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - cd jsonnet && docker build -t registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest .
+    - cd jsonnet && docker build -t registry.gitlab.com/gitlab-com/runbooks/jsonnet-intermediate:latest . && cd ..
+    - docker build -t registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest images/jsonnet/
     - docker push registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
+
   when: manual
