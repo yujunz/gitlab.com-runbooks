@@ -109,7 +109,7 @@ dashboard.new(
 .addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 2000, })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="pgbouncer", environment="$environment"'), gridPos={ x: 0, y: 3000, })
 + {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer'),
+  links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer') + platformLinks.services,
 }
 
 

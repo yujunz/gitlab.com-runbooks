@@ -6,6 +6,48 @@ local row = grafana.row;
 local seriesOverrides = import 'series_overrides.libsonnet';
 
 {
+  timeseries(
+    title="Timeseries",
+    description="",
+    query="",
+    legendFormat='',
+    format='short',
+    interval="1m",
+    intervalFactor=3,
+    yAxisLabel='',
+    legend_show=true,
+    ):: graphPanel.new(
+    title,
+    description=description,
+    sort="decreasing",
+    linewidth=2,
+    fill=0,
+    datasource="$PROMETHEUS_DS",
+    decimals=0,
+    legend_show=legend_show,
+    legend_values=true,
+    legend_min=true,
+    legend_max=true,
+    legend_current=true,
+    legend_total=false,
+    legend_avg=true,
+    legend_alignAsTable=true,
+    legend_hideEmpty=true,
+  )
+  .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+  .resetYaxes()
+  .addYaxis(
+    format=format,
+    min=0,
+    label=yAxisLabel,
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  ),
+
   queueLengthTimeseries(
     title="Timeseries",
     description="",
@@ -97,6 +139,8 @@ local seriesOverrides = import 'series_overrides.libsonnet';
     yAxisLabel='Duration',
     interval="1m",
     intervalFactor=3,
+    legend_show=true,
+    logBase=1,
     ):: graphPanel.new(
     title,
     description=description,
@@ -105,7 +149,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
     fill=0,
     datasource="$PROMETHEUS_DS",
     decimals=0,
-    legend_show=true,
+    legend_show=legend_show,
     legend_values=true,
     legend_min=true,
     legend_max=true,
@@ -121,6 +165,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
     format="s",
     min=0,
     label=yAxisLabel,
+    logBase=logBase,
   )
   .addYaxis(
     format='short',
