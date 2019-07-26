@@ -3,7 +3,7 @@ teams:
   url: https://about.gitlab.com/handbook/engineering/dev-backend/create/
   manager_slug: douwe
   slack_channel: g_create
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
@@ -11,7 +11,7 @@ teams:
   url: https://about.gitlab.com/handbook/engineering/dev-backend/distribution/
   manager_slug: marin
   slack_channel: distribution
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
@@ -19,7 +19,7 @@ teams:
   url: https://about.gitlab.com/handbook/engineering/dev-backend/geo/
   manager_slug: geo-mgr
   slack_channel: g_geo
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
@@ -28,13 +28,13 @@ teams:
   slack_channel: gitaly
   slack_low_severity_alerts_channel: gitaly-alerts
   engagement_policy:
-  oncall_schedule:   
+  oncall_schedule:
 
 - name: gitter
   url: https://about.gitlab.com/handbook/engineering/dev-backend/gitter/
   manager_slug: eng-manager-gitaly
   slack_channel: g_gitaly
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
@@ -42,7 +42,7 @@ teams:
   url: https://about.gitlab.com/handbook/engineering/dev-backend/manage/
   manager_slug: ruben-d
   slack_channel: g_manage
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
@@ -50,7 +50,7 @@ teams:
   url: https://about.gitlab.com/handbook/engineering/dev-backend/manage/
   manager_slug: ean-m
   slack_channel: g_plan
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
@@ -58,7 +58,7 @@ teams:
   url: https://about.gitlab.com/handbook/engineering/dev-backend/
   manager_slug: darby-frey
   slack_channel: g_release
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
@@ -66,15 +66,15 @@ teams:
   url: https://about.gitlab.com/handbook/support/
   manager_slug: tcooney
   slack_channel: support_gitlab-com
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule: https://gitlab.pagerduty.com/schedules#PIQ317K
 
 - name: infrastructure
   url: https://about.gitlab.com/handbook/engineering/infrastructure/
-  manager_slug: 
+  manager_slug:
   slack_channel: production
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
 
@@ -83,7 +83,7 @@ teams:
   url: https://about.gitlab.com/handbook/engineering/dev-backend/
   manager_slug: clement
   slack_channel: backend
-  engagement_policy: # Link to doc that talks about engagement 
+  engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
@@ -100,7 +100,7 @@ tiers:
 - name: lb
 - name: stor
 - name: db
-- name: inf 
+- name: inf
 
 services:
 - name: alertmanager
@@ -117,14 +117,14 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://gitlab.com/gitlab-org/build/omnibus-mirror/alertmanager
     criticality: 3
     slx:
     documents:
       design: https://docs.google.com/document/d/1-4jefGkFo71jlaLo4lHz40ZBoCv9ycBBBbjzbXifGyY
       architecture: https://github.com/prometheus/alertmanager/blob/master/doc/arch.svg
-      service: 
+      service:
         - https://github.com/prometheus/alertmanager/blob/master/README.md
       security: https://prometheus.io/docs/operating/security/#alertmanager
     dependencies:
@@ -278,14 +278,14 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://gitlab.com/gitlab-cookbooks/gitlab-exporters
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: 
+      service:
         - https://github.com/prometheus/blackbox_exporter/blob/master/README.md
       security:
     dependencies:
@@ -345,7 +345,7 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://gitlab.com/gitlab-cookbooks/gitlab_users
     criticality: 4
     slx:
@@ -422,14 +422,14 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://github.com/hashicorp/consul
     criticality: 3
     slx:
     documents:
       design:
       architecture: https://www.consul.io/docs/internals/architecture.html
-      service: 
+      service:
         - https://github.com/hashicorp/consul/blob/master/README.md
       security: https://www.consul.io/docs/internals/security.html
     dependencies:
@@ -483,7 +483,7 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://gitlab.com/gitlab-com/gitlab-contributors
     criticality: 4
     slx:
@@ -639,7 +639,7 @@ services:
         access_type:
         reviewed:
   operations:
-    maintenance: 
+    maintenance:
     runbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/discourse-forum.md
     playbooks:
@@ -839,14 +839,14 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://gitlab.com/gitlab-cookbooks/gitlab-haproxy
     criticality: 1
     slx:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
-      service: 
+      service:
         - https://cbonte.github.io/haproxy-dconv/1.7/intro.html
       security:
     dependencies:
@@ -879,7 +879,7 @@ services:
         reviewed:
   operations:
     maintenance: https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/haproxy.md
-    runbooks: 
+    runbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/haproxy.md
     playbooks:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
@@ -890,16 +890,16 @@ services:
 
 - name: git
   tier: sv
-  teams: 
-    - create 
+  teams:
+    - create
     - distribution
     - geo
     - gitaly
-    - gitter 
+    - gitter
     - manage
-    - plan 
+    - plan
   label: Service:Git
-  business: 
+  business:
     requirement: |
       Serves git operation requests over SSH and HTTP. The specific git operations handled are git-upload-pack (pushing), git-receive-pack (pulling), git-upload-archive (creating an archive of a tree), and git-lfs-authenticate (LFS authentication). git-upload-pack is also used in git-ls-remote.
     customers:
@@ -918,7 +918,7 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
-      service: 
+      service:
         - https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
       security:
     dependencies:
@@ -995,14 +995,14 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://gitlab.com/gitlab-org/gitaly
     criticality: 2
     slx:
     documents:
       design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/DESIGN.md
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
-      service: 
+      service:
         - https://gitlab.com/gitlab-org/gitaly/blob/master/README.md
       security:
     dependencies:
@@ -1081,14 +1081,14 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://github.com/influxdata/influxdb
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: 
+      service:
         - https://github.com/influxdata/influxdb/blob/master/README.md
       security: https://docs.influxdata.com/influxdb/v1.7/administration/security/
     dependencies:
@@ -1148,14 +1148,14 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://github.com/tpitale/mail_room
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: 
+      service:
         - https://github.com/tpitale/mail_room/blob/master/README.md
       security:
     dependencies:
@@ -1213,14 +1213,14 @@ services:
       availability:
       response_time:
   technical:
-    project: 
+    project:
       - https://gitlab.com/gitlab-org/gitlab-pages
     criticality: 3
     slx:
     documents:
       design:
       architecture:
-      service: 
+      service:
         - https://gitlab.com/gitlab-org/gitlab-pages/blob/master/README.md
       security:
     dependencies:
@@ -1263,31 +1263,31 @@ services:
 
 - name: pgbouncer
   tier: db
-  teams: 
+  teams:
     - infrastructure
   label: Service:pgbouncer
-  business: 
+  business:
     requirement:  We use PgBouncer as the connection pooler for PostgreSQL
-    customers:  
+    customers:
       - GitLab.com customers
     business_value:   |
       It allows pooling and reusing server connections to reduce the number of database conections.
     SLA:
       availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
+      response_time:   # Response time for inquiries or issues
                        # relating this service
-  technical: 
+  technical:
     project:
       - https://github.com/pgbouncer/pgbouncer
     criticality:  1
-    slx:  
-    documents: 
-      design:   
+    slx:
+    documents:
+      design:
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
-      service: 
+      service:
         - https://pgbouncer.github.io/features.html
-      security: 
-    dependencies: 
+      security:
+    dependencies:
       - service:  postgres
     configurations:    # A service might have one or more configs
       - config_name:  pgbouncer.ini
@@ -1297,75 +1297,75 @@ services:
       - gprd-base-db-pgbouncer
       - gstg-base-db-pgbouncer-common
       - gstg-base-db-pgbouncer
-    scalability:       
+    scalability:
       bound:  cpu
       scalable: vertical
-    security: 
-      security_reviewed: 
-      data_classification: 
-      security_incidents:  
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
     logging:
       - name: pgbouncer
         permalink: https://log.gitlab.net/goto/3fb9391e5ef07b47aac2fce6fda175d9
       - name: system
         permalink: https://log.gitlab.net/goto/ae311f6f133cc1c45b62541977081043
-  infrastructure: 
+  infrastructure:
     provider:   gcp
     architecture:   https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
-    provisioning:  terraform      
+    provisioning:  terraform
     accesses:
-      - account_name:  # User or system account that has access to the service 
+      - account_name:  # User or system account that has access to the service
                        # components in the infra provider
         access_type:   # Level of access
         reviewed:      # Is it reviewed and approved?
   operations:
     maintenance:       # Link to maintenance procedures document
-    runbooks:   
+    runbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/pgbouncer.md
-    playbooks:  
+    playbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pgbouncer.md
 
     error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
-  observability: 
-    monitors: 
-      grafana_folder: RNfEDpLmz
-      primary_grafana_dashboard: "PwlB97Jmk/pgbouncer-overview"
+  observability:
+    monitors:
+      grafana_folder: pgbouncer
+      primary_grafana_dashboard: "pgbouncer-main/pgbouncer-overview"
 
 - name: postgres
   tier: db
-  teams: 
+  teams:
     - infrastructure
   label: Service:Postgres
-  business: 
+  business:
     requirement:  We use Postgres as our backend database.
-    customers:      
+    customers:
       - GitLab.com customers
     business_value: |
-      PostgreSQL is a powerful, open source object-relational database system 
-      that uses and extends the SQL language combined with many features 
+      PostgreSQL is a powerful, open source object-relational database system
+      that uses and extends the SQL language combined with many features
       that safely store and scale the most complicated data workloads.
       We use Patroni as the high-availability solution, PGBouncer as the pooling solution, and WAL-G as the backup solution.
 
     SLA:
       availability:    # Availability SLA promised to customers
-      response_time:   # Response time for inquiries or issues 
+      response_time:   # Response time for inquiries or issues
                        # relating this service
-  technical: 
+  technical:
     project:
       - https://github.com/postgres/postgres
     criticality:       1
-    slx:  
-    documents: 
-      design: 
+    slx:
+    documents:
+      design:
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
       service:
         - https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
-    dependencies:     
-      - service: consul  
+    dependencies:
+      - service: consul
     components:
       - patroni
-    configurations:   
+    configurations:
       - config_name:  postgresql.conf
         location:  /var/opt/gitlab/postgresql/postgresql.conf
       - config_name:  pg_ident.conf
@@ -1377,33 +1377,33 @@ services:
     chef_roles:
       - gstg-base-db-patroni
       - gprd-base-db-patroni
-    scalability:       
+    scalability:
       bound:  cpu, memory, disk
       scalable: horizontal or vertical. We can horizontally scale by adding more read only replicas to serve read oprations. However, for serving read/write operations we may need to scale vertically.
-    security: 
-      security_reviewed: 
+    security:
+      security_reviewed:
       data_classification: red
-      security_incidents:  
+      security_incidents:
     logging:
       - name: Postgres
         permalink: https://log.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c
       - name: system
         permalink: https://log.gitlab.net/goto/3669d551a595a3a5cf1e9318b74e6c22
-  infrastructure: 
+  infrastructure:
     provider:  gcp
     architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
-    provisioning:  terraform      
+    provisioning:  terraform
     accesses:
-      - account_name:  
-        access_type:   
-        reviewed: 
+      - account_name:
+        access_type:
+        reviewed:
   operations:
-    maintenance:  
-    runbooks:  
+    maintenance:
+    runbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/postgres.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-wale-backups.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-walg-backups.md
-    playbooks: 
+    playbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/patroni-management.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pg-ha.md
@@ -1413,8 +1413,8 @@ services:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-switchover.md
 
     error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
-  observability: 
-    monitors: 
+  observability:
+    monitors:
       grafana_folder: RNfEDpLmz
       primary_grafana_dashboard: "000000144/postgresql-overview"
 
@@ -1680,7 +1680,7 @@ services:
     documents:
       design:
       architecture: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md#architecture-overview
-      service: 
+      service:
         - https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
       security:
     dependencies:
@@ -1770,7 +1770,7 @@ services:
     documents:
       design:
       architecture: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md#architecture-overview
-      service: 
+      service:
         - https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
       security:
     dependencies:
@@ -1835,10 +1835,10 @@ services:
 
 - name: redis
   tier: db
-  teams: 
+  teams:
     - infrastructure
   label: Service:Redis
-  business: 
+  business:
     requirement: |
       Redis is packaged to provide a place to store session data, temporary cache information and background job queues (as the backend for SideKiq).
     customers:
@@ -1891,25 +1891,27 @@ services:
   operations:
     maintenance:
     runbooks:
-    playbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/redis-new-cluster-replication.md
     error_budget:
   observability:
     monitors:
-      primary_grafana_dashboard: "wccEP9Imk/redis"
+      grafana_folder: redis
+      primary_grafana_dashboard: "redis-main/redis-overview"
 
 - name: redis-cache
   tier: db
-  teams: 
+  teams:
     - infrastructure
   label: Service:RedisCache
-  business: 
+  business:
     requirement: |
       Redis-Cache is used to cache things like function calls, return values...etc in our Rails appl for performance and optimization purpose. Instead of using the Rails' built-in caching infrastructure, we use annotation decorations to do caching in Redis-Cache.
     customers:
       - GitLab.com customers
     business_value: |
-      Redis-Cache delivers us performance and optimization in our Rails app. 
+      Redis-Cache delivers us performance and optimization in our Rails app.
     SLA:
       availability:
       response_time:
@@ -1963,10 +1965,10 @@ services:
 
 - name: redis-cache-sentinel
   tier: db
-  teams: 
+  teams:
     - infrastructure
   label: Service:RedisCacheSentinel
-  business: 
+  business:
     requirement: |
       Redis Sentinel provides High Availability (HA) to Redis. In addition, Sentinel monitors Redis nodes, initiates automatical failover and service discovery.
     customers:
@@ -2049,7 +2051,7 @@ services:
     documents:
       design:
       architecture:
-      service: 
+      service:
         - https://github.com/docker/distribution/blob/364d2e4a5bed94e9393dd88232ea3be29ca8f27a/README.md
       security:
     dependencies:
