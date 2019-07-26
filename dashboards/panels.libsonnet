@@ -3,7 +3,8 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 {
   generalGraphPanel(
       title,
-      description=null
+      description=null,
+      legend_show=false,
     ):: grafana.graphPanel.new(
         title,
         description=description,
@@ -11,7 +12,7 @@ local grafana = import 'grafonnet/grafana.libsonnet';
         fill=0,
         datasource="$PROMETHEUS_DS",
         decimals=2,
-        legend_show=true,
+        legend_show=legend_show,
         legend_values=true,
         legend_min=true,
         legend_max=true,
@@ -24,10 +25,12 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 
   generalBytesGraphPanel(
       title,
-      description = null
+      description=null,
+      legend_show=false,
     ):: self.generalGraphPanel(
       title,
-      description=null,
+      description=description,
+      legend_show=legend_show,
     )
     .resetYaxes()
     .addYaxis(
@@ -43,10 +46,12 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 
   generalPercentageGraphPanel(
       title,
-      description = null
+      description=null,
+      legend_show=false,
     ):: self.generalGraphPanel(
       title,
-      description=null,
+      description=description,
+      legend_show=legend_show,
     )
     .resetYaxes()
     .addYaxis(
