@@ -8,6 +8,7 @@ local platformLinks = import 'platform_links.libsonnet';
 local nodeMetrics = import 'node_metrics.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
 local layout = import 'layout.libsonnet';
+local capacityPlanning = import 'capacity_planning.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -205,6 +206,8 @@ dashboard.new(
       h: 1,
   }
 )
+.addPanel(capacityPlanning.capacityPlanningRow('$type', '$stage'), gridPos={ x: 0, y: 4000, })
+
 + {
   links+: platformLinks.services + platformLinks.triage,
 }

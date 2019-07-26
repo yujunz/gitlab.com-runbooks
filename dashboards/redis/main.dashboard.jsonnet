@@ -5,6 +5,7 @@ local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
 local colors = import 'colors.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
+local capacityPlanning = import 'capacity_planning.libsonnet';
 local layout = import 'layout.libsonnet';
 local basic = import 'basic.libsonnet';
 local nodeMetrics = import 'node_metrics.libsonnet';
@@ -249,6 +250,7 @@ dashboard.new(
 .addPanel(keyMetrics.keyServiceMetricsRow('redis', 'main'), gridPos={ x: 0, y: 4000, })
 .addPanel(keyMetrics.keyComponentMetricsRow('redis', 'main'), gridPos={ x: 0, y: 5000, })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis", environment="$environment", fqdn=~"redis-\\\\d\\\\d.*"'), gridPos={ x: 0, y: 6000, })
+.addPanel(capacityPlanning.capacityPlanningRow('redis', 'main'), gridPos={ x: 0, y: 7000, })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('redis') + platformLinks.services,
 }

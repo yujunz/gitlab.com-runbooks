@@ -1,5 +1,16 @@
 local colors = import 'colors.libsonnet';
 
+local capacityComponentColors = {
+  redis_clients: "#73BF69",
+  single_node_cpu: "#FADE2A",
+  single_threaded_cpu: "#F2495C",
+  workers: "#5794F2",
+  connection_pool: "#FA9830",
+  cpu: "#B877D9",
+  disk_space: "#37852E",
+  memory: "#E0B301",
+};
+
 {
   upper:: {
     "alias": "upper normal",
@@ -160,5 +171,18 @@ local colors = import 'colors.libsonnet';
     "spaceLength": 4,
     "nullPointMode": "connected",
     "zindex": -2,
+  },
+  capacityThresholds:: [{
+    "alias": "/^" + a + "/",
+    "color":capacityComponentColors[a],
+  } for a in std.objectFields(capacityComponentColors)],
+  capacityTrend:: {
+    "alias": "/ trend$/",
+    "dashes": true,
+    "legend": true,
+    "lines": true,
+    "linewidth": 2,
+    "dashLength": 4,
+    "spaceLength": 4,
   },
 }

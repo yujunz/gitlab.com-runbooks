@@ -114,7 +114,9 @@ find_dashboards "$@"|while read -r line; do
     -H "Content-Type: application/json" \
     "https://dashboards.gitlab.net/api/folders/${folder}" | jq '.id')
 
-  response=$(curl --silent --fail \
+  # Use http1.1 and gzip compression to workaround unexplainable random errors that
+  # occur when uploading some dashboards
+  response=$(curl --http1.1 --compress --silent --fail \
     -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
     -H "Accept: application/json" \
     -H "Content-Type: application/json" \

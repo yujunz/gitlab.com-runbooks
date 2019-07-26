@@ -6,6 +6,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local colors = import 'colors.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
+local capacityPlanning = import 'capacity_planning.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -440,6 +441,8 @@ dashboard.new(
   )
   , gridPos=genGridPos(0, 4.5, w=2)
 )
+.addPanel(capacityPlanning.currentEnvironmentSaturationBarGauge(), gridPos=genGridPos(0, 5.5))
+.addPanel(capacityPlanning.oneMonthEnvironmentForecastBarGauge(), gridPos=genGridPos(1, 5.5))
  + {
   links+: platformLinks.services,
 }
