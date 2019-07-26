@@ -2,72 +2,13 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 
 local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
-
-local generalGraphPanel(
-    title,
-    description=null
-  ) = grafana.graphPanel.new(
-      title,
-      description=description,
-      linewidth=1,
-      fill=0,
-      datasource="$PROMETHEUS_DS",
-      decimals=2,
-      legend_show=true,
-      legend_values=true,
-      legend_min=true,
-      legend_max=true,
-      legend_current=true,
-      legend_total=false,
-      legend_avg=true,
-      legend_alignAsTable=true,
-      legend_hideEmpty=true,
-    );
-
-local generalBytesGraphPanel(
-    title,
-    description = null
-  ) = generalGraphPanel(
-    title,
-    description=null,
-  )
-  .resetYaxes()
-  .addYaxis(
-    format='bytes',
-    label="Size",
-  )
-  .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  );
-
-local generalPercentageGraphPanel(
-    title,
-    description = null
-  ) = generalGraphPanel(
-    title,
-    description=null,
-  )
-  .resetYaxes()
-  .addYaxis(
-    format='percentunit',
-    max=1,
-    label=title,
-  )
-  .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  );
+local panels = import 'panels.libsonnet';
 
 #######################################
 # ARC                                 #
 #######################################
 
-local arcHitRatePanel = generalPercentageGraphPanel("ARC Hit Rate")
+local arcHitRatePanel = panels.generalPercentageGraphPanel("ARC Hit Rate")
   .addTarget(
     promQuery.target('
       node_zfs_arc_hits{env="$environment", type="$type"}
@@ -77,7 +18,7 @@ local arcHitRatePanel = generalPercentageGraphPanel("ARC Hit Rate")
     legendFormat='{{instance}}')
   );
 
-local arcDemandHitRatePanel = generalPercentageGraphPanel("ARC Demand Hit Rate")
+local arcDemandHitRatePanel = panels.generalPercentageGraphPanel("ARC Demand Hit Rate")
   .addTarget(
     promQuery.target('
       (node_zfs_arc_demand_data_hits{env="$environment", type="$type"} + node_zfs_arc_demand_metadata_hits{env="$environment", type="$type"})
@@ -94,7 +35,7 @@ local arcDemandHitRatePanel = generalPercentageGraphPanel("ARC Demand Hit Rate")
 # Utilization                         #
 #######################################
 
-local fsUtilizationPanel = generalBytesGraphPanel("Filesystem Utilization")
+local fsUtilizationPanel = panels.generalBytesGraphPanel("Filesystem Utilization")
   .addTarget(
     promQuery.target('
       min by (instance) (node_filesystem_size_bytes{device="tank/reservation", env="$environment", type = "$type"})
@@ -116,7 +57,7 @@ local fsUtilizationPanel = generalBytesGraphPanel("Filesystem Utilization")
     legendFormat='{{instance}}')
   );
 
-local totalFsUtilizationPanel = generalBytesGraphPanel("Total Filesystem Utilization")
+local totalFsUtilizationPanel = panels.generalBytesGraphPanel("Total Filesystem Utilization")
   .addTarget(
     promQuery.target('
       sum by (instance) (node_filesystem_size_bytes{device="tank/reservation", env="$environment", type = "$type"})
