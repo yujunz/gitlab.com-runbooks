@@ -27,6 +27,8 @@ groups:
       count without (fqdn, instance, job) (redis_connected_slaves) -
       sum without (fqdn, instance, job) (redis_connected_slaves) -
       1
+  - record: gitlab:redis_cluster_nodes:count
+    expr: count without (fqdn,instance) (up{job="gitlab-redis"})
   - record: gitlab:redis_master
     expr: redis_connected_slaves > 1
   - record: instance:redis_cpu_usage:rate1m
@@ -35,28 +37,78 @@ groups:
       (rate(redis_used_cpu_user[1m]) + rate(redis_used_cpu_sys[1m]))
 - name: Redis Alerts
   rules:
-  - alert: RedisReplicasFlapping
-    expr: changes(redis_connected_slaves[5m]) > 1 
+  - alert: RedisSwitchMaster
+    expr: >
+      max without (fqdn,instance) (
+        changes(redis_sentinel_commands_total{event=~"switch-master"}[1h])
+      ) > 1
+    labels:
+      pager: pagerduty
+      severity: s1
+    annotations:
+      title: Redis Switch Master
+      description: Redis type {{$labels.type}} has {{$value}} switch-master event in the last hour minutes.
+      runbook: howto/redis-switch-master.md
+  - alert: RedisMasterMissing
+    expr: >
+      (gitlab:redis_cluster_nodes:count > bool 1)
+      unless on (stage,tier,type) redis_instance_info{role="master"}
     for: 1m
     labels:
       pager: pagerduty
       severity: s1
     annotations:
-      description: Changes have been detected in Redis replica connection. 
+      description: >
+        The redis cluster {{$labels.type}} has no node marked as master.
+      runbook: troubleshooting/redis_replication.md
+      title: Redis master missing for {{$labels.type}}
+  - alert: RedisClusterTooSmall
+    expr: gitlab:redis_cluster_nodes:count < 3
+    for: 30m
+    labels:
+      pager: pagerduty
+      severity: s1
+    annotations:
+      description: >
+        The redis cluster {{$labels.type}} has only {{$value}} nodes.
+      runbook: troubleshooting/redis_replication.md
+      title: Redis cluster {{$labels.type}} is missing instances
+  - alert: RedisReplicasFlapping
+    expr: changes(redis_connected_slaves[5m]) > 2
+    for: 1m
+    labels:
+      severity: s4
+    annotations:
+      description: >
+        Changes have been detected in Redis replica connection. 
         This can occur when replica nodes loose connection to the master and 
         reconnect (a.k.a flapping)
-      runbook: troubleshooting/redis_replication.md
-      title: Connection of Redis replicas to the master is flapping! 
         Look at `{{ $labels.instance }}` and its replicas.
-  - alert: FailedToCollectRedisMetrics
-    expr: redis_up < 1
+      runbook: troubleshooting/redis_replication.md
+      title: Connection of Redis replicas to the master is flapping
+  - alert: RedisReplicasFlapping
+    expr: changes(redis_connected_slaves[1h]) > 4
+    for: 1m
+    labels:
+      pager: pagerduty
+      severity: s1
+    annotations:
+      description: >
+        Changes ({{$value}}) have been detected in Redis replica connection. 
+        This can occur when replica nodes loose connection to the master and 
+        reconnect (a.k.a flapping)
+        Look at `{{ $labels.instance }}` and its replicas.
+      runbook: troubleshooting/redis_replication.md
+      title: Connection of Redis replicas to the master is flapping
+  - alert: RedisInstanceDown
+    expr: up{job="gitlab-redis"} != 1 or redis_up != 1
     for: 20m
     labels:
       pager: pagerduty
       severity: s1
     annotations:
       description: The redis exporter failed to fetch metrics from the local
-        redis instance for more than 5 minutes. This could be because the redis
+        redis instance for more than 20 minutes. This could be because the redis
         process is down or redis has issues with responding to requests.
         Check the status of redis and sentinel on `{{ $labels.instance }}`
         with `gitlab-ctl status` and restart with `gitlab-ctl restart redis`
@@ -80,3 +132,31 @@ groups:
       title: Redis memory usage is too high
       description: Redis node {{$labels.fqdn}} is using over 80% of the host memory for the last 5 minutes.
       runbook: howto/clear_anonymous_sessions.md
+  - alert: RedisMasterLinkDown
+    expr: >
+      (
+       avg_over_time(redis_master_link_up{type="redis-cache"}[10m])
+         and on (instance)
+       redis_instance_info{role="slave"}
+      ) == 0
+    for: 30m
+    labels:
+      pager: pagerduty
+      severity: s1
+    annotations:
+      description: The redis master link on {{ $labels.fqdn }} has been down for 30 minutes, review the replication status.
+      runbook: troubleshooting/redis_replication.md
+      title: Redis master link is not up.
+  - alert: RedisReplicationDown
+    expr: gitlab:redis_disconnected_slaves > 1
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: s1
+    annotations:
+      description: Redis not replicating for all slaves for more than 5 minutes! Consider
+        reviewing the redis replication status
+      runbook: troubleshooting/redis_replication.md
+      title: |
+        Redis replication not working for {{ range query "gitlab:redis_disconnected_slaves > 1" }}{{ .Labels.fqdn }}{{ end }}
+        Possible masters are {{ range query "gitlab:redis_master" }}{{ .Labels.fqdn }}{{ end }}.
