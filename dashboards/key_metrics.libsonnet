@@ -5,7 +5,6 @@ local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
 local colors = import 'colors.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
-local gitlab = import 'gitlab.libsonnet';
 local layout = import 'layout.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
@@ -384,7 +383,7 @@ errorRatesPanel(serviceType, serviceStage)::
     .addTarget(
       promQuery.target('
         gitlab_service_ops:rate:prediction{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"} +
-        gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}
+        2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}
         ',
         legendFormat='upper normal',
       ),
@@ -394,7 +393,7 @@ errorRatesPanel(serviceType, serviceStage)::
         avg(
           clamp_min(
             gitlab_service_ops:rate:prediction{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"} -
-            gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"},
+            2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"},
             0
           )
         )
@@ -405,7 +404,7 @@ errorRatesPanel(serviceType, serviceStage)::
     .addTarget( // Legacy metric - remove 2020-01-01
       promQuery.target('
         gitlab_service_ops:rate:prediction{environment="$environment", type="'+ serviceType + '", stage=""} +
-        gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage=""}
+        2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage=""}
         ',
         legendFormat='upper normal (legacy)',
       ),
@@ -415,7 +414,7 @@ errorRatesPanel(serviceType, serviceStage)::
         avg(
           clamp_min(
             gitlab_service_ops:rate:prediction{environment="$environment", type="'+ serviceType + '", stage=""} -
-            gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage=""},
+            2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage=""},
             0
           )
         )
