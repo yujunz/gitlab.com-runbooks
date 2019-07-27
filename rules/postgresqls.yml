@@ -51,8 +51,8 @@ groups:
       title: Postgres has {{$value}} connections on {{$labels.fqdn}} which is close
         to the maximum
   - alert: PostgreSQL_RollbackRateTooHigh
-    expr: rate(pg_stat_database_xact_rollback{datname="gitlabhq_production"}[5m])
-      / ON(instance, datname) rate(pg_stat_database_xact_commit{datname="gitlabhq_production"}[5m])
+    expr: rate(pg_stat_database_xact_rollback{datname="gitlabhq_production", type="patroni"}[5m])
+      / ON(instance, datname) rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type="patroni"}[5m])
       > 0.1
     for: 5m
     labels:
