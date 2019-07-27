@@ -1,4 +1,4 @@
-#Access Requests
+# Access Requests
 
 ## Add or verify data bag
 1. Check ssh key
@@ -17,3 +17,8 @@ chef-server-ctl org-user-add gitlab <username>
 1. User talks to @marvin
 1. Admin adds user (keep in mind slack name may be different from unix or email name)
 1. !group-member-add <group> <user>
+
+## Ops Instance Access
+Generally when developers ask for access to the ops instance, we are concerned
+with chatops access, which requires developer on `gitlab-com` group.
+If access to any other groups are needed, please clarify with the requester.
