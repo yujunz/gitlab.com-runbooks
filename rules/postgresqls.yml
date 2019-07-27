@@ -2,7 +2,7 @@ groups:
 - name: postgresql.rules
   rules:
   - alert: PostgresSQL_XIDConsumptionTooLow
-    expr: rate(pg_txid_current[1m]) < 5
+    expr: rate(pg_txid_current{environment!="gstg"}[1m]) < 5
     for: 1m
     labels:
       pager: pagerduty
