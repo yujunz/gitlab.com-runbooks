@@ -16,7 +16,7 @@ local link = grafana.link;
     link.dashboards('pgbouncer service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url='https://dashboards.gitlab.net/d/pgbouncer-main/pgbouncer-overview'),
     link.dashboards('redis service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url='https://dashboards.gitlab.net/d/redis-main/redis-overview'),
     link.dashboards('redis-cache service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=redis-cache'),
-    link.dashboards('redis-sidekiq service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=redis-sidekiq'),
+    link.dashboards('redis-sidekiq service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url='https://dashboards.gitlab.net/d/redis-sidekiq-main/redis-sidekiq-overview'),
     link.dashboards('registry service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=registry'),
     link.dashboards('sidekiq service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=sidekiq'),
     link.dashboards('web service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=web'),
