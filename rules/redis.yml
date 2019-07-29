@@ -95,7 +95,7 @@ groups:
     annotations:
       description: >
         Changes ({{$value}}) have been detected in Redis replica connection. 
-        This can occur when replica nodes loose connection to the master and 
+        This can occur when replica nodes lose connection to the master and 
         reconnect (a.k.a flapping)
         Look at `{{ $labels.instance }}` and its replicas.
       runbook: troubleshooting/redis_replication.md
