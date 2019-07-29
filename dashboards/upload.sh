@@ -83,6 +83,21 @@ find_dashboards() {
   fi
 }
 
+call_grafana_api() {
+  local response
+
+  response=$(curl -H 'Expect:' --http1.1 --compressed --silent --fail \
+    -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json" \
+    "$@") || {
+      >&2 echo "API call to $1 failed: $response: exit code $?"
+      return 1
+    }
+
+  echo "$response"
+}
+
 # Install jsonnet dashboards
 find_dashboards "$@"|while read -r line; do
   relative=${line#"./"}
@@ -96,40 +111,29 @@ find_dashboards "$@"|while read -r line; do
     dashboard=$(cat "${line}")
   fi
 
-  current_uid=$(echo "${dashboard}" | jq -r ".uid")
-  if [[ -z ${current_uid} ]] || [[ ${current_uid}  == "null" ]]; then
-    # If the dashboard doesn't have a uid, configure one
-    dashboard=$(echo "${dashboard}" | jq ".uid = \"$uid\"")
-  fi
+  # Note: create folders with `create-grafana-folder.sh` to configure the UID
+  folderId=$(call_grafana_api "https://dashboards.gitlab.net/api/folders/${folder}" | jq '.id')
+
+  # Generate the POST body
+  body=$(echo "$dashboard"|jq -c --arg uid "$uid" --arg folderId "$folderId" '
+  {
+    dashboard: .,
+    folderId: $folderId | tonumber,
+    overwrite: true
+  } * {
+    dashboard: {
+      uid: $uid
+    }
+  }')
 
   if [[ -n $dry_run ]]; then
     echo "Running in dry run mode, would create $line in folder $folder with uid $uid"
     continue
   fi
 
-  # Note: create folders with `create-grafana-folder.sh` to configure the UID
-  folderId=$(curl --silent --fail \
-    -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
-    -H "Accept: application/json" \
-    -H "Content-Type: application/json" \
-    "https://dashboards.gitlab.net/api/folders/${folder}" | jq '.id')
-
   # Use http1.1 and gzip compression to workaround unexplainable random errors that
   # occur when uploading some dashboards
-  response=$(curl --http1.1 --compressed --silent --fail \
-    -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
-    -H "Accept: application/json" \
-    -H "Content-Type: application/json" \
-    https://dashboards.gitlab.net/api/dashboards/db \
-    -d"{
-    \"dashboard\": ${dashboard},
-    \"folderId\": ${folderId},
-    \"overwrite\": true
-  }") || {
-    echo "Unable to install $relative"
-
-    exit 1
-  }
+  response=$(echo "$body"|call_grafana_api https://dashboards.gitlab.net/api/dashboards/db --data-binary @-)
 
   url=$(echo "${response}"| jq -r '.url')
   echo "Installed https://dashboards.gitlab.net${url}"
