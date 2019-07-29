@@ -9,6 +9,6 @@ groups:
       service: alertmanager
       severity: s1
     annotations:
-      title: Alertmanager is failing sending notications
+      title: Alertmanager is failing sending notifications
       runbook: troubleshooting/alertmanager-notification-failures.md
       description: Alertmanager is seeing errors for integration {{$labels.integration}}
