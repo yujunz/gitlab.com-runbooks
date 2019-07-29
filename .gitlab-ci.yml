@@ -100,7 +100,9 @@ test:
 
 deploy_elastic_watcher_updates:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
+  image:
+    name: registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest
+    entrypoint: ["/bin/sh", "-c"]
   script:
   - elastic-watcher/update-alerts.sh
   only:
