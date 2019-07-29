@@ -172,5 +172,46 @@ local seriesOverrides = import 'series_overrides.libsonnet';
     max=1,
     min=0,
     show=false,
+  ),
+
+  slaTimeseries(
+    title="SLA",
+    description="",
+    query="",
+    legendFormat='',
+    yAxisLabel='SLA',
+    interval="1m",
+    intervalFactor=3,
+    ):: graphPanel.new(
+    title,
+    description=description,
+    sort="decreasing",
+    linewidth=2,
+    fill=0,
+    datasource="$PROMETHEUS_DS",
+    decimals=2,
+    legend_show=true,
+    legend_values=true,
+    legend_min=true,
+    legend_max=true,
+    legend_current=true,
+    legend_total=false,
+    legend_avg=true,
+    legend_alignAsTable=true,
+    legend_hideEmpty=true,
   )
+  .addTarget(promQuery.target('clamp_min(clamp_max(' + query + ',1),0)', legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+  .resetYaxes()
+  .addYaxis(
+    format="percentunit",
+    max=1,
+    label=yAxisLabel,
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  ),
+
 }

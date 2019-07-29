@@ -190,6 +190,7 @@ services:
       Allows GitLab.com customers to interact with GitLab.com programmatically
       through a uniform interface
     SLA:
+      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
       availability:
       response_time:
   technical:
@@ -757,6 +758,7 @@ services:
     business_value: |
       Allows GitLab.com customers to interact with GitLab.com through web-based interface.
     SLA:
+      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
       availability:
       response_time:
   technical:
@@ -908,6 +910,7 @@ services:
     business_value:
       This is the standard way of working with and managing remote repositories.
     SLA:
+      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
       availability:
       response_time:
   technical:
@@ -1210,6 +1213,7 @@ services:
       It allows hosting static websites on GitLab.com for free, which can be an incentive
       for new users to join and use GitLab.com.
     SLA:
+      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
       availability:
       response_time:
   technical:
@@ -2041,6 +2045,7 @@ services:
       GitLab is all about having a single, integrated experience and registry is no exception.
       Customers can easily use their images for GitLab CI, create images specific for tags or branches and much more.
     SLA:
+      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
       availability:
       response_time:
   technical:
@@ -2184,6 +2189,7 @@ services:
       # For a list of available background workers, see https://gitlab.com/gitlab-org/gitlab-ee/tree/master/app/workers
       # and https://gitlab.com/gitlab-org/gitlab-ee/tree/master/ee/app/workers
     SLA:
+      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
       availability:
       response_time:
   technical:
