@@ -47,7 +47,7 @@ groups:
       severity: s1
     annotations:
       title: Redis Switch Master
-      description: Redis type {{$labels.type}} has {{$value}} switch-master event in the last hour minutes.
+      description: Redis type {{$labels.type}} has {{$value}} switch-master event in the last hour.
       runbook: howto/redis-switch-master.md
   - alert: RedisMasterMissing
     expr: >
