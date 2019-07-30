@@ -7,7 +7,7 @@ local basic = import 'basic.libsonnet';
       title='Connected Clients',
       yAxisLabel='Clients',
       query='
-        avg_over_time(redis_connected_clients{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(avg_over_time(redis_connected_clients{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,
@@ -17,7 +17,7 @@ local basic = import 'basic.libsonnet';
       description="Blocked clients are waiting for a state change event using commands such as BLPOP. Blocked clients are not a sign of an issue on their own.",
       yAxisLabel='Blocked Clients',
       query='
-        avg_over_time(redis_blocked_clients{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(avg_over_time(redis_blocked_clients{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,
@@ -26,7 +26,7 @@ local basic = import 'basic.libsonnet';
       title='Connections Received',
       yAxisLabel='Connections',
       query='
-        rate(redis_connections_received_total{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(rate(redis_connections_received_total{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,
@@ -57,7 +57,7 @@ local basic = import 'basic.libsonnet';
       title='Redis Network Out',
       format='Bps',
       query='
-        rate(redis_net_output_bytes_total{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(rate(redis_net_output_bytes_total{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,
@@ -66,7 +66,7 @@ local basic = import 'basic.libsonnet';
       title='Redis Network In',
       format='Bps',
       query='
-        rate(redis_net_input_bytes_total{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(rate(redis_net_input_bytes_total{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,
@@ -75,7 +75,7 @@ local basic = import 'basic.libsonnet';
       title='Slowlog Events',
       yAxisLabel='Events',
       query='
-        changes(redis_slowlog_last_id{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(changes(redis_slowlog_last_id{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=10,
@@ -128,7 +128,7 @@ local basic = import 'basic.libsonnet';
       yAxisLabel='Bytes/sec',
       format='Bps',
       query='
-        rate(redis_memory_used_bytes{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(rate(redis_memory_used_bytes{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,
@@ -137,7 +137,7 @@ local basic = import 'basic.libsonnet';
       title='Expired Keys',
       yAxisLabel='Keys',
       query='
-        rate(redis_expired_keys_total{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(rate(redis_expired_keys_total{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,
@@ -158,7 +158,7 @@ local basic = import 'basic.libsonnet';
       title='Connected Secondaries',
       yAxisLabel='Secondaries',
       query='
-        avg_over_time(redis_connected_slaves{environment="$environment", type="' + serviceType + '"}[$__interval])
+        sum(avg_over_time(redis_connected_slaves{environment="$environment", type="' + serviceType + '"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,
@@ -179,7 +179,7 @@ local basic = import 'basic.libsonnet';
       title='Resync Events',
       yAxisLabel='Events',
       query='
-        changes(redis_slave_resync_total{environment="$environment", type="' + serviceType + '", fqdn=~"' + serviceType + '-\\\\d\\\\d.*"}[$__interval])
+        sum(changes(redis_slave_resync_total{environment="$environment", type="' + serviceType + '", fqdn=~"' + serviceType + '-\\\\d\\\\d.*"}[$__interval])) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       intervalFactor=2,

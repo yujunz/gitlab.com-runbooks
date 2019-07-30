@@ -118,16 +118,19 @@ find_dashboards "$@"|while read -r line; do
   folderId=$(call_grafana_api "https://dashboards.gitlab.net/api/folders/${folder}" | jq '.id')
 
   # Generate the POST body
-  body=$(echo "$dashboard"|jq -c --arg uid "$uid" --arg folderId "$folderId" '
-  {
+  body=$(echo "$dashboard"|jq -c --arg uid "$uid" --arg folder "$folder" --arg folderId "$folderId" '
+ {
     dashboard: .,
     folderId: $folderId | tonumber,
     overwrite: true
   } * {
     dashboard: {
-      uid: $uid
+      uid: $uid,
+      title: "\($folder): \(.title)",
+      tags: (["managed", $folder] + .tags)
     }
-  }')
+  }
+')
 
   if [[ -n $dry_run ]]; then
     echo "Running in dry run mode, would create $line in folder $folder with uid $uid"

@@ -19,7 +19,7 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 
 dashboard.new(
-  'redis-sidekiq Overview',
+  'Overview',
   schemaVersion=16,
   tags=['redis', 'overview'],
   timezone='UTC',

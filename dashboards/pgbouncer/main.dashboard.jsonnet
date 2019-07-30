@@ -18,7 +18,7 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 
 dashboard.new(
-  'pgbouncer Overview',
+  'Overview',
   schemaVersion=16,
   tags=['pgbouncer'],
   timezone='UTC',
