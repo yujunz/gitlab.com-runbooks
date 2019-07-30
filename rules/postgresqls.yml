@@ -26,7 +26,7 @@ groups:
       runbook: troubleshooting/postgres.md#availability
       title: Postgres seems to be consuming XLOG very slowly
   - alert: PostgreSQL_CommitRateTooLow
-    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type =~"postgres|patroni"}[1m])
+    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type =~"postgres|patroni", environment!="gstg"}[1m])
       < 1000
     for: 5m
     labels:
