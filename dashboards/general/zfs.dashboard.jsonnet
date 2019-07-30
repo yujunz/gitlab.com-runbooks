@@ -1,8 +1,9 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 
+local layout = import 'layout.libsonnet';
+local panels = import 'panels.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
-local panels = import 'panels.libsonnet';
 
 #######################################
 # ARC                                 #
@@ -93,27 +94,7 @@ grafana.dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addTemplate(templates.type)
-.addPanel(fsUtilizationPanel, gridPos={
-  x: 0,
-  y: 0,
-  w: 12,
-  h: 10,
-})
-.addPanel(totalFsUtilizationPanel, gridPos={
-  x: 12,
-  y: 0,
-  w: 12,
-  h: 10,
-})
-.addPanel(arcHitRatePanel, gridPos={
-  x: 0,
-  y: 10,
-  w: 12,
-  h: 10,
-})
-.addPanel(arcDemandHitRatePanel, gridPos={
-  x: 12,
-  y: 10,
-  w: 12,
-  h: 10,
-})
+.addPanels(layout.grid([
+  fsUtilizationPanel, totalFsUtilizationPanel,
+  arcHitRatePanel, arcDemandHitRatePanel,
+], cols=2, rowHeight=10))
