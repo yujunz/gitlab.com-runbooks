@@ -29,8 +29,8 @@ on-boarding new team member
 
 ## Checklists
 
-- [EMOC](on-call/eoc.md)
-- [IMOC](on-call/imoc.md)
+- [Engineer on Call (EOC)](on-call/checklists/eoc.md)
+- [Incident Manager on Call (IMOC)](on-call/checklists/imoc.md)
 
 To start with the right foot let's define a set of tasks that are nice things to do before you go any further in your week
 
@@ -422,4 +422,3 @@ Please see the [contribution guidelines](CONTRIBUTING.md)
 [slack-alerts-gstg]:                https://gitlab.slack.com/channels/alerts-gstg
 [slack-incident-management]:        https://gitlab.slack.com/channels/incident-management
 [slack-production]:                 https://gitlab.slack.com/channels/production
-

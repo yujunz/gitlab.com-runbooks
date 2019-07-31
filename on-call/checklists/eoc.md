@@ -1,4 +1,4 @@
-# Engineer On Call
+# Engineer On Call (EOC)
 
 To start with the right foot let's define a set of tasks that are nice things to do before you go
 any further in your week
