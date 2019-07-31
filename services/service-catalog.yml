@@ -1844,7 +1844,7 @@ services:
   label: Service:Redis
   business:
     requirement: |
-      Redis is packaged to provide a place to store session data, temporary cache information and background job queues (as the backend for SideKiq).
+      Redis is packaged to provide a place to store session data and temporary cache information
     customers:
       - GitLab.com customers
     business_value: |
@@ -2029,6 +2029,69 @@ services:
   observability:
     monitors:
       primary_grafana_dashboard: "wccEP9Imk/redis"
+
+- name: redis-sidekiq
+  tier: db
+  teams:
+    - infrastructure
+  label: Service:RedisSidekiq
+  business:
+    requirement: |
+      Redis-Sidekiq is used as a fast persistent key-value store for Sidekiq to store job information (queued, scheduled, and results)
+    customers:
+      - GitLab.com customers
+    business_value: |
+      Redis-Sidekiq allows the sidekiq job processing system to work, a core and critical part of the entire GitLab.com system
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://github.com/antirez/redis/
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+        - https://redis.io/documentation
+        - https://docs.gitlab.com/omnibus/settings/redis.html
+      security:
+    dependencies:
+      - service:
+    configurations:
+      - config_name: redis.conf
+        location: /var/opt/gitlab/redis/redis.conf
+    chef_roles:
+      - gstg-base-db-redis-server-sidekiq
+      - gprd-base-db-redis-server-sidekiq
+    scalability:
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/80a1ff609f91b0fb2b770a3a70784be0
+  infrastructure:
+    provider: gcp
+    architecture: https://drive.google.com/open?id=1H5s5EonMX0Mzz6jahAotMOb349TNO7YK
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+    error_budget:
+  observability:
+    monitors:
+      primary_grafana_dashboard: "redis-main/redis-sidekiq-overview"
 
 - name: registry
   tier: sv
