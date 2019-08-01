@@ -92,3 +92,14 @@ groups:
     labels:
       component: 'redis_clients'
     expr: '0.90'
+
+  ## CGroup memory utilization
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'cgroup_memory'
+    expr: '0.80'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'cgroup_memory'
+    expr: '0.90'

@@ -105,6 +105,22 @@ groups:
         redis_config_maxclients
       ) by (environment, tier, type, stage)
 
+  # type: *
+  # cadvisor cgroup memory saturation limits
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'cgroup_memory'
+    expr: >
+      max(
+        (
+          container_memory_usage_bytes{id="/system.slice/gitlab-runsvdir.service"} -
+          container_memory_cache{id="/system.slice/gitlab-runsvdir.service"} -
+          container_memory_swap{id="/system.slice/gitlab-runsvdir.service"}
+        )
+        /
+        container_spec_memory_limit_bytes{id="/system.slice/gitlab-runsvdir.service"}
+      ) by (environment, tier, type, stage)
+
   # Aggregate over all components within a service using max
   - record: gitlab_service_saturation:ratio
     expr: >
