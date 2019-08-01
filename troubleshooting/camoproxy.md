@@ -45,7 +45,7 @@ Alternatively, you can grab the camoproxy binaries from https://github.com/cactu
 
 It's unknown how useful these will be, but if it's alerting, maybe check to see if throughput is suddenly spiking or otherwise behaving badly:
 
-<https://dashboards.gitlab.net/d/i6kMBiIZk/camoproxy>
+<https://dashboards.gitlab.net/d/general-camoproxy/general-camoproxy>
 
 ## SSL certificate
 

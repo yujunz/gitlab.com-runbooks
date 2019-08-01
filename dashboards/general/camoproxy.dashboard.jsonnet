@@ -37,7 +37,7 @@ local requestsPanel() = generalGraphPanel(
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camoproxy_requests_total{environment="$environment"}[1m]))',
+      'sum(rate(camo_response_size_bytes_count{environment="$environment"}[1m]))',
       interval="30s",
       intervalFactor=3,
       legendFormat="Requests/s",
@@ -60,7 +60,7 @@ local trafficPanel() = generalGraphPanel(
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camoproxy_bytes_total{environment="$environment"}[1m]))',
+      'sum(rate(camo_response_size_bytes_sum{environment="$environment"}[1m]))',
       interval="30s",
       intervalFactor=3,
       legendFormat="Bytes/s",
