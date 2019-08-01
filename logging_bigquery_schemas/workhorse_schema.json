@@ -1,4 +1,3 @@
-
 [
     {
         "mode": "NULLABLE",
@@ -9,8 +8,8 @@
         "mode": "NULLABLE",
         "name": "insertId",
         "type": "STRING"
-    }
-    ,{
+    },
+    {
         "fields": [
             {
                 "mode": "NULLABLE",
@@ -70,17 +69,27 @@
         "fields": [
             {
                 "mode": "NULLABLE",
-                "name": "environment",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
                 "name": "correlation_id",
                 "type": "STRING"
             },
             {
                 "mode": "NULLABLE",
+                "name": "duration",
+                "type": "FLOAT"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "environment",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
                 "name": "fqdn",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "host",
                 "type": "STRING"
             },
             {
@@ -95,13 +104,63 @@
             },
             {
                 "mode": "NULLABLE",
+                "name": "message",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "method",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
                 "name": "msg",
                 "type": "STRING"
             },
             {
                 "mode": "NULLABLE",
+                "name": "proto",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "referer",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "remoteAddr",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "remoteIp",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "status",
+                "type": "INTEGER"
+            },
+            {
+                "mode": "NULLABLE",
                 "name": "system",
                 "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "uri",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "userAgent",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "written",
+                "type": "INTEGER"
             }
         ],
         "mode": "NULLABLE",
@@ -109,4 +168,3 @@
         "type": "RECORD"
     }
 ]
-
