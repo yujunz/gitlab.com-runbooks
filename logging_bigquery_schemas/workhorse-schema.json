@@ -69,23 +69,8 @@
         "fields": [
             {
                 "mode": "NULLABLE",
-                "name": "action",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "controller",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
                 "name": "correlation_id",
                 "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "db",
-                "type": "FLOAT"
             },
             {
                 "mode": "NULLABLE",
@@ -104,17 +89,7 @@
             },
             {
                 "mode": "NULLABLE",
-                "name": "location",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "format",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "method",
+                "name": "host",
                 "type": "STRING"
             },
             {
@@ -124,17 +99,42 @@
             },
             {
                 "mode": "NULLABLE",
+                "name": "level",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
                 "name": "message",
                 "type": "STRING"
             },
             {
                 "mode": "NULLABLE",
-                "name": "path",
+                "name": "method",
                 "type": "STRING"
             },
             {
                 "mode": "NULLABLE",
-                "name": "remote_ip",
+                "name": "msg",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "proto",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "referer",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "remoteAddr",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "remoteIp",
                 "type": "STRING"
             },
             {
@@ -144,50 +144,23 @@
             },
             {
                 "mode": "NULLABLE",
-                "name": "ua",
+                "name": "system",
                 "type": "STRING"
             },
             {
                 "mode": "NULLABLE",
-                "name": "user_id",
+                "name": "uri",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "userAgent",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "written",
                 "type": "INTEGER"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "username",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "view",
-                "type": "FLOAT"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "route",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "queue_duration",
-                "type": "FLOAT"
-            },
-            {
-                "fields": [
-                    {
-                        "mode": "NULLABLE",
-                        "name": "key",
-                        "type": "STRING"
-                    },
-                    {
-                        "mode": "NULLABLE",
-                        "name": "value",
-                        "type": "STRING"
-                    }
-                ],
-                "mode": "REPEATED",
-                "name": "params",
-                "type": "RECORD"
             }
         ],
         "mode": "NULLABLE",

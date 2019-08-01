@@ -1,0 +1,112 @@
+
+[
+    {
+        "mode": "NULLABLE",
+        "name": "logName",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "insertId",
+        "type": "STRING"
+    }
+    ,{
+        "fields": [
+            {
+                "mode": "NULLABLE",
+                "name": "type",
+                "type": "STRING"
+            },
+            {
+                "fields": [
+                    {
+                        "mode": "NULLABLE",
+                        "name": "instance_id",
+                        "type": "STRING"
+                    },
+                    {
+                        "mode": "NULLABLE",
+                        "name": "zone",
+                        "type": "STRING"
+                    },
+                    {
+                        "mode": "NULLABLE",
+                        "name": "project_id",
+                        "type": "STRING"
+                    }
+                ],
+                "mode": "NULLABLE",
+                "name": "labels",
+                "type": "RECORD"
+            }
+        ],
+        "mode": "NULLABLE",
+        "name": "resource",
+        "type": "RECORD"
+    },
+    {
+        "fields": [
+            {
+                "mode": "NULLABLE",
+                "name": "tag",
+                "type": "STRING"
+            }
+        ],
+        "mode": "NULLABLE",
+        "name": "labels",
+        "type": "RECORD"
+    },
+    {
+        "mode": "REQUIRED",
+        "name": "timestamp",
+        "type": "TIMESTAMP"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "receiveTimeStamp",
+        "type": "TIMESTAMP"
+    },
+    {
+        "fields": [
+            {
+                "mode": "NULLABLE",
+                "name": "environment",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "correlation_id",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "fqdn",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "hostname",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "level",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "msg",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "system",
+                "type": "STRING"
+            }
+        ],
+        "mode": "NULLABLE",
+        "name": "jsonPayload",
+        "type": "RECORD"
+    }
+]
+
