@@ -37,9 +37,9 @@ local requestsPanel() = generalGraphPanel(
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camo_response_size_bytes_count{environment="$environment"}[1m]))',
+      'sum(rate(camo_response_size_bytes_count{environment="$environment"}[$__interval]))',
       interval="30s",
-      intervalFactor=3,
+      intervalFactor=1,
       legendFormat="Requests/s",
     )
   )
@@ -60,9 +60,8 @@ local trafficPanel() = generalGraphPanel(
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camo_response_size_bytes_sum{environment="$environment"}[1m]))',
+      'sum(rate(camo_response_size_bytes_sum{environment="$environment"}[$__interval]))',
       interval="30s",
-      intervalFactor=3,
       legendFormat="Bytes/s",
     )
   )
@@ -83,25 +82,22 @@ local eventPanel() = generalGraphPanel(
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camoproxy_content_length_exceeded_count{environment="$environment"}[1m]))',
+      'sum(rate(camoproxy_content_length_exceeded_count{environment="$environment"}[$__interval]))',
       interval="30s",
-      intervalFactor=3,
       legendFormat="Content Length Exceeded -  --max-size exceeded",
     )
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camoproxy_could_not_connect_count{environment="$environment"}[1m]))',
+      'sum(rate(camoproxy_could_not_connect_count{environment="$environment"}[$__interval]))',
       interval="30s",
-      intervalFactor=3,
       legendFormat="Could not connect - maybe --timeout exceeded",
     )
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camoproxy_timeout_expired_count{environment="$environment"}[1m]))',
+      'sum(rate(camoproxy_timeout_expired_count{environment="$environment"}[$__interval]))',
       interval="30s",
-      intervalFactor=3,
       legendFormat="Timeout Expired - --timeout exceeded",
     )
   )
@@ -119,9 +115,9 @@ local eventPanel() = generalGraphPanel(
 local envTemplate = template.new(
   "environment",
   "$PROMETHEUS_DS",
-  "label_values(camoproxy_bytes_total, environment)",
-  current="gprd",
-  refresh='load',
+  'label_values(up{job="camoproxy"}, environment)',
+  current="gstg",
+  refresh='time',
   sort=1,
 );
 
