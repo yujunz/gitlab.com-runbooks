@@ -5,11 +5,6 @@
         "type": "STRING"
     },
     {
-        "mode": "NULLABLE",
-        "name": "insertId",
-        "type": "STRING"
-    },
-    {
         "fields": [
             {
                 "mode": "NULLABLE",
@@ -48,6 +43,11 @@
             {
                 "mode": "NULLABLE",
                 "name": "tag",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "compute_googleapis_com_resource_name",
                 "type": "STRING"
             }
         ],
@@ -104,22 +104,12 @@
             },
             {
                 "mode": "NULLABLE",
-                "name": "location",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
                 "name": "format",
                 "type": "STRING"
             },
             {
                 "mode": "NULLABLE",
                 "name": "method",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "hostname",
                 "type": "STRING"
             },
             {
@@ -161,33 +151,6 @@
                 "mode": "NULLABLE",
                 "name": "view",
                 "type": "FLOAT"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "route",
-                "type": "STRING"
-            },
-            {
-                "mode": "NULLABLE",
-                "name": "queue_duration",
-                "type": "FLOAT"
-            },
-            {
-                "fields": [
-                    {
-                        "mode": "NULLABLE",
-                        "name": "key",
-                        "type": "STRING"
-                    },
-                    {
-                        "mode": "NULLABLE",
-                        "name": "value",
-                        "type": "STRING"
-                    }
-                ],
-                "mode": "REPEATED",
-                "name": "params",
-                "type": "RECORD"
             }
         ],
         "mode": "NULLABLE",
