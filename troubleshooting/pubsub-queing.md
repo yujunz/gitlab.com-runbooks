@@ -36,6 +36,11 @@
   * ssh into the chosen server, stop the pubsubbeat service
   * This will only stop that one topic, but messages will continue to gather in
     pubsub
+* You can try to lower the retention on ES
+  * Make your change in [esc-tools cleanup script](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/esc-tools/blob/master/cleanup_indices.sh)
+  * Run the `Daily cleanup` schedule manually [here](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/esc-tools/pipeline_schedules)
+* Should there be unallocated shards
+  * Use `debug_allocation.sh` in [the esc-tools repo](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/esc-tools/tree/master) to find out why.
 * As yet another resort, we could consider acking all messages in pubsub
   * This will induce data loss, so this would only be recommended as a final
     resort, and for queues in which we are okay with losing said data
