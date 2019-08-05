@@ -50,7 +50,7 @@ groups:
     labels:
       component: 'workers'
     expr: >
-      sum(avg_over_time(unicorn_active_connections{job="gitlab-rails"}[1m])) by (type, tier, stage, environment)
+      sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)"}[1m])) by (type, tier, stage, environment)
       /
       sum(max(unicorn_workers) without (pid)) by (type, tier, stage, environment)
 
