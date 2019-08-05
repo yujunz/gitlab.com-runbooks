@@ -68,7 +68,7 @@ groups:
     labels:
       component: 'unicorn'
     expr: >
-      sum by (environment, tier, type, stage) (rate(http_request_duration_seconds_count{job="gitlab-rails"}[1m]))
+      sum by (environment, tier, type, stage) (rate(http_request_duration_seconds_count{job=~"gitlab-(rails|unicorn)"}[1m]))
 
   # sidekiq: job RPS rate
   - record: gitlab_component_ops:rate
