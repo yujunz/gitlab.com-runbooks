@@ -27,7 +27,7 @@ groups:
     labels:
       component: 'unicorn'
     expr: >
-      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv",job="gitlab-unicorn"}[1m]))
+      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv",job=~"gitlab-(rails|unicorn)"}[1m]))
 
   - record: gitlab_component_availability:ratio
     labels:

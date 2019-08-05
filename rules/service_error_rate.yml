@@ -96,7 +96,7 @@ groups:
       # type from series: ` api/web/sidekiq/git`
       component: 'unicorn'
     expr: >
-      sum by (environment, tier, type, stage) (rate(http_request_duration_seconds_count{job="gitlab-unicorn", status=~"^5.*"}[1m]))
+      sum by (environment, tier, type, stage) (rate(http_request_duration_seconds_count{job=~"gitlab-(rails|unicorn)", status=~"^5.*"}[1m]))
 
   # sidekiq: job failure rate
   - record: gitlab_component_errors:rate
