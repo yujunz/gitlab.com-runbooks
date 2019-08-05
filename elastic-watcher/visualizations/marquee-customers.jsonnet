@@ -1,4 +1,4 @@
-local GOLD_WATCH_TOP_LEVEL_DOMAINS = std.extVar('gold_watch_top_level_domains');
+local MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS = std.extVar('gold_watch_top_level_domains');
 
 local wildcardQuery(topLevelDomain) = {
     wildcard: {
@@ -7,7 +7,7 @@ local wildcardQuery(topLevelDomain) = {
   };
 
 local wildcardQueries() =  [
-  wildcardQuery(topLevelDomain) for topLevelDomain in std.split(GOLD_WATCH_TOP_LEVEL_DOMAINS, ",")
+  wildcardQuery(topLevelDomain) for topLevelDomain in std.split(MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS, ",")
 ];
 
 local boolCanaryCustomerQuery() = {
@@ -35,7 +35,7 @@ local disabledIndividualWildcardQueries() = [
 
 {
   visState: {
-    title: 'Goldwatch: aggregated customer latency in Workhorse',
+    title: 'Marquee Customers: aggregated customer latency in Workhorse',
     type: 'line',
     params: {
       addLegend: true,

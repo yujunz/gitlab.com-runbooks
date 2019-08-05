@@ -3,14 +3,14 @@
 local TRIGGER_SCHEDULE_MINS = 30; // Run this watcher at this frequency, in minutes
 local QUERY_PERIOD_MINS = 30;
 local P95_ALERT_THRESHOLD_LATENCY_SECONDS = 3;
-local GOLD_WATCH_TOP_LEVEL_DOMAINS = std.extVar('gold_watch_top_level_domains');
+local MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS = std.extVar('marquee_customers_top_level_domains');
 
 local wildcardQueries() =  [
   {
     wildcard: {
       "json.uri.keyword": "/" + topLevelDomain + "/*"
     }
-  } for topLevelDomain in std.split(GOLD_WATCH_TOP_LEVEL_DOMAINS, ",")
+  } for topLevelDomain in std.split(MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS, ",")
 ];
 
 local ES_QUERY = {
@@ -80,15 +80,15 @@ local ES_QUERY = {
       slack: {
         account: "gitlab_team",
         message: {
-          from: "ElasticCloud Watcher: gold-watch",
+          from: "ElasticCloud Watcher: marquee-customers latency alert",
           to: [
-            "#gold-watch"
+            "#marquee_account_alrts"
           ],
-          text: "Gold-watch: Customer watchdog alert",
+          text: "Marquee customers latency alert",
           attachments : [
           {
             title : "Latency issues detected",
-            text : "Canary customer accounts experiencing a p95 latency of {{ctx.payload.aggregations.percentile_durations.values.0.value}}s. <https://log.gitlab.net/goto/9128cfe7e30f58716af9e63fac492ca8>",
+            text : "Marquee customer accounts experiencing a p95 latency of {{ctx.payload.aggregations.percentile_durations.values.0.value}}s. <https://log.gitlab.net/goto/9128cfe7e30f58716af9e63fac492ca8>",
             color : "danger"
           }]
         }
