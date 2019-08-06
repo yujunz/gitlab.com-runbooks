@@ -107,6 +107,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Secure & Defend
   label: Service:AlertManager
   business:
     requirement: We use Prometheus for our monitoring solution. Alerting with Prometheus is separated into two parts. Alerting rules in Prometheus servers send alerts to an Alertmanager. The Alertmanager then manages those alerts, including silencing, inhibition, aggregation and sending out notifications via, in our case, PagerDuty and Slack.
@@ -176,6 +177,7 @@ services:
     - gitter
     - manage
     - plan
+  infra_owner: Secure & Defend
   label: Service:API
   business:
     requirement: |
@@ -264,6 +266,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Secure & Defend
   label: Service:Blackbox
   business:
     requirement: |
@@ -327,6 +330,7 @@ services:
   tier: sv
   teams:
     - infrastructure
+  infra_owner: CI/CD & Enablement
   label: Service:Console
   business:
     requirement: |
@@ -405,6 +409,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Dev & Ops
   label: Service:Consul
   business:
     requirement: |
@@ -474,6 +479,7 @@ services:
   tier: sv
   teams:
     - verify # The service is maintained by Matija Čupić who is part of the Verify team
+  infra_owner: Secure & Defend
   label: Service:Contributors
   business:
     requirement: It allows giving credits to GitLab CE contributors.
@@ -532,6 +538,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Dev & Ops
   label: Service:ELK
   business:
     requirement: |
@@ -594,6 +601,7 @@ services:
   tier: sv
   teams:
     - support
+  infra_owner: Secure & Defend
   label: forum.gitlab.com
   business:
     requirement: |
@@ -655,6 +663,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Secure & Defend
   label: Service:Logging
   business:
     requirement: We are required to keep logs, both on legal terms as well as for debugging production issues
@@ -748,6 +757,7 @@ services:
     - gitter
     - manage
     - plan
+  infra_owner: Secure & Defend
   label: Service:Web
   business:
     requirement: |
@@ -826,6 +836,7 @@ services:
   tier: lb
   teams:
     - infrastructure
+  infra_owner: Secure & Defend
   label: Service:HAProxy
   business:
     requirement: |
@@ -900,6 +911,7 @@ services:
     - gitter
     - manage
     - plan
+  infra_owner: Dev & Ops
   label: Service:Git
   business:
     requirement: |
@@ -982,6 +994,7 @@ services:
   tier: stor
   teams:
     - gitaly
+  infra_owner: Dev & Ops
   label: Service:Gitaly
   business:
     requirement: |
@@ -1068,6 +1081,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Secure & Defend
   label: Service:Influxdb
   business:
     requirement: |
@@ -1140,6 +1154,7 @@ services:
     - gitter
     - manage
     - plan
+  infra_owner: Secure & Defend
   label: Service:Mailroom
   business:
     requirement: It is needed to allow responding to issues/MR through email replies.
@@ -1201,6 +1216,7 @@ services:
   tier: sv
   teams:
     - release
+  infra_owner: CI/CD & Enablement
   label: Service:Pages
   business:
     requirement: |
@@ -1269,6 +1285,7 @@ services:
   tier: db
   teams:
     - infrastructure
+  infra_owner: Dev & Ops
   label: Service:pgbouncer
   business:
     requirement:  We use PgBouncer as the connection pooler for PostgreSQL
@@ -1339,6 +1356,7 @@ services:
   tier: db
   teams:
     - infrastructure
+  infra_owner: Dev & Ops
   label: Service:Postgres
   business:
     requirement:  We use Postgres as our backend database.
@@ -1426,6 +1444,7 @@ services:
   tier: db
   teams:
     - infrastructure
+  infra_owner: Dev & Ops
   label: Service:PostgresArchive
   business:
     requirement: |
@@ -1514,6 +1533,7 @@ services:
   tier: db
   teams:
     - infrastructure
+  infra_owner: Dev & Ops
   label: Service:PostgresDelayed
   business:
     requirement: |
@@ -1596,6 +1616,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Dev & Ops
   label: Service:PsqlTimings
   business:
     requirement: |
@@ -1661,6 +1682,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Secure & Defend
   label: Service:Prometheus
   business:
     requirement: |
@@ -1751,6 +1773,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: Secure & Defend
   label: Service:PrometheusApp
   business:
     requirement: |
@@ -1841,6 +1864,7 @@ services:
   tier: db
   teams:
     - infrastructure
+  infra_owner: CI/CD & Enablement
   label: Service:Redis
   business:
     requirement: |
@@ -1908,6 +1932,7 @@ services:
   tier: db
   teams:
     - infrastructure
+  infra_owner: CI/CD & Enablement
   label: Service:RedisCache
   business:
     requirement: |
@@ -1971,6 +1996,7 @@ services:
   tier: db
   teams:
     - infrastructure
+  infra_owner: CI/CD & Enablement
   label: Service:RedisCacheSentinel
   business:
     requirement: |
@@ -2034,6 +2060,7 @@ services:
   tier: db
   teams:
     - infrastructure
+  infra_owner: CI/CD & Enablement
   label: Service:RedisSidekiq
   business:
     requirement: |
@@ -2097,6 +2124,7 @@ services:
   tier: sv
   teams:
     - package
+  infra_owner: Secure & Defend
   label: Service:Registry
   business:
     requirement: |
@@ -2172,6 +2200,7 @@ services:
     - geo
     - manage
     - plan
+  infra_owner: 
   label: Service:Share
   business:
     requirement: |
@@ -2238,6 +2267,7 @@ services:
     - gitter
     - manage
     - plan
+  infra_owner: CI/CD & Enablement
   label: Service:Sidekiq
   business:
     requirement: |
@@ -2321,6 +2351,7 @@ services:
   tier: sv
   teams:
     - verify
+  infra_owner: CI/CD & Enablement
   label: Service:Runner
   business:
     requirement: |
@@ -2390,6 +2421,7 @@ services:
   tier: sv
   teams:
     - manage
+  infra_owner: Secure & Defend
   label: Service:License
   business:
     requirement: |
@@ -2459,6 +2491,7 @@ services:
   tier: sv
   teams:
     - manage
+  infra_owner: Secure & Defend
   label: Service:Version
   business:
     requirement: |
@@ -2530,6 +2563,7 @@ services:
   tier: inf
   teams:
     - infrastructure
+  infra_owner: CI/CD & Enablement
   label: Service:PubSub
   business:
     requirement: |
@@ -2618,6 +2652,7 @@ services:
   tier: sv
   teams:
     - infrastructure
+  infra_owner: CI/CD & Enablement
   label: Service:CI Runner
   business:
     requirement: |
