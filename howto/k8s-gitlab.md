@@ -70,3 +70,85 @@ Our current application configuration components:
     * Save and test
 1. Add the thanos side cars to our thanos-query ops instance
     * Example MR: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/1430
+
+## Terraforming with GKE
+
+* We have our own module: https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/gke
+
+### Cycling Node Pools
+
+In some cases we may need to upgrade our node pools that participate in a
+cluster.  This is a destructive process by default, so we must instead, bring a
+new node pool up to prevent an outage.  It would be wise that when a node pool
+is to be destroyed, we should play it safe and perform some tasks noted below.
+
+Let's say we want to replace `node pool A` with some change.  We start with
+`v1`.  (Nomenclature for visualization purposes)
+
+Existing GKE config - 1 node pool for the GKE cluster
+
+```mermaid
+graph TD
+A[GKE] --> B(node pool A v1)
+```
+
+Add new node pool, this will be `v2` - This creates our second node pool for the
+GKE cluster
+
+```mermaid
+graph TD
+A[GKE] --> B(node pool A v1)
+A --> C(node pool B v2)
+```
+
+Change v1 to v2 - This destroys `node pool A`, then creates a new `node pool A`
+with the `v2` configuration.
+
+```mermaid
+graph TD
+A[GKE] --> B(node pool A v2)
+A --> C(node pool B v2 )
+```
+
+Rid of the extra node pool - This destroys `node pool B`
+
+```mermaid
+graph TD
+A[GKE] --> B(node pool A v2)
+```
+
+### Cycling Pods
+
+Due to node pool destructions bringing down nodes before being drained, it would
+be wise to do a sweep on the nodes to perform some work to prevent the potential
+for outages.
+
+1. Mark the targeted nodes as unschedulable - Example:
+```bash
+old_node_pool="<name of node pool as defined by terraform>"
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=${old_node_pool} -o=name)
+do
+  kubectl cordon "$node"
+  declare node_cordon_exit_code=$?
+  if [[ ${node_cordon_exit_code} != 0 ]]
+  then
+    exit ${node_cordon_exit_code}
+  fi
+done
+```
+
+1. Drain that set of nodes - Example:
+```bash
+old_node_pool="<name of node pool as defined by terraform>"
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=${old_node_pool} -o=name)
+do
+  kubectl drain --force --ignore-daemonsets --delete-local-data "$node"
+  declare node_drain_exit_code=$?
+  if [[ ${node_drain_exit_code} != 0 ]]
+  then
+    exit ${node_drain_exit_code}
+  fi
+  sleep 60 # don't drain too fast
+done
+```
+1. Perform the terraform destructive process
