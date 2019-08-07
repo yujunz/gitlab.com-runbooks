@@ -104,7 +104,6 @@ groups:
       component: 'cgroup_memory'
     expr: '0.90'
 
-
   ## disk_sustained_read_iops
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
@@ -149,6 +148,13 @@ groups:
       component: 'disk_sustained_write_throughput'
     expr: '0.90'
 
+  ## Open file descriptors
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'open_fds'
+    expr: '0.80'
 
-
-
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'open_fds'
+    expr: '0.90'

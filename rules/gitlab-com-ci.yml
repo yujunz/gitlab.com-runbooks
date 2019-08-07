@@ -114,8 +114,9 @@ groups:
       runbook: troubleshooting/cicd/ci_graphs.md#runners-manager-auto-scaling
 
   - alert: CICDTooManyUsedFDs
-    expr: process_open_fds{job=~"(omnibus-runners|private-runners|shared-runners|shared-runners-(gitlab-org|high-cpu))"}
-      / process_max_fds{job=~"(omnibus-runners|private-runners|shared-runners|shared-runners-(gitlab-org|high-cpu))"} > 0.8
+    expr: >
+      gitlab_component_saturation:ratio{component="open_fds",job=~"(omnibus-runners|private-runners|shared-runners|shared-runners-(gitlab-org|high-cpu))"} >
+        on (component) slo:max:soft:gitlab_component_saturation:ratio{component="open_fds"}
     for: 10m
     labels:
       channel: ci-cd
