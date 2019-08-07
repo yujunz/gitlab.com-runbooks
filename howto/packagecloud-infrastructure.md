@@ -94,3 +94,49 @@ This step will take around 2 hours. As the database grows, so too will this time
 Be certain to run this step in `screen` or `tmux`!
 1. At this point, everything should be ready to go. If the elastic IP is unable to
 be used for some reason, you will need to update DNS.
+
+## Credentials
+
+### Package key
+
+The package key is used for the prerelease repo which is used for
+all GitLab deployments that pull packages from
+
+```
+repo:    gitlab/pre-release
+```
+
+We do not let the wider community pull from this repo because GitLab.com
+production and non-production environments use it for testing security updates
+and unreleased builds before they are released.
+
+#### Key rotation
+
+* To rotate the package key visit
+https://packages.gitlab.com/gitlab/pre-release/tokens and select `rotate`
+
+* Update the secret in each environment, for example:
+```
+    ./bin/gkms-vault-edit gitlab-omnibus-secrets gprd
+    ./bin/gkms-vault-edit gitlab-omnibus-secrets gstg
+    ./bin/gkms-vault-edit gitlab-omnibus-secrets ops
+    ./bin/gkms-vault-edit gitlab-omnibus-secrets dev
+    ./bin/gkms-vault-edit gitlab-omnibus-secrets dr
+    ./bin/gkms-vault-edit gitlab-omnibus-secrets pre
+    ./bin/gkms-vault-edit gitlab-omnibus-secrets testbed
+
+# ... and change the following
+
+  "omnibus-gitlab": {
+    "package": {
+      "key": "abc123"
+    },
+
+```
+* _Note: For an updated list of envs see https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/bin/gkms-vault-common#L56_
+* After the update, chef runs will fail because the sources file is not updated
+  automatically, the following knife command can workaround the issue:
+```
+knife ssh -C10  "recipes:omnibus-gitlab\\:\\:default" "sudo rm -f /etc/apt/sources.list.d/gitlab_pre-release.list"
+```
+* Verify that chef runs complete successfully after deleting the sources file
