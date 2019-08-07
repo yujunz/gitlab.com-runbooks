@@ -134,7 +134,7 @@ https://packages.gitlab.com/gitlab/pre-release/tokens and select `rotate`
 
 ```
 * _Note: For an updated list of envs see https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/bin/gkms-vault-common#L56_
-* After the update, chef runs will fail because the sources file is not updated
+* Because of https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7459 , after the update chef runs will fail because the sources file is not updated
   automatically, the following knife command can workaround the issue:
 ```
 knife ssh -C10  "recipes:omnibus-gitlab\\:\\:default" "sudo rm -f /etc/apt/sources.list.d/gitlab_pre-release.list"
