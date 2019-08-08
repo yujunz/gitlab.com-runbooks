@@ -21,6 +21,6 @@ groups:
       WITHOUT (fqdn, instance, priority))
   - record: worker:sidekiq_jobs_completion:rate1m
     expr: sum(rate(sidekiq_jobs_completion_time_seconds_count[1m]))
-      WITHOUT (fqdn, instance, priority)
+      WITHOUT (fqdn, instance)
   - record: worker:sidekiq_jobs_failed:rate1m
     expr: sum(rate(sidekiq_jobs_failed_total[1m])) WITHOUT (fqdn, instance, priority)
