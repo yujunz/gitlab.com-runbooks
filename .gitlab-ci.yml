@@ -223,17 +223,21 @@ deploy_dashboards:
 
 build_runtools_build_image:
   stage: images
-  image: docker:stable
+  image: docker:19.03.1-git
   services:
-    - docker:dind
+    - docker:19.03.1-dind
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    INTERMEDIATE_IMAGE: ${CI_REGISTRY_IMAGE}/runtools_build-intermediate:latest
+    IMAGE: ${CI_REGISTRY_IMAGE}/runtools_build:latest
   script:
-    - apk add curl git
+    - apk add curl
     - git clone https://github.com/google/jsonnet.git
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - cd jsonnet && docker build -t registry.gitlab.com/gitlab-com/runbooks/runtools_build-intermediate:latest . && cd ..
-    - docker build -t registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest images/runtools_build/
-    - docker push registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" ${CI_REGISTRY}
+    - cd jsonnet && docker build -t ${INTERMEDIATE_IMAGE} . && cd ..
+    - docker build -t ${IMAGE} images/runtools_build/
+    - docker push ${IMAGE}
   when: manual
+
