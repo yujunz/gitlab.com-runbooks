@@ -185,4 +185,16 @@ local capacityComponentColors = {
     "dashLength": 4,
     "spaceLength": 4,
   },
+  thresholdSeries(alias):: {
+    "alias": alias,
+    "color": "#FF4500", // "Orange red"
+    "dashes": true,
+    "legend": true,
+    "lines": true,
+    "linewidth": 2,
+    "dashLength": 4,
+    "spaceLength": 10,
+    "nullPointMode": "connected",
+    "zindex": -2,
+  },
 }

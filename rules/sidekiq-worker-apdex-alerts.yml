@@ -1,0 +1,27 @@
+groups:
+  - name: sidekiq_worker_apdex_alerts.rules
+    rules:
+      # Warn: Worker adpex below 80% for 10 minutes. Only include workers that run at a relatively high frequency (more than once every 2 seconds on average)
+      # in this check
+      - alert: gitlab_background_worker_queue_duration_apdex_slo_out_of_bounds_lower_5m
+        expr: |
+          (avg(gitlab_background_worker_queue_duration_apdex:ratio) by (environment, stage, tier, type, worker, threshold) < 0.8)
+          and ignoring(threshold)
+          (sum(rate(sidekiq_jobs_started_total[4h])) by (environment, stage, tier, type, worker) > 0.5)
+        for: 10m
+        labels:
+          rules_domain: general
+          metric: gitlab_background_worker_queue_duration_apdex:ratio
+          severity: s3
+          slo_alert: 'yes'
+          period: 10m
+          bound: lower
+        annotations:
+          title: "The `{{ $labels.worker }}` Sidekiq worker (`{{ $labels.stage }}` stage) is not meeting its latency SLOs"
+          description: |
+            Only 80% of the jobs running for this worker are attaining a satisfactory apdex score.
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          grafana_dashboard_id: "alerts-worker_apdex_violation/alerts-worker-apdex-violation-alert"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,worker,threshold"
+          grafana_min_zoom_hours: "6"
