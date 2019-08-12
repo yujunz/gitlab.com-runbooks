@@ -103,3 +103,52 @@ groups:
     labels:
       component: 'cgroup_memory'
     expr: '0.90'
+
+
+  ## disk_sustained_read_iops
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_sustained_read_iops'
+    expr: '0.80'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_sustained_read_iops'
+    expr: '0.90'
+
+  ## disk_sustained_write_iops
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_sustained_write_iops'
+    expr: '0.80'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_sustained_write_iops'
+    expr: '0.90'
+
+  ## disk_sustained_read_throughput
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_sustained_read_throughput'
+    expr: '0.80'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_sustained_read_throughput'
+    expr: '0.90'
+
+  ## disk_sustained_write_throughput
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_sustained_write_throughput'
+    expr: '0.80'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'disk_sustained_write_throughput'
+    expr: '0.90'
+
+
+
+
