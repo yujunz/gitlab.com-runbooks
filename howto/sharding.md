@@ -19,6 +19,12 @@ settings are applied via the `gitlab-base` chef role [internal link](https://ops
 
 ## Moving Repositories between Shards
 
+### Dashboards
+
+The Gitaly Rebalancing dashboard (https://dashboards.gitlab.net/d/gitaly-rebalancing/gitaly-rebalance-dashboard?orgId=1) is designed to assist with decision making around
+manual rebalancing of repositories. It is recommended that this dashboard is consulted before triggering a manual rebalance, to get an idea of which servers
+are over-utilized and which ones are under-utilized.
+
 ### Overview ###
 
 Repositories are moved by scheduling sidekiq jobs called `project_update_repository_storage` (you can check logs for it in Kibana, see job implementation in gitlab repo, etc).
