@@ -124,7 +124,27 @@ appears that there may still be a pathologic repository causing high processing 
     yAxisLabel='Total Processing Time',
     interval="1m",
     intervalFactor=3,
-    linewidth=1)
+    linewidth=1),
+
+  // --------------------------------------------------------------------
+
+  text.new(title='PostReceive Latency',
+  mode='markdown',
+  content='
+`PostRecieve` latency. Lower is better. As a retrospective item, [we have now added](https://gitlab.com/gitlab-com/runbooks/merge_requests/1318) per-worker latency monitoring.
+this shows the p80 latency of the `PostReceive` worker. This rose due to Gitaly latency caused by the `FindAllTags` issue and the huge payloads being processes.
+  '),
+  basic.timeseries(
+    title="p80 Latency for PostReceive jobs",
+    description="",
+    query='
+      histogram_quantile(0.8, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="gprd", worker="PostReceive"}[$__interval])) by (le, environment, stage, tier, type, worker))
+    ',
+    legendFormat='{{ worker }}',
+    yAxisLabel='PostReceive latency',
+    interval="1m",
+    intervalFactor=3,
+    linewidth=1),
 
 ], cols=2,rowHeight=10, startRow=1))
 + {

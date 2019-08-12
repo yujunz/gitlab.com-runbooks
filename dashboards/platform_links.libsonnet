@@ -1,27 +1,47 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 local link = grafana.link;
 
+local SERVICE_LINKS = {
+  'api': 'https://dashboards.gitlab.net/d/api-main/api-overview?orgId=1',
+  'ci-runners':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=ci-runners',
+  'git':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=git',
+  'gitaly':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=gitaly',
+  'haproxy':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=haproxy',
+  'pages':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=pages',
+  'patroni':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=patroni',
+  'pgbouncer':'https://dashboards.gitlab.net/d/pgbouncer-main/pgbouncer-overview?orgId=1',
+  'redis':'https://dashboards.gitlab.net/d/redis-main/redis-overview?orgId=1',
+  'redis-cache':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=redis-cache',
+  'redis-sidekiq':'https://dashboards.gitlab.net/d/redis-sidekiq-main/redis-sidekiq-overview',
+  'registry':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=registry',
+  'sidekiq':'https://dashboards.gitlab.net/d/sidekiq-main/sidekiq-overview?orgId=1',
+  'web':'https://dashboards.gitlab.net/d/web-main/web-overview?orgId=1',
+};
+
 {
   triage:: [
     link.dashboards('Platform Triage', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-triage/platform-triage?orgId=1'),
   ],
   services:: [
-    link.dashboards('api service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/api-main/api-overview?orgId=1'),
-    link.dashboards('ci-runners service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=ci-runners'),
-    link.dashboards('git service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=git'),
-    link.dashboards('gitaly service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=gitaly'),
-    link.dashboards('haproxy service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=haproxy'),
-    link.dashboards('pages service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=pages'),
-    link.dashboards('patroni service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=patroni'),
-    link.dashboards('pgbouncer service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url='https://dashboards.gitlab.net/d/pgbouncer-main/pgbouncer-overview?orgId=1'),
-    link.dashboards('redis service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url='https://dashboards.gitlab.net/d/redis-main/redis-overview?orgId=1'),
-    link.dashboards('redis-cache service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=redis-cache'),
-    link.dashboards('redis-sidekiq service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url='https://dashboards.gitlab.net/d/redis-sidekiq-main/redis-sidekiq-overview'),
-    link.dashboards('registry service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=registry'),
-    link.dashboards('sidekiq service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/sidekiq-main/sidekiq-overview?orgId=1'),
-    link.dashboards('web service', '', icon='dashboard', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/web-main/web-overview?orgId=1'),
+    link.dashboards('api service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['api']),
+    link.dashboards('ci-runners service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['ci-runners']),
+    link.dashboards('git service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['git']),
+    link.dashboards('gitaly service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['gitaly']),
+    link.dashboards('haproxy service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['haproxy']),
+    link.dashboards('pages service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['pages']),
+    link.dashboards('patroni service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['patroni']),
+    link.dashboards('pgbouncer service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url=SERVICE_LINKS['pgbouncer']),
+    link.dashboards('redis service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url=SERVICE_LINKS['redis']),
+    link.dashboards('redis-cache service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['redis-cache']),
+    link.dashboards('redis-sidekiq service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url=SERVICE_LINKS['redis-sidekiq']),
+    link.dashboards('registry service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['registry']),
+    link.dashboards('sidekiq service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['sidekiq']),
+    link.dashboards('web service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['web']),
   ],
   parameterizedServiceLink: [
     link.dashboards('$type service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=$type'),
+  ],
+  serviceLink(type):: [
+    link.dashboards(type + ' service', '', type='link', keepTime=true, url=SERVICE_LINKS[type]),
   ],
 }
