@@ -149,3 +149,44 @@ have permissions, you will see errors here.
 Log in to the PgBouncer database, then run `show lists`. If `free_servers` is 0
 this means you need more backend connections. If `free_clients` is 0 this means
 you need more frontend connections. Both can be changed by reloading PgBouncer.
+
+## Healthcheck/pgbouncer-leader-check
+
+In gprd and gstg, clients access pgbouncer via an internal load balancer (ILB)
+named ENV-pgbouncer-regional.
+
+This ILB uses an HTTP healthcheck to determine which of the 3 pgbouncer nodes
+are alive and ready to serve traffic.  This healthcheck is serviced on the
+pgbouncer nodes with a simple python http server on port 8010.
+
+Because we want to run with active and standby pgbouncers (to keep connection
+counts to a reasonable number normally, but still have failover capability),
+this is implemented with a systemd service called pgbouncer-leader-check.  This
+runs `consul lock`, which uses consul and a `-n` parameter to ensure only `n`
+instances of something are running across a fleet at a time.  In gprd, with 3
+pgbouncer nodes and -n=2, consul lock ensures at most 2 nodes have a succeeding
+healthcheck at any given point in time.  If an active node fails hard, its
+`consul lock` will die, freeing a slot in the lock, the `consul lock` on the
+warm spare will start the healthcheck process, and the ILB will re-route
+connections.
+
+### Normal configuration
+
+* pgbouncer-leader-check is running on all pgbouncer nodes
+* `consul lock` is running on all pgbouncer nodes
+* The simple python http server is running on only `n` nodes
+   * gprd => 2, gstg => 1
+* The ILB will have `n` nodes active, and `3-n` nodes as warm spares.
+
+### Gotchas
+
+The pgbouncer-leader-check service (or rather, `consul lock`) has been known
+to fail if consul isn't working correctly (e.g. if all consul nodes are
+restarted at once).  If this happens, the service fails repeatedly and quickly
+and systemd will shut it down.  If all 3 nodes have no healthcheck, the ILB fails
+open and sends requests to all pgbouncer nodes, which will likely result in
+more connections to postgres than desired.
+
+Work is ongoing to make this better (make systemd retry slower, and keep retrying
+for longer, as we *really* want it to try and have this `consul lock` process
+running)
