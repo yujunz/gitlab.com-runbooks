@@ -1,5 +1,7 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
+local basic = import 'basic.libsonnet';
+local layout = import 'layout.libsonnet';
 local graphPanel = grafana.graphPanel;
 local grafana = import 'grafonnet/grafana.libsonnet';
 local row = grafana.row;
@@ -8,7 +10,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
 {
   nodeMetricsDetailRow(nodeSelector)::
     row.new(title="🖥️ Node Metrics", collapse=true)
-    .addPanel(
+    .addPanels(layout.grid([
       graphPanel.new(
         "Node CPU",
         linewidth=1,
@@ -41,14 +43,6 @@ local seriesOverrides = import 'series_overrides.libsonnet';
           min=0,
           show=false,
         ),
-      gridPos={
-        x: 0,
-        y: 0,
-        w: 12,
-        h: 10,
-      }
-    )
-    .addPanel(
       graphPanel.new(
         "Node Network Utilization",
         linewidth=1,
@@ -90,13 +84,69 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         min=0,
         show=false,
       ),
-      gridPos={
-        x: 12,
-        y: 0,
-        w: 12,
-        h: 10,
-      }
-    )
-
-
+    basic.timeseries(
+      title="Disk Read IOPs",
+      description="Disk Read IO operations per second. Lower is better.",
+      query='
+        max(
+          rate(node_disk_reads_completed_total{' + nodeSelector + '}[$__interval])
+        ) by (fqdn)
+      ',
+      legendFormat='{{ fqdn }}',
+      format='ops',
+      interval="1m",
+      intervalFactor=1,
+      yAxisLabel='Operations/s',
+      legend_show=false,
+      linewidth=1
+      ),
+    basic.timeseries(
+      title="Disk Read Throughput",
+      description="Disk Read throughput datarate. Lower is better.",
+      query='
+        max(
+          rate(node_disk_read_bytes_total{' + nodeSelector + '}[$__interval])
+        ) by (fqdn)
+      ',
+      legendFormat='{{ fqdn }}',
+      format='Bps',
+      interval="1m",
+      intervalFactor=1,
+      yAxisLabel='Bytes/s',
+      legend_show=false,
+      linewidth=1
+      ),
+    basic.timeseries(
+      title="Disk Write IOPs",
+      description="Disk Write IO operations per second. Lower is better.",
+      query='
+        max(
+          rate(node_disk_writes_completed_total{' + nodeSelector + '}[$__interval])
+        ) by (fqdn)
+      ',
+      legendFormat='{{ fqdn }}',
+      format='ops',
+      interval="1m",
+      intervalFactor=1,
+      yAxisLabel='Operations/s',
+      legend_show=false,
+      linewidth=1
+      ),
+    basic.timeseries(
+      title="Disk Write Throughput",
+      description="Disk Write throughput datarate. Lower is better.",
+      query='
+        max(
+          rate(node_disk_written_bytes_total{' + nodeSelector + '}[$__interval])
+        ) by (fqdn)
+      ',
+      legendFormat='{{ fqdn }}',
+      format='Bps',
+      interval="1m",
+      intervalFactor=1,
+      yAxisLabel='Bytes/s',
+      legend_show=false,
+      linewidth=1
+      ),
+    ]))
 }
