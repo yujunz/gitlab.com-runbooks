@@ -93,6 +93,18 @@ groups:
           )
       ) by (type, tier, stage, environment), 1)
 
+  # type: postgres-delayed, postgres-archive, patroni
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'active_db_connections'
+    expr: >
+      clamp_max(
+        max(
+          sum without(state) (pg_stat_activity_count{datname="gitlabhq_production", state!="idle"})
+          /
+          (sum without(state) (pg_stat_activity_count{datname="gitlabhq_production"}) > 0)
+      ) by (type, tier, stage, environment), 1)
+
   # type: redis, redis-cache, component: redis_clients
   # Records the saturation of redis client connections against a redis fleet
   - record: gitlab_component_saturation:ratio
@@ -192,7 +204,7 @@ groups:
         max_over_time(process_open_fds[1m])
         /
         max_over_time(process_max_fds[1m])
-      ) by (environment, type, tier, stage) 
+      ) by (environment, type, tier, stage)
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'open_fds'
@@ -201,7 +213,7 @@ groups:
         max_over_time(ruby_file_descriptors[1m])
         /
         max_over_time(ruby_process_max_fds[1m])
-      ) by (environment, type, tier, stage) 
+      ) by (environment, type, tier, stage)
 
 # Unlike other service metrics, we record the stats for each component independently
 - name: GitLab Saturation Ratios Stats
