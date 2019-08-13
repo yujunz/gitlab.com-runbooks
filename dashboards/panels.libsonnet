@@ -26,7 +26,7 @@ local grafana = import 'grafonnet/grafana.libsonnet';
   generalBytesGraphPanel(
       title,
       description=null,
-      legend_show=false,
+      legend_show=true,
     ):: self.generalGraphPanel(
       title,
       description=description,
