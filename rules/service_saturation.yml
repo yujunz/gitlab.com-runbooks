@@ -50,9 +50,12 @@ groups:
     labels:
       component: 'workers'
     expr: >
-      sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)"}[1m])) by (type, tier, stage, environment)
-      /
-      sum(max(unicorn_workers) without (pid)) by (type, tier, stage, environment)
+      clamp_max(
+        sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)"}[1m])) by (type, tier, stage, environment)
+        /
+        sum(max(unicorn_workers) without (pid)) by (type, tier, stage, environment),
+        1
+      )
 
   # type: redis/redis cache, component: single_threaded_cpu
   - record: gitlab_component_saturation:ratio
@@ -66,12 +69,15 @@ groups:
         1
       )
 
-  # type: pgbouncer, component: single_threaded_cpu
+  # type: pgbouncer, patroni, component: single_threaded_cpu
+  # Note that since pgbouncer runs on the patroni nodes alongside postgres,
+  # for handling replica connections, we need to monitor `single_threaded_cpu`
+  # saturation here too
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'single_threaded_cpu'
     expr: >
-      max(1 - rate(node_cpu_seconds_total{type="pgbouncer", mode="idle"}[1m])) by (type, tier, stage, environment)
+      max(1 - rate(node_cpu_seconds_total{type=~"pgbouncer|patroni", mode="idle"}[1m])) by (type, tier, stage, environment)
 
   # type: pgbouncer, component: server_connections_pools
   - record: gitlab_component_saturation:ratio
@@ -80,14 +86,14 @@ groups:
     expr: >
       clamp_max(
         max(
-          max_over_time(pgbouncer_pools_server_active_connections{type="pgbouncer", user="gitlab"}[1m]) /
+          max_over_time(pgbouncer_pools_server_active_connections{user="gitlab"}[1m]) /
           (
             (
-              pgbouncer_pools_server_idle_connections{type="pgbouncer", user="gitlab"} +
-              pgbouncer_pools_server_active_connections{type="pgbouncer", user="gitlab"} +
-              pgbouncer_pools_server_testing_connections{type="pgbouncer", user="gitlab"} +
-              pgbouncer_pools_server_used_connections{type="pgbouncer", user="gitlab"} +
-              pgbouncer_pools_server_login_connections{type="pgbouncer", user="gitlab"}
+              pgbouncer_pools_server_idle_connections{user="gitlab"} +
+              pgbouncer_pools_server_active_connections{user="gitlab"} +
+              pgbouncer_pools_server_testing_connections{user="gitlab"} +
+              pgbouncer_pools_server_used_connections{user="gitlab"} +
+              pgbouncer_pools_server_login_connections{user="gitlab"}
             )
             > 0
           )
