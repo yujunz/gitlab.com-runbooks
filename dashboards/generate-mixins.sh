@@ -9,7 +9,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "${SCRIPT_DIR}"
 
 if [[ ! -d "vendor" ]]; then
-  >&2 echo "vendor directory not founder, running bundler.sh to install dependencies..."
+  >&2 echo "vendor directory not found, running bundler.sh to install dependencies..."
   "${SCRIPT_DIR}/bundler.sh"
 fi
 
