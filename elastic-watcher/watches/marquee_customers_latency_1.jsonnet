@@ -45,7 +45,7 @@ local ES_QUERY = {
   aggs: {
     percentile_durations: {
           percentiles: {
-            field: "json.duration",
+            field: "json.duration_ms",
             percents: [
               95.0
             ],
@@ -70,7 +70,7 @@ local ES_QUERY = {
   condition: {
     compare: {
       "ctx.payload.aggregations.percentile_durations.values.0.value": {
-        gte: P95_ALERT_THRESHOLD_LATENCY_SECONDS
+        gte: P95_ALERT_THRESHOLD_LATENCY_SECONDS * 1000 /* Convert to milliseconds */
       }
     }
   },
@@ -88,7 +88,7 @@ local ES_QUERY = {
           attachments : [
           {
             title : "Latency issues detected",
-            text : "Marquee customer accounts experiencing a p95 latency of {{ctx.payload.aggregations.percentile_durations.values.0.value}}s. <https://log.gitlab.net/goto/9128cfe7e30f58716af9e63fac492ca8>",
+            text : "Marquee customer accounts experiencing a p95 latency of {{ctx.payload.aggregations.percentile_durations.values.0.value}}ms. <https://log.gitlab.net/goto/a28ff15a4609fdcb93e128c94263edb2>",
             color : "danger"
           }]
         }
