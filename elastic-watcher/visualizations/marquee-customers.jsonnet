@@ -1,4 +1,4 @@
-local MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS = std.extVar('gold_watch_top_level_domains');
+local MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS = std.extVar('marquee_customers_top_level_domains');
 
 local wildcardQuery(topLevelDomain) = {
     wildcard: {
@@ -30,7 +30,7 @@ local disabledIndividualWildcardQueries() = [
     '$state': {
       store: 'appState',
     },
-  } for topLevelDomain in std.split(GOLD_WATCH_TOP_LEVEL_DOMAINS, ",")
+  } for topLevelDomain in std.split(MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS, ",")
 ];
 
 {
@@ -71,7 +71,7 @@ local disabledIndividualWildcardQueries() = [
         {
           data: {
             id: '1',
-            label: 'Percentiles of json.duration',
+            label: 'Percentiles of json.duration_ms',
           },
           drawLinesBetweenPoints: true,
           mode: 'normal',
@@ -101,7 +101,7 @@ local disabledIndividualWildcardQueries() = [
           show: true,
           style: {},
           title: {
-            text: 'Percentiles of json.duration',
+            text: 'Percentiles of json.duration_ms',
           },
           type: 'value',
         },
@@ -114,7 +114,7 @@ local disabledIndividualWildcardQueries() = [
         type: 'percentiles',
         schema: 'metric',
         params: {
-          field: 'json.duration',
+          field: 'json.duration_ms',
           percents: [
             95,
           ],
