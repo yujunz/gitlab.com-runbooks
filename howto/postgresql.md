@@ -84,3 +84,68 @@ Before shutting down a host which is no longer required, run the following as ro
 ```shell
 # gitlab-ctl repmgr standby unregister
 ```
+
+## Rebuild a corrupt index
+
+Summary: we must build a new index concurrently, so as not to contend with
+production traffic, and then replace the corrupt index with this new one.
+
+Run these SQL commands in `gitlab-psql` shell on the **primary** database
+instance.
+
+Find the size of the index:
+
+```
+select pg_size_pretty(pg_indexes_size('index_blah'));
+```
+
+As a very rough rule of thumb, we can expect index creation to take a few
+minutes per GB on production.
+
+Set your statement timeout to be long enough to create the new index:
+
+```
+set statement_timeout to '1h';
+```
+
+Find the definition of the index:
+
+```
+select indexdef from pg_indexes where indexname = 'index_blah';
+```
+
+Create a replacement index with a different name, based on the definition about
+**but ensuring to use `CONCURRENTLY`**:
+
+```
+CREATE INDEX CONCURRENTLY index_blah_rebuild ON foo USING some_algo (bar, baz);
+```
+
+Rename the corrupt index, then name the new index to the corrupt index's old
+name, in a transaction:
+
+```
+BEGIN;
+ALTER INDEX index_blah RENAME TO index_blah_old;
+ALTER INDEX index_blah_rebuild RENAME TO index_blah;
+END;
+```
+
+Verify that the new index is receiving traffic:
+
+```
+select * from pg_stat_user_indexes where indexrelname = 'index_blah';
+```
+
+`idx_tup_read` and/or `idx_tup_fetch` should increase over time.
+
+Drop the old index:
+
+```
+DROP INDEX index_blah_old;
+```
+
+Indexes corruption can occur when string sorting order changes. String sorting
+order can change on glibc upgrade, or postgres upgrade. When upgrading postgres
+we must be careful to check for index corruption and rebuild indexes if
+necessary.
