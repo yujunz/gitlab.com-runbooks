@@ -190,6 +190,7 @@ During an incident there are at least 2 roles, and one more optional
 * [Add a new secondary replica](howto/postgresql-replica.md)
 * [Database backups](howto/using-wale-gpg.md)
 * [Database backups restore testing](https://gitlab.com/gitlab-restore/postgres-01.db.prd.gitlab.com/)
+* [Rebuild a corrupt index](howto/postgresql.md#rebuild-a-corrupt-index)
 
 ### Frontend Services
 
