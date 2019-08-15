@@ -100,6 +100,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
     interval="1m",
     intervalFactor=3,
     linewidth=2,
+    legend_show=true,
     ):: graphPanel.new(
     title,
     description=description,
@@ -108,7 +109,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
     fill=0,
     datasource="$PROMETHEUS_DS",
     decimals=0,
-    legend_show=true,
+    legend_show=legend_show,
     legend_values=true,
     legend_min=true,
     legend_max=true,

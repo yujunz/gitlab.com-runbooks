@@ -43,6 +43,17 @@ local seriesOverrides = import 'series_overrides.libsonnet';
           min=0,
           show=false,
         ),
+      basic.saturationTimeseries(
+        "Node Maximum Single Core Utilization",
+        description="The maximum utilization of a single core on each node. Lower is better",
+        query='
+          max(1 - rate(node_cpu_seconds_total{' + nodeSelector + ', mode="idle"}[$__interval])) by (fqdn)
+        ',
+        legendFormat='{{ fqdn }}',
+        legend_show=false,
+        linewidth=1
+      ),
+
       graphPanel.new(
         "Node Network Utilization",
         linewidth=1,
@@ -83,6 +94,27 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         max=1,
         min=0,
         show=false,
+      ),
+    basic.saturationTimeseries(
+      title="Memory Utilization",
+      description="Memory utilization. Lower is better.",
+      query='
+        1 -
+        (
+          (
+            node_memory_MemFree_bytes{' + nodeSelector + '} +
+            node_memory_Buffers_bytes{' + nodeSelector + '} +
+            node_memory_Cached_bytes{' + nodeSelector + '}
+          )
+        )
+        /
+        node_memory_MemTotal_bytes{' + nodeSelector + '}
+      ',
+      legendFormat='{{ fqdn }}',
+      interval="1m",
+      intervalFactor=1,
+      legend_show=false,
+      linewidth=1
       ),
     basic.timeseries(
       title="Disk Read IOPs",
