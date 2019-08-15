@@ -3,13 +3,14 @@ local kubernetes = import "kubernetes-mixin/mixin.libsonnet";
 local mixin = kubernetes {
   _config+:: {
     kubeStateMetricsSelector: 'job="kube-state-metrics"',
-    cadvisorSelector: 'job="kubernetes-cadvisor"',
-    nodeExporterSelector: 'job="kubernetes-node-exporter"',
-    kubeletSelector: 'job="kubernetes-kubelet"',
+    cadvisorSelector: 'job="kubelet"',
+    nodeExporterSelector: 'job="node-exporter"',
+    kubeletSelector: 'job="kubelet"',
     grafanaK8s+:: {
       dashboardNamePrefix: '',
       dashboardTags: ['kubernetes', 'infrastucture'],
     },
+    showMultiCluster: true,
   },
 };
 
