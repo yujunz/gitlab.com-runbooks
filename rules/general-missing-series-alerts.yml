@@ -13,7 +13,7 @@ groups:
           severity: s4
         annotations:
           title: "Availability data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
-          description: |
+          description: >
             The data used to generate the `gitlab_component_availability:ratio` metrics are missing for the
             `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
             might indicate that our observability has been affected.
@@ -34,7 +34,7 @@ groups:
           severity: s4
         annotations:
           title: "Operation rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
-          description: |
+          description: >
             The data used to generate the `gitlab_component_ops:rate` metrics are missing for the
             `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
             might indicate that our observability has been affected.
@@ -55,7 +55,7 @@ groups:
           severity: s4
         annotations:
           title: "Apdex for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
-          description: |
+          description: >
             The data used to generate the `gitlab_component_apdex:ratio` metrics are missing for the
             `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
             might indicate that our observability has been affected.
@@ -65,18 +65,21 @@ groups:
           grafana_min_zoom_hours: "24"
 
       # Error Rate
+      # For error rate, ignore the `cny` stage, as without much traffic,
+      # the likelihood of errors will be reduced, leading to
+      # `gitlab_component_error_missing_series` alerts
       - alert: gitlab_component_error_missing_series
         expr: |
-          (gitlab_component_errors:rate offset 1d)
+          (gitlab_component_errors:rate{stage!="cny"} offset 1d)
           unless
-          gitlab_component_errors:rate
+          gitlab_component_errors:rate{stage!="cny"}
         for: 1h
         labels:
           rules_domain: general
           severity: s4
         annotations:
           title: "Error rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
-          description: |
+          description: >
             The data used to generate the `gitlab_component_errors:rate` metrics are missing for the
             `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
             might indicate that our observability has been affected.
