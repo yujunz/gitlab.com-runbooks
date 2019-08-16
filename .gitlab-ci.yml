@@ -7,8 +7,8 @@ stages:
   - test
   - deploy
   - alertmanager
-  - deploy-rules-gstg
-  - deploy-rules-pre
+  - deploy-rules
+  - deploy-rules-production
 
 .deploy-rules:
   extends: .rules-artifacts
@@ -66,12 +66,18 @@ rspec:
 deploy-rules-gstg:
   environment: gstg
   extends: .deploy-rules
-  stage: deploy-rules-gstg
+  stage: deploy-rules
 
 deploy-rules-pre:
   environment: pre
   extends: .deploy-rules
-  stage: deploy-rules-pre
+  stage: deploy-rules
+
+deploy-rules-production:
+  environment: pre
+  extends: .deploy-rules
+  when: manual
+  stage: deploy-rules-production
 
 update-alert-manager:
   stage: alertmanager

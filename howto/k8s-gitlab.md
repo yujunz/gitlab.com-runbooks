@@ -4,8 +4,9 @@ The following is a high level guide on what it takes to build out the necessary
 bits for adding GKE and bringing over components of GitLab into Kubernetes.
 
 Our current application configuration components:
-* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com
+* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common
 * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/monitoring
+* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com
 
 1. Create the cluster configuration in terraform, we'll need the following
    items:
@@ -14,29 +15,41 @@ Our current application configuration components:
     * Internal IP address for prometheus service
     * Cloud NAT device
     * Router for the Cloud NAT
-    * Cluster - we'll use our gke submodule https://gitlab.com/gitlab-com/gl-infra/terraform-modules/google/gke which will build out the following
-      items:
+    * Cluster - we'll use our gke submodule
+      https://gitlab.com/gitlab-com/gl-infra/terraform-modules/google/gke which
+      will build out the following items:
       * cluster
       * 1 node pool
       * the required network - subnetwork and secondary networks
     * Logging pubsub instance
     * Create an IAM user for operations on CI/CD and inside of our cluster
-    * Example of all the above via terraform: https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/merge_requests/839
+    * Example of all the above via terraform:
+      https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/merge_requests/839
 1. Set IAM user permissions on cluster
-    * This is manual, documented here: https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/master/README.md#service-account
-1. Set the appropriate environment variables in the application configuration repos
+    * This is manual, documented here:
+      https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/master/README.md#service-account
+    * The service account will have an authentication key file in json format
+      created, we'll need this for the next step.
+1. Set the appropriate environment variables in the application configuration
+repos
     * Repos:
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/settings/ci_cd
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/monitoring/-/settings/ci_cd
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/common/-/settings/ci_cd
     * ENV Vars:
       * `SERVICE_KEY`
+      * This key is gathered from following the documentation in the previous
+        step.
+      * This must be added to each repo since environment scoped group level
+        variables are not a feature of GitLab
 1. Create the application configurations
     * Adjust any necessary configurations or additions by following the README's
       in each of our application configuration repos.
     * Example Merge Requests:
-      * Monitoring: https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/monitoring/merge_requests/12
-      * GitLab.com: https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/merge_requests/5
+      * Monitoring:
+        https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/monitoring/merge_requests/12
+      * GitLab.com:
+        https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/merge_requests/5
     * Note that when merged to master, CI/CD will fail, so it would be advised
       to hold off until after the next few steps
 1. Take care of any manual actions from our new configuration:
@@ -49,27 +62,55 @@ Our current application configuration components:
       and then run: `./bin/k-ctl -e <ENVIRONMENT> install`
     * Troubleshoot where necessary
 1. We can now merge any commits associated with these repos, and CI/CD should
-   work successfully
+work successfully
 1. Prometheus rules:
     * Inside of our `runbooks` repo, we need to add a configuration inside of
       `.gitlab-ci.yaml` to deploy to our new cluster.
     * ensure the appropriate variables are added to the ops instance
-    * Utilize this MR as a guideline: https://gitlab.com/gitlab-com/runbooks/merge_requests/1200
+    * Utilize this MR as a guideline:
+      https://gitlab.com/gitlab-com/runbooks/merge_requests/1200
 1. Create the chef configuration for registry traffic
-    * Example Merge Request: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/1452
+    * Example Merge Request:
+      https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/1452
 1. Validate the registry is working properly
     * Inside of the haproxy nodes, set the VM's to `MAINT` such that the only
       available registry backend server is our Kubernetes Service endpoint
-    * And you should also be able to successfully utilize docker to login, push, and pull images
+    * And you should also be able to successfully utilize docker to login, push,
+      and pull images
 1. Add data source to grafana to our new GKE cluster
-    * This is currently done by hand: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6955
+    * This is currently done by hand:
+      https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6955
     * Login as an admin into https://dashboards.gitlab.net
     * Go to Datasources>Add
     * Name: <NAME OF CLUSTER>
-    * URL: `http://<IP OF PROMETHEUS SERVICE>:9090` - this is a class A IP address as defined by our terraform configs
+    * URL: `http://<IP OF PROMETHEUS SERVICE>:9090` - this is a class A IP
+      address as defined by our terraform configs
     * Save and test
 1. Add the thanos side cars to our thanos-query ops instance
-    * Example MR: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/1430
+    * Example MR:
+      https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/1430
+
+## Monitoring with Kubernetes
+
+### Metrics
+
+We utilize https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/monitoring to
+deploy our monitoring infrastructure inside of Kubernetes.
+
+Configuration outside of Kubernetes:
+* We add the prometheus endpoint to our thanos-ops query instance.  This is
+  handled via the `ops-base` chef role.
+* The thanos-query running inside the cluster is added as a datasource to
+  grafana.  This is currently done manually.  Though not required, this provides
+  a fall back in cases where `thanos-query.ops.gitlab.net` may be unhealthy.
+
+### Logging
+
+A single pubsubbeat VM is setup to monitor a single pubsub that is configured to be a log sink from Stackdriver.  All
+items end up in the index `pubsub-gke-inf-<ENV>*`
+
+One can refer to this document for further details
+[troubleshooting/kubernetes.md](../troubleshooting/kubernetes.md)
 
 ## Terraforming with GKE
 
