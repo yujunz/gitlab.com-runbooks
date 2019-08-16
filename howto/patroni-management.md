@@ -1,11 +1,27 @@
 # Patroni
 
-## Scaling the cluster up or down
+## Scaling the cluster up
 
-Increasing or decreasing the node count of `patroni` in an environment [variables][environment-variables],
-followed by a Terraform provisioning, should be enough to add or remove nodes to the
-Patroni cluster. A successful Chef run will start the `patroni` service will take
-care of doing the base backup replication and the streaming replication afterwards.
+1. Increase the node count of `patroni` in [terraform][environment-variables].
+1. Apply the terraform and wait for chef to converge.
+1. On the new box, `gitlab-patronictl list` and ensure that the other cluster
+   members are identical to those seen by running the same command on another
+   cluster member.
+1. `systemctl enable patroni && systemctl start patroni` (for some reason we do
+   not automate this yet, but this operation is rare).
+1. Follow the patroni logs. A pg_basebackup will take several hours, after which
+   point streaming replication will begin. Silence alerts as necessary.
+
+## Scaling the cluster down
+
+1. Using this method, we can only delete the highest index of patroni. Make sure
+   it isn't the primary!
+1. Take the replica out of the read replica pool, and ensure it doesn't become
+   the primary if we are unlucky enough to suffer a failover while scaling the
+   cluster down: follow the [replica maintenance](#replica-maintenance)
+   instructions.
+1. Decrease the node count of `patroni` in [terraform][environment-variables].
+   Carefully read the plan and apply the terraform.
 
 ## Cluster information
 
@@ -131,9 +147,39 @@ issue with the help of a DBRE before restarting.
 
 ## Replica Maintenance
 
-If clients are connecting to replicas by means of [service discovery][service-discovery]
-(as opposed to hard-coded list of hosts), you can remove a replica from the list of hosts
-used by the clients by enabling Consul service maintenance on the selected replica:
+If clients are connecting to replicas by means of [service
+discovery][service-discovery] (as opposed to hard-coded list of hosts), you can
+remove a replica from the list of hosts used by the clients by enabling Consul
+service maintenance on the selected replica (and also prevent it from becoming
+the primary):
+
+1. `systemctl stop chef-client && systemctl disable chef-client`
+1. Add a `tags` section to `/var/opt/gitlab/patroni/patroni.yaml` on the
+   node:
+
+   ```
+   tags:
+     nofailover: true
+     noloadbalance: true
+   ```
+
+1. `gitlab-patronictl reload` (the author has not personally done this, so
+   pay close attention to the next testing step)
+1. Test the efficacy of that reload by checking for the node's IP (`ip addr`)
+   in the list of replicas:
+
+   ```
+   dig @127.0.0.1 -p 8600 replica.patroni.service.consul.
+   ```
+
+    If the IP is absent, then the reload worked.
+
+You can see an example of taking a node out of service [in this
+issue](https://gitlab.com/gitlab-com/gl-infra/production/issues/1061).
+
+In the past we have sometimes used consul directly to remove the replica from
+the replica DNS entry (bear in mind this does not prevent the node from becoming
+the primary).
 
 ```
 patroni-01-db-gstg $ consul maint -enable -service=patroni-replica -reason="Production issue #xyz"
