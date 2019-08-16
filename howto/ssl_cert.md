@@ -98,6 +98,9 @@ one (and CSR) using SSLMate's web UI. Download the private key and create a
    gcloud --project=<project> compute ssl-certificates create wilcard-ops-gitlab-net-exp-2020-08-15 \
      --certificate ./_.ops.gitlab.net.chained.pem --private-key ./_.ops.gitlab.net.key.pem
    ```
+1. The certificate will then be available at the following resource route:
+   `projects/[PROJECT_NAME]/global/sslCertificates/[CERTIFICATE_NAME]` (you may
+   have to specify that resource path to the relevant terraform module).
 1. Edit the terraform for the LB to point at the new certificate, as seen in
    https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/merge_requests/935.
 1. Once applied, it may take 10 minutes or longer for your changes to be seen live.
@@ -125,22 +128,6 @@ awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' [domain].chained.crt
 `[domain].crt` file!
 
 ```
-
-### Upload certificate to GCP
-
-If your certificate is to be used by a GCP resource (for example, a load
-balancer) you can upload it using this command:
-
-```
-gcloud compute ssl-certificates create [CERTIFICATE_NAME] --certificate [PATH_TO_CRT] --private-key [PATH_TO_KEY] --project [PROJECT_NAME]
-```
-
-The certificate will then be available at the following resource route:
-`projects/[PROJECT_NAME]/global/sslCertificates/[CERTIFICATE_NAME]` (you may
-have to specify that resource path to the relevant terraform module).
-
-**Note:** You _must_ use the `[domain].chained.crt` certificate file, _not_ the
-`[domain].crt` file!
 
 ### Verify the certificate
 
