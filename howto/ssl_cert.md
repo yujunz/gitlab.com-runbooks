@@ -46,7 +46,13 @@ Note that sslmate may complain that you won't have the key in your `${CWD}`.
 This is fine as we should have the key on minimally on a server, but may also
 exist inside of 1Password, and even better, inside a chef vault.
 
-### Process to update certificates in production
+### Re-keying a certificate
+
+If a certificate auto-renews but we have lost the private key, generate a new
+one (and CSR) using SSLMate's web UI. Download the private key and create a
+1password entry for it (and the new cert) in the "SSLCerts Lockbox" vault.
+
+### Updating certificates on chef-managed VMs
 
 #### Preparation for update
 1. The newly renewed certificate has been downloaded with sslmate.
@@ -79,16 +85,24 @@ exist inside of 1Password, and even better, inside a chef vault.
 1. Restart chef on the nodes from the first step.
   * ```knife ssh "role:gprd-base-lb-fe" "sudo service chef-client start"```
 
-#### Extra steps for GCP certificate updates
-1. Under ```Networking -> Network services -> Load balancing``` switch to the advanced menu.
-1. Select the certificates label and create a new SSL certificate using the private key from the GKMS vaults, and the information downloaded from SSLMate.
-1. Edit the frontend rules for the load balancer you are updating and change it's certificate to the one you added and make sure you save your changes.
-1. ***It may take 10 minutes or longer for your changes to be seen live.***
-
 #### Rollback steps
 1. Revert changes made to the vaults using the ```gkms-vault-edit``` command.
 1. Replace the changed cert with the backup that was made locally.
 1. Save the changes and force a chef run on the test system and verify it is fixed (or back to normal).
+
+### Updating certificates on GCP LBs
+
+1. Upload the certificate (chain) and private key from your local machine:
+
+   ```
+   gcloud --project=<project> compute ssl-certificates create wilcard-ops-gitlab-net-exp-2020-08-15 \
+     --certificate ./_.ops.gitlab.net.chained.pem --private-key ./_.ops.gitlab.net.key.pem
+   ```
+1. Edit the terraform for the LB to point at the new certificate, as seen in
+   https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/merge_requests/935.
+1. Once applied, it may take 10 minutes or longer for your changes to be seen live.
+1. Delete the old cert from GCP, to de-clutter: `gcloud --project=gitlab-ops compute ssl-certificates delete wildcard-ops-gitlab-net`
+1. Delete the private key (and cert) from your local machine.
 
 ### Use Rake to update vault
 
