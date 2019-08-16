@@ -23,7 +23,7 @@ groups:
       pager: pagerduty
       severity: s1
     annotations:
-      description: |
+      description: >
         Haproxy is seeing/reporting 5xx HTTP responses.  Investigate the following
           * The Registry is taking too long to respond
           * The Registry is down

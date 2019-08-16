@@ -148,7 +148,7 @@ groups:
       severity: s4
     annotations:
       title: GCP Quota usage of {{ $labels.quota }} is too high
-      description: |
+      description: >
         Quota usage of {{ $labels.quota }} is at the level of {{ $value }} for more than 5 minutes.
         Quota limit breach is coming!
         See https://dashboards.gitlab.net/dashboard/db/ci-autoscaling-providers
@@ -164,7 +164,7 @@ groups:
       severity: s3
     annotations:
       title: GCP Quota usage of {{ $labels.quota }} is near limit
-      description: |
+      description: >
         Quota usage of {{ $labels.quota }} is at the level of {{ $value }} for more than 5 minutes.
         It's less than 5% to reach quota limits!
         See https://dashboards.gitlab.net/dashboard/db/ci-autoscaling-providers
@@ -180,7 +180,7 @@ groups:
       severity: s4
     annotations:
       title: Namespace with constant number of long running jobs with repeated commands
-      description: |
+      description: >
         Namespace {{ $labels.namespace }} is running a constant number of jobs with
         repeated commands for more than 45 minutes.
       runbook: troubleshooting/cicd/ci_constantnumberoflongrunningrepeatedjobs.md
@@ -198,7 +198,7 @@ groups:
       severity: s3
     annotations:
       title: Job queue duration performance for '0 - 10s' is to low
-      description: |
+      description: >
         The job queue duration performance for 10s bucket for projects with 0 running
         jobs is lower than 80% for more than 5 minutes.
 
@@ -218,7 +218,7 @@ groups:
       severity: s3
     annotations:
       title: 90% of request queued on Workhorse is longer than 30s
-      description: |
+      description: >
         90% of requests queued on Workhorse are longer than 30s for last 5 minutes.
 
         This should be considered as service degradation and the reason should be investigated.
@@ -232,7 +232,7 @@ groups:
       severity: s4
     annotations:
       title: 'Too big number of traces archiving failures: {{$value}}'
-      description: |
+      description: >
         Traces archiving keeps failing for more than 5 minutes.
         Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&orgId=1&panelId=153&fullscreen,
         https://sentry.gitlab.net/gitlab/gitlabcom/?query=ArchiveTraceWorker, and
@@ -247,7 +247,7 @@ groups:
       severity: s3
     annotations:
       title: 'Sidekiq queues for CI/CD are growing: {{$value}}'
-      description: |
+      description: >
         Sidekiq queues for CI/CD are growing and are over 1000 for
         more than last 5 minutes.
         Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&from=now-1h&to=now&orgId=1&panelId=85&fullscreen

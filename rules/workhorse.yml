@@ -49,7 +49,7 @@ groups:
       bound: lower
       threshold_sigma: "4"
     annotations:
-      description: |
+      description: >
         This may be caused by an upstream load-balancer issue, DNS issue or authentication issues.
       runbook: "troubleshooting/workhorse-git-session-alerts.md"
       title: "The number of active Git HTTP sessions is unusually low"
@@ -83,7 +83,7 @@ groups:
       bound: lower
       threshold_sigma: "4"
     annotations:
-      description: |
+      description: >
         The number of Git HTTP sessions is unusually high. This could be because of a surge in traffic,
         a bottleneck in a upstream load-balancer, or a slow backend Gitaly server.
       runbook: "troubleshooting/workhorse-git-session-alerts.md"

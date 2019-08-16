@@ -8,6 +8,6 @@ groups:
         severity: s4
       annotations:
         title: td-agent is down on {{$labels.instance}}
-        description: |
+        description: >
           Consider running `sudo service td-agent start`,
           check `/var/log/td-agent/td-agent.log` for any errors.

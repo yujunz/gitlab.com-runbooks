@@ -11,7 +11,7 @@ groups:
           severity: s4
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
-          description: |
+          description: >
             The `deadman_15m_checkin` metrics are missing for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`). This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -28,7 +28,7 @@ groups:
           severity: s4
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
-          description: |
+          description: >
             The `deadman_30m_checkin` metrics are missing for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`). This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -45,7 +45,7 @@ groups:
           severity: s4
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
-          description: |
+          description: >
             The `deadman_6h_checkin` metrics are missing for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`). This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -62,7 +62,7 @@ groups:
           severity: s4
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
-          description: |
+          description: >
             The `deadman_1d_checkin` metrics are missing for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`). This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -79,7 +79,7 @@ groups:
           severity: s4
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
-          description: |
+          description: >
             The `deadman_1d_checkin` metrics are missing for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`). This might indicate that our observability has been affected.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -95,7 +95,7 @@ groups:
           severity: s4
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
-          description: |
+          description: >
             The deadman switch for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`) has not been updated in the last 15 minutes.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -111,7 +111,7 @@ groups:
           severity: s4
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
-          description: |
+          description: >
             The deadman switch for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`) has not been updated in the last 30 minutes.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -127,7 +127,7 @@ groups:
           severity: s4
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
-          description: |
+          description: >
             The deadman switch for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`) has not been updated in the last 6 hours.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -143,7 +143,7 @@ groups:
           severity: s4
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
-          description: |
+          description: >
             The deadman switch for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`) has not been updated in the last day.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"
@@ -159,7 +159,7 @@ groups:
           severity: s4
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
-          description: |
+          description: >
             The deadman switch for `{{ $labels.resource }}` (tier `{{ $labels.tier }}`, type `{{ $labels.type }}`) has not been updated in the last day and 6 hours.
           grafana_dashboard_id: "QrxHvt_ik/deadman-slackline-dashboard"
           grafana_panel_id: "2"

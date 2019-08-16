@@ -17,7 +17,7 @@ groups:
           bound: lower
           pager: pagerduty
         annotations:
-          description: |
+          description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is not meeting its latency SLOs
 
             The service is taking longer to respond to requests than usual. This could be caused by
@@ -51,7 +51,7 @@ groups:
           bound: upper
           pager: pagerduty
         annotations:
-          description: |
+          description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio higher than SLOs
 
             A high proportion of requests to the `{{ $labels.type }}` service are resulting in errors.
@@ -81,7 +81,7 @@ groups:
           bound: upper
           # pager: pagerduty Uncomment after trial period
         annotations:
-          description: |
+          description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
 
             This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
@@ -114,7 +114,7 @@ groups:
           bound: lower
           threshold_value: "0.75"
         annotations:
-          description: |
+          description: >
             The ratio of services that are available to serve the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage)
             is unusually low, and a unusually large proportion of the fleet is not responding.
 
@@ -147,7 +147,7 @@ groups:
           bound: lower
           threshold_value: "0.5"
         annotations:
-          description: |
+          description: >
             The ratio of services that are available to serve the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage)
             is unusually low, and a unusually large proportion of the fleet is not responding.
 
@@ -190,7 +190,7 @@ groups:
           bound: upper
           threshold_sigma: "3"
         annotations:
-          description: |
+          description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving more requests than normal.
 
             This is often caused by user generated traffic, sometimes abuse. It can also be cause by
@@ -230,7 +230,7 @@ groups:
           bound: lower
           threshold_sigma: "3"
         annotations:
-          description: |
+          description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving fewer requests than normal.
 
             This is often caused by a failure in an upstream service - for example, an upstream load balancer rejected

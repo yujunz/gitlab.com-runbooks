@@ -10,7 +10,7 @@ groups:
       channel: production
       severity: s4
     annotations:
-      description: |
+      description: >
         PubSub messages are queuing up.  Unacked messages older than 60 seconds exist in the queue
         for the last 5 minutes. This will lead to a loss of log data.
       runbook: troubleshooting/pubsub-queing.md

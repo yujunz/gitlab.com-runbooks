@@ -172,7 +172,7 @@ groups:
       channel: g_gitaly
       severity: s4
     annotations:
-      description: |
+      description: >
         Reach out to the Gitaly team, ensure logging is set properly.
       runbook: troubleshooting/gitaly-pubsub.md
       title: Gitaly PubSub send operation is low
@@ -205,7 +205,7 @@ groups:
       period: 10m
     annotations:
       title: "More than 20% of Gitaly {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are queueing for more than 60s"
-      description: |
+      description: >
         An extremely high proportion of Gitaly  {{ $labels.grpc_method }} requests to {{ $labels.fqdn }} are being queued up for an extended period.
 
         This issue is likely to be immediately client-impacting.
