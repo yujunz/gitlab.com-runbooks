@@ -100,6 +100,7 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf | |
 | rails.auth | gitlab-rails/auth.log | JSON | pubsub-rails-inf | |
 | rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf | |
+| rails.git | gitlab-rails/git_json.log | JSON | pubsub-rails-inf | |
 | rails.importer | gitlab-rails/impoter.log | JSON | pubsub-rails-inf | |
 | rails.integrations | gitlab-rails/integrations\_json.log | JSON | pubsub-rails-inf | |
 | rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf | |
