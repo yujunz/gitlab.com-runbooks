@@ -158,6 +158,81 @@ graph TD
 A[GKE] --> B(node pool A v2)
 ```
 
+### Troubleshooting Terraform
+
+Sometimes Google is doing something to GKE during the time in which we may want
+to operate on a cluster.  For example, if you were to create a new node pool,
+Google needs to accomplish something.  Sometimes this may be a long running
+operation.  And while the Kubernetes Cluster is reachable, serving requests,
+Google's API will prevent terraform from making any changes until this process
+is complete.  There's a way to figure out what Google is doing.
+
+#### Discovery
+
+Terraform does not _always_ tell you what is going on.  When is doesn't,
+terraform will simply timeout when refreshing it's state.  At this point, skip
+forward below to figure out what may be happening.  If it does tell you, it'll
+look something like this:
+
+```
+Error: Error applying plan:
+
+1 error occurred:
+        * module.gitlab-gke.google_container_node_pool.node_pool[0] (destroy): 1 error occurred:
+        * google_container_node_pool.node_pool.0: Error deleting NodePool: googleapi: Error 400: Operation operation-1565970176782-7753cb1e is currently upgrading cluster gprd-gitlab-gke. Please wait and try again once it is done., failedPrecondition
+```
+
+In the above we were provided an `operation id` that we can use.
+
+##### Finding Operations
+
+If we don't know an operation id, we can find one, to figure out what google
+might be doing, execute the following:
+
+```
+% gcloud container operations list --region us-east1
+operation-1565970176782-7753cb1e  UPGRADE_MASTER    us-east1  gprd-gitlab-gke                  DONE     2019-08-16T15:42:56.782819169Z  2019-08-16T15:58:29.249333034Z
+operation-1565970176789-257e66be  UPDATE_CLUSTER    us-east1  gprd-gitlab-gke                  DONE     2019-08-16T15:42:56.789869562Z  2019-08-16T15:42:57.01965906Z
+operation-1565971458672-ef210c44  DELETE_NODE_POOL  us-east1  node-pool-0                      DONE     2019-08-16T16:04:18.672470053Z  2019-08-16T16:06:52.998278444Z
+operation-1565971614556-b7d82560  CREATE_NODE_POOL  us-east1  node-pool-0                      RUNNING  2019-08-16T16:06:54.556307283Z
+<snip>
+```
+
+Now we have a list of operation id's and we can now further discover what Google
+is doing
+
+##### Describing an Operation
+
+If you have an operation id, just plug it in like so:
+
+```
+% gcloud container operations describe operation-1565971614556-b7d82560 --region us-east1                                                                                                                 hooman: Fri Aug 16 12:12:43 2019
+
+endTime: '2019-08-16T16:10:33.899860383Z'
+name: operation-1565971614556-b7d82560
+operationType: CREATE_NODE_POOL
+selfLink: https://container.googleapis.com/v1/projects/805818759045/locations/us-east1/operations/operation-1565971614556-b7d82560
+startTime: '2019-08-16T16:06:54.556307283Z'
+status: RUNNING
+targetLink: https://container.googleapis.com/v1/projects/805818759045/locations/us-east1/clusters/gprd-gitlab-gke/nodePools/node-pool-0
+zone: us-east1
+```
+
+#### Waiting
+
+If you'd like to create an alert so you don't need to wait for progress, you can
+utilize the shell in your favor to alert you when an operation is done.
+Example:
+
+```
+% gcloud container operations wait operation-1565970176782-7753cb1e --region
+us-east1 && wall 'operation is done'
+```
+
+The above will output that google is waiting with a CLI type spinner.
+After which, your desired command to alert you will fire.  In the above example,
+`wall` was used.
+
 ### Cycling Pods
 
 Due to node pool destructions bringing down nodes before being drained, it would
