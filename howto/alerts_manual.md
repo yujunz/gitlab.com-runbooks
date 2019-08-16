@@ -59,7 +59,7 @@ groups:
       severity: s1
     annotations:
       title: "Emergency Alert"
-      description: |
+      description: >
         "BALLISTIC MISSILE THREAT INBOUND TO GITLAB. SEEK IMMEDIATE SHELTER.
         THIS IS NOT A DRILL."
       node_load: '{{ $value }}'

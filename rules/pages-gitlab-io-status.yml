@@ -43,7 +43,7 @@ groups:
       severity: s4
     annotations:
       title: GitLab Pages server(s) have low number of hosted domains
-      description: |
+      description: >
         GitLab Pages on {{ $labels.environment }} {{ $labels.fqdn }} have an unusually low number of hosted domains.
       environment: "{{ $labels.environment }}"
       runbook: troubleshooting/gitlab-pages.md

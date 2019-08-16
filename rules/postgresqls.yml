@@ -170,7 +170,7 @@ groups:
       title: |
         PostgreSQL replication slot {{$labels.slot_name}} on {{$labels.fqdn}} is
         falling behind.
-      description: |
+      description: >
         The replication slot {{$labels.slot_name}} on {{$labels.fqdn}} is using
         a minimum transaction ID that is {{$value | humanize}} transactions old.
         This can cause an increase in dead tuples on the primary. This can be
@@ -182,7 +182,7 @@ groups:
       severity: s4
       channel: database
     annotations:
-      description: |
+      description: >
         "Postgres server {{$labels.fqdn}} has a transaction in currently in
         state "{{$labels.state}}" that started {{ $value | humanizeDuration }}
         ago"
@@ -263,7 +263,7 @@ groups:
       pager: pagerduty
       severity: s1
     annotations:
-      description: |
+      description: >
         {{$labels.fqdn}} postgres service appears down
       runbook: "troubleshooting/postgres.md"
       title: |
@@ -275,7 +275,7 @@ groups:
       severity: s4
       channel: database
     annotations:
-      description: |
+      description: >
         {{$labels.fqdn}} postgres service appears to be restarted
       runbook: "troubleshooting/postgres.md"
       title: |

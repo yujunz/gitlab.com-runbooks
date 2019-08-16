@@ -18,7 +18,7 @@ groups:
           bound: lower
         annotations:
           title: "The `{{ $labels.worker }}` Sidekiq worker (`{{ $labels.stage }}` stage) is not meeting its latency SLOs"
-          description: |
+          description: >
             Only 80% of the jobs running for this worker are attaining a satisfactory apdex score.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
           grafana_dashboard_id: "alerts-worker_apdex_violation/alerts-worker-apdex-violation-alert"

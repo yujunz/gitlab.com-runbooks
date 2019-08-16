@@ -9,7 +9,7 @@ groups:
     labels:
       severity: s4
     annotations:
-      description: |
+      description: >
         The rate of Sidekiq {{ $labels.controller }} Exceptions in {{ $labels.environment }} is high.
         Check https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?orgId=1&panelId=58&fullscreen
       title: 'High Rate of Sidekiq {{ $labels.controller }} exceptions in {{ $labels.environment }}: {{ $value | printf "%.1f" }}'

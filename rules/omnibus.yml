@@ -7,7 +7,7 @@ groups:
         labels:
           severity: s4
         annotations:
-          description: |
+          description: >
             At least 75% of the fleet have omnibus package updates disabled.
             This prevents automatic package installations for newly provisioned
             VMs

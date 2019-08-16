@@ -124,7 +124,7 @@ groups:
       severity: s4
     annotations:
       title: 'Filesystem will be full SOON'
-      description: |
+      description: >
         The filesystem is predicted to be full in will be full in the next 24 hours.
       runbook: troubleshooting/filesystem_alerts.md
       instance: '{{ $labels.instance }}'
@@ -137,7 +137,7 @@ groups:
       severity: s3
     annotations:
       title: 'Less than 10% disk space left'
-      description: |
+      description: >
         Consider sshing into the instance and removing old logs, clean
         temp files, or remove old apt packages with `apt-get autoremove`
       runbook: troubleshooting/filesystem_alerts.md
@@ -166,7 +166,7 @@ groups:
       severity: s1
     annotations:
       title: "High number of inode usage"
-      description: |
+      description: >
         "Consider ssh'ing into the instance and removing files or clean
         temp files"
       runbook: troubleshooting/filesystem_alerts_inodes.md

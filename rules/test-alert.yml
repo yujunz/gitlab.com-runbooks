@@ -9,7 +9,7 @@ groups:
       severity: s1
     annotations:
       title: The alert test file is missing!
-      description: |
+      description: >
         Test alert is firing! This means that
         https://gitlab.com/gitlab-com/infrastructure/blob/master/alert-test is missing
         or gitlab.com is unavailable.

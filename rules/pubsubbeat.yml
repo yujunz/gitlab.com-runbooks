@@ -8,7 +8,7 @@ groups:
         severity: s4
       annotations:
         title: Pubsubbeat is logging a lot of warnings
-        description: |
+        description: >
           Warnings could be a result of failures in publishing logs.
           Consider checking /var/log/pubsubbeat/current on the affected
           host and see what's the cause of the warnings.
@@ -20,7 +20,7 @@ groups:
         severity: s4
       annotations:
         title: Pubsubbeat is logging a lot of errors
-        description: |
+        description: >
           Warnings could be a result of pubsubbeat being unable to connect to
           Elasticsearch. Consider checking /var/log/pubsubbeat/current on the affected
           host and see what's the cause of the errors.
