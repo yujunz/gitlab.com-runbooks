@@ -103,7 +103,13 @@ groups:
     labels:
       component: 'jobs'
     expr: >
-      sum by (environment, tier, type, stage) (rate(sidekiq_jobs_failed_total{type = "sidekiq"}[1m]))
+      sum by (environment, tier, type, stage) (
+        rate(sidekiq_jobs_failed_total{
+          type="sidekiq",
+          queue!="repository_update_mirror",
+          queue!="repository_update_remote_mirror"
+        }[1m])
+      )
 
   # gitaly:goserver
   - record: gitlab_component_errors:rate
