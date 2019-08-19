@@ -215,13 +215,69 @@ dashboard.new(
     )
   ], cols=2,rowHeight=10, startRow=1001),
 )
+.addPanel(row.new(title="Priority Workloads"),
+  gridPos={
+      x: 0,
+      y: 2000,
+      w: 24,
+      h: 1,
+  }
+)
+.addPanels(
+  layout.grid([
+    basic.saturationTimeseries(
+      "Node Average CPU Utilization per Priority",
+      description="The maximum utilization of a single core on each node. Lower is better",
+      query='
+        avg(1 - rate(node_cpu_seconds_total{type="sidekiq", environment="$environment", stage="$stage", mode="idle"}[$__interval])) by (priority)
+      ',
+      legendFormat='{{ priority }}',
+      legend_show=true,
+      linewidth=2
+    ),
+    basic.saturationTimeseries(
+      "Node Maximum Single Core Utilization per Priority",
+      description="The maximum utilization of a single core on each node. Lower is better",
+      query='
+        max(1 - rate(node_cpu_seconds_total{type="sidekiq", environment="$environment", stage="$stage", mode="idle"}[$__interval])) by (priority)
+      ',
+      legendFormat='{{ priority }}',
+      legend_show=true,
+      linewidth=2
+    ),
+    basic.saturationTimeseries(
+      title="Maximum Memory Utilization per Priority",
+      description="Memory utilization. Lower is better.",
+      query='
+        max(
+          1 -
+          (
+            (
+              node_memory_MemFree_bytes{type="sidekiq", environment="$environment", stage="$stage"} +
+              node_memory_Buffers_bytes{type="sidekiq", environment="$environment", stage="$stage"} +
+              node_memory_Cached_bytes{type="sidekiq", environment="$environment", stage="$stage"}
+            )
+          )
+          /
+          node_memory_MemTotal_bytes{type="sidekiq", environment="$environment", stage="$stage"}
+        ) by (priority)
+      ',
+      legendFormat='{{ priority }}',
+      interval="1m",
+      intervalFactor=1,
+      legend_show=true,
+      linewidth=2
+      ),
+
+  ], cols=2,rowHeight=10, startRow=2001)
+)
 .addPanel(
   row.new(title="Rails Metrics", collapse=true)
     .addPanels(railsCommon.railsPanels(serviceType="sidekiq", serviceStage="$stage", startRow=1))
   ,
   gridPos={
       x: 0,
-      y: 2000,
+      y: 3000,
       w: 24,
       h: 1,
   }
