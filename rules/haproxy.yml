@@ -170,7 +170,6 @@ groups:
     expr: sum(rate(haproxy_ssh_max_startups_breached_total[1m])) > 0.25
     for: 30s
     labels:
-      pager: pagerduty
       severity: s4
     annotations:
       description: We have detected conditions which suggest SSH's MaxStartups limit is being breached for git+ssh connections
