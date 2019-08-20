@@ -160,3 +160,18 @@ groups:
       description: HAProxy process high CPU usage on {{ $labels.fqdn }}
       runbook: troubleshooting/haproxy.md
       title: HAProxy process high CPU usage on {{ $labels.fqdn }}
+  - alert: SSHMaxStartupsMaybeBreached
+    # About the numbers here:
+    # I know that "for: 30s" and the actual threshold (0.25) look low, but this
+    # alert is meant to detect very brief spikes that occur for a few seconds at
+    # the top of the minute.  They absolutely should not occur at all; if they
+    # do then either the MaxStartups is being breached again, or something else
+    # is exploding.  See the runbook for more details
+    expr: sum(rate(haproxy_ssh_max_startups_breached_total[1m])) > 0.25
+    for: 30s
+    labels:
+      severity: s4
+    annotations:
+      description: We have detected conditions which suggest SSH's MaxStartups limit is being breached for git+ssh connections
+      runbook: troubleshooting/ssh-maxstartups-breach.md
+      title: Possible breach of SSH MaxStartups limit
