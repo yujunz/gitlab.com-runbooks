@@ -38,13 +38,6 @@ route:
     receiver: slack_alerts_general
     continue: false
 
-  - match:
-      rules_domain: general
-      pager: pagerduty
-    group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
-    receiver: slack_alerts_general
-    continue: true
-
   ################################################
   # Team Alerts
   # Route certain alerts directly to teams

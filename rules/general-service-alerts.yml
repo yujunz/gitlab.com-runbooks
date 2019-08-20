@@ -45,11 +45,12 @@ groups:
         labels:
           rules_domain: general
           metric: gitlab_service_errors:ratio
-          severity: s2
+          # change severity to s2 when enabling pagerduty!
+          severity: s3
           slo_alert: 'yes'
           period: 5m
           bound: upper
-          pager: pagerduty
+          # pager: pagerduty uncomment after trimming down 4xx errors that we don't control
         annotations:
           description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio higher than SLOs
