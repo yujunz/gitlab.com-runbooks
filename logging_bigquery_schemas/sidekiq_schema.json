@@ -1,0 +1,99 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "insertId",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "class",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "completed_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "correlation_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "created_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "duration",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "enqueued_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "environment",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "fqdn",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "hostname",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "jid",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "job_status",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "message",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "pid",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "queue",
+        "type": "STRING"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "jsonPayload",
+    "type": "RECORD"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "receiveTimestamp",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "severity",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "timestamp",
+    "type": "TIMESTAMP"
+  }
+]
