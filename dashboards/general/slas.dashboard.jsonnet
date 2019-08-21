@@ -17,6 +17,12 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 
+local keyServices = serviceCatalog.findServices(function(service)
+  std.objectHas(service.business.SLA, 'primary_sla_service') &&
+  service.business.SLA.primary_sla_service );
+
+local keyServiceRegExp = std.join("|", std.map(function(service) service.name, keyServices));
+
 local slaBarGauge(
   title,
   query,
@@ -103,7 +109,7 @@ dashboard.new(
     .addTarget(
       promQuery.target('sort(
           avg(
-            avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"web|api|git|ci-runners|pages|sidekiq"}[$__range])
+            avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"' + keyServiceRegExp + '"}[$__range])
           )
         )',
         instant=true
@@ -117,7 +123,7 @@ dashboard.new(
       description="1w rolling average SLO adherence across all primary services. Higher is better.",
       yAxisLabel='SLA',
       query='
-        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"pages|web|api|git|sidekiq|registry"}[7d]))
+        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"' + keyServiceRegExp + '"}[7d]))
       ',
       legendFormat='gitlab.com SLA',
       intervalFactor=5,
@@ -137,7 +143,7 @@ dashboard.new(
     slaBarGauge(
       title="Primary Services Average Availability for Period",
       query='
-        sort(avg(avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"web|api|git|ci-runners|pages|sidekiq"}[$__range])) by (type))
+        sort(avg(avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"' + keyServiceRegExp + '"}[$__range])) by (type))
       ',
       legendFormat='{{ type }}'
     ),
@@ -146,7 +152,7 @@ dashboard.new(
       description="1w rolling average SLO adherence for primary services. Higher is better.",
       yAxisLabel='SLA',
       query='
-        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"pages|web|api|git|sidekiq|registry"}[7d])) by (type)
+        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"' + keyServiceRegExp + '"}[7d])) by (type)
       ',
       legendFormat='{{ type }}',
       intervalFactor=5,
