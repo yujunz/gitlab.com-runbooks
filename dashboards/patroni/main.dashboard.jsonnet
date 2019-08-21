@@ -21,7 +21,7 @@ local annotation = grafana.annotation;
 dashboard.new(
   'Overview',
   schemaVersion=16,
-  tags=['pgbouncer'],
+  tags=['patroni'],
   timezone='UTC',
   graphTooltip='shared_crosshair',
 )
@@ -37,13 +37,13 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('pgbouncer', 1))
-.addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 1000, })
-.addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 2000, })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="pgbouncer", environment="$environment"'), gridPos={ x: 0, y: 3000, })
-.addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 4000, })
+.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('patroni', 1))
+.addPanel(keyMetrics.keyServiceMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 1000, })
+.addPanel(keyMetrics.keyComponentMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 2000, })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="patroni", environment="$environment"'), gridPos={ x: 0, y: 3000, })
+.addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 4000, })
 + {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer') + platformLinks.services,
+  links+: platformLinks.triage + serviceCatalog.getServiceLinks('patroni') + platformLinks.services,
 }
 
 
