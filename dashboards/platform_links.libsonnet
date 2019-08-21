@@ -8,7 +8,7 @@ local SERVICE_LINKS = {
   'gitaly':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=gitaly',
   'haproxy':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=haproxy',
   'pages':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=pages',
-  'patroni':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=patroni',
+  'patroni':'https://dashboards.gitlab.net/d/patroni-main/patroni-overview?orgId=1',
   'pgbouncer':'https://dashboards.gitlab.net/d/pgbouncer-main/pgbouncer-overview?orgId=1',
   'redis':'https://dashboards.gitlab.net/d/redis-main/redis-overview?orgId=1',
   'redis-cache':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=redis-cache',
