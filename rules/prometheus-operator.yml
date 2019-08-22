@@ -1,0 +1,21 @@
+groups:
+  - name: prometheus-operator.rules
+    rules:
+
+      - alert: PrometheusOperatorReconcileErrors
+        annotations:
+          title: Prometheus Operator Reconciliation Errors
+          description: Errors while reconciling {{ $labels.controller }} in {{ $labels.namespace }} Namespace.
+        expr: rate(prometheus_operator_reconcile_errors_total[5m]) > 0.1
+        for: 10m
+        labels:
+          severity: s4
+
+      - alert: PrometheusOperatorNodeLookupErrors
+        annotations:
+          title: Prometheus Operator Node Lookup failing
+          description: Errors while reconciling Prometheus in {{ $labels.namespace }} Namespace.
+        expr: rate(prometheus_operator_node_address_lookup_errors_total[5m]) > 0.1
+        for: 10m
+        labels:
+          severity: s4
