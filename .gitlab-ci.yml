@@ -74,7 +74,7 @@ deploy-rules-pre:
   stage: deploy-rules
 
 deploy-rules-production:
-  environment: pre
+  environment: gprd
   extends: .deploy-rules
   when: manual
   stage: deploy-rules-production
