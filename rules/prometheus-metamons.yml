@@ -20,10 +20,24 @@ groups:
       service: prometheus
       severity: s1
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} could not be scraped for
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} could not be scraped for
         over 10 minutes.'
       runbook: troubleshooting/prometheus-is-down.md
       title: '{{$labels.job}} is unreachable'
+
+  - alert: PrometheusNotConnectedToAlertmanagers
+    expr: prometheus_notifications_alertmanagers_discovered < 1
+    for: 10m
+    labels:
+      pager: pagerduty
+      service: prometheus
+      severity: s1
+    annotations:
+      description: 'Prometheus {{$labels.pod}} {{$labels.fqdn}}
+       is not connected to any Alertmanagers'
+      runbook: troubleshooting/prometheus-is-down.md
+      title: 'Prometheus not connected to any Alertmanagers'
+
   - alert: PrometheusManyRestarts
     expr: changes(process_start_time_seconds{job=~"prometheus.*"}[30m]) > 3
     for: 30m
@@ -32,7 +46,7 @@ groups:
       service: prometheus
       severity: s1
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has restarted more than
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has restarted more than
         3 times in the last 30 minutes. It might be crashlooping.'
       runbook: troubleshooting/prometheus-is-down.md
       title: '{{$labels.job}} is restarting frequently'
@@ -46,7 +60,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has {{$value}}% of DNS-SD
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has {{$value}}% of DNS-SD
         requests failing.'
       runbook: troubleshooting/prometheus-filesd-errors.md
       title: '{{$labels.job}} has many DNS-SD errors'
@@ -57,7 +71,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has a 90th percentile
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has a 90th percentile
         latency of {{$value}}s completing rule evaluation cycles.'
       runbook: troubleshooting/prometheus-slow-rule-eval.md
       title: '{{$labels.job}} is evaluating rules too slowly'
@@ -69,11 +83,22 @@ groups:
       service: prometheus
       severity: s1
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} is backlogging on the
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} is backlogging on the
         notifications queue. The queue has not been empty for 10 minutes. Current
         queue length: {{$value}}.'
       runbook: troubleshooting/prometheus-notifications-backlog.md
       title: '{{$labels.job}} is backlogging on the notifications queue'
+
+  - alert: PrometheusErrorSendingAlerts
+    expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m]) > 0.01
+    for: 10m
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      description: 'Prometheus {{$labels.pod}} {{$labels.fqdn}} is having errors sending alerts to Alertmanager {{$labels.alertmanager}}'
+      title: Errors while sending alerts from Prometheus
+
   - alert: PrometheusScrapingSlowly
     expr: prometheus_target_interval_length_seconds{interval!~".*m.*",quantile="0.9"}
       > 2 * 60
@@ -82,7 +107,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has a 90th percentile
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has a 90th percentile
         latency of {{$value}}s for scraping targets in the {{$labels.interval}} target
         pool.'
       runbook: troubleshooting/prometheus-slow-scrapes.md
@@ -95,7 +120,7 @@ groups:
       service: prometheus
       severity: s1
     annotations:
-      description: The configuration file for {{$labels.job}} at {{$labels.instance}}
+      description: The configuration file for {{$labels.job}} at {{$labels.instance}} {{$labels.pod}}
         is invalid and was therefore not reloaded.
       runbook: troubleshooting/prometheus-invalid-config.md
       title: '{{$labels.job}} has an invalid config'
@@ -108,7 +133,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} rule group {{$labels.rule_group}}
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} rule group {{$labels.rule_group}}
         is taking more than 70% of the evaluation over the last 30 minutes.'
       runbook: troubleshooting/prometheus-slow-rule-eval.md
       title: 'Prometheus has slow rule evaluations'
@@ -118,16 +143,47 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has failed compactions in the last 6 hours'
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has failed compactions in the last 6 hours'
       runbook: troubleshooting/prometheus-failed-compactions.md
       title: 'Prometheus has failed compactions'
+
+  - alert: PrometheusTSDBReloadsFailing
+    expr: increase(prometheus_tsdb_reloads_failures_total[2h]) > 0
+    for: 12h
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      description: 'Prometheus {{$labels.pod}} {{$labels.fqdn}} had {{$value | humanize}} reload failures over the last four hours.'
+      title: Prometheus has issues reloading data blocks from disk
+
+  - alert: PrometheusNotIngestingSamples
+    expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) <= 0
+    for: 10m
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      description: 'Prometheus {{$labels.pod }} {{$labels.fqdn}} is not ingesting samples.'
+      title: Prometheus isn't ingesting samples
+
+  - alert: PrometheusTargetScrapesDuplicate
+    expr: increase(prometheus_target_scrapes_sample_duplicate_timestamp_total[5m]) > 0
+    for: 10m
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      description: 'Prometheus {{$labels.pod }} {{$labels.fqdn}} has many samples rejected due to duplicate timestamps but different values'
+      title: Prometheus has many samples rejected
+
   - alert: PrometheusLargeScrapes
     expr: increase(prometheus_target_scrapes_exceeded_sample_limit_total[30m]) > 60
     labels:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has many scrapes that exceed the sample limit'
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has many scrapes that exceed the sample limit'
       runbook: troubleshooting/prometheus-scrape-errors.md
       title: 'Prometheus has large scrape errors'
   - alert: PrometheusFailedCheckpoints
@@ -136,7 +192,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has failed to create checkpoints.'
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has failed to create checkpoints.'
       runbook: troubleshooting/prometheus-failed-checkpoints.md
       title: 'Prometheus has failed checkpoints'
   - alert: PrometheusFailedDeletingCheckpoints
@@ -145,7 +201,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has failed to delete checkpoints.'
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has failed to delete checkpoints.'
       runbook: troubleshooting/prometheus-failed-checkpoints.md
       title: 'Prometheus has failed deleting checkpoints'
   - alert: PrometheusWALTruncationsFailed
@@ -154,7 +210,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has failed to wal truncations.'
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has failed to wal truncations.'
       runbook: troubleshooting/prometheus-failed-wal-truncations.md
       title: 'Prometheus has failed wal truncations'
   - alert: PrometheusRuleEvalFailures
@@ -163,7 +219,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} has failing rule evaluations.'
+      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has failing rule evaluations.'
       runbook: troubleshooting/prometheus-failing-rule-evaluations.md
       title: 'Prometheus has failing rule evaluations'
   - alert: PrometheusEmptyJobs
@@ -173,7 +229,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: '{{$labels.config}} at {{$labels.instance}} has no targets in service discovery.'
+      description: '{{$labels.config}} at {{$labels.instance}} {{$labels.pod}} has no targets in service discovery.'
       runbook: troubleshooting/prometheus-empty-sd.md
       title: 'Prometheus has no targets'
   - alert: PrometheusHighMemoryUtilization
@@ -183,7 +239,7 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: 'Prometheus at {{$labels.instance}} has very high ({{$value}}%) system memory utilization.'
+      description: 'Prometheus at {{$labels.instance}} {{$labels.pod}} has very high ({{$value}}%) system memory utilization.'
       runbook: troubleshooting/prometheus-high-memory.md
       title: 'Prometheus High Memory Utilization'
   - alert: PrometheusWALCorruption
@@ -192,6 +248,6 @@ groups:
       service: prometheus
       severity: s4
     annotations:
-      description: 'Prometheus at {{$labels.instance}} has {{$value}} WAL Corruptions.'
+      description: 'Prometheus at {{$labels.instance}} {{$labels.pod}} has {{$value}} WAL Corruptions.'
       runbook: troubleshooting/prometheus-wal-corruption.md
       title: 'Prometheus WAL Corruption'
