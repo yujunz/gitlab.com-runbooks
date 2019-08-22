@@ -282,8 +282,12 @@ earlier state:
    following for the gprd environment:
 
    ```
-   tf plan -out plan -target module.postgres-dr-archive -target
+   tf plan -out plan -target module.postgres-dr-archive -target module.postgres-dr-delayed
    ```
+
+   If there is a plan diff for mutable things like labels, apply it. If there is
+   a plan diff for more severe things like disk name, you might have made a
+   mistake and will have to repeat this whole procedure.
 
 This procedure is rather manual and lengthy, but this does not happen often and
 has no directly user-facing impact.
