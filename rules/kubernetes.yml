@@ -57,6 +57,20 @@ groups:
         labels:
           severity: s3
 
+      - alert: KubeDeploymentReplicasMismatch
+        annotations:
+          title: Deployment Replicas Mismatch
+          description: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not
+            matched the expected number of replicas for longer than an hour.
+          runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubedeploymentreplicasmismatch
+        expr: |
+          kube_deployment_spec_replicas{job="kube-state-metrics"}
+            !=
+          kube_deployment_status_replicas_available{job="kube-state-metrics"}
+        for: 1h
+        labels:
+          severity: s3
+
       - alert: KubeDeploymentGenerationMismatch
         annotations:
           title: Duplicate Deployments detected
