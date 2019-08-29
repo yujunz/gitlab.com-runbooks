@@ -23,6 +23,22 @@
 1. Decrease the node count of `patroni` in [terraform][environment-variables].
    Carefully read the plan and apply the terraform.
 
+### Checking status
+
+`patroni` service is managed with systemd, so you can check the service status with `systemctl status patroni` and logs with `journalctl -u patroni` (it should be enabled and running).
+
+Run `gitlab-patronictl list` to check the state of the patroni cluster, you should see the new node join the cluster and go through the following states:
+- creating replica
+- starting
+- running
+
+the node will also be added to the consul DNS entry, you can verify that with:
+```
+$ dig @127.0.0.1 -p8600 +short replica.patroni.service.consul.
+```
+
+At the moment of writing the database is 4TB big and it takes ~3h for a new node to catch up.
+
 ## Cluster information
 
 Run `gitlab-patronictl list` on any Patroni member to list all the cluster members and their statuses.
@@ -188,7 +204,7 @@ patroni-01-db-gstg $ consul maint -enable -service=patroni-replica -reason="Prod
 You can verify the action by running:
 
 ```
-patroni-01-db-gstg $ dig @localhost -p8600 +short replica.patroni.service.consul. | grep $(hostname -I) | wc -l # Prints 0
+patroni-01-db-gstg $ dig @127.0.0.1 -p8600 +short replica.patroni.service.consul. | grep $(hostname -I) | wc -l # Prints 0
 ```
 
 Wait until all client connections are drained from the replica (it depends on the interval value set for the clients),
@@ -202,7 +218,7 @@ After you're done with the maintenance, disable Consul service maintenance and v
 
 ```
 patroni-01-db-gstg $ consul maint -disable -service=patroni-replica
-patroni-01-db-gstg $ dig @localhost -p8600 +short replica.patroni.service.consul. | grep $(hostname -I) | wc -l # Prints 1
+patroni-01-db-gstg $ dig @127.0.0.1 -p8600 +short replica.patroni.service.consul. | grep $(hostname -I) | wc -l # Prints 1
 ```
 
 ## Failover/Switchover
