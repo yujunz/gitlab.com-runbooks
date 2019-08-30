@@ -5,39 +5,43 @@ set -eufo pipefail
 IFS=$'\t\n'
 
 # Command requirements
-command -v doctl >/dev/null 2>/dev/null || { echo 'Please install doctl utility'; exit 1; }
+command -v doctl >/dev/null 2>/dev/null || {
+  echo 'Please install doctl utility'
+  exit 1
+}
 
 # Variables to change always
 RESTORE='version'
 
 # Variables to change only if you know what you are doing
-DO_REGION='nyc3'	# Location to create restoration resource group in
-VM_NAME="bkp${RESTORE}"	# How the VM should be named
+DO_REGION='nyc3'        # Location to create restoration resource group in
+VM_NAME="bkp${RESTORE}" # How the VM should be named
 
 # Main flow
 # Check what we're restoring
 if [[ ! "${RESTORE}" =~ ^(license|version|customers)$ ]]; then
-	echo "Box to test restore should be one of: license, version, customers"
-	exit 1
+  echo "Box to test restore should be one of: license, version, customers"
+  exit 1
 else
-	RESTORE_IMAGE='ubuntu-14-04-x64'
-	RESTORE_PG_VER='9.3'
-	if [[ "${RESTORE}" == 'customers' ]]; then
-		RESTORE_IMAGE='ubuntu-16-04-x64'
-		RESTORE_PG_VER='9.5'
-	fi
+  RESTORE_IMAGE='ubuntu-14-04-x64'
+  RESTORE_PG_VER='9.3'
+  if [[ "${RESTORE}" == 'customers' ]]; then
+    RESTORE_IMAGE='ubuntu-16-04-x64'
+    RESTORE_PG_VER='9.5'
+  fi
 fi
 
 # Generate rsa keypair in current dir if not existent
-test -f "./${RESTORE}_rsa4096" || \
-	ssh-keygen -f "./${RESTORE}_rsa4096" \
-		-t rsa \
-		-C "ephemeral ${USER}'s key for ${RESTORE}" \
-		-N '' \
-		-b 4096
+test -f "./${RESTORE}_rsa4096" ||
+  ssh-keygen -f "./${RESTORE}_rsa4096" \
+    -t rsa \
+    -C "ephemeral ${USER}'s key for ${RESTORE}" \
+    -N '' \
+    -b 4096
 
 echo "Creating VM ${VM_NAME}"
-USER_DATA=$(cat <<EOF
+USER_DATA=$(
+  cat <<EOF
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 mkdir -p /root/.ssh
@@ -94,15 +98,15 @@ EOF
 )
 
 VM_IP="$(doctl compute droplet create \
-	"${VM_NAME}" \
-	--no-header \
-	--format PublicIPv4 \
-	--image "${RESTORE_IMAGE}" \
-	--region "${DO_REGION}" \
-	--size '512mb' \
-	--user-data "${USER_DATA}" \
-	--verbose \
-	--wait)"
+  "${VM_NAME}" \
+  --no-header \
+  --format PublicIPv4 \
+  --image "${RESTORE_IMAGE}" \
+  --region "${DO_REGION}" \
+  --size '512mb' \
+  --user-data "${USER_DATA}" \
+  --verbose \
+  --wait)"
 
 echo "All done, please proceed (see tail -f /var/log/cloud-init-output.log):"
 echo ssh "root@${VM_IP}" -i "./${RESTORE}_rsa4096" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null

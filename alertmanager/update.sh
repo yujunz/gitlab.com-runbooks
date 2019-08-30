@@ -14,8 +14,7 @@ gcloud config set project "${project}"
 
 declare -r files=("${chef_file}" "${k8s_file}")
 
-for file in "${files[@]}"
-do
+for file in "${files[@]}"; do
   gcloud --project "${project}" kms encrypt --location=global --keyring="${kms_keyring}" --key="${kms_key}" --ciphertext-file="${file}".enc --plaintext-file="${file}"
   gsutil cp "${file}".enc gs://"${bucket}"/"${file}".enc
 done

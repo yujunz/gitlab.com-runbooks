@@ -11,32 +11,36 @@ AZDEBUG=--verbose
 IFS=$'\t\n'
 
 # Command requirements
-command -v az >/dev/null 2>/dev/null || { echo 'Please install az utility'; exit 1; }
+command -v az >/dev/null 2>/dev/null || {
+  echo 'Please install az utility'
+  exit 1
+}
 
 # Variables to change always
 RG_NAME="BAD-$(date --iso-8601)-${USER}-proddb" # Name of the resource group
 
 # Variables to change only if you know what you are doing
-RG_LOC='eastus2'	# Location to create restoration resource group in
-VM_NAME='restoreproddb'	# How the VM should be named
-VM_USERNAME='restore'	# How the first user should be named
+RG_LOC='eastus2'        # Location to create restoration resource group in
+VM_NAME='restoreproddb' # How the VM should be named
+VM_USERNAME='restore'   # How the first user should be named
 
 # Main flow
 # Generate rsa keypair in current dir if not existent
-test -f "./${RG_NAME}_rsa4096" || \
-	ssh-keygen -f "./${RG_NAME}_rsa4096" \
-		-t rsa \
-		-C "ephemeral ${USER}'s key for ${RG_NAME}" \
-		-N '' \
-		-b 4096
+test -f "./${RG_NAME}_rsa4096" ||
+  ssh-keygen -f "./${RG_NAME}_rsa4096" \
+    -t rsa \
+    -C "ephemeral ${USER}'s key for ${RG_NAME}" \
+    -N '' \
+    -b 4096
 
 echo "Creating separate resource group $RG_NAME for restoration:"
 az group create $AZDEBUG \
-	--location "${RG_LOC}" \
-	--name "${RG_NAME}"
+  --location "${RG_LOC}" \
+  --name "${RG_NAME}"
 
 echo "Creating VM ${VM_NAME}"
-CUSTOM_DATA=$(cat <<EOF
+CUSTOM_DATA=$(
+  cat <<EOF
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 
@@ -82,21 +86,21 @@ EOF
 )
 
 az vm create $AZDEBUG \
-	--resource-group "${RG_NAME}" \
-	--location "${RG_LOC}" \
-	--name "${VM_NAME}" \
-	--image "UbuntuLTS" \
-	--admin-username "${VM_USERNAME}" \
-	--authentication-type "ssh" \
-	--ssh-key-value "./${RG_NAME}_rsa4096.pub" \
-	--size "Standard_DS3_v2" \
-	--data-disk-sizes-gb 1024 \
-	--custom-data "${CUSTOM_DATA}"
+  --resource-group "${RG_NAME}" \
+  --location "${RG_LOC}" \
+  --name "${VM_NAME}" \
+  --image "UbuntuLTS" \
+  --admin-username "${VM_USERNAME}" \
+  --authentication-type "ssh" \
+  --ssh-key-value "./${RG_NAME}_rsa4096.pub" \
+  --size "Standard_DS3_v2" \
+  --data-disk-sizes-gb 1024 \
+  --custom-data "${CUSTOM_DATA}"
 
 # We can't use the ip address from the vm create because, at least in
 # one version of az cli, it produces bogus json with single quotes
-VM_IP=$(az vm list-ip-addresses $AZDEBUG --resource-group "${RG_NAME}" -o json | \
-			jq -r '.[0].virtualMachine.network.publicIpAddresses[0].ipAddress')
+VM_IP=$(az vm list-ip-addresses $AZDEBUG --resource-group "${RG_NAME}" -o json |
+  jq -r '.[0].virtualMachine.network.publicIpAddresses[0].ipAddress')
 
 echo "All done, please proceed (see tail -f /var/log/cloud-init-output.log):"
 echo ssh "${VM_USERNAME}@${VM_IP}" -i "./${RG_NAME}_rsa4096" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
