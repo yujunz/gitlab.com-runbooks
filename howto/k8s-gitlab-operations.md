@@ -12,7 +12,7 @@ gcloud container clusters get-credentials gstg-gitlab-gke --region us-east1 --pr
 gcloud container clusters get-credentials gprd-gitlab-gke --region us-east1 --project gitlab-production
 ```
 - [ ] Install `kubectl` https://kubernetes.io/docs/tasks/tools/install-kubectl/
-- [ ] Install `helm` https://helm.sh/docs/using_helm/#install-helm
+- [ ] Install `helm` 2.x https://helm.sh/docs/using_helm/#install-helm
 - [ ] Install `kubectx` https://github.com/ahmetb/kubectx
 - [ ] Test to ensure you can list the installed helm charts in staging and production
 
@@ -42,7 +42,7 @@ kubectl -n gitlab get hpa
 # Query the name of one of the GKE nodes
 gcloud compute instances list --project "gitlab-production" | grep ^gke
 
-# Initiate an SSH connection to one of the production nodes
+# Initiate an SSH connection to one of the production nodes, this requires a fairly recent version of gsuite
 gcloud compute --project "gitlab-production" ssh --zone us-east1-b gke-gprd-gitlab-gke-node-pool-0-ec8ba4d2-q1j9 --tunnel-through-iap
 ```
 
@@ -62,7 +62,7 @@ To upgrade or downgrade the versions:
 - after approval, merge the MR to master and see that the change is applied to
   the non-production environments on [ops.gitlab.net](https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com)
 - Manually promote the pipeline to production by running the manual CI job for
-  the production deployment
+  the production deployment. Please be aware this will apply all pending changes.
 
 ## Monitoring and Troubleshooting
 
@@ -71,6 +71,47 @@ To upgrade or downgrade the versions:
 * Registry in GKE application overview: https://dashboards.gitlab.net/d/CoBSgj8iz/application-info?orgId=1
 * Pod Metrics: https://dashboards.gitlab.net/d/oWe9aYxmk/pod-metrics?orgId=1&refresh=30s
 * General service metrics for Registry: https://dashboards.gitlab.net/d/general-service/general-service-platform-metrics?orgId=1&var-type=registry&from=now-1h&to=now
+
+### Using Toolbox
+
+GKE nodes by design have a very limited subset of tools. If you need to conduct troubleshooting directly on the host, consider using toolbox. Toolbox is a container that is started with the host's root filesystem mounted under `/media/root/`. The toolbox's file system is available on the host at `/var/lib/toolbox/`.
+
+You can specify which container image you want to use, for example you can use `coreos/toolbox` or build and publish your own image. There can only be one toolbox running on a host at any given time.
+
+For more details see: https://cloud.google.com/container-optimized-os/docs/how-to/toolbox
+
+### Debugging containers in pods
+
+Quite often you'll find yourself working with containers created from very small images that are stripped of any tooling. Installation of tools inside of those containers might be impossible or not recommended. Changing the definition of the pod (to add a debug container) will result in recreation of the pod and likely rescheduling of the pod on a different node.
+
+One way to workaround it is to investigate the container from the host. Below are a few ideas to get you started.
+
+#### Run a command with the pod's network namespace
+
+1. Find the PID of any process running inside the pod, you can use the pause process for that (network namespace is shared by all processes/containers in a pod). There are many, many ways to get the PID, here are a few ideas:
+    1. get PIDs and hostnames of all containers: `docker ps -a | tail -n +2 | awk '{ print $1}' | xargs docker inspect -f '{{ .State.Pid }} {{ .Config.Hostname }}'`
+1. Once you have the PID, link its namespace where the `ip` command can find it (by default docker doesn't link network namespaces that it creates): `ln -sf /proc/<pid_you_found>/ns/net /var/run/netns/<your_custom_name>`
+1. Run a command with the process' namespace
+    1. Enter toolbox: `toolbox`
+    1. List namespaces: `ip netns list`
+    1. Run your command with the desired network namespace: `ip netns exec <your_custom_name> ip a`
+1. Alternatively, you can use nsenter: `nsenter -target <PID> -mount -uts -ipc -net -pid`
+
+#### Start a container that will use network and process namespaces of a pod
+
+1. Get container id from PID: `cat /proc/<PID>/cgroup`
+1. Get container name from container id: `docker inspect --format '{{.Name}}' "<containerId>" | sed 's/^\///'`
+1. Create a container on the host: `docker run --rm -ti --net=container:<container_name> --pid=container:<conatiner_name> --name ubuntu ubuntu bash`
+
+For example:
+```
+$ docker run --rm --name pause --hostname pause gcr.io/google_containers/pause-amd64:3.0   # this is an example, it will run a simple container which you will connect to in a moment
+$ docker run --rm -ti --net=container:pause --pid=container:pause -v /:/media/root:ro --name ubuntu ubuntu bash  # this will run an ubuntu container with network and process namespaces from the pause container and host's root file system mounted under /media/root
+```
+
+#### Share process namespace between containers in a pod
+
+Share process namespace between containers in a pod: https://kubernetes.io/docs/tasks/configure-pod-container/share-process-namespace/
 
 ## Credential rotation
 
