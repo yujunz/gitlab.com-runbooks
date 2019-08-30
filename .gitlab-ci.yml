@@ -41,6 +41,22 @@ stages:
     variables:
       - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
 
+shellcheck:
+  stage: test
+  image:
+    name: nlknguyen/alpine-shellcheck
+    entrypoint: ["/bin/sh", "-c"]
+  script:
+    - find -name "*.sh" -type f -not -path "./dashboards/vendor/*" | xargs -r shellcheck -e SC1090,SC1091
+
+shfmt:
+  stage: test
+  image:
+    name: peterdavehello/shfmt:2.6.4
+    entrypoint: ["/bin/sh", "-c"]
+  script:
+    - find -name "*.sh" -type f -not -path "./dashboards/vendor/*" | xargs -r shfmt -i 2 -ci -l -d
+
 test-rules:
   extends: .rules-artifacts
   stage: test

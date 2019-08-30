@@ -3,10 +3,11 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 
 function es_client() {
-  url=$1; shift
+  url=$1
+  shift
   curl --retry 3 --fail -H 'Content-Type: application/json' "${ES_URL}/${url}" "$@"
 }
 
@@ -26,6 +27,6 @@ function execute_jsonnet() {
 for i in "${SCRIPT_DIR}"/watches/*.jsonnet; do
   base_name=$(basename "$i")
   name=${base_name%.jsonnet}
-  watch_json="$(execute_jsonnet "${i}"|jq -c '.')" # Compile jsonnet and compact with jq
-  es_client "_xpack/watcher/watch/${name}?pretty=true"  -X PUT --data-binary "${watch_json}"
+  watch_json="$(execute_jsonnet "${i}" | jq -c '.')" # Compile jsonnet and compact with jq
+  es_client "_xpack/watcher/watch/${name}?pretty=true" -X PUT --data-binary "${watch_json}"
 done

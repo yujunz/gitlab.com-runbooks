@@ -1,6 +1,6 @@
 #!/bin/bash
 su - gitlab-psql -c "/opt/gitlab/embedded/bin/psql -h /var/opt/gitlab/postgresql template1 <<EOF
-\x on
+\\x on
 SELECT blockingl.relation::regclass,
   blockeda.pid AS blocked_pid, blockeda.query as blocked_query,
   blockedl.mode as blocked_mode,
