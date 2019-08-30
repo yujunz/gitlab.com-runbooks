@@ -48,7 +48,7 @@ mkdir -p /root/.ssh
 echo "$(cat "./${RESTORE}_rsa4096.pub")" >> /root/.ssh/authorized_keys
 chmod 0700 /root/.ssh && chmod 0400 /root/.ssh/authorized_keys
 sed -i 's/^PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-echo -e '\nPermitRootLogin without-password\n' >> /etc/ssh/sshd_config
+echo -e "\\nPermitRootLogin without-password\\n" >> /etc/ssh/sshd_config
 service ssh reload
 chpasswd <<< "root:plzdontbugmedigitalocean$(pwgen -s -1 32)"
 
