@@ -8,6 +8,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "${SCRIPT_DIR}"
 
+source "grafana-tools.lib.sh"
+
 usage() {
   cat <<-EOF
   Usage $0 [Dh]
@@ -52,13 +54,7 @@ if [[ -z $dry_run && -z ${GRAFANA_API_TOKEN:-} ]]; then
   exit 1
 fi
 
-if [[ ! -d "vendor" ]]; then
-  echo >&2 "vendor directory not found, running bundler.sh to install dependencies..."
-  "${SCRIPT_DIR}/bundler.sh"
-fi
-
-# Convert the service catalog yaml into a JSON file in a format thats consumable by jsonnet
-ruby -rjson -ryaml -e "puts YAML.load(ARGF.read).to_json" ../services/service-catalog.yml >service_catalog.json
+prepare
 
 find_dashboards() {
   local find_opts
@@ -85,21 +81,6 @@ find_dashboards() {
   fi
 }
 
-call_grafana_api() {
-  local response
-
-  response=$(curl -H 'Expect:' --http1.1 --compressed --silent --fail \
-    -H "Authorization: Bearer $GRAFANA_API_TOKEN" \
-    -H "Accept: application/json" \
-    -H "Content-Type: application/json" \
-    "$@") || {
-    echo >&2 "API call to $1 failed: $response: exit code $?"
-    return 1
-  }
-
-  echo "$response"
-}
-
 # Install jsonnet dashboards
 find_dashboards "$@" | while read -r line; do
   relative=${line#"./"}
@@ -108,13 +89,13 @@ find_dashboards "$@" | while read -r line; do
   extension="${relative##*.}"
 
   if [[ "$extension" == "jsonnet" ]]; then
-    dashboard=$(jsonnet -J . -J vendor "${line}")
+    dashboard=$(jsonnet_compile "${line}")
   else
     dashboard=$(cat "${line}")
   fi
 
   # Note: create folders with `create-grafana-folder.sh` to configure the UID
-  folderId=$(call_grafana_api "https://dashboards.gitlab.net/api/folders/${folder}" | jq '.id')
+  folderId=$(resolve_folder_id "${folder}")
 
   # Generate the POST body
   body=$(echo "$dashboard" | jq -c --arg uid "$uid" --arg folder "$folder" --arg folderId "$folderId" '

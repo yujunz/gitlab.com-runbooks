@@ -17,6 +17,18 @@ The dashboards are kept in [`grafonnet`](https://github.com/grafana/grafonnet-li
 * Update vendor dependencies
   * `(cd dashboards && jb install)`
 
+# Testing Your Changes
+
+* All users with viewer access to dashboards.gitlab.net, (ie, all GitLab team members), have full permission to edit all dashboards in the Playground Grafana folder: https://dashboards.gitlab.net/dashboards/f/playground-FOR-TESTING-ONLY/playground-for-testing-purposes-only
+* You can create dashboards in this folder using the Grafana Web UI
+* Alternatively, you can test your Grafonnet changes here using the following method:
+  1. Clone git@gitlab.com:gitlab-com/runbooks.git and test your changes locally
+  1. In the 1password Team Vault, lookup the API key stored in `dashboards.gitlab.net Grafana Playground API Key`
+  1. Edit the `dashboards/.env.sh` file and add the following content: `export GRAFANA_API_TOKEN=<1PASSWORD API KEY VALUE>`
+  1. In your shell, in the `dashboards` directory, run `. .env.sh`
+  1. To upload your dashboard, run `./test-dashboard.sh dashboard-folder-path/file.dashboard.jsonnet`. It will upload the file and return a link to your dashboard.
+* **Note that the playground is transient. Dashboards may be deleted at any stage. Do not include links to playground dashboards in the handbook or other permanent content. **
+
 # Editing Files
 
 * Dashboards should be kept in files with the following name: `/dashboards/[grafana_folder_name]/[name].dashboard.jsonnet`
