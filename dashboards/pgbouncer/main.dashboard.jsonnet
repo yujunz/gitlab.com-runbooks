@@ -29,7 +29,7 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
-.addPanel(row.new(title="pgbouncer Connection Pooling"),
+.addPanel(row.new(title="pgbouncer Workload"),
   gridPos={
       x: 0,
       y: 0,
@@ -37,11 +37,29 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('pgbouncer', 1))
-.addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 1000, })
-.addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 2000, })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="pgbouncer", environment="$environment"'), gridPos={ x: 0, y: 3000, })
-.addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 4000, })
+.addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1))
+.addPanel(row.new(title="pgbouncer Connection Pooling"),
+  gridPos={
+      x: 0,
+      y: 1000,
+      w: 24,
+      h: 1,
+  }
+)
+.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('pgbouncer', 1001))
+.addPanel(row.new(title="pgbouncer Network"),
+  gridPos={
+      x: 0,
+      y: 2000,
+      w: 24,
+      h: 1,
+  }
+)
+.addPanels(pgbouncerCommonGraphs.networkStats('pgbouncer', 2001))
+.addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 3000, })
+.addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 4000, })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="pgbouncer", environment="$environment"'), gridPos={ x: 0, y: 5000, })
+.addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 6000, })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer') + platformLinks.services,
 }
