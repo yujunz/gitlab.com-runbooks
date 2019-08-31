@@ -55,7 +55,7 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanels(redisCommon.workload(serviceType="redis-sidekiq", startRow=2001))
+.addPanels(redisCommon.data(serviceType="redis-sidekiq", startRow=2001))
 .addPanel(row.new(title="Replication"),
   gridPos={
       x: 0,
