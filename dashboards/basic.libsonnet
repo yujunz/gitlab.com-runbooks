@@ -221,4 +221,49 @@ local seriesOverrides = import 'series_overrides.libsonnet';
     show=false,
   ),
 
+  networkTrafficGraph(
+    title="Node Network Utilization",
+    description="Network utilization",
+    sendQuery,
+    legendFormat='{{ fqdn }}',
+    receiveQuery,
+    intervalFactor=3,
+    legend_show=true
+  ):: graphPanel.new(
+        title,
+        linewidth=1,
+        fill=0,
+        description=description,
+        datasource="$PROMETHEUS_DS",
+        decimals=2,
+        sort="decreasing",
+        legend_show=legend_show,
+        legend_values=false,
+        legend_alignAsTable=false,
+        legend_hideEmpty=true,
+      )
+      .addSeriesOverride(seriesOverrides.networkReceive)
+      .addTarget(
+        promQuery.target(sendQuery,
+          legendFormat='send ' + legendFormat,
+          intervalFactor=intervalFactor,
+        )
+      )
+      .addTarget(
+        promQuery.target(receiveQuery,
+          legendFormat='receive ' + legendFormat,
+          intervalFactor=intervalFactor,
+        )
+      )
+      .resetYaxes()
+      .addYaxis(
+        format='Bps',
+        label="Network utilization",
+      )
+      .addYaxis(
+        format='short',
+        max=1,
+        min=0,
+        show=false,
+      )
 }
