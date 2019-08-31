@@ -11,7 +11,7 @@ local SERVICE_LINKS = {
   'patroni':'https://dashboards.gitlab.net/d/patroni-main/patroni-overview?orgId=1',
   'pgbouncer':'https://dashboards.gitlab.net/d/pgbouncer-main/pgbouncer-overview?orgId=1',
   'redis':'https://dashboards.gitlab.net/d/redis-main/redis-overview?orgId=1',
-  'redis-cache':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=redis-cache',
+  'redis-cache':'https://dashboards.gitlab.net/d/redis-cache-main/redis-cache-overview?orgId=1',
   'redis-sidekiq':'https://dashboards.gitlab.net/d/redis-sidekiq-main/redis-sidekiq-overview',
   'registry':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=registry',
   'sidekiq':'https://dashboards.gitlab.net/d/sidekiq-main/sidekiq-overview?orgId=1',
