@@ -21,7 +21,7 @@ local annotation = grafana.annotation;
 dashboard.new(
   'Overview',
   schemaVersion=16,
-  tags=['redis', 'overview'],
+  tags=['redis-cache', 'overview'],
   timezone='UTC',
   graphTooltip='shared_crosshair',
 )
@@ -37,7 +37,7 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanels(redisCommon.clientPanels(serviceType="redis", startRow=1))
+.addPanels(redisCommon.clientPanels(serviceType="redis-cache", startRow=1))
 .addPanel(row.new(title="Workload"),
   gridPos={
       x: 0,
@@ -46,7 +46,7 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanels(redisCommon.workload(serviceType="redis", startRow=1001))
+.addPanels(redisCommon.workload(serviceType="redis-cache", startRow=1001))
 .addPanel(row.new(title="Redis Data"),
   gridPos={
       x: 0,
@@ -55,7 +55,7 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanels(redisCommon.data(serviceType="redis", startRow=2001))
+.addPanels(redisCommon.data(serviceType="redis-cache", startRow=2001))
 .addPanel(row.new(title="Replication"),
   gridPos={
       x: 0,
@@ -64,14 +64,14 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanels(redisCommon.replication(serviceType="redis", startRow=3001))
+.addPanels(redisCommon.replication(serviceType="redis-cache", startRow=3001))
 
-.addPanel(keyMetrics.keyServiceMetricsRow('redis', 'main'), gridPos={ x: 0, y: 4000, })
-.addPanel(keyMetrics.keyComponentMetricsRow('redis', 'main'), gridPos={ x: 0, y: 5000, })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis", environment="$environment", fqdn=~"redis-\\\\d\\\\d.*"'), gridPos={ x: 0, y: 6000, })
-.addPanel(capacityPlanning.capacityPlanningRow('redis', 'main'), gridPos={ x: 0, y: 7000, })
+.addPanel(keyMetrics.keyServiceMetricsRow('redis-cache', 'main'), gridPos={ x: 0, y: 4000, })
+.addPanel(keyMetrics.keyComponentMetricsRow('redis-cache', 'main'), gridPos={ x: 0, y: 5000, })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis-cache", environment="$environment", fqdn=~"redis-cache-\\\\d\\\\d.*"'), gridPos={ x: 0, y: 6000, })
+.addPanel(capacityPlanning.capacityPlanningRow('redredis-cacheis', 'main'), gridPos={ x: 0, y: 7000, })
 + {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('redis') + platformLinks.services,
+  links+: platformLinks.triage + serviceCatalog.getServiceLinks('redis-cache') + platformLinks.services,
 }
 
 
