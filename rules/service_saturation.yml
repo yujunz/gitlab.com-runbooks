@@ -285,7 +285,7 @@ groups:
       avg_over_time(gitlab_component_saturation:ratio:modified[1w])
 
   # Modified saturation score long term trend forecasting
-  # Using linear week-on-week growth, what prediction to we have for 30d from now?
+  # Using 2 weeks linear week-on-week growth, what prediction to we have for 30d from now?
   - record: gitlab_component_saturation:ratio:modified:avg_over_time_1w:predict_linear_30d
     expr: >
-      predict_linear(gitlab_component_saturation:ratio:modified:avg_over_time_1w[1w], 86400 * 30)
+      predict_linear(gitlab_component_saturation:ratio:modified:avg_over_time_1w[2w], 86400 * 30)
