@@ -97,12 +97,13 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | rails.api | gitlab-rails/api\_json.log | JSON | pubsub-rails-inf | |
 | rails.application | gitlab-rails/application.log | JSON | pubsub-application-inf | |
 | rails.audit | gitlab-rails/audit_json.log | JSON | pubsub-rails-inf | |
-| rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf | |
 | rails.auth | gitlab-rails/auth.log | JSON | pubsub-rails-inf | |
+| rails.database_load_balancing | gitlab-rails/database_load_balancing.log | JSON | pubsub-rails-inf | |
 | rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf | |
 | rails.git | gitlab-rails/git_json.log | JSON | pubsub-rails-inf | |
 | rails.importer | gitlab-rails/impoter.log | JSON | pubsub-rails-inf | |
 | rails.integrations | gitlab-rails/integrations\_json.log | JSON | pubsub-rails-inf | |
+| rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf | |
 | rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf | |
 | shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf | |
 | unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf | |
