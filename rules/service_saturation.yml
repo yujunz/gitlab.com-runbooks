@@ -245,10 +245,15 @@ groups:
   # Linear Interpolation
   # ----------------------------------------------
 
-  # Average values for each service, over a week
+  # Average values for each component, over a week
   - record: gitlab_component_saturation:ratio:avg_over_time_1w
     expr: >
       avg_over_time(gitlab_component_saturation:ratio[1w])
+
+  # Stddev for each component, over a week
+  - record: gitlab_component_saturation:ratio:stddev_over_time_1w
+    expr: >
+      stddev_over_time(gitlab_component_saturation:ratio[1w])
 
   # Using linear week-on-week growth, what prediction to we have for 2w from now?
   - record: gitlab_component_saturation:ratio:predict_linear_2w
