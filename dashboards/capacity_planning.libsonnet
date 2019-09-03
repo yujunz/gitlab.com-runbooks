@@ -148,7 +148,6 @@ local oneMonthForecastBarGauge(serviceType, serviceStage) = baseBargauge {
                     gitlab_component_saturation:ratio:stddev_over_time_1w{
                       environment="$environment"
                     }
-                  )
                 ) by (type, component)
                 , 1
               ),
@@ -179,7 +178,6 @@ local oneMonthForecastBarGauge(serviceType, serviceStage) = baseBargauge {
                     gitlab_component_saturation:ratio:stddev_over_time_1w{
                       environment="$environment"
                     }
-                  )
                 ) by (type, component)
                 , 1
               ),
