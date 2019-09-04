@@ -123,14 +123,14 @@ groups:
   # HAProxy
   - record: gitlab_component_ops:rate
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       stage: 'main'
     expr: >
       sum(rate(haproxy_backend_http_responses_total{backend!~"canary_.*"}[1m])) by (environment, tier)
 
   - record: gitlab_component_ops:rate
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       stage: 'cny'
     expr: >
       sum(rate(haproxy_backend_http_responses_total{backend=~"canary_.*"}[1m])) by (environment, tier)

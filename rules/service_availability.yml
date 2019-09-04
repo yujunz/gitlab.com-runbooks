@@ -68,7 +68,7 @@ groups:
   # haproxy backends
   - record: gitlab_component_availability:ratio
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       stage: 'main'
     expr: >
       avg by (environment, tier, component) (
@@ -83,7 +83,7 @@ groups:
 
   - record: gitlab_component_availability:ratio
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       stage: 'cny'
     expr: >
       avg by (environment, tier, component) (

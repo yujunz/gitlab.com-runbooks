@@ -5,7 +5,7 @@ groups:
   # haproxy:http traffic - NON-CANARY
   - record: gitlab_component_apdex:ratio
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       tier: 'lb'
       stage: 'main'
     expr: >
@@ -23,7 +23,7 @@ groups:
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       tier: 'lb'
       stage: 'main'
     expr: >
@@ -40,7 +40,7 @@ groups:
   # haproxy:http traffic - CANARY
   - record: gitlab_component_apdex:ratio
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       tier: 'lb'
       stage: 'cny'
     expr: >
@@ -58,7 +58,7 @@ groups:
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       tier: 'lb'
       stage: 'cny'
     expr: >
@@ -75,7 +75,7 @@ groups:
   # haproxy:ssh traffic
   - record: gitlab_component_apdex:ratio
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       tier: 'lb'
       stage: 'main'
       component: 'backend-ssh'
@@ -86,7 +86,7 @@ groups:
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       tier: 'lb'
       stage: 'main'
       component: 'backend-ssh'
