@@ -832,7 +832,7 @@ services:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=web"
 
-- name: fe-lb
+- name: frontend
   tier: lb
   teams:
     - infrastructure
@@ -1023,7 +1023,7 @@ services:
       security:
     dependencies:
       - service: gitaly
-      - service: fe-lb # through gitlab-shell
+      - service: frontend # through gitlab-shell
       - service: redis # through gitlab-shell
     configurations:
       - config_name: Gitaly config

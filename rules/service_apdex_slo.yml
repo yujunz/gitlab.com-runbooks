@@ -35,7 +35,7 @@ groups:
 
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:
-      type: 'haproxy'
+      type: 'frontend'
       tier: 'lb'
     expr: '0.90'
 
