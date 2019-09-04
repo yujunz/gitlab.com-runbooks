@@ -7,7 +7,7 @@ All commands are to be run with root privileges.
 
 ## Deployment
 
-***The node is a one-off.**
+**The node is a one-off.**
 
 Discourse is deployed using Docker exclusively and for that they have the
 [discourse_docker](https://github.com/discourse/discourse_docker) project
@@ -98,8 +98,9 @@ UI.
 
 ## Backup
 
-The backup happens automatically once a day, it's stored locally, and we keep the
-[latest seven](https://forum.gitlab.com/admin/backups).
+The backup happens automatically once a day, it's stored in the
+gitlab-discourse-forum-backup S3 bucket, and we keep the [latest
+seven](https://forum.gitlab.com/admin/backups).
 
 ## Running low on disk space
 
