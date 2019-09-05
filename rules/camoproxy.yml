@@ -24,4 +24,26 @@ groups:
       description: GitLab Camoproxy is down for 2 minutes!
       runbook: troubleshooting/camoproxy.md
       title: GitLab Camoproxy is down for 2 minutes
-
+  - alert: Camoproxy bad healthcheck
+    expr: probe_http_status_code{instance="https://user-content.gitlab-static.net/healthcheck",job="blackbox"}
+      != 200
+    for: 2m
+    labels:
+      pager: pagerduty
+      severity: s1
+      environment: gprd
+    annotations:
+      description: GitLab Camoproxy is not responding correctly for 2 minutes!
+      runbook: troubleshooting/camoproxy.md
+      title: GitLab Camoproxy is not responding correctly for 2 minutes
+  - alert: Camoproxy down
+    expr: probe_success{instance="https://user-content.gitlab-static.net/healthcheck",job="blackbox"} == 0
+    for: 2m
+    labels:
+      pager: pagerduty
+      severity: s1
+      environment: gprd
+    annotations:
+      description: GitLab Camoproxy is down for 2 minutes!
+      runbook: troubleshooting/camoproxy.md
+      title: GitLab Camoproxy is down for 2 minutes
