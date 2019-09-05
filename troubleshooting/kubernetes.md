@@ -66,6 +66,27 @@ wish.
 
 The desired event data for this style of search will exist in `json.textPayload`
 
+# Alerts
+
+## HighThrottleRate
+
+This is triggered when a container is surpassing the CPU limits governed by the
+configuration of the Pod.  This has the potential to lead to poor performance of
+this container.  One should investigate the performance of this container over
+the course of time and determine if there's unnecessary pressure on the node, or
+a potentially misbehaving Pod.  Looking at the logs for said Pod and overall CPU
+usage of the pod and node for which that pod lives should lead to necessary
+discoveries and future corrective actions.
+
+Keep in mind that there are some configurations we cannot manage.  It's safe to
+say that nay Pod that exists in the `kube-system` namespace we may not have
+control of the limits as these are created by GKE.  If a Pod is consistently
+triggering this alert for a component we do not manage, check for node pressure
+and consider opening a line of communication with Google to discuss measures to
+alleviate the pain.  We alert for containers that trigger this alert that we
+cannot manage as any container in this namespace is critical for the successful
+operation of the cluster and it's health overall.
+
 ## GKENodeCount
 
 ### GKENodeCountCritical
