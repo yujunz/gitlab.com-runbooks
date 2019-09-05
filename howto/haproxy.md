@@ -133,7 +133,6 @@ Fetching server state...
    2 pages_http/web-02-sv-gstg: UP
    2 pages_https/web-01-sv-gstg: UP
    2 pages_https/web-02-sv-gstg: UP
-   2 registry/registry-01-sv-gstg: UP
    3 ssh/git-01-sv-gstg: UP
    3 ssh/git-02-sv-gstg: UP
    3 ssh/git-cny-01-sv-gstg: UP

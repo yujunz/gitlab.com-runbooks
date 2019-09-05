@@ -1,18 +1,50 @@
 ## Reason
 
-GitLab registry is not responding or returns not 200 OK statuses.
+GitLab Container Registry is not responding or returns not 200 OK statuses.
 
 ## Possible checks
 
 1. Open https://registry.gitlab.com and if you are seeing empty page, not 4xx or 5xx error page, then things are generally functional, and you don't need to panic heavily.  However, continue looking for more subtle causes.
-1. Also you can check by running `knife ssh role:gprd-base-fe-registry 'sudo gitlab-ctl status registry'`. If you are seeing messages like `worker15.cluster.gitlab.com run: registry: (pid 1091) 2107486s; run: log: (pid 1085) 2107486s`, then also again things are generally functional.  If registry is not working you will be seeing services in `down` state, and should restart (see below).
-1. In more subtle cases, we might have something only slightly-broken.  Check the registry logs in Kibana (index pattern: `pubsub-registry-inf-[gstg/gprd]*`), look for suspicious stuff.
+1. Validate running pods:
+    * On the approriate Kubernetes Cluster run, `kubectl get pods -l
+      app=registry -n gitlab`
+1. In more subtle cases, we might have something only slightly-broken.  Check the registry logs in Kibana (index pattern: `pubsub-gke-inf-[gstg|gprd]*`), using filter: `json.logName: projects/[gitlab-production|gitlab-staging-1]/logs/registry` and browse for anything suspect.
    1. One useful query is `"invalid checksum digest format"`  There shouldn't be any of those under normal circumstances; in at least one situation, this was caused by transient upload issues leaving empty images (tag links empty, or pointing to non-existent layers).  C.f. https://gitlab.com/gitlab-com/gl-infra/production/issues/906.  In the GitLab UI, these images show up as some combination of an empty tag id, null bytes, 0 bytes, and typically 'Last Updated' is stuck at 'Just now'.  Deleting through the UI is not possible (HTTP 400 Bad Request seen in the dev console when trying).  See below for resolution.
    1. Other possible queries include for `json.message:"http.response.status\":500"`.  We should really decompose the json output into structured fields, so we can search on e.g. http.response.status more directly, and do visualisations, but this query will do for now.
 
 ## What to do?
 
-1. Try restart service with the command `sudo gitlab-ctl restart registry` if it is down.
+1. Determine the state of the Pods
+    * If they are running, find out why they are tossing errors
+      * Check the status of GCS - https://status.cloud.google.com/
+      * Look at logs described above
+    * If we have a low amount of pods, less than baseline (roughly 20) validate
+      we are receiving traffic at the haproxy layer
+    * If we have MANY pods, more than baseline, or at the max of the HPA, that
+      may signal a performance and/or a network issue that must be investigated
+      further
+    * If the Pods are in a CrashLoop, look in the logs to find out why
+    * If the Pods are stuck in state `Init...`; perform a `describe` command and
+      look at the `Events` associated with that Pod to guide next steps: `kubectl
+      describe pod <podname>`
+    * Validate the Service Endpoints in Kubernetes
+      * `kubectl describe service gitlab-registry -n gitlab`
+      * Validate the `LoadBalancer Ingress` IP matches that for which haproxy
+        knows as the `gke-backend`
+    * Validate the Service has our Pod Endpoints
+      * `kubectl describe endpoints gitlab-registry -n gitlab`
+      * There should be 1 address for each pod that is in state `Running` listed
+        in `Addresses`
+      * If there are none, validate we have running Pods
+
+1. Check the state of haproxy load balancers
+    * Ensure the Load Balancers are serving traffic
+      * Each server should be listed in an OK state in the GCP load balancers:
+        * `gprd-gcp-tcp-lb-registry-http`
+        * `gprd-gcp-tcp-lb-registry-https`
+    * Ensure haproxy is healthy
+      * Validate the service is running
+      * Validate the `gke-registry` backend is healthy
 
 ### Broken images - empty/null/just now, "invalid checksum digest format"
 From the error logs, you should see a URI in the form `/v2/<group>/<nestedgroup>/<project>/<imagename>/manifests/<tag>`.

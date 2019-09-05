@@ -33,7 +33,7 @@ kubectx gke_gitlab-production_us-east1_gprd-gitlab-gke
 kubectl -n gitlab get hpa
 ```
 
-- [ ] Familiarize yourself with the deployment pipeline for registry, see an
+- [ ] Familiarize yourself with the deployment pipeline for Container Registry, see an
   [example that deploys a change from non-production to production](https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/pipelines/75089).
 
 - [ ] Ensure you can SSH to a production node

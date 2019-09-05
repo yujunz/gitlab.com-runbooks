@@ -7,7 +7,7 @@ accidental deletion of a GitLab project.
 * Project Repo Data
 * Project Wiki Data
 * There's more but we haven't encountered/practiced necessary mechanisms for a
-  restoration.  Examples, docker registry data and artifacts
+  restoration.  Examples, Container Registry data and artifacts
 
 ### Coordination
 * A restoration process should be assigned to available team members (SRE, DBRE) and
