@@ -7,9 +7,11 @@ reassuring way. We don't tweet directly from Twitter, but via `@marvin`,
 a [Cog][] app on Slack. See [How to tweet](#how-to-tweet) for the commands
 we're using.
 
-Avoid using ambiguous messages, but if we don't know what is going on yet just state that we are investigating.
-If you are tweeting about a problem with the Container Registry service, avoid using the trademarked name "Docker" as it is not ours to use. Our service should always
-be referred to as the "GitLab container registry".
+Avoid using ambiguous messages, but if we don't know what is going on yet just
+state that we are investigating. If you are tweeting about a problem with the
+Container Registry service, avoid using the trademarked name "Docker" as it is
+not ours to use. Our service should always be referred to as the "GitLab
+Container Registry".
 
 When we have issues with any production operation we should always tweet opening and closing the incident:
 

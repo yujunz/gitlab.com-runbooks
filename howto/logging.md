@@ -113,7 +113,7 @@ For retention in elasticcloud, see the cleanup script - https://gitlab.com/gitla
 | sidekiq | /var/log/gitlab/sidekiq-cluster/current |  JSON | pubsub-sidekiq-inf | |
 | haproxy | /var/log/haproxy.log | syslog | pubsub-haproxy-inf | label.tag="haproxy" |
 | nginx.access | /var/log/gitlab/nginx/gitlab\_access.log | nginx | pubsub-nginx-inf | |
-| registry | /var/log/gitlab/registry/current | lines | pubsub-registry-inf | |
+| registry | n/a | mix (lines/json) | pubsub-gke-inf | |
 | system.auth | /var/log/auth.log | syslog | pubsub-system-inf | |
 | system.syslog | /var/log/syslog | syslog | pubsub-system-inf | |
 | rails.graphql | /var/log/gitlab/gitlab-rails/graphql_json.log | JSON | pubsub-rails-inf ||

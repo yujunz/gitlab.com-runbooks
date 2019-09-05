@@ -2154,12 +2154,9 @@ services:
       - service: web # For JWT authentication
     configurations:
       - config_name: Registry
-        location: /var/opt/gitlab/registry/config.yml
-    chef_roles:
-      - gstg-base-fe-registry
-      - gprd-base-fe-registry
+        location: /etc/docker/registry/config.yml
     scalability:
-      bound: memory
+      bound: cpu
       scalable: horizontal
     security:
       security_reviewed:
@@ -2174,8 +2171,8 @@ services:
         permalink: https://log.gitlab.net/goto/b68e1a4183a652dc8d5e52a1fc2c1aba
   infrastructure:
     provider: gcp
-    architecture:
-    provisioning: terraform
+    architecture: gke
+    provisioning: kubernetes
     accesses:
       - account_name:
         access_type:
@@ -2189,7 +2186,7 @@ services:
   observability:
     monitors:
       grafana_folder: Ymoh2MEmk
-      primary_grafana_dashboard: "bd2Kl8Imk/registry-host-stats"
+      primary_grafana_dashboard: "oBSgj8iz/application-info"
 
 - name: share
   tier: stor
