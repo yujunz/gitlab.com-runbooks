@@ -109,15 +109,15 @@ local currentSaturationBarGauge(serviceType, serviceStage) = baseBargauge {
 };
 
 local oneMonthForecastBarGauge(serviceType, serviceStage) = baseBargauge {
-  title: '30d Saturation Forecast (worst likely case)',
-  description: 'Resource Saturation predictions for 30d from now. Lower is better.',
+  title: '14d Saturation Forecast (likely worst-case)',
+  description: 'Resource Saturation predictions for 14d from now. Lower is better.',
   targets: [
     promQuery.target(
       'sort(
           clamp_min(
             clamp_max(
               max(
-                gitlab_component_saturation:ratio:predict_linear_30d{environment="$environment", type="' + serviceType + '", stage=~"|' + serviceStage + '"}
+                gitlab_component_saturation:ratio:predict_linear_2w{environment="$environment", type="' + serviceType + '", stage=~"|' + serviceStage + '"}
                 + 2 * gitlab_component_saturation:ratio:stddev_over_time_1w{environment="$environment", type="' + serviceType + '", stage=~"|' + serviceStage + '"}
               ) by (component),
             1),
@@ -161,8 +161,8 @@ local oneMonthForecastBarGauge(serviceType, serviceStage) = baseBargauge {
     ],
   },
   oneMonthEnvironmentForecastBarGauge():: baseBargauge {
-    title: '30d Saturation Forecast (worst likely case)',
-    description: 'Resource Saturation predictions for 30d from now. Lower is better.',
+    title: '14d Saturation Forecast (likely worst-case)',
+    description: 'Resource Saturation predictions for 14 days from now. Lower is better.',
     targets: [
       promQuery.target(
         '
@@ -171,7 +171,7 @@ local oneMonthForecastBarGauge(serviceType, serviceStage) = baseBargauge {
             clamp_min(
               clamp_max(
                 max(
-                  gitlab_component_saturation:ratio:predict_linear_30d{
+                  gitlab_component_saturation:ratio:predict_linear_2w{
                     environment="$environment"
                   } +
                   2 *
