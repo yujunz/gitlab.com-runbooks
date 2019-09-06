@@ -81,13 +81,11 @@ work.
 
 * Start a tmux session -- the standby clone will take several hours
 * Ensure you're on the correct replica host!
-* Ensure the database is shut down on the replica
+* Ensure the database (patroni service) is shut down on the replica
 * `watch du -sh /var/opt/gitlab/postgresql/data`
 * `tail -f /var/log/gitlab/postgresql/current `
 * `rm -r /var/opt/gitlab/postgresql/data/*`
-* `/opt/gitlab/bin/gitlab-ctl repmgr standby clone postgres01.db.stg.gitlab.com`
-* `/opt/gitlab/bin/gitlab-ctl start postgresql`
-* `/opt/gitlab/bin/gitlab-ctl repmgr standby register`
+* Follow [patroni-management.md](patroni-management) to bootstrap the replica
 
 While the server is starting up -- especially for the first time -- it
 is normal to see many log entries like this which simply indicate that
@@ -105,74 +103,3 @@ When it's ready you should see log entries like this when the database starts up
 2018-01-30_01:00:11.58246 postgres02 postgresql: 2018-01-30 01:00:11 GMT [110182]: [1-1] LOG:  database system is ready to accept read only connections
 2018-01-30_01:00:11.65525 postgres02 postgresql: 2018-01-30 01:00:11 GMT [110525]: [1-1] LOG:  started streaming WAL from primary at 2B79/DA000000 on timeline 4
 ```
-
-If you see log entries like this:
-
-```
-2018-01-29_21:11:47.51934 postgres02 postgresql: 2018-01-29 21:11:47 GMT [36073]: [2-1] LOG:  invalid checkpoint record
-2018-01-29_21:11:47.51944 postgres02 postgresql: 2018-01-29 21:11:47 GMT [36073]: [3-1] FATAL:  could not locate required checkpoint record
-2018-01-29_21:11:47.51948 postgres02 postgresql: 2018-01-29 21:11:47 GMT [36073]: [4-1] HINT:  If you are not restoring from a backup, try removing the file "/var/opt/gitlab/postgresql/data/backup_label".
-```
-
-Then you are missing the `*.history` file. It may have been removed in
-an overzealous attempt to free space by removing xlog files. Don't
-panic, you can cons one up manually without too much difficulty, at
-least in the simple case where there's only one timeline. In that case
-you just need a single dummy entry in the timeline history file
-telling the standby to follow that timeline.
-
-The following example says that the switch from timeline 3 (the parent
-timeline) to timeline 4 (the current timeline) occurred right at the
-start of the oldest xlog file that was retained. 
-
-You can pick any xlog time older than the checkpoint that the
-pg_basebackup was taken from. It may be easiest to just put 0/0 in
-fact -- we should test that.
-
-```
-$ ls /var/opt/gitlab/postgresql/data/pg_xlog | head
-0000000400002B780000003B
-0000000400002B7800000086
-0000000400002B78000000D1
-0000000400002B790000001C
-0000000400002B7900000067
-0000000400002B79000000B2
-0000000400002B77000000F1
-0000000400002B780000003C
-0000000400002B7800000087
-
-$ cat > 00000004.history
-3   2B78/3B000000   manually recreated timeline history
-^D
-```
-
-You'll probably want to do this on the *primary* and then repeat the
-`repmgr standby clone` (after clearing out the `data` directory). 
-
-You may be able to just add it to the standby and restart however make
-sure the standby is actually still in standby mode and hasn't
-accidentally been promoted. (Run `pg_controldata` and check the
-`Database cluster state`).
-
-If you see something like:
-
-```
-2018-01-30_00:48:41.54672 postgres02 postgresql: 2018-01-30 00:48:41 GMT [105225]: [3-1] FATAL:  invalid data in history file "pg_xlog/00000004.history"
-2018-01-30_00:48:41.54687 postgres02 postgresql: 2018-01-30 00:48:41 GMT [105225]: [4-1] HINT:  Timeline IDs must be less than child timeline's ID.
-```
-
-it indicates you've entered the *current* timeline (4 above) rather than the
-*parent* timeline (3 above) in the history file.
-
-
-If it succeeds you should see something like:
-
-```
-2018-01-30_01:00:11.58219 postgres02 postgresql: 2018-01-30 01:00:11 GMT [110184]: [4-1] LOG:  consistent recovery state reached at 2B79/D994F010
-2018-01-30_01:00:11.58246 postgres02 postgresql: 2018-01-30 01:00:11 GMT [110182]: [1-1] LOG:  database system is ready to accept read only connections
-2018-01-30_01:00:11.65525 postgres02 postgresql: 2018-01-30 01:00:11 GMT [110525]: [1-1] LOG:  started streaming WAL from primary at 2B79/DA000000 on timeline 4
-```
-
-Don't forget to run `gitlab-ctl repmgr standby register` to add the
-standby to the repmgr cluster. Run `gitlab-ctl repmgr cluster show` to
-verify that it's active.

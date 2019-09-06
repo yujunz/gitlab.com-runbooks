@@ -237,7 +237,7 @@ groups:
       (primary) mode: {{range query
         "pg_replication_is_replica{environment=''$labels.environment''} ==
         0.0"}} {{.labels.fqdn}} {{end}}'
-      runbook: "troubleshooting/postgres.md#repmgr"
+      runbook: "howto/patroni-management.md"
       title: "Split Brain: too many postgres databases in environment {{$labels.environment}}
         in read-write (primary) mode"
   - alert: PostgreSQL_SplitBrain_Replicas
@@ -253,7 +253,7 @@ groups:
         upstream primaries: {{range query "pg_stat_wal_receiver_status{environment=''$labels.environment''}
         >= 0"}}"{{.labels.fqdn}}" thinks "{{.labels.upstream_host}}" is the primary;
         {{end}} '
-      runbook: troubleshooting/postgres.md#repmgr
+      runbook: howto/patroni-management.md
       title: Replicas have different upstream primary databases
   - alert: PostgreSQL_ServiceDown
     expr: pg_up == 0
