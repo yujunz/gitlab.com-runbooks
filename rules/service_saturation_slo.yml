@@ -16,6 +16,19 @@ groups:
       component: 'single_threaded_cpu'
     expr: '0.90'
 
+  ## pgbouncer single core. Measure single threaded core saturation in pgbouncer
+  # The soft limit is used to predict when we will reach saturation.
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'pgbouncer_single_core'
+    expr: '0.80'
+
+  # The hard limit is the limit at which we send out an alert
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'pgbouncer_single_core'
+    expr: '0.90'
+
   ## Memory Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:

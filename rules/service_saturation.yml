@@ -76,6 +76,17 @@ groups:
     expr: >
       max(1 - rate(node_cpu_seconds_total{type=~"pgbouncer", mode="idle"}[1m])) by (type, tier, stage, environment)
 
+  # type: pgbouncer,patroni, component: pgbouncer_single_core
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'pgbouncer_single_core'
+    expr: >
+      max(
+        rate(
+          namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", type=~"pgbouncer|patroni"}[1m]
+        )
+      ) by (type, tier, stage, environment)
+
   # type: pgbouncer, component: server_connections_pools
   - record: gitlab_component_saturation:ratio
     labels:
