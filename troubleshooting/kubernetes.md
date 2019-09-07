@@ -89,6 +89,30 @@ operation of the cluster and it's health overall.
 
 ## GKENodeCount
 
+### HPAScaleCapability
+
+The Horizontal Pod Autoscaler has reached it's maximum configured allowed Pods.
+Start troubleshooting by validating the service is able to successfully handle
+requests.
+
+When we reach this threshold we must start an investigation into the load that
+this service is taking to see if there's been a trend upward that we simply
+haven't noticed over time, or if there's a problem processing requests which led
+to an undesired effect of scaling upwards out of normal.
+
+Utilize the dashboard https://dashboards.gitlab.net/d/oWe9aYxmk/pod-metrics and
+observe the Active Replicaset over the course of time to take into account how
+many Pods we've been scaling.  Normally we scale with traffic.  If there are
+spikes, something must be amiss and is a signal that we need to investigate
+further.  If we've been scaling up over a lengthy period of time (say months),
+it may simply mean we need to bump the amount of maximum allowed Pods.
+
+During the investigation, take a look at the HPA configuration to understand
+what drives the scaling needs.  This will help determine what signals to look
+deeper into and drive the conversation for what changes need to be made.  When
+making changes to the HPA we need to ensure that the cluster will not endure
+undue stress.
+
 ### GKENodeCountCritical
 
 We have reached the maximum configured amount of nodes allowed by a node pool.

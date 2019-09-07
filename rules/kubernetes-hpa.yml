@@ -24,10 +24,11 @@ groups:
 
       - alert: HPAScaleCapability
         annotations:
-          title: HPA unable to scale
-          description: '{{ $labels.hpa}} has either hit the maximum or minimum number of desired Pods'
-          runbook: troubleshooting/kubernetes.md
-        expr: kube_hpa_status_condition{condition="true", status="ScalingLimited"} == 1
+          title: HPA unable to scale up
+          description: '{{$labels.hpa}} has hit the maximum number of desired Pods'
+          runbook: troubleshooting/kubernetes.md#hpascalecapability
+        expr: kube_hpa_status_desired_replicas >= kube_hpa_spec_max_replicas
         for: 30m
         labels:
-          severity: s3
+          pager: pagerduty
+          severity: s2
