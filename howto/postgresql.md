@@ -77,14 +77,6 @@ See the [PostgreSQL Switchover](postgresql-switchover.md) document for instructi
 
 See the [PostgreSQL Replica](postgresql-replica.md) document for instructions
 
-## Removing a node from the repmgr cluster
-
-Before shutting down a host which is no longer required, run the following as root to remove it from the repmgr cluster
-
-```shell
-# gitlab-ctl repmgr standby unregister
-```
-
 ## Rebuild a corrupt index
 
 Summary: we must build a new index concurrently, so as not to contend with
