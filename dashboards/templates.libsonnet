@@ -13,7 +13,7 @@ local template = grafana.template;
   project_id:: template.new(
     'project_id',
     '$PROMETHEUS_DS',
-    'label_values(stackdriver_gke_container_logging_googleapis_com_log_entry_count, project_id)',
+    'label_values(stackdriver_gke_container_logging_googleapis_com_log_entry_count{cluster_name="$cluster"}, project_id)',
     current='gitlab-production',
     refresh='load',
     sort=1,
