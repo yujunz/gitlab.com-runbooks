@@ -12,9 +12,10 @@
 #
 #    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --wait=10800 --current-file-server=nfs-file01 --target-file-server=nfs-file09 --staging --max-failures=200 --refresh-stats
 #
-# Production example:
+# Production examples:
 #
 #    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --wait=10800 --current-file-server=nfs-file25 --target-file-server=nfs-file36
+#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=no --wait=10800 --move-amount=10 --current-file-server=nfs-file27 --target-file-server=nfs-file38 --skip=9271929
 #
 # Verify the migration status of previously logged project migrations:
 #
@@ -66,6 +67,7 @@ Options = {
   timeout: 10,
   max_failures: 3,
   list: false,
+  black_list: [],
   refresh_statistics: false,
   stats: [:commit_count, :storage_size, :repository_size],
   group: nil,
@@ -73,6 +75,10 @@ Options = {
   logdir_path: '/var/log/gitlab/storage_migrations',
   migration_logfile_name: 'migrated_projects_%{date}.log',
 }
+
+def resembles_integer?(s)
+  (not s.to_s.match(/\A\d+\Z/).nil?)
+end
 
 def parse_args
   ARGV << '-?' if ARGV.empty?
@@ -93,6 +99,15 @@ def parse_args
 
   opt.on('--list-nodes', 'List all known repository storage nodes') do |list_nodes|
     Options[:list_nodes] = true
+  end
+
+  opt.on('--skip=<project_id,...>', Array, 'Skip specific project(s)') do |project_identifiers|
+    Options[:black_list] ||= []
+    if project_identifiers.respond_to? :all? and project_identifiers.all? { |s| resembles_integer? s }
+      Options[:black_list].concat project_identifiers.map(&:to_i).delete_if { |i| i <= 0 }
+    else
+      raise OptionParser::InvalidArgument.new("Argument given for --skip must be a list of one or more integers")
+    end
   end
 
   opt.on('-r', '--refresh-stats', 'Refresh all project statistics; WARNING: ignores --dry-run') do |refresh_statistics|
@@ -351,6 +366,7 @@ class Rebalancer
     # any previous delete operations, sort by size descending,
     # then sort by last activity date ascending in order to select the
     # most idle and largest projects first.
+    project_identifiers = []
     Project.transaction do
       ActiveRecord::Base.connection.execute 'SET statement_timeout = 600000'
       clauses = {
@@ -369,8 +385,14 @@ class Rebalancer
         .order('project_statistics.repository_size DESC')
         .order('last_activity_at ASC')
       query = query.limit(limit) if limit > 0
-      query.pluck(:id)
+      project_identifiers = query.pluck(:id)
     end
+    black_list = Options[:black_list]
+    unless black_list.empty?
+      log.debug "Skipping projects: #{black_list}"
+      project_identifiers = project_identifiers - black_list
+    end
+    project_identifiers
   end
 
   def move_many_projects(min_amount, project_ids)
