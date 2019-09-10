@@ -7,7 +7,8 @@ There are a variety of ways you can do this, and the most effective will depend 
 ## Rails console
 Most reliable, and quick if you already have a console open
 
-ProjectRepository.find_by(disk_path:"@hashed/00/11/00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff.git").project
+ProjectRepository.find_by(disk_path:"@hashed/00/11/00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff").project
+ (note the lack of a trailing .git in the path)
 
 ## Config on disk
 Not 100% reliable; under some circumstances (https://gitlab.com/gitlab-org/gitlab-ce/issues/48527#note_116019702) the config file might not be populated at the time you need it.  But definitely quick, if you're already on the server
