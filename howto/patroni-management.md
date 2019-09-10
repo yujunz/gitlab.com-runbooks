@@ -165,12 +165,11 @@ issue with the help of a DBRE before restarting.
 
 If clients are connecting to replicas by means of [service
 discovery][service-discovery] (as opposed to hard-coded list of hosts), you can
-remove a replica from the list of hosts used by the clients by enabling Consul
-service maintenance on the selected replica (and also prevent it from becoming
-the primary):
+remove a replica from the list of hosts used by the clients by tagging it as not
+suitable for failing over and load balancing.
 
-1. `systemctl stop chef-client && systemctl disable chef-client`
-1. Add a `tags` section to `/var/opt/gitlab/patroni/patroni.yaml` on the
+1. `sudo systemctl stop chef-client && sudo systemctl disable chef-client`
+1. Add a `tags` section to `/var/opt/gitlab/patroni/patroni.yml` on the
    node:
 
    ```
@@ -179,19 +178,25 @@ the primary):
      noloadbalance: true
    ```
 
-1. `gitlab-patronictl reload` (the author has not personally done this, so
-   pay close attention to the next testing step)
-1. Test the efficacy of that reload by checking for the node's IP (`ip addr`)
+1. `sudo systemctl reload patroni`
+1. Test the efficacy of that reload by checking for the node name
    in the list of replicas:
 
    ```
-   dig @127.0.0.1 -p 8600 replica.patroni.service.consul.
+   dig @127.0.0.1 -p 8600 db-replica.service.consul. SRV
    ```
 
-    If the IP is absent, then the reload worked.
+    If the name is absent, then the reload worked.
 
 You can see an example of taking a node out of service [in this
 issue](https://gitlab.com/gitlab-com/gl-infra/production/issues/1061).
+
+### Legacy Method (Consul Maintenance)
+
+:warning: _This method only works if the clients are configured with
+a `replica.patroni.service.consul.` DNS record, it won't work properly if they
+are configured with `db-replica.service.consul.` record. Check
+`/var/opt/gitlab/gitlab-rails/etc/database.yml` before you proceed._
 
 In the past we have sometimes used consul directly to remove the replica from
 the replica DNS entry (bear in mind this does not prevent the node from becoming
