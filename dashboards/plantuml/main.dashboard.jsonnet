@@ -10,15 +10,16 @@ local row = grafana.row;
 local text = grafana.text;
 
 dashboard.new(
-  'PlantUML Overview',
+  'Overview',
   schemaVersion=16,
-  tags=['plantuml'],
+  tags=['overview'],
   timezone='UTC',
   graphTooltip='shared_crosshair'
 )
 .addTemplate(templates.ds)
-.addTemplate(templates.gke_cluster)
-.addTemplate(templates.project_id)
+.addTemplate(templates.environment)
+.addTemplate(templates.gkeCluster)
+.addTemplate(templates.projectId)
 .addPanel(
   row.new(title='Stackdriver Logs'),
   gridPos={
