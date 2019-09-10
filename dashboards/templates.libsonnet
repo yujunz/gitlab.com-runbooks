@@ -10,14 +10,6 @@ local template = grafana.template;
     refresh='load',
     sort=1,
   ),
-  projectId:: template.new(
-    'project_id',
-    '$PROMETHEUS_DS',
-    'label_values(stackdriver_gke_container_logging_googleapis_com_log_entry_count{environment="$environment"}, project_id)',
-    current='gitlab-production',
-    refresh='load',
-    sort=1,
-  ),
   ds:: template.datasource(
     'PROMETHEUS_DS',
     'prometheus',
