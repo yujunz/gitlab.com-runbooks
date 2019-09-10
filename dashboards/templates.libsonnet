@@ -2,18 +2,18 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 local template = grafana.template;
 
 {
-  gke_cluster:: template.new(
+  gkeCluster:: template.new(
     'cluster',
     '$PROMETHEUS_DS',
-    'label_values(kube_pod_container_info, cluster)',
+    'label_values(kube_pod_container_info{environment="$environment"}, cluster)',
     current='gprd-gitlab-gke ',
     refresh='load',
     sort=1,
   ),
-  project_id:: template.new(
+  projectId:: template.new(
     'project_id',
     '$PROMETHEUS_DS',
-    'label_values(stackdriver_gke_container_logging_googleapis_com_log_entry_count{cluster_name="$cluster"}, project_id)',
+    'label_values(stackdriver_gke_container_logging_googleapis_com_log_entry_count{environment="$environment"}, project_id)',
     current='gitlab-production',
     refresh='load',
     sort=1,
