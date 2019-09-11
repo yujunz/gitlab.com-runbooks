@@ -51,6 +51,12 @@ groups:
       tier: 'db'
     expr: '0.95'
 
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'frontend'
+      tier: 'lb'
+    expr: '0.90'
+
 - name: GitLab Apdex SLO observance status
   interval: 1m
   rules:
