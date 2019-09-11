@@ -2,118 +2,41 @@ groups:
 - name: GitLab Component Availability
   interval: 1m
   rules:
-  # Postgres Service
+  # Everything except metrics until https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7833 is merged....
   - record: gitlab_component_availability:ratio
-    labels:
-      type: 'posgres'
-      component: 'server'
-      stage: 'main' # Postgres only exists in `main` stage
     expr: >
-      avg by (environment, tier, type) (avg_over_time(up{geo_role!="secondary", job="postgres"}[1m]))
-        and
-      avg by (environment, tier, type) (avg_over_time(pg_up{geo_role!="secondary"}[1m]))
-
-  # Registry Service
-  # Note: currently we have no insight into the availability of the registry, so we
-  # have to rely on the node_exporter
-  - record: gitlab_component_availability:ratio
-    labels:
-      component: 'server'
-    expr: >
-      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv", type="registry", job="node"}[1m]))
-
-  # {web, api, sidekiq, git} , unicorn component
-  - record: gitlab_component_availability:ratio
-    labels:
-      component: 'unicorn'
-    expr: >
-      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv",job=~"gitlab-(rails|unicorn)"}[1m]))
-
-  - record: gitlab_component_availability:ratio
-    labels:
-      component: 'workhorse'
-    expr: >
-      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv",job=~"gitlab-workhorse-.*"}[1m]))
-
-  # sidekiq, sidekiq_cluster component
-  - record: gitlab_component_availability:ratio
-    labels:
-      component: 'sidekiq'
-    expr: >
-      avg by (environment, tier, type, stage) (avg_over_time(up{tier="sv", job="gitlab-sidekiq"}[1m]))
-
-  # pgbouncer
-  - record: gitlab_component_availability:ratio
-    labels:
-      component: 'server'
-      stage: 'main'
-    expr: >
-      avg by (environment, tier, type) (avg_over_time(up{tier="db", type="pgbouncer", job="pgbouncer"}[1m]))
-
-  # gitaly:goserver
-  - record: gitlab_component_availability:ratio
-    labels:
-      component: 'goserver'
-    expr: >
-      avg by (environment, tier, type, stage) (avg_over_time(up{tier="stor", type="gitaly", job="gitaly"}[1m]))
-
-  # pages
-  - record: gitlab_component_availability:ratio
-    labels:
-      component: 'service'
-      type: pages
-    expr: >
-      avg by (environment, tier, stage) (avg_over_time(up{tier="sv", job="gitlab-pages"}[1m]))
-
-  # haproxy backends
-  - record: gitlab_component_availability:ratio
-    labels:
-      type: 'frontend'
-      stage: 'main'
-    expr: >
-      avg by (environment, tier, component) (
+      avg(
         label_replace(
-          avg_over_time(haproxy_backend_up{backend!~"canary_.*"}[1m]),
+          avg(
+            up{
+              environment!="",
+              type!="",
+              job!~"gitlab-monitor-.*",
+            }
+          ) by (job, environment, tier, type, stage),
           "component",
-          "backend-$1",
-          "backend",
-          "(.*)"
+          "$0",
+          "job",
+          ".*"
         )
-      )
-
-  - record: gitlab_component_availability:ratio
-    labels:
-      type: 'frontend'
-      stage: 'cny'
-    expr: >
-      avg by (environment, tier, component) (
-        label_replace(
-          avg_over_time(haproxy_backend_up{backend=~"canary_.*"}[1m]),
-          "component",
-          "backend-$1",
-          "backend",
-          "canary_(.*)"
-        )
-      )
+      ) without (job)
 
   # metrics
+  # Until https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7833 is merged....
   - record: gitlab_component_availability:ratio
     labels:
       type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
       tier: inf
-      stage: main
-      component: thanos
     expr: >
-      avg by (environment) (avg_over_time(up{job="thanos"}[1m]))
-
-  - record: gitlab_component_availability:ratio
-    labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
-      tier: inf
-      stage: main
-      component: prometheus
-    expr: >
-      avg by (environment) (avg_over_time(up{job="prometheus"}[1m]))
+      avg(
+        label_replace(
+          avg(up{environment!="", type="", fqdn=~"(prometheus|thanos).*"}) by (job, environment, tier, type, stage),
+          "component",
+          "$0",
+          "job",
+          ".*"
+        )
+      ) without (job)
 
 - name: GitLab Service Availability Aggregated Rates
   interval: 1m
