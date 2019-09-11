@@ -25,7 +25,7 @@
 #
 #    export logd=/var/log/gitlab/storage_rebalance; for f in `ls -t ${logd}`; do ls -la ${logd}/$f && cat ${logd}/$f; done
 #
-
+require 'date'
 require 'fileutils'
 require 'json'
 require 'io/console'
@@ -53,6 +53,7 @@ end
 module Storage
 
 NodeConfiguration = ::Gitlab.config.repositories.storages
+ISO8601_FRACTIONAL_SECONDS_LENGTH = 3
 
 class NoCommits < StandardError; end
 
@@ -315,6 +316,7 @@ class Rebalancer
       log.info "Validating project integrity by comparing latest commit " +
         "identifers before and after"
       if commit_id == get_commit_id(project.id)
+        log_artifact[:date] = DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
         @migration_log.info log_artifact.to_json
       else
         log.error "Failed to validate integrity of project id: #{project.id}"
