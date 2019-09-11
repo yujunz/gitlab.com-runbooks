@@ -1,9 +1,9 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local templates = import 'templates.libsonnet';
 local colors = import 'colors.libsonnet';
+local commonAnnotations = import 'common_annotations.libsonnet';
+local grafana = import 'grafonnet/grafana.libsonnet';
+local promQuery = import 'prom_query.libsonnet';
+local seriesOverrides = import 'series_overrides.libsonnet';
+local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;

@@ -43,13 +43,13 @@ local transformScript = "
 ";
 
 local painlessScript(script) = {
-  script : {
-    inline : painlessFunctions + "\n" + script,
-    lang : "painless",
-    params : {
-      OOM_ALERT_THRESHOLD: OOM_ALERT_THRESHOLD
-    }
-  }
+  script: {
+    inline: painlessFunctions + "\n" + script,
+    lang: "painless",
+    params: {
+      OOM_ALERT_THRESHOLD: OOM_ALERT_THRESHOLD,
+    },
+  },
 };
 
 {
@@ -73,18 +73,18 @@ local painlessScript(script) = {
         message: {
           from: "ElasticCloud Watcher: oom_watcher",
           to: [
-            "#mech_symp_alerts"
+            "#mech_symp_alerts",
           ],
           text: "Multiple OOM-events detected on nodes. Visit https://log.gitlab.net/goto/fedfb6a8e169bac2f1dfccdadda0caa5 for more details",
           dynamic_attachments: {
             list_path: "ctx.payload.items",
             attachment_template: {
               title: "node: {{key}}",
-              text: "OOM-Events: {{ doc_count }}"
-            }
-          }
-        }
-      }
-    }
+              text: "OOM-Events: {{ doc_count }}",
+            },
+          },
+        },
+      },
+    },
   },
 }

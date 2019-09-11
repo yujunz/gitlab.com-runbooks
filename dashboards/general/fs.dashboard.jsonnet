@@ -5,9 +5,9 @@ local panels = import 'panels.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
 
-#######################################
-# ARC                                 #
-#######################################
+//######################################
+// ARC                                 #
+//######################################
 
 local arcHitRatePanel = panels.generalPercentageGraphPanel("ZFS ARC Hit Rate")
   .addTarget(
@@ -32,9 +32,9 @@ local arcDemandHitRatePanel = panels.generalPercentageGraphPanel("ZFS ARC Demand
     legendFormat='{{instance}}')
   );
 
-#######################################
-# Utilization                         #
-#######################################
+//######################################
+// Utilization                         #
+//######################################
 
 local fsUtilizationPanel = panels.generalBytesGraphPanel("Filesystem Utilization")
   .addTarget(
@@ -71,17 +71,17 @@ local totalFsUtilizationPanel = panels.generalBytesGraphPanel("Total Filesystem 
     legendFormat='All Instances ({{device}})')
   );
 
-# As tank/dataset grows, the reported sizes of all other filesystems in the
-# zpool (tank/reservation, and the top-level "tank") decrease, to take account
-# of decreasing availability. To properly report the absolute capacity limit of
-# the zpool, we must add the space occupied by the dataset to the reported size
-# of the only filesystem containing a reservation.
-# The limit lines are not flat, because the capacity of ZFS filesystems
-# decreases as metadata is dynamically provisioned and destroyed.
-# Therefore the available capacity will differ from node to node, even for
-# equally sized disks.
-# Because we use the "min" aggregator, the reported limits are worst-case, and
-# are equal to the lowest limit of all nodes in the env/type fleet.
+// As tank/dataset grows, the reported sizes of all other filesystems in the
+// zpool (tank/reservation, and the top-level "tank") decrease, to take account
+// of decreasing availability. To properly report the absolute capacity limit of
+// the zpool, we must add the space occupied by the dataset to the reported size
+// of the only filesystem containing a reservation.
+// The limit lines are not flat, because the capacity of ZFS filesystems
+// decreases as metadata is dynamically provisioned and destroyed.
+// Therefore the available capacity will differ from node to node, even for
+// equally sized disks.
+// Because we use the "min" aggregator, the reported limits are worst-case, and
+// are equal to the lowest limit of all nodes in the env/type fleet.
 local zfsFsUtilizationPanel = panels.generalBytesGraphPanel("Filesystem Utilization (ZFS)")
   .addTarget(
     promQuery.target('
@@ -113,15 +113,15 @@ local zfsFsUtilizationPanel = panels.generalBytesGraphPanel("Filesystem Utilizat
     legendFormat='{{instance}}')
   );
 
-# As tank/dataset grows, the reported sizes of all other filesystems in the
-# zpool (tank/reservation, and the top-level "tank") decrease, to take account
-# of decreasing availability. To properly report the absolute capacity limit of
-# the zpool, we must add the space occupied by the dataset to the reported size
-# of the only filesystem containing a reservation.
-# The limit lines are not flat, because the capacity of ZFS filesystems
-# decreases as metadata is dynamically provisioned and destroyed.
-# Therefore the available capacity will differ from node to node, even for
-# equally sized disks.
+// As tank/dataset grows, the reported sizes of all other filesystems in the
+// zpool (tank/reservation, and the top-level "tank") decrease, to take account
+// of decreasing availability. To properly report the absolute capacity limit of
+// the zpool, we must add the space occupied by the dataset to the reported size
+// of the only filesystem containing a reservation.
+// The limit lines are not flat, because the capacity of ZFS filesystems
+// decreases as metadata is dynamically provisioned and destroyed.
+// Therefore the available capacity will differ from node to node, even for
+// equally sized disks.
 local totalZfsFsUtilizationPanel = panels.generalBytesGraphPanel("Total Filesystem Utilization (ZFS)")
   .addTarget(
     promQuery.target('
@@ -168,7 +168,10 @@ grafana.dashboard.new(
 .addTemplate(templates.environment)
 .addTemplate(templates.type)
 .addPanels(layout.grid([
-  fsUtilizationPanel, totalFsUtilizationPanel,
-  zfsFsUtilizationPanel, totalZfsFsUtilizationPanel,
-  arcHitRatePanel, arcDemandHitRatePanel,
+  fsUtilizationPanel,
+totalFsUtilizationPanel,
+  zfsFsUtilizationPanel,
+totalZfsFsUtilizationPanel,
+  arcHitRatePanel,
+arcDemandHitRatePanel,
 ], cols=2, rowHeight=10))

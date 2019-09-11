@@ -1,11 +1,11 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local templates = import 'templates.libsonnet';
 local colors = import 'colors.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
+local commonAnnotations = import 'common_annotations.libsonnet';
+local grafana = import 'grafonnet/grafana.libsonnet';
 local layout = import 'layout.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
+local promQuery = import 'prom_query.libsonnet';
+local seriesOverrides = import 'series_overrides.libsonnet';
+local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -30,8 +30,9 @@ local componentSaturationPanel() = graphPanel.new(
     legend_alignAsTable=true,
     legend_hideEmpty=true,
   )
-  .addTarget( // Primary metric
-    promQuery.target('
+  .addTarget(  // Primary metric
+    promQuery.target(
+'
       max(
         max_over_time(
           gitlab_component_saturation:ratio{environment="$environment", type="$type", stage="$stage", component="$component"}[$__interval]
@@ -41,15 +42,17 @@ local componentSaturationPanel() = graphPanel.new(
       legendFormat='{{ component }} component',
     )
   )
-  .addTarget( // Soft SLO
-    promQuery.target('
+  .addTarget(  // Soft SLO
+    promQuery.target(
+'
       avg(slo:max:soft:gitlab_component_saturation:ratio{component="$component"})
       ',
       legendFormat='Soft SLO',
     )
   )
-  .addTarget( // Hard SLO
-    promQuery.target('
+  .addTarget(  // Hard SLO
+    promQuery.target(
+'
       avg(slo:max:hard:gitlab_component_saturation:ratio{component="$component"})
       ',
       legendFormat='Hard SLO',
@@ -87,9 +90,7 @@ dashboard.new(
 .addTemplate(templates.saturationComponent)
 .addPanels(layout.grid([
     componentSaturationPanel(),
-  ], cols=1,rowHeight=10))
+  ], cols=1, rowHeight=10))
 + {
   links+: platformLinks.parameterizedServiceLink + platformLinks.triage,
 }
-
-

@@ -1,9 +1,9 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local templates = import 'templates.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
 local layout = import 'layout.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
+local promQuery = import 'prom_query.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';
+local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local graphPanel = grafana.graphPanel;
 local link = grafana.link;
@@ -31,19 +31,20 @@ local balanceChart(
   )
   .addSeriesOverride({
     alias: "//",
-    color: "#73BF69"
+    color: "#73BF69",
   })
   .addTarget(
-    promQuery.target(query,
+    promQuery.target(
+query,
       instant=true,
       legendFormat=legendFormat,
     )
   ) + {
     tooltip: {
-      "shared": false,
-      "sort": 0,
-      "value_type": "individual"
-    }
+      shared: false,
+      sort: 0,
+      value_type: "individual",
+    },
   };
 
 dashboard.new(
@@ -55,7 +56,8 @@ dashboard.new(
 )
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
-.addPanels(layout.grid([
+.addPanels(
+layout.grid([
     balanceChart(
       title='Balacing',
       description="Balancing Ranking. Equal is better.",
@@ -105,9 +107,10 @@ dashboard.new(
       ',
       legendFormat='{{ fqdn }}',
     ),
-  ], cols=1,rowHeight=10, startRow=1)
+  ], cols=1, rowHeight=10, startRow=1)
 )
-.addPanels(layout.grid([
+.addPanels(
+layout.grid([
     balanceChart(
       title='Disk read bytes/second average',
       description="Average read throughput. Lower is better.",
@@ -174,7 +177,7 @@ dashboard.new(
       legendFormat='{{ fqdn }}',
     ),
 
-  ], cols=2,rowHeight=10, startRow=1000)
+  ], cols=2, rowHeight=10, startRow=1000)
 )
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('gitaly') + platformLinks.services + [

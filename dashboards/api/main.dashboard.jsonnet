@@ -1,18 +1,18 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local templates = import 'templates.libsonnet';
-local colors = import 'colors.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
-local capacityPlanning = import 'capacity_planning.libsonnet';
-local layout = import 'layout.libsonnet';
 local basic = import 'basic.libsonnet';
-local workhorseCommon = import 'workhorse_common_graphs.libsonnet';
-local railsCommon = import 'rails_common_graphs.libsonnet';
-local nodeMetrics = import 'node_metrics.libsonnet';
+local capacityPlanning = import 'capacity_planning.libsonnet';
+local colors = import 'colors.libsonnet';
+local commonAnnotations = import 'common_annotations.libsonnet';
+local grafana = import 'grafonnet/grafana.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
+local layout = import 'layout.libsonnet';
+local nodeMetrics = import 'node_metrics.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
+local promQuery = import 'prom_query.libsonnet';
+local railsCommon = import 'rails_common_graphs.libsonnet';
+local seriesOverrides = import 'series_overrides.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';
+local templates = import 'templates.libsonnet';
+local workhorseCommon = import 'workhorse_common_graphs.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -31,7 +31,8 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addTemplate(templates.stage)
-.addPanel(row.new(title="Workhorse"),
+.addPanel(
+row.new(title="Workhorse"),
   gridPos={
       x: 0,
       y: 0,
@@ -41,7 +42,8 @@ dashboard.new(
 )
 .addPanels(workhorseCommon.workhorsePanels(serviceType="api", serviceStage="$stage", startRow=1))
 
-.addPanel(row.new(title="Rails"),
+.addPanel(
+row.new(title="Rails"),
   gridPos={
       x: 0,
       y: 1000,
@@ -51,12 +53,10 @@ dashboard.new(
 )
 .addPanels(railsCommon.railsPanels(serviceType="api", serviceStage="$stage", startRow=1001))
 
-.addPanel(keyMetrics.keyServiceMetricsRow('api', '$stage'), gridPos={ x: 0, y: 4000, })
-.addPanel(keyMetrics.keyComponentMetricsRow('api', '$stage'), gridPos={ x: 0, y: 5000, })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="api", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000, })
-.addPanel(capacityPlanning.capacityPlanningRow('api', '$stage'), gridPos={ x: 0, y: 7000, })
+.addPanel(keyMetrics.keyServiceMetricsRow('api', '$stage'), gridPos={ x: 0, y: 4000 })
+.addPanel(keyMetrics.keyComponentMetricsRow('api', '$stage'), gridPos={ x: 0, y: 5000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="api", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
+.addPanel(capacityPlanning.capacityPlanningRow('api', '$stage'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('api') + platformLinks.services,
 }
-
-
