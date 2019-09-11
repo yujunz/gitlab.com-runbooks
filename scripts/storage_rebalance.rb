@@ -23,7 +23,7 @@
 #
 # Logs may be reviewed:
 #
-#    export logd=/var/log/gitlab/storage_rebalance; for f in `ls -t ${logd}`; do ls -la ${logd}/$f && cat ${logd}/$f; done
+#    export logd=/var/log/gitlab/storage_migrations; for f in `ls -t ${logd}`; do ls -la ${logd}/$f && cat ${logd}/$f; done
 #
 require 'date'
 require 'fileutils'
@@ -85,12 +85,14 @@ def parse_args
   ARGV << '-?' if ARGV.empty?
   opt = OptionParser.new
   opt.banner = "Usage: #{$PROGRAM_NAME} [options] --current-file-server <servername> --target-file-server <servername>"
+  opt.separator ''
+  opt.separator 'Options:'
 
-  opt.on('--current-file-server=<SERVERNAME>', String, 'Source storage node server') do |server|
+  opt.on_head('--current-file-server=<SERVERNAME>', String, 'Source storage node server') do |server|
     Options[:current_file_server] = server
   end
 
-  opt.on('--target-file-server=<SERVERNAME>', String, 'Destination storage node server') do |server|
+  opt.on_head('--target-file-server=<SERVERNAME>', String, 'Destination storage node server') do |server|
     Options[:target_file_server] = server
   end
 
@@ -202,6 +204,16 @@ class Rebalancer
     end
   end
 
+  def get_storage_node_hostname(storage_node_name)
+    hostname = nil
+    url = NodeConfiguration.fetch(storage_node_name, {}).fetch('gitaly_address', nil)
+    if url
+      uri = URI.parse(url)
+      hostname = uri.host
+    end
+    hostname
+  end
+
   def get_commit_id(project_id)
     endpoints = Options[:api_endpoints]
     environment = Options[:env]
@@ -289,13 +301,11 @@ class Rebalancer
     commit_id = get_commit_id(project.id)
     raise NoCommits.new("Could not obtain any commits for project id #{project.id}") if commit_id.nil?
 
-    url = NodeConfiguration[project.repository_storage]['gitaly_address']
-    uri = URI.parse(url)
-    source_storage_node = uri.host
     log_artifact = {
       id: project.id,
       path: project.disk_path,
-      source: source_storage_node,
+      source: get_storage_node_hostname(project.repository_storage),
+      destination: get_storage_node_hostname(Options[:target_file_server]),
     }
 
     if Options[:dry_run]
