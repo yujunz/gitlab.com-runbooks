@@ -120,7 +120,7 @@ def parse_args
 
   opt.on('-m', '--move-amount=<N>', Integer, "Gigabytes of repo data to move; default: #{Options[:move_amount]}, or largest single repo if 0") do |move_amount|
     abort 'Size too large' if move_amount > 16_000
-    Options[:move_amount] = move_amount
+    Options[:move_amount] = (move_amount * 1024 * 1024 * 1024)  # Convert given gigabytes to bytes
   end
 
   opt.on('-w', '--wait=<N>', Integer, "Timeout in seconds for migration completion; default: #{Options[:timeout]}") do |wait|
