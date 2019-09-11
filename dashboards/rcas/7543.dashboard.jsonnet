@@ -72,51 +72,53 @@ Kernel logs show stress from memory pressure in the hours leading up the failove
       node_memory_MemTotal_bytes{fqdn="patroni-01-db-gprd.c.gitlab-production.internal"}
     ',
     legendFormat='{{ fqdn }}',
-  )
+  ),
 
-], cols=2,rowHeight=10, startRow=1))
+], cols=2, rowHeight=10, startRow=1))
 + {
   annotations: {
-    list+: [{
-      "datasource": "Pagerduty",
-      "enable": true,
-      "hide": false,
-      "iconColor": "#F2495C",
-      "limit": 100,
-      "name": "GitLab Production Pagerduty",
-      "serviceId": "PATDFCE",
-      "showIn": 0,
-      "tags": [],
-      "type": "tags",
-      "urgency": "high"
+    list+: [
+{
+      datasource: "Pagerduty",
+      enable: true,
+      hide: false,
+      iconColor: "#F2495C",
+      limit: 100,
+      name: "GitLab Production Pagerduty",
+      serviceId: "PATDFCE",
+      showIn: 0,
+      tags: [],
+      type: "tags",
+      urgency: "high",
     },
     {
-      "datasource": "Pagerduty",
-      "enable": true,
-      "hide": false,
-      "iconColor": "#C4162A",
-      "limit": 100,
-      "name": "GitLab Production SLO",
-      "serviceId": "P7Q44DU",
-      "showIn": 0,
-      "tags": [],
-      "type": "tags",
-      "urgency": "high"
+      datasource: "Pagerduty",
+      enable: true,
+      hide: false,
+      iconColor: "#C4162A",
+      limit: 100,
+      name: "GitLab Production SLO",
+      serviceId: "P7Q44DU",
+      showIn: 0,
+      tags: [],
+      type: "tags",
+      urgency: "high",
     },
     {
-      "datasource": "Simple Annotations",
-      "enable": true,
-      "hide": false,
-      "iconColor": "#5794F2",
-      "limit": 100,
-      "name": "Key Events",
+      datasource: "Simple Annotations",
+      enable: true,
+      hide: false,
+      iconColor: "#5794F2",
+      limit: 100,
+      name: "Key Events",
       // To be completed...
-      "queries": [
+      queries: [
         { date: "2019-08-14T08:25:00Z", text: "The patroni postgres cluster manager on the primary database instance (pg01) reports 'ERROR: get_cluster'" },
       ],
-      "showIn": 0,
-      "tags": [],
-      "type": "tags"
-    }]
+      showIn: 0,
+      tags: [],
+      type: "tags",
+    },
+],
   },
 }

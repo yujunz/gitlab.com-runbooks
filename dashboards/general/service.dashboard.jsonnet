@@ -1,14 +1,14 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local templates = import 'templates.libsonnet';
+local capacityPlanning = import 'capacity_planning.libsonnet';
 local colors = import 'colors.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
-local nodeMetrics = import 'node_metrics.libsonnet';
+local commonAnnotations = import 'common_annotations.libsonnet';
+local grafana = import 'grafonnet/grafana.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
 local layout = import 'layout.libsonnet';
-local capacityPlanning = import 'capacity_planning.libsonnet';
+local nodeMetrics = import 'node_metrics.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
+local promQuery = import 'prom_query.libsonnet';
+local seriesOverrides = import 'series_overrides.libsonnet';
+local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -54,42 +54,46 @@ local generalGraphPanel(
 local activeAlertsPanel() = grafana.tablePanel.new(
     'Active Alerts',
     datasource="$PROMETHEUS_DS",
-    styles=[{
-      "type": "hidden",
-      "pattern": "Time",
-      "alias": "Time",
-    }, {
-      "unit": "short",
-      "type": "string",
-      "alias": "Alert",
-      "decimals": 2,
-      "pattern": "alertname",
-      "mappingType": 2,
-      "link": true,
-      "linkUrl": "https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%2C%20type%3D%22${type}%22%7D",
-      "linkTooltip": "Open alertmanager",
-    }, {
-      "unit": "short",
-      "type": "number",
-      "alias": "Score",
-      "decimals": 0,
-      "colors": [
+    styles=[
+{
+      type: "hidden",
+      pattern: "Time",
+      alias: "Time",
+    },
+{
+      unit: "short",
+      type: "string",
+      alias: "Alert",
+      decimals: 2,
+      pattern: "alertname",
+      mappingType: 2,
+      link: true,
+      linkUrl: "https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%2C%20type%3D%22${type}%22%7D",
+      linkTooltip: "Open alertmanager",
+    },
+{
+      unit: "short",
+      type: "number",
+      alias: "Score",
+      decimals: 0,
+      colors: [
         colors.warningColor,
         colors.errorColor,
-        colors.criticalColor
+        colors.criticalColor,
       ],
-      "colorMode": "row",
-      "pattern": "Value",
-      "thresholds": [
+      colorMode: "row",
+      pattern: "Value",
+      thresholds: [
         "2",
-        "3"
+        "3",
       ],
-      "mappingType": 1
-    }
+      mappingType: 1,
+    },
   ],
   )
-  .addTarget( // Alert scoring
-    promQuery.target('
+  .addTarget(  // Alert scoring
+    promQuery.target(
+'
       sort(
         max(
         ALERTS{environment="$environment", type="$type", stage="$stage", severity="critical", alertstate="firing"} * 3
@@ -111,7 +115,8 @@ local latencySLOPanel() = grafana.singlestat.new(
     format='percentunit',
   )
   .addTarget(
-    promQuery.target('
+    promQuery.target(
+'
         avg(avg_over_time(slo_observation_status{slo="error_ratio", environment="$environment", type="$type", stage="$stage"}[7d]))
       ',
       instant=true
@@ -124,7 +129,8 @@ local errorRateSLOPanel() = grafana.singlestat.new(
     format='percentunit',
   )
   .addTarget(
-    promQuery.target('
+    promQuery.target(
+'
         avg_over_time(slo_observation_status{slo="apdex_ratio",  environment="$environment", type="$type", stage="$stage"}[7d])
       ',
       instant=true
@@ -145,7 +151,8 @@ dashboard.new(
 .addTemplate(templates.type)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)
-.addPanel(row.new(title="👩‍⚕️ Service Health", collapse=true)
+.addPanel(
+row.new(title="👩‍⚕️ Service Health", collapse=true)
   .addPanel(latencySLOPanel(),
     gridPos={
       x: 0,
@@ -174,7 +181,8 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanel(row.new(title="🏅 Key Service Metrics"),
+.addPanel(
+row.new(title="🏅 Key Service Metrics"),
   gridPos={
       x: 0,
       y: 1000,
@@ -182,15 +190,17 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanels(layout.grid([
+.addPanels(
+layout.grid([
     keyMetrics.apdexPanel('$type', '$stage'),
     keyMetrics.errorRatesPanel('$type', '$stage'),
     keyMetrics.serviceAvailabilityPanel('$type', '$stage'),
     keyMetrics.qpsPanel('$type', '$stage'),
-    keyMetrics.saturationPanel('$type', '$stage')
+    keyMetrics.saturationPanel('$type', '$stage'),
   ], startRow=1001)
 )
-.addPanel(keyMetrics.keyComponentMetricsRow('$type', '$stage'),
+.addPanel(
+keyMetrics.keyComponentMetricsRow('$type', '$stage'),
   gridPos={
       x: 0,
       y: 2000,
@@ -198,7 +208,8 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanel(nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="$type"'),
+.addPanel(
+nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="$type"'),
   gridPos={
       x: 0,
       y: 3000,
@@ -206,10 +217,8 @@ dashboard.new(
       h: 1,
   }
 )
-.addPanel(capacityPlanning.capacityPlanningRow('$type', '$stage'), gridPos={ x: 0, y: 4000, })
+.addPanel(capacityPlanning.capacityPlanningRow('$type', '$stage'), gridPos={ x: 0, y: 4000 })
 
 + {
   links+: platformLinks.services + platformLinks.triage,
 }
-
-
