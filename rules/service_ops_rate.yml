@@ -100,25 +100,25 @@ groups:
     expr: >
       sum by (environment, tier, type, stage) (rate(grpc_server_started_total{type="gitaly"}[1m]))
 
-  # pages:http - use http semantics
+  # pages - haproxy service in front of GitLab pages
   - record: gitlab_component_ops:rate
     labels:
-      type: 'pages'
-      tier: 'sv'
-      component: 'http'
-      stage: 'main'
+      component: 'haproxy_http'
     expr: >
-      sum by (environment) (rate(haproxy_backend_http_responses_total{backend="pages_http"}[1m]))
+      sum (rate(haproxy_backend_http_responses_total{type="pages"}[1m])) by (environment, type, tier, stage)
 
-  # pages:https - we can't use http semantics as haproxy only handles the encrypted HTTPS sessions
   - record: gitlab_component_ops:rate
     labels:
-      type: 'pages'
-      tier: 'sv'
-      component: 'https'
-      stage: 'main'
+      component: 'haproxy_https'
     expr: >
-      sum by (environment) (rate(haproxy_backend_sessions_total{backend="pages_https"}[1m]))
+      sum(haproxy_backend_current_session_rate{backend="pages_https", type="pages"}) by (environment, type, tier, stage)
+
+  # web-pages
+  - record: gitlab_component_ops:rate
+    labels:
+      component: 'http'
+    expr: >
+      sum(rate(gitlab_pages_http_requests_total{}[1m])) by (environment, tier, type, stage)
 
   # HAProxy
   - record: gitlab_component_ops:rate

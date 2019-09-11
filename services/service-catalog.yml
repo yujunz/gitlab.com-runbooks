@@ -1213,6 +1213,66 @@ services:
       sentry_slug:
 
 - name: pages
+  tier: lb
+  teams:
+    - infrastructure
+  infra_owner: reliability-engineering-cicd--enablement
+  label: Service:Pages
+  business:
+    requirement: |
+      HAProxy load balancer service in front of the web-pages service running GitLab pages
+    customers:
+      - GitLab.com customers
+      - Internally for sites like docs.gitlab.com and design.gitlab.com
+    business_value: |
+      It acts as a load-balancer in front of our pages service
+    SLA:
+      primary_sla_service: false # True if this service's SLA contributed to the headline SLA metric for GitLab.com
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+      security:
+    dependencies:
+    configurations:
+    chef_roles:
+      - gstg-base-fe-pages
+      - gprd-base-fe-pages
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification: green
+      security_incidents:
+    logging:
+      - name: Stackdriver Logs
+        permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&advancedFilter=resource.type%3D%22gce_instance%22%0Alabels.tag%3D%22haproxy%22%0Alabels.%22compute.googleapis.com%2Fresource_name%22:%22fe-pages%22
+
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
+  observability:
+      grafana_folder:
+      primary_grafana_dashboard:
+
+- name: web-pages
   tier: sv
   teams:
     - release

@@ -16,6 +16,7 @@ local SERVICE_LINKS = {
   'registry':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=registry',
   'sidekiq':'https://dashboards.gitlab.net/d/sidekiq-main/sidekiq-overview?orgId=1',
   'web':'https://dashboards.gitlab.net/d/web-main/web-overview?orgId=1',
+  'web-pages':'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=web-pages',
 };
 
 {
@@ -28,7 +29,7 @@ local SERVICE_LINKS = {
     link.dashboards('frontend service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['frontend']),
     link.dashboards('git service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['git']),
     link.dashboards('gitaly service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['gitaly']),
-    link.dashboards('pages service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['pages']),
+    link.dashboards('pages (haproxy) service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['pages']),
     link.dashboards('patroni service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['patroni']),
     link.dashboards('pgbouncer service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url=SERVICE_LINKS['pgbouncer']),
     link.dashboards('redis service', '', icon='dashboard', type='link', keepTime=true, includeVars=true, url=SERVICE_LINKS['redis']),
@@ -37,6 +38,7 @@ local SERVICE_LINKS = {
     link.dashboards('registry service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['registry']),
     link.dashboards('sidekiq service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['sidekiq']),
     link.dashboards('web service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['web']),
+    link.dashboards('web-pages (pages) service', '', icon='dashboard', type='link', keepTime=true, url=SERVICE_LINKS['web-pages']),
   ],
   parameterizedServiceLink: [
     link.dashboards('$type service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=$type'),
