@@ -258,57 +258,7 @@ errorRatesPanel(serviceType, serviceStage)::
       show=false,
     ),
 
-  serviceAvailabilityPanel(serviceType, serviceStage)::
-    generalGraphPanel(
-      "Service Availability",
-      description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.",
-      sort=0,
-    )
-    .addTarget( // Primary metric
-      promQuery.target('
-        min(
-          min_over_time(
-            gitlab_service_availability:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-          )
-        ) by (tier, type)
-        ',
-        legendFormat='{{ type }} service',
-      )
-    )
-    .addTarget( // Legacy metric
-      promQuery.target('
-        min(
-          min_over_time(
-            gitlab_service_availability:ratio{environment="$environment", type="'+ serviceType + '", stage=""}[$__interval]
-          )
-        ) by (tier, type)
-        ',
-        legendFormat='{{ type }} service (legacy)',
-      )
-    )
-    .addTarget( // Last week
-      promQuery.target('
-        min(
-          min_over_time(
-            gitlab_service_availability:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval] offset 1w
-          )
-        ) by (tier, type)
-        ',
-        legendFormat='last week',
-      )
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      max=1,
-      label="Availability %",
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
-    ),
+  serviceAvailabilityPanel(serviceType, serviceStage):: self.componentAvailabilityPanel(serviceType, serviceStage),
 
   componentAvailabilityPanel(serviceType, serviceStage)::
     generalGraphPanel(
@@ -466,54 +416,7 @@ errorRatesPanel(serviceType, serviceStage)::
       show=false,
     ),
 
-  saturationPanel(serviceType, serviceStage)::
-    generalGraphPanel(
-      "Saturation",
-      description="Saturation is a measure of the most saturated component of the service. Lower is better.",
-      sort=0,
-    )
-    .addTarget( // Primary metric
-      promQuery.target('
-        max(
-          max_over_time(
-            gitlab_service_saturation:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-          )
-        ) by (type)
-        ',
-        legendFormat='{{ type }} service',
-      )
-    )
-    .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
-      promQuery.target('
-          avg(slo:max:gitlab_service_saturation:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}) or avg(slo:max:gitlab_service_saturation:ratio{type="'+ serviceType + '"})
-        ',
-        interval="5m",
-        legendFormat='SLO',
-      ),
-    )
-    .addTarget( // Last week
-      promQuery.target('
-          max(
-            max_over_time(
-              gitlab_service_saturation:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval] offset 1w
-            )
-          ) by (type)
-        ',
-        legendFormat='last week',
-      )
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      max=1,
-      label="Saturation %",
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
-    ),
+  saturationPanel(serviceType, serviceStage):: self.componentSaturationPanel(serviceType, serviceStage),
 
   componentSaturationPanel(serviceType, serviceStage)::
     generalGraphPanel(
