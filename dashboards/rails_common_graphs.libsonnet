@@ -94,6 +94,25 @@ local basic = import 'basic.libsonnet';
       intervalFactor=10, // High interval as we don't have a recording rule yet
       legend_show=true,
     ),
+    basic.queueLengthTimeseries(
+      title='Database load balancer: average secondary connections per client',
+      description='This graph shows the average number of secondary database connections
+        per process. A value of zero indicates that the secondary replicas are unreachable.',
+      yAxisLabel='Average connections',
+      query='
+        avg(
+          avg_over_time(
+            db_load_balancing_hosts{
+              environment="$environment",
+              type="' + serviceType + '",
+              stage="' + serviceStage + '"}[$__interval]
+          )
+        ) by (job)
+      ',
+      legendFormat='{{ job }}',
+      interval='1m',
+      intervalFactor=2,
+    ),
   ], cols=2,rowHeight=10, startRow=startRow),
 
 }
