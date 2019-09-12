@@ -51,7 +51,7 @@ dashboard.new(
   'Rebalance Dashboard',
   schemaVersion=16,
   tags=['gitaly'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
 )
 .addTemplate(templates.ds)

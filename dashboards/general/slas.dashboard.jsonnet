@@ -72,7 +72,7 @@ dashboard.new(
   'SLAs',
   schemaVersion=16,
   tags=['overview'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
   time_from='now-30d',
   time_to='now',

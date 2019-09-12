@@ -125,7 +125,7 @@ dashboard.new(
   'Camoproxy',
   schemaVersion=16,
   tags=['general'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
 )
 .addAnnotation(commonAnnotations.deploymentsForEnvironment)

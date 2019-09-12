@@ -22,7 +22,7 @@ dashboard.new(
   'Overview',
   schemaVersion=16,
   tags=['patroni'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
 )
 .addAnnotation(commonAnnotations.deploymentsForEnvironment)

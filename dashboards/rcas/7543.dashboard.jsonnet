@@ -24,7 +24,7 @@ dashboard.new(
   '2019-08-14 long degradation after postgres failover',
   schemaVersion=16,
   tags=['rca'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
   time_from='2019-08-14 06:00:00',
   time_to='2019-08-14 22:00:00',

@@ -31,7 +31,7 @@ dashboard.new(
   'Worker Apdex Violation Alert',
   schemaVersion=16,
   tags=['alert-target', 'sidekiq'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
 )
 .addAnnotation(commonAnnotations.deploymentsForEnvironment)

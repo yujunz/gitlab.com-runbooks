@@ -13,7 +13,7 @@ dashboard.new(
   'Overview',
   schemaVersion=16,
   tags=['overview'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair'
 )
 .addTemplate(templates.ds)
