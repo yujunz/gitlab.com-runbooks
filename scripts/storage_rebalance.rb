@@ -50,9 +50,9 @@ class Object
 end
 
 begin
-require '/opt/gitlab/embedded/service/gitlab-rails/config/environment.rb'
+  require '/opt/gitlab/embedded/service/gitlab-rails/config/environment.rb'
 rescue LoadError => e
-log.warn e.message
+  log.warn e.message
 end
 
 module Storage
