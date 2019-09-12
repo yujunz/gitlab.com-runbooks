@@ -160,7 +160,7 @@ grafana.dashboard.new(
   'Filesystems',
   schemaVersion=16,
   tags=[],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
   refresh='30s',
 )

@@ -78,7 +78,7 @@ dashboard.new(
   'Saturation Component Alert',
   schemaVersion=16,
   tags=['alert-target'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
 )
 .addAnnotation(commonAnnotations.deploymentsForEnvironment)

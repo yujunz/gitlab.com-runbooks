@@ -24,7 +24,7 @@ dashboard.new(
   'Gitaly n+1 calls causing bad latency and sidekiq queues to grow',
   schemaVersion=16,
   tags=['rca'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
   time_from='2019-08-07 22:00:00',
   time_to='2019-08-08 18:00:00',

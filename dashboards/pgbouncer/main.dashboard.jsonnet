@@ -22,7 +22,7 @@ dashboard.new(
   'Overview',
   schemaVersion=16,
   tags=['pgbouncer'],
-  timezone='UTC',
+  timezone='utc',
   graphTooltip='shared_crosshair',
 )
 .addAnnotation(commonAnnotations.deploymentsForEnvironment)
