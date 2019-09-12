@@ -25,6 +25,7 @@
 #
 #    export logd=/var/log/gitlab/storage_migrations; for f in `ls -t ${logd}`; do ls -la ${logd}/$f && cat ${logd}/$f; done
 #
+
 require 'date'
 require 'fileutils'
 require 'json'
@@ -32,8 +33,6 @@ require 'io/console'
 require 'logger'
 require 'optparse'
 require 'uri'
-
-require '/opt/gitlab/embedded/service/gitlab-rails/config/environment.rb'
 
 def initialize_log
   STDOUT.sync = true
@@ -50,10 +49,18 @@ class Object
   end
 end
 
+begin
+  require '/opt/gitlab/embedded/service/gitlab-rails/config/environment.rb'
+rescue LoadError => e
+  log.warn e.message
+end
+
 module Storage
 
-NodeConfiguration = ::Gitlab.config.repositories.storages
 ISO8601_FRACTIONAL_SECONDS_LENGTH = 3
+
+NodeConfiguration = {}
+NodeConfiguration.merge! ::Gitlab.config.repositories.storages if defined? ::Gitlab
 
 class NoCommits < StandardError; end
 
@@ -153,8 +160,8 @@ def parse_args
     puts opt
     exit
   end
-  args = opt.order!(ARGV) {}
   begin
+    args = opt.order!(ARGV) {}
     opt.parse!(args)
   rescue OptionParser::InvalidOption => e
     puts opt
