@@ -258,18 +258,23 @@ class Rebalancer
 
   def validate(project)
     start = Time.now.to_i
+    i = 0
     timeout = Options[:timeout]
     while project.repository_read_only?
       sleep 1
       project.reload
       print '.'
+      i += 1
+      print "\n" if i % 80 == 0
       elapsed = Time.now.to_i - start
       if elapsed >= timeout
+        print "\n"
         log.warn ""
         log.warn "Timed out up waiting for project id: #{project.id} to move: #{elapsed} seconds"
         break
       end
     end
+    print "\n"
     if project.repository_storage == Options[:target_file_server]
       log.info "Success moving project id:#{project.id}"
     else
