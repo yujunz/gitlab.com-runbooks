@@ -94,6 +94,26 @@ local basic = import 'basic.libsonnet';
       intervalFactor=10, // High interval as we don't have a recording rule yet
       legend_show=true,
     ),
+    basic.timeseries(
+      title='gitlab-rails Process restarts',
+      description='The number of times this process restarted in a given period, including children workers. Restarts are associated with poor client experience, so lower is better.',
+      yAxisLabel='Process restarts',
+      query='
+        sum(
+          changes(
+            ruby_process_start_time_seconds{
+              environment="$environment",
+              type="' + serviceType + '",
+              stage="' + serviceStage + '",
+              job="gitlab-rails"
+            }[$__interval]
+          )
+        )
+      ',
+      legendFormat='process restarts',
+      interval='1m',
+      intervalFactor=2,
+    ),
     basic.queueLengthTimeseries(
       title='Database load balancer: average secondary connections per client',
       description='This graph shows the average number of secondary database connections
