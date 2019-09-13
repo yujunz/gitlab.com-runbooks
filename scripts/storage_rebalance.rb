@@ -113,7 +113,7 @@ def parse_args
 
   opt.on('--skip=<project_id,...>', Array, 'Skip specific project(s)') do |project_identifiers|
     Options[:black_list] ||= []
-    if project_identifiers.respond_to? :all? and project_identifiers.all? { |s| resembles_integer? s }
+    if project_identifiers.respond_to?(:all?) && project_identifiers.all? { |s| resembles_integer? s }
       Options[:black_list].concat project_identifiers.map(&:to_i).delete_if { |i| i <= 0 }
     else
       raise OptionParser::InvalidArgument.new("Argument given for --skip must be a list of one or more integers")
@@ -225,7 +225,7 @@ class Rebalancer
     endpoints = Options[:api_endpoints]
     environment = Options[:env]
     url = endpoints.include?(environment) ? endpoints[environment] : endpoints[:production]
-    abort "No api endpoint url is configured" if url.nil? or url.empty?
+    abort "No api endpoint url is configured" if url.nil? || url.empty?
     url = url % {project_id: project_id}
     uri = URI(url)
 
@@ -253,7 +253,7 @@ class Rebalancer
     end
 
     commit_id = nil
-    if response.code.to_i == 200 and not payload.empty?
+    if response.code.to_i == 200 && not payload.empty?
       first_commit = payload.first
       commit_id = first_commit['id']
     elsif payload.include? 'message'
@@ -350,7 +350,7 @@ class Rebalancer
     current_file_server = Options[:current_file_server]
     group = Options[:group]
     namespace_id = nil
-    if group and not group.empty?
+    if group && not group.empty?
       namespace_id = Namespace.find_by(path: group) rescue nil
       log.error "Group name '#{group}' not found" if namespace_id.nil?
       abort
@@ -378,7 +378,7 @@ class Rebalancer
     current_file_server = Options[:current_file_server]
     group = Options[:group]
     namespace_id = nil
-    if group and not group.empty?
+    if group && not group.empty?
       Group.find_by_full_path('gitlab-org')
       namespace_id = Namespace.find_by(path: group) rescue nil
       if namespace_id.nil?
@@ -560,11 +560,11 @@ def main
     end
     exit
   end
-  if source_storage_node and args[:count]
+  if source_storage_node && args[:count]
     log.info "Movable projects stored on #{source_storage_node}: #{Rebalancer.count}"
     exit
   end
-  if source_storage_node.nil? or destination_storage_node.nil?
+  if source_storage_node.nil? || destination_storage_node.nil?
     abort "Missing arguments. Use #{$PROGRAM_NAME} --help to see the list of arguments available"
   end
   if NodeConfiguration[source_storage_node]['gitaly_address'] == NodeConfiguration[destination_storage_node]['gitaly_address']
@@ -572,7 +572,7 @@ def main
   end
 
   private_token = ENV.fetch('PRIVATE_TOKEN', nil)
-  if private_token.nil? or private_token.empty?
+  if private_token.nil? || private_token.empty?
     log.warn "No PRIVATE_TOKEN variable set in environment"
     private_token = password_prompt
     abort "Cannot proceed without a private API token." if private_token.empty?
