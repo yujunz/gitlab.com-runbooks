@@ -55,7 +55,10 @@ local conditionScript = "
 
 local transformScript = "
   [
-    'items': ctx.payload.aggregations.controller.buckets.findAll(controllerBucket -> findController(controllerBucket, params))
+    'items': ctx.payload.aggregations.controller.buckets.findAll(controllerBucket -> findController(controllerBucket, params)).collect(controllerBucket -> [
+      'key': controllerBucket.key,
+      'max_gitaly_calls': Math.round(controllerBucket.max_gitaly_calls.value)
+    ])
   ]
 ";
 
@@ -105,7 +108,7 @@ Click through to find events...",
               attachment_template: {
                 title: "{{key}}",
                 title_link: searchLinkTemplate(keyField),
-                text: "Maximum Gitaly calls in a single request: {{ max_gitaly_calls.value }}."
+                text: "Maximum Gitaly calls in a single request: {{ max_gitaly_calls }}."
               }
             }
           }
