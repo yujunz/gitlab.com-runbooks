@@ -253,7 +253,7 @@ class Rebalancer
     end
 
     commit_id = nil
-    if response.code.to_i == 200 && not payload.empty?
+    if response.code.to_i == 200 && !payload.empty?
       first_commit = payload.first
       commit_id = first_commit['id']
     elsif payload.include? 'message'
@@ -350,7 +350,7 @@ class Rebalancer
     current_file_server = Options[:current_file_server]
     group = Options[:group]
     namespace_id = nil
-    if group && not group.empty?
+    if group && !group.empty?
       namespace_id = Namespace.find_by(path: group) rescue nil
       log.error "Group name '#{group}' not found" if namespace_id.nil?
       abort
@@ -378,7 +378,7 @@ class Rebalancer
     current_file_server = Options[:current_file_server]
     group = Options[:group]
     namespace_id = nil
-    if group && not group.empty?
+    if group && !group.empty?
       Group.find_by_full_path('gitlab-org')
       namespace_id = Namespace.find_by(path: group) rescue nil
       if namespace_id.nil?
