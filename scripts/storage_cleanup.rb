@@ -134,17 +134,17 @@ class Cleaner
     `ssh #{storage_node} '#{command}'`.strip
   end
 
-  def available_disk_space(hostname)
-    remote_command = "df -P /dev/sdb | awk \"NR==2 {print \\$4}\""
+  def total_disk_space(hostname)
+    remote_command = "df -P /dev/sdb | awk \"NR==2 {print \\$2}\""
     command = "ssh #{hostname} '#{remote_command}'"
     log.debug "Command: #{command}"
-    available_disk_space_1024_blocks = 0
+    total_disk_space_1024_blocks = 0
     begin
-      available_disk_space_1024_blocks = `#{command}`.strip.to_i
-    rescue
-      log.error "Failed to get used disk space from #{hostname}"
+      total_disk_space_1024_blocks = `#{command}`.strip.to_i
+    rescue StandardError => e
+      log.error "Failed to get total disk space from #{hostname}: #{e.message}"
     end
-    available_disk_space_1024_blocks * 1024
+    total_disk_space_1024_blocks * 1024
   end
 
   def used_disk_space(hostname)
@@ -154,8 +154,8 @@ class Cleaner
     used_disk_space_1024_blocks = 0
     begin
       used_disk_space_1024_blocks = `#{command}`.strip.to_i
-    rescue
-      log.error "Failed to get used disk space from #{hostname}"
+    rescue StandardError => e
+      log.error "Failed to get used disk space from #{hostname}: #{e.message}"
     end
     used_disk_space_1024_blocks * 1024
   end
@@ -221,7 +221,7 @@ class Cleaner
     end
     for source, paths in migrated_projects_remaining_on_source_disk
       used_pre_cleanup = used_disk_space(source)
-      available_disk_space = available_disk_space(source)
+      total_disk_space = total_disk_space(source)
 
       remote_command = "sudo find /var/opt/gitlab/git-data/repositories/@hashed -type d -mindepth 2 -maxdepth 3 \\( "
       project_directory_names = paths.collect { |path| "\"#{File.basename(path)}*\"" }
@@ -255,15 +255,15 @@ class Cleaner
       log.info "Initial used disk space: #{human_friendly_filesize(used_pre_cleanup)}"
       if Options[:dry_run]
         if estimated_reclaimed_total > 0
-          percentage = ((estimated_reclaimed_total / available_disk_space.to_f) * 100).round(2)
-          log.info "Estimated reclaimed disk space: #{human_friendly_filesize(estimated_reclaimed_total)} (#{percentage}% of available)"
+          percentage = ((estimated_reclaimed_total / total_disk_space.to_f) * 100).round(2)
+          log.info "Estimated reclaimed disk space: #{human_friendly_filesize(estimated_reclaimed_total)} (#{percentage}% of total)"
         else
           log.info "Estimated reclaimed disk space: 0 bytes"
         end
       else
         reclaimed = [used_pre_cleanup - used_disk_space(source), 0].max
-        percentage = ((reclaimed / available_disk_space.to_f) * 100).round(2)
-        log.info "Reclaimed disk space: #{human_friendly_filesize(reclaimed)} (#{percentage}% of available)"
+        percentage = ((reclaimed / total_disk_space.to_f) * 100).round(2)
+        log.info "Reclaimed disk space: #{human_friendly_filesize(reclaimed)} (#{percentage}% of total)"
       end
     end
   end
