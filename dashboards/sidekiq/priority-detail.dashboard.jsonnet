@@ -20,7 +20,7 @@ local annotation = grafana.annotation;
 local sidekiq = import 'sidekiq.libsonnet';
 
 dashboard.new(
-  'Overview',
+  'Priority Detail',
   schemaVersion=16,
   tags=['type:sidekiq', 'detail'],
   timezone='utc',
