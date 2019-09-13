@@ -17,11 +17,12 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
+local sidekiq = import 'sidekiq.libsonnet';
 
 dashboard.new(
   'Overview',
   schemaVersion=16,
-  tags=['overview'],
+  tags=['type:sidekiq', 'overview'],
   timezone='utc',
   graphTooltip='shared_crosshair',
 )
@@ -137,7 +138,7 @@ row.new(title="Sidekiq Execution"),
       title="Sidekiq Throughput per Priority",
       description="The total number of jobs being completed per priority",
       query='
-        sum(worker:sidekiq_jobs_completion:rate1m) by (priority)
+        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (priority)
       ',
       legendFormat='{{ priority }}',
       interval="1m",
@@ -150,7 +151,7 @@ row.new(title="Sidekiq Execution"),
       title="Sidekiq Throughput per Job",
       description="The total number of jobs being completed per priority",
       query='
-        sum(worker:sidekiq_jobs_completion:rate1m) by (worker)
+        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (worker)
       ',
       legendFormat='{{ worker }}',
       interval="1m",
@@ -226,54 +227,7 @@ row.new(title="Priority Workloads"),
       h: 1,
   }
 )
-.addPanels(
-  layout.grid([
-    basic.saturationTimeseries(
-      "Node Average CPU Utilization per Priority",
-      description="The maximum utilization of a single core on each node. Lower is better",
-      query='
-        avg(1 - rate(node_cpu_seconds_total{type="sidekiq", environment="$environment", stage="$stage", mode="idle"}[$__interval])) by (priority)
-      ',
-      legendFormat='{{ priority }}',
-      legend_show=true,
-      linewidth=2
-    ),
-    basic.saturationTimeseries(
-      "Node Maximum Single Core Utilization per Priority",
-      description="The maximum utilization of a single core on each node. Lower is better",
-      query='
-        max(1 - rate(node_cpu_seconds_total{type="sidekiq", environment="$environment", stage="$stage", mode="idle"}[$__interval])) by (priority)
-      ',
-      legendFormat='{{ priority }}',
-      legend_show=true,
-      linewidth=2
-    ),
-    basic.saturationTimeseries(
-      title="Maximum Memory Utilization per Priority",
-      description="Memory utilization. Lower is better.",
-      query='
-        max(
-          1 -
-          (
-            (
-              node_memory_MemFree_bytes{type="sidekiq", environment="$environment", stage="$stage"} +
-              node_memory_Buffers_bytes{type="sidekiq", environment="$environment", stage="$stage"} +
-              node_memory_Cached_bytes{type="sidekiq", environment="$environment", stage="$stage"}
-            )
-          )
-          /
-          node_memory_MemTotal_bytes{type="sidekiq", environment="$environment", stage="$stage"}
-        ) by (priority)
-      ',
-      legendFormat='{{ priority }}',
-      interval="1m",
-      intervalFactor=1,
-      legend_show=true,
-      linewidth=2
-      ),
-
-  ], cols=2, rowHeight=10, startRow=2001)
-)
+.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=2001))
 .addPanel(
   row.new(title="Rails Metrics", collapse=true)
     .addPanels(railsCommon.railsPanels(serviceType="sidekiq", serviceStage="$stage", startRow=1))
@@ -290,5 +244,8 @@ row.new(title="Priority Workloads"),
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
 .addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 7000 })
 + {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('sidekiq') + platformLinks.services,
+  links+: platformLinks.triage +
+    serviceCatalog.getServiceLinks('sidekiq') +
+    platformLinks.services +
+    [platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq')],
 }

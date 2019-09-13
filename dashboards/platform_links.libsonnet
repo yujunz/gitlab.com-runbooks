@@ -46,4 +46,13 @@ local SERVICE_LINKS = {
   serviceLink(type):: [
     link.dashboards(type + ' service', '', type='link', keepTime=true, url=SERVICE_LINKS[type]),
   ],
+  dynamicLinks(title, tags, asDropdown=true, icon='dashboard')::
+    link.dashboards(
+        title,
+        tags,
+        asDropdown=asDropdown,
+        includeVars=true,
+        keepTime=true,
+        icon=icon,
+      )
 }
