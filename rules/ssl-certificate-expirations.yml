@@ -2,12 +2,22 @@ groups:
 - name: ssl-certificate-expiration.rules
   rules:
   - alert: SSLCertExpiresSoon
-    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 7 * 60 * 60
-      * 24
+    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 1 * 86400
     for: 30m
     labels:
       severity: s1
       pager: pagerduty
+    annotations:
+      description: Check SSL for specified nodes and consider reissuing certificate.
+      runbook: troubleshooting/ssl_cert.md
+      title: SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration
+        }}
+  - alert: SSLCertExpiresSoon
+    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 7 * 86400
+    for: 30m
+    labels:
+      severity: s2
+      pager: issue
     annotations:
       description: Check SSL for specified nodes and consider reissuing certificate.
       runbook: troubleshooting/ssl_cert.md

@@ -20,6 +20,17 @@ groups:
       grafana_dashboard_id: "000000231/chef-client"
       runbook: troubleshooting/chef.md
       title: Chef client hasn't run for longer than expected
+  - alert: ChefClientStale
+    expr: time() - chef_client_last_run_timestamp_seconds > 3 * 86400
+    for: 1h
+    labels:
+      severity: s2
+      pager: issue
+    annotations:
+      description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration }} ago
+      grafana_dashboard_id: "000000231/chef-client"
+      runbook: troubleshooting/chef.md
+      title: Chef client hasn't run for longer than expected
   - alert: ChefClientErrorCritical
     expr: avg(chef_client_error) by (type) * 100 > 10
     for: 1h
