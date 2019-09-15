@@ -38,6 +38,9 @@ dashboard.new(
   current="besteffort",
   refresh='load',
   sort=1,
+  multi=true,
+  includeAll=true,
+  allValues='.*',
 ))
 .addPanel(
 row.new(title="Sidekiq Execution"),
@@ -54,7 +57,7 @@ row.new(title="Sidekiq Execution"),
       title="Sidekiq Total Execution Time for Priority",
       description="The sum of job execution times",
       query='
-        sum(rate(sidekiq_jobs_completion_time_seconds_sum{environment="$environment", priority="$priority"}[$__interval])) by (priority)
+        sum(rate(sidekiq_jobs_completion_time_seconds_sum{environment="$environment", priority=~"$priority"}[$__interval])) by (priority)
       ',
       legendFormat='{{ priority }}',
       interval="1m",
@@ -67,7 +70,7 @@ row.new(title="Sidekiq Execution"),
       title="Sidekiq Aggregated Throughput for Priority",
       description="The total number of jobs being completed",
       query='
-        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment", priority="$priority"}) by (priority)
+        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment", priority=~"$priority"}) by (priority)
       ',
       legendFormat='{{ priority }}',
       interval="1m",
@@ -79,7 +82,7 @@ row.new(title="Sidekiq Execution"),
       title="Sidekiq Throughput per Job for Priority",
       description="The total number of jobs being completed per priority",
       query='
-        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment", priority="$priority"}) by (worker)
+        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment", priority=~"$priority"}) by (worker)
       ',
       legendFormat='{{ worker }}',
       interval="1m",
@@ -92,7 +95,7 @@ row.new(title="Sidekiq Execution"),
       title="Sidekiq Estimated Median Job Latency for priority",
       description="The median duration, once a job starts executing, that it runs for, by priority. Lower is better.",
       query='
-        avg(priority:sidekiq_jobs_completion_time_seconds:p50{environment="$environment", priority="$priority"}) by (priority)
+        avg(priority:sidekiq_jobs_completion_time_seconds:p50{environment="$environment", priority=~"$priority"}) by (priority)
       ',
       legendFormat='{{ priority }}',
       format="s",
@@ -108,7 +111,7 @@ row.new(title="Sidekiq Execution"),
       title="Sidekiq Estimated p95 Job Latency for priority",
       description="The 95th percentile duration, once a job starts executing, that it runs for, by priority. Lower is better.",
       query='
-        avg(priority:sidekiq_jobs_completion_time_seconds:p95{environment="$environment", priority="$priority"}) by (priority)
+        avg(priority:sidekiq_jobs_completion_time_seconds:p95{environment="$environment", priority=~"$priority"}) by (priority)
       ',
       legendFormat='{{ priority }}',
       format="s",
@@ -131,7 +134,7 @@ row.new(title="Priority Workloads"),
       h: 1,
   }
 )
-.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage", priority="$priority"', startRow=2001))
+.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"', startRow=2001))
 .addPanel(
   row.new(title="Rails Metrics", collapse=true)
     .addPanels(railsCommon.railsPanels(serviceType="sidekiq", serviceStage="$stage", startRow=1))
@@ -143,7 +146,7 @@ row.new(title="Priority Workloads"),
       h: 1,
   }
 )
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage", priority="$priority"'), gridPos={ x: 0, y: 6000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"'), gridPos={ x: 0, y: 6000 })
 .addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('sidekiq') + platformLinks.services,
