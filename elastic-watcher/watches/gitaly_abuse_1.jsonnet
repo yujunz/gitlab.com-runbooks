@@ -3,8 +3,8 @@ local TRIGGER_SCHEDULE_MINS = 5;  // Run this watcher at this frequency, in minu
 local QUERY_PERIOD_MINS = TRIGGER_SCHEDULE_MINS * 2;
 
 local IGNORE_REPOS = [
-  "gitlab-org/gitlab-ce",
-  "gitlab-org/gitlab-ee",
+  "gitlab-org/gitlab-foss",
+  "gitlab-org/gitlab",
   "gitlab-com/www-gitlab-com",
 ];
 
