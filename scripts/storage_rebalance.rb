@@ -63,6 +63,7 @@ NodeConfiguration = {}
 NodeConfiguration.merge! ::Gitlab.config.repositories.storages if defined? ::Gitlab
 
 class NoCommits < StandardError; end
+class DifferentCommits < StandardError; end
 
 Options = {
   dry_run: true,
@@ -199,6 +200,10 @@ class Rebalancer
     exit
   end
 
+  def migration_errors
+    @errors ||= []
+  end
+
   def largest_denomination(bytes)
     if bytes.to_gb > 0
       "#{bytes.to_gb} GB"
@@ -310,8 +315,8 @@ class Rebalancer
       log.debug "  #{stat.capitalize}: #{project.statistics[stat]}"
     end
 
-    commit_id = get_commit_id(project.id)
-    raise NoCommits.new("Could not obtain any commits for project id #{project.id}") if commit_id.nil?
+    original_commit_id = get_commit_id(project.id)
+    raise NoCommits.new("Could not obtain any commits for project id #{project.id}") if original_commit_id.nil?
 
     log_artifact = {
       id: project.id,
@@ -337,11 +342,12 @@ class Rebalancer
       log.debug "  Path: #{project.disk_path}"
       log.info "Validating project integrity by comparing latest commit " +
         "identifers before and after"
-      if commit_id == get_commit_id(project.id)
+      current_commit_id = get_commit_id(project.id)
+      if original_commit_id == current_commit_id
         log_artifact[:date] = DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
         @migration_log.info log_artifact.to_json
       else
-        log.error "Failed to validate integrity of project id: #{project.id}"
+        raise DifferentCommits.new("Current commit id #{current_commit_id} does not match original commit id #{original_commit_id}")
       end
     end
   end
@@ -420,7 +426,6 @@ class Rebalancer
   end
 
   def move_many_projects(min_amount, project_ids)
-    failures = 0
     total = 0
     for project_id in project_ids
       project = Project.find_by(id: project_id)
@@ -428,15 +433,21 @@ class Rebalancer
         migrate(project)
         total += project.statistics.repository_size
       rescue NoCommits => e
+        migration_errors << { project_id: project_id, message: e.message }
         log.error "Error: #{e}"
         log.warn "Skipping migration"
-        failures += 1
+      rescue DifferentCommits => e
+        migration_errors << { project_id: project_id, message: e.message }
+        log.error "Failed to validate integrity of project id: #{project.id}"
+        log.error "Error: #{e}"
+        log.warn "Skipping migration"
       rescue StandardError => e
+        migration_errors << { project_id: project_id, message: e.message }
         log.error "Unexpected error migrating project id #{project.id}: #{e}"
         e.backtrace.each { |t| log.error t }
-        failures += 1
+        log.warn "Skipping migration"
       end
-      if failures > Options[:max_failures]
+      if migration_errors.length > Options[:max_failures]
         log.error "Failed too many times"
         break
       end
@@ -451,7 +462,6 @@ class Rebalancer
   end
 
   def move_one_project
-    failures = 0
     project_ids = get_project_ids(limit=Options[:max_failures])
     if project_ids.length == 0
       log.info "No movable projects found on #{Options[:current_file_server]}"
@@ -462,15 +472,21 @@ class Rebalancer
         migrate(project)
         break
       rescue NoCommits => e
+        migration_errors << { project_id: project_id, message: e.message }
         log.error "Error: #{e}"
         log.warn "Skipping migration"
-        failures += 1
+      rescue DifferentCommits => e
+        migration_errors << { project_id: project_id, message: e.message }
+        log.error "Failed to validate integrity of project id: #{project.id}"
+        log.error "Error: #{e}"
+        log.warn "Skipping migration"
       rescue StandardError => e
+        migration_errors << { project_id: project_id, message: e.message }
         log.error "Unexpected error migrating project id: #{project.id}: #{e}"
         e.backtrace.each { |t| log.error t }
-        failures += 1
+        log.warn "Skipping migration"
       end
-      if failures >= Options[:max_failures]
+      if migration_errors.length >= Options[:max_failures]
         log.error "Failed too many times"
       end
     end
@@ -484,6 +500,13 @@ class Rebalancer
     else
       log.info "Will move at least #{move_amount_bytes.to_gb} GB worth of data"
       move_many_projects(move_amount_bytes, get_project_ids)
+    end
+    log.info "Finished migrating projects from #{Options[:current_file_server]} to #{Options[:target_file_server]}"
+    if migration_errors.length > 0
+      log.error "Encountered #{migration_errors.length} errors:"
+      log.error JSON.pretty_generate(migration_errors)
+    else
+      log.info "No errors encountered during migration"
     end
   end
 
