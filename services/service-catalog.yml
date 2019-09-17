@@ -2783,3 +2783,65 @@ services:
       primary_grafana_dashboard: "000000159/ci"
     alerts:
       - alert_link: https://alerts.gprd.gitlab.net/#/alerts?silenced=false&inhibited=false&filter=%7Bchannel%3D%22ci-cd%22%7D
+
+- name: stackdriver
+  tier: inf
+  teams:
+    - infrastructure
+  infra_owner: reliability-engineering-dev--ops
+  label: Service:Stackdriver
+  business:
+    requirement: |
+      Stackdriver is the sink for all of our logs across all environments, it's capabale
+      of handling high amount of log entries (e.g. HAProxy logs) that would normally be difficult
+      to be handled in Elasticsearch.
+    customers:
+      - Used internally by GitLab teams
+    business_value: |
+      Allows visibility into the infrastructure, aides in debugging issues and
+      incidents handling.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+      security:
+    dependencies:
+    configurations:
+      - config_name: Log exclustion
+        location: https://gitlab.com/gitlab-com/gl-infra/terraform-modules/google/stackdriver
+    chef_roles:
+    scalability:
+      bound:
+      scalable:
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name:
+        permalink:
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning:
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto%2Flogging.md#stackdriver
+    error_budget:
+  observability:
+    monitors:
+      primary_grafana_dashboard: "USVj3qHmk/logging"
+      sentry_slug:
