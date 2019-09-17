@@ -13,9 +13,7 @@ kubectl -n plantuml get hpa
 
 * `CHART_VERSION` which is set in the [configuration project](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/plantuml/blob/7850985e67984d363b31ed888674325fab84e03b/CHART_VERSION)
 * NGinx version which is a [value in the chart](https://gitlab.com/gitlab-com/gl-infra/charts/plantuml/blob/8d080485f58020a08b75a889f1fb81159fa93195/values.yaml#L18)
-* PlantUML version which is a [value in the chart](https://gitlab.com/gitlab-com/gl-infra/charts/plantuml/blob/8d080485f58020a08b75a889f1fb81159fa93195/values.yaml#L13).
-  This is set to `latest` until a version is tagged upstream, which is a [pending change for plantuml-server](https://github.com/plantuml/plantuml-server/pull/115)
-  PlantUML
+* PlantUML version which is a [value in the chart](https://gitlab.com/gitlab-com/gl-infra/charts/plantuml/blob/8d080485f58020a08b75a889f1fb81159fa93195/values.yaml#L13) and set as an [override in the env files](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/plantuml/blob/a610ec027f02e07312a33add1f333df409ca978e/gprd.yaml#L10). This is set to a `sha256` until https://gitlab.com/gitlab-com/gl-infra/delivery/issues/475 is resolved
 
 To upgrade or downgrade the versions:
 
@@ -43,6 +41,15 @@ service during the rollout for rate limiting
 
 Example for pre-production: https://nonprod-log.gitlab.net/goto/1409380492c985230a87b5af5dafe621
 
+## CDN and Caching
+
+All images are cached aggressively at the L7 LB which provides a CDN. Under some
+circumstances, it may be necessary to send a cache invalidation, this is done
+using the GCP console.
+
+Example for pre-production: https://console.cloud.google.com/net-services/cdn/list?project=gitlab-pre&cdnOriginsTablesize=50
+
+* To reset the cache for all diagrams, send a cache invalidation for `/png/*`
 
 ## Resource Limits
 
