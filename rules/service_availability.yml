@@ -25,7 +25,7 @@ groups:
   # Until https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7833 is merged....
   - record: gitlab_component_availability:ratio
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
       tier: inf
     expr: >
       avg(

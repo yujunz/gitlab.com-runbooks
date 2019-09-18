@@ -390,7 +390,7 @@ groups:
   # metrics: thanos_instant_query
   - record: gitlab_component_apdex:ratio
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
       tier: inf
       stage: main
       component: 'thanos_instant_query'
@@ -406,7 +406,7 @@ groups:
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
       tier: inf
       stage: main
       component: 'thanos_instant_query'
@@ -416,7 +416,7 @@ groups:
   # metrics: thanos_range_query
   - record: gitlab_component_apdex:ratio
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
       tier: inf
       stage: main
       component: 'thanos_range_query'
@@ -432,7 +432,7 @@ groups:
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
       tier: inf
       stage: main
       component: 'thanos_range_query'
@@ -442,7 +442,7 @@ groups:
   # metrics: prometheus http request
   - record: gitlab_component_apdex:ratio
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
       tier: inf
       stage: main
       component: 'prometheus_http'
@@ -458,7 +458,7 @@ groups:
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
+      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
       tier: inf
       stage: main
       component: 'prometheus_http'
