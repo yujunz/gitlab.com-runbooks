@@ -12,8 +12,8 @@ kubectl -n plantuml get hpa
 ## Application Upgrading
 
 * `CHART_VERSION` which is set in the [configuration project](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/plantuml/blob/7850985e67984d363b31ed888674325fab84e03b/CHART_VERSION)
-* NGinx version which is a [value in the chart](https://gitlab.com/gitlab-com/gl-infra/charts/plantuml/blob/8d080485f58020a08b75a889f1fb81159fa93195/values.yaml#L18)
-* PlantUML version which is a [value in the chart](https://gitlab.com/gitlab-com/gl-infra/charts/plantuml/blob/8d080485f58020a08b75a889f1fb81159fa93195/values.yaml#L13) and set as an [override in the env files](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/plantuml/blob/a610ec027f02e07312a33add1f333df409ca978e/gprd.yaml#L10). This is set to a `sha256` until https://gitlab.com/gitlab-com/gl-infra/delivery/issues/475 is resolved
+* NGinx version which is a [value in the chart](https://gitlab.com/gitlab-org/charts/plantuml/blob/8d080485f58020a08b75a889f1fb81159fa93195/values.yaml#L18)
+* PlantUML version which is a [value in the chart](https://gitlab.com/gitlab-org/charts/plantuml/blob/8d080485f58020a08b75a889f1fb81159fa93195/values.yaml#L13) and set as an [override in the env files](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/plantuml/blob/a610ec027f02e07312a33add1f333df409ca978e/gprd.yaml#L10). This is set to a `sha256` until https://gitlab.com/gitlab-com/gl-infra/delivery/issues/475 is resolved
 
 To upgrade or downgrade the versions:
 
