@@ -21,23 +21,6 @@ groups:
         )
       ) without (job)
 
-  # metrics
-  # Until https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7833 is merged....
-  - record: gitlab_component_availability:ratio
-    labels:
-      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
-      tier: inf
-    expr: >
-      avg(
-        label_replace(
-          avg(up{environment!="", type="", fqdn=~"(prometheus|thanos).*"}) by (job, environment, tier, type, stage),
-          "component",
-          "$0",
-          "job",
-          ".*"
-        )
-      ) without (job)
-
 - name: GitLab Service Availability Aggregated Rates
   interval: 1m
   rules:
