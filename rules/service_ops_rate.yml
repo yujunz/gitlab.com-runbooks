@@ -165,6 +165,18 @@ groups:
     expr: >
       sum(rate(prometheus_http_request_duration_seconds_count[1m])) by (environment)
 
+  # Stackdriver
+  - record: gitlab_component_ops:rate
+    labels:
+      type: stackdriver
+      tier: inf
+      stage: main
+      component: 'stackdriver'
+    expr: >
+      sum(
+        stackdriver_gce_instance_logging_googleapis_com_log_entry_count
+      ) by (environment)
+
   # ci-runners
   - record: gitlab_component_ops:rate
     labels:
