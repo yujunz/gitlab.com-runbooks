@@ -8,8 +8,6 @@ groups:
   # Acceptable -> 2.5 seconds
   - record: gitlab_component_apdex:ratio
     labels:
-      type: 'registry'
-      tier: 'sv'
       component: 'registry'
     expr: >
       (
@@ -19,6 +17,12 @@ groups:
       )
       /
       2 / sum(rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])) by (environment, type, tier, stage)
+
+  - record: gitlab_component_apdex:ratio:score
+    labels:
+      component: 'registry'
+    expr: >
+      sum(rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])) by (environment, type, tier, stage)
 
   # haproxy:http traffic - NON-CANARY
   - record: gitlab_component_apdex:ratio

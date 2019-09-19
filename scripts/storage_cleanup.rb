@@ -178,6 +178,15 @@ class Cleaner
 
   def get_log_files(console_node)
     logdir_path = Options[:logdir_path]
+
+    # This script may be executed on a console node, where the migration log 
+    # records are persisted.  In this case, reading the log files directly 
+    # from the file system is simple enough.
+    return logdir_path if File.exists? logdir_path
+
+    # Alternatively, this script could also get executed from the local 
+    # workstation system of an operator.  The migration log files will have 
+    # to get transferred from the console node to the local system.
     local_logdir_path = Options[:local_logdir_path]
     FileUtils.mkdir_p local_logdir_path
 

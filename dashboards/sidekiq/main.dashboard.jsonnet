@@ -12,6 +12,7 @@ local railsCommon = import 'rails_common_graphs.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';
 local templates = import 'templates.libsonnet';
+local unicornCommon = import 'unicorn_common_graphs.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -229,8 +230,8 @@ row.new(title="Priority Workloads"),
 )
 .addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=2001))
 .addPanel(
-  row.new(title="Rails Metrics", collapse=true)
-    .addPanels(railsCommon.railsPanels(serviceType="sidekiq", serviceStage="$stage", startRow=1))
+  row.new(title="Unicorn Metrics", collapse=true)
+    .addPanels(unicornCommon.unicornPanels(serviceType="sidekiq", serviceStage="$stage", startRow=1))
   ,
   gridPos={
       x: 0,
@@ -239,10 +240,21 @@ row.new(title="Priority Workloads"),
       h: 1,
   }
 )
-.addPanel(keyMetrics.keyServiceMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 4000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 5000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
-.addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 7000 })
+.addPanel(
+  row.new(title="Rails Metrics", collapse=true)
+    .addPanels(railsCommon.railsPanels(serviceType="sidekiq", serviceStage="$stage", startRow=1))
+  ,
+  gridPos={
+      x: 0,
+      y: 4000,
+      w: 24,
+      h: 1,
+  }
+)
+.addPanel(keyMetrics.keyServiceMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 5000 })
+.addPanel(keyMetrics.keyComponentMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 6000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 7000 })
+.addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 8000 })
 + {
   links+: platformLinks.triage +
     serviceCatalog.getServiceLinks('sidekiq') +

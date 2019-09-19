@@ -116,6 +116,11 @@ local seriesOverrides = import 'series_overrides.libsonnet';
       legend_show=false,
       linewidth=1
       ),
+
+    // Node-level disk metrics
+    // Reads on the left, writes on the right
+    //
+    // IOPS ---------------
     basic.timeseries(
       title="Disk Read IOPs",
       description="Disk Read IO operations per second. Lower is better.",
@@ -129,22 +134,6 @@ local seriesOverrides = import 'series_overrides.libsonnet';
       interval="1m",
       intervalFactor=1,
       yAxisLabel='Operations/s',
-      legend_show=false,
-      linewidth=1
-      ),
-    basic.timeseries(
-      title="Disk Read Throughput",
-      description="Disk Read throughput datarate. Lower is better.",
-      query='
-        max(
-          rate(node_disk_read_bytes_total{' + nodeSelector + '}[$__interval])
-        ) by (fqdn)
-      ',
-      legendFormat='{{ fqdn }}',
-      format='Bps',
-      interval="1m",
-      intervalFactor=1,
-      yAxisLabel='Bytes/s',
       legend_show=false,
       linewidth=1
       ),
@@ -164,6 +153,23 @@ local seriesOverrides = import 'series_overrides.libsonnet';
       legend_show=false,
       linewidth=1
       ),
+    // Disk Throughput ---------------
+    basic.timeseries(
+      title="Disk Read Throughput",
+      description="Disk Read throughput datarate. Lower is better.",
+      query='
+        max(
+          rate(node_disk_read_bytes_total{' + nodeSelector + '}[$__interval])
+        ) by (fqdn)
+      ',
+      legendFormat='{{ fqdn }}',
+      format='Bps',
+      interval="1m",
+      intervalFactor=1,
+      yAxisLabel='Bytes/s',
+      legend_show=false,
+      linewidth=1
+      ),
     basic.timeseries(
       title="Disk Write Throughput",
       description="Disk Write throughput datarate. Lower is better.",
@@ -177,6 +183,39 @@ local seriesOverrides = import 'series_overrides.libsonnet';
       interval="1m",
       intervalFactor=1,
       yAxisLabel='Bytes/s',
+      legend_show=false,
+      linewidth=1
+      ),
+    // Disk Total Time ---------------
+    basic.timeseries(
+      title="Disk Read Total Time",
+      description="Total time spent in read operations across all disks on the node. Lower is better.",
+      query='
+        sum(
+          rate(node_disk_read_time_seconds_total{' + nodeSelector + '}[$__interval])
+        ) by (fqdn)
+      ',
+      legendFormat='{{ fqdn }}',
+      format='s',
+      interval="30s",
+      intervalFactor=1,
+      yAxisLabel='Total Time/s',
+      legend_show=false,
+      linewidth=1
+      ),
+    basic.timeseries(
+      title="Disk Write Total Time",
+      description="Total time spent in write operations across all disks on the node. Lower is better.",
+      query='
+        sum(
+          rate(node_disk_write_time_seconds_total{' + nodeSelector + '}[$__interval])
+        ) by (fqdn)
+      ',
+      legendFormat='{{ fqdn }}',
+      format='s',
+      interval="30s",
+      intervalFactor=1,
+      yAxisLabel='Total Time/s',
       legend_show=false,
       linewidth=1
       ),
