@@ -162,11 +162,12 @@ groups:
       type: stackdriver
       tier: inf
       stage: main
-      component: 'stackdriver'
     expr: >
       sum(
-        stackdriver_gce_instance_logging_googleapis_com_log_entry_count
-      ) by (environment)
+        label_replace(
+          stackdriver_gce_instance_logging_googleapis_com_log_entry_count, "component", "$1", "log", "(.*)"
+        )
+      ) by (environment, component)
 
   # ci-runners
   - record: gitlab_component_ops:rate
