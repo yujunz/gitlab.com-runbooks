@@ -18,7 +18,7 @@ groups:
       /
       2 / sum(rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])) by (environment, type, tier, stage)
 
-  - record: gitlab_component_apdex:ratio:score
+  - record: gitlab_component_apdex:weight:score
     labels:
       component: 'registry'
     expr: >
