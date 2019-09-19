@@ -10,7 +10,7 @@ groups:
       description: SnitchHeartBeat
       runbook: troubleshooting/prometheus-snitch.md
       title: SnitchHeartBeat
-- name: prometheus-metamon.rules
+- name: Prometheus Metamon
   rules:
   - alert: PrometheusUnreachable
     expr: up{job=~"prometheus.*"} == 0
@@ -252,3 +252,43 @@ groups:
       description: 'Prometheus at {{$labels.instance}} {{$labels.pod}} has {{$value}} WAL Corruptions.'
       runbook: troubleshooting/prometheus-wal-corruption.md
       title: 'Prometheus WAL Corruption'
+
+- name: Thanos Metamon
+  rules:
+  - alert: ThanosCompactHalted
+    expr: thanos_compactor_halted == 1
+    for: 5m
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      title: Thanos compaction halted
+      description: Thanos compact {{ $labels.instance }} has failed to run and is now halted.
+      runbook: troubleshooting/thanos-compact.md
+  - alert: ThanosCompactCompactionsFailed
+    expr: rate(prometheus_tsdb_compactions_failed_total[5m]) > 0
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      title: Thanos compaction is failing
+      description: Thanos compact {{ $labels.instance }} has failed compactions.
+      runbook: troubleshooting/thanos-compact.md
+  - alert: ThanosCompactBucketOperationsFailed
+    expr: rate(thanos_objstore_bucket_operation_failures_total[5m]) > 0
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      title: Thanos compaction has failing storage operations
+      description: Thanos compact {{ $labels.instance }} has failing storage bucket operations.
+      runbook: troubleshooting/thanos-compact.md
+  - alert: ThanosCompactNotRunIn24Hours
+    expr: (time() - thanos_objstore_bucket_last_successful_upload_time) > 86400
+    labels:
+      service: prometheus
+      severity: s4
+    annotations:
+      title: Thanos compaction has not run in 24 hours.
+      description: Thanos compact {{ $labels.instance }} has not uploaded any blocks in 24 hours.
+      runbook: troubleshooting/thanos-compact.md
