@@ -390,35 +390,26 @@ groups:
   # metrics: thanos_instant_query
   - record: gitlab_component_apdex:ratio
     labels:
-      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
-      tier: inf
-      stage: main
       component: 'thanos_instant_query'
     expr: >
       (
-        sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="3.5"}[1m])) by (environment)
+        sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="3.5", type="monitoring"}[1m])) by (environment, tier, type, stage)
         +
-        sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="10"}[1m])) by (environment)
+        sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="10", type="monitoring"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) >= 0
+      sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage) >= 0
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
-      tier: inf
-      stage: main
       component: 'thanos_instant_query'
     expr: >
-      sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
+      sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage)
 
   # metrics: thanos_range_query
   - record: gitlab_component_apdex:ratio
     labels:
-      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
-      tier: inf
-      stage: main
       component: 'thanos_range_query'
     expr: >
       (
@@ -428,42 +419,33 @@ groups:
       )
       / 2
       /
-      sum(rate(thanos_query_api_range_query_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) >= 0
+      sum(rate(thanos_query_api_range_query_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage) >= 0
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
-      tier: inf
-      stage: main
       component: 'thanos_range_query'
     expr: >
-      sum(rate(thanos_query_api_range_query_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
+      sum(rate(thanos_query_api_range_query_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage)
 
   # metrics: prometheus http request
   - record: gitlab_component_apdex:ratio
     labels:
-      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
-      tier: inf
-      stage: main
       component: 'prometheus_http'
     expr: >
       (
-        sum(rate(prometheus_http_request_duration_seconds_bucket{le="1"}[1m])) by (environment)
+        sum(rate(prometheus_http_request_duration_seconds_bucket{le="1", type="monitoring"}[1m])) by (environment, tier, type, stage)
         +
-        sum(rate(prometheus_http_request_duration_seconds_bucket{le="0.4"}[1m])) by (environment)
+        sum(rate(prometheus_http_request_duration_seconds_bucket{le="0.4", type="monitoring"}[1m])) by (environment, tier, type, stage)
       )
       / 2
       /
-      sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) >= 0
+      sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage) >= 0
 
   - record: gitlab_component_apdex:weight:score
     labels:
-      type: monitoring # We treat monitoring as a single service, so Thanos + Prometheus = `monitoring`
-      tier: inf
-      stage: main
       component: 'prometheus_http'
     expr: >
-      sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
+      sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage)
 
   ######################
   # Aggregation Stage
