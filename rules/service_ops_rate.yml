@@ -166,6 +166,20 @@ groups:
     expr: >
       sum by (environment, stage) (rate(gitlab_workhorse_builds_register_handler_requests[1m]))
 
+  # monitoring:thanos
+  - record: gitlab_component_errors:rate
+    labels:
+      component: 'thanos'
+    expr: >
+      sum(rate(http_requests_total{job="thanos"}[1m])) by (environment, tier, type, stage)
+
+  # monitoring:prometheus
+  - record: gitlab_component_errors:rate
+    labels:
+      component: 'prometheus'
+    expr: >
+      sum(rate(prometheus_http_requests_total{job="prometheus"}[1m])) by (environment, tier, type, stage)
+
 - name: GitLab Service Operations-per-Second Aggregated Rates
   interval: 1m
   rules:
