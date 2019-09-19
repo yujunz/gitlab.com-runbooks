@@ -135,35 +135,26 @@ groups:
     expr: >
       sum(rate(haproxy_backend_http_responses_total{backend=~"canary_.*"}[1m])) by (environment, tier)
 
-  # metrics: thanos_instant_query
+  # monitoring: thanos_instant_query
   - record: gitlab_component_ops:rate
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
-      tier: inf
-      stage: main
       component: 'thanos_instant_query'
     expr: >
-      sum(rate(thanos_query_api_instant_query_duration_seconds_count[1m])) by (environment)
+      sum(rate(thanos_query_api_instant_query_duration_seconds_count{type="monitoring"}[1m])) by (environment, tier, type, stage)
 
-  # metrics: thanos_range_query
+  # monitoring: thanos_range_query
   - record: gitlab_component_ops:rate
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
-      tier: inf
-      stage: main
       component: 'thanos_range_query'
     expr: >
-      sum(rate(thanos_query_api_range_query_duration_seconds_count[1m])) by (environment)
+      sum(rate(thanos_query_api_range_query_duration_seconds_count{type="monitoring"}[1m])) by (environment, tier, type, stage)
 
-  # metrics: prometheus http request
+  # monitoring: prometheus http request
   - record: gitlab_component_ops:rate
     labels:
-      type: metrics # We treat metrics as a single service, so Thanos + Prometheus = `metrics`
-      tier: inf
-      stage: main
       component: 'prometheus_http'
     expr: >
-      sum(rate(prometheus_http_request_duration_seconds_count[1m])) by (environment)
+      sum(rate(prometheus_http_request_duration_seconds_count{type="monitoring"}[1m])) by (environment, tier, type, stage)
 
   # Stackdriver
   - record: gitlab_component_ops:rate
@@ -186,6 +177,20 @@ groups:
     # See https://gitlab.com/gitlab-org/gitlab-workhorse/blob/master/internal/builds/register.go for details of each status label
     expr: >
       sum by (environment, stage) (rate(gitlab_workhorse_builds_register_handler_requests[1m]))
+
+  # monitoring:thanos
+  - record: gitlab_component_errors:rate
+    labels:
+      component: 'thanos'
+    expr: >
+      sum(rate(http_requests_total{job="thanos"}[1m])) by (environment, tier, type, stage)
+
+  # monitoring:prometheus
+  - record: gitlab_component_errors:rate
+    labels:
+      component: 'prometheus'
+    expr: >
+      sum(rate(prometheus_http_requests_total{job="prometheus"}[1m])) by (environment, tier, type, stage)
 
 - name: GitLab Service Operations-per-Second Aggregated Rates
   interval: 1m
