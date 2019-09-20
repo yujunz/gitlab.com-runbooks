@@ -17,7 +17,7 @@ groups:
 
   - alert: Detecting5xxForRegistry
     expr: |
-      sum(backend_code:haproxy_server_http_responses_total:rate5m{backend="registry",code="5xx",tier="lb"}) > 0.2
+      sum(backend_code:haproxy_server_http_responses_total:rate5m{backend="registry",code="5xx",tier="lb"}) > 0.25
     for: 5m
     labels:
       pager: pagerduty
