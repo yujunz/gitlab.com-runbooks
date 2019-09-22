@@ -35,7 +35,8 @@ git fsck
 
 # for each found invalid sha1 pointer,
 # if it looks like an important branch (like master), set it to a previous commit.
-# finding previous commit on console: project.events.last.push_event_payload.commit_from
+# finding previous commit on console:
+# project.events.where(action: Event::PUSHED).last.push_event_payload.commit_from
 #
 # Else:
 git update-ref -d <invalid_ref_found_by_git_fsck>
