@@ -98,7 +98,7 @@ groups:
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag is over 2 minutes
   - alert: PostgreSQL_ReplicationLagTooLarge_ArchiveReplica
-    expr: (pg_replication_lag > 3600) and ON(instance) (pg_replication_is_replica{type = "postgres-archive"} == 1)
+    expr: (pg_replication_lag > 10800) and ON(instance) (pg_replication_is_replica{type = "postgres-archive"} == 1)
     for: 5m
     labels:
       pager: pagerduty
@@ -108,7 +108,7 @@ groups:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanizeDuration }}
       runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
-      title: Postgres Replication lag is over 1 hour on archive recovery replica
+      title: Postgres Replication lag is over 3 hours on archive recovery replica
   - alert: PostgreSQL_ReplicationLagTooLarge_DelayedReplica
     expr: (pg_replication_lag > 32400) and ON(instance) (pg_replication_is_replica{type = "postgres-delayed"} == 1)
     for: 5m
