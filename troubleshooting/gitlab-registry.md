@@ -9,8 +9,7 @@ GitLab Container Registry is not responding or returns not 200 OK statuses.
     * On the approriate Kubernetes Cluster run, `kubectl get pods -l
       app=registry -n gitlab`
 1. In more subtle cases, we might have something only slightly-broken.  Check the registry logs in Kibana (index pattern: `pubsub-gke-inf-[gstg|gprd]*`), using filter: `json.logName: projects/[gitlab-production|gitlab-staging-1]/logs/registry` and browse for anything suspect.
-   1. One useful query is `"invalid checksum digest format"`  There shouldn't be any of those under normal circumstances; in at least one situation, this was caused by transient upload issues leaving empty images (tag links empty, or pointing to non-existent layers).  C.f. https://gitlab.com/gitlab-com/gl-infra/production/issues/906.  In the GitLab UI, these images show up as some combination of an empty tag id, null bytes, 0 bytes, and typically 'Last Updated' is stuck at 'Just now'.  Deleting through the UI is not possible (HTTP 400 Bad Request seen in the dev console when trying).  See below for resolution.
-   1. Other possible queries include for `json.message:"http.response.status\":500"`.  We should really decompose the json output into structured fields, so we can search on e.g. http.response.status more directly, and do visualisations, but this query will do for now.
+   1. Adding this querye `json.logName:"projects/gitlab-production/logs/registry" AND json.jsonPayload.msg:"response completed with error" AND json.jsonPayload.err.message:"unknown error"` has been known to show problems that used to be visible by searching for `"invalid checksum digest format"`.  There shouldn't be any of those under normal circumstances; this is often caused by transient upload issues leaving empty or otherwise corrupt images (tag links empty, or pointing to non-existent layers).  C.f. https://gitlab.com/gitlab-com/gl-infra/production/issues/906.  In the GitLab UI, these images show up as some combination of an empty tag id, null bytes, 0 bytes, and typically 'Last Updated' is stuck at 'Just now'.  Deleting through the UI is not possible (HTTP 400 Bad Request seen in the dev console when trying).  See below for resolution.
 
 ## What to do?
 
@@ -46,7 +45,7 @@ GitLab Container Registry is not responding or returns not 200 OK statuses.
       * Validate the service is running
       * Validate the `gke-registry` backend is healthy
 
-### Broken images - empty/null/just now, "invalid checksum digest format"
+### Broken images - empty/null/just now, "invalid checksum digest format", "unknown error"
 From the error logs, you should see a URI in the form `/v2/<group>/<nestedgroup>/<project>/<imagename>/manifests/<tag>`.
 
 You can also check the haproxy logs on the frontend load balancers `fe-registry-0[1|2]-lb-gprd.c.gitlab-production.internal` for the paths which are returning 5xx errors, sorted by frequency.
