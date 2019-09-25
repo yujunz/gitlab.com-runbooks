@@ -14,7 +14,7 @@ groups:
       runbook: troubleshooting/postgres.md#availability
       title: Postgres seems to be consuming transaction IDs very slowly
   - alert: PostgreSQL_XLOGConsumptionTooLow
-    expr: rate(pg_xlog_position_bytes{type =~"postgres|patroni"}[1m]) < 200000
+    expr: rate(pg_xlog_position_bytes{type="patroni"}[1m]) < 200000
     for: 2m
     labels:
       pager: pagerduty
@@ -25,6 +25,21 @@ groups:
         which is unusually low. Perhaps the application is unable to connect
       runbook: troubleshooting/postgres.md#availability
       title: Postgres seems to be consuming XLOG very slowly
+  - alert: PostgreSQL_WALEReplicationStopped
+    expr: rate(pg_xlog_position_bytes{type=~"postgres-(archive|delayed)"}[1m]) == 0
+    # Given that long running queries can't temporarily halt replication,
+    # we're setting the "for" value to the value of statement_timeout.
+    for: 15m
+    labels:
+      pager: pagerduty
+      severity: s1
+      channel: database
+    annotations:
+      description: WAL-E replication seems to be stopped on {{$labels.instance}}.
+        Check if PostgreSQL isn't stuck on restoring a WAL segment or if it's capabale
+        of downloading WAL segments.
+      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      title: WAL-E replication has stopped
   - alert: PostgreSQL_CommitRateTooLow
     expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type =~"postgres|patroni", environment!="gstg"}[1m])
       < 1000
