@@ -142,21 +142,10 @@ A[GKE] --> B(node pool A v1)
 A --> C(node pool B v2)
 ```
 
-Change v1 to v2 - This destroys `node pool A`, then creates a new `node pool A`
-with the `v2` configuration.
-
-```mermaid
-graph TD
-A[GKE] --> B(node pool A v2)
-A --> C(node pool B v2 )
-```
-
-Rid of the extra node pool - This destroys `node pool B`
-
-```mermaid
-graph TD
-A[GKE] --> B(node pool A v2)
-```
+For details on how to migrate workloads from one node pool to a new
+one without incurring any service interruption see the
+[k8s-gitlab-operations](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/k8s-gitlab-operations.md)
+runbook.
 
 ### Troubleshooting Terraform
 
