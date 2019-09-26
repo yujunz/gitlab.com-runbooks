@@ -100,6 +100,59 @@ To upgrade or downgrade the versions:
 - Manually promote the pipeline to production by running the manual CI job for
   the production deployment. Please be aware this will apply all pending changes.
 
+## Creating a new node pool
+
+Creating a new node pool will be necessary if we need to change the instance
+sizes of our nodes or any setting that requires nodes to be stopped.
+
+It is possible to create a new pool without any service interruption by
+migrating workloads.
+
+The following outlines the procedure, note that when doing this in production
+you should create a change issue, see
+https://gitlab.com/gitlab-com/gl-infra/production/issues/1192 as an example.
+
+```
+OLD_NODE_POOL=<name of old pool>
+NEW_NODE_POOL=<name of new pool>
+```
+
+- Add the new node pool to terraform
+- Apply the change and confirm the new node pool is created
+- Cordon the existing node pool
+
+```
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=$OLD_NODE_POOL -o=name); do \
+  kubectl cordon "$node"; \
+  read -p "Node $node cordoned, enter to continue ..."; \
+done
+
+```
+
+- Evict pods from the old node pool
+
+```
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=$OLD_NODE_POOL -o=name); do \
+  kubectl drain --force --ignore-daemonsets --delete-local-data --grace-period=10 "$node"; \
+  read -p "Node $node drained, enter to continue ..."; \
+done
+```
+
+- Delete the old node pool manually (in GCP console or on the command line)
+- Remove all node pools from the terraform state
+
+```
+tf state rm module.gitlab-gke.google_container_node_pool.node_pool[0]
+tf state rm module.gitlab-gke.google_container_node_pool.node_pool[1]
+```
+- Import the new node pool into terraform
+
+```
+tf import module.gitlab-gke.google_container_node_pool.node_pool[0] gitlab-production/us-east1/gprd-gitlab-gke/$NEW_NODE_POOL
+```
+
+- Update terraform so that the new node pool is the only one in the list
+
 ## Monitoring and Troubleshooting
 
 * All GKE logs: https://log.gitlab.net/goto/fcf1a37403d6a035e3dfd3a3b406bf34
