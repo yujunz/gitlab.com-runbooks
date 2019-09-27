@@ -13,6 +13,12 @@ GitLab Container Registry is not responding or returns not 200 OK statuses.
 
 ## What to do?
 
+1. Whenever a PagerDuty alert fires off for registry issues such as [5xx Error Rate on Docker Registry Load Balancers](https://gitlab.pagerduty.com/incidents/PFC3EAS), please:
+    * Create an incident issue, note down the date, duration, and impact.  Also make note of whether or not Support was contacted in order to assist unblocking users.
+    * Link to the issue for [The Container Registry needs improvements to error handling](https://gitlab.com/gitlab-org/gitlab/issues/32907).
+    * Close the incident issue when the PagerDuty alert eventually resolves.
+    * Based on such issues, the priority of the root cause issue(s) may be adjusted based on a data-based analysis of its severity.
+
 1. Determine the state of the Pods
     * If they are running, find out why they are tossing errors
       * Check the status of GCS - https://status.cloud.google.com/
