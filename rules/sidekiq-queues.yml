@@ -13,14 +13,14 @@ groups:
       runbook: troubleshooting/large-sidekiq-queue.md
       title: 'Large amount of Sidekiq Queued jobs: {{$value}}'
   - alert: SidekiqNewNotesQueueTooLarge
-    expr: max(sidekiq_queue_size{name="new_note"}) by (environment) > 5000
+    expr: max(sidekiq_queue_size{name="new_note"}) by (environment) > 100
     for: 20m
     labels:
       severity: s1
       pager: pagerduty
     annotations:
-      description: The new_note sidekiq queue is piling up. This likely means that users are not receiving email notifications
-        for comments on issues.
+      description: The new_note sidekiq queue is piling up. This may mean that users are not receiving email notifications
+        for comments on issues, or that we are being spammed/abused and other ASAP jobs will be affected badly.
       runbook: troubleshooting/large-sidekiq-queue.md
       title: 'Large amount of new_note sidekiq queued jobs: {{$value}}'
   - alert: SidekiqQueuesTooLargeHourly
