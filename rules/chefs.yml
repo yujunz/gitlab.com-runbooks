@@ -26,6 +26,7 @@ groups:
     labels:
       severity: s2
       pager: issue
+      project: gitlab.com/gitlab-com/gl-infra/infrastructure
     annotations:
       description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration }} ago
       grafana_dashboard_id: "000000231/chef-client"
