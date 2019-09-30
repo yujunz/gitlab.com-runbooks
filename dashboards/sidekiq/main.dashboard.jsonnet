@@ -19,6 +19,7 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local sidekiq = import 'sidekiq.libsonnet';
+local serviceHealth = import 'service_health.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -32,11 +33,12 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addTemplate(templates.stage)
+.addPanel(serviceHealth.row('sidekiq', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
 row.new(title="Sidekiq Queues"),
   gridPos={
       x: 0,
-      y: 1,
+      y: 1000,
       w: 24,
       h: 1,
   }
@@ -83,13 +85,13 @@ row.new(title="Sidekiq Queues"),
       linewidth=1,
       min=0,
     ),
-  ], cols=2, rowHeight=10, startRow=1),
+  ], cols=2, rowHeight=10, startRow=1001),
 )
 .addPanel(
 row.new(title="Sidekiq Execution"),
   gridPos={
       x: 0,
-      y: 1000,
+      y: 2000,
       w: 24,
       h: 1,
   }
@@ -217,25 +219,25 @@ row.new(title="Sidekiq Execution"),
       linewidth=1,
       min=0.01,
     ),
-  ], cols=2, rowHeight=10, startRow=1001),
+  ], cols=2, rowHeight=10, startRow=2001),
 )
 .addPanel(
 row.new(title="Priority Workloads"),
   gridPos={
       x: 0,
-      y: 2000,
+      y: 3000,
       w: 24,
       h: 1,
   }
 )
-.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=2001))
+.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=3001))
 .addPanel(
   row.new(title="Unicorn Metrics", collapse=true)
     .addPanels(unicornCommon.unicornPanels(serviceType="sidekiq", serviceStage="$stage", startRow=1))
   ,
   gridPos={
       x: 0,
-      y: 3000,
+      y: 4000,
       w: 24,
       h: 1,
   }
@@ -246,15 +248,15 @@ row.new(title="Priority Workloads"),
   ,
   gridPos={
       x: 0,
-      y: 4000,
+      y: 5000,
       w: 24,
       h: 1,
   }
 )
-.addPanel(keyMetrics.keyServiceMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 5000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 6000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 7000 })
-.addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 8000 })
+.addPanel(keyMetrics.keyServiceMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 6000 })
+.addPanel(keyMetrics.keyComponentMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 7000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 8000 })
+.addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 9000 })
 + {
   links+: platformLinks.triage +
     serviceCatalog.getServiceLinks('sidekiq') +
