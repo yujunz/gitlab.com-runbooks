@@ -17,6 +17,7 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
+local serviceHealth = import 'service_health.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -29,6 +30,8 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
+.addPanel(serviceHealth.row('pgbouncer', '$stage'), gridPos={ x: 0, y: 0 })
+
 .addPanel(
 row.new(title="pgbouncer Workload"),
   gridPos={

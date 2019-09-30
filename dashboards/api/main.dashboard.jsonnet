@@ -19,6 +19,7 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
+local serviceHealth = import 'service_health.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -32,21 +33,22 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addTemplate(templates.stage)
+.addPanel(serviceHealth.row('api', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
 row.new(title="Workhorse"),
   gridPos={
       x: 0,
-      y: 0,
+      y: 1000,
       w: 24,
       h: 1,
   }
 )
-.addPanels(workhorseCommon.workhorsePanels(serviceType="api", serviceStage="$stage", startRow=1))
+.addPanels(workhorseCommon.workhorsePanels(serviceType="api", serviceStage="$stage", startRow=1001))
 .addPanel(
 row.new(title="Unicorn"),
   gridPos={
       x: 0,
-      y: 1000,
+      y: 2000,
       w: 24,
       h: 1,
   }
@@ -57,13 +59,12 @@ row.new(title="Unicorn"),
 row.new(title="Rails"),
   gridPos={
       x: 0,
-      y: 2000,
+      y: 3000,
       w: 24,
       h: 1,
   }
 )
-.addPanels(railsCommon.railsPanels(serviceType="api", serviceStage="$stage", startRow=2001))
-
+.addPanels(railsCommon.railsPanels(serviceType="api", serviceStage="$stage", startRow=3001))
 .addPanel(keyMetrics.keyServiceMetricsRow('api', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('api', '$stage'), gridPos={ x: 0, y: 5000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="api", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })

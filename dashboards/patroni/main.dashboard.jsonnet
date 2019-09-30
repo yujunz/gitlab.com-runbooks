@@ -17,6 +17,7 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
+local serviceHealth = import 'service_health.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -29,18 +30,9 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
+.addPanel(serviceHealth.row('patroni', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
 row.new(title="pgbouncer Workload", collapse=false),
-  gridPos={
-      x: 0,
-      y: 0,
-      w: 24,
-      h: 1,
-  }
-)
-.addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1))
-.addPanel(
-row.new(title="pgbouncer Connection Pooling", collapse=false),
   gridPos={
       x: 0,
       y: 1000,
@@ -48,9 +40,9 @@ row.new(title="pgbouncer Connection Pooling", collapse=false),
       h: 1,
   }
 )
-.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('patroni', 1001))
+.addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1001))
 .addPanel(
-row.new(title="pgbouncer Network", collapse=false),
+row.new(title="pgbouncer Connection Pooling", collapse=false),
   gridPos={
       x: 0,
       y: 2000,
@@ -58,11 +50,21 @@ row.new(title="pgbouncer Network", collapse=false),
       h: 1,
   }
 )
-.addPanels(pgbouncerCommonGraphs.networkStats('patroni', 2001))
-.addPanel(keyMetrics.keyServiceMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 3000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 4000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="patroni", environment="$environment"'), gridPos={ x: 0, y: 5000 })
-.addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 6000 })
+.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('patroni', 2001))
+.addPanel(
+row.new(title="pgbouncer Network", collapse=false),
+  gridPos={
+      x: 0,
+      y: 3000,
+      w: 24,
+      h: 1,
+  }
+)
+.addPanels(pgbouncerCommonGraphs.networkStats('patroni', 3001))
+.addPanel(keyMetrics.keyServiceMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 4000 })
+.addPanel(keyMetrics.keyComponentMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 5000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="patroni", environment="$environment"'), gridPos={ x: 0, y: 6000 })
+.addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('patroni') + platformLinks.services,
 }
