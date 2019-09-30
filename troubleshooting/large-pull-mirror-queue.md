@@ -30,10 +30,9 @@ As GitLab.com grows, the number of mirrored project is going to grow as well. We
 1. Under "Running Jobs", pay attention to the `UpdateAllMirrorsWorker`. If that has gone flat, then
 you may need to log the state of the pending pull mirror queue.
 1. Check [Sentry](https://sentry.gitlab.net/gitlab/gitlabcom/) for new 500 errors relating to `UpdateAllMirrorsWorker`.
-1. Check if Redis cpu usage is high using [the redis dashboard](https://dashboards.gitlab.net/d/wccEP9Imk/redis?orgId=1&refresh=1m). If it is, the sidekiq slow down is likely related to [this issue](https://gitlab.com/gitlab-com/gl-infra/production/issues/937). Follow the instructions in [this
-   snippet](https://gitlab.com/gitlab-com/gl-infra/infrastructure/snippets/1873154)
-   to aggressively enqueue pull mirror jobs. This will continue to be necessary
-   until a long-term solution is implemented.
+1. Check the logs on one pullmirror node, to see if a big upstream (e.g. bitbucket.org, github.com) are down/returning errors:
+   `sudo grep fail /var/log/gitlab/sidekiq-cluster/current|jq .|egrep 'error_message|_at'`.
+   Look for consistent hostnames or errors; note that there is a low grade normal rate of failure here, so you're looking for outliers.
 
 [maximum-mirroring-capacity]: https://gitlab.com/admin/application_settings/repository#js-mirror-settings
 [sidekiq-queue-sizes]: https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?orgId=1&panelId=3&fullscreen
