@@ -25,6 +25,7 @@ def validate_rule(alert_file_path, rule)
   if labels["pager"]
     raise StandardError, " #{alert}: rules contains an invalid `pager` label: #{labels["pager"]}" unless ["pagerduty", "issue"].include?(labels["pager"])
     raise StandardError, " #{alert}: only severity s1 and s2 errors should page" unless labels["severity"] == "s1" or labels["severity"] == "s2"
+    raise StandardError, " #{alert}: 'pager: issue' alerts need a project label" if labels["pager"] == "issue" and labels["project"].nil?
   else
     raise StandardError, " #{alert}: s1 and s2 alerts must be configured to send to pagerduty" if labels["severity"] == "s1" or labels["severity"] == "s2"
   end

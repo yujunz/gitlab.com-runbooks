@@ -18,6 +18,7 @@ groups:
     labels:
       severity: s2
       pager: issue
+      project: gitlab.com/gitlab-com/gl-infra/infrastructure
     annotations:
       description: Check SSL for specified nodes and consider reissuing certificate.
       runbook: troubleshooting/ssl_cert.md
