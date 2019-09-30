@@ -40,6 +40,12 @@ work and display the nodes running on the cluster:
 
 - [ ] `kubectl get nodes`
 
+**:warning: It is not the intention of the console servers to utilize the `k-ctl`
+script or any of the components necessary.  These servers provide the sole means
+of troubleshooting a misbehaving cluster or application.  Any changes that
+involve the use of `helm` or `k-ctl` MUST be done via the repo and CI/CD.
+:warning:**
+
 ## Workstation setup
 
 - [ ] Clone `git@gitlab.com:gitlab-com/gl-infra/k8s-workloads/gitlab-com`
