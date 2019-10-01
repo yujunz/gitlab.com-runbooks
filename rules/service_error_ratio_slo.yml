@@ -37,7 +37,7 @@ groups:
     labels:
       type: 'registry'
       tier: 'sv'
-    expr: '0.0005'
+    expr: '0.005'
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
