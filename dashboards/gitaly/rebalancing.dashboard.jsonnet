@@ -50,7 +50,7 @@ query,
 dashboard.new(
   'Rebalance Dashboard',
   schemaVersion=16,
-  tags=['gitaly'],
+  tags=['gitaly', 'type:gitaly'],
   timezone='utc',
   graphTooltip='shared_crosshair',
 )
