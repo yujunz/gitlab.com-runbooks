@@ -161,6 +161,36 @@ If the command above returned a value higher than 3, then Patroni is going to
 have [trouble starting][patroni-is-postmaster], so it is advised to fix this
 issue with the help of a DBRE before restarting.
 
+## Upgrading Patroni
+
+Patroni version is controlled by Chef, upgrading it should be as simple as changing
+an attribute in a role or a cookbook. Since Patroni would need to be restarted
+(and subsequently, PostgreSQL), careful execution of the change is needed to
+avoid database errors on the client side. While pausing Patroni (see relevant
+section above) may be employed to restart Patroni without disturbing PostgreSQL,
+it's not recommended to go this route as converging Chef can undo the pausing action,
+which can introduce unintended results.
+
+Instead, we recommend, one at a time, putting replicas into maintenance
+(see relevant section below), upgrading Patroni through Chef, then putting replicas
+out of maintenance. For the primary, we initiate a switchover to one of the upgraded
+replicas then we upgraded it once it's been demoted.
+
+The exact sequence of upgrading replicas has been encapsulated into an [Ansible playbook][upgrade-patroni-ansible].
+The playbook expects an MR in the [chef-repo][chef-repo] project to be specified
+in `variables.yml` under the target environment, and an API token to be used to
+merge such MR.
+
+The playbook can be run as follows:
+
+```
+$ git clone git@gitlab.com:gitlab-com/gl-infra/ansible-migrations.git
+$ cd ansible-migrations
+# Change relevant MRs in variables.yml
+$ tmux
+$ OPS_API_TOKEN=secure-token MIGRATION_ENV=gprd-or-gstg ansible-playbook -i production-1172/inventory.txt -M ./modules/ -e @production-1172/variables.yml production-1172/playbook.yml
+```
+
 ## Replica Maintenance
 
 If clients are connecting to replicas by means of [service
@@ -335,3 +365,5 @@ by running `sudo chef-client` across the cluster.
 [pause-docs]: https://github.com/zalando/patroni/blob/v1.5.0/docs/pause.rst
 [service-discovery]: https://docs.gitlab.com/ee/administration/database_load_balancing.html#service-discovery
 [patroni-is-postmaster]: https://github.com/zalando/patroni/blob/13c88e8b7a27b68e5c554d83d14e5cf640871ccc/patroni/postmaster.py#L55-L58
+[upgrade-patroni-ansible]: https://gitlab.com/gitlab-com/gl-infra/ansible-migrations/blob/master/production-1172
+[chef-repo]: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/
