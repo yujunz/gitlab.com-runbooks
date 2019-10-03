@@ -81,7 +81,8 @@ local painlessFunctions = "
       'action': actionBucket,
       'actionKey': actionBucket.key,
       'p95latencySeconds': Math.round(actionBucket.percentile_durations.values[0].value/1000),
-      'controller':controllerBucket.key
+      'controller':controllerBucket.key,
+      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key + '%23' + actionBucket.key
     ])
   }
 ";
@@ -135,13 +136,13 @@ local searchLinkTemplate() =
             "#mech_symp_alerts",
           ],
           text: "*Worst performing Rails controllers in the applications, by p95 latency*
-Click through to find events...",
+Click through the attachment title to find events in the logs...",
           dynamic_attachments: {
             list_path: "ctx.payload.items",
             attachment_template: {
               title: "{{controller}}#{{actionKey}}",
               title_link: searchLinkTemplate(),
-              text: "p95 latency for this endpoint: {{ p95latencySeconds }}s",
+              text: "p95 latency for this endpoint: {{ p95latencySeconds }}s (<{{ issue_search_url }}|find related issues>)",
             },
           },
         },

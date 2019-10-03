@@ -26,6 +26,7 @@ function execute_jsonnet() {
 
 for i in "${SCRIPT_DIR}"/watches/*.jsonnet; do
   base_name=$(basename "$i")
+  echo "$base_name"
   name=${base_name%.jsonnet}
   watch_json="$(execute_jsonnet "${i}" | jq -c '.')" # Compile jsonnet and compact with jq
   es_client "_xpack/watcher/watch/${name}?pretty=true" -X PUT --data-binary "${watch_json}"

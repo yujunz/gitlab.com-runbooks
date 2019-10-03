@@ -57,7 +57,8 @@ local transformScript = "
   [
     'items': ctx.payload.aggregations.controller.buckets.findAll(controllerBucket -> findController(controllerBucket, params)).collect(controllerBucket -> [
       'key': controllerBucket.key,
-      'max_gitaly_calls': Math.round(controllerBucket.max_gitaly_calls.value)
+      'max_gitaly_calls': Math.round(controllerBucket.max_gitaly_calls.value),
+      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key
     ])
   ]
 ";
@@ -102,13 +103,13 @@ local searchLinkTemplate(keyField) =
               "#mech_symp_alerts"
             ],
             text: "*Gitaly n+1 issues detected in the following endpoints.*
-Click through to find events...",
+Click through the attachment title to find events in the logs...",
             dynamic_attachments: {
               list_path: "ctx.payload.items",
               attachment_template: {
                 title: "{{key}}",
                 title_link: searchLinkTemplate(keyField),
-                text: "Maximum Gitaly calls in a single request: {{ max_gitaly_calls }}."
+                text: 'Maximum Gitaly calls in a single request: {{ max_gitaly_calls }}. (<{{ issue_search_url }}|find related issues>)'
               }
             }
           }
