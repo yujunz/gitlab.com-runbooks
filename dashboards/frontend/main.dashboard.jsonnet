@@ -6,7 +6,6 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
 local layout = import 'layout.libsonnet';
 local nodeMetrics = import 'node_metrics.libsonnet';
-local pgbouncerCommonGraphs = import 'pgbouncer_common_graphs.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
@@ -23,7 +22,7 @@ local processExporter = import 'process_exporter.libsonnet';
 dashboard.new(
   'Overview',
   schemaVersion=16,
-  tags=['patroni'],
+  tags=['type:frontend', 'haproxy'],
   timezone='utc',
   graphTooltip='shared_crosshair',
 )
@@ -31,9 +30,11 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
-.addPanel(serviceHealth.row('patroni', '$stage'), gridPos={ x: 0, y: 0 })
+.addTemplate(templates.stage)
+.addTemplate(templates.sigma)
+.addPanel(serviceHealth.row('frontend', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
-row.new(title="pgbouncer Workload", collapse=false),
+row.new(title="🏅 Key Service Metrics"),
   gridPos={
       x: 0,
       y: 1000,
@@ -41,9 +42,17 @@ row.new(title="pgbouncer Workload", collapse=false),
       h: 1,
   }
 )
-.addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1001))
+.addPanels(
+layout.grid([
+    keyMetrics.apdexPanel('frontend', '$stage'),
+    keyMetrics.errorRatesPanel('frontend', '$stage'),
+    keyMetrics.serviceAvailabilityPanel('frontend', '$stage'),
+    keyMetrics.qpsPanel('frontend', '$stage'),
+    keyMetrics.saturationPanel('frontend', '$stage'),
+  ], startRow=1001)
+)
 .addPanel(
-row.new(title="pgbouncer Connection Pooling", collapse=false),
+row.new(title="HAProxy process"),
   gridPos={
       x: 0,
       y: 2000,
@@ -51,19 +60,11 @@ row.new(title="pgbouncer Connection Pooling", collapse=false),
       h: 1,
   }
 )
-.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('patroni', 2001))
-.addPanel(
-row.new(title="pgbouncer Network", collapse=false),
-  gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
-  }
+.addPanels(
+  processExporter.namedGroup('haproxy', 'haproxy', 'frontend', '$stage', startRow=2001)
 )
-.addPanels(pgbouncerCommonGraphs.networkStats('patroni', 3001))
 .addPanel(
-row.new(title="patroni process stats"),
+keyMetrics.keyComponentMetricsRow('frontend', '$stage'),
   gridPos={
       x: 0,
       y: 4000,
@@ -71,13 +72,16 @@ row.new(title="patroni process stats"),
       h: 1,
   }
 )
-.addPanels(
-  processExporter.namedGroup('patroni', 'patroni', 'patroni', 'main', startRow=4001)
+.addPanel(
+nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="frontend"'),
+  gridPos={
+      x: 0,
+      y: 5000,
+      w: 24,
+      h: 1,
+  }
 )
-.addPanel(keyMetrics.keyServiceMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 5000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 6000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="patroni", environment="$environment"'), gridPos={ x: 0, y: 7000 })
-.addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 8000 })
+.addPanel(capacityPlanning.capacityPlanningRow('frontend', '$stage'), gridPos={ x: 0, y: 6000 })
 + {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('patroni') + platformLinks.services,
+  links+: platformLinks.triage + serviceCatalog.getServiceLinks('frontend') + platformLinks.services,
 }
