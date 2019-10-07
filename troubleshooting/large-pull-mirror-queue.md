@@ -33,6 +33,18 @@ you may need to log the state of the pending pull mirror queue.
 1. Check the logs on one pullmirror node, to see if a big upstream (e.g. bitbucket.org, github.com) are down/returning errors:
    `sudo grep fail /var/log/gitlab/sidekiq-cluster/current|jq .|egrep 'error_message|_at'`.
    Look for consistent hostnames or errors; note that there is a low grade normal rate of failure here, so you're looking for outliers.
+1. Check the top long-running jobs using the script below, it displays how many minutes they have been running and the project ID.
+   Check the projects (i.e. `Project.find(id)`) for a common pattern (e.g. they belong to the same user/group, they reside on the same shard, their upstream is the same, ...).
+   ```ruby
+   jobs = []
+   Sidekiq::Workers.new.each do |process, thread, msg|
+     job = Sidekiq::Job.new(msg['payload'])
+     jobs << [Time.now - Time.at(msg['run_at']), job] if msg['queue'] == 'repository_update_mirror'
+   end
+   jobs.sort_by { |(t, job)| t }.reverse.first(25).each do |(t, job)|
+     puts "#{t / 60} | #{job.args}"
+   end; nil
+   ```
 
 [maximum-mirroring-capacity]: https://gitlab.com/admin/application_settings/repository#js-mirror-settings
 [sidekiq-queue-sizes]: https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?orgId=1&panelId=3&fullscreen
