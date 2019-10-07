@@ -333,25 +333,6 @@ migration and reverting the deploy is probably necessary. Similarly if
 the source of the dead tuple thrashing is determined to be from a
 buggy web or api endpoint (or if it can't be determined at all.)
 
-If the source is determined and it's necessary and expected that it
-perform a high rate of updates or deletes on a table then it can be
-accommodated by adjusting the autovacuum settings. Typically this is
-necessary for small frequently updated state tables which are better
-handled using Redis variables.
-
-Adjust the vacuum settings for the given table to match the other
-tables, like this:
-
-```json
-roles/gitlab-base-db-postgres.json
-"push_event_payloads": {
-  "autovacuum_analyze_scale_factor": 0,
-  "autovacuum_vacuum_scale_factor": 0,
-  "autovacuum_vacuum_threshold": 5000,
-  "autovacuum_analyze_threshold": 10000
-},
-```
-
 ## Connections
 
 This could indicate a problem with the pgbouncer setup as it's our
@@ -404,7 +385,7 @@ gitlab-+ 109886 34.4  0.6  28888 12836 ?        Rs   Mar19 13929:17 /opt/gitlab/
 RESOURCE DESCRIPTION               SOFT  HARD UNITS
 NOFILE   max number of open files 50000 50000
 
-# sudo -u gitlab-psql psql -h /var/opt/gitlab/pgbouncer -p 6432 -d pgbouncer -U pgbouncer
+$ sudo pgb-console
 
 pgbouncer=# show config;
             key            |                           value                            | changeable

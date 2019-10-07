@@ -71,7 +71,7 @@ WHERE NOT blockedl.granted;
 
 ## Triggering a Failover
 
-See the [PostgreSQL Switchover](postgresql-switchover.md) document for instructions
+See the [PostgreSQL Switchover](patroni-management.md#failoverswitchover) document for instructions
 
 ## Setting up Secondaries
 
