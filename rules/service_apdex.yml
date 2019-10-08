@@ -143,8 +143,8 @@ groups:
       sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-web", type="web", tier="sv", route!="^/([^/]+/){1,}[^/]+/uploads\\z"}[1m])) by (environment, type, tier, stage)
 
   # api:workhorse
-  # Satisfied -> 10 seconds
-  # Acceptable -> 30 seconds
+  # Satisfied -> 1 seconds
+  # Acceptable -> 10 seconds
   - record: gitlab_component_apdex:ratio
     labels:
       type: api
@@ -152,9 +152,9 @@ groups:
       component: 'workhorse'
     expr: >
       (
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="10", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="1", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
       +
-        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="30", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
+        sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", tier="sv", le="10", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
       )
       /
       2 / sum(rate(gitlab_workhorse_http_request_duration_seconds_count{job="gitlab-workhorse-api", type="api", tier="sv", route!="^/api/v4/jobs/request\\z"}[1m])) by (environment, type, tier, stage)
