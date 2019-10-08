@@ -1,9 +1,5 @@
 # Gitaly unusual activity alert
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Alert on Slack: _Unusual Gitaly activity for a project has been detected. Review the runbook at https://gitlab.com/gitlab-com/runbooks/tree/master/troubleshooting/gitaly-unusual-activity.md for more details_

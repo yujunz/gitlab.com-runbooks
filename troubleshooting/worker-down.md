@@ -1,9 +1,5 @@
 # Workers Down
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 

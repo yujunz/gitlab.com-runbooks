@@ -1,9 +1,5 @@
 # PubSub Queuing Rate Increasing
 
-## First and foremost
-
-*Don't Panic*
-
 ## Reason
 * PubSub takes our log messages from fluentd and sends them to PubSub, which is
   later scrapped and sent to our Elastic Search Cluster

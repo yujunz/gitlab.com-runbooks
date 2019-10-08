@@ -1,9 +1,5 @@
 # Sidekiq is using most of its PgBouncer connections
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Message in #alerts-gprd: _Sidekiq is using most of its PgBouncer connections_

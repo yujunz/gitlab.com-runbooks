@@ -1,9 +1,5 @@
 # Gitaly PubSub Rate is low
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Message in alerts _Gitaly PubSub send operation is low_

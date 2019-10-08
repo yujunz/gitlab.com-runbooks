@@ -1,9 +1,5 @@
 # Gitaly latency is too high
 
-## First and foremost
-
-*Don't Panic*
-
 ## Note
 
 This runbook will be deprecated in favor of the [gitaly pprof runbook](https://gitlab.com/gitlab-org/gitaly/issues/776) once `pprof` is available in production.

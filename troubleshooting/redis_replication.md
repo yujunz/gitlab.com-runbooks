@@ -1,9 +1,5 @@
 # Redis replication is lagging or has stopped
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 You see alerts like

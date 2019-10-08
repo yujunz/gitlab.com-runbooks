@@ -1,9 +1,5 @@
 # Recovering from NFS disaster
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 Existing projects are reporting a missing repository on the web UI, or you're

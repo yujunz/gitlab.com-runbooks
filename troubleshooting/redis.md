@@ -1,9 +1,5 @@
 # Redis troubleshooting
 
-## First and foremost
-
-*Don't Panic*
-
 ## Replication issues
 
 See [redis_replication.md].

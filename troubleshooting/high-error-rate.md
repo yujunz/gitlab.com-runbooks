@@ -1,9 +1,5 @@
 # Increased Error Rate
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 - Message in prometheus-alerts _Increased Error Rate Across Fleet_

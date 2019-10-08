@@ -1,9 +1,5 @@
 # Pull mirror overdue queue is too large
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Message in #alerts-gprd: _Large number of overdue pull mirror jobs_

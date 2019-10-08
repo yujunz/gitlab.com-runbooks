@@ -1,9 +1,5 @@
 # Gitaly CPU too high on a file server
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Load spike on the NFS servers, high I/O load.
