@@ -1,9 +1,5 @@
 # HAPrpoxy Alert Troubleshooting
 
-## First and foremost
-
-*Don't Panic*
-
 ## Reason
 * Errors are being reported by HAProxy, this could be a spike in 5xx errors,
   server connection errors, or backends reporting unhealthy.

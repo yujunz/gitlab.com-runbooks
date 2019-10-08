@@ -1,9 +1,5 @@
 # Gitaly is down
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Message in prometheus-alerts _Gitaly: two versions of Gitaly have been running in production for more than 30 minutes_

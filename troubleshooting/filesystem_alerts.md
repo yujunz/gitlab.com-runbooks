@@ -1,9 +1,5 @@
 # Errors are reported in LOG files
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 You're likely here because you saw a message saying "Really low disk space left on _path_ on _host_: _very low number_%".

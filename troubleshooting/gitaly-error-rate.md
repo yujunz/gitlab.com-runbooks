@@ -1,9 +1,5 @@
 # Gitaly error rate is too high
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Message in prometheus-alerts _Gitaly error rate is too high_

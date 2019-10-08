@@ -8,10 +8,6 @@ the resolution below.
 It could also be possible that Sidekiq is just spending time jumping from one
 queue to the next not actually doing any job at all.
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 Open the [Sidekiq dashboard](http://dashboards.gitlab.net/dashboard/db/sidekiq-stats)

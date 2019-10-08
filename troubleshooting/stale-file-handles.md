@@ -1,9 +1,5 @@
 # "Stale file handle" errors on NFS mounts
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 `chef-client` runs fail with a message like the following:

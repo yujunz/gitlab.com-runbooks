@@ -1,9 +1,5 @@
 # Gitaly is down
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Message in prometheus-alerts _Gitaly is down on [hostname]_

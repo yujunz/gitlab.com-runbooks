@@ -1,9 +1,5 @@
 # osqueryd troubleshooting
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 ### /var/osqueryd consumes a lot of space

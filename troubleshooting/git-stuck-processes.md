@@ -1,9 +1,5 @@
 # Git Stuck Processes
 
-## First and foremost
-
-*Don't Panic*
-
 ## Reason
 
 Workhorse is not killing connections on a deadline after the client went away, this means that these processes are dangling blocked on IO, effectively doing nothing.

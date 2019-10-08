@@ -1,9 +1,5 @@
 # Omnibus package troubleshooting
 
-## First and foremost
-
-*Don't Panic*
-
 ## Symptoms
 
 * Omnibus packages are set to disabled preventing automatic updates

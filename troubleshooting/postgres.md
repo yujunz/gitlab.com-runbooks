@@ -28,10 +28,6 @@
 
 # Postgresql troubleshooting
 
-## First and foremost
-
-*Don't Panic*
-
 ## Dashboards
 
 All PostgreSQL dashboards can be found in the [PostgreSQL Grafana Folder](https://dashboards.gitlab.net/dashboards/f/RNfEDpLmz/postgresql).

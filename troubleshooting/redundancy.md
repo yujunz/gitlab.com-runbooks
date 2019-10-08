@@ -1,8 +1,5 @@
 # Loss of Redundancy
 
-## First and foremost
-*Don't Panic*
-
 ## Symptoms
 * Alerts that we've lost redundancy or no servers of a specific type are
   available
