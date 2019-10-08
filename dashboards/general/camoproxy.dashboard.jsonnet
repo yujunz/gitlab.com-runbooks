@@ -123,7 +123,7 @@ local envTemplate = template.new(
   "environment",
   "$PROMETHEUS_DS",
   'label_values(up{job="camoproxy"}, environment)',
-  current="gstg",
+  current="gprd",
   refresh='time',
   sort=1,
 );
