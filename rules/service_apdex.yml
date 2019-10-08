@@ -437,6 +437,7 @@ groups:
     labels:
       type: ci-runners
       tier: runners
+      stage: main
       component: 'queuing'
     expr: >
       sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", le="60"}[1m])) by (environment)
@@ -447,6 +448,7 @@ groups:
     labels:
       type: ci-runners
       tier: runners
+      stage: main
       component: 'queuing'
     expr: >
       sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", le="+Inf"}[1m])) by (environment)
