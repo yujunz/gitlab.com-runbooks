@@ -2705,7 +2705,7 @@ services:
     alerts:
       - alert_link:
 
-- name: shared-runners
+- name: ci-runners
   tier: sv
   teams:
     - infrastructure
@@ -2713,16 +2713,17 @@ services:
   label: Service:CI Runner
   business:
     requirement: |
-      Shared runners to service CI jobs for any project on GitLab.com.
+      Runners to service CI jobs for any project on GitLab.com.
     customers:
       - GitLab.com customers
     business_value: |
-      Shared runners are used by customers to run CI jobs. We offer every
+      CI runners are used by customers to run CI jobs. We offer every
       account up to 2000 minutes, but more can be purchased by upgrading
       to a higher plan.
     SLA:
+      primary_sla_service: true # The intention is for this to be set to true once the service is responding within it's SLA: https://gitlab.com/gitlab-com/www-gitlab-com/issues/5341
       availability:
-      response_time: p90 of 30 second job pick up latency
+      response_time: p95 of 60 second job pick up latency
   technical:
     project:
       - https://gitlab.com/gitlab-org/gitlab-runner
