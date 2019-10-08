@@ -37,10 +37,10 @@ local requestsPanel() = generalGraphPanel(
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camo_response_size_bytes_count{environment="$environment"}[$__interval]))',
+      'sum by (code) (rate(camo_responses_total{environment="$environment"}[$__interval]))',
       interval="30s",
       intervalFactor=1,
-      legendFormat="Requests/s",
+      legendFormat="{{code}}",
     )
   )
   .resetYaxes()
@@ -77,28 +77,35 @@ local trafficPanel() = generalGraphPanel(
   );
 
 local eventPanel() = generalGraphPanel(
-    "Log Events",
-    description="Events detected from logs",
+    "Request Failures",
+    description="Failed requests",
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camoproxy_content_length_exceeded_count{environment="$environment"}[$__interval]))',
+      'sum(rate(responseFailed{environment="$environment"}[$__interval]))',
       interval="30s",
-      legendFormat="Content Length Exceeded -  --max-size exceeded",
+      legendFormat="Failed Responses",
     )
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camoproxy_could_not_connect_count{environment="$environment"}[$__interval]))',
+      'sum(rate(camo_proxy_content_length_exceeded_total{environment="$environment"}[$__interval]))',
       interval="30s",
-      legendFormat="Could not connect - maybe --timeout exceeded",
+      legendFormat="Content Length Exceeded - --max-size exceeded",
     )
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(camoproxy_timeout_expired_count{environment="$environment"}[$__interval]))',
+      'sum(rate(camo_proxy_reponses_truncated_total{environment="$environment"}[$__interval]))',
       interval="30s",
-      legendFormat="Timeout Expired - --timeout exceeded",
+      legendFormat="Response Truncated - --max-size exceeded",
+    )
+  )
+  .addTarget(
+    promQuery.target(
+      'sum(rate(camo_responses_total{environment="$environment",code="504"}[$__interval]))',
+      interval="30s",
+      legendFormat="504 - Gateway Timeout - maybe --timeout exceeded",
     )
   )
   .resetYaxes()
@@ -137,16 +144,16 @@ dashboard.new(
   gridPos={
     x: 0,
     y: 10,
-    w: 24,
+    w: 12,
     h: 10,
   }
 )
 .addPanel(
   trafficPanel(),
   gridPos={
-    x: 0,
-    y: 20,
-    w: 24,
+    x: 12,
+    y: 10,
+    w: 12,
     h: 10,
   }
 )
@@ -154,7 +161,7 @@ dashboard.new(
   eventPanel(),
   gridPos={
     x: 0,
-    y: 30,
+    y: 20,
     w: 24,
     h: 10,
   }
