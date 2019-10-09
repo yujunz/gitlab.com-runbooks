@@ -106,6 +106,17 @@ To upgrade or downgrade the versions:
 - Manually promote the pipeline to production by running the manual CI job for
   the production deployment. Please be aware this will apply all pending changes.
 
+### Failed Deploys
+
+When deployments to environments fail, helm should automatically rollback the
+application and mark the deployment job as failed.  Note that at this moment in
+time, the application will not be upgraded, but the master branch of the repo
+will contain the desired state that was not achievable.  One MUST address this
+immediately.  If there's a failure to deploy, perform a revert of the commit
+immediately to ensure the master branch represents what is in production.
+Once the revert commit is in place, proceed to perform the necessary
+investigation to continue towards the desired state.
+
 ## Creating a new node pool
 
 Creating a new node pool will be necessary if we need to change the instance
