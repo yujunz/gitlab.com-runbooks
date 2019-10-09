@@ -217,3 +217,41 @@ requests will help as it will ask Kubernetes to provision new nodes if capacity
 is limited.
 
 Kubernetes Resource Management: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+
+### Updating secrets
+
+The GitLab namespace has the following secrets:
+* registry-storage
+* registry-httpsecret
+* registry-certificate
+
+For more information about creating secrets see  [HELM_README](https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/master/HELM_README.md#secret-for-gcs-configuration)
+
+## Updating the registry configuration via secrets
+
+The registry configuration is a base64 string that is encoded in the
+`registry-storage` secret.
+
+**Updating this secret in production should be done with care and requires a ~change issue (see https://gitlab.com/gitlab-com/gl-infra/production/issues/1101 as an example)**
+
+- Export the secrets
+
+```
+kubectl get secret registry-storage --export -o yaml -n gitlab > secret-export.yaml
+```
+
+- Back up the exported secret and create a new base64 encoded config string
+
+```
+cp secret-export.yaml secret-export.yaml.bak
+echo <config base64> | base64 -D > config.out
+# modify the configuration
+cat config.out | base64
+# add the base64 string back to `secret-export.yml`
+```
+
+- Apply the new secret
+
+```
+kubectl apply -f ./secret-export.yaml -n gitlab
+```
