@@ -1,3 +1,18 @@
+# PlantUML
+
+https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/plantuml
+
+## Setup for the oncall
+
+- **!Important!** Before you do anything in this doc please follow the [setup instructions for the oncall](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/k8s-operations.md)
+- Ensure you can query Kubernetes gitlab namespace
+
+```
+kubectl -n plantuml get hpa
+```
+
+- Familiarize yourself with the deployment pipeline for GitLab on [ops.gitlab.net](https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/plantuml)
+
 ## Workstation setup for the oncall
 
 - Follow the setup instructions [workstation setup for the oncall](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/k8s-gitlab-operations.md#workstation-setup-for-the-oncall)

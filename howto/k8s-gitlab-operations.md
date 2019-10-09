@@ -1,3 +1,18 @@
+# GitLab
+
+https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com
+
+## Setup for the oncall
+
+- **!Important!** Before you do anything in this doc please follow the [setup instructions for the oncall](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/k8s-operations.md)
+- Ensure you can query Kubernetes gitlab namespace
+
+```
+kubectl -n gitlab get hpa
+```
+
+- Familiarize yourself with the deployment pipeline for GitLab on [ops.gitlab.net](https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com)
+
 ## Application Upgrading
 
 * [CHART_VERSION](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/dd201383641d01c5b5471012563a3079fdcdbdf1/CHART_VERSION)
