@@ -74,6 +74,6 @@ PlantUML has per environment requests and resource limits, configured in the
 ## Updating secrets
 
 PlantUML has a single secret `plantuml-cert` which is the SSL certificate for
-the L7 LB created in GCP. To update this certificate when it close to expiration
+the L7 LB created in GCP. To update this certificate when it is close to expiration
 follow the secret instructions in the project
 [README.md](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/plantuml/blob/c821508531a7610722174430eb63cfe1b9891304/README.md).
