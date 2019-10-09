@@ -227,7 +227,7 @@ The GitLab namespace has the following secrets:
 
 For more information about creating secrets see  [HELM_README](https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/master/HELM_README.md#secret-for-gcs-configuration)
 
-## Updating the registry configuration via secrets
+#### Updating the registry configuration via secrets
 
 The registry configuration is a base64 string that is encoded in the
 `registry-storage` secret.
