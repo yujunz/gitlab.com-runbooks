@@ -440,9 +440,9 @@ groups:
       stage: main
       component: 'queuing'
     expr: >
-      sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", le="60"}[1m])) by (environment)
+      sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="60"}[1m])) by (environment)
       /
-      sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", le="+Inf"}[1m])) by (environment)
+      sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1m])) by (environment)
 
   - record: gitlab_component_apdex:weight:score
     labels:
