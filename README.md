@@ -76,7 +76,7 @@ Check how many targets are not scraped at the moment. alerts are in flight right
 
 First: don't panic.
 
-If you are feeling overwhelmed, escalate to the [IMOC or CMOC](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#roles).  
+If you are feeling overwhelmed, escalate to the [IMOC or CMOC](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#roles).
 Whoever is in that role can help you get other people to help with whatever is needed.  Our goal is to resolve the incident in a timely manner, but sometimes that means slowing down and making sure we get the right people involved.  Accuracy is as important or more than speed.
 
 Roles for an incident can be found in the [incident management section of the handbook](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/)
@@ -365,6 +365,7 @@ During an incident there are at least 2 roles, and one more optional
 ### Other
 * [Setup oauth2-proxy protection for web based application](howto/setup-oauth2-proxy-protected-application.md)
 * [Register new domain(s)](howto/domain-registration.md)
+* [Manage DNS entries](howto/manage-dns-entries.md)
 * [Setup and Use my Yubikey](howto/yubikey.md)
 * [Purge Git data](howto/purge-git-data.md)
 * [Getting Started with Kubernetes and GitLab.com](howto/k8s-gitlab.md)
