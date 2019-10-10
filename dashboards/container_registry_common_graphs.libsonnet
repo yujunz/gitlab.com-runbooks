@@ -1,4 +1,5 @@
 local basic = import 'basic.libsonnet';
+local colors = import 'colors.libsonnet';
 local layout = import 'layout.libsonnet';
 
 {
@@ -58,9 +59,9 @@ local layout = import 'layout.libsonnet';
       title='Cache Hit %',
       query='sum(rate(registry_storage_cache_total{cluster="$cluster", environment="$environment", namespace="$namespace",exported_type="Hit"}[$__interval])) / sum(rate(registry_storage_cache_total{environment="$environment",exported_type="Request"}[$__interval]))',
       colors=[
-        '#d44a3a',
-        'rgba(237, 129, 40, 0.89)',
-        '#299c46',
+        colors.criticalColor,
+        colors.errorColor,
+        colors.normalRangeColor,
       ],
       gaugeMaxValue=1,
       gaugeShow=true,

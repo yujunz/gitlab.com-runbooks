@@ -6,6 +6,7 @@ local heatmapPanel = grafana.heatmapPanel;
 local row = grafana.row;
 local seriesOverrides = import 'series_overrides.libsonnet';
 local singlestatPanel = grafana.singlestat;
+local tablePanel = grafana.tablePanel;
 
 {
   heatmap(
@@ -44,10 +45,12 @@ local singlestatPanel = grafana.singlestat;
     instant=true,
     interval='1m',
     intervalFactor=3,
+    postfix=null,
     thresholds='',
     yAxisLabel='',
     legend_show=true,
-    linewidth=2
+    linewidth=2,
+    valueName='current',
   ):: singlestatPanel.new(
     title,
     description=description,
@@ -56,9 +59,28 @@ local singlestatPanel = grafana.singlestat;
     format=format,
     gaugeMaxValue=gaugeMaxValue,
     gaugeShow=gaugeShow,
+    postfix=postfix,
     thresholds=thresholds,
+    valueName=valueName,
   )
       .addTarget(promQuery.target(query, instant)),
+
+  table(
+    title='Table',
+    description='',
+    span=null,
+    min_span=null,
+    styles=[],
+    columns=[],
+  ):: tablePanel.new(
+    title,
+    description=description,
+    span=span,
+    min_span=min_span,
+    datasource='$PROMETHEUS_DS',
+    styles=[],
+    columns=[],
+  ),
 
   timeseries(
     title='Timeseries',
@@ -70,6 +92,7 @@ local singlestatPanel = grafana.singlestat;
     intervalFactor=3,
     yAxisLabel='',
     legend_show=true,
+    legend_rightSide=false,
     linewidth=2
   ):: graphPanel.new(
     title,
@@ -79,6 +102,7 @@ local singlestatPanel = grafana.singlestat;
     fill=0,
     datasource='$PROMETHEUS_DS',
     decimals=0,
+    legend_rightSide=legend_rightSide,
     legend_show=legend_show,
     legend_values=true,
     legend_min=true,
