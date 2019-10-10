@@ -112,7 +112,7 @@ deploy_elastic_watcher_updates:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
-  - elastic-watcher/update-alerts.sh
+  - ./elastic/watchers/update-alerts.sh
   only:
     refs:
       - master

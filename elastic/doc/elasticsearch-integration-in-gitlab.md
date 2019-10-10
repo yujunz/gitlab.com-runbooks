@@ -1,13 +1,41 @@
-# ES integration #
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-## ES integration docs & video ##
+- [Quick start](#quick-start)
+    - [ES integration admin page](#es-integration-admin-page)
+- [How-to guides](#how-to-guides)
+    - [Enabling ES integration](#enabling-es-integration)
+    - [Disabling ES integration](#disabling-es-integration)
+    - [When disabling ES integration did not help](#when-disabling-es-integration-did-not-help)
+    - [Disabling elastic backed search, but leaving the integration on](#disabling-elastic-backed-search-but-leaving-the-integration-on)
+    - [Creating and removing indices](#creating-and-removing-indices)
+        - [Creating and removing indices - TLDR](#creating-and-removing-indices-tldr)
+        - [Recreating an index](#recreating-an-index)
+        - [Creating an index (shards considerations)](#creating-an-index-shards-considerations)
+    - [Shards management](#shards-management)
+    - [Cleaning up index](#cleaning-up-index)
+    - [Triggering indexing](#triggering-indexing)
+        - [Impact on gitlab](#impact-on-gitlab)
+        - [Impact on Elastic cluster](#impact-on-elastic-cluster)
+- [Concepts](#concepts)
+    - [ES integration docs & video](#es-integration-docs-&-video)
+    - [Indexer](#indexer)
+        - [Overview](#overview)
+        - [Sidekiq jobs](#sidekiq-jobs)
+        - [Elastic_indexer_worker.rb](#elastic_indexer_workerrb)
+        - [Elastic_commit_indexer_worker.rb](#elastic_commit_indexer_workerrb)
 
-More detailed instructions and docs: https://docs.gitlab.com/ee/integration/elasticsearch.html
-ES integration deep dive video: https://www.youtube.com/watch?reload=9&v=vrvl-tN2EaA
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# Quick start
 
 ## ES integration admin page ##
 
 Go to gitlab's admin panel, navigate to Settings -> [Integrations] -> Elasticsearch -> [Expand] (URL: `https://gitlab.com/admin/application_settings/integrations`)
+
+
+# How-to guides
 
 ## Enabling ES integration ##
 
@@ -49,9 +77,9 @@ An example procedure that should cover all edge cases (nuclear option, will wipe
 
 You can prevent Gitlab from using ES integration for searching, but leave the integration itself enabled. An example of when this is useful is during initial indexing.
 
-## Creating and removing indexes ##
+## Creating and removing indices ##
 
-### TLDR ###
+### Creating and removing indices - TLDR ###
 
 Creating:
 - The rake task that creates the index is also setting up mapping, so the easiest way to create the index is by using [the rake task](https://docs.gitlab.com/ee/integration/elasticsearch.html#gitlab-elasticsearch-rake-tasks). If you don't use that rake task you'll have to create mappings yourself!
@@ -85,40 +113,6 @@ Q: Will we ever remove data from the index? e.g. when a project is removed from 
 
 A: Data is removed from the elasticsearch index when it is removed from the GitLab database or filesystem. When a project is removed, we delete corresponding documents from the index. Similarly, if an issue is removed, then the elasticsearch document for that index is also removed. The only way to discover if a particular document in elasticsearch is stale compared to the database is to cross-reference between the two. There's nothing automatic for that at present, and it sounds expensive to do.
 
-# Indexer #
-
-## Overview ##
-
-Indexing happens in two scenarios:
-- initial indexing - triggered by adding namespaces or by manually running rake tasks
-- new events (e.g. git push) - unicorn schedules sidekiq jobs that run indexers
-
-There are two indexers that are used by sidekiq jobs, they are delivered as part of omnibus:
-- Ruby indexer, `/opt/gitlab/embedded/service/gitlab-rails/bin/elastic_repo_indexer`, expects the repo to be Present at `/var/opt/gitlab/`
-- go indexer, `/opt/gitlab/embedded/bin/gitlab-elasticsearch-indexer`, uses a connection to gitaly
-
-
-## Sidekiq jobs ##
-
-Examples of indexer jobs:
-- `ee/app/workers/elastic_indexer_worker.rb`
-- `ee/app/workers/elastic_commit_indexer_worker.rb`
-- `ee/app/workers/elastic_batch_project_indexer_worker.rb`
-- `ee/app/workers/elastic_namespace_indexer_worker.rb`
-
-Logs available in `sidekiq.log`
-
-## Elastic_indexer_worker.rb ##
-
-* Triggered by application events (except epics), e.g. comments, issues
-* Processes database
-
-## Elastic_commit_indexer_worker.rb ##
-
-* Triggered by commits to git repo
-* Processes the git repo data accessed over gitaly
-* Uses external binary
-
 ## Triggering indexing ##
 
 Rake tasks are manual and we are moving away from them, gitlab application will be scheduling sidekiq jobs. Once a namespace is enabled sidekiq jobs will be scheduled for it.
@@ -133,11 +127,54 @@ You cannot be selective about what is processed, you can only limit which projec
 
 Gitlab won't be indexing anything if no namespaces are enabled, so we can enable Elastic and add URL with creds later. This is to prevent a situation where the integration is enabled but no creds are available
 
-## Impact on gitlab ##
+### Impact on gitlab ###
 
 Sidekiq workers impact -> add more workers that will process the elastic queues, how much resources do those jobs need? they are not time critical, but they are very bursty
 Gitaly impact -> should be controlled with sidekiq concurency
 
-## Impact on Elastic cluster ##
+### Impact on Elastic cluster ###
 
 Estimate number of requests -> measure impact on Elastic
+
+# Concepts
+
+## ES integration docs & video ##
+
+More detailed instructions and docs: https://docs.gitlab.com/ee/integration/elasticsearch.html
+
+ES integration deep dive video: https://www.youtube.com/watch?reload=9&v=vrvl-tN2EaA
+
+
+## Indexer ##
+
+### Overview ###
+
+Indexing happens in two scenarios:
+- initial indexing - triggered by adding namespaces or by manually running rake tasks
+- new events (e.g. git push) - unicorn schedules sidekiq jobs that run indexers
+
+There are two indexers that are used by sidekiq jobs, they are delivered as part of omnibus:
+- Ruby indexer, `/opt/gitlab/embedded/service/gitlab-rails/bin/elastic_repo_indexer`, expects the repo to be Present at `/var/opt/gitlab/`
+- go indexer, `/opt/gitlab/embedded/bin/gitlab-elasticsearch-indexer`, uses a connection to gitaly
+
+
+### Sidekiq jobs ###
+
+Examples of indexer jobs:
+- `ee/app/workers/elastic_indexer_worker.rb`
+- `ee/app/workers/elastic_commit_indexer_worker.rb`
+- `ee/app/workers/elastic_batch_project_indexer_worker.rb`
+- `ee/app/workers/elastic_namespace_indexer_worker.rb`
+
+Logs available locally in `sidekiq.log` or in centralised logging
+
+### Elastic_indexer_worker.rb ###
+
+* Triggered by application events (except epics), e.g. comments, issues
+* Processes database
+
+### Elastic_commit_indexer_worker.rb ###
+
+* Triggered by commits to git repo
+* Processes the git repo data accessed over gitaly
+* Uses external binary
