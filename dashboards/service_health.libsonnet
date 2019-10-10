@@ -63,26 +63,28 @@ local activeAlertsPanel(type, stage) = grafana.tablePanel.new(
   );
 
 local latencySLOPanel(type, stage) = grafana.singlestat.new(
-    '7d Latency SLO Error Budget',
+    '7d Latency SLA',
+    description="Percentage time the latency SLI for this service is within SLO",
     datasource="$PROMETHEUS_DS",
     format='percentunit',
   )
   .addTarget(
     promQuery.target('
-        avg(avg_over_time(slo_observation_status{slo="error_ratio", environment="$environment", type="' + type + '", stage="' + stage + '"}[7d]))
+        avg(avg_over_time(slo_observation_status{slo="apdex_ratio", environment="$environment", type="' + type + '", stage="' + stage + '"}[7d]))
       ',
       instant=true
     )
   );
 
 local errorRateSLOPanel(type, stage) = grafana.singlestat.new(
-    '7d Apdex Rate SLO Error Budget',
+    '7d Error Rate SLA',
+    description="Percentage time the error ratio SLI for this service is within SLO",
     datasource="$PROMETHEUS_DS",
     format='percentunit',
   )
   .addTarget(
     promQuery.target('
-        avg_over_time(slo_observation_status{slo="apdex_ratio",  environment="$environment", type="' + type + '", stage="' + stage + '"}[7d])
+        avg_over_time(slo_observation_status{slo="error_ratio", environment="$environment", type="' + type + '", stage="' + stage + '"}[7d])
       ',
       instant=true
     )
