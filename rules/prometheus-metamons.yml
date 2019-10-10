@@ -275,7 +275,8 @@ groups:
       description: Thanos compact {{ $labels.instance }} has failed compactions.
       runbook: troubleshooting/thanos-compact.md
   - alert: ThanosCompactBucketOperationsFailed
-    expr: rate(thanos_objstore_bucket_operation_failures_total[5m]) > 0
+    expr: rate(thanos_objstore_bucket_operation_failures_total[1m]) > 0
+    for: 10m
     labels:
       service: prometheus
       severity: s4
