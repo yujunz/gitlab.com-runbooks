@@ -1,3 +1,22 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Loading StackDriver(SD) Archives from Google Cloud Storage (GCS) into BiqQuery](#loading-stackdriversd-archives-from-google-cloud-storage-gcs-into-biqquery)
+    - [Summary](#summary)
+        - [Why](#why)
+        - [What](#what)
+- [How](#how)
+    - [Using the UI](#using-the-ui)
+    - [Alternative: Starting from an existing schema](#alternative-starting-from-an-existing-schema)
+    - [Example Queries](#example-queries)
+        - [Find the most used Source-IP-Addresses for a User](#find-the-most-used-source-ip-addresses-for-a-user)
+        - [Find Actions by User and respective Paths Performed from a given IP-Address](#find-actions-by-user-and-respective-paths-performed-from-a-given-ip-address)
+        - [Count the Number of Repositories a User has Archived and Downloaded](#count-the-number-of-repositories-a-user-has-archived-and-downloaded)
+- [TODO](#todo)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Loading StackDriver(SD) Archives from Google Cloud Storage (GCS) into BiqQuery
 
 ## Summary
@@ -31,22 +50,22 @@ differing styles.
 3. Choose "Google Cloud Storage" with "JSON (Newline Delimted)" as the `Source data`.
 4. Using the browse functionality to find an appropriate bucket is not always an option, as only buckets in the same project are listed  and data is usually imported from,
     for example, gitlab-production or gitlab-internal. Go to the ["Google Cloud Storage" browser](https://console.cloud.google.com/storage/browser/) and find the data you want to load.
-5. Insert the bucket URI as follows: `bucket/folder/folder/myfile.JSON` for a single file or `bucket/folder/folder/*` for all files in that folder. 
+5. Insert the bucket URI as follows: `bucket/folder/folder/myfile.JSON` for a single file or `bucket/folder/folder/*` for all files in that folder.
 
-![source data](../img/create_table_source.png)
+![source data](./img/create_table_source.png)
 
 4. Unselect "Auto detect Schema and input parameters" if selected.
-5. Use one of our [predifined schemas](https://gitlab.com/gitlab-com/runbooks/blob/master/logging_bigquery_schemas/) or do it manually adding records for fields, using `RECORD` type for nested fields and adding
+5. Use one of our [predifined schemas](https://gitlab.com/gitlab-com/runbooks/blob/master/logging/logging_bigquery_schemas/) or do it manually adding records for fields, using `RECORD` type for nested fields and adding
    subfields using the `+` on the parent record.  It should look something like this:
 
-![record type](../img/bigquery_schema_record.png)
+![record type](./img/bigquery_schema_record.png)
 
 6. In `Advanced options`, check `Ignore unknown values`
 7. If the data to be imported is large, consider whether partioning will be necessary.
    1. Add `timestamp` field of type `TIMESTAMP`
    2. In `Advanced options`, select it as the partitioning field:
 
-![partition by timestamp](../img/bigquery_table_partition.png)
+![partition by timestamp](./img/bigquery_table_partition.png)
 
 8. Create the table.  If everything is right, a background job will run to
 load the data into the new table. This usually takes a while, be patient or check the status of the created job under "Job History".
@@ -57,16 +76,16 @@ To save time and increase usability, the text version of a table schema can be
 dumped with the `bq` command-line tool as follows:
 
 ```
-  $ bq show --schema --format=prettyjson myproject:myhaproxy.haproxy > haproxy_schema.json 
+  $ bq show --schema --format=prettyjson myproject:myhaproxy.haproxy > haproxy_schema.json
 ```
 
 The result can be copied and pasted into BQ by selecting `Edit as text` when creating a table that relies on a similar schema.
 
-Contribute changes or new schemas back to [logging_bigquery_schemas](../logging_bigquery_schemas).
+Contribute changes or new schemas back to [logging_bigquery_schemas](./logging_bigquery_schemas).
 
 ## Example Queries
 
-The following sample queries can be run on tables created for logs coming from `gitlab-gprd-logging-archive/rails-application/*` and conforming to [the rails_application production schema](https://gitlab.com/gitlab-com/runbooks/blob/master/logging_bigquery_schemas/rails_production_schema.json).
+The following sample queries can be run on tables created for logs coming from `gitlab-gprd-logging-archive/rails-application/*` and conforming to [the rails_application production schema](https://gitlab.com/gitlab-com/runbooks/blob/master/logging/logging_bigquery_schemas/rails_production_schema.json).
 
 ### Find the most used Source-IP-Addresses for a User
 
