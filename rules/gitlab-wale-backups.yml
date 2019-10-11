@@ -31,4 +31,4 @@ groups:
       description: WALE basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: troubleshooting/gitlab-com-wale-backups.md
-      title: Last successful WALE basebackup was seen {{ .Value | humanizeDuration }} ago.
+      title: Last successful WALE basebackup was seen {{ .Value }} hours ago.
