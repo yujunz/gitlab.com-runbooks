@@ -185,21 +185,21 @@ local generalGraphPanel(
         },
       ],
     )
-    .addTarget(  // Alert scoring
+    .addTarget(
       promQuery.target(
         'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
         format='table',
         instant=true,
       )
     )
-    .addTarget(  // Alert scoring
+    .addTarget(
       promQuery.target(
         'sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
         format='table',
         instant=true,
       )
     )
-    .addTarget(  // Alert scoring
+    .addTarget(
       promQuery.target(
         'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod) / sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
         format='table',

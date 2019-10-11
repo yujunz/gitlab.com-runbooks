@@ -7,6 +7,15 @@ the Grafana instance will be overwritten.
 
 The dashboards are kept in [`grafonnet`](https://github.com/grafana/grafonnet-lib) format, which is based on the [jsonnet template language](https://jsonnet.org/).
 
+# File nomenclature
+
+We utilize the following file format: `dashboards/<service name, aka type>/<dashboard name>.dashboard.libsonnet`
+
+Using this consistent schema makes URLs consistent, etc.
+
+Example, the Container Registry is of service type `registry`.  Therefore,
+`dashboards/registry/<somedashboard>.dashboard.libsonnet`
+
 # Local Development
 
 * Install `jsonnet`, `jq` and `curl`
