@@ -1,17 +1,23 @@
 # PubSub Queuing Rate Increasing
 
 ## Reason
+
 * PubSub takes our log messages from fluentd and sends them to PubSub, which is
-  later scrapped and sent to our Elastic Search Cluster
-* There's something wrong
+  later subscribed to by our pubsubbeat machines that forward the logs to
+  Elasticsearch.
+* Either the beats, or elasticsearch itself, is having issues ingesting /
+  forwarding these logs.
 
 ## Prechecks
-* This [stackdriver chart](https://app.google.stackdriver.com/monitoring/1088234/logging-pubsub-in-gprd?project=gitlab-production)
+
+* This [dashboard](https://dashboards.gitlab.com/d/USVj3qHmk/logging)
   will provide details on the status of our pubsubs
   * If the queues for the following are growing, continue to investigate:
     * Backlog size
     * Old unacknowledged message age
     * unacknowledged messages
+    * Rate of change of unacked messages (there is a panel for this). If it's
+      positive and flat, ingestion has likely stopped altogether.
 
 ## Resolution
 * If `Publish message operations` has a spike, ensure it goes back down.
