@@ -99,8 +99,8 @@ tf import module.gitlab-gke.google_container_node_pool.node_pool[0] gitlab-produ
 
 * All GKE logs: https://log.gitlab.net/goto/fcf1a37403d6a035e3dfd3a3b406bf34
 * Registry errors in GKE: https://log.gitlab.net/goto/763017c05032e98ee79ef18165da7703
-* Registry in GKE application overview: https://dashboards.gitlab.net/d/CoBSgj8iz/application-info?orgId=1
-* Pod Metrics: https://dashboards.gitlab.net/d/oWe9aYxmk/pod-metrics?orgId=1&refresh=30s
+* Registry in GKE application overview: https://dashboards.gitlab.net/d/registry-app/registry-application-info?orgId=1
+* Pod Metrics: https://dashboards.gitlab.net/d/registry-pod/registry-pod-info?orgId=1
 * General service metrics for Registry: https://dashboards.gitlab.net/d/general-service/general-service-platform-metrics?orgId=1&var-type=registry&from=now-1h&to=now
 
 ### Using Toolbox
