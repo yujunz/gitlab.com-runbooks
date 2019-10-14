@@ -1,15 +1,18 @@
 ## Symptoms
 
-* An alert in #alerts for SidekiqExceptionCountTooHigh
-* [The Sidekiq Exceptions Count by Controller Graph]( https://dashboards.gitlab.net/d/9GOIu9Siz/sidekiq-stats?panelId=66&fullscreen&orgId=1&from=now-6h&to=now) shows a steady increase in one of the controllers
+* An alert in `#alerts-general` for Sidekiq's error ratio exceeding SLO
 
 ## Troubleshooting
 
-* It's important to mind which sidekiq controller might be having issues.
+* It's important to mind which sidekiq job is having issues. This
+  [chart](https://log.gitlab.net/app/kibana#/visualize/edit/AW3J3Lc4zkPhEGn_VsuR)
+  shows the worker classes with the most errors. You might want to drill down
+  [to service class](https://log.gitlab.net/app/kibana#/visualize/edit/AW2moVRdUOguGaJ_mRPG).
 * For most of them, ideally we'd contact the #backend and ask for insight
 * Some we can potentially troubleshoot ourselves
 
 ### ReactiveCachingWorker
+
 * This one likes to fire when end users might have misconfigured an integration
   with their project.
   * As a quick example, if they utilize the Bamboo CI Integration, they are
@@ -25,19 +28,19 @@ Failed to open TCP connection to 192.0.2.188:8089 (No route to host -connect(2).
 ```
 * In this case we can quickly discern that some integration is not successfully
   connecting to this IP address
-  * Browse into that error 
+  * Browse into that error
   * In the "additional data", subsection "sidekiq", you'll find something
     similar to this:
 ```
 {
-context: Job raised exception, 
+context: Job raised exception,
 job: {
 args: [
-BambooService, 
-40888973, 
-41af8888732fd99c7a69cd5dbc230174ec538f36, 
+BambooService,
+40888973,
+41af8888732fd99c7a69cd5dbc230174ec538f36,
 development
-], 
+],
 ```
 * In this example we can confirm there's trouble using the Bamboo CI Integration
   from project id `40888973`
@@ -53,3 +56,10 @@ development
 * Finally, reach out to support letting them know your findings, the decision
   into what led disabling this integration, and ask that they reach out to the
   end user
+
+### GithubService (ProjectServiceWorker)
+
+Until https://gitlab.com/gitlab-org/gitlab/issues/30996 is fixed, client errors
+are reported as job errors from this service. If the logs are full of 4XX
+errors, there is nothing to do. We can't stop users from submitting incorrect
+repo paths or invalid credentials.

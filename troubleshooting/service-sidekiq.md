@@ -21,6 +21,6 @@
 
 * [ci_introduction.md](ci_introduction.md)
 * [large-sidekiq-queue.md](large-sidekiq-queue.md)
-* [sidekiq_exception_count.md](sidekiq_exception_count.md)
+* [sidekiq_error_rate_high.md](sidekiq_error_rate_high.md)
 * [sidekiq_stats_no_longer_showing.md](sidekiq_stats_no_longer_showing.md)
 <!-- END_MARKER -->
