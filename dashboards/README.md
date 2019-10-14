@@ -7,6 +7,15 @@ the Grafana instance will be overwritten.
 
 The dashboards are kept in [`grafonnet`](https://github.com/grafana/grafonnet-lib) format, which is based on the [jsonnet template language](https://jsonnet.org/).
 
+# File nomenclature
+
+We utilize the following file format: `dashboards/<service name, aka type>/<dashboard name>.dashboard.libsonnet`
+
+Using this consistent schema makes URLs consistent, etc.
+
+Example, the Container Registry is of service type `registry`.  Therefore,
+`dashboards/registry/<somedashboard>.dashboard.libsonnet`
+
 # Local Development
 
 * Install `jsonnet`, `jq` and `curl`
@@ -33,6 +42,10 @@ The dashboards are kept in [`grafonnet`](https://github.com/grafana/grafonnet-li
 
 * Dashboards should be kept in files with the following name: `/dashboards/[grafana_folder_name]/[name].dashboard.jsonnet`
   * `grafana_folder_name` refers to the grafana folder where the files will be uploaded to. Note that the folder must already be created.
+  * These can be created via `./create-dashboard-folder.sh <grafana_folder_name> <friendly name>`
+  * Example: `./create-grafana-folder.sh registry 'Container Registry'`
+  * Note that if a folder already contains the name, it'll need to be removed or
+    renamed in order for the API to accept the creation of a new folder
 * Obtain a API key to the Grafana instance and export it in `GRAFANA_API_TOKEN`:
   * `export GRAFANA_API_TOKEN=123`
 * To upload the files, run `./dashboards/upload.sh`

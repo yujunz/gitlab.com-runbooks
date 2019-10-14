@@ -30,6 +30,17 @@ local template = grafana.template;
     refresh='load',
     sort=1,
   ),
+  Node:: template.new(
+    'Node',
+    '$PROMETHEUS_DS',
+    'query_result(count(count_over_time(kube_node_labels{environment="$environment", cluster="$cluster"}[1w])) by (label_kubernetes_io_hostname))',
+    allValues='.*',
+    current='NewMergeRequestWorker',
+    includeAll=true,
+    refresh='time',
+    regex='/.*="(.*)".*/',
+    sort=0,
+  ),
   type:: template.new(
     'type',
     '$PROMETHEUS_DS',
