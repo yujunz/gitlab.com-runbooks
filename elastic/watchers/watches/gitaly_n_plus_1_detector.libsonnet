@@ -58,7 +58,7 @@ local transformScript = "
     'items': ctx.payload.aggregations.controller.buckets.findAll(controllerBucket -> findController(controllerBucket, params)).collect(controllerBucket -> [
       'key': controllerBucket.key,
       'max_gitaly_calls': Math.round(controllerBucket.max_gitaly_calls.value),
-      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key
+      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&state=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key
     ])
   ]
 ";

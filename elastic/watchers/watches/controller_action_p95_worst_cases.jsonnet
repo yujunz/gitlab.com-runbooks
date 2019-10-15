@@ -82,7 +82,7 @@ local painlessFunctions = "
       'actionKey': actionBucket.key,
       'p95latencySeconds': Math.round(actionBucket.percentile_durations.values[0].value/1000),
       'controller':controllerBucket.key,
-      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key + '%23' + actionBucket.key
+      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&state=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key + '%23' + actionBucket.key
     ])
   }
 ";
