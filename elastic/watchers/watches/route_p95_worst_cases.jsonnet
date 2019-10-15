@@ -66,7 +66,7 @@ local transformScript = "
       .collect(routeBucket -> [
         'routeKey': routeBucket.key,
         'p95latencySeconds': Math.round(routeBucket.percentile_durations.values[0].value/1000),
-        'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&label_name[]=Mechanical%20Sympathy&search=' + routeBucket.key
+        'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&state=all&label_name[]=Mechanical%20Sympathy&search=' + routeBucket.key
       ])
   ]
 ";
