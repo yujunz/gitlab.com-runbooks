@@ -61,13 +61,13 @@ groups:
   # of ci-runner jobs to start within 60s.
   #
   # Initially, until we can make improvements, this is wishful thinking, so we'll only
-  # alert when the p80 exceeds 60s. As the service improves, we can improve the target,
+  # alert when the p50 exceeds 60s. As the service improves, we can improve the target,
   # but setting this to p95 initially will just generate a lot of unhelpful alerts.
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:
       type: ci-runners
       tier: runners
-    expr: '0.80'
+    expr: '0.50'
 
 - name: GitLab Apdex SLO observance status
   interval: 1m
