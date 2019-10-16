@@ -29,7 +29,7 @@ gcloud auth login
 
 > If you see warnings about permissions issues related to `~/.config/gcloud/*`
 > check the permissions of this directory.  Simply change it to your user if
-> necessary: `sudo chown -R $(id) ~/.config`
+> necessary: `sudo chown -R $(whoami) ~/.config`
 
 You'll be prompted to accept that you are using the `gcloud` on a shared
 computer and presented with a URL to continue logging in with, after which
