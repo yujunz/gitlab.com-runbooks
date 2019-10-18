@@ -81,3 +81,27 @@ If you're investigating further, there's at least two cases seen so far:
 1. Inside this folder, in current/link the link file is *empty* (which correlates more directly with the UI experience often seen)
 
 It may be worth noting which case we're seeing, and if you see other failure modes, note them down too.  We should eventually get to the bottom of the source of these corrupt states, and fix them there.
+
+#### Repairing 500 errors
+
+There [is a script](../scripts/registry_scanner.rb) that will help identify which file is broken. To run it:
+
+```sh
+./registry_scanner.rb /v2/someuser/really-awesome-project/manifests/even-awesomer-build
+```
+
+The output will show something like this:
+
+```
+Checking tag even-awesomer-build...
+Checking revision 14dccc1ea5804e70e77bc62d7e96ded4032c16fa1d32f94f96bb909f3408dadc
+Checking blob 14dccc1ea5804e70e77bc62d7e96ded4032c16fa1d32f94f96bb909f3408dadc...
+0-byte file found: gs://gitlab-gprd-registry/docker/registry/v2/blobs/sha256/14/14dccc1ea5804e70e77bc62d7e96ded4032c16fa1d32f94f96bb909f3408dadc/data
+
+To remove these file(s), you may want to run:
+================================================
+gsutil rm gs://gitlab-gprd-registry/docker/registry/v2/blobs/sha256/14/14dccc1ea5804e70e77bc62d7e96ded4032c16fa1d32f94f96bb909f3408dadc/data
+gsutil rm -r gs://gitlab-gprd-registry/docker/registry/v2/repositories/someuser/really-awesome-project/_manifests/revisions/sha256/14dccc1ea5804e70e77bc62d7e96ded4032c16fa1d32f94f96bb909f3408dadc
+gsutil rm -r gs://gitlab-gprd-registry/docker/registry/v2/repositories/someuser/really-awesome-project/_manifests/tags/even-awesomer-build
+================================================
+```
