@@ -41,7 +41,7 @@ local generalGraphPanel(
   version(startRow):: layout.grid([
     basic.timeseries(
       title='Active Version',
-      query='count(kube_pod_container_info{container="registry", cluster="$cluster"}) by (image)',
+      query='count(kube_pod_container_info{container="registry",container_id!="",cluster="$cluster"}) by (image)',
       legendFormat='{{ image }}',
       legend_rightSide=true,
     ),
