@@ -6,7 +6,7 @@ integrations:
   - name: pagerduty
     id: 65172
 checks:
-  - url: https://gitlab.com/gitlab-org/gitlab-ce/
+  - url: https://gitlab.com/gitlab-org/gitlab-foss/
     timeout_ms: 20000
     resolution_minutes: 5
     notify_when_restored: true
@@ -19,7 +19,7 @@ checks:
     integrations:
     - pagerduty
 
-  - url: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/
+  - url: https://gitlab.com/gitlab-org/gitlab-foss/merge_requests/
     timeout_ms: 20000
     resolution_minutes: 5
     notify_when_restored: true
@@ -32,7 +32,7 @@ checks:
     integrations:
     - pagerduty
 
-  - url: https://gitlab.com/gitlab-org/gitlab-ce/tree/master
+  - url: https://gitlab.com/gitlab-org/gitlab-foss/tree/master
     timeout_ms: 20000
     resolution_minutes: 5
     notify_when_restored: true
@@ -44,7 +44,7 @@ checks:
     integrations:
     - pagerduty
 
-  - url: https://gitlab.com/gitlab-org/gitlab-ce/issues
+  - url: https://gitlab.com/gitlab-org/gitlab-foss/issues
     timeout_ms: 20000
     resolution_minutes: 5
     notify_when_restored: true
@@ -56,7 +56,7 @@ checks:
     integrations:
     - pagerduty
 
-  - url: 'https://gitlab.com/api/v4/projects/13083' # GitLab-CE
+  - url: 'https://gitlab.com/api/v4/projects/13083' # GitLab-CE / GitLab-FOSS
     timeout_ms: 20000
     resolution_minutes: 5
     notify_when_restored: true
@@ -103,7 +103,7 @@ checks:
     integrations:
     - pagerduty
 
-  - url: https://gitlab.com/gitlab-org/gitlab-ce/issues/1
+  - url: https://gitlab.com/gitlab-org/gitlab-foss/issues/1
     timeout_ms: 30000
     resolution_minutes: 5
     notify_when_restored: true
