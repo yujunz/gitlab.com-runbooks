@@ -19,7 +19,7 @@ groups:
     labels:
       type: 'api'
       tier: 'sv'
-    expr: '0.99'
+    expr: '0.90'
 
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:
