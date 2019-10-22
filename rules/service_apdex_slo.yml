@@ -31,7 +31,7 @@ groups:
     labels:
       type: 'git'
       tier: 'sv'
-    expr: '0.995'
+    expr: '0.95'
 
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:
