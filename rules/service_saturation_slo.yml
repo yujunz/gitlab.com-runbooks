@@ -106,6 +106,17 @@ groups:
       component: 'connection_pool'
     expr: '0.95'
 
+  ## Redis Memory Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'redis_memory'
+    expr: '0.65'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'redis_memory'
+    expr: '0.75'
+
   ## Redis Client Slot Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:

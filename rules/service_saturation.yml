@@ -136,6 +136,25 @@ groups:
           (sum without(state) (pg_stat_activity_count{datname="gitlabhq_production"}) > 0)
       ) by (type, tier, stage, environment), 1)
 
+  # type: redis, redis-cache, component: redis_memory
+  # Records Redis memory usage
+  # TODO: After upgrading to Redis 4, we should include the rdb_last_cow_size in this value
+  # so that we include the RDB snapshot utilization in our memory usage
+  # See https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3785#note_234689504
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'redis_memory'
+    expr: >
+      max(
+        max(
+          label_replace(redis_memory_used_rss_bytes, "memtype", "rss","","")
+          or
+          label_replace(redis_memory_used_bytes, "memtype", "used","","")
+        ) by (type, tier, stage, environment, fqdn)
+        / on(fqdn) group_left
+        node_memory_MemTotal_bytes
+      )  without (fqdn)
+
   # type: redis, redis-cache, component: redis_clients
   # Records the saturation of redis client connections against a redis fleet
   - record: gitlab_component_saturation:ratio
