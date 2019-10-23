@@ -316,6 +316,7 @@ During an incident there are at least 2 roles, and one more optional
 * [Manage Chef Cookbooks](howto/chef-documentation.md)
 * [Chef Guidelines](howto/chef-guidelines.md)
 * [Chef Vault](howto/chef-vault.md)
+* [Debug failed provisioning](howto/debug-failed-chef-provisioning.md)
 
 ### Work with CI Infrastructure
 * [Update GitLab Runner on runners managers](howto/update-gitlab-runner-on-managers.md)
