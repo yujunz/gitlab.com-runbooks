@@ -1,12 +1,16 @@
 groups:
   - name: slo_alerts.rules
     rules:
-      # Warn: Latency SLO not being met
+      # ------------------------------------------------------------------------------
+      # Latency alerts
+      # ------------------------------------------------------------------------------
+
+      # Warn: Latency SLO not being met, default alert_trigger_duration (short, 5m)
       - alert: service_apdex_slo_out_of_bounds_lower_5m
         expr: |
           avg(gitlab_service_apdex:ratio) by (environment, tier, type, stage)
           < ignoring(environment, stage) group_left
-            avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+            avg(slo:min:gitlab_service_apdex:ratio{alert_trigger_duration!="long"}) by (tier, type)
         for: 5m
         labels:
           rules_domain: general
@@ -35,12 +39,50 @@ groups:
           promql_template_1: 'gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
 
-      # Warn: Error ratio SLO not being met
+      # Warn: Latency SLO not being met, long alert_trigger_duration (15m)
+      - alert: service_apdex_slo_out_of_bounds_lower_15m
+        expr: |
+          avg(gitlab_service_apdex:ratio) by (environment, tier, type, stage)
+          < ignoring(environment, stage) group_left
+            avg(slo:min:gitlab_service_apdex:ratio{alert_trigger_duration="long"}) by (tier, type)
+        for: 15m
+        labels:
+          rules_domain: general
+          metric: gitlab_service_apdex:ratio
+          severity: s2
+          slo_alert: 'yes'
+          period: 15m
+          bound: lower
+          pager: pagerduty
+        annotations:
+          description: >
+            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is not meeting its latency SLOs
+
+            The service is taking longer to respond to requests than usual. This could be caused by
+            user abuse, application changes in upstream services that lead to higher request rates or slower
+            requested, or slowdown in downstream services. Check operation rates in upstream and downstream
+            services, error rates and check ELK for abuse.
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has a apdex score (latency) below SLO"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
+          grafana_panel_id: "7"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: "6"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
+          promql_template_1: 'gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
+
+      # ------------------------------------------------------------------------------
+      # Error Rate alerts
+      # ------------------------------------------------------------------------------
+
+      # Warn: Error ratio SLO not being met, default alert_trigger_duration (short, 5m)
       - alert: service_error_ratio_slo_out_of_bounds_upper_5m
         expr: |
           avg(gitlab_service_errors:ratio) by (environment, tier, type, stage)
           > ignoring(environment, stage) group_left
-          avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+          avg(slo:max:gitlab_service_errors:ratio{alert_trigger_duration!="long"}) by (tier, type)
         for: 5m
         labels:
           rules_domain: general
@@ -68,10 +110,48 @@ groups:
           promql_template_1: 'gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
 
-      # Saturation: Hard SLO exceeded
+      # Warn: Error ratio SLO not being met, long alert_trigger_duration (15m)
+      - alert: service_error_ratio_slo_out_of_bounds_upper_15m
+        expr: |
+          avg(gitlab_service_errors:ratio) by (environment, tier, type, stage)
+          > ignoring(environment, stage) group_left
+          avg(slo:max:gitlab_service_errors:ratio{alert_trigger_duration="long"}) by (tier, type)
+        for: 15m
+        labels:
+          rules_domain: general
+          metric: gitlab_service_errors:ratio
+          # change severity to s2 when enabling pagerduty!
+          severity: s3
+          slo_alert: 'yes'
+          period: 15m
+          bound: upper
+          # pager: pagerduty uncomment after trimming down 4xx errors that we don't control
+        annotations:
+          description: >
+            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio higher than SLOs
+
+            A high proportion of requests to the `{{ $labels.type }}` service are resulting in errors.
+            This ratio is higher than the defined SLO for the service.
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio exceeding SLO"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
+          grafana_panel_id: "8"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: "6"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
+          promql_template_1: 'gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
+
+      # ------------------------------------------------------------------------------
+      # Saturation alerts
+      # ------------------------------------------------------------------------------
+
+      # Saturation: Hard SLO exceeded, default alert_trigger_duration (short, 5m)
       - alert: component_saturation_slo_out_of_bounds_upper_5m
         expr: |
-          gitlab_component_saturation:ratio > on(component) group_left slo:max:hard:gitlab_component_saturation:ratio
+          gitlab_component_saturation:ratio > on(component) group_left
+          slo:max:hard:gitlab_component_saturation:ratio{alert_trigger_duration!="long"}
         for: 5m
         labels:
           rules_domain: general
@@ -79,6 +159,33 @@ groups:
           severity: s3
           # slo_alert: 'yes' Uncomment after trial period
           period: 5m
+          bound: upper
+          # pager: pagerduty Uncomment after trial period
+        annotations:
+          description: >
+            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
+
+            This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit."
+          grafana_dashboard_id: "alerts-saturation_component/saturation-component-alert"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type,stage,component"
+          grafana_min_zoom_hours: "6"
+          promql_template_1: 'gitlab_component_saturation:ratio{component="$component",environment="$environment",stage="$stage",type="$type"}'
+
+      # Saturation: Hard SLO exceeded, long alert_trigger_duration (15m)
+      - alert: component_saturation_slo_out_of_bounds_upper_15m
+        expr: |
+          gitlab_component_saturation:ratio > on(component) group_left
+          slo:max:hard:gitlab_component_saturation:ratio{alert_trigger_duration="long"}
+        for: 15m
+        labels:
+          rules_domain: general
+          metric: gitlab_component_saturation:ratio
+          severity: s3
+          # slo_alert: 'yes' Uncomment after trial period
+          period: 15m
           bound: upper
           # pager: pagerduty Uncomment after trial period
         annotations:

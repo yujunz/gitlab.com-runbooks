@@ -67,6 +67,7 @@ groups:
     labels:
       type: ci-runners
       tier: runners
+      alert_trigger_duration: long
     expr: '0.50'
 
 - name: GitLab Apdex SLO observance status
