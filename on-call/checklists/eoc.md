@@ -14,9 +14,9 @@ Here is a suggested checklist of things to do at the start of an on-call shift:
 - *Change Slack Icon*: Click name. Click `Set status`. Click grey smile face. Type `:pagerduty:`. Set `Clear after` to end of on-call shift. Click `Save`
 - *Add On-Call Feed*: PM yourself in slack `/feed add https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues.atom?feed_token=(TOKEN)&label_name%5B%5D=SRE%3AOn-call&scope=all&state=opened&utf8=%E2%9C%93`
 - *Add Production Feed*: PM yourself in slack `/feed add https://gitlab.com/gitlab-com/gl-infra/production/issues.atom?feed_token=(TOKEN)&label_name%5B%5D=incident&state=opened`
-- *Join alert channels*: If not already a member, `/join` `#alerts`, `#alerts-general`, `#alerts-prod-abuse`, `#alerts-ops`, `#tenable-notifications`, `#marquee_account_alrts`
+- *Join alert channels*: If not already a member, `/join` `#alerts`, `#alerts-general`, `#alerts-prod-abuse`, `#tenable-notifications`, `#marquee_account_alrts`
 - *Turn on slack channel notifications*: Open `#production` and `#incident-management` Notification Preferences (and optionally #infrastructure-lounge). Set Desktop and Mobile to `All new messages`
-- *Turn on slack alert notifications*: Open `#alerts`, `#alerts-general`, and `#alerts-ops` Notification Preferences. Set Desktop only to `All new messages`
+- *Turn on slack alert notifications*: Open `#alerts` and `#alerts-general`, Notification Preferences. Set Desktop only to `All new messages`
 - At the start of each on-call day, read all S1 incidents at: https://gitlab.com/gitlab-com/gl-infra/production/issues?scope=all&utf8=✓&state=opened&label_name%5B%5D=incident&label_name%5B%5D=S1
 
 At the end of a shift:
