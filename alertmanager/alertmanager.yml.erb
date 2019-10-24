@@ -37,7 +37,7 @@ route:
     group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
     receiver: slack_alerts_general
     continue: false
-    
+
   - match:
       rules_domain: general
       pager: "pagerduty"
@@ -229,7 +229,7 @@ receivers:
   slack_configs:
   - api_url: "<%= slack_hook %>"
     send_resolved: true
-    channel: "#alerts-ops"
+    channel: "#alerts"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
@@ -239,7 +239,7 @@ receivers:
   slack_configs:
   - api_url: "<%= slack_hook %>"
     send_resolved: true
-    channel: "#alerts-ops"
+    channel: "#alerts"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
@@ -249,7 +249,7 @@ receivers:
   slack_configs:
   - api_url: "<%= slack_hook %>"
     send_resolved: true
-    channel: "#alerts-ops"
+    channel: "#alerts"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
@@ -259,7 +259,7 @@ receivers:
   slack_configs:
   - api_url: "<%= slack_hook %>"
     send_resolved: true
-    channel: "#alerts-ops"
+    channel: "#alerts"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
@@ -269,7 +269,7 @@ receivers:
   slack_configs:
   - api_url: "<%= slack_hook %>"
     send_resolved: true
-    channel: "#alerts-ops"
+    channel: "#alerts"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
@@ -279,7 +279,7 @@ receivers:
   slack_configs:
   - api_url: "<%= slack_hook %>"
     send_resolved: true
-    channel: "#alerts-ops"
+    channel: "#alerts"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
@@ -289,7 +289,7 @@ receivers:
   slack_configs:
   - api_url: "<%= slack_hook %>"
     send_resolved: true
-    channel: "#alerts-ops"
+    channel: "#alerts"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
@@ -314,4 +314,3 @@ receivers:
   webhook_configs:
   - url: "<%= snitch_hook %>"
     send_resolved: false
-
