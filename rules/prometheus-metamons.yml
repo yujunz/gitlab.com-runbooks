@@ -234,7 +234,7 @@ groups:
       runbook: troubleshooting/prometheus-empty-sd.md
       title: 'Prometheus has no targets'
   - alert: PrometheusHighMemoryUtilization
-    expr: process_resident_memory_bytes{job="prometheus"} / on (fqdn) node_memory_MemTotal_bytes * 100 > 90
+    expr: go_memstats_alloc_bytes{job="prometheus"} / on (fqdn) node_memory_MemTotal_bytes * 100 > 90
     for: 30m
     labels:
       service: prometheus
