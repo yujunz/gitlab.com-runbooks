@@ -91,6 +91,29 @@ local writeThroughput() = basic.saturationTimeseries(
   legend_show=true,
 );
 
+local ratelimitLockPercentage() = generalGraphPanel(
+    "Request % acquiring rate-limit lock within 1m, by host + method",
+    description="Percentage of requests that acquire a Gitaly rate-limit lock within 1 minute, by host and method"
+  )
+  .addTarget(
+    promQuery.target(
+      'sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{le="60"}[$__interval])) by (environment, tier, type, stage, fqdn, grpc_method) / sum(rate(gitaly_rate_limiting_acquiring_seconds_bucket{le="+Inf"}[$__interval])) by (environment, tier, type, stage, fqdn, grpc_method)',
+      interval="30s",
+      legendFormat="{{fqdn}} - {{grpc_method}}"
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    min=0,
+    max=1,
+    label="%"
+  )
+  .addYaxis(
+    format='short',
+    show=false,
+  );
+
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -121,6 +144,7 @@ layout.grid([
     keyMetrics.serviceAvailabilityPanel('gitaly', '$stage'),
     keyMetrics.qpsPanel('gitaly', '$stage'),
     keyMetrics.saturationPanel('gitaly', '$stage'),
+    ratelimitLockPercentage(),
   ], startRow=1001)
 )
 .addPanel(
