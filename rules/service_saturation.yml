@@ -25,17 +25,10 @@ groups:
     labels:
       component: 'disk_space'
     expr: >
-      max(
-        (
-          (
-            node_filesystem_size_bytes{type!="", tier!="", fstype=~"ext.|xfs"}
-            -
-            node_filesystem_free_bytes{type!="", tier!="", fstype=~"ext.|xfs"}
-          )
-          /
-          node_filesystem_size_bytes{type!="", tier!="", fstype=~"ext.|xfs"}
-        )
-      ) by (type, tier, stage, environment)
+      max by (type, tier, stage, environment) (
+        1 -
+        instance:node_filesystem_avail:ratio{type!="",tier!="",fstype=~"ext.|xfs"}
+      )
 
   - record: gitlab_component_saturation:ratio
     labels:
