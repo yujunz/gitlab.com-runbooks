@@ -125,15 +125,20 @@ groups:
       ) by (type, tier, stage, environment), 1)
 
   # type: postgres-delayed, postgres-archive, patroni
+  # postgres has a MAX_CONNECTIONS value which specifies the maximum number of active connections
+  # the server can handle concurrently. This records the number of non-idle connections as a
+  # fraction of the maximum. When we reach saturation
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'active_db_connections'
     expr: >
       clamp_max(
         max(
-          sum without(state) (pg_stat_activity_count{datname="gitlabhq_production", state!="idle"})
-          /
-          (sum without(state) (pg_stat_activity_count{datname="gitlabhq_production"}) > 0)
+          sum without (state) (
+            pg_stat_activity_count{datname="gitlabhq_production", state!="idle"}
+          )
+          /  on (type, tier, stage, environment, fqdn)
+          pg_settings_max_connections
       ) by (type, tier, stage, environment), 1)
 
   # type: redis, redis-cache, component: redis_memory
