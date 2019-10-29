@@ -51,10 +51,10 @@ groups:
     expr: >
       max by (type, tier, stage, environment) (
         sum by (fqdn, type, tier, stage, environment) (
-          go_memstats_alloc_bytes{type!=""}
-        ) / on (fqdn)
+          go_memstats_alloc_bytes{type!="",tier!="",stage!="",job=~"(alertmanager|gitaly|gitlab-workhorse.*|prometheus|thanos)"}
+        ) /
         sum by (fqdn, type, tier, stage, environment) (
-          node_memory_MemTotal_bytes{type!=""}
+          node_memory_MemTotal_bytes{type!="",tier!="",stage!="",job=~"(alertmanager|gitaly|gitlab-workhorse.*|prometheus|thanos)"}
         )
       )
 
