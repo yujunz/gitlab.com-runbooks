@@ -266,7 +266,7 @@ groups:
   # when this limit is reached, new jobs need to be queued.
   # Defaults to using the environment `gprd` since runners do not always
   # have the correct environment label
-  - record: gitlab_component_apdex:ratio
+  - record: gitlab_component_saturation:ratio
     labels:
       type: ci-runners
       tier: runners
