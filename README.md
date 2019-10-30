@@ -342,19 +342,46 @@ During an incident there are at least 2 roles, and one more optional
 ### Manage Marvin, our infra bot
 * [Manage cog](howto/manage-cog.md)
 
-### Elasticsearch
-* [How to work with ES](howto/elasticsearch.md)
-* [Elastic Cloud](howto/elastic-cloud.md)
-* [ES integration in gitlab](howto/elasticsearch-integration-in-gitlab.md)
-* [`mapper_parsing_exception` errors](troubleshooting/elk_mapper_parsing_exception.md)
-* [elastic-watcher](https://gitlab.com/gitlab-com/runbooks/tree/master/elastic-watcher)
+### ElasticStack (previously Elasticsearch)
+
+Selected elastic documents and resources:
+
+- elastic/
+    - doc/
+        - [elastic-cloud.md](elastic/doc/elastic-cloud.md) (hosted ES provider docs)
+        - [exercises](elastic/doc/exercises) (e.g. cluster performance tuning)
+        - [kibana.md](elastic/doc/kibana.md)
+        - [README.md](elastic/doc/README.md) (ES overview)
+        - troubleshooting/
+            - [README.md](elastic/doc/troubleshooting/README.md) (troubleshooting overview)
+    - [scripts/](elastic/scripts) (api calls used for admin tasks documented as bash scripts)
+    - watchers/
+
+### ElasticStack integration in Gitlab (indexing Gitlab data)
+
+[elasticsearch-integration-in-gitlab.md](elastic-integration/doc/elasticsearch-integration-in-gitlab.md)
+
+### Logging
+
+Selected logging documents and resources:
+
+- logging/
+    - doc/
+        - [exercises](logging/doc/exercises) (e.g. searching logs in Kibana)
+        - [README.md](logging/doc/README.md) (logging overview)
+            - [quick-start](logging/doc/README.md#quick-start)
+            - [what-are-we-logging](logging/doc/README.md#what-are-we-logging)
+            - [searching-logs](logging/doc/README.md#searching-logs)
+            - [logging-infrastructure-overview](logging/doc/README.md#logging-infrastructure-overview)
+        - troubleshooting/
+            - [README.md](logging/doc/troubleshooting/README.md)
 
 ### Internal DNS
 * [Managing internal DNS](howto/internal_dns.md)
 
 ### Debug and monitor
 * [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
-* [Work with Kibana (logs view)](howto/kibana.md)
+* [Work with Kibana (logs view)](logging/doc/README.md#searching-logs)
 
 ### Secrets
 * [Working with Google Cloud secrets](howto/working-with-gcloud-secrets.md)
