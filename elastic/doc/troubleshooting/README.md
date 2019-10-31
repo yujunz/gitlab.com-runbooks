@@ -18,16 +18,17 @@
             - [running out of disk space](#running-out-of-disk-space)
             - [shards unallocated](#shards-unallocated)
             - [shards too big](#shards-too-big)
-    - [ILM](#ilm)
+    - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm)
+        - [Failure to move an index from a hot node to a warm node](#failure-to-move-an-index-from-a-hot-node-to-a-warm-node)
 - [Failover and Recovery procedures](#failover-and-recovery-procedures)
     - [Elastic](#elastic-1)
-        - [esc-tools](#esc-tools)
-            - [delete an index](#delete-an-index)
-            - [retry shard allocation](#retry-shard-allocation)
+        - [delete an index](#delete-an-index)
+        - [retry shard allocation](#retry-shard-allocation)
         - [moving shards between nodes](#moving-shards-between-nodes)
         - [restarting an ES deployment](#restarting-an-es-deployment)
-    - [ILM](#ilm-1)
-        - [esc-tools](#esc-tools-1)
+        - [remove oldest indices](#remove-oldest-indices)
+    - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm-1)
+        - [esc-tools](#esc-tools)
             - [mark index as complete](#mark-index-as-complete)
             - [force index rollover](#force-index-rollover)
 
@@ -115,7 +116,7 @@ for different reasons:
 
 https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7398
 
-## ILM
+## Index Lifecycle Management (ILM)
 
 - in Kibana, go to: Management -> Index Management -> if there are ILM errors there will be a notification box displayed above the search box
 - in Elastic Cloud web UI:
@@ -127,16 +128,32 @@ https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7398
 for more docs see [Index Lifecycle Management](../../logging/doc/README.md#index-lifecycle-management-ilm)
 
 
+### Failure to move an index from a hot node to a warm node ###
+
+This can happen for example when warm nodes run out of disk space. The ILM step will fail and mark the index as read-only. Clusters health will turn to unhealthy with an error message:
+```
+"An Elasticsearch index is in a read-only state and only allows deletes"
+```
+
+Any subsequent ILM attempts will fail with the following error message:
+```
+blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];
+```
+
+In order to fix:
+- Release space on warm nodes (do not resize the cluster as it will fail!). Disk space can be released by removing indices. When deciding which indices to remove, start with oldest ones.
+- Remove blocks from indices that failed (if the entire cluster has been marked as read-only, remove that block as well). API calls for removing blocks (from indices and from the cluster) are documented in this repo, in the [scripts](../../scripts/) directory.
+- Retry ILM steps
+- Once the cluster is back in a healthy state, adjust ILM policy or resize the cluster
+
 
 # Failover and Recovery procedures #
 
 ## Elastic
 
-### esc-tools
+### delete an index ###
 
-#### delete an index ####
-
-#### retry shard allocation ####
+### retry shard allocation ###
 
 ### moving shards between nodes ###
 
@@ -146,7 +163,9 @@ for more docs see [Index Lifecycle Management](../../logging/doc/README.md#index
 
 ### restarting an ES deployment ###
 
-## ILM
+### remove oldest indices ###
+
+## Index Lifecycle Management (ILM)
 
 ### esc-tools
 
