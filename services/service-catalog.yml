@@ -2774,6 +2774,7 @@ services:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_pending_builds.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_too_many_archiving_trace_failures.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_workhorse-queuing.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-ci-runners.md
     playbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/create-runners-manager-node.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-gitlab-runner-on-managers.md
