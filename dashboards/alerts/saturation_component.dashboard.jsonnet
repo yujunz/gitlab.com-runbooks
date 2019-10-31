@@ -92,5 +92,7 @@ dashboard.new(
     componentSaturationPanel(),
   ], cols=1, rowHeight=10))
 + {
-  links+: platformLinks.parameterizedServiceLink + platformLinks.triage,
+  links+: platformLinks.parameterizedServiceLink +
+    platformLinks.triage +
+    [platformLinks.dynamicLinks('Service Dashboards', 'type:$type managed', asDropdown=false, includeVars=false, keepTime=false)],
 }

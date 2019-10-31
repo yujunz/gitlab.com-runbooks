@@ -451,8 +451,7 @@ dashboard.new(
   )
   , gridPos=genGridPos(0, 4.5, w=2)
 )
-.addPanel(capacityPlanning.currentEnvironmentSaturationBarGauge(), gridPos=genGridPos(0, 5.5))
-.addPanel(capacityPlanning.oneMonthEnvironmentForecastBarGauge(), gridPos=genGridPos(1, 5.5))
+.addPanel(capacityPlanning.environmentCapacityPlanningRow(), gridPos=genGridPos(0, 6.5))
  + {
   links+: platformLinks.services,
 }
