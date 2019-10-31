@@ -52,13 +52,13 @@ local getServiceLink(serviceType) =
   serviceLink(type):: [
     link.dashboards(type + ' service', '', type='link', keepTime=true, url=getServiceLink(type)),
   ],
-  dynamicLinks(title, tags, asDropdown=true, icon='dashboard')::
+  dynamicLinks(title, tags, asDropdown=true, icon='dashboard', includeVars=true, keepTime=true)::
     link.dashboards(
         title,
         tags,
         asDropdown=asDropdown,
-        includeVars=true,
-        keepTime=true,
+        includeVars=includeVars,
+        keepTime=keepTime,
         icon=icon,
       )
 }

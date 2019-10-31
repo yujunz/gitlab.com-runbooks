@@ -10,190 +10,171 @@ local templates = import 'templates.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
-local template = grafana.template;
 local graphPanel = grafana.graphPanel;
-local annotation = grafana.annotation;
+local row = grafana.row;
+local tablePanel = grafana.tablePanel;
 
-local baseBargauge = {
-  type: 'bargauge',
-  options: {
-    displayMode: 'gradient',
-    orientation: 'horizontal',
-    fieldOptions: {
-      values: true,
-      calcs: ['last'],
-      defaults: {
-        min: 0,
-        max: 1,
-        decimals: 0,
-        title: '',
-      },
-      mappings: [
-        {
-          id: 1,
-          operator: '',
-          value: '',
-          text: 'Within capacity',
-          type: 2,
-          from: '0',
-          to: '0.50',
-        },
-        {
-          id: 2,
-          operator: '',
-          value: '',
-          text: 'Tending',
-          type: 2,
-          from: '0.50',
-          to: '0.75',
-        },
-        {
-          id: 3,
-          operator: '',
-          value: '',
-          text: 'Nearing saturation',
-          type: 2,
-          from: '0.75',
-          to: '0.90',
-        },
-        {
-          id: 4,
-          operator: '',
-          value: '',
-          text: 'Saturated',
-          type: 2,
-          from: '0.90',
-          to: '1',
-        },
-      ],
-      thresholds: [
-        {
-          index: 0,
-          value: null,
-          color: colors.normalRangeColor,
-        },
-        {
-          color: colors.warningColor,
-          index: 1,
-          value: 0.50,
-        },
-        {
-          color: colors.errorColor,
-          index: 2,
-          value: 0.75,
-        },
-      ],
+local findIssuesLink = 'https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&utf8=%E2%9C%93&state=all&label_name[]=GitLab.com%20Resource%20Saturation&search=${__cell_1}+${__cell_3}';
+
+local saturationTable(title, description, query, saturationDays, valueColumnName) =
+  tablePanel.new(
+    title,
+    description=description,
+    datasource='$PROMETHEUS_DS',
+    styles=[{
+      "alias": "Satuation Resource",
+      "link": true,
+      "linkTargetBlank": true,
+      "linkTooltip": "Click the link to review the past " + saturationDays + " day(s) history for this saturation point.",
+      "linkUrl": "https://dashboards.gitlab.net/d/alerts-saturation_component/alerts-saturation-component-alert?var-environment=gprd&var-type=${__cell_3}&var-stage=${__cell_2}&var-component=${__cell_1}&from=now-" + saturationDays + "d&to=now",
+      "mappingType": 1,
+      "pattern": "component",
+      "type": "string"
     },
-  },
-};
+    {
+      "alias": "Type",
+      "mappingType": 1,
+      "pattern": "type",
+      "thresholds": [],
+      "type": "string",
+    },
+    {
+      "alias": valueColumnName,
+      "colorMode": "row",
+      "colors": [
+        colors.errorColor,
+        colors.errorColor,
+        colors.errorColor,
+      ],
+      "mappingType": 1,
+      "pattern": "Value",
+      "thresholds": [
+        "0",
+        "100"
+      ],
+      "type": "number",
+      "unit": "percentunit",
+      decimals: 2,
+    },
+    {
+      "alias": "Stage",
+      "mappingType": 2,
+      "pattern": "stage",
+      "type": "string",
+    },
+    { // Sneaky repurposing of the Time column as a find issues link
+      "alias": "Issues",
+      "mappingType": 2,
+      "pattern": "Time",
+      "type": "string",
+      "rangeMaps": [
+        {
+          "from": "0",
+          "to": "9999999999999",
+          "text": "Find Issues"
+        }
+      ],
+      "link": true,
+      "linkTargetBlank": true,
+      "linkUrl": findIssuesLink,
+      "linkTooltip": "Click the link to find issues on GitLab.com related to this saturation point."
+    },
+    {
+      "alias": "",
+      "mappingType": 1,
+      "pattern": "/.*/",
+      "type": "hidden"
+    }],
+  )
+  .addTarget(promQuery.target(query, instant=true, format="table")) + {
+    sort: {
+      col: 13,
+      desc: true
+    },
+  };
 
-local currentSaturationBarGauge(serviceType, serviceStage) = baseBargauge {
-  title: 'Current Saturation',
-  description: 'Resource Saturation. Lower is better.',
-  targets: [
-    promQuery.target(
-      'sort(
-          clamp_min(
-            clamp_max(
-              max(
-                gitlab_component_saturation:ratio:avg_over_time_1w{environment="$environment", type="' + serviceType + '", stage=~"|' + serviceStage + '"}
-                + 2 * gitlab_component_saturation:ratio:stddev_over_time_1w{environment="$environment", type="' + serviceType + '", stage=~"|' + serviceStage + '"}
-              ) by (component),
-            1),
-          0)
-        )',
-      legendFormat='{{ component }}',
-      instant=true
-    ),
-  ],
-};
+local currentSaturationBreaches(nodeSelector) =
+    saturationTable('Currently Saturated Resources',
+      description='Lists saturated resources that are breaching their soft SLO thresholds at this instant',
+      query='
+      max by (type, stage, component) (
+        clamp_max(
+          gitlab_component_saturation:ratio{
+            environment="$environment",
+              ' + nodeSelector + '
+          }
+          ,
+          1
+        ) >= on(component, monitor, env) group_left slo:max:soft:gitlab_component_saturation:ratio
+      )
+    ',
+    saturationDays=1, valueColumnName="Current %");
 
-local oneMonthForecastBarGauge(serviceType, serviceStage) = baseBargauge {
-  title: '14d Saturation Forecast (likely worst-case)',
-  description: 'Resource Saturation predictions for 14d from now. Lower is better.',
-  targets: [
-    promQuery.target(
-      'sort(
-          clamp_min(
-            clamp_max(
-              max(
-                gitlab_component_saturation:ratio:predict_linear_2w{environment="$environment", type="' + serviceType + '", stage=~"|' + serviceStage + '"}
-                + 2 * gitlab_component_saturation:ratio:stddev_over_time_1w{environment="$environment", type="' + serviceType + '", stage=~"|' + serviceStage + '"}
-              ) by (component),
-            1),
-          0)
-        )',
-      legendFormat='{{ component }}',
-      instant=true
-    ),
-  ],
-};
+local currentSaturationWarnings(nodeSelector) =
+    saturationTable('Resources Currently at Risk of being Saturated',
+    description='Lists saturated resources that, given their current value and weekly variance, have a high probability of breaching their soft thresholds limits within the next few hours',
+    query='
+      sort_desc(
+        max by (type, stage, component) (
+          clamp_max(
+            gitlab_component_saturation:ratio:avg_over_time_1w{
+              environment="$environment",
+              ' + nodeSelector + '
+            } +
+            2 *
+              gitlab_component_saturation:ratio:stddev_over_time_1w{
+                environment="$environment",
+              ' + nodeSelector + '
+              }
+            , 1
+          )
+          >= on(component, monitor, env) group_left slo:max:soft:gitlab_component_saturation:ratio
+        )
+      )
+    ',
+    saturationDays=7, valueColumnName="Worst-case Saturation Today");
+
+local twoWeekSaturationWarnings(nodeSelector) =
+    saturationTable('Resources Forecasted to be at Risk of Saturation in 14d',
+      description='Lists saturated resources that, given their growth rate over the the past week, and their weekly variance, are likely to breach their soft thresholds limits in the next 14d',
+      query='
+      sort_desc(
+        max by (type, stage, component) (
+          clamp_max(
+            gitlab_component_saturation:ratio:predict_linear_2w{
+              environment="$environment",
+              ' + nodeSelector + '
+            } +
+            2 *
+              gitlab_component_saturation:ratio:stddev_over_time_1w{
+                environment="$environment",
+              ' + nodeSelector + '
+              }
+          , 1
+          )
+          >= on(component, monitor, env) group_left slo:max:soft:gitlab_component_saturation:ratio
+        )
+      )
+    ',
+    saturationDays=30, valueColumnName="Worst-case Saturation 14d Forecast");
 
 {
-  currentEnvironmentSaturationBarGauge():: baseBargauge {
-    title: 'Current Saturation',
-    description: 'Resource Saturation. Lower is better.',
-    targets: [
-      promQuery.target(
-        '
-          topk(
-            10,
-            clamp_min(
-              clamp_max(
-                max(
-                  gitlab_component_saturation:ratio:avg_over_time_1w{
-                    environment="$environment"
-                  } +
-                  2 *
-                    gitlab_component_saturation:ratio:stddev_over_time_1w{
-                      environment="$environment"
-                    }
-                ) by (type, component)
-                , 1
-              ),
-              0
-            )
-          ) > 0.75
-        ',
-        legendFormat='{{ type }} service, {{ component }} resource',
-        instant=true
-      ),
-    ],
-  },
-  oneMonthEnvironmentForecastBarGauge():: baseBargauge {
-    title: '14d Saturation Forecast (likely worst-case)',
-    description: 'Resource Saturation predictions for 14 days from now. Lower is better.',
-    targets: [
-      promQuery.target(
-        '
-          topk(
-            10,
-            clamp_min(
-              clamp_max(
-                max(
-                  gitlab_component_saturation:ratio:predict_linear_2w{
-                    environment="$environment"
-                  } +
-                  2 *
-                    gitlab_component_saturation:ratio:stddev_over_time_1w{
-                      environment="$environment"
-                    }
-                ) by (type, component)
-                , 1
-              ),
-              0
-            )
-          ) > 0.75
-        ',
-        legendFormat='{{ type }} service, {{ component }} resource',
-        instant=true
-      ),
-    ]
-  },
-  capacityPlanningRow(serviceType, serviceStage):: row.new(title='📆 Capacity Planning', collapse=true)
-                                                   .addPanels(layout.grid([
-    currentSaturationBarGauge(serviceType, serviceStage),
-    oneMonthForecastBarGauge(serviceType, serviceStage),
+  environmentCapacityPlanningRow()::
+    local nodeSelector = 'type!="", component!=""';
+    row.new(title='📆 Capacity Planning', collapse=true)
+      .addPanels(layout.grid([
+        currentSaturationBreaches(nodeSelector),
+        currentSaturationWarnings(nodeSelector),
+        twoWeekSaturationWarnings(nodeSelector),
+      ], cols=1)),
+
+  capacityPlanningRow(serviceType, serviceStage)::
+    local nodeSelector = 'type="' + serviceType + '", stage=~"|' + serviceStage + '"';
+    row.new(title='📆 Capacity Planning', collapse=true)
+    .addPanels(layout.grid([
+      currentSaturationBreaches(nodeSelector),
+      currentSaturationWarnings(nodeSelector),
+      twoWeekSaturationWarnings(nodeSelector),
     graphPanel.new(
       'Long-term Resource Saturation',
       description='Resource saturation levels for saturation components for this service. Lower is better.',
