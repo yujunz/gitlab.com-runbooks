@@ -86,7 +86,7 @@ All logs processed by StackDriver (even if excluded from indexing) are archived 
 | rails.database_load_balancing | gitlab-rails/database_load_balancing.log | JSON | pubsub-rails-inf | |
 | rails.geo | gitlab-rails/geo.log | JSON | pubsub-rails-inf | |
 | rails.git | gitlab-rails/git_json.log | JSON | pubsub-rails-inf | |
-| rails.importer | gitlab-rails/impoter.log | JSON | pubsub-rails-inf | |
+| rails.importer | gitlab-rails/importer.log | JSON | pubsub-rails-inf | |
 | rails.integrations | gitlab-rails/integrations\_json.log | JSON | pubsub-rails-inf | |
 | rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf | |
 | rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf | |
