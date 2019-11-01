@@ -453,5 +453,5 @@ dashboard.new(
 )
 .addPanel(capacityPlanning.environmentCapacityPlanningRow(), gridPos=genGridPos(0, 6.5))
  + {
-  links+: platformLinks.services,
+  links+: platformLinks.capacityPlanning + platformLinks.services,
 }

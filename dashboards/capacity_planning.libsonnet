@@ -160,13 +160,17 @@ local twoWeekSaturationWarnings(nodeSelector) =
 
 {
   environmentCapacityPlanningRow()::
-    local nodeSelector = 'type!="", component!=""';
     row.new(title='📆 Capacity Planning', collapse=true)
-      .addPanels(layout.grid([
+      .addPanels(self.environmentCapacityPlanningPanels()),
+
+  environmentCapacityPlanningPanels(startRow=1)::
+    local nodeSelector = 'type!="", component!=""';
+
+    layout.grid([
         currentSaturationBreaches(nodeSelector),
         currentSaturationWarnings(nodeSelector),
         twoWeekSaturationWarnings(nodeSelector),
-      ], cols=1)),
+      ], cols=1, startRow=startRow),
 
   capacityPlanningRow(serviceType, serviceStage)::
     local nodeSelector = 'type="' + serviceType + '", stage=~"|' + serviceStage + '"';
