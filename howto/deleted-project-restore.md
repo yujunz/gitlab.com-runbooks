@@ -68,7 +68,28 @@ In order to restore a database backup, we leverage the backup restore pipeline. 
 1. By default, the instance of `n1-standard-8` type will be used. Such instances have quite weak disks because [Google throttles disk IO based on the disk size and the number of vCPUs](https://cloud.google.com/compute/docs/disks/performance#ssd-pd-performance)), but budget spending is low and risks to reach the GCE quotas for the "gitlab-restore" project are low. It is crucial to minimize the risks to reach those quotas because the daily backup verification jobs also use the "gitlab-restore" project. However, if your case is urgent and you need to perform PITR within a few hours, use `n1-highcpu-32`, specifying CI/CD variable `GCE_INSTANCE_TYPE` in the CI/CD pipeline launch interface. It is highly recommended to check the current resource consumption (total vCPUs, RAM, disk space, IP addresses, and the number of instances and disks in general) in the [GCP quotas interfaces of the "gitlab-restore" project](https://console.cloud.google.com/iam-admin/quotas?project=gitlab-restore).
 1. Finally, especially if you have made multiple attempts to provision an instance via CI/CD Pipelines interface, check [VM Instances](https://console.cloud.google.com/compute/instances?project=gitlab-restore&instancessize=50) in GCP console to ensure that there are no stalled instances related to your work. If there are some, delete them manually.
 
-After the process completes, an instance with a full GitLab installation and a production copy of the database is available for the next steps.
+The instance will progress through a series of operations:
+
+1. The basebackup will be downloaded
+1. The postgres server process will be started, and will begin progressing past
+   the basebackup by recovering from WAL segments downloaded from GCS.
+1. Initially postgres will be in crash recovery mode and will not accept
+   connections.
+1. At some point postgres will accept connections, and you can check its
+   recovery point by running `select pg_last_xact_replay_timestamp();` in a
+   `gitlab-psql` shell.
+1. Check back every hour or so until the recovery point you wanted has been
+   reached. You don't need to do anything to stop further recovery, your branch
+   has configured it to pause at this point.
+
+After the process completes, an instance with a full GitLab installation and a
+production copy of the database is available for the next steps.
+
+Note that the startup script will never actually exit due to the branch
+configuration that causes postgres to pause recovery when some point is reached.
+It [loops
+forever](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/blob/8d011b3f8a29582d358374adde6f701fe382c03d/bootstrap.sh#L161-164)
+waiting for a recovery point equal to script start time.
 
 ### Export project from database backup and import into GitLab
 
