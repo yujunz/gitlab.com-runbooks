@@ -220,9 +220,11 @@ groups:
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'sidekiq_workers'
+      alert_trigger_duration: long
     expr: '0.90'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'sidekiq_workers'
+      alert_trigger_duration: long
     expr: '0.95'
