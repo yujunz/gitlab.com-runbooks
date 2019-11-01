@@ -77,8 +77,6 @@ groups:
         1
       )
 
-
-
   # type: redis/redis cache, component: single_threaded_cpu
   - record: gitlab_component_saturation:ratio
     labels:
@@ -297,6 +295,20 @@ groups:
           1
         ),
         "environment", "gprd", "environment", ""
+      )
+
+  # sidekiq: sidekiq_workers
+  #
+  # Sidekiq worker saturation refers to a situation where all workers that are available to process a
+  # subset of jobs are busy processing those jobs. This leads to queuing of new jobs. For background
+  # processing, this is sometimes accecptable over short periods, but generally not over longer
+  # periods.
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'sidekiq_workers'
+    expr: >
+      max by(environment, type, tier) (
+        sum without (queue) (sidekiq_running_jobs{priority!="export"}) / sidekiq_concurrency{priority!="export"}
       )
 
 # Unlike other service metrics, we record the stats for each component independently

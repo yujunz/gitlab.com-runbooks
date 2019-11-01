@@ -8,6 +8,20 @@ local platformLinks = import 'platform_links.libsonnet';
   priorityWorkloads(nodeSelector, startRow)::
     layout.grid([
       basic.saturationTimeseries(
+        title='Sidekiq Worker Saturation by Priority',
+        description='Shows sidekiq worker saturation. Once saturated, all sidekiq workers will be busy processing jobs, and any new jobs that arrive will queue. Lower is better.',
+        query='
+          max by(environment, type, tier, priority) (
+            sum without (queue) (sidekiq_running_jobs{' + nodeSelector + '})
+            /
+            sidekiq_concurrency{' + nodeSelector + '}
+          )
+        ',
+        legendFormat='{{ priority }}',
+        intervalFactor=1,
+        linewidth=2,
+      ),
+      basic.saturationTimeseries(
         "Node Average CPU Utilization per Priority",
         description="The maximum utilization of a single core on each node. Lower is better",
         query='
