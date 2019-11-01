@@ -307,7 +307,7 @@ groups:
     labels:
       component: 'sidekiq_workers'
     expr: >
-      max by(environment, type, tier) (
+      max by(environment, tier, type, stage) (
         sum without (queue) (sidekiq_running_jobs{priority!="export"}) / sidekiq_concurrency{priority!="export"}
       )
 
