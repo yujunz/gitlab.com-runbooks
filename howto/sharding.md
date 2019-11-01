@@ -83,24 +83,31 @@ marked the repository as writable to verify this.
 #### How to Use it
 
 1. Copy it to a location where the git user can access it on the console server.
-   The console server might be a good location.
+   The console server might be a good location. `sudo mkdir -p /var/opt/gitlab/scripts; sudo mkdir -p /var/opt/gitlab/scripts/logs; sudo cd /var/opt/gitlab/scripts sudo curl --silent --remote-name https://gitlab.com/gitlab-com/runbooks/raw/master/scripts/storage_rebalance.rb; sudo chmod +x storage_rebalance.rb`
 1. You will need a personal access token that has _API_ access using your admin
    account. This token will need to be exported as an environment variable,
-   `PRIVATE_TOKEN`.
-1. Utilize the `-srh` flag for details on how to use it
+   `PRIVATE_TOKEN`. `export PRIVATE_TOKEN=CHANGEME`
+1. Invoke the script using the `--help` flag for usage details: `/var/opt/gitlab/scripts/storage_rebalance.rb --help` (A warning will appear because the script is not being ran with a `gitlab-rails runner`.  This is fine for now.)
 1. See issue https://gitlab.com/gitlab-com/gl-infra/production/issues/664 for
    further inspiration
 1. Or use this guideline below on how to conduct a production issue repo move.
    - Install the migration script on a common system (console server).
    - Dry run the migration script and look for problems.
    ```
-   time gitlab-rails runner /tmp/storage_rebalance.rb --current-file-server nfs-fileXX --target-file-server nfs-fileYY --dry-run true --wait 10800 --move-amount 1000 2>&1 | tee "migration.$(date +%Y-%m-%d_%H:%M).log"
+   time gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --current-file-server=nfs-fileXX --target-file-server=nfs-fileYY --dry-run=yes --wait=10800 --move-amount=1000 2>&1 | tee "/var/opt/gitlab/scripts/logs/migration.$(date +%Y-%m-%d_%H:%M).log"
    ```
    - Execute the migration script in a tmux session on the console server during low utilization time period.
    ```
-   time gitlab-rails runner /tmp/storage_rebalance.rb --current-file-server nfs-fileXX --target-file-server nfs-fileYY --dry-run false --wait 10800 --move-amount 1000 2>&1 | tee "migration.$(date +%Y-%m-%d_%H:%M).log"
+   time gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --current-file-server=nfs-fileXX --target-file-server=nfs-fileYY --dry-run false --wait 10800 --move-amount=1000 2>&1 | tee "/var/opt/gitlab/scripts/logs/migration.$(date +%Y-%m-%d_%H:%M).log"
    ```
    - Review any timed out transactions and restore/repair any repositories to their proper writable status.
+
+#### Cleaning up
+
+After each project repository has finished being completely mirrored to its new storage node home, the each original repository must be removed from their source storage node.
+
+##### Manual method
+
    - Create a list of moved repositories to delete on file-XX.
    ```
    # It looks like there is a scenario where there already are repo files named *+moved*.git so we don't want to
@@ -114,6 +121,27 @@ marked the repository as writable to verify this.
    - Take a before df to show before disk space in use `df -h /dev/sdb`
    - Remove the files `< files_to_remove.txt xargs -rn1 ionice -c 3 rm -fr`
    - Take an after df to show after disk space in use `df -h /dev/sdb`
+
+##### Somewhat automated method
+A script exists in this repo
+[`scripts/storage_cleanup.rb`](../scripts/storage_cleanup.rb)
+
+The goal of this script is to access a log file on a gitlab console node which
+is expected to contain json entries describing individual project migrations,
+and the storage node and disk paths to the original repositories.  This script
+will iterate through this list, and use the log entry information to remotely
+delete the repositories (marked `+moved`) which remain at those paths.
+
+##### Script usage
+
+1. Copy the script to your local workstation.  (The script *must* be ran from your local workstation, because it will need secure shell access to both the console node *and* the file storage nodes which contain the remaining project repositories.) `git clone git@gitlab.com:gitlab-com/runbooks.git; cd runbooks; chmod +x scripts/storage_cleanup.rb`
+1. Confirm that the script can be ran: `scripts/storage_cleanup.rb --help`
+1. Conduct a dry-run of the cleanup script.
+   - Example dry-run usage: `scripts/storage_cleanup.rb --verbose --dry-run=yes`
+1. For each unique storage node listed in the dry-run output, you should perform a GCP snapshot of its larger disk.  This way any deleted repository can be recovered, if needed. For example: `gcloud auth login; gcloud config set project gitlab-production; gcloud config set compute/region us-east1; gcloud config set compute/zone us-east1-c; gcloud compute disks list | grep file-24-stor-gprd-data;gcloud compute disks snapshot file-24-stor-gprd-data`
+1. Finally, execute the cleanup script.
+ - If one is feeling particularly cautious, single storage node can be targetted.  For example: `scripts/storage_cleanup.rb --verbose --dry-run=no  --node=file-24-stor-gprd.c.gitlab-production.internal`
+ - If one is feeling extra especially cautious, combine a dry-run with single node restriction: `scripts/storage_cleanup.rb --verbose --dry-run=yes  --node=file-24-stor-gprd.c.gitlab-production.internal`
 
 #### Verify Information
 Via the rails console, we have a few easy lookups to see where a project lives,
