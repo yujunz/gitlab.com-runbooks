@@ -215,3 +215,14 @@ groups:
     labels:
       component: 'shared_runners'
     expr: '0.95'
+
+  ## sidekiq_workers
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'sidekiq_workers'
+    expr: '0.90'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'sidekiq_workers'
+    expr: '0.95'

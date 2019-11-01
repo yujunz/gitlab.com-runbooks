@@ -67,6 +67,19 @@ row.new(title="Sidekiq Execution"),
       yAxisLabel='Job time completed per second',
     ),
     basic.timeseries(
+      title="Sidekiq Total Execution Time for Priority",
+      description="The sum of job execution times",
+      query='
+        sum(rate(sidekiq_jobs_completion_time_seconds_sum{environment="$environment", priority=~"$priority"}[$__interval])) by (priority)
+      ',
+      legendFormat='{{ priority }}',
+      interval="1m",
+      format="s",
+      intervalFactor=1,
+      legend_show=true,
+      yAxisLabel='Job time completed per second',
+    ),
+    basic.timeseries(
       title="Sidekiq Aggregated Throughput for Priority",
       description="The total number of jobs being completed",
       query='
