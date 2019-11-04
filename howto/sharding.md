@@ -104,7 +104,7 @@ marked the repository as writable to verify this.
 
 #### Cleaning up
 
-After each project repository has finished being completely mirrored to its new storage node home, the each original repository must be removed from their source storage node.
+After each project repository has finished being completely mirrored to its new storage node home, each original repository must be removed from their source storage node.
 
 ##### Manual method
 
