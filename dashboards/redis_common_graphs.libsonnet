@@ -46,10 +46,12 @@ local promQuery = import 'prom_query.libsonnet';
       intervalFactor=1,
     ),
     basic.saturationTimeseries(
-      title='Max Single Core Saturation per Node',
+      title='Redis CPU per Node',
       description="redis is single-threaded. This graph shows maximum utilization across all cores on each host. Lower is better.",
       query='
-        max(1 - rate(node_cpu_seconds_total{environment="$environment", type="' + serviceType + '", mode="idle", fqdn=~"' + serviceType + '-\\\\d\\\\d.*"}[$__interval])) by (fqdn)
+        max(
+          max_over_time(instance:redis_cpu_usage:rate1m{environment="$environment", type="' + serviceType + '", fqdn=~"' + serviceType + '-\\\\d\\\\d.*"}[$__interval])
+        ) by (fqdn)
       ',
       legendFormat='{{ fqdn }}',
       interval="30s",

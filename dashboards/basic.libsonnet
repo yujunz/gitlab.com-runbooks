@@ -212,6 +212,49 @@ local tablePanel = grafana.tablePanel;
     show=false,
   ),
 
+  apdexTimeseries(
+    title='Apdex',
+    description='Apdex is a measure of requests that complete within an acceptable threshold duration. Actual threshold vary per service or endpoint. Higher is better.',
+    query='',
+    legendFormat='',
+    yAxisLabel='% Requests w/ Satisfactory Latency',
+    interval='1m',
+    intervalFactor=3,
+    linewidth=2,
+    legend_show=true,
+  ):: graphPanel.new(
+    title,
+    description=description,
+    sort='increasing',
+    linewidth=linewidth,
+    fill=0,
+    datasource='$PROMETHEUS_DS',
+    decimals=0,
+    legend_show=legend_show,
+    legend_values=true,
+    legend_min=true,
+    legend_max=true,
+    legend_current=true,
+    legend_total=false,
+    legend_avg=true,
+    legend_alignAsTable=true,
+    legend_hideEmpty=true,
+  )
+      .addTarget(promQuery.target('clamp_min(clamp_max(' + query + ',1),0)', legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+      .resetYaxes()
+      .addYaxis(
+    format='percentunit',
+    min=0,
+    max=1,
+    label=yAxisLabel,
+  )
+      .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  ),
+
   latencyTimeseries(
     title='Latency',
     description='',

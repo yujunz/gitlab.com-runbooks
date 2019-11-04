@@ -17,8 +17,8 @@ groups:
         logs. Check http://dashboards.gitlab.net/dashboard/db/ci."
 
   - alert: CICDTooManyPendingJobsPerNamespace
-    expr: max(ci_pending_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runners="yes"}) by (namespace) > 350
-    for: 1m
+    expr: max(ci_pending_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runners="yes"}) by (namespace) > 1000
+    for: 5m
     labels:
       channel: ci-cd
       severity: s4

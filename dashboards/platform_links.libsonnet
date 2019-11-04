@@ -42,6 +42,9 @@ local getServiceLink(serviceType) =
 {
   triage:: [
     link.dashboards('Platform Triage', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-triage/platform-triage?orgId=1'),
+  ] + self.capacityPlanning,
+  capacityPlanning:: [
+    link.dashboards('Capacity Planning', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-capacity-planning/general-capacity-planning?orgId=1')
   ],
   services:: [
     link.dashboards(type + ' service', '', icon='dashboard', type='link', keepTime=true, url=getServiceLink(type)) for type in LINKED_SERVICES
@@ -52,13 +55,13 @@ local getServiceLink(serviceType) =
   serviceLink(type):: [
     link.dashboards(type + ' service', '', type='link', keepTime=true, url=getServiceLink(type)),
   ],
-  dynamicLinks(title, tags, asDropdown=true, icon='dashboard')::
+  dynamicLinks(title, tags, asDropdown=true, icon='dashboard', includeVars=true, keepTime=true)::
     link.dashboards(
         title,
         tags,
         asDropdown=asDropdown,
-        includeVars=true,
-        keepTime=true,
+        includeVars=includeVars,
+        keepTime=keepTime,
         icon=icon,
       )
 }

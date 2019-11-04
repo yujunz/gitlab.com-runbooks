@@ -195,6 +195,8 @@ groups:
   # gitaly:goserver
   # Satisfied -> 0.5 seconds
   # Acceptable -> 1 seconds
+  # NOTE: when adjusting this definition, update the
+  # per node equivalent definition in `dashboards/gitaly/main.dashboard.jsonnet`
   - record: gitlab_component_apdex:ratio
     labels:
       type: gitaly

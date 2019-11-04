@@ -77,8 +77,6 @@ groups:
         1
       )
 
-
-
   # type: redis/redis cache, component: single_threaded_cpu
   - record: gitlab_component_saturation:ratio
     labels:
@@ -125,15 +123,20 @@ groups:
       ) by (type, tier, stage, environment), 1)
 
   # type: postgres-delayed, postgres-archive, patroni
+  # postgres has a MAX_CONNECTIONS value which specifies the maximum number of active connections
+  # the server can handle concurrently. This records the number of non-idle connections as a
+  # fraction of the maximum. When we reach saturation
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'active_db_connections'
     expr: >
       clamp_max(
         max(
-          sum without(state) (pg_stat_activity_count{datname="gitlabhq_production", state!="idle"})
-          /
-          (sum without(state) (pg_stat_activity_count{datname="gitlabhq_production"}) > 0)
+          sum without (state) (
+            pg_stat_activity_count{datname="gitlabhq_production", state!="idle"}
+          )
+          /  on (type, tier, stage, environment, fqdn)
+          pg_settings_max_connections
       ) by (type, tier, stage, environment), 1)
 
   # type: redis, redis-cache, component: redis_memory
@@ -255,6 +258,58 @@ groups:
         /
         max_over_time(ruby_process_max_fds[1m])
       ) by (environment, type, tier, stage)
+
+  # ci-runners: shared_runners/shared_runners_gitlab/private_runners
+  # Each runner manager has a maximum number of CI jobs that it can handle at any one time
+  # when this limit is reached, new jobs need to be queued.
+  # Defaults to using the environment `gprd` since runners do not always
+  # have the correct environment label
+  - record: gitlab_component_saturation:ratio
+    labels:
+      type: ci-runners
+      tier: runners
+      stage: main
+    expr: >
+      label_replace(
+        clamp_max(
+          max by(environment, component) (
+            sum without (stage, state, executor_stage) (
+              label_replace(max_over_time(gitlab_runner_jobs{job="shared-runners"}[1m]), "component", "shared_runners", "", "")
+              or
+              label_replace(max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[1m]), "component", "shared_runners_gitlab", "", "")
+              or
+              label_replace(max_over_time(gitlab_runner_jobs{job="private-runners"}[1m]), "component", "private_runners", "", "")
+            )
+            /
+            (
+              (
+                label_replace(max_over_time(gitlab_runner_limit{job="shared-runners"}[1m]), "component", "shared_runners", "", "")
+                or
+                label_replace(max_over_time(gitlab_runner_limit{job="shared-runners-gitlab-org"}[1m]), "component", "shared_runners_gitlab", "", "")
+                or
+                label_replace(max_over_time(gitlab_runner_limit{job="private-runners"}[1m]), "component", "private_runners", "", "")
+              )
+              > 0
+            )
+          ),
+          1
+        ),
+        "environment", "gprd", "environment", ""
+      )
+
+  # sidekiq: sidekiq_workers
+  #
+  # Sidekiq worker saturation refers to a situation where all workers that are available to process a
+  # subset of jobs are busy processing those jobs. This leads to queuing of new jobs. For background
+  # processing, this is sometimes accecptable over short periods, but generally not over longer
+  # periods.
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'sidekiq_workers'
+    expr: >
+      max by(environment, tier, type, stage) (
+        sum without (queue) (sidekiq_running_jobs{priority!="export"}) / sidekiq_concurrency{priority!="export"}
+      )
 
 # Unlike other service metrics, we record the stats for each component independently
 - name: GitLab Saturation Ratios Stats
