@@ -2,6 +2,8 @@
 # This script is a helper for cleaning up projects marked
 # as `moved` on source storage node systems.
 #
+# This script is intended to be invoked from your local workstation system.
+#
 # Because this script's functionality is destructive in nature, 
 # it is recommended that one make a manual snapshot of the storage node disk,
 # per the instructions found in the Sharding runbook:
