@@ -93,7 +93,7 @@ graph LR
     r::srm-gce --> r::srm-gce-us-east1-d
     r::srm-gce-us-east1-d --> r::srm3
     r::srm3 ==> n::srm3
-    r::srm-gce-us-east1-c --> r::srm5
+    r::srm-gce-us-east1-d --> r::srm5
     r::srm5 ==> n::srm5
 
     r::srm --> r::stg-srm
@@ -133,19 +133,19 @@ To upgrade runners on managers you need to:
     For example, to shutdown chef-client on private-runners-manager-X.gitlab.com, you can execute:
 
     ```bash
-    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- sudo service chef-client stop
+    $ knife ssh -afqdn 'roles:gitlab-runner-prm' -- sudo service chef-client stop
     ```
 
     To be sure that chef-cilent process is terminated you can execute:
 
     ```bash
-    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- 'service chef-client status; ps aux | grep chef'
+    $ knife ssh -afqdn 'roles:gitlab-runner-prm' -- 'service chef-client status; ps aux | grep chef'
     ```
 
     or, since we're using systemd on all Runner machines:
 
     ```bash
-    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- systemctl is-active chef-client
+    $ knife ssh -afqdn 'roles:gitlab-runner-prm' -- systemctl is-active chef-client
     ```
 
 1. **Update chef role (or roles)**
@@ -184,7 +184,7 @@ To upgrade runners on managers you need to:
     To upgrade chosen Runners manager, execute the command:
 
     ```bash
-    $ knife ssh -C1 -aipaddress 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade.sh
+    $ knife ssh -C1 -afqdn 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade.sh
     ```
 
     This will send a stop signal to the Runner. The process will wait until all handled jobs are finished,
@@ -207,7 +207,7 @@ To upgrade runners on managers you need to:
     If you want to check which version of Runner is installed, execute the following command:
 
     ```bash
-    $ knife ssh -aipaddress 'roles:gitlab-runner-prm' -- gitlab-runner --version
+    $ knife ssh -afqdn 'roles:gitlab-runner-prm' -- gitlab-runner --version
     ```
 
     You can also check the [uptime](https://dashboards.gitlab.net/dashboard/db/ci?refresh=5m&orgId=1&panelId=18&fullscreen)
@@ -232,8 +232,8 @@ If you want to upgrade all Runners of GitLab.com fleet at the same time, then yo
 
 ```bash
 # Stop chef-client
-knife ssh -aipaddress 'roles:gitlab-runner-base' -- sudo service chef-client stop
-knife ssh -aipaddress 'roles:gitlab-runner-base' -- systemctl is-active chef-client
+knife ssh -afqdn 'roles:gitlab-runner-base' -- sudo service chef-client stop
+knife ssh -afqdn 'roles:gitlab-runner-base' -- systemctl is-active chef-client
 
 # Update configuration in roles definition and secrets
 git checkout master && git pull
@@ -249,14 +249,14 @@ After the branch will be merged, open the pipeline FOR THE MERGE COMMIT (search 
 and check in the `apply_to_staging` job, if the dry-run tries to upload only the role file updated above.
 If yes - hit `play` on the `apply_to_prod` job and wait until the job on Chef Server will be updated.
 
-You can continue **after the changes are uploaded to CHef Server**.
+You can continue **after the changes are uploaded to Chef Server**.
 
 ```bash
 # Upgrade Runner's version and configuration on nodes
-knife ssh -C1 -aipaddress 'roles:gitlab-runner-builder' -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress 'roles:gitlab-runner-gsrm' -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade.sh &
-knife ssh -C1 -aipaddress 'roles:gitlab-runner-srm' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -afqdn 'roles:gitlab-runner-builder' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -afqdn 'roles:gitlab-runner-gsrm' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -afqdn 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade.sh &
+knife ssh -C1 -afqdn 'roles:gitlab-runner-srm' -- sudo /root/runner_upgrade.sh &
 time wait
 ```
 
@@ -264,7 +264,8 @@ time wait
 Be aware, that graceful restart of whole CI Runners fleet may take up to several hours!
 6-8 hours is the usual timing. Until we'll finish our plan to
 [use K8S to deploy Runner Managers][k8s-deployment] anyone that needs to update/restart
-Runner on our CI fleet should expect, that the operation will be **really long**.
+Runner on our CI fleet should expect, that the operation will be **really long** and that
+during this time the networking connection can't be terminated.
 
 [gitlab-ce-new-mr]: https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/new
 [k8s-deployment]: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/4813
