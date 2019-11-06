@@ -1209,7 +1209,7 @@ services:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
-      primary_grafana_dashboard:
+      primary_grafana_dashboard: https://dashboards.gitlab.net/d/mailroom/mailroom-application-info
       sentry_slug:
 
 - name: pages
