@@ -77,7 +77,7 @@ If it fails to create you will see a message here.
 You should try to create machine manually:
 
 ```bash
-$ docker-machine create -d digitalocean test-machine --digitalocean-image=coreos-stable --digitalocean-ssh-user=core --digitalocean-access-token=GET_TOKEN_FROM_ETC_GITLAB_RUNNER_CONFIG --digitalocean-region=nyc1 --digitalocean-size=2gb --digitalocean-private-networking --engine-registry-mirror=http://runners-cache-2-internal.gitlab.com:1444 --digitalocean-userdata=/etc/gitlab-runner/cloudinit.sh
+$ docker-machine create -d google test-machine --google-project=gitlab-ci-155816 --google-disk-size=25 --google-machine-type=n1-standard-1 --google-username=core --google-operation-backoff-initial-interval=2 --google-subnetwork=shared-runners --google-zone=us-east1-d --engine-opt=mtu=1460 --engine-opt=ipv6 --engine-opt=fixed-cidr-v6=fc00::/7 --google-scopes=https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write --google-machine-image=gitlab-ci-155816/global/images/runners-coreos-stable-v20190822-0
 ```
 
 This method should succeed. If it does not. You have to verify it.
