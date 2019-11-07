@@ -151,7 +151,7 @@ groups:
       pager: pagerduty
       severity: s2
     annotations:
-      title: '1% disk space left'
+      title: '5% disk space left'
       description: "There's only 5% disk space left"
       runbook: troubleshooting/filesystem_alerts.md
       value: '{{ $value | humanize }}%'
