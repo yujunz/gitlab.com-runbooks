@@ -1,5 +1,3 @@
 # Alert about SSL certificate expiration
 
-## Modify list of hosts with SSL certificate
-
-By editing list inside `prometheus.jobs.blackbox-ssl.target` attribute in the role `prometheus-server` on chef, you can add or remove server from monitoring for SSL certificate expiration. By adding server there you will be receiving alerts when there is less than 30 days remain for certificate expiration. Do not forget to save your changes to chef-repo and run chef-client on prometheus host to see changes.
+This document has moved to [Gitlab Certificate Run Books](../certificates/README.md)
