@@ -41,13 +41,12 @@ local generalGraphPanel(
   version(startRow):: layout.grid([
     basic.timeseries(
       title='Active Version',
-      query='count(kube_pod_container_info{container="registry",container_id!="",cluster="$cluster"}) by (image)',
+      query='count(kube_pod_container_info{pod=~"^$Deployment.*",container_id!="",cluster="$cluster"}) by (image)',
       legendFormat='{{ image }}',
-      legend_rightSide=true,
     ),
     basic.timeseries(
       title='Active Replicaset',
-      query='avg(kube_replicaset_spec_replicas{replicaset=~"gitlab-registry-.*", cluster="$cluster"}) by (replicaset)',
+      query='avg(kube_replicaset_spec_replicas{replicaset=~"^$Deployment.*", cluster="$cluster"}) by (replicaset)',
       legendFormat='{{ replicaset }}',
       legend_rightSide=true,
     ),
@@ -187,21 +186,21 @@ local generalGraphPanel(
     )
     .addTarget(
       promQuery.target(
-        'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
+        'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
     )
     .addTarget(
       promQuery.target(
-        'sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
+        'sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
     )
     .addTarget(
       promQuery.target(
-        'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod) / sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
+        'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod) / sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
@@ -265,21 +264,21 @@ local generalGraphPanel(
     )
     .addTarget(
       promQuery.target(
-        'sum(label_replace(container_memory_usage_bytes{env=~"$environment", container_name!=""}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
+        'sum(label_replace(container_memory_usage_bytes{env=~"$environment", container_name!=""}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
     )
     .addTarget(
       promQuery.target(
-        'sum(kube_pod_container_resource_requests_memory_bytes{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
+        'sum(kube_pod_container_resource_requests_memory_bytes{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
     )
     .addTarget(
       promQuery.target(
-        'sum(label_replace(container_memory_usage_bytes{env=~"$environment", container_name!=""}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod) /sum(kube_pod_container_resource_requests_memory_bytes{env=~"$environment", } * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="gitlab-registry"}) by (pod)',
+        'sum(label_replace(container_memory_usage_bytes{env=~"$environment", container_name!=""}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod) /sum(kube_pod_container_resource_requests_memory_bytes{env=~"$environment", } * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
