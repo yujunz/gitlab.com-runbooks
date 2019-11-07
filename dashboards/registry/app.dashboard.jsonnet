@@ -1,6 +1,8 @@
 local commonAnnotations = import 'common_annotations.libsonnet';
-local crCommon = import 'container_registry_common_graphs.libsonnet';
+local common = import 'container_common_graphs.libsonnet';
+local crCommon = import 'container_registry_graphs.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
+local template = grafana.template;
 local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
@@ -18,6 +20,13 @@ dashboard.new(
 .addTemplate(templates.environment)
 .addTemplate(templates.gkeCluster)
 .addTemplate(templates.namespace)
+.addTemplate(
+  template.custom(
+    'Deployment',
+    'gitlab-registry,',
+    'gitlab-registry',
+  )
+)
 .addPanel(
 
   row.new(title='Stackdriver Metrics'),
@@ -28,7 +37,7 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanels(crCommon.logMessages(startRow=1))
+.addPanels(common.logMessages(startRow=1))
 .addPanel(
 
   row.new(title='General Counters'),
@@ -39,7 +48,7 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanels(crCommon.generalCounters(startRow=1001))
+.addPanels(common.generalCounters(startRow=1001))
 .addPanel(
 
   row.new(title='Data'),
