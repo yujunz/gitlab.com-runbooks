@@ -243,6 +243,9 @@ During an incident there are at least 2 roles, and one more optional
 * [General Troubleshooting](troubleshooting/chef.md)
 * [Error executing action `create` on resource 'directory[/some/path]'](troubleshooting/stale-file-handles.md)
 
+### Certificates
+* [Certificate runbooks](certificates/index.md)
+
 ## Learning
 
 ### Alerting and monitoring
