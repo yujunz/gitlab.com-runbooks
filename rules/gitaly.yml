@@ -23,7 +23,7 @@ groups:
     expr: gitaly:grpc_server_handled_total:error_rate1m > 2
     for: 5m
     labels:
-      channel: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
     annotations:
@@ -35,7 +35,7 @@ groups:
     expr: gitaly:grpc_server_handled_total:instance_error_rate1m > 5
     for: 5m
     labels:
-      channel: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
     annotations:
@@ -95,7 +95,7 @@ groups:
     expr: up{job="gitaly",tier="stor",type="gitaly"} == 0
     for: 1m
     labels:
-      channel: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
     annotations:
@@ -113,7 +113,7 @@ groups:
       ) * 100 > 50
     for: 1m
     labels:
-      channel: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
     annotations:
@@ -131,7 +131,7 @@ groups:
       ) == 2
     for: 30m
     labels:
-      channel: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
     annotations:
@@ -151,7 +151,7 @@ groups:
       ) > 2
     for: 1m
     labels:
-      channel: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
     annotations:
@@ -169,7 +169,7 @@ groups:
       stackdriver_pubsub_topic_pubsub_googleapis_com_topic_send_message_operation_count{topic_id="pubsub-gitaly-inf-gprd"} / 60 < 100
     for: 5m
     labels:
-      channel: g_gitaly
+      channel: g_create_gitaly
       severity: s4
     annotations:
       description: >
