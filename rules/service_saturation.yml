@@ -194,9 +194,12 @@ groups:
     labels:
       component: 'disk_sustained_read_iops'
     expr: >
-      max(
-        rate(node_disk_reads_completed_total{type="gitaly", device="sdb"}[1m]) / (60000)
-      ) by (environment, tier, type, stage)
+      clamp_max(
+        max(
+          rate(node_disk_reads_completed_total{type="gitaly", device="sdb"}[1m]) / (60000)
+        ) by (environment, tier, type, stage),
+        1
+      )
 
   # type: gitaly
   # Disk write IOPS saturation based on GCP estimate of 400MB/s limit
@@ -206,9 +209,12 @@ groups:
     labels:
       component: 'disk_sustained_write_iops'
     expr: >
-      max(
-        rate(node_disk_writes_completed_total{type="gitaly", device="sdb"}[1m]) / (30000)
-      ) by (environment, tier, type, stage)
+      clamp_max(
+        max(
+          rate(node_disk_writes_completed_total{type="gitaly", device="sdb"}[1m]) / (30000)
+        ) by (environment, tier, type, stage),
+        1
+      )
 
   # type: gitaly
   # Disk read throughput saturation based on GCP estimate of 1200MB/s limit
@@ -218,9 +224,12 @@ groups:
     labels:
       component: 'disk_sustained_read_throughput'
     expr: >
-      max(
-        rate(node_disk_read_bytes_total{type="gitaly", device="sdb"}[1m]) / (1200 * 1024 * 1024)
-      ) by (environment, tier, type, stage)
+      clamp_max(
+        max(
+          rate(node_disk_read_bytes_total{type="gitaly", device="sdb"}[1m]) / (1200 * 1024 * 1024)
+        ) by (environment, tier, type, stage),
+        1
+      )
 
   # type: gitaly
   # Disk write throughput saturation based on GCP estimate of 400MB/s limit
@@ -230,9 +239,12 @@ groups:
     labels:
       component: 'disk_sustained_write_throughput'
     expr: >
-      max(
-        rate(node_disk_written_bytes_total{type="gitaly", device="sdb"}[1m]) / (400 * 1024 * 1024)
-      ) by (environment, tier, type, stage)
+      clamp_max(
+        max(
+          rate(node_disk_written_bytes_total{type="gitaly", device="sdb"}[1m]) / (400 * 1024 * 1024)
+        ) by (environment, tier, type, stage),
+        1
+      )
 
   # Aggregate over all components within a service using max
   - record: gitlab_service_saturation:ratio
