@@ -224,9 +224,9 @@ groups:
   - alert: PostgreSQL_TooManyDeadTuples
     expr: >
       (
-        (pg_stat_user_tables_n_dead_tup > 10000)
+        (pg_stat_user_tables_n_dead_tup > 1000000)
         /
-        (pg_stat_user_tables_n_live_tup + pg_stat_user_tables_n_dead_tup > 1000)
+        (pg_stat_user_tables_n_live_tup + pg_stat_user_tables_n_dead_tup)
       ) >= 0.05
       unless ON(instance) (pg_replication_is_replica == 1)
     for: 30m
