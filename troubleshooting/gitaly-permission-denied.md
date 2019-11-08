@@ -8,7 +8,7 @@
 ## 1. Review the PermissionDenied errors
 
 - **Search for nodes serving PermissionDenied gRPC status codes**: https://dashboards.gitlab.net/d/xSYVQ9Sik/gitaly-feature-error-diagnostics?orgId=1&refresh=5m
-- These nodes either have clock drift, as HMAC uses time as a nonse for authentication. Or Keep in mind that this is an open-ended alert, so it alerts to suspicious activity, rather than pin-pointing an issue.
+- These nodes either have clock drift, as HMAC uses time as a nonce for authentication. Keep in mind that this is an open-ended alert, so it alerts to suspicious activity, rather than pin-pointing an issue.
 - If a lot of different nodes are affected, it might be a misconfiguration of the Gitaly or frontend node.
 
 ## 2. Evaluate impact
