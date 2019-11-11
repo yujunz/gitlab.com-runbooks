@@ -6,33 +6,35 @@ local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
 
 local gatewayNameTemplate = grafana.template.new(
-  "gateway",
-  "$PROMETHEUS_DS",
+  'gateway',
+  '$PROMETHEUS_DS',
   'label_values(stackdriver_nat_gateway_logging_googleapis_com_user_nat_translations{environment="$environment"}, gateway_name)',
-  current="gitlab-gke",
+  current='gitlab-gke',
   refresh='load',
   sort=1,
 );
 
 local environmentTemplate = grafana.template.new(
-    "environment",
-    "$PROMETHEUS_DS",
-    "label_values(stackdriver_nat_gateway_logging_googleapis_com_user_nat_translations, environment)",
-    current="gprd",
+    'environment',
+    '$PROMETHEUS_DS',
+    'label_values(stackdriver_nat_gateway_logging_googleapis_com_user_nat_translations, environment)',
+    current='gprd',
     refresh='load',
     sort=1,
 );
 
-local errorsPanel = panels.generalGraphPanel("Cloud NAT errors", legend_show=true)
+local errorsPanel = panels.generalGraphPanel('Cloud NAT errors', legend_show=true)
   .addTarget(
-    promQuery.target('
+    promQuery.target(|||
       stackdriver_nat_gateway_logging_googleapis_com_user_nat_errors{environment="$environment"}
-    ', legendFormat='errors'),
+    |||,
+    legendFormat='errors'),
   )
   .addTarget(
-    promQuery.target('
+    promQuery.target(|||
       stackdriver_nat_gateway_logging_googleapis_com_user_nat_translations{environment="$environment"}
-    ', legendFormat='translations'),
+    |||,
+    legendFormat='translations'),
   );
 
 grafana.dashboard.new(

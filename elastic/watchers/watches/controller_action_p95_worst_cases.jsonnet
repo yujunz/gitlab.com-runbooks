@@ -13,9 +13,9 @@ local query() = {
       bool: {
         must: [{
           range: {
-            "@timestamp": {
+            '@timestamp': {
               gte: std.format('now-%dh', TRIGGER_SCHEDULE_HOURS),
-              lte: "now",
+              lte: 'now',
             },
           },
         }],
@@ -26,35 +26,35 @@ local query() = {
     aggs: {
       controller: {
         terms: {
-          field: "json.controller.keyword",
+          field: 'json.controller.keyword',
           size: 50,
           order: {
-            sum_duration: "desc",
+            sum_duration: 'desc',
           },
         },
         aggs: {
           sum_duration: {
             sum: {
-              field: "json.duration",
+              field: 'json.duration',
             },
           },
           action: {
             terms: {
-              field: "json.action.keyword",
+              field: 'json.action.keyword',
               size: 5,
               order: {
-                sum_duration: "desc",
+                sum_duration: 'desc',
               },
             },
             aggs: {
               sum_duration: {
                 sum: {
-                  field: "json.duration",
+                  field: 'json.duration',
                 },
               },
               percentile_durations: {
                 percentiles: {
-                  field: "json.duration",
+                  field: 'json.duration',
                   percents: [95],
                   keyed: false,
                 },
@@ -67,43 +67,16 @@ local query() = {
   },
 };
 
-local painlessFunctions = "
-  boolean findAction(def actionBucket, def params) {
-    actionBucket.percentile_durations.values[0].value >= params.P95_THRESHOLD_MILLIS
-  }
+local painlessFunctions = "\n  boolean findAction(def actionBucket, def params) {\n    actionBucket.percentile_durations.values[0].value >= params.P95_THRESHOLD_MILLIS\n  }\n\n  boolean findController(def controllerBucket, def params) {\n    controllerBucket.action.buckets.any(actionBucket -> findAction(actionBucket, params))\n  }\n\n  Object collectActions(def controllerBucket, def params) {\n    controllerBucket.action.buckets.findAll(actionBucket -> findAction(actionBucket, params)).collect(actionBucket -> [\n      'action': actionBucket,\n      'actionKey': actionBucket.key,\n      'p95latencySeconds': Math.round(actionBucket.percentile_durations.values[0].value/1000),\n      'controller':controllerBucket.key,\n      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&state=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key + '%23' + actionBucket.key\n    ])\n  }\n";
 
-  boolean findController(def controllerBucket, def params) {
-    controllerBucket.action.buckets.any(actionBucket -> findAction(actionBucket, params))
-  }
+local conditionScript = '\n  ctx.payload.aggregations.controller.buckets.any(controllerBucket -> findController(controllerBucket, params))\n';
 
-  Object collectActions(def controllerBucket, def params) {
-    controllerBucket.action.buckets.findAll(actionBucket -> findAction(actionBucket, params)).collect(actionBucket -> [
-      'action': actionBucket,
-      'actionKey': actionBucket.key,
-      'p95latencySeconds': Math.round(actionBucket.percentile_durations.values[0].value/1000),
-      'controller':controllerBucket.key,
-      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&state=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key + '%23' + actionBucket.key
-    ])
-  }
-";
-
-local conditionScript = "
-  ctx.payload.aggregations.controller.buckets.any(controllerBucket -> findController(controllerBucket, params))
-";
-
-local transformScript = "
-  [
-    'items': ctx.payload.aggregations.controller.buckets.collect(controllerBucket -> collectActions(controllerBucket, params))
-      .stream()
-      .flatMap(x -> x.stream())
-      .collect(Collectors.toList())
-  ]
-";
+local transformScript = "\n  [\n    'items': ctx.payload.aggregations.controller.buckets.collect(controllerBucket -> collectActions(controllerBucket, params))\n      .stream()\n      .flatMap(x -> x.stream())\n      .collect(Collectors.toList())\n  ]\n";
 
 local painlessScript(script) = {
   script: {
-    inline: painlessFunctions + "\n" + script,
-    lang: "painless",
+    inline: painlessFunctions + '\n' + script,
+    lang: 'painless',
     params: {
       P95_THRESHOLD_MILLIS: P95_THRESHOLD_MILLIS,
     },
@@ -127,22 +100,21 @@ local searchLinkTemplate() =
   condition: painlessScript(conditionScript),
   transform: painlessScript(transformScript),
   actions: {
-    "notify-slack": {
+    'notify-slack': {
       slack: {
-        account: "gitlab_team",
+        account: 'gitlab_team',
         message: {
-          from: "ElasticCloud Watcher: worst-case p95",
+          from: 'ElasticCloud Watcher: worst-case p95',
           to: [
-            "#mech_symp_alerts",
+            '#mech_symp_alerts',
           ],
-          text: "*Worst performing Rails controllers in the applications, by p95 latency*
-Click through the attachment title to find events in the logs...",
+          text: '*Worst performing Rails controllers in the applications, by p95 latency*\nClick through the attachment title to find events in the logs...',
           dynamic_attachments: {
-            list_path: "ctx.payload.items",
+            list_path: 'ctx.payload.items',
             attachment_template: {
-              title: "{{controller}}#{{actionKey}}",
+              title: '{{controller}}#{{actionKey}}',
               title_link: searchLinkTemplate(),
-              text: "p95 latency for this endpoint: {{ p95latencySeconds }}s (<{{ issue_search_url }}|find related issues>)",
+              text: 'p95 latency for this endpoint: {{ p95latencySeconds }}s (<{{ issue_search_url }}|find related issues>)',
             },
           },
         },

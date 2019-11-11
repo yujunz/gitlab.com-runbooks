@@ -32,7 +32,7 @@ dashboard.new(
 .addTemplate(templates.environment)
 .addPanel(serviceHealth.row('redis-sidekiq', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
-row.new(title="Clients"),
+row.new(title='Clients'),
   gridPos={
       x: 0,
       y: 1000,
@@ -40,9 +40,9 @@ row.new(title="Clients"),
       h: 1,
   }
 )
-.addPanels(redisCommon.clientPanels(serviceType="redis-sidekiq", startRow=1001))
+.addPanels(redisCommon.clientPanels(serviceType='redis-sidekiq', startRow=1001))
 .addPanel(
-row.new(title="Workload"),
+row.new(title='Workload'),
   gridPos={
       x: 0,
       y: 2000,
@@ -50,9 +50,9 @@ row.new(title="Workload"),
       h: 1,
   }
 )
-.addPanels(redisCommon.workload(serviceType="redis-sidekiq", startRow=2001))
+.addPanels(redisCommon.workload(serviceType='redis-sidekiq', startRow=2001))
 .addPanel(
-row.new(title="Redis Data"),
+row.new(title='Redis Data'),
   gridPos={
       x: 0,
       y: 3000,
@@ -60,9 +60,9 @@ row.new(title="Redis Data"),
       h: 1,
   }
 )
-.addPanels(redisCommon.data(serviceType="redis-sidekiq", startRow=3001))
+.addPanels(redisCommon.data(serviceType='redis-sidekiq', startRow=3001))
 .addPanel(
-row.new(title="Replication"),
+row.new(title='Replication'),
   gridPos={
       x: 0,
       y: 4000,
@@ -70,7 +70,7 @@ row.new(title="Replication"),
       h: 1,
   }
 )
-.addPanels(redisCommon.replication(serviceType="redis-sidekiq", startRow=4001))
+.addPanels(redisCommon.replication(serviceType='redis-sidekiq', startRow=4001))
 
 .addPanel(keyMetrics.keyServiceMetricsRow('redis-sidekiq', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('redis-sidekiq', 'main'), gridPos={ x: 0, y: 6000 })

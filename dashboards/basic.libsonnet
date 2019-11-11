@@ -179,7 +179,11 @@ local tablePanel = grafana.tablePanel;
     intervalFactor=3,
     linewidth=2,
     legend_show=true,
-  ):: graphPanel.new(
+  )::
+  local formatConfig = {
+    query: query,
+  };
+  graphPanel.new(
     title,
     description=description,
     sort='decreasing',
@@ -197,7 +201,16 @@ local tablePanel = grafana.tablePanel;
     legend_alignAsTable=true,
     legend_hideEmpty=true,
   )
-      .addTarget(promQuery.target('clamp_min(clamp_max(' + query + ',1),0)', legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+      .addTarget(
+        promQuery.target(
+          |||
+            clamp_min(clamp_max(%(query)s,1),0)
+          ||| % formatConfig,
+          legendFormat=legendFormat,
+          interval=interval,
+          intervalFactor=intervalFactor
+        )
+      )
       .resetYaxes()
       .addYaxis(
     format='percentunit',
@@ -222,7 +235,11 @@ local tablePanel = grafana.tablePanel;
     intervalFactor=3,
     linewidth=2,
     legend_show=true,
-  ):: graphPanel.new(
+  )::
+  local formatConfig = {
+    query: query,
+  };
+  graphPanel.new(
     title,
     description=description,
     sort='increasing',
@@ -240,7 +257,16 @@ local tablePanel = grafana.tablePanel;
     legend_alignAsTable=true,
     legend_hideEmpty=true,
   )
-      .addTarget(promQuery.target('clamp_min(clamp_max(' + query + ',1),0)', legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+      .addTarget(
+        promQuery.target(
+          |||
+            clamp_min(clamp_max(%(query)s,1),0)
+          ||| % formatConfig,
+          legendFormat=legendFormat,
+          interval=interval,
+          intervalFactor=intervalFactor
+        )
+      )
       .resetYaxes()
       .addYaxis(
     format='percentunit',
@@ -310,7 +336,11 @@ local tablePanel = grafana.tablePanel;
     yAxisLabel='SLA',
     interval='1m',
     intervalFactor=3,
-  ):: graphPanel.new(
+  )::
+  local formatConfig = {
+    query: query,
+  };
+  graphPanel.new(
     title,
     description=description,
     sort='decreasing',
@@ -328,7 +358,16 @@ local tablePanel = grafana.tablePanel;
     legend_alignAsTable=true,
     legend_hideEmpty=true,
   )
-      .addTarget(promQuery.target('clamp_min(clamp_max(' + query + ',1),0)', legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+      .addTarget(
+        promQuery.target(
+          |||
+            clamp_min(clamp_max(%(query)s,1),0)
+          ||| % formatConfig,
+          legendFormat=legendFormat,
+          interval=interval,
+          intervalFactor=intervalFactor
+        )
+      )
       .resetYaxes()
       .addYaxis(
     format='percentunit',

@@ -33,7 +33,7 @@ dashboard.new(
 .addPanel(serviceHealth.row('pgbouncer', '$stage'), gridPos={ x: 0, y: 0 })
 
 .addPanel(
-row.new(title="pgbouncer Workload"),
+row.new(title='pgbouncer Workload'),
   gridPos={
       x: 0,
       y: 0,
@@ -43,7 +43,7 @@ row.new(title="pgbouncer Workload"),
 )
 .addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1))
 .addPanel(
-row.new(title="pgbouncer Connection Pooling"),
+row.new(title='pgbouncer Connection Pooling'),
   gridPos={
       x: 0,
       y: 1000,
@@ -53,7 +53,7 @@ row.new(title="pgbouncer Connection Pooling"),
 )
 .addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('pgbouncer', 1001))
 .addPanel(
-row.new(title="pgbouncer Network"),
+row.new(title='pgbouncer Network'),
   gridPos={
       x: 0,
       y: 2000,

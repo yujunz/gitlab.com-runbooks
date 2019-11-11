@@ -112,6 +112,18 @@ find_dashboards "$@" | while read -r line; do
   }
 ')
 
+  if (echo "${body}" | grep -E '%\(\w+\)' >/dev/null); then
+    echo "$line output contains format markers. Did you forget to use %?"
+    echo "${body}" | jq '.' | grep -E -B3 -A3 --color=always '%\(\w+\)'
+    exit 1
+  fi
+
+  if (echo "${body}" | grep -E "' *\\+" >/dev/null); then
+    echo "$line output contains format markers. Did you forget to use %?"
+    echo "${body}" | jq '.' | grep -E -B3 -A3 --color=always "' *\\+"
+    exit 1
+  fi
+
   if [[ -n $dry_run ]]; then
     echo "Running in dry run mode, would create $line in folder $folder with uid $uid"
     continue

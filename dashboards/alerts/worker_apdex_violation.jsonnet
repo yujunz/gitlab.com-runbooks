@@ -15,11 +15,11 @@ local annotation = grafana.annotation;
 local seriesOverrides = import 'series_overrides.libsonnet';
 
 local sidekiqWorkerLatency() = basic.latencyTimeseries(
-    title="Worker Latency",
-    description="${percentile}th percentile worker latency. Lower is better.",
-    query='
+    title='Worker Latency',
+    description='${percentile}th percentile worker latency. Lower is better.',
+    query=|||
       histogram_quantile($percentile/100, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="$environment", worker="$worker"}[$__interval])) by (le, environment, stage, tier, type, worker))
-    ',
+    |||,
     legendFormat='{{ worker }}'
   )
   .addTarget(
@@ -41,16 +41,16 @@ dashboard.new(
 .addTemplate(templates.sidekiqWorker)
 .addTemplate(
 template.custom(
-    "threshold",
-    "0.025,0.05,0.1,0.25,0.5,1,2.5,5,10,25,50",
-    "1",
+    'threshold',
+    '0.025,0.05,0.1,0.25,0.5,1,2.5,5,10,25,50',
+    '1',
   )
 )
 .addTemplate(
 template.custom(
-    "percentile",
-    "50,80,90,95,99",
-    "95",
+    'percentile',
+    '50,80,90,95,99',
+    '95',
   )
 )
 .addPanels(layout.grid([

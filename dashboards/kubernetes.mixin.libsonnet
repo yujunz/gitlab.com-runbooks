@@ -1,4 +1,4 @@
-local kubernetes = import "kubernetes-mixin/mixin.libsonnet";
+local kubernetes = import 'kubernetes-mixin/mixin.libsonnet';
 
 local mixin = kubernetes {
   _config+:: {
@@ -18,8 +18,7 @@ local mixin = kubernetes {
 {
   [std.strReplace(x, 'k8s-', '')]: mixin.grafanaDashboards[x] {
     uid: null,
-    timezone: "UTC"
-  }, for x in std.objectFields(mixin.grafanaDashboards)
+    timezone: 'UTC',
+  }
+for x in std.objectFields(mixin.grafanaDashboards)
 }
-
-

@@ -3,117 +3,136 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local row = grafana.row;
 
-local activeAlertsPanel(type, stage) = grafana.tablePanel.new(
+local activeAlertsPanel(serviceType, serviceStage) =
+  local formatConfig = {
+    serviceType: serviceType,
+    serviceStage: serviceStage,
+  };
+  grafana.tablePanel.new(
     'Active Alerts',
-    datasource="$PROMETHEUS_DS",
+    datasource='$PROMETHEUS_DS',
     styles=[
 {
-      type: "hidden",
-      pattern: "Time",
-      alias: "Time",
+      type: 'hidden',
+      pattern: 'Time',
+      alias: 'Time',
     },
 {
-      unit: "short",
-      type: "string",
-      alias: "Alert",
+      unit: 'short',
+      type: 'string',
+      alias: 'Alert',
       decimals: 2,
-      pattern: "alertname",
+      pattern: 'alertname',
       mappingType: 2,
       link: true,
-      linkUrl: "https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%2C%20type%3D%22" + type + "%22%7D",
-      linkTooltip: "Open alertmanager",
+      linkUrl: 'https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%2C%20type%3D%22' + serviceType + '%22%7D',
+      linkTooltip: 'Open alertmanager',
     },
 {
-      unit: "short",
-      type: "number",
-      alias: "Score",
+      unit: 'short',
+      type: 'number',
+      alias: 'Score',
       decimals: 0,
       colors: [
         colors.warningColor,
         colors.errorColor,
         colors.criticalColor,
       ],
-      colorMode: "row",
-      pattern: "Value",
+      colorMode: 'row',
+      pattern: 'Value',
       thresholds: [
-        "2",
-        "3",
+        '2',
+        '3',
       ],
       mappingType: 1,
     },
   ],
   )
   .addTarget(  // Alert scoring
-    promQuery.target('
-      sort(
-        max(
-        ALERTS{environment="$environment", type="' + type + '", stage=~"|' + stage + '", severity="s1", alertstate="firing"} * 4
-        or
-        ALERTS{environment="$environment", type="' + type + '", stage=~"|' + stage + '", severity="s2", alertstate="firing"} * 3
-        or
-        ALERTS{environment="$environment", type="' + type + '", stage=~"|' + stage + '", severity="s3", alertstate="firing"} * 2
-        or
-        ALERTS{environment="$environment", type="' + type + '", alertstate="firing"}
-        ) by (alertname, severity)
-      )
-      ',
-      format="table",
+    promQuery.target(
+      |||
+        sort(
+          max(
+          ALERTS{environment="$environment", type="%(serviceType)s", stage=~"|%(serviceStage)s", severity="s1", alertstate="firing"} * 4
+          or
+          ALERTS{environment="$environment", type="%(serviceType)s", stage=~"|%(serviceStage)s", severity="s2", alertstate="firing"} * 3
+          or
+          ALERTS{environment="$environment", type="%(serviceType)s", stage=~"|%(serviceStage)s", severity="s3", alertstate="firing"} * 2
+          or
+          ALERTS{environment="$environment", type="%(serviceType)s", alertstate="firing"}
+          ) by (alertname, severity)
+        )
+      ||| % formatConfig,
+      format='table',
       instant=true
     )
   );
 
-local latencySLOPanel(type, stage) = grafana.singlestat.new(
+local latencySLOPanel(serviceType, serviceStage) =
+  local formatConfig = {
+    serviceType: serviceType,
+    serviceStage: serviceStage,
+  };
+
+  grafana.singlestat.new(
     '7d Latency SLA',
-    description="Percentage time the latency SLI for this service is within SLO",
-    datasource="$PROMETHEUS_DS",
+    description='Percentage time the latency SLI for this service is within SLO',
+    datasource='$PROMETHEUS_DS',
     format='percentunit',
   )
   .addTarget(
-    promQuery.target('
-        avg(avg_over_time(slo_observation_status{slo="apdex_ratio", environment="$environment", type="' + type + '", stage="' + stage + '"}[7d]))
-      ',
+    promQuery.target(
+      |||
+        avg(avg_over_time(slo_observation_status{slo="apdex_ratio", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[7d]))
+      ||| % formatConfig,
       instant=true
     )
   );
 
-local errorRateSLOPanel(type, stage) = grafana.singlestat.new(
+local errorRateSLOPanel(serviceType, serviceStage) =
+  local formatConfig = {
+    serviceType: serviceType,
+    serviceStage: serviceStage,
+  };
+
+  grafana.singlestat.new(
     '7d Error Rate SLA',
-    description="Percentage time the error ratio SLI for this service is within SLO",
-    datasource="$PROMETHEUS_DS",
+    description='Percentage time the error ratio SLI for this service is within SLO',
+    datasource='$PROMETHEUS_DS',
     format='percentunit',
   )
   .addTarget(
-    promQuery.target('
-        avg_over_time(slo_observation_status{slo="error_ratio", environment="$environment", type="' + type + '", stage="' + stage + '"}[7d])
-      ',
+    promQuery.target(
+      |||
+        avg_over_time(slo_observation_status{slo="error_ratio", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[7d])
+      ||| % formatConfig,
       instant=true
     )
   );
 
 
 {
-  row(type, stage)::
-  row.new(title="👩‍⚕️ Service Health", collapse=true)
-    .addPanel(latencySLOPanel(type, stage),
+  row(serviceType, serviceStage)::
+  row.new(title='👩‍⚕️ Service Health', collapse=true)
+    .addPanel(latencySLOPanel(serviceType, serviceStage),
       gridPos={
         x: 0,
         y: 1,
         w: 6,
         h: 4,
     })
-    .addPanel(activeAlertsPanel(type, stage),
+    .addPanel(activeAlertsPanel(serviceType, serviceStage),
       gridPos={
         x: 6,
         y: 1,
         w: 18,
         h: 8,
     })
-    .addPanel(errorRateSLOPanel(type, stage),
+    .addPanel(errorRateSLOPanel(serviceType, serviceStage),
       gridPos={
         x: 0,
         y: 5,
         w: 6,
         h: 4,
-    })
-
+    }),
 }

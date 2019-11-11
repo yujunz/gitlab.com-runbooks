@@ -33,7 +33,7 @@ dashboard.new(
 .addTemplate(templates.environment)
 .addPanel(serviceHealth.row('patroni', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
-row.new(title="pgbouncer Workload", collapse=false),
+row.new(title='pgbouncer Workload', collapse=false),
   gridPos={
       x: 0,
       y: 1000,
@@ -43,7 +43,7 @@ row.new(title="pgbouncer Workload", collapse=false),
 )
 .addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1001))
 .addPanel(
-row.new(title="pgbouncer Connection Pooling", collapse=false),
+row.new(title='pgbouncer Connection Pooling', collapse=false),
   gridPos={
       x: 0,
       y: 2000,
@@ -53,7 +53,7 @@ row.new(title="pgbouncer Connection Pooling", collapse=false),
 )
 .addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('patroni', 2001))
 .addPanel(
-row.new(title="pgbouncer Network", collapse=false),
+row.new(title='pgbouncer Network', collapse=false),
   gridPos={
       x: 0,
       y: 3000,
@@ -63,7 +63,7 @@ row.new(title="pgbouncer Network", collapse=false),
 )
 .addPanels(pgbouncerCommonGraphs.networkStats('patroni', 3001))
 .addPanel(
-row.new(title="patroni process stats"),
+row.new(title='patroni process stats'),
   gridPos={
       x: 0,
       y: 4000,

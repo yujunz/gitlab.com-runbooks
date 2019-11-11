@@ -2,13 +2,13 @@ local MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS = std.extVar('marquee_customers_top_le
 
 local wildcardQuery(topLevelDomain) = {
     wildcard: {
-      "json.uri.keyword": "/" + topLevelDomain + "/*",
+      'json.uri.keyword': '/' + topLevelDomain + '/*',
     },
   };
 
 local wildcardQueries() = [
   wildcardQuery(topLevelDomain)
-for topLevelDomain in std.split(MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS, ",")
+for topLevelDomain in std.split(MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS, ',')
 ];
 
 local boolCanaryCustomerQuery() = {
@@ -32,7 +32,7 @@ local disabledIndividualWildcardQueries() = [
       store: 'appState',
     },
   }
-for topLevelDomain in std.split(MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS, ",")
+for topLevelDomain in std.split(MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS, ',')
 ];
 
 {
@@ -172,7 +172,7 @@ for topLevelDomain in std.split(MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS, ",")
           negate: false,
           index: 'AWM6itvP1NBBQZg_ElD1',
           disabled: false,
-          alias: "Any Canary Customer",
+          alias: 'Any Canary Customer',
           type: 'custom',
           key: 'bool',
           value: std.manifestJson(boolCanaryCustomerQuery()),

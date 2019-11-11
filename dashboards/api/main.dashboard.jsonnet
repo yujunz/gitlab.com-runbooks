@@ -35,7 +35,7 @@ dashboard.new(
 .addTemplate(templates.stage)
 .addPanel(serviceHealth.row('api', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
-row.new(title="Workhorse"),
+row.new(title='Workhorse'),
   gridPos={
       x: 0,
       y: 1000,
@@ -43,9 +43,9 @@ row.new(title="Workhorse"),
       h: 1,
   }
 )
-.addPanels(workhorseCommon.workhorsePanels(serviceType="api", serviceStage="$stage", startRow=1001))
+.addPanels(workhorseCommon.workhorsePanels(serviceType='api', serviceStage='$stage', startRow=1001))
 .addPanel(
-row.new(title="Unicorn"),
+row.new(title='Unicorn'),
   gridPos={
       x: 0,
       y: 2000,
@@ -53,10 +53,10 @@ row.new(title="Unicorn"),
       h: 1,
   }
 )
-.addPanels(unicornCommon.unicornPanels(serviceType="api", serviceStage="$stage", startRow=1001))
+.addPanels(unicornCommon.unicornPanels(serviceType='api', serviceStage='$stage', startRow=1001))
 
 .addPanel(
-row.new(title="Rails"),
+row.new(title='Rails'),
   gridPos={
       x: 0,
       y: 3000,
@@ -64,7 +64,7 @@ row.new(title="Rails"),
       h: 1,
   }
 )
-.addPanels(railsCommon.railsPanels(serviceType="api", serviceStage="$stage", startRow=3001))
+.addPanels(railsCommon.railsPanels(serviceType='api', serviceStage='$stage', startRow=3001))
 .addPanel(keyMetrics.keyServiceMetricsRow('api', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('api', '$stage'), gridPos={ x: 0, y: 5000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="api", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })

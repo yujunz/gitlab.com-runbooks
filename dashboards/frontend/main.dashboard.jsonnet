@@ -34,7 +34,7 @@ dashboard.new(
 .addTemplate(templates.sigma)
 .addPanel(serviceHealth.row('frontend', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
-row.new(title="🏅 Key Service Metrics"),
+row.new(title='🏅 Key Service Metrics'),
   gridPos={
       x: 0,
       y: 1000,
@@ -52,7 +52,7 @@ layout.grid([
   ], startRow=1001)
 )
 .addPanel(
-row.new(title="HAProxy process"),
+row.new(title='HAProxy process'),
   gridPos={
       x: 0,
       y: 2000,
