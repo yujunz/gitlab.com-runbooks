@@ -47,7 +47,7 @@ groups:
 
   - record: gitlab_component_saturation:ratio
     labels:
-      component: 'go-memory'
+      component: 'go_memory'
     expr: >
       max by (type, tier, stage, environment) (
         sum by (fqdn, type, tier, stage, environment) (
