@@ -17,7 +17,7 @@ local generalGraphPanel(
     title,
     linewidth=1,
     fill=0,
-    datasource="$PROMETHEUS_DS",
+    datasource='$PROMETHEUS_DS',
     description=description,
     decimals=2,
     legend_show=true,
@@ -33,30 +33,30 @@ local generalGraphPanel(
   .addSeriesOverride(seriesOverrides.slo);
 
 local apdexPanel() = generalGraphPanel(
-    "Latency: Apdex",
-    description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+    'Latency: Apdex',
+    description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
   )
   .addSeriesOverride(seriesOverrides.mainStage)
   .addSeriesOverride(seriesOverrides.cnyStage)
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      min(
-        min_over_time(
-          gitlab_service_apdex:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
-        )
-      ) by (stage)
-      ',
+      |||
+        min(
+          min_over_time(
+            gitlab_service_apdex:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
+          )
+        ) by (stage)
+      |||,
       intervalFactor=5,
       legendFormat='{{ stage }} stage',
     )
   )
   .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
     promQuery.target(
-'
+      |||
         avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="$type"}) or avg(slo:min:gitlab_service_apdex:ratio{type="$type"})
-      ',
-      interval="5m",
+      |||,
+      interval='5m',
       legendFormat='SLO',
     ),
   )
@@ -64,7 +64,7 @@ local apdexPanel() = generalGraphPanel(
   .addYaxis(
     format='percentunit',
     max=1,
-    label="Apdex %",
+    label='Apdex %',
   )
   .addYaxis(
     format='short',
@@ -75,30 +75,30 @@ local apdexPanel() = generalGraphPanel(
 
 local errorRatesPanel() =
   generalGraphPanel(
-    "Error Ratios",
-    description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better"
+    'Error Ratios',
+    description='Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better'
   )
   .addSeriesOverride(seriesOverrides.mainStage)
   .addSeriesOverride(seriesOverrides.cnyStage)
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      max(
-        max_over_time(
-          gitlab_service_errors:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
-        )
-      ) by (stage)
-      ',
+      |||
+        max(
+          max_over_time(
+            gitlab_service_errors:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
+          )
+        ) by (stage)
+      |||,
       intervalFactor=5,
       legendFormat='{{ stage }} stage',
     )
   )
   .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
     promQuery.target(
-'
+      |||
         avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="$type"}) or avg(slo:max:gitlab_service_errors:ratio{type="$type"})
-      ',
-      interval="5m",
+      |||,
+      interval='5m',
       legendFormat='SLO',
     ),
   )
@@ -106,7 +106,7 @@ local errorRatesPanel() =
   .addYaxis(
     format='percentunit',
     min=0,
-    label="% Requests in Error",
+    label='% Requests in Error',
   )
   .addYaxis(
     format='short',
@@ -117,20 +117,20 @@ local errorRatesPanel() =
 
 local serviceAvailabilityPanel() =
   generalGraphPanel(
-    "Service Availability",
-    description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better."
+    'Service Availability',
+    description='Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.'
   )
   .addSeriesOverride(seriesOverrides.mainStage)
   .addSeriesOverride(seriesOverrides.cnyStage)
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      min(
-        min_over_time(
-          gitlab_service_availability:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
-        )
-      ) by (stage)
-      ',
+      |||
+        min(
+          min_over_time(
+            gitlab_service_availability:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
+          )
+        ) by (stage)
+      |||,
       intervalFactor=5,
       legendFormat='{{ stage }} stage',
     )
@@ -139,7 +139,7 @@ local serviceAvailabilityPanel() =
   .addYaxis(
     format='percentunit',
     max=1,
-    label="Availability %",
+    label='Availability %',
   )
   .addYaxis(
     format='short',
@@ -150,20 +150,20 @@ local serviceAvailabilityPanel() =
 
 local qpsPanel() =
   generalGraphPanel(
-    "RPS - Service Requests per Second",
-    description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier."
+    'RPS - Service Requests per Second',
+    description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.'
   )
   .addSeriesOverride(seriesOverrides.mainStage)
   .addSeriesOverride(seriesOverrides.cnyStage)
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      max(
-        avg_over_time(
-          gitlab_service_ops:rate{environment="$environment", type="$type", stage!=""}[$__interval]
-        )
-      ) by (stage)
-      ',
+      |||
+        max(
+          avg_over_time(
+            gitlab_service_ops:rate{environment="$environment", type="$type", stage!=""}[$__interval]
+          )
+        ) by (stage)
+      |||,
       intervalFactor=5,
       legendFormat='{{ stage }} stage',
     )
@@ -172,7 +172,7 @@ local qpsPanel() =
   .addYaxis(
     format='short',
     min=0,
-    label="Operations per Second",
+    label='Operations per Second',
   )
   .addYaxis(
     format='short',

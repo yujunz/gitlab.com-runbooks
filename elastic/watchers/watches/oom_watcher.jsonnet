@@ -25,27 +25,16 @@ local ES_QUERY = {
   },
 };
 
-local painlessFunctions = "
-  boolean bucketMatches(def bucket, def params) {
-    bucket.doc_count >= params.OOM_ALERT_THRESHOLD
-  }
-";
+local painlessFunctions = '\n  boolean bucketMatches(def bucket, def params) {\n    bucket.doc_count >= params.OOM_ALERT_THRESHOLD\n  }\n';
 
-local conditionScript = "
-  ctx.payload.aggregations.fqdn.buckets.any(bucket -> bucketMatches(bucket, params))
-";
+local conditionScript = '\n  ctx.payload.aggregations.fqdn.buckets.any(bucket -> bucketMatches(bucket, params))\n';
 
-local transformScript = "
-  [
-    'items': ctx.payload.aggregations.fqdn.buckets
-                .findAll(bucket -> bucketMatches(bucket, params))
-  ]
-";
+local transformScript = "\n  [\n    'items': ctx.payload.aggregations.fqdn.buckets\n                .findAll(bucket -> bucketMatches(bucket, params))\n  ]\n";
 
 local painlessScript(script) = {
   script: {
-    inline: painlessFunctions + "\n" + script,
-    lang: "painless",
+    inline: painlessFunctions + '\n' + script,
+    lang: 'painless',
     params: {
       OOM_ALERT_THRESHOLD: OOM_ALERT_THRESHOLD,
     },
@@ -66,21 +55,21 @@ local painlessScript(script) = {
   condition: painlessScript(conditionScript),
   transform: painlessScript(transformScript),
   actions: {
-    "notify-slack": {
-      throttle_period: "30m",
+    'notify-slack': {
+      throttle_period: '30m',
       slack: {
-        account: "gitlab_team",
+        account: 'gitlab_team',
         message: {
-          from: "ElasticCloud Watcher: oom_watcher",
+          from: 'ElasticCloud Watcher: oom_watcher',
           to: [
-            "#mech_symp_alerts",
+            '#mech_symp_alerts',
           ],
-          text: "Multiple OOM-events detected on nodes. Visit https://log.gitlab.net/goto/fedfb6a8e169bac2f1dfccdadda0caa5 for more details",
+          text: 'Multiple OOM-events detected on nodes. Visit https://log.gitlab.net/goto/fedfb6a8e169bac2f1dfccdadda0caa5 for more details',
           dynamic_attachments: {
-            list_path: "ctx.payload.items",
+            list_path: 'ctx.payload.items',
             attachment_template: {
-              title: "node: {{key}}",
-              text: "OOM-Events: {{ doc_count }}",
+              title: 'node: {{key}}',
+              text: 'OOM-Events: {{ doc_count }}',
             },
           },
         },

@@ -10,7 +10,7 @@ local grafana = import 'grafonnet/grafana.libsonnet';
         description=description,
         linewidth=1,
         fill=0,
-        datasource="$PROMETHEUS_DS",
+        datasource='$PROMETHEUS_DS',
         decimals=2,
         legend_show=legend_show,
         legend_values=true,
@@ -35,7 +35,7 @@ local grafana = import 'grafonnet/grafana.libsonnet';
     .resetYaxes()
     .addYaxis(
       format='bytes',
-      label="Size",
+      label='Size',
     )
     .addYaxis(
       format='short',
@@ -64,5 +64,5 @@ local grafana = import 'grafonnet/grafana.libsonnet';
       max=1,
       min=0,
       show=false,
-    )
+    ),
 }

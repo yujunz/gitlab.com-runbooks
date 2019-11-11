@@ -13,12 +13,12 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 
 local componentSaturationPanel() = graphPanel.new(
-    "Saturation",
-    description="Saturation is a measure of what ratio of a finite resource is currently being utilized. Lower is better.",
-    sort="decreasing",
+    'Saturation',
+    description='Saturation is a measure of what ratio of a finite resource is currently being utilized. Lower is better.',
+    sort='decreasing',
     linewidth=2,
     fill=0,
-    datasource="$PROMETHEUS_DS",
+    datasource='$PROMETHEUS_DS',
     decimals=2,
     legend_show=true,
     legend_values=true,
@@ -32,29 +32,29 @@ local componentSaturationPanel() = graphPanel.new(
   )
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      max(
-        max_over_time(
-          gitlab_component_saturation:ratio{environment="$environment", type="$type", stage="$stage", component="$component"}[$__interval]
-        )
-      ) by (component)
-      ',
+      |||
+        max(
+          max_over_time(
+            gitlab_component_saturation:ratio{environment="$environment", type="$type", stage="$stage", component="$component"}[$__interval]
+          )
+        ) by (component)
+      |||,
       legendFormat='{{ component }} component',
     )
   )
   .addTarget(  // Soft SLO
     promQuery.target(
-'
-      avg(slo:max:soft:gitlab_component_saturation:ratio{component="$component"})
-      ',
+      |||
+        avg(slo:max:soft:gitlab_component_saturation:ratio{component="$component"})
+      |||,
       legendFormat='Soft SLO',
     )
   )
   .addTarget(  // Hard SLO
     promQuery.target(
-'
-      avg(slo:max:hard:gitlab_component_saturation:ratio{component="$component"})
-      ',
+      |||
+        avg(slo:max:hard:gitlab_component_saturation:ratio{component="$component"})
+      |||,
       legendFormat='Hard SLO',
     )
   )
@@ -62,7 +62,7 @@ local componentSaturationPanel() = graphPanel.new(
   .addYaxis(
     format='percentunit',
     max=1,
-    label="Saturation %",
+    label='Saturation %',
   )
   .addYaxis(
     format='short',
@@ -70,7 +70,7 @@ local componentSaturationPanel() = graphPanel.new(
     min=0,
     show=false,
   )
-  .addSeriesOverride(seriesOverrides.goldenMetric("/ component/"))
+  .addSeriesOverride(seriesOverrides.goldenMetric('/ component/'))
   .addSeriesOverride(seriesOverrides.softSlo)
   .addSeriesOverride(seriesOverrides.hardSlo);
 

@@ -1,6 +1,6 @@
 local TRIGGER_SCHEDULE_HOURS = 24;  // Run this watcher once a day
 
-local GITALY_CALLS_THRESHOLD = 750; // This many Gitaly calls in a single request triggers an alert
+local GITALY_CALLS_THRESHOLD = 750;  // This many Gitaly calls in a single request triggers an alert
 
 local query(keyField) = {
   search_type: 'query_then_fetch',
@@ -13,13 +13,13 @@ local query(keyField) = {
       bool: {
         must: [{
           range: {
-            "@timestamp": {
+            '@timestamp': {
               gte: std.format('now-%dh', TRIGGER_SCHEDULE_HOURS),
-              lte: "now"
-            }
-          }
-        }]
-      }
+              lte: 'now',
+            },
+          },
+        }],
+      },
     },
     size: 0,
     aggs: {
@@ -28,49 +28,35 @@ local query(keyField) = {
           field: keyField + '.keyword',
           size: 10,
           order: {
-            max_gitaly_calls: "desc"
-          }
+            max_gitaly_calls: 'desc',
+          },
         },
         aggs: {
           max_gitaly_calls: {
             max: {
-              field: "json.gitaly_calls"
-            }
-          }
-        }
-      }
-    }
+              field: 'json.gitaly_calls',
+            },
+          },
+        },
+      },
+    },
   },
 };
 
-local painlessFunctions = "
-  boolean findController(def controllerBucket, def params) {
-    controllerBucket.max_gitaly_calls.value >= params.GITALY_CALLS_THRESHOLD
-  }
-";
+local painlessFunctions = '\n  boolean findController(def controllerBucket, def params) {\n    controllerBucket.max_gitaly_calls.value >= params.GITALY_CALLS_THRESHOLD\n  }\n';
 
-local conditionScript = "
-  ctx.payload.aggregations.controller.buckets.any(controllerBucket -> findController(controllerBucket, params))
-";
+local conditionScript = '\n  ctx.payload.aggregations.controller.buckets.any(controllerBucket -> findController(controllerBucket, params))\n';
 
-local transformScript = "
-  [
-    'items': ctx.payload.aggregations.controller.buckets.findAll(controllerBucket -> findController(controllerBucket, params)).collect(controllerBucket -> [
-      'key': controllerBucket.key,
-      'max_gitaly_calls': Math.round(controllerBucket.max_gitaly_calls.value),
-      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&state=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key
-    ])
-  ]
-";
+local transformScript = "\n  [\n    'items': ctx.payload.aggregations.controller.buckets.findAll(controllerBucket -> findController(controllerBucket, params)).collect(controllerBucket -> [\n      'key': controllerBucket.key,\n      'max_gitaly_calls': Math.round(controllerBucket.max_gitaly_calls.value),\n      'issue_search_url': 'https://gitlab.com/gitlab-org/gitlab/issues?scope=all&state=all&label_name[]=Mechanical%20Sympathy&search=' + controllerBucket.key\n    ])\n  ]\n";
 
 local painlessScript(script) = {
-  script : {
-    inline : painlessFunctions + "\n" + script,
-    lang : "painless",
-    params : {
-      GITALY_CALLS_THRESHOLD: GITALY_CALLS_THRESHOLD
-    }
-  }
+  script: {
+    inline: painlessFunctions + '\n' + script,
+    lang: 'painless',
+    params: {
+      GITALY_CALLS_THRESHOLD: GITALY_CALLS_THRESHOLD,
+    },
+  },
 };
 
 local searchLinkTemplate(keyField) =
@@ -94,27 +80,26 @@ local searchLinkTemplate(keyField) =
     condition: painlessScript(conditionScript),
     transform: painlessScript(transformScript),
     actions: {
-      "notify-slack": {
+      'notify-slack': {
         slack: {
-          account: "gitlab_team",
+          account: 'gitlab_team',
           message: {
-            from: "ElasticCloud Watcher: " + name,
+            from: 'ElasticCloud Watcher: ' + name,
             to: [
-              "#mech_symp_alerts"
+              '#mech_symp_alerts',
             ],
-            text: "*Gitaly n+1 issues detected in the following endpoints.*
-Click through the attachment title to find events in the logs...",
+            text: '*Gitaly n+1 issues detected in the following endpoints.*\nClick through the attachment title to find events in the logs...',
             dynamic_attachments: {
-              list_path: "ctx.payload.items",
+              list_path: 'ctx.payload.items',
               attachment_template: {
-                title: "{{key}}",
+                title: '{{key}}',
                 title_link: searchLinkTemplate(keyField),
-                text: 'Maximum Gitaly calls in a single request: {{ max_gitaly_calls }}. (<{{ issue_search_url }}|find related issues>)'
-              }
-            }
-          }
-        }
-      }
+                text: 'Maximum Gitaly calls in a single request: {{ max_gitaly_calls }}. (<{{ issue_search_url }}|find related issues>)',
+              },
+            },
+          },
+        },
+      },
     },
-  }
+  },
 }

@@ -7,7 +7,7 @@ local prometheus = grafana.prometheus;
     intervalFactor=3,
     legendFormat='',
     datasource=null,
-    interval="1m",
+    interval='1m',
     instant=null,
   ):: prometheus.target(
     expr,
@@ -17,6 +17,6 @@ local prometheus = grafana.prometheus;
     datasource=datasource,
     interval=interval,
     instant=instant,
-  )
+  ),
 
 }

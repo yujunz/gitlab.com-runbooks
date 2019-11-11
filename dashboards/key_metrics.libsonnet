@@ -1,11 +1,11 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local templates = import 'templates.libsonnet';
 local colors = import 'colors.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
+local commonAnnotations = import 'common_annotations.libsonnet';
+local grafana = import 'grafonnet/grafana.libsonnet';
 local layout = import 'layout.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
+local promQuery = import 'prom_query.libsonnet';
+local seriesOverrides = import 'series_overrides.libsonnet';
+local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -16,12 +16,12 @@ local generalGraphPanel(
   title,
   description=null,
   linewidth=2,
-  sort="increasing",
+  sort='increasing',
 ) = graphPanel.new(
     title,
     linewidth=linewidth,
     fill=0,
-    datasource="$PROMETHEUS_DS",
+    datasource='$PROMETHEUS_DS',
     description=description,
     decimals=2,
     sort=sort,
@@ -35,7 +35,7 @@ local generalGraphPanel(
     legend_alignAsTable=true,
     legend_hideEmpty=true,
   )
-  .addSeriesOverride(seriesOverrides.goldenMetric("/ service/"))
+  .addSeriesOverride(seriesOverrides.goldenMetric('/ service/'))
   .addSeriesOverride(seriesOverrides.upper)
   .addSeriesOverride(seriesOverrides.lower)
   .addSeriesOverride(seriesOverrides.upperLegacy)
@@ -48,59 +48,65 @@ local generalGraphPanel(
   .addSeriesOverride(seriesOverrides.slo);
 
 
-
 {
-  apdexPanel(serviceType, serviceStage):: generalGraphPanel(
-      "Latency: Apdex",
-      description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+  apdexPanel(serviceType, serviceStage)::
+    local formatConfig = { serviceType: serviceType, serviceStage: serviceStage };
+    generalGraphPanel(
+      'Latency: Apdex',
+      description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
       sort=0,
     )
-    .addTarget( // Primary metric
-      promQuery.target('
-        min(
-          min_over_time(
-            gitlab_service_apdex:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-          )
-        ) by (type)
-        ',
+    .addTarget(  // Primary metric
+      promQuery.target(
+        |||
+          min(
+            min_over_time(
+              gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+            )
+          ) by (type)
+        ||| % formatConfig,
         legendFormat='{{ type }} service',
       )
     )
-  .addTarget( // Legacy metric - remove 2020-01-01
-      promQuery.target('
-        min(
-          min_over_time(
-            gitlab_service_apdex:ratio{environment="$environment", type="'+ serviceType + '", stage=""}[$__interval]
-          )
-        ) by (type)
-        ',
+  .addTarget(  // Legacy metric - remove 2020-01-01
+      promQuery.target(
+        |||
+          min(
+            min_over_time(
+              gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage=""}[$__interval]
+            )
+          ) by (type)
+        ||| % formatConfig,
         legendFormat='{{ type }} service (legacy)',
       )
     )
-    .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
-      promQuery.target('
-          avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}) or avg(slo:min:gitlab_service_apdex:ratio{type="'+ serviceType + '"})
-        ',
-        interval="5m",
+    .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
+      promQuery.target(
+        |||
+          avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(serviceType)s"})
+        ||| % formatConfig,
+        interval='5m',
         legendFormat='Degradation SLO',
       ),
     )
-    .addTarget( // Double apdex SLO is Outage-level SLO
-      promQuery.target('
-          2 * (avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}) or avg(slo:min:gitlab_service_apdex:ratio{type="'+ serviceType + '"})) - 1
-        ',
-        interval="5m",
+    .addTarget(  // Double apdex SLO is Outage-level SLO
+      promQuery.target(
+        |||
+          2 * (avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(serviceType)s"})) - 1
+        ||| % formatConfig,
+        interval='5m',
         legendFormat='Outage SLO',
       ),
     )
-    .addTarget( // Last week
-      promQuery.target('
-        min(
-          min_over_time(
-            gitlab_service_apdex:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval] offset 1w
-          )
-        ) by (type)
-        ',
+    .addTarget(  // Last week
+      promQuery.target(
+        |||
+          min(
+            min_over_time(
+              gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval] offset 1w
+            )
+          ) by (type)
+        ||| % formatConfig,
         legendFormat='last week',
       )
     )
@@ -108,7 +114,7 @@ local generalGraphPanel(
     .addYaxis(
       format='percentunit',
       max=1,
-      label="Apdex %",
+      label='Apdex %',
     )
     .addYaxis(
       format='short',
@@ -117,28 +123,35 @@ local generalGraphPanel(
       show=false,
     ),
 
-componentApdexPanel(serviceType, serviceStage):: generalGraphPanel(
-    "Component Latency: Apdex",
-    description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
+componentApdexPanel(serviceType, serviceStage)::
+  local formatConfig = {
+    serviceType: serviceType,
+    serviceStage: serviceStage,
+  };
+  generalGraphPanel(
+    'Component Latency: Apdex',
+    description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
     linewidth=1,
-    sort="increasing",
+    sort='increasing',
   )
-  .addTarget( // Primary metric
-    promQuery.target('
-      min(
-        min_over_time(
-          gitlab_component_apdex:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-        )
-      ) by (component)
-      ',
+  .addTarget(  // Primary metric
+    promQuery.target(
+      |||
+        min(
+          min_over_time(
+            gitlab_component_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+          )
+        ) by (component)
+      ||| % formatConfig,
       legendFormat='{{ component }} component',
     )
   )
-  .addTarget( // Min apdex score SLO for gitlab_service_errors:ratio metric
-    promQuery.target('
-        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}) or avg(slo:min:gitlab_service_apdex:ratio{type="'+ serviceType + '"})
-      ',
-      interval="5m",
+  .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
+    promQuery.target(
+      |||
+        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(serviceType)s"})
+      ||| % formatConfig,
+      interval='5m',
       legendFormat='SLO',
     ),
   )
@@ -146,7 +159,7 @@ componentApdexPanel(serviceType, serviceStage):: generalGraphPanel(
   .addYaxis(
     format='percentunit',
     max=1,
-    label="Apdex %",
+    label='Apdex %',
   )
   .addYaxis(
     format='short',
@@ -156,57 +169,66 @@ componentApdexPanel(serviceType, serviceStage):: generalGraphPanel(
   ),
 
 errorRatesPanel(serviceType, serviceStage)::
+  local formatConfig = {
+    serviceType: serviceType,
+    serviceStage: serviceStage,
+  };
   generalGraphPanel(
-    "Error Ratios",
-    description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better",
+    'Error Ratios',
+    description='Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better',
     sort=0,
   )
-  .addTarget( // Primary metric
-    promQuery.target('
-      max(
-        max_over_time(
-          gitlab_service_errors:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-        )
-      ) by (type)
-      ',
+  .addTarget(  // Primary metric
+    promQuery.target(
+      |||
+        max(
+          max_over_time(
+            gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+          )
+        ) by (type)
+      ||| % formatConfig,
       legendFormat='{{ type }} service',
     )
   )
-  .addTarget( // Legacy metric - remove 2020-01-01
-    promQuery.target('
-      max(
-        max_over_time(
-          gitlab_service_errors:ratio{environment="$environment", type="'+ serviceType + '", stage=""}[$__interval]
-        )
-      ) by (type)
-      ',
+  .addTarget(  // Legacy metric - remove 2020-01-01
+    promQuery.target(
+      |||
+        max(
+          max_over_time(
+            gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage=""}[$__interval]
+          )
+        ) by (type)
+      ||| % formatConfig,
       legendFormat='{{ type }} service (legacy)',
     )
   )
-  .addTarget( // Maximum error rate SLO for gitlab_service_errors:ratio metric
-    promQuery.target('
-        avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}) or avg(slo:max:gitlab_service_errors:ratio{type="'+ serviceType + '"})
-      ',
-      interval="5m",
+  .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
+    promQuery.target(
+      |||
+        avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(serviceType)s"})
+      ||| % formatConfig,
+      interval='5m',
       legendFormat='Degradation SLO',
     ),
   )
-  .addTarget( // Outage level SLO
-    promQuery.target('
-        2 * (avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}) or avg(slo:max:gitlab_service_errors:ratio{type="'+ serviceType + '"}))
-      ',
-      interval="5m",
+  .addTarget(  // Outage level SLO
+    promQuery.target(
+      |||
+        2 * (avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(serviceType)s"}))
+      ||| % formatConfig,
+      interval='5m',
       legendFormat='Outage SLO',
     ),
   )
-  .addTarget( // Last week
-    promQuery.target('
-      max(
-        max_over_time(
-          gitlab_service_errors:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval] offset 1w
-        )
-      ) by (type)
-      ',
+  .addTarget(  // Last week
+    promQuery.target(
+      |||
+        max(
+          max_over_time(
+            gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval] offset 1w
+          )
+        ) by (type)
+      ||| % formatConfig,
       legendFormat='last week',
     )
   )
@@ -214,7 +236,7 @@ errorRatesPanel(serviceType, serviceStage)::
   .addYaxis(
     format='percentunit',
     min=0,
-    label="% Requests in Error",
+    label='% Requests in Error',
   )
   .addYaxis(
     format='short',
@@ -224,31 +246,36 @@ errorRatesPanel(serviceType, serviceStage)::
   ),
 
   componentErrorRates(serviceType, serviceStage)::
+    local formatConfig = {
+      serviceType: serviceType,
+      serviceStage: serviceStage,
+    };
     generalGraphPanel(
-      "Component Error Rates - modified scale: (1 + n) log10",
-      description="Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better",
+      'Component Error Rates - modified scale: (1 + n) log10',
+      description='Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better',
       linewidth=1,
-      sort="decreasing",
+      sort='decreasing',
     )
-    .addTarget( // Primary metric
-      promQuery.target('
-        1 +
-        (
-          60 *
-          max(
-            max_over_time(
-              gitlab_component_errors:rate{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-            )
-          ) by (component)
-        )
-        ',
+    .addTarget(  // Primary metric
+      promQuery.target(
+        |||
+          1 +
+          (
+            60 *
+            max(
+              max_over_time(
+                gitlab_component_errors:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+              )
+            ) by (component)
+          )
+        ||| % formatConfig,
         legendFormat='{{ component }} component',
       )
     )
     .resetYaxes()
     .addYaxis(
       format='short',
-      label="Errors per Minute",
+      label='Errors per Minute',
       logBase=10,
     )
     .addYaxis(
@@ -261,20 +288,25 @@ errorRatesPanel(serviceType, serviceStage)::
   serviceAvailabilityPanel(serviceType, serviceStage):: self.componentAvailabilityPanel(serviceType, serviceStage),
 
   componentAvailabilityPanel(serviceType, serviceStage)::
+    local formatConfig = {
+      serviceType: serviceType,
+      serviceStage: serviceStage,
+    };
     generalGraphPanel(
-      "Component Availability",
-      description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.",
+      'Component Availability',
+      description='Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.',
       linewidth=1,
-      sort="decreasing",
+      sort='decreasing',
     )
-    .addTarget( // Primary metric
-      promQuery.target('
-        min(
-          min_over_time(
-            gitlab_component_availability:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-          )
-        ) by (component)
-        ',
+    .addTarget(  // Primary metric
+      promQuery.target(
+        |||
+          min(
+            min_over_time(
+              gitlab_component_availability:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+            )
+          ) by (component)
+        ||| % formatConfig,
         legendFormat='{{ component }} component',
       )
     )
@@ -282,7 +314,7 @@ errorRatesPanel(serviceType, serviceStage)::
     .addYaxis(
       format='percentunit',
       max=1,
-      label="Availability %",
+      label='Availability %',
     )
     .addYaxis(
       format='short',
@@ -292,83 +324,94 @@ errorRatesPanel(serviceType, serviceStage)::
     ),
 
   qpsPanel(serviceType, serviceStage)::
+    local formatConfig = {
+      serviceType: serviceType,
+      serviceStage: serviceStage,
+    };
     generalGraphPanel(
-      "RPS - Service Requests per Second",
-      description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      'RPS - Service Requests per Second',
+      description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
       sort=0,
     )
-    .addTarget( // Primary metric
-      promQuery.target('
-        max(
-          avg_over_time(
-            gitlab_service_ops:rate{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-          )
-        ) by (type)
-        ',
+    .addTarget(  // Primary metric
+      promQuery.target(
+        |||
+          max(
+            avg_over_time(
+              gitlab_service_ops:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+            )
+          ) by (type)
+        ||| % formatConfig,
         legendFormat='{{ type }} service',
       )
     )
-    .addTarget( // Legacy metric - remove 2020-01-01
-      promQuery.target('
-        max(
-          avg_over_time(
-            gitlab_service_ops:rate{environment="$environment", type="'+ serviceType + '", stage=""}[$__interval]
-          )
-        ) by (type)
-        ',
+    .addTarget(  // Legacy metric - remove 2020-01-01
+      promQuery.target(
+        |||
+          max(
+            avg_over_time(
+              gitlab_service_ops:rate{environment="$environment", type="%(serviceType)s", stage=""}[$__interval]
+            )
+          ) by (type)
+        ||| % formatConfig,
         legendFormat='{{ type }} service (legacy)',
       )
     )
-    .addTarget( // Last week
-      promQuery.target('
-        max(
-          avg_over_time(
-            gitlab_service_ops:rate{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval] offset 1w
-          )
-        ) by (type)
-        ',
+    .addTarget(  // Last week
+      promQuery.target(
+        |||
+          max(
+            avg_over_time(
+              gitlab_service_ops:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval] offset 1w
+            )
+          ) by (type)
+        ||| % formatConfig,
         legendFormat='last week',
       )
     )
     .addTarget(
-      promQuery.target('
-        gitlab_service_ops:rate:prediction{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"} +
-        2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}
-        ',
+      promQuery.target(
+        |||
+          gitlab_service_ops:rate:prediction{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} +
+          2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+        ||| % formatConfig,
         legendFormat='upper normal',
       ),
     )
     .addTarget(
-      promQuery.target('
-        avg(
-          clamp_min(
-            gitlab_service_ops:rate:prediction{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"} -
-            2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"},
-            0
+      promQuery.target(
+        |||
+          avg(
+            clamp_min(
+              gitlab_service_ops:rate:prediction{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} -
+              2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"},
+              0
+            )
           )
-        )
-        ',
+        ||| % formatConfig,
         legendFormat='lower normal',
       ),
     )
-    .addTarget( // Legacy metric - remove 2020-01-01
-      promQuery.target('
-        gitlab_service_ops:rate:prediction{environment="$environment", type="'+ serviceType + '", stage=""} +
-        2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage=""}
-        ',
+    .addTarget(  // Legacy metric - remove 2020-01-01
+      promQuery.target(
+        |||
+          gitlab_service_ops:rate:prediction{environment="$environment", type="%(serviceType)s", stage=""} +
+          2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="%(serviceType)s", stage=""}
+        ||| % formatConfig,
         legendFormat='upper normal (legacy)',
       ),
     )
-    .addTarget( // Legacy metric - remove 2020-01-01
-      promQuery.target('
-        avg(
-          clamp_min(
-            gitlab_service_ops:rate:prediction{environment="$environment", type="'+ serviceType + '", stage=""} -
-            2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="'+ serviceType + '", stage=""},
-            0
+    .addTarget(  // Legacy metric - remove 2020-01-01
+      promQuery.target(
+        |||
+          avg(
+            clamp_min(
+              gitlab_service_ops:rate:prediction{environment="$environment", type="%(serviceType)s", stage=""} -
+              2 * gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", type="%(serviceType)s", stage=""},
+              0
+            )
           )
-        )
-        ',
+        ||| % formatConfig,
         legendFormat='lower normal (legacy)',
       ),
     )
@@ -376,7 +419,7 @@ errorRatesPanel(serviceType, serviceStage)::
     .addYaxis(
       format='short',
       min=0,
-      label="Operations per Second",
+      label='Operations per Second',
     )
     .addYaxis(
       format='short',
@@ -386,28 +429,33 @@ errorRatesPanel(serviceType, serviceStage)::
     ),
 
   componentQpsPanel(serviceType, serviceStage)::
+    local formatConfig = {
+      serviceType: serviceType,
+      serviceStage: serviceStage,
+    };
     generalGraphPanel(
-      "Component RPS - Requests per Second",
-      description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
+      'Component RPS - Requests per Second',
+      description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
       linewidth=1,
-      sort="decreasing",
+      sort='decreasing',
     )
-    .addTarget( // Primary metric
-      promQuery.target('
-        1 +
-        max(
-          avg_over_time(
-            gitlab_component_ops:rate{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-          )
-        ) by (component)
-        ',
+    .addTarget(  // Primary metric
+      promQuery.target(
+        |||
+          1 +
+          max(
+            avg_over_time(
+              gitlab_component_ops:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+            )
+          ) by (component)
+        ||| % formatConfig,
         legendFormat='{{ component }} component',
       )
     )
     .resetYaxes()
     .addYaxis(
       format='reqps',
-      label="Requests per Second",
+      label='Requests per Second',
     )
     .addYaxis(
       format='short',
@@ -419,19 +467,24 @@ errorRatesPanel(serviceType, serviceStage)::
   saturationPanel(serviceType, serviceStage):: self.componentSaturationPanel(serviceType, serviceStage),
 
   componentSaturationPanel(serviceType, serviceStage)::
+    local formatConfig = {
+      serviceType: serviceType,
+      serviceStage: serviceStage,
+    };
     generalGraphPanel(
-      "Saturation",
-      description="Saturation is a measure of what ratio of a finite resource is currently being utilized. Lower is better.",
-      sort="decreasing",
+      'Saturation',
+      description='Saturation is a measure of what ratio of a finite resource is currently being utilized. Lower is better.',
+      sort='decreasing',
     )
-    .addTarget( // Primary metric
-      promQuery.target('
-        max(
-          max_over_time(
-            gitlab_component_saturation:ratio{environment="$environment", type="'+ serviceType + '", stage="' + serviceStage + '"}[$__interval]
-          )
-        ) by (component)
-        ',
+    .addTarget(  // Primary metric
+      promQuery.target(
+        |||
+          max(
+            max_over_time(
+              gitlab_component_saturation:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+            )
+          ) by (component)
+        ||| % formatConfig,
         legendFormat='{{ component }} component',
       )
     )
@@ -439,7 +492,7 @@ errorRatesPanel(serviceType, serviceStage)::
     .addYaxis(
       format='percentunit',
       max=1,
-      label="Saturation %",
+      label='Saturation %',
     )
     .addYaxis(
       format='short',
@@ -448,7 +501,7 @@ errorRatesPanel(serviceType, serviceStage)::
       show=false,
     ),
 
-  keyServiceMetricsRow(serviceType, serviceStage):: row.new(title="🏅 Key Service Metrics", collapse=true)
+  keyServiceMetricsRow(serviceType, serviceStage):: row.new(title='🏅 Key Service Metrics', collapse=true)
     .addPanels(layout.grid([
       self.apdexPanel(serviceType, serviceStage),
       self.errorRatesPanel(serviceType, serviceStage),
@@ -456,13 +509,12 @@ errorRatesPanel(serviceType, serviceStage)::
       self.qpsPanel(serviceType, serviceStage),
       self.saturationPanel(serviceType, serviceStage),
     ])),
-  keyComponentMetricsRow(serviceType, serviceStage):: row.new(title="🔩 Service Component Metrics", collapse=true)
+  keyComponentMetricsRow(serviceType, serviceStage):: row.new(title='🔩 Service Component Metrics', collapse=true)
     .addPanels(layout.grid([
       self.componentApdexPanel(serviceType, serviceStage),
       self.componentErrorRates(serviceType, serviceStage),
       self.componentAvailabilityPanel(serviceType, serviceStage),
       self.componentQpsPanel(serviceType, serviceStage),
       self.componentSaturationPanel(serviceType, serviceStage),
-    ]))
+    ])),
 }
-

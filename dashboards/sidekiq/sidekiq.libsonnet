@@ -6,65 +6,68 @@ local platformLinks = import 'platform_links.libsonnet';
 
 {
   priorityWorkloads(nodeSelector, startRow)::
+    local formatConfig = {
+      nodeSelector: nodeSelector,
+    };
+
     layout.grid([
       basic.saturationTimeseries(
         title='Sidekiq Worker Saturation by Priority',
         description='Shows sidekiq worker saturation. Once saturated, all sidekiq workers will be busy processing jobs, and any new jobs that arrive will queue. Lower is better.',
-        query='
+        query=|||
           max by(environment, type, tier, priority) (
-            sum without (queue) (sidekiq_running_jobs{' + nodeSelector + '})
+            sum without (queue) (sidekiq_running_jobs{%(nodeSelector)s})
             /
-            sidekiq_concurrency{' + nodeSelector + '}
+            sidekiq_concurrency{%(nodeSelector)s}
           )
-        ',
+        ||| % formatConfig,
         legendFormat='{{ priority }}',
         intervalFactor=1,
         linewidth=2,
       ),
       basic.saturationTimeseries(
-        "Node Average CPU Utilization per Priority",
-        description="The maximum utilization of a single core on each node. Lower is better",
-        query='
-          avg(1 - rate(node_cpu_seconds_total{' + nodeSelector + ', mode="idle"}[$__interval])) by (priority)
-        ',
+        'Node Average CPU Utilization per Priority',
+        description='The maximum utilization of a single core on each node. Lower is better',
+        query=|||
+          avg(1 - rate(node_cpu_seconds_total{%(nodeSelector)s, mode="idle"}[$__interval])) by (priority)
+        ||| % formatConfig,
         legendFormat='{{ priority }}',
         legend_show=true,
         linewidth=2
       ),
       basic.saturationTimeseries(
-        "Node Maximum Single Core Utilization per Priority",
-        description="The maximum utilization of a single core on each node. Lower is better",
-        query='
-          max(1 - rate(node_cpu_seconds_total{' + nodeSelector + ', mode="idle"}[$__interval])) by (priority)
-        ',
+        'Node Maximum Single Core Utilization per Priority',
+        description='The maximum utilization of a single core on each node. Lower is better',
+        query=|||
+          max(1 - rate(node_cpu_seconds_total{%(nodeSelector)s, mode="idle"}[$__interval])) by (priority)
+        ||| % formatConfig,
         legendFormat='{{ priority }}',
         legend_show=true,
         linewidth=2
       ),
       basic.saturationTimeseries(
-        title="Maximum Memory Utilization per Priority",
-        description="Memory utilization. Lower is better.",
-        query='
+        title='Maximum Memory Utilization per Priority',
+        description='Memory utilization. Lower is better.',
+        query=|||
           max(
             1 -
             (
               (
-                node_memory_MemFree_bytes{' + nodeSelector + '} +
-                node_memory_Buffers_bytes{' + nodeSelector + '} +
-                node_memory_Cached_bytes{' + nodeSelector + '}
+                node_memory_MemFree_bytes{%(nodeSelector)s} +
+                node_memory_Buffers_bytes{%(nodeSelector)s} +
+                node_memory_Cached_bytes{%(nodeSelector)s}
               )
             )
             /
-            node_memory_MemTotal_bytes{' + nodeSelector + '}
+            node_memory_MemTotal_bytes{%(nodeSelector)s}
           ) by (priority)
-        ',
+        ||| % formatConfig,
         legendFormat='{{ priority }}',
-        interval="1m",
+        interval='1m',
         intervalFactor=1,
         legend_show=true,
         linewidth=2
         ),
 
-    ], cols=2, rowHeight=10, startRow=startRow)
+    ], cols=2, rowHeight=10, startRow=startRow),
 }
-

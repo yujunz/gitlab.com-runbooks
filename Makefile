@@ -1,5 +1,5 @@
-JSONNET_FMT_FLAGS := --string-style l -n 0 # Note: Currently, as of v0.13 jsonnetfmt will collapse multiline strings and incorrectly indent lines, so disabling these options for now
-JSONNET_FILES = $(shell find . -name "*.jsonnet" -type f -not -path "./dashboards/vendor/*")
+JSONNET_FMT_FLAGS := --string-style s -n 0
+JSONNET_FILES = $(shell find . \( -name "*.jsonnet" -o -name "*.libsonnet" \)  -type f -not -path "./dashboards/vendor/*")
 
 SHELL_FMT_FLAGS := -i 2 -ci
 SHELL_FILES = $(shell find . -name "*.sh" -type f -not -path "./dashboards/vendor/*")

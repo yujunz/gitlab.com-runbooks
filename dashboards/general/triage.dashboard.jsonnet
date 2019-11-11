@@ -25,10 +25,10 @@ local genGridPos(x, y, h=1, w=1) = {
 local generalGraphPanel(
   title,
   description=null,
-  sort="increasing",
+  sort='increasing',
 ) = graphPanel.new(
     title,
-    datasource="$PROMETHEUS_DS",
+    datasource='$PROMETHEUS_DS',
     linewidth=2,
     fill=0,
     description=description,
@@ -53,12 +53,13 @@ local generateAnomalyPanel(
   maxY=6,
   errorThreshold=8,
   warningThreshold=6,
-  sort="increasing",
+  sort='increasing',
   ) =
+
   graphPanel.new(
     title,
-    datasource="$PROMETHEUS_DS",
-    description="Each timeseries represents the distance, in standard deviations, that each service is away from its normal range. The further from zero, the more anomalous",
+    datasource='$PROMETHEUS_DS',
+    description='Each timeseries represents the distance, in standard deviations, that each service is away from its normal range. The further from zero, the more anomalous',
     linewidth=2,
     fill=0,
     decimals=2,
@@ -73,23 +74,25 @@ local generateAnomalyPanel(
     legend_alignAsTable=false,
     legend_hideEmpty=true,
     thresholds=[
-      thresholds.errorLevel("gt", errorThreshold),
-      thresholds.warningLevel("gt", warningThreshold),
-      thresholds.warningLevel("lt", -warningThreshold),
-      thresholds.errorLevel("lt", -errorThreshold),
+      thresholds.errorLevel('gt', errorThreshold),
+      thresholds.warningLevel('gt', warningThreshold),
+      thresholds.warningLevel('lt', -warningThreshold),
+      thresholds.errorLevel('lt', -errorThreshold),
     ]
   )
   .addTarget(
     promQuery.target(
-      '
-      clamp_min(
-        clamp_max(
-          avg(
-                ' + query + '
-            ) by (type),
-          ' + maxY + '),
-        ' + minY + ')
-      ',
+      |||
+        clamp_min(
+          clamp_max(
+            avg(%(query)s) by (type),
+            %(maxY)f),
+          %(minY)f)
+      ||| % {
+        minY: minY,
+        maxY: maxY,
+        query: query,
+      },
       legendFormat='{{ type }} service',
       intervalFactor=3,
     )
@@ -97,7 +100,7 @@ local generateAnomalyPanel(
   .resetYaxes()
   .addYaxis(
     format='short',
-    label="Sigma σ",
+    label='Sigma σ',
     min=minY,
     max=maxY,
     show=true,
@@ -105,46 +108,46 @@ local generateAnomalyPanel(
   )
   .addYaxis(
     format='none',
-    label="",
+    label='',
     show=false
   );
 
 local activeAlertsPanel = grafana.tablePanel.new(
     'Active Alerts',
-    datasource="$PROMETHEUS_DS",
+    datasource='$PROMETHEUS_DS',
     styles=[
 {
-      type: "hidden",
-      pattern: "Time",
-      alias: "Time",
+      type: 'hidden',
+      pattern: 'Time',
+      alias: 'Time',
     },
 {
-      unit: "short",
-      type: "string",
-      alias: "Service",
+      unit: 'short',
+      type: 'string',
+      alias: 'Service',
       decimals: 2,
-      pattern: "type",
-      dateFormat: "YYYY-MM-DD HH:mm:ss",
+      pattern: 'type',
+      dateFormat: 'YYYY-MM-DD HH:mm:ss',
       mappingType: 2,
       link: true,
-      linkUrl: "https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=${__cell}&var-environment=$environment",
-      linkTooltip: "Open dashboard",
+      linkUrl: 'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=${__cell}&var-environment=$environment',
+      linkTooltip: 'Open dashboard',
     },
     {
-      unit: "short",
-      type: "number",
-      alias: "Score",
+      unit: 'short',
+      type: 'number',
+      alias: 'Score',
       decimals: 0,
       colors: [
         colors.warningColor,
         colors.errorColor,
         colors.criticalColor,
       ],
-      colorMode: "row",
-      pattern: "Value",
+      colorMode: 'row',
+      pattern: 'Value',
       thresholds: [
-        "100",
-        "10000",
+        '100',
+        '10000',
       ],
       mappingType: 1,
     },
@@ -152,18 +155,18 @@ local activeAlertsPanel = grafana.tablePanel.new(
   )
   .addTarget(  // Alert scoring
     promQuery.target(
-'
-      sort(
-        sum(
-          ALERTS{environment="$environment", type!="", severity="critical", alertstate="firing"} * 10000
-          or
-          ALERTS{environment="$environment", type!="", severity="error", alertstate="firing"} * 100
-          or
-          ALERTS{environment="$environment", type!="", severity="warn", alertstate="firing"}
-        ) by (type)
-      )
-      ',
-      format="table",
+      |||
+        sort(
+          sum(
+            ALERTS{environment="$environment", type!="", severity="critical", alertstate="firing"} * 10000
+            or
+            ALERTS{environment="$environment", type!="", severity="error", alertstate="firing"} * 100
+            or
+            ALERTS{environment="$environment", type!="", severity="warn", alertstate="firing"}
+          ) by (type)
+        )
+      |||,
+      format='table',
       instant=true
     )
   );
@@ -183,36 +186,36 @@ dashboard.new(
 .addPanel(activeAlertsPanel, gridPos=genGridPos(0, 0, w=2, h=0.5))
 .addPanel(
   generalGraphPanel(
-    "Latency: Apdex",
-    description="Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.",
-    sort="increasing",
+    'Latency: Apdex',
+    description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
+    sort='increasing',
   )
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      clamp_min(
-        avg(
-          gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
-        ) by (type),
-        0.85
-      )
-      ',
+      |||
+        clamp_min(
+          avg(
+            gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
+          ) by (type),
+          0.85
+        )
+      |||,
       legendFormat='{{ type }} service',
       intervalFactor=3,
     )
   )
   .addTarget(  // SLO Violations
     promQuery.target(
-'
-      clamp_min(
-        avg(
-            gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
-        ) by (type)
-        <= on(type) group_left
-        avg(slo:min:gitlab_service_apdex:ratio) by (type),
-        0.85
-      )
-      ',
+      |||
+        clamp_min(
+          avg(
+              gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
+          ) by (type)
+          <= on(type) group_left
+          avg(slo:min:gitlab_service_apdex:ratio) by (type),
+          0.85
+        )
+      |||,
       legendFormat='{{ type }} SLO violation',
       intervalFactor=3,
     )
@@ -221,7 +224,7 @@ dashboard.new(
   .addYaxis(
     format='percentunit',
     max=1,
-    label="Apdex %",
+    label='Apdex %',
   )
   .addYaxis(
     format='short',
@@ -234,55 +237,55 @@ dashboard.new(
 .addPanel(
   generateAnomalyPanel(
     'Anomaly detection: Latency: Apdex Score',
-    '
+    |||
       (
         gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
         - gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", stage="$stage"}
       )
       /
       gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-  ',
+  |||,
   maxY=0.5,
   minY=-12,
-  sort="increasing",
+  sort='increasing',
   )
   ,
   gridPos=genGridPos(1, 0.5)
 )
 .addPanel(
   generalGraphPanel(
-    "Error Ratios",
-    description="Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better",
-    sort="decreasing",
+    'Error Ratios',
+    description='Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better',
+    sort='decreasing',
   )
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      clamp_max(
-        avg(
-          max_over_time(
-            gitlab_service_errors:ratio{environment="$environment", stage="$stage"}[$__interval]
-          )
-        ) by (type),
-        0.15
-      )
-      ',
+      |||
+        clamp_max(
+          avg(
+            max_over_time(
+              gitlab_service_errors:ratio{environment="$environment", stage="$stage"}[$__interval]
+            )
+          ) by (type),
+          0.15
+        )
+      |||,
       legendFormat='{{ type }} service',
       intervalFactor=3,
     )
   )
   .addTarget(  // SLO Violations
     promQuery.target(
-'
-      clamp_max(
-        avg(
-          gitlab_service_errors:ratio{environment="$environment", stage="$stage"}
-        ) by (type)
-        >= on(type) group_left
-        avg(slo:max:gitlab_service_errors:ratio) by (type),
-        0.15
-      )
-      ',
+      |||
+        clamp_max(
+          avg(
+            gitlab_service_errors:ratio{environment="$environment", stage="$stage"}
+          ) by (type)
+          >= on(type) group_left
+          avg(slo:max:gitlab_service_errors:ratio) by (type),
+          0.15
+        )
+      |||,
       legendFormat='{{ type }} SLO violation',
       intervalFactor=3,
     )
@@ -291,7 +294,7 @@ dashboard.new(
   .addYaxis(
     format='percentunit',
     min=0,
-    label="% Requests in Error",
+    label='% Requests in Error',
   )
   .addYaxis(
     format='short',
@@ -304,33 +307,33 @@ dashboard.new(
 .addPanel(
   generateAnomalyPanel(
     'Anomaly detection: Error Ratio',
-    '
+    |||
       (
         gitlab_service_errors:ratio{environment="$environment", stage="$stage"}
         - gitlab_service_errors:ratio:avg_over_time_1w{environment="$environment", stage="$stage"}
       )
       /
       gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-  ',
+  |||,
   maxY=12,
   minY=-0.5,
-  sort="decreasing",
+  sort='decreasing',
   )
   , gridPos=genGridPos(1, 1.5)
 )
 .addPanel(
   generalGraphPanel(
-    "Service Requests per Second",
-    description="The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.",
-    sort="decreasing",
+    'Service Requests per Second',
+    description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
+    sort='decreasing',
   )
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      sum(
-        gitlab_service_ops:rate{environment="$environment", stage="$stage"}
-      ) by (type)
-      ',
+      |||
+        sum(
+          gitlab_service_ops:rate{environment="$environment", stage="$stage"}
+        ) by (type)
+      |||,
       legendFormat='{{ type }} service',
       intervalFactor=3,
     )
@@ -338,7 +341,7 @@ dashboard.new(
   .resetYaxes()
   .addYaxis(
     format='short',
-    label="Operations per Second",
+    label='Operations per Second',
     logBase=10,
   )
   .addYaxis(
@@ -352,7 +355,7 @@ dashboard.new(
 .addPanel(
   generateAnomalyPanel(
     'Anomaly detection: Requests per second',
-    '
+    |||
       (
         gitlab_service_ops:rate{environment="$environment", stage="$stage"}
         -
@@ -360,29 +363,29 @@ dashboard.new(
       )
       /
       gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", stage="$stage"}
-  ',
+  |||,
   maxY=6,
   minY=-3,
   errorThreshold=4,
   warningThreshold=3,
-  sort="decreasing",
+  sort='decreasing',
   )
   , gridPos=genGridPos(1, 2.5)
 )
 .addPanel(
   generalGraphPanel(
-    "Service Availability",
-    description="Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better."
+    'Service Availability',
+    description='Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.'
   )
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      min(
-        min_over_time(
-          gitlab_service_availability:ratio{environment="$environment", stage="$stage"}[$__interval]
-        )
-      ) by (type)
-      ',
+      |||
+        min(
+          min_over_time(
+            gitlab_service_availability:ratio{environment="$environment", stage="$stage"}[$__interval]
+          )
+        ) by (type)
+      |||,
       legendFormat='{{ type }} service',
       intervalFactor=3,
     )
@@ -391,7 +394,7 @@ dashboard.new(
   .addYaxis(
     format='percentunit',
     max=1,
-    label="Availability %",
+    label='Availability %',
   )
   .addYaxis(
     format='short',
@@ -404,7 +407,7 @@ dashboard.new(
 .addPanel(
   generateAnomalyPanel(
     'Anomaly detection: Availability',
-    '
+    |||
       (
       gitlab_service_availability:ratio{environment="$environment", stage="$stage"}
       -
@@ -412,7 +415,7 @@ dashboard.new(
       )
       /
       gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-  ',
+  |||,
   maxY=0.5,
   minY=-12
   )
@@ -420,19 +423,19 @@ dashboard.new(
 )
 .addPanel(
   generalGraphPanel(
-    "Saturation",
-    description="Saturation is a measure of the most saturated component of the service. Lower is better.",
-    sort="decreasing",
+    'Saturation',
+    description='Saturation is a measure of the most saturated component of the service. Lower is better.',
+    sort='decreasing',
   )
   .addTarget(  // Primary metric
     promQuery.target(
-'
-      max(
-        max_over_time(
-          gitlab_service_saturation:ratio{environment="$environment", stage="$stage"}[$__interval]
-        )
-      ) by (type)
-      ',
+      |||
+        max(
+          max_over_time(
+            gitlab_service_saturation:ratio{environment="$environment", stage="$stage"}[$__interval]
+          )
+        ) by (type)
+      |||,
       legendFormat='{{ type }} service',
       intervalFactor=3,
     )
@@ -441,7 +444,7 @@ dashboard.new(
   .addYaxis(
     format='percentunit',
     max=1,
-    label="Availability %",
+    label='Availability %',
   )
   .addYaxis(
     format='short',

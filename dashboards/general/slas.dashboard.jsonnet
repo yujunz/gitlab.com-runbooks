@@ -21,7 +21,7 @@ local keyServices = serviceCatalog.findServices(function(service)
   std.objectHas(service.business.SLA, 'primary_sla_service') &&
   service.business.SLA.primary_sla_service);
 
-local keyServiceRegExp = std.join("|", std.map(function(service) service.name, keyServices));
+local keyServiceRegExp = std.join('|', std.map(function(service) service.name, keyServices));
 
 local slaBarGauge(
   title,
@@ -29,43 +29,43 @@ local slaBarGauge(
   legendFormat
   ) = {
       options: {
-        displayMode: "gradient",
+        displayMode: 'gradient',
         fieldOptions: {
           calcs: [
-            "last",
+            'last',
           ],
           defaults: {
             decimals: 1,
             max: 1,
             min: 0,
-            unit: "percentunit",
+            unit: 'percentunit',
           },
           mappings: [],
           override: {},
           thresholds: [{
-            color: "green",
+            color: 'green',
             index: 0,
             value: null,
           }],
           values: false,
         },
-        orientation: "horizontal",
+        orientation: 'horizontal',
       },
       targets: [
         {
           expr: query,
-          format: "time_series",
+          format: 'time_series',
           instant: true,
-          interval: "",
+          interval: '',
           intervalFactor: 1,
           legendFormat: legendFormat,
-          refId: "A",
+          refId: 'A',
         },
       ],
       timeFrom: null,
       timeShift: null,
       title: title,
-      type: "bargauge",
+      type: 'bargauge',
     };
 
 dashboard.new(
@@ -93,7 +93,7 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addPanel(
-row.new(title="Headline"),
+row.new(title='Headline'),
   gridPos={
       x: 0,
       y: 0,
@@ -105,16 +105,18 @@ row.new(title="Headline"),
 layout.grid([
     grafana.singlestat.new(
       'SLA Status',
-      datasource="$PROMETHEUS_DS",
+      datasource='$PROMETHEUS_DS',
       format='percentunit',
     )
     .addTarget(
       promQuery.target(
-'sort(
-          avg(
-            avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"' + keyServiceRegExp + '"}[$__range])
+        |||
+          sort(
+            avg(
+              avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])
+            )
           )
-        )',
+        ||| % { keyServiceRegExp: keyServiceRegExp },
         instant=true
       )
     ),
@@ -124,11 +126,11 @@ layout.grid([
 layout.grid([
     basic.slaTimeseries(
       title='SLA Trends - Aggregated',
-      description="1w rolling average SLO adherence across all primary services. Higher is better.",
+      description='1w rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
-      query='
-        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"' + keyServiceRegExp + '"}[7d]))
-      ',
+      query=|||
+        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[7d]))
+      ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='gitlab.com SLA',
       intervalFactor=5,
     ),
@@ -136,7 +138,7 @@ layout.grid([
 )
 
 .addPanel(
-row.new(title="Primary Services"),
+row.new(title='Primary Services'),
   gridPos={
       x: 0,
       y: 2000,
@@ -147,19 +149,19 @@ row.new(title="Primary Services"),
 .addPanels(
 layout.grid([
     slaBarGauge(
-      title="Primary Services Average Availability for Period",
-      query='
-        sort(avg(avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"' + keyServiceRegExp + '"}[$__range])) by (type))
-      ',
+      title='Primary Services Average Availability for Period',
+      query=|||
+        sort(avg(avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])) by (type))
+      ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='{{ type }}'
     ),
     basic.slaTimeseries(
       title='SLA Trends - Primary Services',
-      description="1w rolling average SLO adherence for primary services. Higher is better.",
+      description='1w rolling average SLO adherence for primary services. Higher is better.',
       yAxisLabel='SLA',
-      query='
-        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"' + keyServiceRegExp + '"}[7d])) by (type)
-      ',
+      query=|||
+        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[7d])) by (type)
+      ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='{{ type }}',
       intervalFactor=5,
     ),

@@ -20,12 +20,12 @@ local generalGraphPanel(
   title,
   description=null,
   linewidth=2,
-  sort="increasing",
+  sort='increasing',
 ) = graphPanel.new(
     title,
     linewidth=linewidth,
     fill=0,
-    datasource="$PROMETHEUS_DS",
+    datasource='$PROMETHEUS_DS',
     description=description,
     decimals=2,
     sort=sort,
@@ -39,7 +39,7 @@ local generalGraphPanel(
     legend_alignAsTable=true,
     legend_hideEmpty=true,
   )
-  .addSeriesOverride(seriesOverrides.goldenMetric("/ service/"))
+  .addSeriesOverride(seriesOverrides.goldenMetric('/ service/'))
   .addSeriesOverride(seriesOverrides.upper)
   .addSeriesOverride(seriesOverrides.lower)
   .addSeriesOverride(seriesOverrides.upperLegacy)
@@ -68,7 +68,7 @@ dashboard.new(
 .addTemplate(templates.sigma)
 .addPanel(serviceHealth.row('$type', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
-row.new(title="🏅 Key Service Metrics"),
+row.new(title='🏅 Key Service Metrics'),
   gridPos={
       x: 0,
       y: 1000,

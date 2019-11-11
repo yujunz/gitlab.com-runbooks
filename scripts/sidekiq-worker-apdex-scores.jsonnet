@@ -159,25 +159,25 @@ local P95_VALUES_FOR_WORKERS = {
 // Returns the next biggest latency bucket for a given latency
 local thresholdForLatency(latency) =
   if latency < 0.1 then
-    "0.1"
+    '0.1'
   else if latency < 0.25 then
-    "0.25"
+    '0.25'
   else if latency < 0.5 then
-    "0.5"
+    '0.5'
   else if latency < 1 then
-    "1"
+    '1'
   else if latency < 2.5 then
-    "2.5"
+    '2.5'
   else if latency < 5 then
-    "5"
+    '5'
   else if latency < 10 then
-    "10"
+    '10'
   else if latency < 25 then
-    "25"
+    '25'
   else if latency < 50 then
-    "50"
+    '50'
   else
-    "+Inf";
+    '+Inf';
 
 // Groups each worker by its apdex threshold
 local latencyGroups =
@@ -194,24 +194,22 @@ local arrayToRegExp(workers) = std.join('|', workers);
 
 // Given a threshold and list of workers, generates the appropriate prometheus Apdex expression
 local apdexScoreForWorkers(threshold, workers) =
-  'sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="' + threshold + '", worker=~"' + arrayToRegExp(workers) + '"}[1m])) by (environment, worker, stage, tier, type)
-   /
-   sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", worker=~"' + arrayToRegExp(workers) + '"}[1m])) by (environment, worker, stage, tier, type) >= 0';
+  'sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="' + threshold + '", worker=~"' + arrayToRegExp(workers) + '"}[1m])) by (environment, worker, stage, tier, type)\n   /\n   sum(rate(sidekiq_jobs_completion_time_seconds_bucket{le="+Inf", worker=~"' + arrayToRegExp(workers) + '"}[1m])) by (environment, worker, stage, tier, type) >= 0';
 
 local recordingRuleForThresholdAndWorkers(threshold, workers) =
   {
-    record: "gitlab_background_worker_queue_duration_apdex:ratio",
+    record: 'gitlab_background_worker_queue_duration_apdex:ratio',
     labels: {
       threshold: threshold,
     },
     expr: apdexScoreForWorkers(threshold, workers),
   };
 
-local excludeInfThreshold(threshold) = threshold != "+Inf";
+local excludeInfThreshold(threshold) = threshold != '+Inf';
 
 local rulesFile = {
   groups: [{
-    name: "sidekiq-worker-apdex-scores.rules",
+    name: 'sidekiq-worker-apdex-scores.rules',
     rules: [
       recordingRuleForThresholdAndWorkers(threshold, latencyGroups[threshold])
 for threshold in std.filter(excludeInfThreshold, std.objectFields(latencyGroups))

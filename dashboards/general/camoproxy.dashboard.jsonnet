@@ -17,7 +17,7 @@ local generalGraphPanel(
     title,
     linewidth=1,
     fill=0,
-    datasource="$PROMETHEUS_DS",
+    datasource='$PROMETHEUS_DS',
     description=description,
     decimals=2,
     legend_show=true,
@@ -32,22 +32,22 @@ local generalGraphPanel(
   );
 
 local requestsPanel() = generalGraphPanel(
-    "Requests",
-    description="Requests per second",
+    'Requests',
+    description='Requests per second',
   )
   .addTarget(
     promQuery.target(
       'sum by (code) (rate(camo_responses_total{environment="$environment"}[$__interval]))',
-      interval="30s",
+      interval='30s',
       intervalFactor=1,
-      legendFormat="{{code}}",
+      legendFormat='{{code}}',
     )
   )
   .resetYaxes()
   .addYaxis(
     format='short',
     min=0,
-    label="Requests/s",
+    label='Requests/s',
   )
   .addYaxis(
     format='short',
@@ -55,21 +55,21 @@ local requestsPanel() = generalGraphPanel(
   );
 
 local trafficPanel() = generalGraphPanel(
-    "Traffic",
-    description="Traffic, in bytes per second",
+    'Traffic',
+    description='Traffic, in bytes per second',
   )
   .addTarget(
     promQuery.target(
       'sum(rate(camo_response_size_bytes_sum{environment="$environment"}[$__interval]))',
-      interval="30s",
-      legendFormat="Bytes/s",
+      interval='30s',
+      legendFormat='Bytes/s',
     )
   )
   .resetYaxes()
   .addYaxis(
     format='Bps',
     min=0,
-    label="Bytes/s",
+    label='Bytes/s',
   )
   .addYaxis(
     format='short',
@@ -77,42 +77,42 @@ local trafficPanel() = generalGraphPanel(
   );
 
 local eventPanel() = generalGraphPanel(
-    "Request Failures",
-    description="Failed requests",
+    'Request Failures',
+    description='Failed requests',
   )
   .addTarget(
     promQuery.target(
       'sum(rate(responseFailed{environment="$environment"}[$__interval]))',
-      interval="30s",
-      legendFormat="Failed Responses",
+      interval='30s',
+      legendFormat='Failed Responses',
     )
   )
   .addTarget(
     promQuery.target(
       'sum(rate(camo_proxy_content_length_exceeded_total{environment="$environment"}[$__interval]))',
-      interval="30s",
-      legendFormat="Content Length Exceeded - --max-size exceeded",
+      interval='30s',
+      legendFormat='Content Length Exceeded - --max-size exceeded',
     )
   )
   .addTarget(
     promQuery.target(
       'sum(rate(camo_proxy_reponses_truncated_total{environment="$environment"}[$__interval]))',
-      interval="30s",
-      legendFormat="Response Truncated - --max-size exceeded",
+      interval='30s',
+      legendFormat='Response Truncated - --max-size exceeded',
     )
   )
   .addTarget(
     promQuery.target(
       'sum(rate(camo_responses_total{environment="$environment",code="504"}[$__interval]))',
-      interval="30s",
-      legendFormat="504 - Gateway Timeout - maybe --timeout exceeded",
+      interval='30s',
+      legendFormat='504 - Gateway Timeout - maybe --timeout exceeded',
     )
   )
   .resetYaxes()
   .addYaxis(
     format='short',
     min=0,
-    label="Events/s",
+    label='Events/s',
   )
   .addYaxis(
     format='short',
@@ -120,10 +120,10 @@ local eventPanel() = generalGraphPanel(
   );
 
 local envTemplate = template.new(
-  "environment",
-  "$PROMETHEUS_DS",
+  'environment',
+  '$PROMETHEUS_DS',
   'label_values(up{job="camoproxy"}, environment)',
-  current="gprd",
+  current='gprd',
   refresh='time',
   sort=1,
 );
