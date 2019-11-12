@@ -16,7 +16,8 @@ It should check prometheus configuration file and alerts being used. Please alwa
 
 Sometimes the chunks of data in GCS that thanos-compact is working on can be corrupted in ways that cause thanos-compact to crash hard and restart, leading to a crashloop and the PrometheusManyRestarts alert.
 
-One such issue resulted in this log:
+One such issue resulted in this log on `/var/log/prometheus/thanos-compact/current`:
+
 ```
 {"caller":"main.go:215","err":"error executing compaction: compaction failed: compaction failed for group 0@{env=\"gprd\",monitor=\"app\",provider=\"gcp\",region=\"us-east\",replica=\"02\"}: compact blocks [/opt/prometheus/thanos/compact-data/compact/0@{env=\"gprd\",monitor=\"app\",provider=\"gcp\",region=\"us-east\",replica=\"02\"}/01DS5AQG40F0NWX3GP57KR1XGF /opt/prometheus/thanos/compact-data/compact/0@{env=\"gprd\",monitor=\"app\",provider=\"gcp\",region=\"us-east\",replica=\"02\"}/01DS5HK7C0HR5WNS9KHEXV0J68 /opt/prometheus/thanos/compact-data/compact/0@{env=\"gprd\",monitor=\"app\",provider=\"gcp\",region=\"us-east\",replica=\"02\"}/01DS5REYM1E1J0X3GTVZ9NNJ68 /opt/prometheus/thanos/compact-data/compact/0@{env=\"gprd\",monitor=\"app\",provider=\"gcp\",region=\"us-east\",replica=\"02\"}/01DS5ZANVZ9N7A14EKPHPZ70MM]: write compaction: iterate compaction set: chunk 45 not found: invalid encoding \"\u003cunknown\u003e\"","level":"error","msg":"running command failed","ts":"2019-11-11T04:12:56.374664759Z"}
 ```
