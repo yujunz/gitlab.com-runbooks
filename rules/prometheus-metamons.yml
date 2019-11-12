@@ -48,7 +48,7 @@ groups:
     annotations:
       description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has restarted more than
         {{ $value }} times in the last hour. It may be crashlooping.'
-      runbook: troubleshooting/prometheus-is-down.md
+      runbook: troubleshooting/prometheus-is-down.md#thanos-compact
       title: '{{$labels.job}} is restarting frequently'
 
   - alert: PrometheusManyFileSDReadErrors
