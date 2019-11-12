@@ -200,25 +200,8 @@ dashboard.new(
 .addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)
-.addPanel(serviceHealth.row('gitaly', '$stage'), gridPos={ x: 0, y: 0 })
-.addPanel(
-row.new(title='🏅 Key Service Metrics'),
-  gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
-  }
-)
-.addPanels(
-layout.grid([
-    keyMetrics.apdexPanel('gitaly', '$stage'),
-    keyMetrics.errorRatesPanel('gitaly', '$stage'),
-    keyMetrics.serviceAvailabilityPanel('gitaly', '$stage'),
-    keyMetrics.qpsPanel('gitaly', '$stage'),
-    keyMetrics.saturationPanel('gitaly', '$stage'),
-  ], startRow=1001)
-)
+.addPanels(keyMetrics.headlineMetricsRow('gitaly', '$stage', startRow=0))
+.addPanel(serviceHealth.row('gitaly', '$stage'), gridPos={ x: 0, y: 1000 })
 .addPanel(
 row.new(title='Node Performance'),
   gridPos={
@@ -251,25 +234,10 @@ layout.grid([
     ratelimitLockPercentage(),
   ], startRow=3001)
 )
-.addPanel(
-keyMetrics.keyComponentMetricsRow('gitaly', '$stage'),
-  gridPos={
-      x: 0,
-      y: 4000,
-      w: 24,
-      h: 1,
-  }
-)
-.addPanel(
-nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="gitaly"'),
-  gridPos={
-      x: 0,
-      y: 5000,
-      w: 24,
-      h: 1,
-  }
-)
-.addPanel(capacityPlanning.capacityPlanningRow('gitaly', '$stage'), gridPos={ x: 0, y: 6000 })
+.addPanel(keyMetrics.keyServiceMetricsRow('gitaly', '$stage'), gridPos={ x: 0, y: 4000 })
+.addPanel(keyMetrics.keyComponentMetricsRow('gitaly', '$stage'), gridPos={ x: 0, y: 5000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="gitaly", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
+.addPanel(capacityPlanning.capacityPlanningRow('gitaly', '$stage'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('gitaly') + platformLinks.services +
   [platformLinks.dynamicLinks('Gitaly Detail', 'type:gitaly')],

@@ -32,7 +32,8 @@ dashboard.new(
 .addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)
-.addPanel(serviceHealth.row('frontend', '$stage'), gridPos={ x: 0, y: 0 })
+.addPanels(keyMetrics.headlineMetricsRow('frontend', '$stage', startRow=0))
+.addPanel(serviceHealth.row('frontend', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
 row.new(title='🏅 Key Service Metrics'),
   gridPos={
