@@ -18,6 +18,7 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
+local saturationDetail = import 'saturation_detail.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -76,7 +77,18 @@ row.new(title='Replication'),
 .addPanel(keyMetrics.keyServiceMetricsRow('redis-cache', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('redis-cache', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis-cache", environment="$environment", fqdn=~"redis-cache-\\\\d\\\\d.*"'), gridPos={ x: 0, y: 7000 })
-.addPanel(capacityPlanning.capacityPlanningRow('redredis-cacheis', 'main'), gridPos={ x: 0, y: 8000 })
+.addPanel(saturationDetail.saturationDetailPanels('redis-cache', 'main', components=[
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'redis_clients',
+    'redis_memory',
+    'single_node_cpu',
+    'single_threaded_cpu',
+  ]),
+  gridPos={ x: 0, y: 8000, w: 24, h: 1 })
+.addPanel(capacityPlanning.capacityPlanningRow('redis-cache', 'main'), gridPos={ x: 0, y: 9000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('redis-cache') + platformLinks.services,
 }

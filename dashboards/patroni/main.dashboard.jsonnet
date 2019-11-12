@@ -19,6 +19,7 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local processExporter = import 'process_exporter.libsonnet';
+local saturationDetail = import 'saturation_detail.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -78,7 +79,18 @@ row.new(title='patroni process stats'),
 .addPanel(keyMetrics.keyServiceMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="patroni", environment="$environment"'), gridPos={ x: 0, y: 7000 })
-.addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 8000 })
+.addPanel(saturationDetail.saturationDetailPanels('patroni', 'main', components=[
+    'active_db_connections',
+    'connection_pool',
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'pgbouncer_single_core',
+    'single_node_cpu',
+  ]),
+  gridPos={ x: 0, y: 8000, w: 24, h: 1 })
+.addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 9000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('patroni') + platformLinks.services,
 }

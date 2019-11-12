@@ -246,29 +246,25 @@ groups:
         1
       )
 
-  # Aggregate over all components within a service using max
-  - record: gitlab_service_saturation:ratio
-    expr: >
-      max by (environment, tier, type, stage) (gitlab_component_saturation:ratio)
-
   # Open file descriptors
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'open_fds'
     expr: >
       max(
-        max_over_time(process_open_fds[1m])
-        /
-        max_over_time(process_max_fds[1m])
-      ) by (environment, type, tier, stage)
-  - record: gitlab_component_saturation:ratio
-    labels:
-      component: 'open_fds'
-    expr: >
-      max(
-        max_over_time(ruby_file_descriptors[1m])
-        /
-        max_over_time(ruby_process_max_fds[1m])
+        label_replace(
+          max_over_time(process_open_fds[1m])
+          /
+          max_over_time(process_max_fds[1m])
+          , "client", "general", "", ""
+        )
+        or
+        label_replace(
+          max_over_time(ruby_file_descriptors[1m])
+          /
+          max_over_time(ruby_process_max_fds[1m])
+          , "client", "ruby", "", ""
+        )
       ) by (environment, type, tier, stage)
 
   # ci-runners: shared_runners/shared_runners_gitlab/private_runners
@@ -322,6 +318,12 @@ groups:
       max by(environment, tier, type, stage) (
         sum without (queue) (sidekiq_running_jobs{priority!="export"}) / sidekiq_concurrency{priority!="export"}
       )
+
+  # Aggregate over all components within a service using max
+  # DEPRECATED!
+  - record: gitlab_service_saturation:ratio
+    expr: >
+      max by (environment, tier, type, stage) (gitlab_component_saturation:ratio)
 
 # Unlike other service metrics, we record the stats for each component independently
 - name: GitLab Saturation Ratios Stats

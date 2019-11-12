@@ -20,6 +20,7 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local sidekiq = import 'sidekiq.libsonnet';
 local serviceHealth = import 'service_health.libsonnet';
+local saturationDetail = import 'saturation_detail.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -257,7 +258,18 @@ row.new(title='Priority Workloads'),
 .addPanel(keyMetrics.keyServiceMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 6000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 7000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 8000 })
-.addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 9000 })
+.addPanel(saturationDetail.saturationDetailPanels('sidekiq', '$stage', components=[
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'sidekiq_workers',
+    'single_node_cpu',
+    'single_node_unicorn_workers',
+    'workers',
+  ]),
+  gridPos={ x: 0, y: 9000, w: 24, h: 1 })
+.addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 10000 })
 + {
   links+: platformLinks.triage +
     serviceCatalog.getServiceLinks('sidekiq') +

@@ -1,98 +1,26 @@
-local colors = import 'colors.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
-local grafana = import 'grafonnet/grafana.libsonnet';
-local layout = import 'layout.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
+local saturationAlerts = import 'alerts/saturation_alerts.libsonnet';
+local saturationDetail = import 'saturation_detail.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local templates = import 'templates.libsonnet';
-local dashboard = grafana.dashboard;
-local row = grafana.row;
-local template = grafana.template;
-local graphPanel = grafana.graphPanel;
-local annotation = grafana.annotation;
 
-local componentSaturationPanel() = graphPanel.new(
-    'Saturation',
+saturationAlerts.saturationDashboard(
+  dashboardTitle='Saturation Component Alert',
+  component='$component',
+  panel=saturationDetail.saturationPanel(
+    title='$component Saturation',
     description='Saturation is a measure of what ratio of a finite resource is currently being utilized. Lower is better.',
-    sort='decreasing',
+    component='$component',
     linewidth=2,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
-    decimals=2,
-    legend_show=true,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
-  )
-  .addTarget(  // Primary metric
-    promQuery.target(
-      |||
-        max(
-          max_over_time(
-            gitlab_component_saturation:ratio{environment="$environment", type="$type", stage="$stage", component="$component"}[$__interval]
-          )
-        ) by (component)
-      |||,
-      legendFormat='{{ component }} component',
-    )
-  )
-  .addTarget(  // Soft SLO
-    promQuery.target(
-      |||
-        avg(slo:max:soft:gitlab_component_saturation:ratio{component="$component"})
-      |||,
-      legendFormat='Soft SLO',
-    )
-  )
-  .addTarget(  // Hard SLO
-    promQuery.target(
-      |||
-        avg(slo:max:hard:gitlab_component_saturation:ratio{component="$component"})
-      |||,
-      legendFormat='Hard SLO',
-    )
-  )
-  .resetYaxes()
-  .addYaxis(
-    format='percentunit',
-    max=1,
-    label='Saturation %',
-  )
-  .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
+    query=|||
+      max(
+        max_over_time(
+          gitlab_component_saturation:ratio{environment="$environment", type="$type", stage="$stage", component="$component"}[$__interval]
+        )
+      ) by (component)
+    |||,
+    legendFormat='{{ component }} component',
   )
   .addSeriesOverride(seriesOverrides.goldenMetric('/ component/'))
-  .addSeriesOverride(seriesOverrides.softSlo)
-  .addSeriesOverride(seriesOverrides.hardSlo);
 
-dashboard.new(
-  'Saturation Component Alert',
-  schemaVersion=16,
-  tags=['alert-target'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
-.addTemplate(templates.type)
-.addTemplate(templates.stage)
 .addTemplate(templates.saturationComponent)
-.addPanels(layout.grid([
-    componentSaturationPanel(),
-  ], cols=1, rowHeight=10))
-+ {
-  links+: platformLinks.parameterizedServiceLink +
-    platformLinks.triage +
-    [platformLinks.dynamicLinks('Service Dashboards', 'type:$type managed', asDropdown=false, includeVars=false, keepTime=false)],
-}
