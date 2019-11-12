@@ -33,7 +33,8 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addTemplate(templates.stage)
-.addPanel(serviceHealth.row('web', '$stage'), gridPos={ x: 0, y: 0 })
+.addPanels(keyMetrics.headlineMetricsRow('web', '$stage', startRow=0))
+.addPanel(serviceHealth.row('web', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
 row.new(title='Workhorse'),
   gridPos={

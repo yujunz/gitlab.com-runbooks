@@ -31,7 +31,8 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
-.addPanel(serviceHealth.row('patroni', '$stage'), gridPos={ x: 0, y: 0 })
+.addPanels(keyMetrics.headlineMetricsRow('patroni', '$stage', startRow=0))
+.addPanel(serviceHealth.row('patroni', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
 row.new(title='pgbouncer Workload', collapse=false),
   gridPos={

@@ -30,7 +30,8 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
-.addPanel(serviceHealth.row('redis', '$stage'), gridPos={ x: 0, y: 0 })
+.addPanels(keyMetrics.headlineMetricsRow('redis', '$stage', startRow=0))
+.addPanel(serviceHealth.row('redis', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
 row.new(title='Clients'),
   gridPos={
@@ -71,7 +72,6 @@ row.new(title='Replication'),
   }
 )
 .addPanels(redisCommon.replication(serviceType='redis', startRow=4001))
-
 .addPanel(keyMetrics.keyServiceMetricsRow('redis', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('redis', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis", environment="$environment", fqdn=~"redis-\\\\d\\\\d.*"'), gridPos={ x: 0, y: 7000 })

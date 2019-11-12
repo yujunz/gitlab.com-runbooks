@@ -17,6 +17,7 @@ local generalGraphPanel(
   description=null,
   linewidth=2,
   sort='increasing',
+  legend_show=true,
 ) = graphPanel.new(
     title,
     linewidth=linewidth,
@@ -25,7 +26,7 @@ local generalGraphPanel(
     description=description,
     decimals=2,
     sort=sort,
-    legend_show=true,
+    legend_show=legend_show,
     legend_values=true,
     legend_min=true,
     legend_max=true,
@@ -49,12 +50,14 @@ local generalGraphPanel(
 
 
 {
-  apdexPanel(serviceType, serviceStage)::
+  apdexPanel(serviceType, serviceStage, compact=false)::
     local formatConfig = { serviceType: serviceType, serviceStage: serviceStage };
     generalGraphPanel(
       'Latency: Apdex',
       description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
       sort=0,
+      legend_show=!compact,
+      linewidth=if compact then 1 else 2,
     )
     .addTarget(  // Primary metric
       promQuery.target(
@@ -114,7 +117,7 @@ local generalGraphPanel(
     .addYaxis(
       format='percentunit',
       max=1,
-      label='Apdex %',
+      label=if compact then '' else 'Apdex %',
     )
     .addYaxis(
       format='short',
@@ -168,7 +171,7 @@ componentApdexPanel(serviceType, serviceStage)::
     show=false,
   ),
 
-errorRatesPanel(serviceType, serviceStage)::
+errorRatesPanel(serviceType, serviceStage, compact=false)::
   local formatConfig = {
     serviceType: serviceType,
     serviceStage: serviceStage,
@@ -177,6 +180,8 @@ errorRatesPanel(serviceType, serviceStage)::
     'Error Ratios',
     description='Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better',
     sort=0,
+    legend_show=!compact,
+    linewidth=if compact then 1 else 2,
   )
   .addTarget(  // Primary metric
     promQuery.target(
@@ -236,7 +241,7 @@ errorRatesPanel(serviceType, serviceStage)::
   .addYaxis(
     format='percentunit',
     min=0,
-    label='% Requests in Error',
+    label=if compact then '' else '% Requests in Error',
   )
   .addYaxis(
     format='short',
@@ -323,7 +328,7 @@ errorRatesPanel(serviceType, serviceStage)::
       show=false,
     ),
 
-  qpsPanel(serviceType, serviceStage)::
+  qpsPanel(serviceType, serviceStage, compact=false)::
     local formatConfig = {
       serviceType: serviceType,
       serviceStage: serviceStage,
@@ -332,6 +337,8 @@ errorRatesPanel(serviceType, serviceStage)::
       'RPS - Service Requests per Second',
       description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
       sort=0,
+      legend_show=!compact,
+      linewidth=if compact then 1 else 2,
     )
     .addTarget(  // Primary metric
       promQuery.target(
@@ -419,7 +426,7 @@ errorRatesPanel(serviceType, serviceStage)::
     .addYaxis(
       format='short',
       min=0,
-      label='Operations per Second',
+      label=if compact then '' else 'Operations per Second',
     )
     .addYaxis(
       format='short',
@@ -464,9 +471,9 @@ errorRatesPanel(serviceType, serviceStage)::
       show=false,
     ),
 
-  saturationPanel(serviceType, serviceStage):: self.componentSaturationPanel(serviceType, serviceStage),
+  saturationPanel(serviceType, serviceStage, compact=false):: self.componentSaturationPanel(serviceType, serviceStage, compact),
 
-  componentSaturationPanel(serviceType, serviceStage)::
+  componentSaturationPanel(serviceType, serviceStage, compact=false)::
     local formatConfig = {
       serviceType: serviceType,
       serviceStage: serviceStage,
@@ -475,6 +482,8 @@ errorRatesPanel(serviceType, serviceStage)::
       'Saturation',
       description='Saturation is a measure of what ratio of a finite resource is currently being utilized. Lower is better.',
       sort='decreasing',
+      legend_show=!compact,
+      linewidth=if compact then 1 else 2,
     )
     .addTarget(  // Primary metric
       promQuery.target(
@@ -492,7 +501,7 @@ errorRatesPanel(serviceType, serviceStage)::
     .addYaxis(
       format='percentunit',
       max=1,
-      label='Saturation %',
+      label=if compact then '' else 'Saturation %',
     )
     .addYaxis(
       format='short',
@@ -500,6 +509,17 @@ errorRatesPanel(serviceType, serviceStage)::
       min=0,
       show=false,
     ),
+  headlineMetricsRow(serviceType, serviceStage, startRow)::
+    layout.grid([
+      row.new(title='🗞️ Headline Metrics - 𝘦𝘹𝘱𝘢𝘯𝘥 𝘬𝘦𝘺 𝘴𝘦𝘳𝘷𝘪𝘤𝘦 𝘮𝘦𝘵𝘳𝘪𝘤𝘴 𝘳𝘰𝘸 𝘧𝘰𝘳 𝘥𝘦𝘵𝘢𝘪𝘭𝘴', collapse=false),
+    ], cols=1, rowHeight=1, startRow=startRow)
+    +
+    layout.grid([
+      self.apdexPanel(serviceType, serviceStage, compact=true),
+      self.errorRatesPanel(serviceType, serviceStage, compact=true),
+      self.qpsPanel(serviceType, serviceStage, compact=true),
+      self.saturationPanel(serviceType, serviceStage, compact=true),
+    ], cols=4, rowHeight=5, startRow=startRow + 1),
 
   keyServiceMetricsRow(serviceType, serviceStage):: row.new(title='🏅 Key Service Metrics', collapse=true)
     .addPanels(layout.grid([

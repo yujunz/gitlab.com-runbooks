@@ -30,7 +30,8 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
-.addPanel(serviceHealth.row('redis-cache', '$stage'), gridPos={ x: 0, y: 0 })
+.addPanels(keyMetrics.headlineMetricsRow('redis-cache', '$stage', startRow=0))
+.addPanel(serviceHealth.row('redis-cache', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
 row.new(title='Clients'),
   gridPos={
