@@ -124,7 +124,7 @@ local currentSaturationWarnings(nodeSelector) =
             2 *
               gitlab_component_saturation:ratio:stddev_over_time_1w{
                 environment="$environment",
-                %(nodeSelector)s}
+                %(nodeSelector)s
               }
             , 1
           )
