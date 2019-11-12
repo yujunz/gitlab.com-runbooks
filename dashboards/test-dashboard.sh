@@ -62,12 +62,6 @@ prepare
 dashboard_file=$1
 
 relative=${dashboard_file#"./"}
-folder="playground-FOR-TESTING-ONLY"
-dashboard_folder="$(dirname "$relative")"
-base_dashboard_name="$(basename "$dashboard_file" | sed -e 's/\..*//')"
-username="$USER"
-
-uid="TESTING-$(dirname "$relative")-$USER-$(basename "$dashboard_file" | sed -e 's/\..*//')"
 extension="${relative##*.}"
 
 if [[ "$extension" == "jsonnet" ]]; then
@@ -76,33 +70,22 @@ else
   dashboard=$(cat "${dashboard_file}")
 fi
 
-# Note: create folders with `create-grafana-folder.sh` to configure the UID
-folderId=$(resolve_folder_id "${folder}")
-
 # Generate the POST body
-body=$(echo "$dashboard" | jq -c --arg uid "$uid" --arg folder "$folder" --arg folderId "$folderId" --arg titleFolderId "${dashboard_folder}" --arg baseDashboardName "${base_dashboard_name}" --arg username "${username}" '
+body=$(echo "$dashboard" | jq -c '
 {
   dashboard: .,
-  folderId: $folderId | tonumber,
-  overwrite: true
+  expires: 86400
 } * {
   dashboard: {
-    uid: $uid,
     editable: true,
-    title: "TESTING \($username) \($titleFolderId) \($baseDashboardName): \(.title)",
     tags: ["playground"]
   }
 }
 ')
 
-if [[ -n $dry_run ]]; then
-  echo "Running in dry run mode, would create $dashboard_file in folder $folder with uid $uid"
-  exit
-fi
-
 # Use http1.1 and gzip compression to workaround unexplainable random errors that
 # occur when uploading some dashboards
-response=$(echo "$body" | call_grafana_api https://dashboards.gitlab.net/api/dashboards/db --data-binary @-)
+response=$(echo "$body" | call_grafana_api https://dashboards.gitlab.net/api/snapshots --data-binary @-)
 
 url=$(echo "${response}" | jq -r '.url')
-echo "Installed https://dashboards.gitlab.net${url}"
+echo "Installed ${url}"
