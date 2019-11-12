@@ -149,7 +149,7 @@ local capacityComponentColors = {
     transform: 'negative-Y',
   },
   softSlo:: {
-    alias: 'Soft SLO',
+    alias: '/^Soft SLO/',
     color: '#FF4500',  // "Orange red"
     dashes: true,
     legend: true,
@@ -161,7 +161,7 @@ local capacityComponentColors = {
     zindex: -2,
   },
   hardSlo:: {
-    alias: 'Hard SLO',
+    alias: '/^Hard SLO/',
     color: '#F2495C',  // "Red"
     dashes: true,
     legend: true,

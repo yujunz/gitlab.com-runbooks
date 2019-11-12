@@ -18,6 +18,7 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
+local saturationDetail = import 'saturation_detail.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -66,7 +67,16 @@ row.new(title='pgbouncer Network'),
 .addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 3000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 4000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="pgbouncer", environment="$environment"'), gridPos={ x: 0, y: 5000 })
-.addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 6000 })
+.addPanel(saturationDetail.saturationDetailPanels('pgbouncer', 'main', components=[
+    'cpu',
+    'memory',
+    'open_fds',
+    'pgbouncer_single_core',
+    'single_node_cpu',
+    'connection_pool',
+  ]),
+  gridPos={ x: 0, y: 6000, w: 24, h: 1 })
+.addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer') + platformLinks.services,
 }

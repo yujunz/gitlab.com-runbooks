@@ -18,6 +18,7 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local processExporter = import 'process_exporter.libsonnet';
+local saturationDetail = import 'saturation_detail.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -82,7 +83,15 @@ nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", 
       h: 1,
   }
 )
-.addPanel(capacityPlanning.capacityPlanningRow('frontend', '$stage'), gridPos={ x: 0, y: 6000 })
+.addPanel(saturationDetail.saturationDetailPanels('frontend', '$stage', components=[
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'single_node_cpu',
+  ]),
+  gridPos={ x: 0, y: 6000, w: 24, h: 1 })
+.addPanel(capacityPlanning.capacityPlanningRow('frontend', '$stage'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('frontend') + platformLinks.services,
 }
