@@ -9,7 +9,7 @@ local row = grafana.row;
 dashboard.new(
   'Pod Info',
   schemaVersion=16,
-  tags=['container registry', 'docker', 'registry'],
+  tags=['mailroom'],
   timezone='utc',
   graphTooltip='shared_crosshair',
 )
@@ -23,8 +23,8 @@ dashboard.new(
 .addTemplate(
   template.custom(
     'Deployment',
-    'gitlab-registry,',
-    'gitlab-registry',
+    'gitlab-mailroom,',
+    'gitlab-mailroom',
     hide='variable',
   )
 )
