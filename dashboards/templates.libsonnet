@@ -16,6 +16,12 @@ local template = grafana.template;
     'label_values(kube_pod_container_info{environment="$environment"}, namespace)',
     refresh='load',
   ),
+  namespaceGitlab:: template.custom(
+    'namespace',
+    'gitlab,',
+    'gitlab',
+    hide='variable',
+  ),
   ds:: template.datasource(
     'PROMETHEUS_DS',
     'prometheus',

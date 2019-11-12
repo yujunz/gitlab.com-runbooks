@@ -186,21 +186,21 @@ local generalGraphPanel(
     )
     .addTarget(
       promQuery.target(
-        'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
+        'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(namespace,pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload=~"^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
     )
     .addTarget(
       promQuery.target(
-        'sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
+        'sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(namespace,pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload=~"^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
     )
     .addTarget(
       promQuery.target(
-        'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod) / sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
+        'sum(label_replace(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{env=~"$environment"}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload=~"^$Deployment"}) by (pod) / sum(kube_pod_container_resource_requests_cpu_cores{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload=~"^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
@@ -264,21 +264,21 @@ local generalGraphPanel(
     )
     .addTarget(
       promQuery.target(
-        'sum(label_replace(container_memory_usage_bytes{env=~"$environment", container_name!=""}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
+        'sum(label_replace(container_memory_usage_bytes{env=~"$environment", container_name!=""}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload=~"^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
     )
     .addTarget(
       promQuery.target(
-        'sum(kube_pod_container_resource_requests_memory_bytes{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
+        'sum(kube_pod_container_resource_requests_memory_bytes{env=~"$environment"} * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload=~"^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
     )
     .addTarget(
       promQuery.target(
-        'sum(label_replace(container_memory_usage_bytes{env=~"$environment", container_name!=""}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod) /sum(kube_pod_container_resource_requests_memory_bytes{env=~"$environment", } * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload="^$Deployment"}) by (pod)',
+        'sum(label_replace(container_memory_usage_bytes{env=~"$environment", container_name!=""}, "pod", "$1", "pod_name", "(.*)") * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload=~"^$Deployment"}) by (pod) /sum(kube_pod_container_resource_requests_memory_bytes{env=~"$environment", } * on(pod) group_left(workload) mixin_pod_workload{env=~"$environment", workload=~"^$Deployment"}) by (pod)',
         format='table',
         instant=true,
       )
