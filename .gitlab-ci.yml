@@ -151,12 +151,12 @@ update_elastic_watchers:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
-  - ./elastic/managed-objects/watchers/update-watchers.sh
+  - ./elastic/managed-objects/watches/update-watches.sh
   only:
     refs:
       - master
     changes:
-      - elastic/managed-objects/watchers/*
+      - elastic/managed-objects/watches/*
     variables:
       - $ES_URL
 
