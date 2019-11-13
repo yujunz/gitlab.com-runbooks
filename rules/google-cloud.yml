@@ -1,0 +1,73 @@
+groups:
+- name: google-cloud
+  interval: 1m
+  rules:
+  - record: load_balancer_name:health_backend:ratio
+    labels:
+      tier: inf
+      environment: gprd
+      lb_type: internal_tcp
+    expr: >
+      count by (load_balancer_name) (
+        sum by (load_balancer_name, backend_name) (
+          rate(stackdriver_internal_tcp_lb_rule_loadbalancing_googleapis_com_l_3_internal_egress_packets_count{load_balancer_name=~"gprd-.*"}[5m])
+        )
+        >
+        max by (load_balancer_name, backend_name) (
+          rate(stackdriver_internal_tcp_lb_rule_loadbalancing_googleapis_com_l_3_internal_egress_packets_count{load_balancer_name=~"gprd-.*"}[5m])
+        ) / 2
+      )
+      /
+      count by (load_balancer_name) (
+        sum by (load_balancer_name, backend_name) (
+          rate(stackdriver_internal_tcp_lb_rule_loadbalancing_googleapis_com_l_3_internal_egress_packets_count{load_balancer_name=~"gprd-.*"}[1h])
+        )
+      )
+
+  - record: load_balancer_name:health_backend:ratio
+    labels:
+      tier: inf
+      environment: gprd
+      lb_type: tcp
+    expr: >
+      count by (load_balancer_name) (
+        sum by (load_balancer_name, backend_name) (
+          rate(stackdriver_tcp_lb_rule_loadbalancing_googleapis_com_l_3_external_egress_bytes_count{load_balancer_name=~"gprd-.*"}[5m])
+        )
+        >
+        max by (load_balancer_name, backend_name) (
+          rate(stackdriver_tcp_lb_rule_loadbalancing_googleapis_com_l_3_external_egress_bytes_count{load_balancer_name=~"gprd-.*"}[5m])
+        ) / 2
+      )
+      /
+      count by (load_balancer_name) (
+        sum by (load_balancer_name, backend_name) (
+          rate(stackdriver_tcp_lb_rule_loadbalancing_googleapis_com_l_3_external_egress_bytes_count{load_balancer_name=~"gprd-.*"}[1h])
+        )
+      )
+
+  - alert: GCPLoadBalancerUnhealthyBackends
+    expr: load_balancer_name:health_backend:ratio <= 0.5
+    for: 5m
+    labels:
+      rules_domain: general
+      metric: load_balancer_name:health_backend:ratio
+      period: 5m
+      bound: lower
+      pager: pagerduty
+      severity: s2
+    annotations:
+      description: >
+        At least half of the backend nodes are accepting less than 50% of the traffic of the most utilized backend.
+
+        This could indicate that several of the backends are unhealthy. In the case of `pgbouncer` LBs, the imbalance
+        can persist until the originating processes are restarted. This could lead to downstream imbalances and
+        saturation issues on single nodes.
+
+        Check https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list?project=gitlab-production
+        for status of the LB.
+      title: "The `{{ $labels.load_balancer_name }}` Google Cloud load-balancer has a high number of unhealthy backends."
+      grafana_dashboard_id: "alerts-gcplbunhealthy/alerts-gcp-load-balancer-alert"
+      grafana_panel_id: "2"
+      grafana_variables: "load_balancer_name"
+      grafana_min_zoom_hours: "6"
