@@ -111,7 +111,7 @@ groups:
       avg by (environment, fqdn) (
         instance:node_cpus:count{tier="stor",type="gitaly"}
       ) * 100 > 50
-    for: 1m
+    for: 5m
     labels:
       channel: g_create_gitaly
       pager: pagerduty
