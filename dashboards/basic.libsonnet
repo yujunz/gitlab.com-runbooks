@@ -93,7 +93,8 @@ local tablePanel = grafana.tablePanel;
     yAxisLabel='',
     legend_show=true,
     legend_rightSide=false,
-    linewidth=2
+    linewidth=2,
+    max=null,
   ):: graphPanel.new(
     title,
     description=description,
@@ -118,6 +119,7 @@ local tablePanel = grafana.tablePanel;
       .addYaxis(
     format=format,
     min=0,
+    max=max,
     label=yAxisLabel,
   )
       .addYaxis(
