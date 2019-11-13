@@ -31,7 +31,7 @@ TODO: List some common things to filter on in the Firewall tab.
 
 ## Managing Workers
 
-TODO: Link to implementation for `about.gitlab.com` redirects.
+Interim documentation: https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cloudflare_workers#configuration
 
 # Getting support from Cloudflare
 
