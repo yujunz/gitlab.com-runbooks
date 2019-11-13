@@ -103,25 +103,6 @@ groups:
         Check Gitaly logs and restart the process if necessary
       runbook: troubleshooting/gitaly-down.md
       title: Gitaly is down on {{ $labels.fqdn }}
-  - alert: GitalyFileServerCPUUsage
-    expr: >
-      avg by (environment, fqdn) (
-        instance:process_cpu_seconds_total:rate1m{job="gitaly",tier="stor",type="gitaly"}
-      ) /
-      avg by (environment, fqdn) (
-        instance:node_cpus:count{tier="stor",type="gitaly"}
-      ) * 100 > 50
-    for: 5m
-    labels:
-      channel: g_create_gitaly
-      pager: pagerduty
-      severity: s1
-    annotations:
-      description: 'Gitaly has been using more than 50% of total available CPU on
-        {{$labels.fqdn}} for the past minute. This may affect the stability of the
-        NFS server. Visit this dashboard: https://dashboards.gitlab.net/dashboard/db/gitaly-nfs-metrics-per-host?refresh=30s&orgId=1&var-fqdn={{$labels.fqdn}}'
-      runbook: troubleshooting/gitaly-high-cpu.md
-      title: 'Gitaly: High CPU usage on {{ $labels.fqdn }}'
   - alert: GitalyVersionMismatch
     expr: >
       count(
