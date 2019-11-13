@@ -108,14 +108,68 @@ test:
     - scripts/validate_kibana_urls
     - scripts/validate-alerts
 
-deploy_elastic_watcher_updates:
+update_elastic_dashboards:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
-  - ./elastic/watchers/update-alerts.sh
+  - ./elastic/managed-objects/dashboards/update-dashboards.sh
   only:
     refs:
       - master
+    changes:
+      - elastic/managed-objects/dashboards/*
+    variables:
+      - $ES_URL
+
+update_elastic_index_patterns:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  script:
+  - ./elastic/managed-objects/index-patterns/update-index-patterns.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/index-patterns/*
+    variables:
+      - $ES_URL
+
+update_elastic_searches:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  script:
+  - ./elastic/managed-objects/searches/update-searches.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/searches/*
+    variables:
+      - $ES_URL
+
+update_elastic_watchers:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  script:
+  - ./elastic/managed-objects/watchers/update-watchers.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/watchers/*
+    variables:
+      - $ES_URL
+
+update_elastic_visualizations:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  script:
+  - ./elastic/managed-objects/visualizations/update-visualizations.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/visualizations/*
     variables:
       - $ES_URL
 

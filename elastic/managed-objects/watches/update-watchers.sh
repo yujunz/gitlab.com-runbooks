@@ -2,29 +2,16 @@
 
 set -euo pipefail
 IFS=$'\n\t'
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
+source "${SCRIPT_DIR}"/../lib/update-scripts-functions.sh
 
-function es_client() {
-  url=$1
-  shift
-  curl --retry 3 --fail -H 'Content-Type: application/json' "${ES_URL}/${url}" "$@"
-}
-
-for i in "${SCRIPT_DIR}"/watches/*.json; do
+for i in "${SCRIPT_DIR}"/*.json; do
   base_name=$(basename "$i")
   name=${base_name%.json}
   es_client "_xpack/watcher/watch/${name}?pretty=true" -X PUT --data-binary "@${i}"
 done
 
-function execute_jsonnet() {
-  # MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS should be comma-delimited
-  jsonnet -J "${SCRIPT_DIR}" \
-    --ext-str "marquee_customers_top_level_domains=${MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS:-}" \
-    "$@"
-}
-
-for i in "${SCRIPT_DIR}"/watches/*.jsonnet; do
+for i in "${SCRIPT_DIR}"/*.jsonnet; do
   base_name=$(basename "$i")
   echo "$base_name"
   name=${base_name%.jsonnet}
