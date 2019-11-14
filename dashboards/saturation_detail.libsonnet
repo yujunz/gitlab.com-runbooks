@@ -12,12 +12,12 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local layout = import 'layout.libsonnet';
+local magicNumbers = import 'magic_numbers.libsonnet';
 
 local DETAILS = {
   active_db_connections: {
     title: 'Active DB Connection Saturation',
     description: 'Active db connection saturation per node.',
-    component: '',
     query: |||
       sum without (state, datname) (
         pg_stat_activity_count{datname="gitlabhq_production", state!="idle", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
@@ -30,7 +30,6 @@ local DETAILS = {
   cgroup_memory: {
     title: 'Cgroup Memory Saturation per Node',
     description: 'Cgroup memory saturation per node.',
-    component: '',
     query: |||
       (
         container_memory_usage_bytes{id="/system.slice/gitlab-runsvdir.service", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} -
@@ -43,22 +42,34 @@ local DETAILS = {
     legendFormat: '{{ fqdn }}',
   },
 
-  connection_pool: {
-    title: 'Postgres Connection Pool Saturation per Node',
+  pgbouncer_async_pool: {
+    title: 'Postgres Async (Sidekiq) Connection Pool Saturation per Node',
     description: 'Postgres connection pool saturation per database node.',
-    component: 'connection_pool',
     query: |||
-      max_over_time(pgbouncer_pools_server_active_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[1m]) /
       (
-        (
-          pgbouncer_pools_server_idle_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} +
-          pgbouncer_pools_server_active_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} +
-          pgbouncer_pools_server_testing_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} +
-          pgbouncer_pools_server_used_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} +
-          pgbouncer_pools_server_login_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
-        )
-        > 0
+        pgbouncer_pools_server_active_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"} +
+        pgbouncer_pools_server_testing_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"} +
+        pgbouncer_pools_server_used_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"} +
+        pgbouncer_pools_server_login_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"}
       )
+      /
+      %(pgbouncer_async_pool_size_magic_number)d
+    |||,
+    legendFormat: '{{ fqdn }}: {{ database }}',
+  },
+
+  pgbouncer_sync_pool: {
+    title: 'Postgres Sync (Web/API) Connection Pool Saturation per Node',
+    description: 'Postgres sync connection pool saturation per database node.',
+    query: |||
+      (
+        pgbouncer_pools_server_active_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"} +
+        pgbouncer_pools_server_testing_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"} +
+        pgbouncer_pools_server_used_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"} +
+        pgbouncer_pools_server_login_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"}
+      )
+      /
+      %(pgbouncer_sync_pool_size_magic_number)d
     |||,
     legendFormat: '{{ fqdn }}: {{ database }}',
   },
@@ -66,7 +77,6 @@ local DETAILS = {
   cpu: {
     title: 'Average CPU Saturation per Node',
     description: 'Average CPU per Node.',
-    component: 'cpu',
     query: |||
         avg(1 - rate(node_cpu_seconds_total{mode="idle", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
       |||,
@@ -76,9 +86,8 @@ local DETAILS = {
   disk_sustained_read_iops: {
     title: 'Disk Sustained Read IOPS Saturation per Node',
     description: 'Disk sustained read IOPS saturation per node.',
-    component: 'disk_sustained_read_iops',
     query: |||
-      rate(node_disk_reads_completed_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (60000)
+      rate(node_disk_reads_completed_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_read_iops_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
     legendFormat: '{{ fqdn }}',
   },
@@ -86,9 +95,8 @@ local DETAILS = {
   disk_sustained_read_throughput: {
     title: 'Disk Sustained Read Throughput Saturation per Node',
     description: 'Disk sustained read throughput saturation per node.',
-    component: 'disk_sustained_read_throughput',
     query: |||
-      rate(node_disk_read_bytes_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (1200 * 1024 * 1024)
+      rate(node_disk_read_bytes_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_read_throughput_bytes_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
     legendFormat: '{{ fqdn }}',
   },
@@ -96,7 +104,6 @@ local DETAILS = {
   disk_space: {
     title: 'Disk Utilization per Device per Node',
     description: 'Disk utilization per device per node.',
-    component: 'disk_space',
     query: |||
         max(
           (
@@ -116,9 +123,8 @@ local DETAILS = {
   disk_sustained_write_iops: {
     title: 'Disk Sustained Write IOPS Saturation per Node',
     description: 'Disk sustained write IOPS saturation per node.',
-    component: 'disk_sustained_write_iops',
     query: |||
-      rate(node_disk_writes_completed_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (30000)
+      rate(node_disk_writes_completed_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_write_iops_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
     legendFormat: '{{ fqdn }}',
   },
@@ -126,9 +132,8 @@ local DETAILS = {
   disk_sustained_write_throughput: {
     title: 'Disk Sustained Write Throughput Saturation per Node',
     description: 'Disk sustained write throughput saturation per node.',
-    component: 'disk_sustained_write_throughput',
     query: |||
-      rate(node_disk_written_bytes_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (400 * 1024 * 1024)
+      rate(node_disk_written_bytes_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_write_throughput_bytes_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
     legendFormat: '{{ fqdn }}',
   },
@@ -136,7 +141,6 @@ local DETAILS = {
   memory: {
     title: 'Memory Utilization per Node',
     description: 'Disk utilization per device per node.',
-    component: 'memory',
     query: |||
       instance:node_memory_utilization:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
     |||,
@@ -146,7 +150,6 @@ local DETAILS = {
   open_fds: {
     title: 'Open file descriptor saturation per instance',
     description: 'Open file descriptor saturation per instance.',
-    component: 'open_fds',
     query: |||
       max(
         label_replace(
@@ -170,7 +173,6 @@ local DETAILS = {
   pgbouncer_single_core: {
     title: 'PGBouncer Single Core per Node',
     description: 'PGBouncer single core saturation per node.',
-    component: 'pgbouncer_single_core',
     query: |||
       sum(
         rate(
@@ -184,7 +186,6 @@ local DETAILS = {
   private_runners: {
     title: 'Private Runners Saturation',
     description: 'Private runners saturation per instance.',
-    component: 'private_runners',
     query: |||
       sum without (stage, state, executor_stage) (
         gitlab_runner_jobs{job="private-runners"}
@@ -201,7 +202,6 @@ local DETAILS = {
   redis_clients: {
     title: 'Redis Client Saturation per Node',
     description: 'Redis client saturation per node.',
-    component: 'redis_clients',
     query: |||
       redis_connected_clients{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
       /
@@ -213,7 +213,6 @@ local DETAILS = {
   redis_memory: {
     title: 'Redis Memory Saturation per Node',
     description: 'Redis memory saturation per node.',
-    component: 'redis_memory',
     query: |||
       max(
         label_replace(redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}, "memtype", "rss","","")
@@ -229,7 +228,6 @@ local DETAILS = {
   shared_runners: {
     title: 'Shared Runner Saturation',
     description: 'Shared runner saturation per instance.',
-    component: 'shared_runners',
     query: |||
       sum without (stage, state, executor_stage) (
         gitlab_runner_jobs{job="shared-runners"}
@@ -246,7 +244,6 @@ local DETAILS = {
   shared_runners_gitlab: {
     title: 'Shared Runner GitLab Saturation',
     description: 'Shared runners saturation per instance.',
-    component: 'shared_runners_gitlab',
     query: |||
       sum without (stage, state, executor_stage) (
         gitlab_runner_jobs{job="shared-runners-gitlab-org"}
@@ -263,7 +260,6 @@ local DETAILS = {
   sidekiq_workers: {
     title: 'Sidekiq Worker Saturation per Node',
     description: 'Sidekiq worker saturation per node.',
-    component: 'sidekiq_workers',
     query: |||
       sum without (queue) (sidekiq_running_jobs{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"})
       /
@@ -307,7 +303,6 @@ local DETAILS = {
   workers: {
     title: 'Unicorn Worker Saturation per Node',
     description: 'Worker saturation per node.',
-    component: 'workers',
     query: |||
       sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
       /
@@ -321,7 +316,8 @@ local DETAILS = {
   saturationPanel(title, description, component, linewidth=1, query, legendFormat)::
     local formatConfig = {
       component: component,
-    };
+      query: query,
+    } + magicNumbers.magicNumbers;
     graphPanel.new(
       title,
       description,
@@ -348,7 +344,7 @@ local DETAILS = {
               %(query)s
             ,1)
           ,0)
-        ||| % { query: query },
+        ||| % formatConfig,
         legendFormat=legendFormat,
       )
     )
@@ -388,7 +384,7 @@ local DETAILS = {
       component: component,
       serviceType: serviceType,
       serviceStage: serviceStage,
-    };
+    } + magicNumbers.magicNumbers;
     local componentDetails = DETAILS[component];
     local query = componentDetails.query % formatConfig;
 
