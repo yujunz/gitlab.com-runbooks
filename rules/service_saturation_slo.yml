@@ -95,16 +95,28 @@ groups:
       component: 'disk_space'
     expr: '0.90'
 
-  ## Connection Pool Saturation
+  ## PGBouncer Async Connection Pool Saturation - Sidekiq pool
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
-      component: 'connection_pool'
+      component: 'pgbouncer_async_pool'
+    expr: '0.90'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'pgbouncer_async_pool'
+    expr: '0.98'
+
+  ## PGBouncer Sync Connection Pool Saturation - Web/API pool
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'pgbouncer_sync_pool'
     expr: '0.85'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
-      component: 'connection_pool'
+      component: 'pgbouncer_sync_pool'
     expr: '0.95'
+
 
   ## Redis Memory Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'

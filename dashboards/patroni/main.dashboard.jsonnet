@@ -81,12 +81,13 @@ row.new(title='patroni process stats'),
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="patroni", environment="$environment"'), gridPos={ x: 0, y: 7000 })
 .addPanel(saturationDetail.saturationDetailPanels('patroni', 'main', components=[
     'active_db_connections',
-    'connection_pool',
     'cpu',
     'disk_space',
     'memory',
     'open_fds',
+    'pgbouncer_async_pool',
     'pgbouncer_single_core',
+    'pgbouncer_sync_pool',
     'single_node_cpu',
   ]),
   gridPos={ x: 0, y: 8000, w: 24, h: 1 })

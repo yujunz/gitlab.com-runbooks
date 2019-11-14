@@ -71,9 +71,10 @@ row.new(title='pgbouncer Network'),
     'cpu',
     'memory',
     'open_fds',
+    'pgbouncer_async_pool',
     'pgbouncer_single_core',
+    'pgbouncer_sync_pool',
     'single_node_cpu',
-    'connection_pool',
   ]),
   gridPos={ x: 0, y: 6000, w: 24, h: 1 })
 .addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 7000 })

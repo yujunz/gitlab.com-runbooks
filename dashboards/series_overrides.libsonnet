@@ -5,7 +5,7 @@ local capacityComponentColors = {
   single_node_cpu: '#FADE2A',
   single_threaded_cpu: '#F2495C',
   workers: '#5794F2',
-  connection_pool: '#FA9830',
+  pgbouncer_async_pool: '#FA9830',
   cpu: '#B877D9',
   disk_space: '#37852E',
   memory: '#E0B301',

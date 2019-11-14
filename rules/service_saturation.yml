@@ -102,24 +102,54 @@ groups:
         ) by (groupname, fqdn, type, tier, stage, environment)
       ) by (type, tier, stage, environment)
 
-  # type: pgbouncer, component: server_connections_pools
+  # type: pgbouncer, component: pgbouncer_sync_pool
+  #
+  # The sync pool is very sensitive to saturation, since
+  # delays obtaining a database connection can lead to
+  # 503s and downstream saturation on unicorn/puma workers
+  # leading to "mini-outages"
+  #
+  # TECHNICAL DEBT: the 50 value is hardcoded. It should be the same as the `pool_size` value
+  # in pgbouncer and should match the value in `magic_numbers.libsonnet`
+  # See also https://gitlab.com/gitlab-org/gitlab/issues/36353
   - record: gitlab_component_saturation:ratio
     labels:
-      component: 'connection_pool'
+      component: 'pgbouncer_sync_pool'
     expr: >
       clamp_max(
         max(
-          max_over_time(pgbouncer_pools_server_active_connections{user="gitlab"}[1m]) /
           (
-            (
-              pgbouncer_pools_server_idle_connections{user="gitlab"} +
-              pgbouncer_pools_server_active_connections{user="gitlab"} +
-              pgbouncer_pools_server_testing_connections{user="gitlab"} +
-              pgbouncer_pools_server_used_connections{user="gitlab"} +
-              pgbouncer_pools_server_login_connections{user="gitlab"}
-            )
-            > 0
+            pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production"} +
+            pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production"} +
+            pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production"} +
+            pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production"}
           )
+          /
+          50
+      ) by (type, tier, stage, environment), 1)
+
+  # type: pgbouncer, component: pgbouncer_async_pool
+  # Async pool is more resiliant to saturation, since
+  # its used by Sidekiq background jobs and some extra
+  # delay should not have a major impact on performance
+  #
+  # TECHNICAL DEBT: the 75 value is hardcoded. It should be the same as the `pool_size` value
+  # in pgbouncer and should match the value in `magic_numbers.libsonnet`
+  # See also https://gitlab.com/gitlab-org/gitlab/issues/36353
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'pgbouncer_async_pool'
+    expr: >
+      clamp_max(
+        max(
+          (
+            pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production_sidekiq"} +
+            pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production_sidekiq"} +
+            pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production_sidekiq"} +
+            pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production_sidekiq"}
+          )
+          /
+          50
       ) by (type, tier, stage, environment), 1)
 
   # type: postgres-delayed, postgres-archive, patroni
@@ -187,9 +217,10 @@ groups:
       ) by (environment, tier, type, stage)
 
   # type: gitaly
-  # Disk read IOPS saturation based on GCP estimate of 1200MB/s limit
+  # Disk read IOPS saturation based on GCP estimate of 60000 IO operations/second
   # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/file-35-stor-gprd-data?project=gitlab-production
   # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'disk_sustained_read_iops'
@@ -202,9 +233,10 @@ groups:
       )
 
   # type: gitaly
-  # Disk write IOPS saturation based on GCP estimate of 400MB/s limit
+  # Disk write IOPS saturation based on GCP estimate of 30000 IO operations/second
   # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/file-35-stor-gprd-data?project=gitlab-production
   # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'disk_sustained_write_iops'
@@ -220,6 +252,7 @@ groups:
   # Disk read throughput saturation based on GCP estimate of 1200MB/s limit
   # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/file-35-stor-gprd-data?project=gitlab-production
   # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'disk_sustained_read_throughput'
@@ -235,6 +268,7 @@ groups:
   # Disk write throughput saturation based on GCP estimate of 400MB/s limit
   # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/file-35-stor-gprd-data?project=gitlab-production
   # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
   - record: gitlab_component_saturation:ratio
     labels:
       component: 'disk_sustained_write_throughput'
