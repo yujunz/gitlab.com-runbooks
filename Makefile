@@ -25,6 +25,7 @@ verify-shellcheck:
 
 .PHONY: fmt
 fmt: jsonnet-fmt shell-fmt
+	git diff --exit-code
 
 .PHONY: jsonnet-fmt
 jsonnet-fmt:
