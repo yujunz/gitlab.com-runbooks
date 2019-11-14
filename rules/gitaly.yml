@@ -201,3 +201,20 @@ groups:
       runbook: troubleshooting/gitaly-latency.md
       title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last 5m
 
+  - alert: GitalyNewVersionDeployed
+    expr: |
+      sum by (version) (
+        gitlab_build_info{job="gitaly",type="gitaly"})
+          unless (
+            sum by (version) (gitlab_build_info{job="gitaly",type="gitaly"} offset 1h
+          )
+      ) > 2
+    for: 5m
+    labels:
+      channel: g_create_gitaly
+      severity: s4
+    annotations:
+      title: New Gitaly version is being deployed
+      description: >
+        Gitaly version {{ $labels.version }} is being deployed to {{ $labels.environment }} (stage {{ $labels.stage }}).
+
