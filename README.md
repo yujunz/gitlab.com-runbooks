@@ -238,6 +238,10 @@ During an incident there are at least 2 roles, and one more optional
 * [SSL certificate expires](troubleshooting/ssl_cert.md)
 * [Troubleshoot git stuck processes](troubleshooting/git-stuck-processes.md)
 
+## Non-Core Applications
+
+* [version.gitlab.com](troubleshooting/version-gitlab-com.md)
+
 ### Chef/Knife
 
 * [General Troubleshooting](troubleshooting/chef.md)
