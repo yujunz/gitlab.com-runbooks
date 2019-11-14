@@ -1,24 +1,25 @@
 groups:
-- name: mailroom.rules
-  rules:
-  - alert: MailroomUnreadMessagesPilingUp
-    expr: max(imap_nb_unread_messages_in_mailbox) >= 25
-    for: 5m
-    labels:
-      severity: s4
-    annotations:
-      description: Mailroom doesn't seem to be processing incoming emails,
-        check if mailroom is running (`sudo gitlab-ctl status mailroom`) and is
-        not stuck in a launch loop (`sudo tail -f /var/log/gitlab/mailroom/current`).
-      title: Unread incoming emails are piling up
-  - alert: ImapMailboxExporterIsNotRunning
-    expr: imap_up == 0
-    for: 5m
-    labels:
-      severity: s4
-    annotations:
-      description: IMAP Mailbox exporter doesn't seem to be running on the mailroom nodes.
-        This hides our visibility into mailroom processing emails.
-        Check its status (`sudo service imap_mailbox_exporter status`) and its
-        logs (`sudo tail -f /var/log/prometheus/imap_mailbox_exporter/current`)
-      title: IMAP Mailbox exporter is not running
+  - name: mailroom.rules
+    rules:
+
+      - alert: MailroomUnreadMessagesPilingUp
+        expr: max(imap_nb_unread_messages_in_mailbox) >= 0
+        for: 10m
+        labels:
+          severity: s3
+        annotations:
+          description: Mailroom is unable to process some email.
+          runbook: troubleshooting/service-mailroom.md
+          title: Unread incoming emails are piling up
+
+      - alert: ImapMailboxExporterIsNotRunning
+        expr: imap_up == 0
+        for: 5m
+        labels:
+          severity: s4
+        annotations:
+          description: IMAP Mailbox exporter doesn't seem to be running on the sd-exporter nodes.
+            This hides our visibility into mailroom processing emails.
+            Check its status (`sudo service imap_mailbox_exporter status`) and its
+            logs (`sudo tail -f /var/log/prometheus/imap_mailbox_exporter/current`)
+          title: IMAP Mailbox exporter is not running
