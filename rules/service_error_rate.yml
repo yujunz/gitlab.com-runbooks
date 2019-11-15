@@ -45,21 +45,9 @@ groups:
   # Registry Service
   - record: gitlab_component_errors:rate
     labels:
-      type: 'registry'
       component: 'server'
-      tier: 'sv'
-      stage: 'main'
     expr: >
-      sum by (environment) (rate(haproxy_backend_http_responses_total{code="5xx", backend="registry"}[1m]))
-
-  - record: gitlab_component_errors:rate
-    labels:
-      type: 'registry'
-      component: 'server'
-      tier: 'sv'
-      stage: 'cny'
-    expr: >
-      sum by (environment) (rate(haproxy_backend_http_responses_total{code="5xx", backend="canary_registry"}[1m]))
+      sum by (environment, tier, type, stage) (rate(registry_http_requests_total{code=~"5.."}[1m]))
 
   # pages - haproxy service in front of GitLab pages
   - record: gitlab_component_errors:rate

@@ -57,6 +57,12 @@ groups:
       tier: 'lb'
     expr: '0.90'
 
+  - record: 'slo:min:gitlab_service_apdex:ratio'
+    labels:
+      type: 'registry'
+      tier: 'lb'
+    expr: '0.90'
+
   # As per https://gitlab.com/gitlab-com/www-gitlab-com/issues/5341, the goal is for 95%
   # of ci-runner jobs to start within 60s.
   #
