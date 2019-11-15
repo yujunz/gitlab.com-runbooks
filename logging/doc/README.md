@@ -102,7 +102,7 @@ All logs processed by StackDriver (even if excluded from indexing) are archived 
 | system.auth | /var/log/auth.log | syslog | pubsub-system-inf | |
 | system.syslog | /var/log/syslog | syslog | pubsub-system-inf | |
 | rails.graphql | /var/log/gitlab/gitlab-rails/graphql_json.log | JSON | pubsub-rails-inf ||
-| rails.mail_room | /var/log/gitlab/mail_room/mail_room_json.log | JSON | pubsub-rails-inf ||
+| rails.mail_room | /var/log/gitlab/mailroom/mail_room_json.log | JSON | pubsub-rails-inf ||
 | history.psql | /home/*-db/.psql_history  | | |
 | history.irb | /var/log/irb_history/*.log  | | |
 
