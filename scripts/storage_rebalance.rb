@@ -63,7 +63,9 @@ NodeConfiguration = {}
 NodeConfiguration.merge! ::Gitlab.config.repositories.storages if defined? ::Gitlab
 
 class NoCommits < StandardError; end
-class DifferentCommits < StandardError; end
+class MigrationTimeout < StandardError; end
+class CommitsMismatch < StandardError; end
+class ChecksumsMismatch < StandardError; end
 
 Options = {
   dry_run: true,
@@ -75,6 +77,8 @@ Options = {
   move_amount: 0,
   timeout: 10,
   max_failures: 3,
+  verify_only: false,
+  checksum: false,
   list: false,
   black_list: [],
   refresh_statistics: false,
@@ -140,6 +144,10 @@ def parse_args
 
   opt.on('-V', '--verify-only', 'Verify that projects have successfully migrated') do |verify_only|
     Options[:verify_only] = true
+  end
+
+  opt.on('-C', '--checksum', 'Verify project checksum is constant post-migration') do |checksum|
+    Options[:checksum] = true
   end
 
   opt.on('-f', '--max-failures=<N>', Integer, "Maximum failed migrations; default: #{Options[:max_failures]}") do |failures|
@@ -268,7 +276,7 @@ class Rebalancer
     commit_id
   end
 
-  def validate(project)
+  def wait_for_repository_storage_update(project)
     start = Time.now.to_i
     i = 0
     timeout = Options[:timeout]
@@ -318,6 +326,9 @@ class Rebalancer
     original_commit_id = get_commit_id(project.id)
     raise NoCommits.new("Could not obtain any commits for project id #{project.id}") if original_commit_id.nil?
 
+    project.repository.expire_exists_cache
+    original_checksum = project.repository.checksum if Options[:checksum]
+
     log_artifact = {
       id: project.id,
       path: project.disk_path,
@@ -333,22 +344,41 @@ class Rebalancer
       project.change_repository_storage(Options[:target_file_server])
       project.save
 
-      validate(project)
+      wait_for_repository_storage_update(project)
+
+      if project.repository_storage != Options[:target_file_server]
+        raise MigrationTimeout.new("Timed out waiting for migration of " +
+          "project id: #{project.id}")
+      end
+
       log.debug "Refreshing all statistics for project id: #{project.id}"
       project.statistics.refresh!
+
+      log.info "Validating project integrity by comparing latest commit " +
+        "identifers before and after"
+      current_commit_id = get_commit_id(project.id)
+      if original_commit_id != current_commit_id
+        raise CommitsMismatch.new("Current commit id #{current_commit_id} " +
+          "does not match original commit id #{original_commit_id}")
+      end
+
+      if Options[:checksum]
+        log.info "Validating project integrity by comparing checksums " +
+          "before and after"
+        project.repository.expire_exists_cache
+        current_checksum = project.repository.checksum
+        if original_checksum != current_checksum
+          raise ChecksumsMismatch.new("Current checksum #{current_checksum} " +
+            "does not match original checksum #{original_checksum}")
+        end
+      end
+
       log.info "Migrated project id: #{project.id}"
       log.debug "  Name: #{project.name}"
       log.debug "  Storage: #{project.repository_storage}"
       log.debug "  Path: #{project.disk_path}"
-      log.info "Validating project integrity by comparing latest commit " +
-        "identifers before and after"
-      current_commit_id = get_commit_id(project.id)
-      if original_commit_id == current_commit_id
-        log_artifact[:date] = DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
-        @migration_log.info log_artifact.to_json
-      else
-        raise DifferentCommits.new("Current commit id #{current_commit_id} does not match original commit id #{original_commit_id}")
-      end
+      log_artifact[:date] = DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
+      @migration_log.info log_artifact.to_json
     end
   end
 
@@ -436,9 +466,19 @@ class Rebalancer
         migration_errors << { project_id: project_id, message: e.message }
         log.error "Error: #{e}"
         log.warn "Skipping migration"
-      rescue DifferentCommits => e
+      rescue CommitsMismatch => e
         migration_errors << { project_id: project_id, message: e.message }
         log.error "Failed to validate integrity of project id: #{project.id}"
+        log.error "Error: #{e}"
+        log.warn "Skipping migration"
+      rescue ChecksumsMismatch => e
+        migration_errors << { project_id: project_id, message: e.message }
+        log.error "Failed to validate integrity of project id: #{project.id}"
+        log.error "Error: #{e}"
+        log.warn "Skipping migration"
+      rescue MigrationTimeout => e
+        migration_errors << { project_id: project_id, message: e.message }
+        log.error "Timed out migrating project id: #{project.id}"
         log.error "Error: #{e}"
         log.warn "Skipping migration"
       rescue StandardError => e
@@ -475,7 +515,7 @@ class Rebalancer
         migration_errors << { project_id: project_id, message: e.message }
         log.error "Error: #{e}"
         log.warn "Skipping migration"
-      rescue DifferentCommits => e
+      rescue CommitsMismatch => e
         migration_errors << { project_id: project_id, message: e.message }
         log.error "Failed to validate integrity of project id: #{project.id}"
         log.error "Error: #{e}"
