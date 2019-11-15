@@ -36,16 +36,16 @@ dashboard.new(
 .addPanels(keyMetrics.headlineMetricsRow('frontend', '$stage', startRow=0))
 .addPanel(serviceHealth.row('frontend', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
-row.new(title='🏅 Key Service Metrics'),
+  row.new(title='🏅 Key Service Metrics'),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
-layout.grid([
+  layout.grid([
     keyMetrics.apdexPanel('frontend', '$stage'),
     keyMetrics.errorRatesPanel('frontend', '$stage'),
     keyMetrics.serviceAvailabilityPanel('frontend', '$stage'),
@@ -54,43 +54,45 @@ layout.grid([
   ], startRow=1001)
 )
 .addPanel(
-row.new(title='HAProxy process'),
+  row.new(title='HAProxy process'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
   processExporter.namedGroup('haproxy', 'haproxy', 'frontend', '$stage', startRow=2001)
 )
 .addPanel(
-keyMetrics.keyComponentMetricsRow('frontend', '$stage'),
+  keyMetrics.keyComponentMetricsRow('frontend', '$stage'),
   gridPos={
-      x: 0,
-      y: 4000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 4000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanel(
-nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="frontend"'),
+  nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="frontend"'),
   gridPos={
-      x: 0,
-      y: 5000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 5000,
+    w: 24,
+    h: 1,
   }
 )
-.addPanel(saturationDetail.saturationDetailPanels('frontend', '$stage', components=[
+.addPanel(
+  saturationDetail.saturationDetailPanels('frontend', '$stage', components=[
     'cpu',
     'disk_space',
     'memory',
     'open_fds',
     'single_node_cpu',
   ]),
-  gridPos={ x: 0, y: 6000, w: 24, h: 1 })
+  gridPos={ x: 0, y: 6000, w: 24, h: 1 }
+)
 .addPanel(capacityPlanning.capacityPlanningRow('frontend', '$stage'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('frontend') + platformLinks.services,

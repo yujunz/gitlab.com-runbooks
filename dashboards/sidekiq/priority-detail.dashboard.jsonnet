@@ -43,12 +43,12 @@ dashboard.new(
   allValues='.*',
 ))
 .addPanel(
-row.new(title='Sidekiq Execution'),
+  row.new(title='Sidekiq Execution'),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
@@ -139,24 +139,24 @@ row.new(title='Sidekiq Execution'),
   ], cols=2, rowHeight=10, startRow=1001),
 )
 .addPanel(
-row.new(title='Priority Workloads'),
+  row.new(title='Priority Workloads'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"', startRow=2001))
 .addPanel(
   row.new(title='Rails Metrics', collapse=true)
-    .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))
+  .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))
   ,
   gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"'), gridPos={ x: 0, y: 6000 })

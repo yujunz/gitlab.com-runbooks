@@ -22,6 +22,6 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addPanels(capacityPlanning.environmentCapacityPlanningPanels())
- + {
++ {
   links+: platformLinks.services,
 }

@@ -29,12 +29,8 @@ local gitalyConfig = {
   GITALY_DISK: GITALY_DISK,
 };
 
-local generalGraphPanel(
-  title,
-  description=null,
-  linewidth=2,
-  sort='increasing',
-) = graphPanel.new(
+local generalGraphPanel(title, description=null, linewidth=2, sort='increasing') =
+  graphPanel.new(
     title,
     linewidth=linewidth,
     fill=0,
@@ -81,24 +77,26 @@ local readThroughput() = basic.saturationTimeseries(
   legend_show=true,
 );
 
-local writeThroughput() = basic.saturationTimeseries(
-  title='Average Peak Write Throughput per Node',
-  description='Average Peak write throughput as a ratio of specified max (over 30s) per Node, on the Gitaly disk (%(GITALY_DISK)s). Lower is better.' % gitalyConfig,
-  query=|||
-    avg_over_time(
-      max_over_time(
-        rate(node_disk_written_bytes_total{environment="$environment", stage="$stage", type="gitaly", device="%(GITALY_DISK)s"}[30s]) / (%(GITALY_PEAK_WRITE_THROUGHPUT_BYTES_PER_SECOND)s)[5m:30s]
-     )[$__interval:1m]
-    )
-  ||| % gitalyConfig,
-  legendFormat='{{ fqdn }}',
-  interval='1m',
-  intervalFactor=3,
-  linewidth=1,
-  legend_show=true,
-);
+local writeThroughput() =
+  basic.saturationTimeseries(
+    title='Average Peak Write Throughput per Node',
+    description='Average Peak write throughput as a ratio of specified max (over 30s) per Node, on the Gitaly disk (%(GITALY_DISK)s). Lower is better.' % gitalyConfig,
+    query=|||
+      avg_over_time(
+        max_over_time(
+          rate(node_disk_written_bytes_total{environment="$environment", stage="$stage", type="gitaly", device="%(GITALY_DISK)s"}[30s]) / (%(GITALY_PEAK_WRITE_THROUGHPUT_BYTES_PER_SECOND)s)[5m:30s]
+       )[$__interval:1m]
+      )
+    ||| % gitalyConfig,
+    legendFormat='{{ fqdn }}',
+    interval='1m',
+    intervalFactor=3,
+    linewidth=1,
+    legend_show=true,
+  );
 
-local ratelimitLockPercentage() = generalGraphPanel(
+local ratelimitLockPercentage() =
+  generalGraphPanel(
     'Request % acquiring rate-limit lock within 1m, by host + method',
     description='Percentage of requests that acquire a Gitaly rate-limit lock within 1 minute, by host and method'
   )
@@ -204,33 +202,33 @@ dashboard.new(
 .addPanels(keyMetrics.headlineMetricsRow('gitaly', '$stage', startRow=0))
 .addPanel(serviceHealth.row('gitaly', '$stage'), gridPos={ x: 0, y: 1000 })
 .addPanel(
-row.new(title='Node Performance'),
+  row.new(title='Node Performance'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
-layout.grid([
-  perNodeApdex(),
-  inflightGitalyCommandsPerNode(),
-  readThroughput(),
-  writeThroughput(),
+  layout.grid([
+    perNodeApdex(),
+    inflightGitalyCommandsPerNode(),
+    readThroughput(),
+    writeThroughput(),
   ], startRow=2001)
 )
 .addPanel(
-row.new(title='Gitaly Safety Mechanisms'),
+  row.new(title='Gitaly Safety Mechanisms'),
   gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
-layout.grid([
+  layout.grid([
     gitalySpawnTimeoutsPerNode(),
     ratelimitLockPercentage(),
   ], startRow=3001)
@@ -238,7 +236,8 @@ layout.grid([
 .addPanel(keyMetrics.keyServiceMetricsRow('gitaly', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('gitaly', '$stage'), gridPos={ x: 0, y: 5000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="gitaly", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
-.addPanel(saturationDetail.saturationDetailPanels('gitaly', '$stage', components=[
+.addPanel(
+  saturationDetail.saturationDetailPanels('gitaly', '$stage', components=[
     'cgroup_memory',
     'cpu',
     'disk_space',
@@ -250,10 +249,11 @@ layout.grid([
     'open_fds',
     'single_node_cpu',
   ]),
-  gridPos={ x: 0, y: 6000, w: 24, h: 1 })
+  gridPos={ x: 0, y: 6000, w: 24, h: 1 }
+)
 
 .addPanel(capacityPlanning.capacityPlanningRow('gitaly', '$stage'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('gitaly') + platformLinks.services +
-  [platformLinks.dynamicLinks('Gitaly Detail', 'type:gitaly')],
+          [platformLinks.dynamicLinks('Gitaly Detail', 'type:gitaly')],
 }

@@ -34,49 +34,50 @@ dashboard.new(
 .addPanels(keyMetrics.headlineMetricsRow('redis', '$stage', startRow=0))
 .addPanel(serviceHealth.row('redis', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
-row.new(title='Clients'),
+  row.new(title='Clients'),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(redisCommon.clientPanels(serviceType='redis', startRow=1001))
 .addPanel(
-row.new(title='Workload'),
+  row.new(title='Workload'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(redisCommon.workload(serviceType='redis', startRow=2001))
 .addPanel(
-row.new(title='Redis Data'),
+  row.new(title='Redis Data'),
   gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(redisCommon.data(serviceType='redis', startRow=3001))
 .addPanel(
-row.new(title='Replication'),
+  row.new(title='Replication'),
   gridPos={
-      x: 0,
-      y: 4000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 4000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(redisCommon.replication(serviceType='redis', startRow=4001))
 .addPanel(keyMetrics.keyServiceMetricsRow('redis', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('redis', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis", environment="$environment", fqdn=~"redis-\\\\d\\\\d.*"'), gridPos={ x: 0, y: 7000 })
-.addPanel(saturationDetail.saturationDetailPanels('redis', 'main', components=[
+.addPanel(
+  saturationDetail.saturationDetailPanels('redis', 'main', components=[
     'cpu',
     'disk_space',
     'memory',
@@ -86,7 +87,8 @@ row.new(title='Replication'),
     'single_node_cpu',
     'single_threaded_cpu',
   ]),
-  gridPos={ x: 0, y: 8000, w: 24, h: 1 })
+  gridPos={ x: 0, y: 8000, w: 24, h: 1 }
+)
 .addPanel(capacityPlanning.capacityPlanningRow('redis', 'main'), gridPos={ x: 0, y: 9000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('redis') + platformLinks.services,

@@ -182,50 +182,50 @@ local tablePanel = grafana.tablePanel;
     linewidth=2,
     legend_show=true,
   )::
-  local formatConfig = {
-    query: query,
-  };
-  graphPanel.new(
-    title,
-    description=description,
-    sort='decreasing',
-    linewidth=linewidth,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
-    decimals=0,
-    legend_show=legend_show,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
-  )
-      .addTarget(
-        promQuery.target(
-          |||
-            clamp_min(clamp_max(%(query)s,1),0)
-          ||| % formatConfig,
-          legendFormat=legendFormat,
-          interval=interval,
-          intervalFactor=intervalFactor
-        )
+    local formatConfig = {
+      query: query,
+    };
+    graphPanel.new(
+      title,
+      description=description,
+      sort='decreasing',
+      linewidth=linewidth,
+      fill=0,
+      datasource='$PROMETHEUS_DS',
+      decimals=0,
+      legend_show=legend_show,
+      legend_values=true,
+      legend_min=true,
+      legend_max=true,
+      legend_current=true,
+      legend_total=false,
+      legend_avg=true,
+      legend_alignAsTable=true,
+      legend_hideEmpty=true,
+    )
+    .addTarget(
+      promQuery.target(
+        |||
+          clamp_min(clamp_max(%(query)s,1),0)
+        ||| % formatConfig,
+        legendFormat=legendFormat,
+        interval=interval,
+        intervalFactor=intervalFactor
       )
-      .resetYaxes()
-      .addYaxis(
-    format='percentunit',
-    min=0,
-    max=1,
-    label=yAxisLabel,
-  )
-      .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='percentunit',
+      min=0,
+      max=1,
+      label=yAxisLabel,
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 
   apdexTimeseries(
     title='Apdex',
@@ -238,50 +238,50 @@ local tablePanel = grafana.tablePanel;
     linewidth=2,
     legend_show=true,
   )::
-  local formatConfig = {
-    query: query,
-  };
-  graphPanel.new(
-    title,
-    description=description,
-    sort='increasing',
-    linewidth=linewidth,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
-    decimals=0,
-    legend_show=legend_show,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
-  )
-      .addTarget(
-        promQuery.target(
-          |||
-            clamp_min(clamp_max(%(query)s,1),0)
-          ||| % formatConfig,
-          legendFormat=legendFormat,
-          interval=interval,
-          intervalFactor=intervalFactor
-        )
+    local formatConfig = {
+      query: query,
+    };
+    graphPanel.new(
+      title,
+      description=description,
+      sort='increasing',
+      linewidth=linewidth,
+      fill=0,
+      datasource='$PROMETHEUS_DS',
+      decimals=0,
+      legend_show=legend_show,
+      legend_values=true,
+      legend_min=true,
+      legend_max=true,
+      legend_current=true,
+      legend_total=false,
+      legend_avg=true,
+      legend_alignAsTable=true,
+      legend_hideEmpty=true,
+    )
+    .addTarget(
+      promQuery.target(
+        |||
+          clamp_min(clamp_max(%(query)s,1),0)
+        ||| % formatConfig,
+        legendFormat=legendFormat,
+        interval=interval,
+        intervalFactor=intervalFactor
       )
-      .resetYaxes()
-      .addYaxis(
-    format='percentunit',
-    min=0,
-    max=1,
-    label=yAxisLabel,
-  )
-      .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='percentunit',
+      min=0,
+      max=1,
+      label=yAxisLabel,
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 
   latencyTimeseries(
     title='Latency',
@@ -339,49 +339,49 @@ local tablePanel = grafana.tablePanel;
     interval='1m',
     intervalFactor=3,
   )::
-  local formatConfig = {
-    query: query,
-  };
-  graphPanel.new(
-    title,
-    description=description,
-    sort='decreasing',
-    linewidth=2,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
-    decimals=2,
-    legend_show=true,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
-  )
-      .addTarget(
-        promQuery.target(
-          |||
-            clamp_min(clamp_max(%(query)s,1),0)
-          ||| % formatConfig,
-          legendFormat=legendFormat,
-          interval=interval,
-          intervalFactor=intervalFactor
-        )
+    local formatConfig = {
+      query: query,
+    };
+    graphPanel.new(
+      title,
+      description=description,
+      sort='decreasing',
+      linewidth=2,
+      fill=0,
+      datasource='$PROMETHEUS_DS',
+      decimals=2,
+      legend_show=true,
+      legend_values=true,
+      legend_min=true,
+      legend_max=true,
+      legend_current=true,
+      legend_total=false,
+      legend_avg=true,
+      legend_alignAsTable=true,
+      legend_hideEmpty=true,
+    )
+    .addTarget(
+      promQuery.target(
+        |||
+          clamp_min(clamp_max(%(query)s,1),0)
+        ||| % formatConfig,
+        legendFormat=legendFormat,
+        interval=interval,
+        intervalFactor=intervalFactor
       )
-      .resetYaxes()
-      .addYaxis(
-    format='percentunit',
-    max=1,
-    label=yAxisLabel,
-  )
-      .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='percentunit',
+      max=1,
+      label=yAxisLabel,
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 
   networkTrafficGraph(
     title='Node Network Utilization',

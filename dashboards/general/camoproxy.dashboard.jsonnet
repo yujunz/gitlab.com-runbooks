@@ -13,25 +13,26 @@ local annotation = grafana.annotation;
 local generalGraphPanel(
   title,
   description=null
-) = graphPanel.new(
-    title,
-    linewidth=1,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
-    description=description,
-    decimals=2,
-    legend_show=true,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
-  );
+      ) = graphPanel.new(
+  title,
+  linewidth=1,
+  fill=0,
+  datasource='$PROMETHEUS_DS',
+  description=description,
+  decimals=2,
+  legend_show=true,
+  legend_values=true,
+  legend_min=true,
+  legend_max=true,
+  legend_current=true,
+  legend_total=false,
+  legend_avg=true,
+  legend_alignAsTable=true,
+  legend_hideEmpty=true,
+);
 
-local requestsPanel() = generalGraphPanel(
+local requestsPanel() =
+  generalGraphPanel(
     'Requests',
     description='Requests per second',
   )
@@ -54,7 +55,8 @@ local requestsPanel() = generalGraphPanel(
     show=false,
   );
 
-local trafficPanel() = generalGraphPanel(
+local trafficPanel() =
+  generalGraphPanel(
     'Traffic',
     description='Traffic, in bytes per second',
   )
@@ -76,7 +78,8 @@ local trafficPanel() = generalGraphPanel(
     show=false,
   );
 
-local eventPanel() = generalGraphPanel(
+local eventPanel() =
+  generalGraphPanel(
     'Request Failures',
     description='Failed requests',
   )

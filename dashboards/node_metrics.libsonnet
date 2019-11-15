@@ -28,25 +28,25 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         legend_hideEmpty=true,
       )
       .addTarget(  // Primary metric
-          promQuery.target(
-            |||
-              avg(instance:node_cpu_utilization:ratio{%(nodeSelector)s}) by (fqdn)
-            ||| % formatConfig,
-            legendFormat='{{ fqdn }}',
-            intervalFactor=5,
-          )
+        promQuery.target(
+          |||
+            avg(instance:node_cpu_utilization:ratio{%(nodeSelector)s}) by (fqdn)
+          ||| % formatConfig,
+          legendFormat='{{ fqdn }}',
+          intervalFactor=5,
         )
-        .resetYaxes()
-        .addYaxis(
-          format='percentunit',
-          label='Average CPU Utilization',
-        )
-        .addYaxis(
-          format='short',
-          max=1,
-          min=0,
-          show=false,
-        ),
+      )
+      .resetYaxes()
+      .addYaxis(
+        format='percentunit',
+        label='Average CPU Utilization',
+      )
+      .addYaxis(
+        format='short',
+        max=1,
+        min=0,
+        show=false,
+      ),
       basic.saturationTimeseries(
         'Node Maximum Single Core Utilization',
         description='The maximum utilization of a single core on each node. Lower is better',
@@ -102,127 +102,127 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         min=0,
         show=false,
       ),
-    basic.saturationTimeseries(
-      title='Memory Utilization',
-      description='Memory utilization. Lower is better.',
-      query=
+      basic.saturationTimeseries(
+        title='Memory Utilization',
+        description='Memory utilization. Lower is better.',
+        query=
         |||
           instance:node_memory_utilization:ratio{%(nodeSelector)s}
         ||| % formatConfig,
-      legendFormat='{{ fqdn }}',
-      interval='1m',
-      intervalFactor=1,
-      legend_show=false,
-      linewidth=1
+        legendFormat='{{ fqdn }}',
+        interval='1m',
+        intervalFactor=1,
+        legend_show=false,
+        linewidth=1
       ),
 
-    // Node-level disk metrics
-    // Reads on the left, writes on the right
-    //
-    // IOPS ---------------
-    basic.timeseries(
-      title='Disk Read IOPs',
-      description='Disk Read IO operations per second. Lower is better.',
-      query=
+      // Node-level disk metrics
+      // Reads on the left, writes on the right
+      //
+      // IOPS ---------------
+      basic.timeseries(
+        title='Disk Read IOPs',
+        description='Disk Read IO operations per second. Lower is better.',
+        query=
         |||
           max(
             rate(node_disk_reads_completed_total{%(nodeSelector)s}[$__interval])
           ) by (fqdn)
         ||| % formatConfig,
-      legendFormat='{{ fqdn }}',
-      format='ops',
-      interval='1m',
-      intervalFactor=1,
-      yAxisLabel='Operations/s',
-      legend_show=false,
-      linewidth=1
+        legendFormat='{{ fqdn }}',
+        format='ops',
+        interval='1m',
+        intervalFactor=1,
+        yAxisLabel='Operations/s',
+        legend_show=false,
+        linewidth=1
       ),
-    basic.timeseries(
-      title='Disk Write IOPs',
-      description='Disk Write IO operations per second. Lower is better.',
-      query=
+      basic.timeseries(
+        title='Disk Write IOPs',
+        description='Disk Write IO operations per second. Lower is better.',
+        query=
         |||
           max(
             rate(node_disk_writes_completed_total{%(nodeSelector)s}[$__interval])
           ) by (fqdn)
         ||| % formatConfig,
-      legendFormat='{{ fqdn }}',
-      format='ops',
-      interval='1m',
-      intervalFactor=1,
-      yAxisLabel='Operations/s',
-      legend_show=false,
-      linewidth=1
+        legendFormat='{{ fqdn }}',
+        format='ops',
+        interval='1m',
+        intervalFactor=1,
+        yAxisLabel='Operations/s',
+        legend_show=false,
+        linewidth=1
       ),
-    // Disk Throughput ---------------
-    basic.timeseries(
-      title='Disk Read Throughput',
-      description='Disk Read throughput datarate. Lower is better.',
-      query=
+      // Disk Throughput ---------------
+      basic.timeseries(
+        title='Disk Read Throughput',
+        description='Disk Read throughput datarate. Lower is better.',
+        query=
         |||
           max(
             rate(node_disk_read_bytes_total{%(nodeSelector)s}[$__interval])
           ) by (fqdn)
         ||| % formatConfig,
-      legendFormat='{{ fqdn }}',
-      format='Bps',
-      interval='1m',
-      intervalFactor=1,
-      yAxisLabel='Bytes/s',
-      legend_show=false,
-      linewidth=1
+        legendFormat='{{ fqdn }}',
+        format='Bps',
+        interval='1m',
+        intervalFactor=1,
+        yAxisLabel='Bytes/s',
+        legend_show=false,
+        linewidth=1
       ),
-    basic.timeseries(
-      title='Disk Write Throughput',
-      description='Disk Write throughput datarate. Lower is better.',
-      query=
+      basic.timeseries(
+        title='Disk Write Throughput',
+        description='Disk Write throughput datarate. Lower is better.',
+        query=
         |||
           max(
             rate(node_disk_written_bytes_total{%(nodeSelector)s}[$__interval])
           ) by (fqdn)
         ||| % formatConfig,
-      legendFormat='{{ fqdn }}',
-      format='Bps',
-      interval='1m',
-      intervalFactor=1,
-      yAxisLabel='Bytes/s',
-      legend_show=false,
-      linewidth=1
+        legendFormat='{{ fqdn }}',
+        format='Bps',
+        interval='1m',
+        intervalFactor=1,
+        yAxisLabel='Bytes/s',
+        legend_show=false,
+        linewidth=1
       ),
-    // Disk Total Time ---------------
-    basic.timeseries(
-      title='Disk Read Total Time',
-      description='Total time spent in read operations across all disks on the node. Lower is better.',
-      query=
+      // Disk Total Time ---------------
+      basic.timeseries(
+        title='Disk Read Total Time',
+        description='Total time spent in read operations across all disks on the node. Lower is better.',
+        query=
         |||
           sum(
             rate(node_disk_read_time_seconds_total{%(nodeSelector)s}[$__interval])
           ) by (fqdn)
         ||| % formatConfig,
-      legendFormat='{{ fqdn }}',
-      format='s',
-      interval='30s',
-      intervalFactor=1,
-      yAxisLabel='Total Time/s',
-      legend_show=false,
-      linewidth=1
+        legendFormat='{{ fqdn }}',
+        format='s',
+        interval='30s',
+        intervalFactor=1,
+        yAxisLabel='Total Time/s',
+        legend_show=false,
+        linewidth=1
       ),
-    basic.timeseries(
-      title='Disk Write Total Time',
-      description='Total time spent in write operations across all disks on the node. Lower is better.',
-      query=
+      basic.timeseries(
+        title='Disk Write Total Time',
+        description='Total time spent in write operations across all disks on the node. Lower is better.',
+        query=
         |||
           sum(
             rate(node_disk_write_time_seconds_total{%(nodeSelector)s}[$__interval])
           ) by (fqdn)
         ||| % formatConfig,
-      legendFormat='{{ fqdn }}',
-      format='s',
-      interval='30s',
-      intervalFactor=1,
-      yAxisLabel='Total Time/s',
-      legend_show=false,
-      linewidth=1
+        legendFormat='{{ fqdn }}',
+        format='s',
+        interval='30s',
+        intervalFactor=1,
+        yAxisLabel='Total Time/s',
+        legend_show=false,
+        linewidth=1
       ),
     ])),
 }

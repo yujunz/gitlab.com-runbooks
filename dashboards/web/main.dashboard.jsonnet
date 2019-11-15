@@ -37,32 +37,32 @@ dashboard.new(
 .addPanels(keyMetrics.headlineMetricsRow('web', '$stage', startRow=0))
 .addPanel(serviceHealth.row('web', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
-row.new(title='Workhorse'),
+  row.new(title='Workhorse'),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(workhorseCommon.workhorsePanels(serviceType='web', serviceStage='$stage', startRow=1001))
 .addPanel(
-row.new(title='Unicorn'),
+  row.new(title='Unicorn'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(unicornCommon.unicornPanels(serviceType='web', serviceStage='$stage', startRow=2001))
 .addPanel(
-row.new(title='Rails'),
+  row.new(title='Rails'),
   gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(railsCommon.railsPanels(serviceType='web', serviceStage='$stage', startRow=3001))
@@ -70,14 +70,14 @@ row.new(title='Rails'),
 .addPanel(keyMetrics.keyComponentMetricsRow('web', '$stage'), gridPos={ x: 0, y: 5000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="web", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
 .addPanel(saturationDetail.saturationDetailPanels('web', '$stage', components=[
-    'cpu',
-    'disk_space',
-    'memory',
-    'open_fds',
-    'single_node_cpu',
-    'single_node_unicorn_workers',
-    'workers',
-  ]), gridPos={ x: 0, y: 7000, w: 24, h: 1 })
+  'cpu',
+  'disk_space',
+  'memory',
+  'open_fds',
+  'single_node_cpu',
+  'single_node_unicorn_workers',
+  'workers',
+]), gridPos={ x: 0, y: 7000, w: 24, h: 1 })
 .addPanel(capacityPlanning.capacityPlanningRow('web', '$stage'), gridPos={ x: 0, y: 8000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('web') + platformLinks.services,

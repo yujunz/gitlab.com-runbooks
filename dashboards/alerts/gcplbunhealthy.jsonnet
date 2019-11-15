@@ -31,15 +31,15 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(template.new(
-    'load_balancer_name',
-    '$PROMETHEUS_DS',
-    'label_values(load_balancer_name:health_backend:ratio, load_balancer_name)',
-    refresh='load',
-    sort=1,
-  ),)
+  'load_balancer_name',
+  '$PROMETHEUS_DS',
+  'label_values(load_balancer_name:health_backend:ratio, load_balancer_name)',
+  refresh='load',
+  sort=1,
+),)
 .addPanels(layout.grid([
-    healthRatioPanel(),
-  ], cols=1, rowHeight=15))
+  healthRatioPanel(),
+], cols=1, rowHeight=15))
 + {
   links+: platformLinks.triage + [
     link.dashboards('Google Cloud Console Load Balancers', '', type='link', url='https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list?project=gitlab-production'),

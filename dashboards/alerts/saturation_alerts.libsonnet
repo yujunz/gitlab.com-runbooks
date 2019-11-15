@@ -16,7 +16,7 @@ local annotation = grafana.annotation;
     component,
     panel,
     helpPanel
-    )::
+  )::
     dashboard.new(
       dashboardTitle,
       schemaVersion=16,
@@ -38,17 +38,17 @@ local annotation = grafana.annotation;
     .addPanel(helpPanel, gridPos={ x: 0, y: 1000, h: 6, w: 24 })
     + {
       links+: platformLinks.parameterizedServiceLink +
-        platformLinks.services +
-        platformLinks.triage +
-        [
-          platformLinks.dynamicLinks('Service Dashboards', 'type:$type managed', asDropdown=false, includeVars=false, keepTime=false),
-          platformLinks.dynamicLinks('Saturation Detail', 'saturationdetail', asDropdown=true, includeVars=true, keepTime=true),
-        ],
+              platformLinks.services +
+              platformLinks.triage +
+              [
+                platformLinks.dynamicLinks('Service Dashboards', 'type:$type managed', asDropdown=false, includeVars=false, keepTime=false),
+                platformLinks.dynamicLinks('Saturation Detail', 'saturationdetail', asDropdown=true, includeVars=true, keepTime=true),
+              ],
     },
 
   saturationDashboardForComponent(
     component,
-    )::
+  )::
     self.saturationDashboard(
       dashboardTitle=component + ': Saturation Detail',
       component=component,

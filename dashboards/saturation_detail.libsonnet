@@ -127,8 +127,8 @@ local DETAILS = {
       vertical scaling.
     |||,
     query: |||
-        avg(1 - rate(node_cpu_seconds_total{mode="idle", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
-      |||,
+      avg(1 - rate(node_cpu_seconds_total{mode="idle", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
+    |||,
     legendFormat: '{{ fqdn }}',
   },
 
@@ -160,13 +160,13 @@ local DETAILS = {
       Disk utilization per device per node.
     |||,
     query: |||
-        max(
-          (
-            1 -
-            instance:node_filesystem_avail:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s" ,fstype=~"ext.|xfs"}
-          )
-        ) by (device, fqdn)
-      |||,
+      max(
+        (
+          1 -
+          instance:node_filesystem_avail:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s" ,fstype=~"ext.|xfs"}
+        )
+      ) by (device, fqdn)
+    |||,
     legendFormat: '{{ fqdn }} {{ device }}',
   },
 
@@ -402,8 +402,8 @@ local DETAILS = {
     |||,
     component: 'single_node_cpu',
     query: |||
-        avg(1 - rate(node_cpu_seconds_total{mode="idle", type="%(serviceType)s", environment="$environment", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
-      |||,
+      avg(1 - rate(node_cpu_seconds_total{mode="idle", type="%(serviceType)s", environment="$environment", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
+    |||,
     legendFormat: '{{ fqdn }}',
   },
 
@@ -550,10 +550,10 @@ local DETAILS = {
 
   saturationDetailPanels(serviceType, serviceStage, components)::
     row.new(title='🌡 Saturation Details', collapse=true)
-      .addPanels(layout.grid([
-        self.componentSaturationPanel(component, serviceType, serviceStage)
-for component in components
-      ])),
+    .addPanels(layout.grid([
+      self.componentSaturationPanel(component, serviceType, serviceStage)
+      for component in components
+    ])),
 
   componentSaturationHelpPanel(component)::
     local componentDetails = DETAILS[component];

@@ -35,42 +35,42 @@ dashboard.new(
 .addPanels(keyMetrics.headlineMetricsRow('patroni', '$stage', startRow=0))
 .addPanel(serviceHealth.row('patroni', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
-row.new(title='pgbouncer Workload', collapse=false),
+  row.new(title='pgbouncer Workload', collapse=false),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1001))
 .addPanel(
-row.new(title='pgbouncer Connection Pooling', collapse=false),
+  row.new(title='pgbouncer Connection Pooling', collapse=false),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('patroni', 2001))
 .addPanel(
-row.new(title='pgbouncer Network', collapse=false),
+  row.new(title='pgbouncer Network', collapse=false),
   gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(pgbouncerCommonGraphs.networkStats('patroni', 3001))
 .addPanel(
-row.new(title='patroni process stats'),
+  row.new(title='patroni process stats'),
   gridPos={
-      x: 0,
-      y: 4000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 4000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
@@ -79,7 +79,8 @@ row.new(title='patroni process stats'),
 .addPanel(keyMetrics.keyServiceMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="patroni", environment="$environment"'), gridPos={ x: 0, y: 7000 })
-.addPanel(saturationDetail.saturationDetailPanels('patroni', 'main', components=[
+.addPanel(
+  saturationDetail.saturationDetailPanels('patroni', 'main', components=[
     'active_db_connections',
     'cpu',
     'disk_space',
@@ -90,7 +91,8 @@ row.new(title='patroni process stats'),
     'pgbouncer_sync_pool',
     'single_node_cpu',
   ]),
-  gridPos={ x: 0, y: 8000, w: 24, h: 1 })
+  gridPos={ x: 0, y: 8000, w: 24, h: 1 }
+)
 .addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 9000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('patroni') + platformLinks.services,

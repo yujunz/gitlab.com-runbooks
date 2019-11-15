@@ -12,41 +12,41 @@ local activeAlertsPanel(serviceType, serviceStage) =
     'Active Alerts',
     datasource='$PROMETHEUS_DS',
     styles=[
-{
-      type: 'hidden',
-      pattern: 'Time',
-      alias: 'Time',
-    },
-{
-      unit: 'short',
-      type: 'string',
-      alias: 'Alert',
-      decimals: 2,
-      pattern: 'alertname',
-      mappingType: 2,
-      link: true,
-      linkUrl: 'https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%2C%20type%3D%22' + serviceType + '%22%7D',
-      linkTooltip: 'Open alertmanager',
-    },
-{
-      unit: 'short',
-      type: 'number',
-      alias: 'Score',
-      decimals: 0,
-      colors: [
-        colors.warningColor,
-        colors.errorColor,
-        colors.criticalColor,
-      ],
-      colorMode: 'row',
-      pattern: 'Value',
-      thresholds: [
-        '2',
-        '3',
-      ],
-      mappingType: 1,
-    },
-  ],
+      {
+        type: 'hidden',
+        pattern: 'Time',
+        alias: 'Time',
+      },
+      {
+        unit: 'short',
+        type: 'string',
+        alias: 'Alert',
+        decimals: 2,
+        pattern: 'alertname',
+        mappingType: 2,
+        link: true,
+        linkUrl: 'https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%2C%20type%3D%22' + serviceType + '%22%7D',
+        linkTooltip: 'Open alertmanager',
+      },
+      {
+        unit: 'short',
+        type: 'number',
+        alias: 'Score',
+        decimals: 0,
+        colors: [
+          colors.warningColor,
+          colors.errorColor,
+          colors.criticalColor,
+        ],
+        colorMode: 'row',
+        pattern: 'Value',
+        thresholds: [
+          '2',
+          '3',
+        ],
+        mappingType: 1,
+      },
+    ],
   )
   .addTarget(  // Alert scoring
     promQuery.target(
@@ -113,26 +113,32 @@ local errorRateSLOPanel(serviceType, serviceStage) =
 
 {
   row(serviceType, serviceStage)::
-  row.new(title='👩‍⚕️ Service Health', collapse=true)
-    .addPanel(latencySLOPanel(serviceType, serviceStage),
+    row.new(title='👩‍⚕️ Service Health', collapse=true)
+    .addPanel(
+      latencySLOPanel(serviceType, serviceStage),
       gridPos={
         x: 0,
         y: 1,
         w: 6,
         h: 4,
-    })
-    .addPanel(activeAlertsPanel(serviceType, serviceStage),
+      }
+    )
+    .addPanel(
+      activeAlertsPanel(serviceType, serviceStage),
       gridPos={
         x: 6,
         y: 1,
         w: 18,
         h: 8,
-    })
-    .addPanel(errorRateSLOPanel(serviceType, serviceStage),
+      }
+    )
+    .addPanel(
+      errorRateSLOPanel(serviceType, serviceStage),
       gridPos={
         x: 0,
         y: 5,
         w: 6,
         h: 4,
-    }),
+      }
+    ),
 }

@@ -230,7 +230,7 @@ local rulesFile = {
     name: 'sidekiq-worker-apdex-scores.rules',
     rules: [
       recordingRuleForThresholdAndQueues(threshold, latencyGroups[threshold])
-for threshold in std.filter(excludeInfThreshold, std.objectFields(latencyGroups))
+      for threshold in std.filter(excludeInfThreshold, std.objectFields(latencyGroups))
     ],
   }],
 };

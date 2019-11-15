@@ -60,7 +60,7 @@ dashboard.new(
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", priority="pipeline", environment="$environment"'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage +
-    serviceCatalog.getServiceLinks('sidekiq') +
-    platformLinks.services +
-    [platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq')],
+          serviceCatalog.getServiceLinks('sidekiq') +
+          platformLinks.services +
+          [platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq')],
 }

@@ -34,42 +34,42 @@ dashboard.new(
 .addPanels(keyMetrics.headlineMetricsRow('redis-sidekiq', '$stage', startRow=0))
 .addPanel(serviceHealth.row('redis-sidekiq', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
-row.new(title='Clients'),
+  row.new(title='Clients'),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(redisCommon.clientPanels(serviceType='redis-sidekiq', startRow=1001))
 .addPanel(
-row.new(title='Workload'),
+  row.new(title='Workload'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(redisCommon.workload(serviceType='redis-sidekiq', startRow=2001))
 .addPanel(
-row.new(title='Redis Data'),
+  row.new(title='Redis Data'),
   gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(redisCommon.data(serviceType='redis-sidekiq', startRow=3001))
 .addPanel(
-row.new(title='Replication'),
+  row.new(title='Replication'),
   gridPos={
-      x: 0,
-      y: 4000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 4000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(redisCommon.replication(serviceType='redis-sidekiq', startRow=4001))
@@ -77,7 +77,8 @@ row.new(title='Replication'),
 .addPanel(keyMetrics.keyServiceMetricsRow('redis-sidekiq', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('redis-sidekiq', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis-sidekiq", environment="$environment"'), gridPos={ x: 0, y: 7000 })
-.addPanel(saturationDetail.saturationDetailPanels('redis-cache', 'main', components=[
+.addPanel(
+  saturationDetail.saturationDetailPanels('redis-cache', 'main', components=[
     'cpu',
     'disk_space',
     'memory',
@@ -87,7 +88,8 @@ row.new(title='Replication'),
     'single_node_cpu',
     'single_threaded_cpu',
   ]),
-  gridPos={ x: 0, y: 9000, w: 24, h: 1 })
+  gridPos={ x: 0, y: 9000, w: 24, h: 1 }
+)
 .addPanel(capacityPlanning.capacityPlanningRow('redis-sidekiq', 'main'), gridPos={ x: 0, y: 9000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('redis-sidekiq') + platformLinks.services,

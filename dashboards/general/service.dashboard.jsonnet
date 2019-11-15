@@ -16,12 +16,8 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 
-local generalGraphPanel(
-  title,
-  description=null,
-  linewidth=2,
-  sort='increasing',
-) = graphPanel.new(
+local generalGraphPanel(title, description=null, linewidth=2, sort='increasing') =
+  graphPanel.new(
     title,
     linewidth=linewidth,
     fill=0,
@@ -68,16 +64,16 @@ dashboard.new(
 .addTemplate(templates.sigma)
 .addPanel(serviceHealth.row('$type', '$stage'), gridPos={ x: 0, y: 0 })
 .addPanel(
-row.new(title='🏅 Key Service Metrics'),
+  row.new(title='🏅 Key Service Metrics'),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
-layout.grid([
+  layout.grid([
     keyMetrics.apdexPanel('$type', '$stage'),
     keyMetrics.errorRatesPanel('$type', '$stage'),
     keyMetrics.serviceAvailabilityPanel('$type', '$stage'),
@@ -86,21 +82,21 @@ layout.grid([
   ], startRow=1001)
 )
 .addPanel(
-keyMetrics.keyComponentMetricsRow('$type', '$stage'),
+  keyMetrics.keyComponentMetricsRow('$type', '$stage'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanel(
-nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="$type"'),
+  nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="$type"'),
   gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanel(capacityPlanning.capacityPlanningRow('$type', '$stage'), gridPos={ x: 0, y: 4000 })

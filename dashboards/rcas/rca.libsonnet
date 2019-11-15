@@ -22,43 +22,45 @@ local text = grafana.text;
 {
   rcaLayout(sections)::
     std.flattenArrays(
-      std.mapWithIndex(function(index, section)
-        local panel = if std.objectHas(section, 'panel') then
+      std.mapWithIndex(
+        function(index, section)
+          local panel = if std.objectHas(section, 'panel') then
             section.panel
           else
-          basic.timeseries(
-            title='',
-            query=section.query,
-            legendFormat=if std.objectHas(section, 'legendFormat') then section.legendFormat else '',
-            format='short',
-            interval='1m',
-            linewidth=1,
-            intervalFactor=5,
-          );
-        [
-          text.new(
-            title='',
-            mode='markdown',
-            content=section.description
-          ) + {
-            gridPos: {
-              x: 0,
-              y: index * 12,
-              w: 6,
-              h: 12,
+            basic.timeseries(
+              title='',
+              query=section.query,
+              legendFormat=if std.objectHas(section, 'legendFormat') then section.legendFormat else '',
+              format='short',
+              interval='1m',
+              linewidth=1,
+              intervalFactor=5,
+            );
+          [
+            text.new(
+              title='',
+              mode='markdown',
+              content=section.description
+            ) + {
+              gridPos: {
+                x: 0,
+                y: index * 12,
+                w: 6,
+                h: 12,
+              },
             },
-          },
-          panel {
-            gridPos: {
-              x: 6,
-              y: index * 12,
-              w: 18,
-              h: 12,
+            panel {
+              gridPos: {
+                x: 6,
+                y: index * 12,
+                w: 18,
+                h: 12,
+              },
             },
-          },
 
-        ],
-        sections)
+          ],
+        sections
+      )
     ),
 
 }

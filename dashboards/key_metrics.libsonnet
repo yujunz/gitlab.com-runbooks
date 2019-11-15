@@ -12,13 +12,8 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 
-local generalGraphPanel(
-  title,
-  description=null,
-  linewidth=2,
-  sort='increasing',
-  legend_show=true,
-) = graphPanel.new(
+local generalGraphPanel(title, description=null, linewidth=2, sort='increasing', legend_show=true) =
+  graphPanel.new(
     title,
     linewidth=linewidth,
     fill=0,
@@ -71,7 +66,7 @@ local generalGraphPanel(
         legendFormat='{{ type }} service',
       )
     )
-  .addTarget(  // Legacy metric - remove 2020-01-01
+    .addTarget(  // Legacy metric - remove 2020-01-01
       promQuery.target(
         |||
           min(
@@ -126,131 +121,131 @@ local generalGraphPanel(
       show=false,
     ),
 
-componentApdexPanel(serviceType, serviceStage)::
-  local formatConfig = {
-    serviceType: serviceType,
-    serviceStage: serviceStage,
-  };
-  generalGraphPanel(
-    'Component Latency: Apdex',
-    description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
-    linewidth=1,
-    sort='increasing',
-  )
-  .addTarget(  // Primary metric
-    promQuery.target(
-      |||
-        min(
-          min_over_time(
-            gitlab_component_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
-          )
-        ) by (component)
-      ||| % formatConfig,
-      legendFormat='{{ component }} component',
+  componentApdexPanel(serviceType, serviceStage)::
+    local formatConfig = {
+      serviceType: serviceType,
+      serviceStage: serviceStage,
+    };
+    generalGraphPanel(
+      'Component Latency: Apdex',
+      description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
+      linewidth=1,
+      sort='increasing',
     )
-  )
-  .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
-    promQuery.target(
-      |||
-        avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(serviceType)s"})
-      ||| % formatConfig,
-      interval='5m',
-      legendFormat='SLO',
+    .addTarget(  // Primary metric
+      promQuery.target(
+        |||
+          min(
+            min_over_time(
+              gitlab_component_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+            )
+          ) by (component)
+        ||| % formatConfig,
+        legendFormat='{{ component }} component',
+      )
+    )
+    .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
+      promQuery.target(
+        |||
+          avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(serviceType)s"})
+        ||| % formatConfig,
+        interval='5m',
+        legendFormat='SLO',
+      ),
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='percentunit',
+      max=1,
+      label='Apdex %',
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
     ),
-  )
-  .resetYaxes()
-  .addYaxis(
-    format='percentunit',
-    max=1,
-    label='Apdex %',
-  )
-  .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
 
-errorRatesPanel(serviceType, serviceStage, compact=false, includeLastWeek=true)::
-  local formatConfig = {
-    serviceType: serviceType,
-    serviceStage: serviceStage,
-  };
-  generalGraphPanel(
-    'Error Ratios',
-    description='Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better',
-    sort=0,
-    legend_show=!compact,
-    linewidth=if compact then 1 else 2,
-  )
-  .addTarget(  // Primary metric
-    promQuery.target(
-      |||
-        max(
-          max_over_time(
-            gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
-          )
-        ) by (type)
-      ||| % formatConfig,
-      legendFormat='{{ type }} service',
+  errorRatesPanel(serviceType, serviceStage, compact=false, includeLastWeek=true)::
+    local formatConfig = {
+      serviceType: serviceType,
+      serviceStage: serviceStage,
+    };
+    generalGraphPanel(
+      'Error Ratios',
+      description='Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better',
+      sort=0,
+      legend_show=!compact,
+      linewidth=if compact then 1 else 2,
     )
-  )
-  .addTarget(  // Legacy metric - remove 2020-01-01
-    promQuery.target(
-      |||
-        max(
-          max_over_time(
-            gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage=""}[$__interval]
-          )
-        ) by (type)
-      ||| % formatConfig,
-      legendFormat='{{ type }} service (legacy)',
+    .addTarget(  // Primary metric
+      promQuery.target(
+        |||
+          max(
+            max_over_time(
+              gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
+            )
+          ) by (type)
+        ||| % formatConfig,
+        legendFormat='{{ type }} service',
+      )
     )
-  )
-  .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
-    promQuery.target(
-      |||
-        avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(serviceType)s"})
-      ||| % formatConfig,
-      interval='5m',
-      legendFormat='Degradation SLO',
+    .addTarget(  // Legacy metric - remove 2020-01-01
+      promQuery.target(
+        |||
+          max(
+            max_over_time(
+              gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage=""}[$__interval]
+            )
+          ) by (type)
+        ||| % formatConfig,
+        legendFormat='{{ type }} service (legacy)',
+      )
+    )
+    .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
+      promQuery.target(
+        |||
+          avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(serviceType)s"})
+        ||| % formatConfig,
+        interval='5m',
+        legendFormat='Degradation SLO',
+      ),
+    )
+    .addTarget(  // Outage level SLO
+      promQuery.target(
+        |||
+          2 * (avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(serviceType)s"}))
+        ||| % formatConfig,
+        interval='5m',
+        legendFormat='Outage SLO',
+      ),
+    )
+    .addTarget(  // Last week
+      promQuery.target(
+        |||
+          max(
+            max_over_time(
+              gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval] offset 1w
+            )
+          ) by (type)
+        ||| % formatConfig,
+        legendFormat='last week',
+      ) + {
+        [if !includeLastWeek then 'hide']: true,
+      }
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='percentunit',
+      min=0,
+      label=if compact then '' else '% Requests in Error',
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
     ),
-  )
-  .addTarget(  // Outage level SLO
-    promQuery.target(
-      |||
-        2 * (avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(serviceType)s"}))
-      ||| % formatConfig,
-      interval='5m',
-      legendFormat='Outage SLO',
-    ),
-  )
-  .addTarget(  // Last week
-    promQuery.target(
-      |||
-        max(
-          max_over_time(
-            gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval] offset 1w
-          )
-        ) by (type)
-      ||| % formatConfig,
-      legendFormat='last week',
-    ) + {
-      [if !includeLastWeek then 'hide']: true,
-    }
-  )
-  .resetYaxes()
-  .addYaxis(
-    format='percentunit',
-    min=0,
-    label=if compact then '' else '% Requests in Error',
-  )
-  .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
 
   componentErrorRates(serviceType, serviceStage)::
     local formatConfig = {
@@ -524,19 +519,19 @@ errorRatesPanel(serviceType, serviceStage, compact=false, includeLastWeek=true):
     ], cols=4, rowHeight=5, startRow=startRow + 1),
 
   keyServiceMetricsRow(serviceType, serviceStage):: row.new(title='🏅 Key Service Metrics', collapse=true)
-    .addPanels(layout.grid([
-      self.apdexPanel(serviceType, serviceStage),
-      self.errorRatesPanel(serviceType, serviceStage),
-      self.serviceAvailabilityPanel(serviceType, serviceStage),
-      self.qpsPanel(serviceType, serviceStage),
-      self.saturationPanel(serviceType, serviceStage),
-    ])),
+                                                    .addPanels(layout.grid([
+    self.apdexPanel(serviceType, serviceStage),
+    self.errorRatesPanel(serviceType, serviceStage),
+    self.serviceAvailabilityPanel(serviceType, serviceStage),
+    self.qpsPanel(serviceType, serviceStage),
+    self.saturationPanel(serviceType, serviceStage),
+  ])),
   keyComponentMetricsRow(serviceType, serviceStage):: row.new(title='🔩 Service Component Metrics', collapse=true)
-    .addPanels(layout.grid([
-      self.componentApdexPanel(serviceType, serviceStage),
-      self.componentErrorRates(serviceType, serviceStage),
-      self.componentAvailabilityPanel(serviceType, serviceStage),
-      self.componentQpsPanel(serviceType, serviceStage),
-      self.componentSaturationPanel(serviceType, serviceStage),
-    ])),
+                                                      .addPanels(layout.grid([
+    self.componentApdexPanel(serviceType, serviceStage),
+    self.componentErrorRates(serviceType, serviceStage),
+    self.componentAvailabilityPanel(serviceType, serviceStage),
+    self.componentQpsPanel(serviceType, serviceStage),
+    self.componentSaturationPanel(serviceType, serviceStage),
+  ])),
 }

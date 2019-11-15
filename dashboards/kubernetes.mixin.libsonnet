@@ -20,5 +20,5 @@ local mixin = kubernetes {
     uid: null,
     timezone: 'UTC',
   }
-for x in std.objectFields(mixin.grafanaDashboards)
+  for x in std.objectFields(mixin.grafanaDashboards)
 }
