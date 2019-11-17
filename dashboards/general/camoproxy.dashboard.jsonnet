@@ -82,7 +82,7 @@ local eventPanel() = generalGraphPanel(
   )
   .addTarget(
     promQuery.target(
-      'sum(rate(responseFailed{environment="$environment"}[$__interval]))',
+      'sum(rate(camo_proxy_reponses_failed_total{environment="$environment"}[$__interval]))',
       interval='30s',
       legendFormat='Failed Responses',
     )
