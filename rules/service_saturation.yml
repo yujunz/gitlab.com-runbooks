@@ -109,7 +109,7 @@ groups:
   # 503s and downstream saturation on unicorn/puma workers
   # leading to "mini-outages"
   #
-  # TECHNICAL DEBT: the 50 value is hardcoded. It should be the same as the `pool_size` value
+  # TECHNICAL DEBT: the 75 value is hardcoded. It should be the same as the `pool_size` value
   # in pgbouncer and should match the value in `magic_numbers.libsonnet`
   # See also https://gitlab.com/gitlab-org/gitlab/issues/36353
   - record: gitlab_component_saturation:ratio
@@ -125,7 +125,7 @@ groups:
             pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production"}
           )
           /
-          50
+          75
       ) by (type, tier, stage, environment), 1)
 
   # type: pgbouncer, component: pgbouncer_async_pool
@@ -133,7 +133,7 @@ groups:
   # its used by Sidekiq background jobs and some extra
   # delay should not have a major impact on performance
   #
-  # TECHNICAL DEBT: the 75 value is hardcoded. It should be the same as the `pool_size` value
+  # TECHNICAL DEBT: the 50 value is hardcoded. It should be the same as the `pool_size` value
   # in pgbouncer and should match the value in `magic_numbers.libsonnet`
   # See also https://gitlab.com/gitlab-org/gitlab/issues/36353
   - record: gitlab_component_saturation:ratio
