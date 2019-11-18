@@ -77,11 +77,18 @@ Options = {
   move_amount: 0,
   timeout: 10,
   max_failures: 3,
+  clauses: {
+    delete_error: nil,
+    pending_delete: false,
+    project_statistics: {commit_count: 1..Float::INFINITY},
+    mirror: false,
+  },
   verify_only: false,
   checksum: false,
   list: false,
   black_list: [],
   refresh_statistics: false,
+  include_mirrors: false,
   stats: [:commit_count, :storage_size, :repository_size],
   group: nil,
   env: :production,
@@ -156,6 +163,10 @@ def parse_args
 
   opt.on('--group=<GROUPNAME>', String, 'Filter projects by group') do |group|
     Options[:group] = group
+  end
+
+  opt.on('-M', '--include-mirrors', 'Include mirror repositories') do |include_mirrors|
+    Options[:include_mirrors] = true
   end
 
   opt.on('--staging', 'Use the staging environment') do |env|
@@ -393,20 +404,14 @@ class Rebalancer
     end
     Project.transaction do
       ActiveRecord::Base.connection.execute 'SET statement_timeout = 600000'
-      clauses = {
-        repository_storage: current_file_server,
-        delete_error: nil,
-        pending_delete: false,
-        project_statistics: {commit_count: 1..Float::INFINITY},
-      }
+      clauses = Options[:clauses].dup
+      clauses.merge!(repository_storage: current_file_server)
       if namespace_id
         log.info "Filtering projects by group: #{group}"
         clauses.merge!(namespace_id: namespace_id)
       end
-      Project
-        .joins(:statistics)
-        .where(**clauses)
-        .size
+      clauses.delete(:mirror) if Options[:include_mirrors]
+      Project.joins(:statistics).where(**clauses).size
     end
   end
 
@@ -429,21 +434,17 @@ class Rebalancer
     project_identifiers = []
     Project.transaction do
       ActiveRecord::Base.connection.execute 'SET statement_timeout = 600000'
-      clauses = {
-        repository_storage: current_file_server,
-        delete_error: nil,
-        pending_delete: false,
-        project_statistics: {commit_count: 1..Float::INFINITY},
-      }
+      clauses = Options[:clauses].dup
+      clauses.merge!(repository_storage: current_file_server)
       if namespace_id
         log.info "Filtering projects by group: #{group}"
         clauses.merge!(namespace_id: namespace_id)
       end
-      query = Project
-        .joins(:statistics)
-        .where(**clauses)
-        .order('project_statistics.repository_size DESC')
-        .order('last_activity_at ASC')
+      clauses.delete(:mirror) if Options[:include_mirrors]
+      query = Project.joins(:statistics).
+        where(**clauses).
+        order('project_statistics.repository_size DESC').
+        order('last_activity_at ASC')
       query = query.limit(limit) if limit > 0
       project_identifiers = query.pluck(:id)
     end
