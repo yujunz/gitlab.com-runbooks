@@ -8,7 +8,7 @@
                     "subdir": ""
                 }
             },
-            "version": "69bc267211790a1c3f4ea6e6211f3e8ffe22f987"
+            "version": "cb9e43f59558ff6338a76ae1806a0fb4b70b1b16"
         },
         {
             "name": "kubernetes-mixin",
@@ -18,7 +18,7 @@
                     "subdir": ""
                 }
             },
-            "version": "5107f34c39baf5360ed0be84ea9a0cc5fb25fabc"
+            "version": "23416282b86f75bff14bf94732c397764d7ba9db"
         },
         {
             "name": "grafonnet",
@@ -28,17 +28,17 @@
                     "subdir": "grafonnet"
                 }
             },
-            "version": "69bc267211790a1c3f4ea6e6211f3e8ffe22f987"
+            "version": "cb9e43f59558ff6338a76ae1806a0fb4b70b1b16"
         },
         {
             "name": "grafana-builder",
             "source": {
                 "git": {
-                    "remote": "https://github.com/kausalco/public",
+                    "remote": "https://github.com/grafana/jsonnet-libs",
                     "subdir": "grafana-builder"
                 }
             },
-            "version": "dbc94ab71afa538b2cf467f06751b1836920dce9"
+            "version": "250bf5499d81e5e77e1e5ed2242c89ad27485aec"
         }
     ]
 }
