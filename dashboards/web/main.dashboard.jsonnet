@@ -20,6 +20,7 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
+local saturationDetail = import 'saturation_detail.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -68,7 +69,16 @@ row.new(title='Rails'),
 .addPanel(keyMetrics.keyServiceMetricsRow('web', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('web', '$stage'), gridPos={ x: 0, y: 5000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="web", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
-.addPanel(capacityPlanning.capacityPlanningRow('web', '$stage'), gridPos={ x: 0, y: 7000 })
+.addPanel(saturationDetail.saturationDetailPanels('web', '$stage', components=[
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'single_node_cpu',
+    'single_node_unicorn_workers',
+    'workers',
+  ]), gridPos={ x: 0, y: 7000, w: 24, h: 1 })
+.addPanel(capacityPlanning.capacityPlanningRow('web', '$stage'), gridPos={ x: 0, y: 8000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('web') + platformLinks.services,
 }
