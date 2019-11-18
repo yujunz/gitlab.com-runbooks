@@ -97,8 +97,11 @@ find_dashboards "$@" | while read -r line; do
   # Note: create folders with `create-grafana-folder.sh` to configure the UID
   folderId=$(resolve_folder_id "${folder}")
 
+  uploader_identifier="${CI_JOB_URL:-$USER}"
+  description="Uploaded by ${uploader_identifier} at $(date -u)"
+
   # Generate the POST body
-  body=$(echo "$dashboard" | jq -c --arg uid "$uid" --arg folder "$folder" --arg folderId "$folderId" '
+  body=$(echo "$dashboard" | jq -c --arg uid "$uid" --arg folder "$folder" --arg folderId "$folderId" --arg description "$description" '
  {
     dashboard: .,
     folderId: $folderId | tonumber,
@@ -107,7 +110,8 @@ find_dashboards "$@" | while read -r line; do
     dashboard: {
       uid: $uid,
       title: "\($folder): \(.title)",
-      tags: (["managed", $folder] + .tags)
+      tags: (["managed", $folder] + .tags),
+      description: "\($description)"
     }
   }
 ')
