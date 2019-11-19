@@ -171,7 +171,7 @@ componentApdexPanel(serviceType, serviceStage)::
     show=false,
   ),
 
-errorRatesPanel(serviceType, serviceStage, compact=false)::
+errorRatesPanel(serviceType, serviceStage, compact=false, includeLastWeek=true)::
   local formatConfig = {
     serviceType: serviceType,
     serviceStage: serviceStage,
@@ -235,7 +235,9 @@ errorRatesPanel(serviceType, serviceStage, compact=false)::
         ) by (type)
       ||| % formatConfig,
       legendFormat='last week',
-    )
+    ) + {
+      [if !includeLastWeek then 'hide']: true,
+    }
   )
   .resetYaxes()
   .addYaxis(
