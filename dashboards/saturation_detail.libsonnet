@@ -13,11 +13,17 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local layout = import 'layout.libsonnet';
 local magicNumbers = import 'magic_numbers.libsonnet';
+local text = grafana.text;
 
 local DETAILS = {
   active_db_connections: {
     title: 'Active DB Connection Saturation',
-    description: 'Active db connection saturation per node.',
+    description: |||
+      Active db connection saturation per node.
+
+      Postgres is configured to use a maximum number of connections. When this resource is saturated,
+      connections may queue.
+    |||,
     query: |||
       sum without (state, datname) (
         pg_stat_activity_count{datname="gitlabhq_production", state!="idle", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
@@ -29,7 +35,15 @@ local DETAILS = {
 
   cgroup_memory: {
     title: 'Cgroup Memory Saturation per Node',
-    description: 'Cgroup memory saturation per node.',
+    description: |||
+      Cgroup memory saturation per node.
+
+      Some services, notably Gitaly, are configured to run within a cgroup with a memory limit lower than the
+      memory limit for the node. This ensures that a traffic spike to Gitaly does not affect other services on the node.
+
+      If this resource is becoming saturated, this may indicate traffic spikes to Gitaly, abuse or possibly resource leaks in
+      the application. Gitaly or other git processes may be killed by the OOM killer when this resource is saturated.
+    |||,
     query: |||
       (
         container_memory_usage_bytes{id="/system.slice/gitlab-runsvdir.service", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} -
@@ -44,7 +58,12 @@ local DETAILS = {
 
   pgbouncer_async_pool: {
     title: 'Postgres Async (Sidekiq) Connection Pool Saturation per Node',
-    description: 'Postgres connection pool saturation per database node.',
+    description: |||
+      Postgres connection pool saturation per database node.
+
+      Sidekiq maintains it's own pgbouncer connection pool. When this resource is saturated, database operations may
+      queue, leading to additional latency in background processing.
+    |||,
     query: |||
       (
         pgbouncer_pools_server_active_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"} +
@@ -60,7 +79,13 @@ local DETAILS = {
 
   pgbouncer_sync_pool: {
     title: 'Postgres Sync (Web/API) Connection Pool Saturation per Node',
-    description: 'Postgres sync connection pool saturation per database node.',
+    description: |||
+      Postgres sync connection pool saturation per database node.
+
+      Web/api/git applications use a separate connection pool to sidekiq.
+
+      When this resource is saturated, web/api database operations may queue, leading to unicorn/puma saturation and 503 errors in the web.
+    |||,
     query: |||
       (
         pgbouncer_pools_server_active_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"} +
@@ -76,7 +101,12 @@ local DETAILS = {
 
   cpu: {
     title: 'Average CPU Saturation per Node',
-    description: 'Average CPU per Node.',
+    description: |||
+      Average CPU per Node.
+
+      This resource measures all CPU across a fleet. If it is becoming saturated, it may indicate that the fleet needs horizontal or
+      vertical scaling.
+    |||,
     query: |||
         avg(1 - rate(node_cpu_seconds_total{mode="idle", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
       |||,
@@ -85,7 +115,9 @@ local DETAILS = {
 
   disk_sustained_read_iops: {
     title: 'Disk Sustained Read IOPS Saturation per Node',
-    description: 'Disk sustained read IOPS saturation per node.',
+    description: |||
+      Disk sustained read IOPS saturation per node.
+    |||,
     query: |||
       rate(node_disk_reads_completed_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_read_iops_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
@@ -94,7 +126,9 @@ local DETAILS = {
 
   disk_sustained_read_throughput: {
     title: 'Disk Sustained Read Throughput Saturation per Node',
-    description: 'Disk sustained read throughput saturation per node.',
+    description: |||
+      Disk sustained read throughput saturation per node.
+    |||,
     query: |||
       rate(node_disk_read_bytes_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_read_throughput_bytes_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
@@ -103,7 +137,9 @@ local DETAILS = {
 
   disk_space: {
     title: 'Disk Utilization per Device per Node',
-    description: 'Disk utilization per device per node.',
+    description: |||
+      Disk utilization per device per node.
+    |||,
     query: |||
         max(
           (
@@ -122,7 +158,16 @@ local DETAILS = {
 
   disk_sustained_write_iops: {
     title: 'Disk Sustained Write IOPS Saturation per Node',
-    description: 'Disk sustained write IOPS saturation per node.',
+    description: |||
+      Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
+      maximum write IOPS value. This value can be exceeded for brief periods.
+
+      If a single node is consistently reaching saturation, it may indicate a noisy-neighbour repository,
+      possible abuse or it may indicate that the node needs rebalancing.
+
+      More information can be found at
+      https://cloud.google.com/compute/docs/disks/performance.
+    |||,
     query: |||
       rate(node_disk_writes_completed_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_write_iops_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
@@ -131,7 +176,16 @@ local DETAILS = {
 
   disk_sustained_write_throughput: {
     title: 'Disk Sustained Write Throughput Saturation per Node',
-    description: 'Disk sustained write throughput saturation per node.',
+    description: |||
+      Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
+      maximum write throughput value. This value can be exceeded for brief periods.
+
+      If a single node is consistently reaching saturation, it may indicate a noisy-neighbour repository,
+      possible abuse or it may indicate that the node needs rebalancing.
+
+      More information can be found at
+      https://cloud.google.com/compute/docs/disks/performance.
+    |||,
     query: |||
       rate(node_disk_written_bytes_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_write_throughput_bytes_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
@@ -140,7 +194,9 @@ local DETAILS = {
 
   memory: {
     title: 'Memory Utilization per Node',
-    description: 'Disk utilization per device per node.',
+    description: |||
+      Memory utilization per device per node.
+    |||,
     query: |||
       instance:node_memory_utilization:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
     |||,
@@ -149,7 +205,13 @@ local DETAILS = {
 
   open_fds: {
     title: 'Open file descriptor saturation per instance',
-    description: 'Open file descriptor saturation per instance.',
+    description: |||
+      Open file descriptor saturation per instance.
+
+      Saturation on file descriptor limits may indicate a resource-descriptor leak in the application.
+
+      As a temporary fix, you may want to consider restarting the affected process.
+    |||,
     query: |||
       max(
         label_replace(
@@ -172,7 +234,12 @@ local DETAILS = {
 
   pgbouncer_single_core: {
     title: 'PGBouncer Single Core per Node',
-    description: 'PGBouncer single core saturation per node.',
+    description: |||
+      PGBouncer single core saturation per node.
+
+      PGBouncer is a single threaded application. Under high volumes this resource may become saturated,
+      and additional pgbouncer nodes may need to be provisioned.
+    |||,
     query: |||
       sum(
         rate(
@@ -185,7 +252,14 @@ local DETAILS = {
 
   private_runners: {
     title: 'Private Runners Saturation',
-    description: 'Private runners saturation per instance.',
+    description: |||
+      Private runners saturation per instance.
+
+      Each runner manager has a maximum number of runners that it can coordinate at any single moment.
+
+      When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+      or scaling the runner managers vertically and increasing their maximum runner capacity.
+    |||,
     query: |||
       sum without (stage, state, executor_stage) (
         gitlab_runner_jobs{job="private-runners"}
@@ -201,7 +275,14 @@ local DETAILS = {
 
   redis_clients: {
     title: 'Redis Client Saturation per Node',
-    description: 'Redis client saturation per node.',
+    description: |||
+      Redis client saturation per node.
+
+      A redis server has a maximum number of clients that can connect. When this resource is saturated,
+      new clients may fail to connect.
+
+      More details at https://redis.io/topics/clients#maximum-number-of-clients
+    |||,
     query: |||
       redis_connected_clients{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
       /
@@ -212,7 +293,15 @@ local DETAILS = {
 
   redis_memory: {
     title: 'Redis Memory Saturation per Node',
-    description: 'Redis memory saturation per node.',
+    description: |||
+      Redis memory saturation per node.
+
+      As Redis memory saturates node memory, the likelyhood of OOM kills, possibly to the Redis process,
+      become more likely.
+
+      For caches, consider lowering the `maxmemory` setting in Redis. For non-caching Redis instances,
+      this has been caused in the past by credential stuffing, leading to large numbers of web sessions.
+    |||,
     query: |||
       max(
         label_replace(redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}, "memtype", "rss","","")
@@ -227,7 +316,14 @@ local DETAILS = {
 
   shared_runners: {
     title: 'Shared Runner Saturation',
-    description: 'Shared runner saturation per instance.',
+    description: |||
+      Shared runner saturation per instance.
+
+      Each runner manager has a maximum number of runners that it can coordinate at any single moment.
+
+      When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+      or scaling the runner managers vertically and increasing their maximum runner capacity.
+    |||,
     query: |||
       sum without (stage, state, executor_stage) (
         gitlab_runner_jobs{job="shared-runners"}
@@ -243,7 +339,14 @@ local DETAILS = {
 
   shared_runners_gitlab: {
     title: 'Shared Runner GitLab Saturation',
-    description: 'Shared runners saturation per instance.',
+    description: |||
+      Shared runners saturation per instance.
+
+      Each runner manager has a maximum number of runners that it can coordinate at any single moment.
+
+      When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+      or scaling the runner managers vertically and increasing their maximum runner capacity.
+    |||,
     query: |||
       sum without (stage, state, executor_stage) (
         gitlab_runner_jobs{job="shared-runners-gitlab-org"}
@@ -259,7 +362,14 @@ local DETAILS = {
 
   sidekiq_workers: {
     title: 'Sidekiq Worker Saturation per Node',
-    description: 'Sidekiq worker saturation per node.',
+    description: |||
+      Sidekiq worker saturation per node.
+
+      This metric represents the percentage of available threads*workers that are utilized actively processing jobs.
+
+      When this metric is saturated, new Sidekiq jobs will queue. Depending on whether or not the jobs are latency sensitive,
+      this could impact user experience.
+    |||,
     query: |||
       sum without (queue) (sidekiq_running_jobs{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"})
       /
@@ -270,7 +380,12 @@ local DETAILS = {
 
   single_node_cpu: {
     title: 'Average CPU Saturation per Node',
-    description: 'Average CPU per Node.',
+    description: |||
+      Average CPU per Node.
+
+      If average CPU is satured, it may indicate that a fleet is in need to horizontal or vertical scaling. It may also indicate
+      imbalances in load in a fleet.
+    |||,
     component: 'single_node_cpu',
     query: |||
         avg(1 - rate(node_cpu_seconds_total{mode="idle", type="%(serviceType)s", environment="$environment", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
@@ -280,7 +395,15 @@ local DETAILS = {
 
   single_node_unicorn_workers: {
     title: 'Unicorn Worker Saturation per Node',
-    description: 'Worker saturation per node.',
+    description: |||
+      Unicorn worker saturation per node.
+
+      Each concurrent HTTP request being handled in the application needs a dedicated unicorn worker. When this resource is saturated,
+      we will see unicorn queuing taking place. Leading to slowdowns across the application.
+
+      Unicorn saturation is usually caused by latency problems in downstream services: usually Gitaly or Postgres, but possibly also Redis.
+      Unicorn saturation can also be caused by traffic spikes.
+    |||,
     component: 'single_node_unicorn_workers',
     query: |||
       sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
@@ -292,7 +415,13 @@ local DETAILS = {
 
   single_threaded_cpu: {
     title: 'Redis CPU Saturation per Node',
-    description: 'Redis CPU per node.',
+    description: |||
+      Redis CPU per node.
+
+      Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
+      When this resource is saturated, major slowdowns should be expected across the application, so avoid if at all
+      possible.
+    |||,
     component: 'single_threaded_cpu',
     query: |||
       instance:redis_cpu_usage:rate1m{environment="$environment", type="%(serviceType)s"}
@@ -302,7 +431,15 @@ local DETAILS = {
 
   workers: {
     title: 'Unicorn Worker Saturation per Node',
-    description: 'Worker saturation per node.',
+    description: |||
+      Unicorn worker saturation per node.
+
+      Each concurrent HTTP request being handled in the application needs a dedicated unicorn worker. When this resource is saturated,
+      we will see unicorn queuing taking place. Leading to slowdowns across the application.
+
+      Unicorn saturation is usually caused by latency problems in downstream services: usually Gitaly or Postgres, but possibly also Redis.
+      Unicorn saturation can also be caused by traffic spikes.
+    |||,
     query: |||
       sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
       /
@@ -403,4 +540,15 @@ local DETAILS = {
         self.componentSaturationPanel(component, serviceType, serviceStage)
 for component in components
       ])),
+
+  componentSaturationHelpPanel(component)::
+    local componentDetails = DETAILS[component];
+
+    text.new(
+      title='Help',
+      mode='markdown',
+      content=componentDetails.description + |||
+        * [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&&state=all&label_name[]=GitLab.com%%20Resource%%20Saturation&search=%s)
+      ||| % [component]
+    ),
 }

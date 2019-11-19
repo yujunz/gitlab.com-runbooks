@@ -14,7 +14,8 @@ local annotation = grafana.annotation;
   saturationDashboard(
     dashboardTitle,
     component,
-    panel
+    panel,
+    helpPanel
     )::
     dashboard.new(
       dashboardTitle,
@@ -33,7 +34,8 @@ local annotation = grafana.annotation;
     .addTemplate(templates.environment)
     .addTemplate(templates.type)
     .addTemplate(templates.stage)
-    .addPanels(layout.grid([panel], cols=1, rowHeight=20))
+    .addPanel(panel, gridPos={ x: 0, y: 0, h: 20, w: 24 })
+    .addPanel(helpPanel, gridPos={ x: 0, y: 1000, h: 6, w: 24 })
     + {
       links+: platformLinks.parameterizedServiceLink +
         platformLinks.services +
@@ -50,6 +52,7 @@ local annotation = grafana.annotation;
     self.saturationDashboard(
       dashboardTitle=component + ': Saturation Detail',
       component=component,
-      panel=saturationDetail.componentSaturationPanel(component, '$type', '$stage')
+      panel=saturationDetail.componentSaturationPanel(component, '$type', '$stage'),
+      helpPanel=saturationDetail.componentSaturationHelpPanel(component),
     ),
 }
