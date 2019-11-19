@@ -1,3 +1,5 @@
+*Last Reviewed for accuracy:*  2019-11-18
+
 ## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -5,6 +7,10 @@
 
 
 - [Quick orientation](#quick-orientation)
+- [Diagrams](#diagrams)
+  - [Path from Rails app to primary db](#path-from-rails-app-to-primary-db)
+  - [Path from Rails app to replica db](#path-from-rails-app-to-replica-db)
+  - [Normal pattern of REST calls from Patroni to Consul](#normal-pattern-of-rest-calls-from-patroni-to-consul)
 - [Where do the components run?](#where-do-the-components-run)
 - [Links to external docs](#links-to-external-docs)
 - [Quick reference commands](#quick-reference-commands)
@@ -59,6 +65,225 @@ Here is a brief summary of how Postgres database access is supported by Patroni,
 
 See [here](#background-details) and [here](#details-of-how-patroni-uses-consul) for more details on the purpose, behaviors, and interactions of each service.
 
+## Diagrams
+
+### Path from Rails app to primary db
+
+```mermaid
+graph LR
+    subgraph "Web Host"
+        Rails
+    end
+
+    subgraph "Network forwarding rule"
+        ILB["Load balancer virtual IP"]
+    end
+
+    subgraph "PgBouncer Host A"
+        PgBouncer1
+    end
+
+    subgraph "PgBouncer Host B"
+        PgBouncer2
+    end
+
+    subgraph "DB Host"
+        Postgres["Postgres (read/write primary mode)"]
+    end
+
+    Rails --> ILB
+
+    ILB --> PgBouncer1
+    ILB --> PgBouncer2
+
+    PgBouncer1 --> Postgres
+    PgBouncer2 --> Postgres
+```
+
+Rails is configured to connect to the primary db using a static host/port pointing to the ILB:
+
+```shell
+$ sudo egrep 'host:|port:' /var/opt/gitlab/gitlab-rails/etc/database.yml
+  host: "pgbouncer.int.gprd.gitlab.net"
+  port: 6432
+
+$ dig +short pgbouncer.int.gprd.gitlab.net
+10.217.4.5
+```
+
+Note that even though this is an internal-only IP address, that DNS `A` record is served by our public DNS provider, AWS Route 53:
+
+```shell
+$ dig +noall +authority -t SOA pgbouncer.int.gprd.gitlab.net
+gitlab.net.    812    IN    SOA    ns-1532.awsdns-63.org. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+```
+
+The ILB (a Google Internal TCP/UDP Load Balancer) is just a set of network configurations, not an in-line proxy for the traffic.  Its forwarding-rule routes each new connection to one of the registered backends (in this case, dedicated PgBouncer hosts).  For details on how to inspect the ILB's components, see section [Internal Loadbalancer (ILB)](#internal-loadbalancer-ilb).
+
+The dedicated PgBouncer hosts proxy traffic to Postgres.  They discover from Consul which Patroni node is currently the primary db.
+
+```shell
+$ sudo cat /var/opt/gitlab/pgbouncer/databases.ini | grep 'host='
+gitlabhq_production = host=master.patroni.service.consul port=5432 pool_size=75 auth_user=pgbouncer
+gitlabhq_production_sidekiq = host=master.patroni.service.consul port=5432 pool_size=50 auth_user=pgbouncer dbname=gitlabhq_production
+
+$ dig +short master.patroni.service.consul
+10.220.16.106
+
+$ dig +short master.patroni.service.consul | xargs -i dig +short -x {}
+patroni-06-db-gprd.c.gitlab-production.internal.
+```
+
+Note that PgBouncer uses the default system DNS resolver, not Consul directly.  We run `dnsmasq` on these hosts with a configuration to recurse to the Consul agent's DNS port (8600), so that PgBouncer's service discovery queries work properly.
+
+```shell
+$ cat /etc/dnsmasq.d/10-consul
+server=/consul/127.0.0.1#8600
+# Disable caching
+cache-size=0
+```
+
+PgBouncer frequently rechecks this DNS query to Consul, so it can respond promptly if a Patroni failover occurs.
+
+```shell
+$ sudo cat /var/opt/gitlab/pgbouncer/pgbouncer.ini | grep 'dns_.*_ttl'
+dns_max_ttl = 2.0
+dns_nxdomain_ttl = 15.0
+```
+
+
+### Path from Rails app to replica db
+
+```mermaid
+graph LR
+    subgraph "Web Host"
+        Rails
+    end
+
+    subgraph "DB Host"
+        PgBouncer1
+        PgBouncer2
+        PgBouncer3
+        Postgres["Postgres (read-only replica mode)"]
+    end
+
+    Rails --> PgBouncer1
+    Rails --> PgBouncer2
+    Rails --> PgBouncer3
+
+    PgBouncer1 --> Postgres
+    PgBouncer2 --> Postgres
+    PgBouncer3 --> Postgres
+```
+
+Rails is configured to connect to the read-only replca dbs using Consul service discovery.  Rails sends a DNS query to the local Consul agent to get a set of DNS `SRV` (service) records.  This provides a list of IP and port combinations to reach all available PgBouncer instances.
+
+```shell
+$ sudo egrep 'load_balancing:' /var/opt/gitlab/gitlab-rails/etc/database.yml
+  load_balancing: {"hosts":[],"discover":{"record":"db-replica.service.consul.","nameserver":"127.0.0.1","port":8600,"use_tcp":true,"record_type":"SRV"}}
+
+$ dig +short -t SRV -p 8600 @127.0.0.1 db-replica.service.consul. | wc -l
+27
+
+$ dig +short -t SRV -p 8600 @127.0.0.1 db-replica.service.consul. | sort -V -k4 -k3
+1 1 6432 patroni-02-db-gprd.node.east-us-2.consul.
+1 1 6433 patroni-02-db-gprd.node.east-us-2.consul.
+1 1 6434 patroni-02-db-gprd.node.east-us-2.consul.
+1 1 6432 patroni-03-db-gprd.node.east-us-2.consul.
+1 1 6433 patroni-03-db-gprd.node.east-us-2.consul.
+1 1 6434 patroni-03-db-gprd.node.east-us-2.consul.
+...
+```
+
+
+### Normal pattern of REST calls from Patroni to Consul
+
+Patroni agent's "loop" periodically runs a sequence of calls to Consul.  Each of these REST calls from Patroni agent to Consul agent results in a single corresponding RPC call from Consul agent to Consul server:
+
+```mermaid
+sequenceDiagram
+    participant PatroniAgent
+    participant ConsulAgent
+    participant ConsulServer
+
+    PatroniAgent->>+ConsulAgent: REST call
+    ConsulAgent->>+ConsulServer: RPC call
+    ConsulServer->>-ConsulAgent: RPC response
+    ConsulAgent->>-PatroniAgent: REST response
+```
+
+The normal healthy sequence of periodic calls is slightly different for the Patroni leader versus the Patroni replicas.
+
+**Patroni leader:**
+
+| REST call                                                                   | REST response                       | Purpose                                                                   |
+| --------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------- |
+| `GET /v1/kv/service/[CLUSTER_NAME]/?recurse=1`                              | All Patroni-related objects as JSON | Get complete state of Patroni cluster                                     |
+| `PUT /v1/session/renew/[SESSION_ID]`                                        | Session object as JSON              | Renew TTL of this Patroni node's consul session                           |
+| `PUT /v1/kv/service/[CLUSTER_NAME]/optime/leader`                           | Leader object as JSON               | Write latest Postgres WAL location of primary db as Patroni leader optime |
+| `PUT /v1/kv/service/[CLUSTER_NAME]/members/[HOSTNAME]?acquire=[SESSION_ID]` | String "true" confirming success    | Publish current state of this Patroni node                                |
+
+**Patroni replica:**
+
+| REST call                                                                        | REST response                       | Purpose                                                                     |
+| -------------------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------- |
+| `GET /v1/kv/service/[CLUSTER_NAME]/?recurse=1`                                   | All Patroni-related objects as JSON | Get complete state of Patroni cluster                                       |
+| `PUT /v1/session/renew/[SESSION_ID]`                                             | Session object as JSON              | Renew TTL of this Patroni node's consul session                             |
+| `PUT /v1/kv/service/[CLUSTER_NAME]/members/[HOSTNAME]?acquire=[SESSION_ID]`      | String "true" confirming success    | Publish current state of this Patroni node                                  |
+| `GET /v1/kv/service/[CLUSTER_NAME]/leader?wait=[DURATION]&index=[CURRENT_VALUE]` | Leader object as JSON               | Sleep for the remainder of `loop_wait` seconds, unless Patroni leader fails |
+
+These calls can be directly observed on a live Patroni host through a brief packet capture of:
+* the Consul agent's REST port (8500) on the loopback network interface
+* the Consul server's RPC port (8300) on the default network interface
+
+The HTTP REST calls from Patroni agent to Consul agent over the loopback interface are unencrypted and easy to interpret.  The RPC calls from Consul agent to Consul server are encrypted, but we can observe the close timing of those calls relative to the REST request/response.
+
+```shell
+$ sudo timeout 30 tcpdump -v -w sample_consul_rest_and_rpc_calls.pcap -c 1000 -i any 'port 8500 or 8300'
+```
+
+Download the above PCAP file to your workstation, and examine it with Wireshark (or its command-line version, `tshark`).  Remember to decode TCP port 8500 as HTTP, as shown below.
+
+```shell
+$ wireshark -r sample_consul_rest_and_rpc_calls.pcap -d 'tcp.port==8500,http'
+
+$ tshark -r sample_consul_rest_and_rpc_calls.pcap -d 'tcp.port==8500,http' -Y 'http.request.uri' -T fields -e frame.time_relative -e http.request.method -e http.request.uri | head -n12
+```
+
+Typical output for primary db:
+
+```shell
+0.000000000    GET    /v1/kv/service/pg-ha-cluster/?recurse=1
+0.006017000    PUT    /v1/session/renew/c255bb15-5cc3-b9ba-be46-0522fb9f883f
+0.008736000    PUT    /v1/kv/service/pg-ha-cluster/optime/leader
+0.019531000    PUT    /v1/kv/service/pg-ha-cluster/members/patroni-06-db-gprd.c.gitlab-production.internal?acquire=c255bb15-5cc3-b9ba-be46-0522fb9f883f
+10.000356000   GET    /v1/kv/service/pg-ha-cluster/?recurse=1
+10.006160000   PUT    /v1/session/renew/c255bb15-5cc3-b9ba-be46-0522fb9f883f
+10.009424000   PUT    /v1/kv/service/pg-ha-cluster/optime/leader
+10.020799000   PUT    /v1/kv/service/pg-ha-cluster/members/patroni-06-db-gprd.c.gitlab-production.internal?acquire=c255bb15-5cc3-b9ba-be46-0522fb9f883f
+20.000465000   GET    /v1/kv/service/pg-ha-cluster/?recurse=1
+20.006820000   PUT    /v1/session/renew/c255bb15-5cc3-b9ba-be46-0522fb9f883f
+20.009269000   PUT    /v1/kv/service/pg-ha-cluster/optime/leader
+20.020930000   PUT    /v1/kv/service/pg-ha-cluster/members/patroni-06-db-gprd.c.gitlab-production.internal?acquire=c255bb15-5cc3-b9ba-be46-0522fb9f883f
+```
+
+Typical output on replica db:
+
+```shell
+0.064859000    GET    /v1/kv/service/pg-ha-cluster/?recurse=1
+0.070741000    PUT    /v1/session/renew/d93acdd6-51de-3bce-5014-f1d4a2cd43cf
+0.078500000    PUT    /v1/kv/service/pg-ha-cluster/members/patroni-03-db-gprd.c.gitlab-production.internal?acquire=d93acdd6-51de-3bce-5014-f1d4a2cd43cf
+0.088481000    GET    /v1/kv/service/pg-ha-cluster/leader?wait=9.711172819137573s&index=44065582
+10.232919000   GET    /v1/kv/service/pg-ha-cluster/?recurse=1
+10.236985000   PUT    /v1/session/renew/d93acdd6-51de-3bce-5014-f1d4a2cd43cf
+10.239178000   PUT    /v1/kv/service/pg-ha-cluster/members/patroni-03-db-gprd.c.gitlab-production.internal?acquire=d93acdd6-51de-3bce-5014-f1d4a2cd43cf
+10.255033000   GET    /v1/kv/service/pg-ha-cluster/leader?wait=9.544909477233887s&index=44065582
+20.327716000   GET    /v1/kv/service/pg-ha-cluster/?recurse=1
+20.332099000   PUT    /v1/session/renew/d93acdd6-51de-3bce-5014-f1d4a2cd43cf
+20.334070000   PUT    /v1/kv/service/pg-ha-cluster/members/patroni-03-db-gprd.c.gitlab-production.internal?acquire=d93acdd6-51de-3bce-5014-f1d4a2cd43cf
+20.347014000   GET    /v1/kv/service/pg-ha-cluster/leader?wait=9.452655792236328s&index=44065582
+```
+
 
 ## Where do the components run?
 
@@ -66,7 +291,7 @@ See [here](#background-details) and [here](#details-of-how-patroni-uses-consul) 
 | --------------------------------- | ----------------------------------------- | --------------------------- | --------------------------------------------------------------------- |
 | Postgres                          | gprd-base-db-patroni                      | patroni-{01..NN}-db-gprd    | 5432 (Pgsql)                                                          |
 | PgBouncer for primary db          | gprd-base-db-pgbouncer                    | pgbouncer-{01..NN}-db-gprd  | 6432 (Pgsql)                                                          |
-| PgBouncer for replica dbs         | Same as Postgres                          | Same as Postgres            | 6432 (Pgsql), 6433 (Pgsql)                                            |
+| PgBouncer for replica dbs         | Same as Postgres                          | Same as Postgres            | 6432-6434 (Pgsql)                                                     |
 | Patroni agent                     | Same as Postgres                          | Same as Postgres            | 8009 (REST)                                                           |
 | Consul agent                      | gprd-base (recipe `gitlab_consul::agent`) | Nearly all Chef-managed VMs | 8600 (DNS), 8500 (REST), 8301 (Serf LAN)                              |
 | Consul server                     | gprd-infra-consul                         | consul-{01..NN}-inf-gprd    | 8600 (DNS), 8500 (REST), 8301 (Serf LAN), 8302 (Serf WAN), 8300 (RPC) |
@@ -529,7 +754,7 @@ For Patroni to provide high availability (automated failover) to Postgres, it ne
 
 Consul prefers consistency over availability.  When failure conditions such as node loss or network partitions force Consul to choose between consistency and availability, Consul prefers to stop accepting writes and reads until a quorum of Consul server nodes is again reached.  This avoids split-brain.  To reduce the likelihood of losing quorum, Consul supports a peer group of up to 11 servers, but most production deployments use 3 or 5 (which tolerates the loss of 1 or 2 nodes respectively).
 
-As is typical, in production we run 5 hosts as Consul servers to act as the datastore, and we run a Consul agent on every other host that need to read or write data stored on the Consul servers.
+As is typical, in production we run 5 hosts as Consul servers to act as the datastore, and we run a Consul agent on every other host that needs to read or write data stored on the Consul servers.
 
 The Consul servers participate in a [strongly consistent consensus protocol (RAFT)](https://www.consul.io/docs/internals/consensus.html) for leader election.  Only the current leader is allowed to accept writes, so that all writes are serializable.  These logged writes are replicated to the other Consul servers; at least a majority (quorum) of Consul servers must receive the new log entry for the write to be considered successful (i.e. guaranteed to be present if a new leader is elected).  If the current leader fails, Consul will stop accepting new writes until the surviving quorum of peers elect a new leader (which may take several seconds).  Typically read requests are also handled by the Consul leader, again to provide strong consistency guarantees, but that is tunable.  If a non-leader consul server receives a read request, it will forward that call to the current Consul leader.
 
@@ -540,12 +765,17 @@ Only the Consul servers participate as peers in the strongly-consistent RAFT pro
 
 Each Patroni agent (whether replica or primary) periodically interacts with Consul to:
 * Fetch the most recently published status of its cluster peers.
-* Publish its own current state metadata.
 * Affirm its liveness by renewing its consul session (which quickly auto-expires without these renewals).
+* Publish its own current state metadata.
+* If leader, publish current Postgres WAL location; otherwise, watch for any change in leadership.
 
 If Patroni fails one of these REST calls to Consul agent, the failed call can be retried for up to its configured `retry_timeout` deadline (currently 30 seconds).  For the Patroni leader (i.e. the Patroni agent whose Postgres instance is currently the writable primary db), if that retry deadline is reached, Patroni will initiate failover by voluntarily releasing the Patroni cluster lock.
 
 Similarly, if the Patroni leader's loop takes long enough to complete that its consul session expires (TTL is currently effectively 45 seconds), then it involuntarily loses the cluster lock, which also initiates failover.
+
+**Note:** Remember that Consul agent does not locally cache data; it makes synchronous remote calls to Consul server.  Often when Patroni logs a timeout, it is due to troubled connectivity between Consul agent and Consul server.
+
+See also: [Normal pattern of REST calls from Patroni to Consul](#normal-pattern-of-rest-calls-from-patroni-to-consul)
 
 
 ### What is Consul's `serfHealth` check, and how can it trigger a Patroni failover?
