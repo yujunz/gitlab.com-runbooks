@@ -134,15 +134,29 @@ class GitlabProjectImport
   end
 
   def import_project
+    # Debug level logs are important usually *after* you've found it fails.  These operations
+    # are rare enough and have a tendency to being problematic, that getting the logs every time
+    # is worth it.  They will appear in (/var/log/gitlab/)gitlab-rails/production.log, not in stdout
+    Rails.logger.level = 0
+
     namespace_path, _sep, name = @project_path.rpartition('/')
     namespace = Groups::NestedCreateService.new(@current_user, group_path: namespace_path).execute
     upload = ImportExportUpload.new(import_file: File.open(@file_path))
 
-    @project = LocalProjectService.new(@current_user,
-                                       namespace_id: namespace.id,
-                                       path: name,
-                                       import_type: 'gitlab_project',
-                                       import_export_upload: upload).execute
+    # Until https://gitlab.com/gitlab-org/gitlab/issues/34091 is resolved we need
+    # to not have a timeout on idle transactions.  This has to happen inside a transaction
+    # of its own so it sticks to the connection (otherwise the SET has no effect)
+    # When 34091 is done, consider removing the transaction and the SET
+    # See also https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8383 for context
+    ActiveRecord::Base.transaction do
+      ActiveRecord::Base.connection.execute("SET idle_in_transaction_session_timeout TO '0'")
+
+      @project = LocalProjectService.new(@current_user,
+                                         namespace_id: namespace.id,
+                                         path: name,
+                                         import_type: 'gitlab_project',
+                                         import_export_upload: upload).execute
+    end
   end
 end
 
