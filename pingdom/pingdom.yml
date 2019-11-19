@@ -153,6 +153,45 @@ checks:
     - pagerduty
 
 #######################################
+# Cloudflare monitoring
+#######################################
+
+# Integrations disabled before rollout
+
+  - url: https://gitlab.com/cdn-cgi/trace
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - cloudflare
+    teams:
+    - Infrastructure
+#    integrations:
+#    - pagerduty
+
+  - url: https://about.gitlab.com/cdn-cgi/trace
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - cloudflare
+    teams:
+    - Infrastructure
+#    integrations:
+#    - pagerduty
+
+  - url: https://staging.gitlab.com/cdn-cgi/trace
+    timeout_ms: 30000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - cloudflare
+    teams:
+    - Infrastructure
+#    integrations:
+#    - pagerduty
+
+#######################################
 # Ancillary Properties
 #######################################
 
