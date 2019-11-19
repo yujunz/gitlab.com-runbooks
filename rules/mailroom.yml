@@ -3,7 +3,7 @@ groups:
     rules:
 
       - alert: MailroomUnreadMessagesPilingUp
-        expr: max(imap_nb_unread_messages_in_mailbox) >= 0
+        expr: max(imap_nb_unread_messages_in_mailbox) > 0
         for: 10m
         labels:
           severity: s3
