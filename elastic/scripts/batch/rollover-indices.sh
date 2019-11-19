@@ -40,7 +40,7 @@ curl_data_close_index() {
 EOF
 }
 
-# if the index was rolled over without conditions, ILM would not know if it was closed so you would have to add to the index:
+# if you're closing an index using the alias, ILM will not mark the index as complete, you'll have to run:
 #{
 #    "index": {
 #        "lifecycle": {
@@ -48,6 +48,7 @@ EOF
 #        }
 #    }
 #}
+# more info here: https://github.com/elastic/elasticsearch/issues/44175
 
 for index in "${indices[@]}"; do
   curl -sSL -H 'Content-Type: application/json' -X POST "${ES7_URL_WITH_CREDS}/pubsub-${index}-inf-${env}/_rollover" -d "$(curl_data_close_index)"
