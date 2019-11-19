@@ -11,7 +11,7 @@ curl_data() {
                 "actions": {
                     "rollover": {
                         "max_age": "3d",
-                        "max_size": "150gb"
+                        "max_size": "120gb"
                     },
                     "set_priority": {
                         "priority": 100
