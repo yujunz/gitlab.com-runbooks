@@ -214,88 +214,23 @@ sequenceDiagram
 
 The normal healthy sequence of periodic calls is slightly different for the Patroni leader versus the Patroni replicas.
 
-Patroni leader:
+**Patroni leader:**
 
-```mermaid
-sequenceDiagram
-    participant PatroniAgent
-    participant ConsulAgent
-    participant ConsulServer
+| REST call                                                                   | REST response                       | Purpose                                                                   |
+| --------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------- |
+| `GET /v1/kv/service/[CLUSTER_NAME]/?recurse=1`                              | All Patroni-related objects as JSON | Get complete state of Patroni cluster                                     |
+| `PUT /v1/session/renew/[SESSION_ID]`                                        | Session object as JSON              | Renew TTL of this Patroni node's consul session                           |
+| `PUT /v1/kv/service/[CLUSTER_NAME]/optime/leader`                           | Leader object as JSON               | Write latest Postgres WAL location of primary db as Patroni leader optime |
+| `PUT /v1/kv/service/[CLUSTER_NAME]/members/[HOSTNAME]?acquire=[SESSION_ID]` | String "true" confirming success    | Publish current state of this Patroni node                                |
 
-    rect rgba(175, 140, 255, 0.5)
-        Note over PatroniAgent,ConsulServer: Get complete state of Patroni cluster
-        PatroniAgent->>+ConsulAgent: REST call: GET /v1/kv/service/[CLUSTER_NAME]/?recurse=1
-        ConsulAgent->>+ConsulServer: RPC call
-        ConsulServer->>-ConsulAgent: RPC response
-        ConsulAgent->>-PatroniAgent: REST response: JSON
-    end
+**Patroni replica:**
 
-    rect rgba(175, 140, 255, 0.5)
-        Note over PatroniAgent,ConsulServer: Renew TTL of this Patroni node's consul session
-        PatroniAgent->>+ConsulAgent: REST call: PUT /v1/session/renew/[SESSION_ID]
-        ConsulAgent->>+ConsulServer: RPC call
-        ConsulServer->>-ConsulAgent: RPC response
-        ConsulAgent->>-PatroniAgent: REST response: Session object as JSON
-    end
-
-    rect rgba(175, 140, 255, 0.5)
-        Note over PatroniAgent,ConsulServer: Write latest Postgres WAL location in primary db as Patroni leader optime
-        PatroniAgent->>+ConsulAgent: REST call: PUT /v1/kv/service/[CLUSTER_NAME]/optime/leader
-        ConsulAgent->>+ConsulServer: RPC call
-        ConsulServer->>-ConsulAgent: RPC response
-        ConsulAgent->>-PatroniAgent: REST response: Leader object as JSON
-    end
-
-    rect rgba(175, 140, 255, 0.5)
-        Note over PatroniAgent,ConsulServer: Publish current state of this Patroni node
-        PatroniAgent->>+ConsulAgent: REST call: PUT /v1/kv/service/[CLUSTER_NAME]/members/[HOSTNAME]?acquire=[SESSION_ID]
-        ConsulAgent->>+ConsulServer: RPC call
-        ConsulServer->>-ConsulAgent: RPC response
-        ConsulAgent->>-PatroniAgent: REST response: String "true" confirming success
-    end
-```
-
-Patroni replica:
-
-```mermaid
-sequenceDiagram
-    participant PatroniAgent
-    participant ConsulAgent
-    participant ConsulServer
-
-    rect rgba(175, 140, 255, 0.5)
-        Note over PatroniAgent,ConsulServer: Get complete state of Patroni cluster
-        PatroniAgent->>+ConsulAgent: REST call: GET /v1/kv/service/[CLUSTER_NAME]/?recurse=1
-        ConsulAgent->>+ConsulServer: RPC call
-        ConsulServer->>-ConsulAgent: RPC response
-        ConsulAgent->>-PatroniAgent: REST response: JSON
-    end
-
-    rect rgba(175, 140, 255, 0.5)
-        Note over PatroniAgent,ConsulServer: Renew TTL of this Patroni node's consul session
-        PatroniAgent->>+ConsulAgent: REST call: PUT /v1/session/renew/[SESSION_ID]
-        ConsulAgent->>+ConsulServer: RPC call
-        ConsulServer->>-ConsulAgent: RPC response
-        ConsulAgent->>-PatroniAgent: REST response: Session object as JSON
-    end
-
-    rect rgba(175, 140, 255, 0.5)
-        Note over PatroniAgent,ConsulServer: Publish current state of this Patroni node
-        PatroniAgent->>+ConsulAgent: REST call: PUT /v1/kv/service/[CLUSTER_NAME]/members/[HOSTNAME]?acquire=[SESSION_ID]
-        ConsulAgent->>+ConsulServer: RPC call
-        ConsulServer->>-ConsulAgent: RPC response
-        ConsulAgent->>-PatroniAgent: REST response: String "true" confirming success
-    end
-
-    rect rgba(175, 140, 255, 0.5)
-        Note over PatroniAgent,ConsulServer: Watch for any change in the Patroni leader lock for the remainder of loop_delay
-        PatroniAgent->>+ConsulAgent: REST call: GET /v1/kv/service/[CLUSTER_NAME]/leader?wait=[DURATION]&index=[CURRENT_VALUE]
-        ConsulAgent->>+ConsulServer: RPC call
-        Note right of ConsulServer:  Sleeps unless the leader KV record changes
-        ConsulServer->>-ConsulAgent: RPC response
-        ConsulAgent->>-PatroniAgent: REST response: Leader object as JSON
-    end
-```
+| REST call                                                                        | REST response                       | Purpose                                                                     |
+| -------------------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------- |
+| `GET /v1/kv/service/[CLUSTER_NAME]/?recurse=1`                                   | All Patroni-related objects as JSON | Get complete state of Patroni cluster                                       |
+| `PUT /v1/session/renew/[SESSION_ID]`                                             | Session object as JSON              | Renew TTL of this Patroni node's consul session                             |
+| `PUT /v1/kv/service/[CLUSTER_NAME]/members/[HOSTNAME]?acquire=[SESSION_ID]`      | String "true" confirming success    | Publish current state of this Patroni node                                  |
+| `GET /v1/kv/service/[CLUSTER_NAME]/leader?wait=[DURATION]&index=[CURRENT_VALUE]` | Leader object as JSON               | Sleep for the remainder of `loop_wait` seconds, unless Patroni leader fails |
 
 These calls can be directly observed on a live Patroni host through a brief packet capture of:
 * the Consul agent's REST port (8500) on the loopback network interface
@@ -307,7 +242,7 @@ The HTTP REST calls from Patroni agent to Consul agent over the loopback interfa
 $ sudo timeout 30 tcpdump -v -w sample_consul_rest_and_rpc_calls.pcap -c 1000 -i any 'port 8500 or 8300'
 ```
 
-Download the above file to your workstation, and examine it with Wireshark (or its command-line version, `tshark`).  Remember to decode TCP port 8500 as HTTP, as shown below.
+Download the above PCAP file to your workstation, and examine it with Wireshark (or its command-line version, `tshark`).  Remember to decode TCP port 8500 as HTTP, as shown below.
 
 ```shell
 $ wireshark -r sample_consul_rest_and_rpc_calls.pcap -d 'tcp.port==8500,http'
