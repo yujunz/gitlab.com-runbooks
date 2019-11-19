@@ -28,14 +28,33 @@ Example of log entries on a slave working correctly (no backups are actually hap
 
 #### WAL-E process stuck ####
 
-WAL-E works by uploading files to a GCS bucket every few seconds. For each upload there should be a log entry.
-
-at the moment of writing, the output from ps that contains the wall-e upload process looks similar to:
+WAL-E works by uploading files to a GCS bucket every few seconds. The upload is done by a forked process which lives only a few seconds. For each successful upload there should be log entries similar to this:
 ```
-(...) /opt/wal-e/bin/python /opt/wal-e/bin/wal-e wal-push (...)
+2019-10-03_12:07:33 patroni-02-db-gprd wal_e.worker.upload  INFO     MSG: begin archiving a file#012        DETAIL: Uploading "pg_xlog/0000001D00014F69000000E7" to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/0000001D00014F69000000E7.lzo".#012        STRUCTURED: t
+ime=2019-10-03T12:07:33.719239-00 pid=20408 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/0000001D00014F69000000E7.lzo prefix=pitr-wale-v1/ seg=0000001D00014F69000000E7 state=begin
+2019-10-03_12:07:34 patroni-02-db-gprd wal_e.worker.upload  INFO     MSG: completed archiving to a file#012        DETAIL: Archiving to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/0000001D00014F69000000E7.lzo" complete at 14281KiB/s.#012        STRUCTURED: time=2
+019-10-03T12:07:34.439057-00 pid=20408 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/0000001D00014F69000000E7.lzo prefix=pitr-wale-v1/ rate=14281 seg=0000001D00014F69000000E7 state=complete
 ```
 
-If you don't see any log entries and there is a wal-e upload process hanging for a long time, consider checking the state of the process with `strace`. If it's not doing anything, consider killing the wal-e upload process. BE EXTREMELY CAREFUL! After killing the process the backups should resume immediately.
+If you're not seeing logs like this (e.g. nothing writes to the log file or there are only entries with `state=begin` but not with `state=complete`) then there's something wrong with WAL-E.
+
+##### Check the WAL-E upload process
+
+Run ps a few times (the upload process is short-lived so you might not catch it the first time), example output:
+```
+# ps aux | grep 'wal-push'
+gitlab-+ 29632  0.0  0.0   4500   844 ?        S    12:16   0:00 sh -c /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-push pg_xlog/0000001D00014F6B000000A2
+gitlab-+ 29633 35.0  0.0 124200 41488 ?        D    12:16   0:00 /opt/wal-e/bin/python /opt/wal-e/bin/wal-e wal-push pg_xlog/0000001D00014F6B000000A2
+root     29638  0.0  0.0  12940   920 pts/0    S+   12:16   0:00 grep wal-push
+```
+
+If the timestamp on the wall-e process is relatively long time in the past (e.g. 15 mins, 1h) then that's a hint that it's stuck at uploading files.
+
+Check the state of the process with: `strace -p <pid>` . If the process is stuck, `strace` will show no activity.
+
+Another indicator of a stuck process is the timestamp on the latest file uploaded to GCS, i.e. it will be close to the timestamp on the upload process. `gsutil` might take too long to list files in the bucket, so go to the [web UI](https://console.cloud.google.com/storage/browser/gitlab-gprd-postgres-backup/) and start typing in the prefix of the filename last uploaded (don't type in the full name).
+
+If everything points to the fact that WAL-E upload process is stuck, consider killing it. BE EXTREMELY CAREFUL! After killing the process it should be restarted automatically and the backups should resume immediately.
 
 #### Other ####
 
