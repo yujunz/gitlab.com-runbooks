@@ -10,12 +10,14 @@
 #
 # Staging example:
 #
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --wait=10800 --current-file-server=nfs-file01 --target-file-server=nfs-file09 --staging --max-failures=200 --refresh-stats
+#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file01 --target-file-server=nfs-file09 --staging --count
+#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file01 --target-file-server=nfs-file09 --staging --max-failures=200 --validate-size --refresh-stats
 #
 # Production examples:
 #
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --wait=10800 --current-file-server=nfs-file25 --target-file-server=nfs-file36
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=no --wait=10800 --move-amount=10 --current-file-server=nfs-file27 --target-file-server=nfs-file38 --skip=9271929
+#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file34 --target-file-server=nfs-file40 --count
+#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file25 --target-file-server=nfs-file36
+#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=no --move-amount=10 --current-file-server=nfs-file27 --target-file-server=nfs-file38 --skip=9271929
 #
 # Verify the migration status of previously logged project migrations:
 #
@@ -66,6 +68,7 @@ class NoCommits < StandardError; end
 class MigrationTimeout < StandardError; end
 class CommitsMismatch < StandardError; end
 class ChecksumsMismatch < StandardError; end
+class RepositorySizesMismatch < StandardError; end
 
 Options = {
   dry_run: true,
@@ -75,7 +78,7 @@ Options = {
     production: 'https://gitlab.com/api/v4/projects/%{project_id}/repository/commits'
   },
   move_amount: 0,
-  timeout: 10,
+  timeout: 10800,
   max_failures: 3,
   clauses: {
     delete_error: nil,
@@ -84,8 +87,9 @@ Options = {
     mirror: false,
   },
   verify_only: false,
-  checksum: false,
-  list: false,
+  validate_checksum: false,
+  validate_size: false,
+  list_nodes: false,
   black_list: [],
   refresh_statistics: false,
   include_mirrors: false,
@@ -153,8 +157,12 @@ def parse_args
     Options[:verify_only] = true
   end
 
-  opt.on('-C', '--checksum', 'Verify project checksum is constant post-migration') do |checksum|
-    Options[:checksum] = true
+  opt.on('-C', '--validate-checksum', 'Validate project checksum is constant post-migration') do |checksum|
+    Options[:validate_checksum] = true
+  end
+
+  opt.on('-S', '--validate-size', 'Validate project repository size is constant post-migration') do |checksum|
+    Options[:validate_size] = true
   end
 
   opt.on('-f', '--max-failures=<N>', Integer, "Maximum failed migrations; default: #{Options[:max_failures]}") do |failures|
@@ -338,7 +346,8 @@ class Rebalancer
     raise NoCommits.new("Could not obtain any commits for project id #{project.id}") if original_commit_id.nil?
 
     project.repository.expire_exists_cache
-    original_checksum = project.repository.checksum if Options[:checksum]
+    original_checksum = project.repository.checksum if Options[:validate_checksum]
+    original_repository_size = project.statistics[:repository_size] if Options[:validate_size]
 
     log_artifact = {
       id: project.id,
@@ -356,38 +365,49 @@ class Rebalancer
       project.save
 
       wait_for_repository_storage_update(project)
+      post_migration_project = Project.find_by(id: project.id)
 
-      if project.repository_storage != Options[:target_file_server]
+      if post_migration_project.repository_storage != Options[:target_file_server]
         raise MigrationTimeout.new("Timed out waiting for migration of " +
-          "project id: #{project.id}")
+          "project id: #{post_migration_project.id}")
       end
 
-      log.debug "Refreshing all statistics for project id: #{project.id}"
-      project.statistics.refresh!
+      log.debug "Refreshing all statistics for project id: #{post_migration_project.id}"
+      post_migration_project.statistics.refresh!
 
       log.info "Validating project integrity by comparing latest commit " +
         "identifers before and after"
-      current_commit_id = get_commit_id(project.id)
+      current_commit_id = get_commit_id(post_migration_project.id)
       if original_commit_id != current_commit_id
         raise CommitsMismatch.new("Current commit id #{current_commit_id} " +
           "does not match original commit id #{original_commit_id}")
       end
 
-      if Options[:checksum]
+      if Options[:validate_checksum]
         log.info "Validating project integrity by comparing checksums " +
           "before and after"
-        project.repository.expire_exists_cache
-        current_checksum = project.repository.checksum
+        post_migration_project.repository.expire_exists_cache
+        current_checksum = post_migration_project.repository.checksum
         if original_checksum != current_checksum
           raise ChecksumsMismatch.new("Current checksum #{current_checksum} " +
             "does not match original checksum #{original_checksum}")
         end
       end
 
-      log.info "Migrated project id: #{project.id}"
-      log.debug "  Name: #{project.name}"
-      log.debug "  Storage: #{project.repository_storage}"
-      log.debug "  Path: #{project.disk_path}"
+      if Options[:validate_size]
+        log.info "Validating project integrity by comparing repository size " +
+          "before and after"
+        current_repository_size = post_migration_project.statistics[:repository_size]
+        if original_repository_size != current_repository_size
+          raise RepositorySizesMismatch.new("Current repository size #{current_repository_size} " +
+            "does not match original repository size #{original_repository_size}")
+        end
+      end
+
+      log.info "Migrated project id: #{post_migration_project.id}"
+      log.debug "  Name: #{post_migration_project.name}"
+      log.debug "  Storage: #{post_migration_project.repository_storage}"
+      log.debug "  Path: #{post_migration_project.disk_path}"
       log_artifact[:date] = DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
       @migration_log.info log_artifact.to_json
     end
@@ -477,6 +497,11 @@ class Rebalancer
         log.error "Failed to validate integrity of project id: #{project.id}"
         log.error "Error: #{e}"
         log.warn "Skipping migration"
+      rescue RepositorySizesMismatch => e
+        migration_errors << { project_id: project_id, message: e.message }
+        log.error "Failed to validate integrity of project id: #{project.id}"
+        log.error "Error: #{e}"
+        log.warn "Skipping migration"
       rescue MigrationTimeout => e
         migration_errors << { project_id: project_id, message: e.message }
         log.error "Timed out migrating project id: #{project.id}"
@@ -519,6 +544,21 @@ class Rebalancer
       rescue CommitsMismatch => e
         migration_errors << { project_id: project_id, message: e.message }
         log.error "Failed to validate integrity of project id: #{project.id}"
+        log.error "Error: #{e}"
+        log.warn "Skipping migration"
+      rescue ChecksumsMismatch => e
+        migration_errors << { project_id: project_id, message: e.message }
+        log.error "Failed to validate integrity of project id: #{project.id}"
+        log.error "Error: #{e}"
+        log.warn "Skipping migration"
+      rescue RepositorySizesMismatch => e
+        migration_errors << { project_id: project_id, message: e.message }
+        log.error "Failed to validate integrity of project id: #{project.id}"
+        log.error "Error: #{e}"
+        log.warn "Skipping migration"
+      rescue MigrationTimeout => e
+        migration_errors << { project_id: project_id, message: e.message }
+        log.error "Timed out migrating project id: #{project.id}"
         log.error "Error: #{e}"
         log.warn "Skipping migration"
       rescue StandardError => e
