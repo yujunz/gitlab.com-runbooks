@@ -1,9 +1,25 @@
 # Accessing and Using CloudFlare
 
-https://dash.cloudflare.com
+CloudFlare is configured as an Okta app. Users that have been provisioned can
+access it from their Okta applications or directly at:
+
+https://gitlab.cloudflaresso.com
+
+## Baseline Entitlements and Provisioning
 
 CloudFlare Administrator Access is a baseline entitlement for SRE. Authentication
-is done via Okta.
+is done via Okta, but SCIM is not supported so team members must be invited
+using the CloudFlare dashboard.
+
+Instructions for Access Provisioners (requires Super Administrator privileges):
+
+1. Log in to the dashboard at https://gitlab.cloudflaresso.com.
+2. Navigate to the "GitLab" account.
+3. Select the "Members" tab.
+4. Select the permission level. Be user to unselect "Administrator" when selecting "Administrator Read Only", it is not automatically unselected.
+5. Enter the team members emails and click "Invite".
+
+# Configuraion
 
 ## Creating or Editing Custom Rules
 
