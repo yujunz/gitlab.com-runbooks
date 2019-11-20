@@ -74,11 +74,11 @@ local template = grafana.template;
     refresh='load',
     sort=1,
   ),
-  sidekiqWorker:: template.new(
-    'worker',
+  sidekiqQueue:: template.new(
+    'queue',
     '$PROMETHEUS_DS',
-    'label_values(gitlab_background_worker_queue_duration_apdex:ratio{environment="$environment"}, worker)',
-    current='NewMergeRequestWorker',
+    'label_values(sidekiq_jobs_completion_seconds_bucket{environment="$environment"}, queue)',
+    current='new_merge_request',
     refresh='load',
     sort=1,
   ),

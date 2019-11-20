@@ -72,9 +72,9 @@ dashboard.new(
       title='ExpireJobCacheWorker,StageUpdateWorker Sidekiq job rates ',
       description='Sidekiq ExpireJobCacheWorker,StageUpdateWorker pipeline (CI) jobs starting per second',
       query=|||
-        sum(rate(sidekiq_jobs_completion_time_seconds_count{worker=~"ExpireJobCacheWorker|StageUpdateWorker", environment="gprd", env="gprd"}[$__interval])) by (worker)
+        sum(rate(sidekiq_jobs_completion_seconds_count{queue=~"pipeline_cache:expire_job_cache|pipeline_processing:stage_update", environment="gprd", env="gprd"}[$__interval])) by (queue)
       |||,
-      legendFormat='{{ worker }}',
+      legendFormat='{{ queue }}',
       format='short',
       interval='1m',
       linewidth=1,
@@ -93,9 +93,9 @@ dashboard.new(
       title='ExpireJobCacheWorker,StageUpdateWorker latency ',
       description='p90 Processing time for ExpireJobCacheWorker,StageUpdateWorker pipeline (CI) jobs',
       query=|||
-        histogram_quantile(0.9, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{worker=~"ExpireJobCacheWorker|StageUpdateWorker", environment="gprd", env="gprd"}[$__interval])) by (le, worker))
+        histogram_quantile(0.9, sum(rate(sidekiq_jobs_completion_seconds_bucket{queue=~"pipeline_cache:expire_job_cache|pipeline_processing:stage_update", environment="gprd", env="gprd"}[$__interval])) by (le, queue))
       |||,
-      legendFormat='{{ worker }}',
+      legendFormat='{{ queue }}',
       format='s',
       interval='1m',
       linewidth=1,

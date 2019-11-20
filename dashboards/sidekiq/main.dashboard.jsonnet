@@ -104,7 +104,7 @@ row.new(title='Sidekiq Execution'),
       title='Sidekiq Total Execution Time',
       description='The sum of job execution times',
       query=|||
-        sum(rate(sidekiq_jobs_completion_time_seconds_sum{environment="$environment"}[$__interval]))
+        sum(rate(sidekiq_jobs_completion_seconds_sum{environment="$environment"}[$__interval]))
       |||,
       legendFormat='Total',
       interval='1m',
@@ -117,7 +117,7 @@ row.new(title='Sidekiq Execution'),
       title='Sidekiq Total Execution Time Per Priority',
       description='The sum of job execution times',
       query=|||
-        sum(rate(sidekiq_jobs_completion_time_seconds_sum{environment="$environment"}[$__interval])) by (priority)
+        sum(rate(sidekiq_jobs_completion_seconds_sum{environment="$environment"}[$__interval])) by (priority)
       |||,
       legendFormat='{{ priority }}',
       interval='1m',
@@ -131,7 +131,7 @@ row.new(title='Sidekiq Execution'),
       title='Sidekiq Aggregated Throughput',
       description='The total number of jobs being completed',
       query=|||
-        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment"})
+        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment"})
       |||,
       legendFormat='Total',
       interval='1m',
@@ -143,7 +143,7 @@ row.new(title='Sidekiq Execution'),
       title='Sidekiq Throughput per Priority',
       description='The total number of jobs being completed per priority',
       query=|||
-        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (priority)
+        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (priority)
       |||,
       legendFormat='{{ priority }}',
       interval='1m',
@@ -156,9 +156,9 @@ row.new(title='Sidekiq Execution'),
       title='Sidekiq Throughput per Job',
       description='The total number of jobs being completed per priority',
       query=|||
-        sum(worker:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (worker)
+        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (queue)
       |||,
-      legendFormat='{{ worker }}',
+      legendFormat='{{ queue }}',
       interval='1m',
       intervalFactor=1,
       linewidth=1,
@@ -193,7 +193,7 @@ row.new(title='Sidekiq Execution'),
       title='Sidekiq Estimated Median Job Latency per priority',
       description='The median duration, once a job starts executing, that it runs for, by priority. Lower is better.',
       query=|||
-        avg(priority:sidekiq_jobs_completion_time_seconds:p50{environment="$environment"}) by (priority)
+        avg(priority:sidekiq_jobs_completion_seconds:p50{environment="$environment"}) by (priority)
       |||,
       legendFormat='{{ priority }}',
       format='s',
@@ -209,7 +209,7 @@ row.new(title='Sidekiq Execution'),
       title='Sidekiq Estimated p95 Job Latency per priority',
       description='The 95th percentile duration, once a job starts executing, that it runs for, by priority. Lower is better.',
       query=|||
-        avg(priority:sidekiq_jobs_completion_time_seconds:p95{environment="$environment"}) by (priority)
+        avg(priority:sidekiq_jobs_completion_seconds:p95{environment="$environment"}) by (priority)
       |||,
       legendFormat='{{ priority }}',
       format='s',
