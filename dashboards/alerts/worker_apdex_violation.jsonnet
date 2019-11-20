@@ -14,13 +14,13 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local seriesOverrides = import 'series_overrides.libsonnet';
 
-local sidekiqWorkerLatency() = basic.latencyTimeseries(
-    title='Worker Latency',
-    description='${percentile}th percentile worker latency. Lower is better.',
+local sidekiqQueueLatency() = basic.latencyTimeseries(
+    title='Queue Latency',
+    description='${percentile}th percentile queue latency. Lower is better.',
     query=|||
-      histogram_quantile($percentile/100, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="$environment", worker="$worker"}[$__interval])) by (le, environment, stage, tier, type, worker))
+      histogram_quantile($percentile/100, sum(rate(sidekiq_jobs_completion_seconds_bucket{environment="$environment", queue="$queue"}[$__interval])) by (le, environment, stage, tier, type, queue))
     |||,
-    legendFormat='{{ worker }}'
+    legendFormat='{{ queue }}'
   )
   .addTarget(
     promQuery.target('$threshold', legendFormat='threshold')
@@ -38,7 +38,7 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
-.addTemplate(templates.sidekiqWorker)
+.addTemplate(templates.sidekiqQueue)
 .addTemplate(
 template.custom(
     'threshold',
@@ -54,7 +54,7 @@ template.custom(
   )
 )
 .addPanels(layout.grid([
-    sidekiqWorkerLatency(),
+    sidekiqQueueLatency(),
   ], cols=1, rowHeight=10))
 + {
   links+: platformLinks.serviceLink('sidekiq') + platformLinks.triage,

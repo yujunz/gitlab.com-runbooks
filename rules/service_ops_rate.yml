@@ -63,7 +63,7 @@ groups:
     labels:
       component: 'jobs'
     expr: >
-      sum by (environment, tier, type, stage) (rate(sidekiq_jobs_completion_time_seconds_count{type = "sidekiq"}[1m]))
+      sum by (environment, tier, type, stage) (rate(sidekiq_jobs_completion_seconds_count{job="gitlab-sidekiq", type = "sidekiq"}[1m]))
 
   # mailroom
   # TODO: zero placeholder as we have no metrics for mailroom at present

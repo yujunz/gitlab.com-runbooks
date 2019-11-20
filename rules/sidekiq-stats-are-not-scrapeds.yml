@@ -9,12 +9,3 @@ groups:
     annotations:
       runbook: troubleshooting/sidekiq_stats_no_longer_showing.md
       title: Sidekiq stats failed to be scraped for the last minute
-  - alert: SidekiqJobsMetricsMissing
-    expr: up{job="mtail", type="sidekiq"} == 1 unless ignoring(le, prog, worker) sidekiq_jobs_completion_time_seconds_bucket
-    for: 2h
-    labels:
-      severity: s4
-    annotations:
-      description: Sidekiq jobs metrics have not been reported for some time. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
-      runbook: troubleshooting/service-sidekiq.md
-      title: 'Sidekiq jobs metrics are missing'

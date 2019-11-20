@@ -108,9 +108,9 @@ dashboard.new(
     title='Processing Time',
     description='',
     query=|||
-      sum(rate(sidekiq_jobs_completion_time_seconds_sum{environment="gprd", worker=~"WebHookWorker|ProjectServiceWorker|PostReceive"}[1m])) by (worker)
+      sum(rate(sidekiq_jobs_completion_seconds_sum{environment="gprd", queue=~"web_hook|project_service|post_receive"}[1m])) by (queue)
     |||,
-    legendFormat='{{ worker }}',
+    legendFormat='{{ queue }}',
     yAxisLabel='Total Processing Time',
     interval='1m',
     intervalFactor=3,
@@ -129,9 +129,9 @@ dashboard.new(
     title='p80 Latency for PostReceive jobs',
     description='',
     query=|||
-      histogram_quantile(0.8, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="gprd", worker="PostReceive"}[$__interval])) by (le, environment, stage, tier, type, worker))
+      histogram_quantile(0.8, sum(rate(sidekiq_jobs_completion_seconds_bucket{environment="gprd", queue="post_receive"}[$__interval])) by (le, environment, stage, tier, type, queue))
     |||,
-    legendFormat='{{ worker }}',
+    legendFormat='{{ queue }}',
     yAxisLabel='PostReceive latency',
     interval='1m',
     intervalFactor=3,
