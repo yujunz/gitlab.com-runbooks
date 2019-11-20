@@ -30,7 +30,7 @@ dashboard.new(
 )
 .addPanel(
 
-  row.new(title='Container Registry Version'),
+  row.new(title='Mailroom Version'),
   gridPos={
     x: 0,
     y: 0,
