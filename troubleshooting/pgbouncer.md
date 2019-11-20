@@ -11,21 +11,24 @@
   * On the dedicated pgbouncer fleet (for rw connections to the master), `pgbouncer_async_pool` is for sidekiq, `pgbouncer_sync_pool` for web/api.
   * Check the [PGBouncer Overview dashboard](https://dashboards.gitlab.net/d/PwlB97Jmk/pgbouncer-overview?orgId=1) and look at `Backend Connections`:
       * if only one pgbouncer node is getting most connections, then either
-        * one pgbouncer node was down during a deployment and all (long persisting) db connections where made to the other one
-        * or the healthcheck service on one of the 2 active nodes is down.
+          * one pgbouncer node was down during a deployment and all (long persisting) db connections where made to the other one
+          * or the healthcheck service on one of the 2 active nodes is down.
       * Solution: 
-        * check the iLB [status](https://console.cloud.google.com/net-services/loadbalancing/details/internal/us-east1/gprd-pgbouncer-regional?project=gitlab-production&angularJsUrl=%2Fnet-services%2Floadbalancing%2Fdetails%2Finternal%2Fus-east1%2Fgprd-pgbouncer-regional%3Fproject%3Dgitlab-production&authuser=1) and [metrics](https://app.google.stackdriver.com/metrics-explorer?project=gitlab-production&timeSelection=%7B%22timeRange%22:%226h%22%7D&xyChart=%7B%22dataSets%22:%5B%7B%22timeSeriesFilter%22:%7B%22filter%22:%22metric.type%3D%5C%22loadbalancing.googleapis.com%2Fl3%2Finternal%2Fegress_packets_count%5C%22%20resource.type%3D%5C%22internal_tcp_lb_rule%5C%22%20resource.label.%5C%22load_balancer_name%5C%22%3D%5C%22gprd-pgbouncer-regional%5C%22%22,%22perSeriesAligner%22:%22ALIGN_RATE%22,%22crossSeriesReducer%22:%22REDUCE_SUM%22,%22secondaryCrossSeriesReducer%22:%22REDUCE_NONE%22,%22minAlignmentPeriod%22:%2260s%22,%22groupByFields%22:%5B%22resource.label.%5C%22backend_name%5C%22%22%5D,%22unitOverride%22:%221%22%7D,%22targetAxis%22:%22Y1%22,%22plotType%22:%22LINE%22%7D%5D,%22options%22:%7B%22mode%22:%22COLOR%22%7D,%22constantLines%22:%5B%5D,%22timeshiftDuration%22:%220s%22,%22y1Axis%22:%7B%22label%22:%22y1Axis%22,%22scale%22:%22LINEAR%22%7D%7D&isAutoRefresh=true)
-    * make sure the healthcheck is up on the 2 nodes that should be active:
-      * `systemctl status pgbouncer-leader-check.service`
-    * `HUP` all unicorns and sidekiq workers to re-establish db connections.
-      * web: `knife ssh -C4 'role:gprd-base-fe-web AND chef_environment:gprd' 'hostname -f && sudo gitlab-ctl hup unicorn && sleep 10'`
-      * api: `knife ssh -C1 'name:api-*-sv-gprd*' 'hostname -f && sudo gitlab-ctl hup unicorn && sleep 30'`
-      * sidekiq: `knife ssh -C4 'name:sidekiq-*-sv-gprd*' 'hostname -f && sudo gitlab-ctl hup sidekiq && sleep 10'`
+          * check the iLB [status](https://console.cloud.google.com/net-services/loadbalancing/details/internal/us-east1/gprd-pgbouncer-regional?project=gitlab-production&angularJsUrl=%2Fnet-services%2Floadbalancing%2Fdetails%2Finternal%2Fus-east1%2Fgprd-pgbouncer-regional%3Fproject%3Dgitlab-production&authuser=1) and [metrics](https://app.google.stackdriver.com/metrics-explorer?project=gitlab-production&timeSelection=%7B%22timeRange%22:%226h%22%7D&xyChart=%7B%22dataSets%22:%5B%7B%22timeSeriesFilter%22:%7B%22filter%22:%22metric.type%3D%5C%22loadbalancing.googleapis.com%2Fl3%2Finternal%2Fegress_packets_count%5C%22%20resource.type%3D%5C%22internal_tcp_lb_rule%5C%22%20resource.label.%5C%22load_balancer_name%5C%22%3D%5C%22gprd-pgbouncer-regional%5C%22%22,%22perSeriesAligner%22:%22ALIGN_RATE%22,%22crossSeriesReducer%22:%22REDUCE_SUM%22,%22secondaryCrossSeriesReducer%22:%22REDUCE_NONE%22,%22minAlignmentPeriod%22:%2260s%22,%22groupByFields%22:%5B%22resource.label.%5C%22backend_name%5C%22%22%5D,%22unitOverride%22:%221%22%7D,%22targetAxis%22:%22Y1%22,%22plotType%22:%22LINE%22%7D%5D,%22options%22:%7B%22mode%22:%22COLOR%22%7D,%22constantLines%22:%5B%5D,%22timeshiftDuration%22:%220s%22,%22y1Axis%22:%7B%22label%22:%22y1Axis%22,%22scale%22:%22LINEAR%22%7D%7D&isAutoRefresh=true)
+          * make sure the healthcheck is up on the 2 nodes that should be active:
+              * `systemctl status pgbouncer-leader-check.service`
+          * `HUP` all unicorns and sidekiq workers to re-establish db connections.
+              * web-cny: `knife ssh -C4 'role:gprd-base-fe-web-cny AND chef_environment:gprd' 'hostname -f && sudo gitlab-ctl hup unicorn && sleep 60'`
+              * api-cny: `knife ssh -C4 'role:gprd-base-fe-api-cny AND chef_environment:gprd' 'hostname -f && sudo gitlab-ctl hup unicorn && sleep 60'`
+              * web: `knife ssh -C4 'role:gprd-base-fe-web AND chef_environment:gprd' 'hostname -f && sudo gitlab-ctl hup unicorn && sleep 60'`
+              * api: `knife ssh -C4 'role:gprd-base-fe-api AND chef_environment:gprd' 'hostname -f && sudo gitlab-ctl hup unicorn && sleep 60'`
+              * sidekiq: `knife ssh -C4 'roles:gprd-base-be-sidekiq AND chef_environment:gprd' 'hostname -f && sudo gitlab-ctl hup sidekiq && sleep 60'`
+
 1. Too many Sidekiq connections
   * Check the [PostgreSQL dashboard](https://dashboards.gitlab.net/d/000000144/postgresql-overview?orgId=1) and look at several graphs:
-    * `PGBouncer Errors`
-    * `Slow Lock Acquires`
-    * `Locks across all hosts`
+      * `PGBouncer Errors`
+      * `Slow Lock Acquires`
+      * `Locks across all hosts`
 
   * Find the PostgreSQL master and take a dump of all SQL queries:
 
