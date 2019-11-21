@@ -253,4 +253,3 @@ build_runtools_build_image:
     - docker build -t ${IMAGE} images/runtools_build/
     - docker push ${IMAGE}
   when: manual
-
