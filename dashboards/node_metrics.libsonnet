@@ -107,16 +107,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
       description='Memory utilization. Lower is better.',
       query=
         |||
-          1 -
-          (
-            (
-              node_memory_MemFree_bytes{%(nodeSelector)s} +
-              node_memory_Buffers_bytes{%(nodeSelector)s} +
-              node_memory_Cached_bytes{%(nodeSelector)s}
-            )
-          )
-          /
-          node_memory_MemTotal_bytes{%(nodeSelector)s}
+          instance:node_memory_utilization:ratio{%(nodeSelector)s}
         ||| % formatConfig,
       legendFormat='{{ fqdn }}',
       interval='1m',

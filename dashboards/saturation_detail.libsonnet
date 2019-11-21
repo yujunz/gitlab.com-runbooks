@@ -56,6 +56,25 @@ local DETAILS = {
     legendFormat: '{{ fqdn }}',
   },
 
+  go_memory: {
+    title: 'Go Memory Saturation per Node',
+    description: |||
+      Go's memory allocation strategy can make it look like a Go process is saturating memory when measured using RSS, when in fact
+      the process is not at risk of memory saturation. For this reason, we measure Go processes using the `go_memstat_alloc_bytes`
+      metric instead of RSS.
+    |||,
+    query: |||
+      sum by (fqdn, type, tier, stage, environment) (
+        go_memstats_alloc_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s}
+      )
+      /
+      sum by (fqdn, type, tier, stage, environment) (
+        node_memory_MemTotal_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s}
+      )
+    |||,
+    legendFormat: '{{ fqdn }}',
+  },
+
   pgbouncer_async_pool: {
     title: 'Postgres Async (Sidekiq) Connection Pool Saturation per Node',
     description: |||

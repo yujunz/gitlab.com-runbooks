@@ -49,18 +49,9 @@ local platformLinks = import 'platform_links.libsonnet';
         title='Maximum Memory Utilization per Priority',
         description='Memory utilization. Lower is better.',
         query=|||
-          max(
-            1 -
-            (
-              (
-                node_memory_MemFree_bytes{%(nodeSelector)s} +
-                node_memory_Buffers_bytes{%(nodeSelector)s} +
-                node_memory_Cached_bytes{%(nodeSelector)s}
-              )
-            )
-            /
-            node_memory_MemTotal_bytes{%(nodeSelector)s}
-          ) by (priority)
+          max by (priority) (
+            instance:node_memory_utilization:ratio{%(nodeSelector)s}
+          )
         ||| % formatConfig,
         legendFormat='{{ priority }}',
         interval='1m',

@@ -42,7 +42,20 @@ groups:
       component: 'memory'
     expr: >
       max by (type, tier, stage, environment) (
-        instance:node_memory_utilization:ratio{type!=""}
+        instance:node_memory_utilization:ratio{type!="",type!="monitoring"}
+      )
+
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'go_memory'
+    expr: >
+      max by (type, tier, stage, environment) (
+        sum by (fqdn, type, tier, stage, environment) (
+          go_memstats_alloc_bytes{type=~"web|git|api|gitaly|web-pages|monitoring|praefect"}
+        ) /
+        sum by (fqdn, type, tier, stage, environment) (
+          node_memory_MemTotal_bytes{type=~"web|git|api|gitaly|web-pages|monitoring|praefect"}
+        )
       )
 
   # type: web/api/git, component: workers
