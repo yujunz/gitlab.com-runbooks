@@ -15,6 +15,19 @@
 
 ## Operations
 
+### Infrastructure
+
+The mailroom service runs in the production GKE cluster, in the `gitlab`
+namespace.
+
+### Configuration
+
+Mailroom depends on being able to read mail from IMAP and a connection to
+redis-sidekiq so that it can queue events on the `email_receiver` queue.
+
+After events are delivered to sidekiq messages are deleted from the IMAP
+mailbox.
+
 ### Clear e-mail that are piling up
 
 Until we are able to [upgrade Mailroom], there exists the possibility that a
