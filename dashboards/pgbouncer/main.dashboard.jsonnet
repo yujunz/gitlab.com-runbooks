@@ -33,41 +33,41 @@ dashboard.new(
 .addTemplate(templates.environment)
 .addPanels(keyMetrics.headlineMetricsRow('pgbouncer', '$stage', startRow=0))
 .addPanel(serviceHealth.row('pgbouncer', '$stage'), gridPos={ x: 0, y: 500 })
-
 .addPanel(
-row.new(title='pgbouncer Workload'),
+  row.new(title='pgbouncer Workload'),
   gridPos={
-      x: 0,
-      y: 0,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 0,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1))
 .addPanel(
-row.new(title='pgbouncer Connection Pooling'),
+  row.new(title='pgbouncer Connection Pooling'),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('pgbouncer', 1001))
 .addPanel(
-row.new(title='pgbouncer Network'),
+  row.new(title='pgbouncer Network'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(pgbouncerCommonGraphs.networkStats('pgbouncer', 2001))
 .addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 3000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 4000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="pgbouncer", environment="$environment"'), gridPos={ x: 0, y: 5000 })
-.addPanel(saturationDetail.saturationDetailPanels('pgbouncer', 'main', components=[
+.addPanel(
+  saturationDetail.saturationDetailPanels('pgbouncer', 'main', components=[
     'cpu',
     'memory',
     'open_fds',
@@ -76,7 +76,8 @@ row.new(title='pgbouncer Network'),
     'pgbouncer_sync_pool',
     'single_node_cpu',
   ]),
-  gridPos={ x: 0, y: 6000, w: 24, h: 1 })
+  gridPos={ x: 0, y: 6000, w: 24, h: 1 }
+)
 .addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 7000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer') + platformLinks.services,

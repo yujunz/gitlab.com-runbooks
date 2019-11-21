@@ -58,7 +58,7 @@ local platformLinks = import 'platform_links.libsonnet';
         intervalFactor=1,
         legend_show=true,
         linewidth=2
-        ),
+      ),
 
     ], cols=2, rowHeight=10, startRow=startRow),
 }

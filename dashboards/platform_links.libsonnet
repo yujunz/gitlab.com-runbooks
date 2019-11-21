@@ -35,9 +35,9 @@ local LINKED_SERVICES = std.sort([
 
 local getServiceLink(serviceType) =
   if std.objectHas(USES_GENERIC_DASHBOARD, serviceType) then
-  'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=' + serviceType
+    'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=' + serviceType
   else
-   GRAFANA_BASE_URL + serviceCatalog.lookupService(serviceType).observability.monitors.primary_grafana_dashboard + '?orgId=1';
+    GRAFANA_BASE_URL + serviceCatalog.lookupService(serviceType).observability.monitors.primary_grafana_dashboard + '?orgId=1';
 
 {
   triage:: [
@@ -48,7 +48,7 @@ local getServiceLink(serviceType) =
   ],
   services:: [
     link.dashboards(type + ' service', '', icon='dashboard', type='link', keepTime=true, url=getServiceLink(type))
-for type in LINKED_SERVICES
+    for type in LINKED_SERVICES
   ],
   parameterizedServiceLink: [
     link.dashboards('$type service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=$type'),
@@ -58,11 +58,11 @@ for type in LINKED_SERVICES
   ],
   dynamicLinks(title, tags, asDropdown=true, icon='dashboard', includeVars=true, keepTime=true)::
     link.dashboards(
-        title,
-        tags,
-        asDropdown=asDropdown,
-        includeVars=includeVars,
-        keepTime=keepTime,
-        icon=icon,
-      ),
+      title,
+      tags,
+      asDropdown=asDropdown,
+      includeVars=includeVars,
+      keepTime=keepTime,
+      icon=icon,
+    ),
 }

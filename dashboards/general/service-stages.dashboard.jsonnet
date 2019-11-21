@@ -10,10 +10,8 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 
-local generalGraphPanel(
-  title,
-  description=null
-) = graphPanel.new(
+local generalGraphPanel(title, description=null) =
+  graphPanel.new(
     title,
     linewidth=1,
     fill=0,
@@ -32,7 +30,8 @@ local generalGraphPanel(
   )
   .addSeriesOverride(seriesOverrides.slo);
 
-local apdexPanel() = generalGraphPanel(
+local apdexPanel() =
+  generalGraphPanel(
     'Latency: Apdex',
     description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
   )

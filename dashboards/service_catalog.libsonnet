@@ -4,7 +4,7 @@ local link = grafana.link;
 
 local serviceMap = {
   [x.name]: x
-for x in serviceCatalog.services
+  for x in serviceCatalog.services
 };
 
 local safeMap(fn, v) = if std.isArray(v) then std.map(fn, v) else [];

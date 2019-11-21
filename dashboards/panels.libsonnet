@@ -1,33 +1,27 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 
 {
-  generalGraphPanel(
+  generalGraphPanel(title, description=null, legend_show=false)::
+    grafana.graphPanel.new(
       title,
-      description=null,
-      legend_show=false,
-    ):: grafana.graphPanel.new(
-        title,
-        description=description,
-        linewidth=1,
-        fill=0,
-        datasource='$PROMETHEUS_DS',
-        decimals=2,
-        legend_show=legend_show,
-        legend_values=true,
-        legend_min=true,
-        legend_max=true,
-        legend_current=true,
-        legend_total=false,
-        legend_avg=true,
-        legend_alignAsTable=true,
-        legend_hideEmpty=true,
-      ),
+      description=description,
+      linewidth=1,
+      fill=0,
+      datasource='$PROMETHEUS_DS',
+      decimals=2,
+      legend_show=legend_show,
+      legend_values=true,
+      legend_min=true,
+      legend_max=true,
+      legend_current=true,
+      legend_total=false,
+      legend_avg=true,
+      legend_alignAsTable=true,
+      legend_hideEmpty=true,
+    ),
 
-  generalBytesGraphPanel(
-      title,
-      description=null,
-      legend_show=true,
-    ):: self.generalGraphPanel(
+  generalBytesGraphPanel(title, description=null, legend_show=true,)::
+    self.generalGraphPanel(
       title,
       description=description,
       legend_show=legend_show,
@@ -45,10 +39,9 @@ local grafana = import 'grafonnet/grafana.libsonnet';
     ),
 
   generalPercentageGraphPanel(
-      title,
-      description=null,
-      legend_show=false,
-    ):: self.generalGraphPanel(
+    title, description=null, legend_show=false,
+  )::
+    self.generalGraphPanel(
       title,
       description=description,
       legend_show=legend_show,

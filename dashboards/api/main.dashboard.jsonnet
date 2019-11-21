@@ -37,40 +37,41 @@ dashboard.new(
 .addPanels(keyMetrics.headlineMetricsRow('api', '$stage', startRow=0))
 .addPanel(serviceHealth.row('api', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
-row.new(title='Workhorse'),
+  row.new(title='Workhorse'),
   gridPos={
-      x: 0,
-      y: 1000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 1000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(workhorseCommon.workhorsePanels(serviceType='api', serviceStage='$stage', startRow=1001))
 .addPanel(
-row.new(title='Unicorn'),
+  row.new(title='Unicorn'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(unicornCommon.unicornPanels(serviceType='api', serviceStage='$stage', startRow=1001))
 
 .addPanel(
-row.new(title='Rails'),
+  row.new(title='Rails'),
   gridPos={
-      x: 0,
-      y: 3000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(railsCommon.railsPanels(serviceType='api', serviceStage='$stage', startRow=3001))
 .addPanel(keyMetrics.keyServiceMetricsRow('api', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('api', '$stage'), gridPos={ x: 0, y: 5000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="api", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
-.addPanel(saturationDetail.saturationDetailPanels('api', '$stage', components=[
+.addPanel(
+  saturationDetail.saturationDetailPanels('api', '$stage', components=[
     'cpu',
     'disk_space',
     'memory',
@@ -79,7 +80,8 @@ row.new(title='Rails'),
     'single_node_unicorn_workers',
     'workers',
   ]),
-  gridPos={ x: 0, y: 7000, w: 24, h: 1 })
+  gridPos={ x: 0, y: 7000, w: 24, h: 1 }
+)
 .addPanel(capacityPlanning.capacityPlanningRow('api', '$stage'), gridPos={ x: 0, y: 8000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('api') + platformLinks.services,

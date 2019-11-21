@@ -23,50 +23,46 @@ local keyServices = serviceCatalog.findServices(function(service)
 
 local keyServiceRegExp = std.join('|', std.map(function(service) service.name, keyServices));
 
-local slaBarGauge(
-  title,
-  query,
-  legendFormat
-  ) = {
-      options: {
-        displayMode: 'gradient',
-        fieldOptions: {
-          calcs: [
-            'last',
-          ],
-          defaults: {
-            decimals: 1,
-            max: 1,
-            min: 0,
-            unit: 'percentunit',
-          },
-          mappings: [],
-          override: {},
-          thresholds: [{
-            color: 'green',
-            index: 0,
-            value: null,
-          }],
-          values: false,
-        },
-        orientation: 'horizontal',
-      },
-      targets: [
-        {
-          expr: query,
-          format: 'time_series',
-          instant: true,
-          interval: '',
-          intervalFactor: 1,
-          legendFormat: legendFormat,
-          refId: 'A',
-        },
+local slaBarGauge(title, query, legendFormat) = {
+  options: {
+    displayMode: 'gradient',
+    fieldOptions: {
+      calcs: [
+        'last',
       ],
-      timeFrom: null,
-      timeShift: null,
-      title: title,
-      type: 'bargauge',
-    };
+      defaults: {
+        decimals: 1,
+        max: 1,
+        min: 0,
+        unit: 'percentunit',
+      },
+      mappings: [],
+      override: {},
+      thresholds: [{
+        color: 'green',
+        index: 0,
+        value: null,
+      }],
+      values: false,
+    },
+    orientation: 'horizontal',
+  },
+  targets: [
+    {
+      expr: query,
+      format: 'time_series',
+      instant: true,
+      interval: '',
+      intervalFactor: 1,
+      legendFormat: legendFormat,
+      refId: 'A',
+    },
+  ],
+  timeFrom: null,
+  timeShift: null,
+  title: title,
+  type: 'bargauge',
+};
 
 dashboard.new(
   'SLAs',
@@ -93,16 +89,16 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addPanel(
-row.new(title='Headline'),
+  row.new(title='Headline'),
   gridPos={
-      x: 0,
-      y: 0,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 0,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
-layout.grid([
+  layout.grid([
     grafana.singlestat.new(
       'SLA Status',
       datasource='$PROMETHEUS_DS',
@@ -123,7 +119,7 @@ layout.grid([
   ], cols=6, rowHeight=5, startRow=1)
 )
 .addPanels(
-layout.grid([
+  layout.grid([
     basic.slaTimeseries(
       title='SLA Trends - Aggregated',
       description='1w rolling average SLO adherence across all primary services. Higher is better.',
@@ -136,18 +132,17 @@ layout.grid([
     ),
   ], cols=1, rowHeight=10, startRow=1001)
 )
-
 .addPanel(
-row.new(title='Primary Services'),
+  row.new(title='Primary Services'),
   gridPos={
-      x: 0,
-      y: 2000,
-      w: 24,
-      h: 1,
+    x: 0,
+    y: 2000,
+    w: 24,
+    h: 1,
   }
 )
 .addPanels(
-layout.grid([
+  layout.grid([
     slaBarGauge(
       title='Primary Services Average Availability for Period',
       query=|||

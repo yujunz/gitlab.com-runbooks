@@ -22,11 +22,8 @@ local genGridPos(x, y, h=1, w=1) = {
   h: h * rowHeight,
 };
 
-local generalGraphPanel(
-  title,
-  description=null,
-  sort='increasing',
-) = graphPanel.new(
+local generalGraphPanel(title, description=null, sort='increasing') =
+  graphPanel.new(
     title,
     datasource='$PROMETHEUS_DS',
     linewidth=2,
@@ -46,16 +43,7 @@ local generalGraphPanel(
   )
   .addSeriesOverride(seriesOverrides.sloViolation);
 
-local generateAnomalyPanel(
-  title,
-  query,
-  minY=6,
-  maxY=6,
-  errorThreshold=8,
-  warningThreshold=6,
-  sort='increasing',
-  ) =
-
+local generateAnomalyPanel(title, query, minY=6, maxY=6, errorThreshold=8, warningThreshold=6, sort='increasing') =
   graphPanel.new(
     title,
     datasource='$PROMETHEUS_DS',
@@ -112,46 +100,47 @@ local generateAnomalyPanel(
     show=false
   );
 
-local activeAlertsPanel = grafana.tablePanel.new(
+local activeAlertsPanel =
+  grafana.tablePanel.new(
     'Active Alerts',
     datasource='$PROMETHEUS_DS',
     styles=[
-{
-      type: 'hidden',
-      pattern: 'Time',
-      alias: 'Time',
-    },
-{
-      unit: 'short',
-      type: 'string',
-      alias: 'Service',
-      decimals: 2,
-      pattern: 'type',
-      dateFormat: 'YYYY-MM-DD HH:mm:ss',
-      mappingType: 2,
-      link: true,
-      linkUrl: 'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=${__cell}&var-environment=$environment',
-      linkTooltip: 'Open dashboard',
-    },
-    {
-      unit: 'short',
-      type: 'number',
-      alias: 'Score',
-      decimals: 0,
-      colors: [
-        colors.warningColor,
-        colors.errorColor,
-        colors.criticalColor,
-      ],
-      colorMode: 'row',
-      pattern: 'Value',
-      thresholds: [
-        '100',
-        '10000',
-      ],
-      mappingType: 1,
-    },
-  ],
+      {
+        type: 'hidden',
+        pattern: 'Time',
+        alias: 'Time',
+      },
+      {
+        unit: 'short',
+        type: 'string',
+        alias: 'Service',
+        decimals: 2,
+        pattern: 'type',
+        dateFormat: 'YYYY-MM-DD HH:mm:ss',
+        mappingType: 2,
+        link: true,
+        linkUrl: 'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=${__cell}&var-environment=$environment',
+        linkTooltip: 'Open dashboard',
+      },
+      {
+        unit: 'short',
+        type: 'number',
+        alias: 'Score',
+        decimals: 0,
+        colors: [
+          colors.warningColor,
+          colors.errorColor,
+          colors.criticalColor,
+        ],
+        colorMode: 'row',
+        pattern: 'Value',
+        thresholds: [
+          '100',
+          '10000',
+        ],
+        mappingType: 1,
+      },
+    ],
   )
   .addTarget(  // Alert scoring
     promQuery.target(
@@ -244,10 +233,10 @@ dashboard.new(
       )
       /
       gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-  |||,
-  maxY=0.5,
-  minY=-12,
-  sort='increasing',
+    |||,
+    maxY=0.5,
+    minY=-12,
+    sort='increasing',
   )
   ,
   gridPos=genGridPos(1, 0.5)
@@ -314,10 +303,10 @@ dashboard.new(
       )
       /
       gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-  |||,
-  maxY=12,
-  minY=-0.5,
-  sort='decreasing',
+    |||,
+    maxY=12,
+    minY=-0.5,
+    sort='decreasing',
   )
   , gridPos=genGridPos(1, 1.5)
 )
@@ -363,12 +352,12 @@ dashboard.new(
       )
       /
       gitlab_service_ops:rate:stddev_over_time_1w{environment="$environment", stage="$stage"}
-  |||,
-  maxY=6,
-  minY=-3,
-  errorThreshold=4,
-  warningThreshold=3,
-  sort='decreasing',
+    |||,
+    maxY=6,
+    minY=-3,
+    errorThreshold=4,
+    warningThreshold=3,
+    sort='decreasing',
   )
   , gridPos=genGridPos(1, 2.5)
 )
@@ -415,9 +404,9 @@ dashboard.new(
       )
       /
       gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-  |||,
-  maxY=0.5,
-  minY=-12
+    |||,
+    maxY=0.5,
+    minY=-12
   )
   , gridPos=genGridPos(1, 3.5)
 )
@@ -455,6 +444,6 @@ dashboard.new(
   , gridPos=genGridPos(0, 4.5, w=2)
 )
 .addPanel(capacityPlanning.environmentCapacityPlanningRow(), gridPos=genGridPos(0, 6.5))
- + {
++ {
   links+: platformLinks.capacityPlanning + platformLinks.services,
 }

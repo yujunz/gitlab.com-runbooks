@@ -8,13 +8,7 @@ local dashboard = grafana.dashboard;
 local graphPanel = grafana.graphPanel;
 local link = grafana.link;
 
-local balanceChart(
-    title,
-    description,
-    format,
-    legendFormat,
-    query,
-) =
+local balanceChart(title, description, format, legendFormat, query) =
   graphPanel.new(
     title,
     description=description,
@@ -35,7 +29,7 @@ local balanceChart(
   })
   .addTarget(
     promQuery.target(
-query,
+      query,
       instant=true,
       legendFormat=legendFormat,
     )
@@ -57,7 +51,7 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addPanels(
-layout.grid([
+  layout.grid([
     balanceChart(
       title='Balacing',
       description='Balancing Ranking. Equal is better.',
@@ -110,7 +104,7 @@ layout.grid([
   ], cols=1, rowHeight=10, startRow=1)
 )
 .addPanels(
-layout.grid([
+  layout.grid([
     balanceChart(
       title='Disk read bytes/second average',
       description='Average read throughput. Lower is better.',
