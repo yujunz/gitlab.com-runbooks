@@ -36,25 +36,21 @@ dashboard.new(
 .addPanels(
   layout.grid([
     basic.latencyTimeseries(
-      title="PipelineProcessWorker, StageUpdateWorker median execution duration",
-      query='
-        histogram_quantile(0.5, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="$environment", worker=~"PipelineProcessWorker|StageUpdateWorker"}[$__interval])) by (le, worker))
-      ',
+      title='PipelineProcessWorker, StageUpdateWorker median execution duration',
+      query='\n        histogram_quantile(0.5, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="$environment", worker=~"PipelineProcessWorker|StageUpdateWorker"}[$__interval])) by (le, worker))\n      ',
       legendFormat='{{ worker }}',
-      format="s",
-      interval="5m",
+      format='s',
+      interval='5m',
       intervalFactor=1,
       legend_show=true,
     ),
     basic.latencyTimeseries(
-      title="PipelineProcessWorker, StageUpdateWorker p95 execution duration (log 10 scale)",
-      query='
-        histogram_quantile(0.95, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="$environment", worker=~"PipelineProcessWorker|StageUpdateWorker"}[$__interval])) by (le, worker))
-      ',
+      title='PipelineProcessWorker, StageUpdateWorker p95 execution duration (log 10 scale)',
+      query='\n        histogram_quantile(0.95, sum(rate(sidekiq_jobs_completion_time_seconds_bucket{environment="$environment", worker=~"PipelineProcessWorker|StageUpdateWorker"}[$__interval])) by (le, worker))\n      ',
       legendFormat='{{ worker }}',
-      format="s",
+      format='s',
       legend_show=true,
-      interval="5m",
+      interval='5m',
       intervalFactor=1,
       logBase=10,
       min=0.001
