@@ -3,7 +3,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
-source "${SCRIPT_DIR}"/../lib/update-scripts-functions.sh
+source "${SCRIPT_DIR}"/../../lib/update-scripts-functions.sh
 
 # this script is not being used at the moment anyway, will review this when moving visualizations to this rep
 
