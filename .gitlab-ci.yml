@@ -107,70 +107,83 @@ test:
     - scripts/validate_kibana_urls
     - scripts/validate-alerts
 
-update_elastic_dashboards:
+update_elastic_log_dashboards:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
-  - ./elastic/managed-objects/dashboards/update-dashboards.sh
+  - ./elastic/managed-objects/log/dashboards/update-dashboards.sh
   only:
     refs:
       - master
     changes:
-      - elastic/managed-objects/dashboards/*
+      - elastic/managed-objects/log/dashboards/*
     variables:
-      - $ES_URL
+      - $ES_LOG_URL
 
-update_elastic_index_patterns:
+update_elastic_log_index_patterns:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
-  - ./elastic/managed-objects/index-patterns/update-index-patterns.sh
+  - ./elastic/managed-objects/log/index-patterns/update-index-patterns.sh
   only:
     refs:
       - master
     changes:
-      - elastic/managed-objects/index-patterns/*
+      - elastic/managed-objects/log/index-patterns/*
     variables:
-      - $ES_URL
+      - $ES_LOG_URL
 
-update_elastic_searches:
+update_elastic_log_searches:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
-  - ./elastic/managed-objects/searches/update-searches.sh
+  - ./elastic/managed-objects/log/searches/update-searches.sh
   only:
     refs:
       - master
     changes:
-      - elastic/managed-objects/searches/*
+      - elastic/managed-objects/log/searches/*
     variables:
-      - $ES_URL
+      - $ES_LOG_URL
 
-update_elastic_watchers:
+update_elastic_log_watchers:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
-  - ./elastic/managed-objects/watches/update-watches.sh
+  - ./elastic/managed-objects/log/watches/update-watches.sh
   only:
     refs:
       - master
     changes:
-      - elastic/managed-objects/watches/*
+      - elastic/managed-objects/log/watches/*
     variables:
-      - $ES_URL
+      - $ES_LOG_URL
 
-update_elastic_visualizations:
+update_elastic_log_visualizations:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
-  - ./elastic/managed-objects/visualizations/update-visualizations.sh
+  - ./elastic/managed-objects/log/visualizations/update-visualizations.sh
   only:
     refs:
       - master
     changes:
-      - elastic/managed-objects/visualizations/*
+      - elastic/managed-objects/log/visualizations/*
     variables:
-      - $ES_URL
+      - $ES_LOG_URL
+
+update_elastic_nonprod-log_watchers:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  script:
+  - ./elastic/managed-objects/nonprod-log/watches/update-watches.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/nonprod-log/watches/*
+    variables:
+      - $ES_NONPROD_URL
 
 dryrun_pingdom_checks:
   stage: test
