@@ -1,9 +1,12 @@
 # Accessing and Using CloudFlare
 
 CloudFlare is configured as an Okta app. Users that have been provisioned can
-access it from their Okta applications or directly at:
+access it directly at:
 
-https://gitlab.cloudflaresso.com
+1. https://gitlab.cloudflaresso.com
+2. https://dash.cloudflare.com: Once you've entered your full `@gitlab.com` email
+   address, the Login button should display "Log in with SSO" and the password
+   box will be grayed out.
 
 ## Baseline Entitlements and Provisioning
 
@@ -13,7 +16,7 @@ using the CloudFlare dashboard.
 
 Instructions for Access Provisioners (requires Super Administrator privileges):
 
-1. Log in to the dashboard at https://gitlab.cloudflaresso.com.
+1. Log in to the dashboard at https://dash.cloudflare.com.
 2. Navigate to the "GitLab" account.
 3. Select the "Members" tab.
 4. Select the permission level. Be user to unselect "Administrator" when selecting "Administrator Read Only", it is not automatically unselected.
