@@ -354,3 +354,103 @@ groups:
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
           promql_template_1: 'gitlab_service_ops:rate{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_ops:rate{environment="$environment", type="$type", stage="$stage"}'
+
+      ################################################
+      # Bad canary: we are experiencing errors or latency issues in
+      # canary, but not in production. This probably indicates that
+      # we have a dud canary
+      ################################################
+
+      - alert: service_cny_apdex_slo_out_of_bounds_lower_5m
+        expr: |
+          (
+            avg(gitlab_service_apdex:ratio{stage="cny"}) by (environment, tier, type)
+            < ignoring(environment, stage) group_left
+              avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+          )
+          unless ignoring(stage)
+          (
+            avg(gitlab_service_apdex:ratio{stage="main"}) by (environment, tier, type)
+            < ignoring(environment, stage) group_left
+              avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+          )
+        for: 5m
+        labels:
+          rules_domain: general
+          canary_warning: 'yes'
+          metric: gitlab_service_apdex:ratio
+          severity: s2
+          slo_alert: 'yes'
+          period: 5m
+          bound: lower
+          pager: pagerduty
+        annotations:
+          description: >
+            The `cny` stage of  the `{{ $labels.type }}` service has a apdex score
+            (latency) below SLO, but the main stage does not.
+
+            While there are other reasons, such as high traffic to the canary stage, experiencing a
+            high error rate in `cny`, without any corresponding errors in `main` stage could indicate
+            a malfunctioning canary deploy.
+
+            Consider investigating further. If there is no evidence of another cause, please
+            consider stopping the deployment process while the problem is investigated.
+
+            This could indicate that the canary deployment is not functioning correctly. Please consider
+            stopping the deployment process while the problem is investigated.
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "Bad canary? The `cny` stage of  the `{{ $labels.type }}` service has a apdex score (latency) below SLO, but the main stage does not."
+          grafana_dashboard_id: "general-service-stages/general-service-platform-metrics-stages"
+          grafana_panel_id: "2"
+          grafana_variables: "environment,type"
+          grafana_min_zoom_hours: "6"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
+          promql_template_1: 'gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
+
+      - alert: service_cny_error_ratio_slo_out_of_bounds_upper_5m
+        expr: |
+          (
+            avg(gitlab_service_errors:ratio{stage="cny"}) by (environment, tier, type, stage)
+            > ignoring(environment, stage) group_left
+            avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+          )
+          unless ignoring(stage)
+          (
+            avg(gitlab_service_errors:ratio{stage="main"}) by (environment, tier, type, stage)
+            > ignoring(environment, stage) group_left
+            avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+          )
+        for: 5m
+        labels:
+          rules_domain: general
+          canary_warning: 'yes'
+          metric: gitlab_service_errors:ratio
+          severity: s2
+          slo_alert: 'yes'
+          period: 5m
+          bound: upper
+          pager: pagerduty
+        annotations:
+          description: >
+            The `cny` stage of  the `{{ $labels.type }}` service has an error-ratio
+            exceeding SLO, but the main stage does not.
+
+            While there are other reasons, such as high traffic to the canary stage, experiencing a
+            high error rate in `cny`, without any corresponding errors in `main` stage could indicate
+            a malfunctioning canary deploy.
+
+            Consider investigating further. If there is no evidence of another cause, please
+            consider stopping the deployment process while the problem is investigated.
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          title: "Bad canary? The `cny` stage of  the `{{ $labels.type }}` service has an error-ratio exceeding SLO, but the main stage does not."
+          grafana_dashboard_id: "general-service-stages/general-service-platform-metrics-stages"
+          grafana_panel_id: "3"
+          grafana_variables: "environment,type"
+          grafana_min_zoom_hours: "6"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
+          promql_template_1: 'gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
+          promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
+
