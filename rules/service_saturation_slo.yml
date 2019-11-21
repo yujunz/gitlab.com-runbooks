@@ -43,12 +43,12 @@ groups:
   ## Golang Memory Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
-      component: 'go-memory'
+      component: 'go_memory'
     expr: '0.90'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
-      component: 'go-memory'
+      component: 'go_memory'
     expr: '0.98'
 
   ## Worker Saturation
