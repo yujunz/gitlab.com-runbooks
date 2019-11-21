@@ -143,13 +143,8 @@ local DETAILS = {
     query: |||
         max(
           (
-            (
-              node_filesystem_size_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", fstype=~"ext.|xfs"}
-              -
-              node_filesystem_free_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", fstype=~"ext.|xfs"}
-            )
-            /
-            node_filesystem_size_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", fstype=~"ext.|xfs"}
+            1 -
+            instance:node_filesystem_avail:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s" ,fstype=~"ext.|xfs"}
           )
         ) by (device, fqdn)
       |||,
