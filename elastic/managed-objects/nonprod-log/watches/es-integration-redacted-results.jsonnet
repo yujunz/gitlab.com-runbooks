@@ -42,7 +42,7 @@ local ES_QUERY = {
   },
   actions: {
     'notify-slack': {
-      throttle_period: '30m',
+      throttle_period: '120m',
       slack: {
         message: {
           from: 'ElasticCloud Watcher: es-integration-redacted-results',
