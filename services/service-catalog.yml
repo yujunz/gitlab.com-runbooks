@@ -1180,10 +1180,7 @@ services:
       - service: redis
     configurations:
       - config_name: MailRoom
-        location: /opt/gitlab/embedded/service/gitlab-rails/config/mail_room.yml
-    chef_roles:
-      - gstg-base-be-mailroom
-      - gprd-base-be-mailroom
+        location: /var/opt/gitlab/mail_room.yml
     scalability:
       bound: cpu
       scalable: horizontal
@@ -1196,8 +1193,8 @@ services:
         permalink: https://log.gitlab.net/goto/0ce3bf67abafcfc0f81f3d6e7a066912
   infrastructure:
     provider: gcp
-    architecture:
-    provisioning: terraform
+    architecture: gke
+    provisioning: kubernetes
     accesses:
       - account_name:
         access_type:
@@ -1209,7 +1206,7 @@ services:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
-      primary_grafana_dashboard: https://dashboards.gitlab.net/d/mailroom/mailroom-application-info
+      primary_grafana_dashboard: https://dashboards.gitlab.net/d/mailroom-app/mailroom-application-info
       sentry_slug:
 
 - name: pages

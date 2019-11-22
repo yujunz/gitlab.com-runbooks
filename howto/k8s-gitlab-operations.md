@@ -2,6 +2,11 @@
 
 https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com
 
+The following production services are running in the `gitlab` namespace:
+
+* Container Registry
+* Mailroom
+
 ## Setup for the oncall
 
 - **!Important!** Before you do anything in this doc please follow the [setup instructions for the oncall](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/k8s-operations.md)
@@ -100,7 +105,9 @@ tf import module.gitlab-gke.google_container_node_pool.node_pool[0] gitlab-produ
 * All GKE logs: https://log.gitlab.net/goto/fcf1a37403d6a035e3dfd3a3b406bf34
 * Registry errors in GKE: https://log.gitlab.net/goto/763017c05032e98ee79ef18165da7703
 * Registry in GKE application overview: https://dashboards.gitlab.net/d/registry-app/registry-application-info?orgId=1
-* Pod Metrics: https://dashboards.gitlab.net/d/registry-pod/registry-pod-info?orgId=1
+* Mailroom in GKE application overview: https://dashboards.gitlab.net/d/mailroom-app/mailroom-application-info?orgId=1
+* Pod Metrics for Registry: https://dashboards.gitlab.net/d/registry-pod/registry-pod-info?orgId=1
+* Pod Metrics for Mailroom: https://dashboards.gitlab.net/d/mailroom-pod/mailroom-pod-info?orgId=1&from=now-12h&to=now&var-PROMETHEUS_DS=Global&var-environment=gstg&var-cluster=gstg-gitlab-gke&var-namespace=gitlab&var-Node=All&var-Deployment=gitlab-mailroom
 * General service metrics for Registry: https://dashboards.gitlab.net/d/general-service/general-service-platform-metrics?orgId=1&var-type=registry&from=now-1h&to=now
 
 ### Using Toolbox
