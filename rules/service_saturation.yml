@@ -112,21 +112,19 @@ groups:
     labels:
       component: 'pgbouncer_sync_pool'
     expr: >
-      clamp_max(
-        max(
-          (
-            pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production"} +
-            pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production"} +
-            pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production"} +
-            pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production"}
-          )
-          /
-          on(database, environment, fqdn, job, stage, tier, type, user)
-          label_replace(
-            label_replace(pgbouncer_databases_pool_size, "database", "$1", "name", "(.*)"),
-            "user", "gitlab", "", ""
-          )
-        ) by (type, tier, stage, environment), 1)
+      max(
+        (
+          pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production"} +
+          pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production"} +
+          pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production"} +
+          pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production"}
+        )
+        /
+        on(environment, tier, type, stage, fqdn, instance) group_left()
+        sum by (environment, tier, type, stage, fqdn, instance) (
+          pgbouncer_databases_pool_size{name="gitlabhq_production"}
+        ) 
+      ) by (type, tier, stage, environment)
 
   # type: pgbouncer, component: pgbouncer_async_pool
   # Async pool is more resiliant to saturation, since
