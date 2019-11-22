@@ -58,7 +58,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         description='redis is single-threaded. This graph shows maximum utilization across all cores on each host. Lower is better.',
         query=|||
           max(
-            max_over_time(instance:redis_cpu_usage:rate1m{environment="$environment", type="%(serviceType)s", fqdn=~"%(serviceType)s-\\\\d\\\\d.*"}[$__interval])
+            max_over_time(instance:redis_cpu_usage:rate1m{environment="$environment", type="%(serviceType)s", fqdn=~"%(serviceType)s-\\d\\d.*"}[$__interval])
           ) by (fqdn)
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',

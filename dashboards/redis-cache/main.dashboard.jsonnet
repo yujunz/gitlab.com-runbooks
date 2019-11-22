@@ -76,7 +76,7 @@ dashboard.new(
 
 .addPanel(keyMetrics.keyServiceMetricsRow('redis-cache', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('redis-cache', 'main'), gridPos={ x: 0, y: 6000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis-cache", environment="$environment", fqdn=~"redis-cache-\\\\d\\\\d.*"'), gridPos={ x: 0, y: 7000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis-cache", environment="$environment", fqdn=~"redis-cache-\\d\\d.*"'), gridPos={ x: 0, y: 7000 })
 .addPanel(
   saturationDetail.saturationDetailPanels('redis-cache', 'main', components=[
     'cpu',
