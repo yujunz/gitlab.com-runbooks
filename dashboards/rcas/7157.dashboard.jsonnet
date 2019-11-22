@@ -44,7 +44,7 @@ dashboard.new(
   basic.saturationTimeseries(
     title='Single core saturation on the redis-cache fleet',
     query=|||
-      max(1 - rate(node_cpu_seconds_total{environment="$environment", type="redis-cache", mode="idle", fqdn=~"redis-cache-\\\\d\\\\d.*"}[$__interval]))
+      max(1 - rate(node_cpu_seconds_total{environment="$environment", type="redis-cache", mode="idle", fqdn=~"redis-cache-\\d\\d.*"}[$__interval]))
     |||,
     legendFormat='Max Single Core Saturation',
   )
