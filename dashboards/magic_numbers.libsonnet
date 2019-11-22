@@ -13,10 +13,5 @@
     gitaly_disk_sustained_read_throughput_bytes_maximum_magic_number: 1200 * 1024 * 1024,  // 1200MB/s
     gitaly_disk_sustained_write_iops_maximum_magic_number: 30000,
     gitaly_disk_sustained_write_throughput_bytes_maximum_magic_number: 400 * 1024 * 1024,  // 400MB/s
-
-    // Technical debt: https://gitlab.com/gitlab-org/gitlab/issues/36353
-    // These values should match the output of `SHOW DATABASE` in pgbouncer console!
-    pgbouncer_sync_pool_size_magic_number: 75,
-    pgbouncer_async_pool_size_magic_number: 50,
   },
 }

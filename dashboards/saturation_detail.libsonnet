@@ -91,7 +91,10 @@ local DETAILS = {
         pgbouncer_pools_server_login_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"}
       )
       /
-      %(pgbouncer_async_pool_size_magic_number)d
+      on(environment, tier, type, stage, fqdn, instance) group_left()
+      sum by (environment, tier, type, stage, fqdn, instance) (
+        pgbouncer_databases_pool_size{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", name="gitlabhq_production_sidekiq"}
+      ) 
     |||,
     legendFormat: '{{ fqdn }}: {{ database }}',
   },
@@ -113,7 +116,10 @@ local DETAILS = {
         pgbouncer_pools_server_login_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"}
       )
       /
-      %(pgbouncer_sync_pool_size_magic_number)d
+      on(environment, tier, type, stage, fqdn, instance) group_left()
+      sum by (environment, tier, type, stage, fqdn, instance) (
+        pgbouncer_databases_pool_size{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", name="gitlabhq_production"}
+      ) 
     |||,
     legendFormat: '{{ fqdn }}: {{ database }}',
   },
