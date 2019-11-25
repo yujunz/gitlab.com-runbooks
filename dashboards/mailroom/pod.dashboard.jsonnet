@@ -72,7 +72,7 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanels(k8sCommon.memory(startRow=2001))
+.addPanels(k8sCommon.memory(startRow=2001, container='mailroom'))
 .addPanel(
 
   row.new(title='Network'),

@@ -208,14 +208,14 @@ local generalGraphPanel(
 
   ], cols=1, rowHeight=10, startRow=startRow),
 
-  memory(startRow):: layout.grid([
+  memory(startRow, container):: layout.grid([
     generalGraphPanel(
       'Usage',
       format='bytes',
     )
     .addTarget(
       promQuery.target(
-        'sum (container_memory_working_set_bytes{env=~"$environment", id!="/",pod_name=~"^$Deployment.*$",node=~"^$Node$"}) by (pod_name)',
+        'sum (container_memory_working_set_bytes{env=~"$environment", id!="/",pod_name=~"^$Deployment.*$",node=~"^$Node$", container="%(container)s"}) by (pod_name)' % { container: container },
         legendFormat='real: {{ pod_name }}',
       )
     ),
