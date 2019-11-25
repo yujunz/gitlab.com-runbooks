@@ -988,7 +988,7 @@ services:
   observability:
     monitors:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
-      primary_grafana_dashboard: "OktWokpik/workhorse-overview?var-type=git"
+      primary_grafana_dashboard: "git-main/git-overview"
 
 - name: gitaly
   tier: stor
@@ -1735,7 +1735,7 @@ services:
       grafana_folder:
       primary_grafana_dashboard:
 
-- name: prometheus
+- name: monitoring
   tier: inf
   teams:
     - infrastructure
@@ -1823,99 +1823,8 @@ services:
     error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
-      grafana_folder: 5dsvpeImz
-      primary_grafana_dashboard: "-gJSV0Yiz/prometheus-performance"
-
-- name: prometheus-app
-  tier: inf
-  teams:
-    - infrastructure
-  infra_owner: reliability-engineering-secure--defend
-  label: Service:PrometheusApp
-  business:
-    requirement: |
-      It is needed to collect, store and view metrics exposed by
-      parts of our infrastructure that are running application
-      code (e.g. api, web, git, sidekiq, ...).
-    customers:
-      - Internally for infrastructure monitoring at dashboards.gitlab.net
-      - General public for publicly available dashboards at dashboards.gitlab.com
-    business_value: |
-      It gives visibility into our application infrastructure (see requirement above),
-      it also powers AlertManager.
-    SLA:
-      availability:
-      response_time:
-  technical:
-    project:
-      - https://github.com/prometheus/prometheus
-    criticality: 3
-    slx:
-    documents:
-      design:
-      architecture: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md#architecture-overview
-      service:
-        - https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
-      security:
-    dependencies:
-      - service:
-    configurations:
-      - config_name: prometheus.yml
-        location: /opt/prometheus/prometheus/prometheus.yml
-      - config_name: Rule definitions
-        location: /opt/prometheus/prometheus/rules/*.yml
-    chef_roles:
-      - gstg-infra-prometheus-app
-      - gprd-infra-prometheus-app
-    scalability:
-      bound: disk
-      scalable: vertical
-    security:
-      security_reviewed:
-      data_classification:
-      security_incidents:
-    logging:
-      - name: system
-        permalink: https://log.gitlab.net/goto/8872908a99847f4c6c03602f0c76bdbc
-  infrastructure:
-    provider: gcp
-    architecture:
-    provisioning: terraform
-    accesses:
-      - account_name:
-        access_type:
-        reviewed:
-  operations:
-    maintenance:
-    runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-checkpointing-slow.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-empty-sd.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-checkpoints.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-compactions.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-wal-truncations.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failing-rule-evaluations.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-filesd-errors.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-high-memory.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-indexing-backlog.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-invalid-config.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-is-down.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-not-ingesting.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-notifications-backlog.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-out-of-order.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-persist-errors.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-persistence-pressure-high.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-scrape-errors.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-rule-eval.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-scrapes.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-series-maintenance.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-storage-inconsistent.md
-    playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-prometheus-and-exporters.md
-    error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
-  observability:
-    monitors:
-      grafana_folder: 5dsvpeImz
-      primary_grafana_dashboard: "-gJSV0Yiz/prometheus-performance"
+      grafana_folder: monitoring
+      primary_grafana_dashboard: "monitoring-main/monitoring-overview"
 
 - name: redis
   tier: db
@@ -2243,7 +2152,7 @@ services:
   observability:
     monitors:
       grafana_folder: Ymoh2MEmk
-      primary_grafana_dashboard: "oBSgj8iz/application-info"
+      primary_grafana_dashboard: "registry-main/registry-overview"
 
 - name: share
   tier: stor

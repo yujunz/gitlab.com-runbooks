@@ -22,7 +22,7 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 
-local selector = 'environment="$environment", type="api", stage="$stage"';
+local selector = 'environment="$environment", type="git", stage="$stage"';
 
 dashboard.new(
   'Overview',
@@ -36,8 +36,8 @@ dashboard.new(
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
 .addTemplate(templates.stage)
-.addPanels(keyMetrics.headlineMetricsRow('api', '$stage', startRow=0))
-.addPanel(serviceHealth.row('api', '$stage'), gridPos={ x: 0, y: 500 })
+.addPanels(keyMetrics.headlineMetricsRow('git', '$stage', startRow=0))
+.addPanel(serviceHealth.row('git', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(
   row.new(title='Workhorse'),
   gridPos={
@@ -47,7 +47,7 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanels(workhorseCommon.workhorsePanels(serviceType='api', serviceStage='$stage', startRow=1001))
+.addPanels(workhorseCommon.workhorsePanels(serviceType='git', serviceStage='$stage', startRow=1001))
 .addPanel(
   row.new(title='Unicorn'),
   gridPos={
@@ -57,7 +57,7 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanels(unicornCommon.unicornPanels(serviceType='api', serviceStage='$stage', startRow=1001))
+.addPanels(unicornCommon.unicornPanels(serviceType='git', serviceStage='$stage', startRow=1001))
 
 .addPanel(
   row.new(title='Rails'),
@@ -68,24 +68,22 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanels(railsCommon.railsPanels(serviceType='api', serviceStage='$stage', startRow=3001))
-.addPanel(keyMetrics.keyServiceMetricsRow('api', '$stage'), gridPos={ x: 0, y: 4000 })
-.addPanel(workhorseCommon.componentDetailsRow('api', selector), gridPos={ x: 0, y: 5000 })
-.addPanel(unicornCommon.componentDetailsRow('api', selector), gridPos={ x: 0, y: 5100 })
+.addPanels(railsCommon.railsPanels(serviceType='git', serviceStage='$stage', startRow=3001))
+.addPanel(keyMetrics.keyServiceMetricsRow('git', '$stage'), gridPos={ x: 0, y: 4000 })
+.addPanel(workhorseCommon.componentDetailsRow('git', selector), gridPos={ x: 0, y: 5000 })
+.addPanel(unicornCommon.componentDetailsRow('git', selector), gridPos={ x: 0, y: 5100 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
-.addPanel(
-  saturationDetail.saturationDetailPanels('api', '$stage', components=[
-    'cpu',
-    'disk_space',
-    'memory',
-    'open_fds',
-    'single_node_cpu',
-    'single_node_unicorn_workers',
-    'workers',
-  ]),
-  gridPos={ x: 0, y: 7000, w: 24, h: 1 }
-)
-.addPanel(capacityPlanning.capacityPlanningRow('api', '$stage'), gridPos={ x: 0, y: 8000 })
+.addPanel(saturationDetail.saturationDetailPanels('git', '$stage', components=[
+            'cpu',
+            'disk_space',
+            'memory',
+            'open_fds',
+            'single_node_cpu',
+            'single_node_unicorn_workers',
+            'workers',
+          ]),
+          gridPos={ x: 0, y: 7000, w: 24, h: 1 })
+.addPanel(capacityPlanning.capacityPlanningRow('git', '$stage'), gridPos={ x: 0, y: 8000 })
 + {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('api') + platformLinks.services,
+  links+: platformLinks.triage + serviceCatalog.getServiceLinks('git') + platformLinks.services,
 }

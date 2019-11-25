@@ -22,6 +22,8 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 
+local selector = 'environment="$environment", type="web", stage="$stage"';
+
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -67,8 +69,9 @@ dashboard.new(
 )
 .addPanels(railsCommon.railsPanels(serviceType='web', serviceStage='$stage', startRow=3001))
 .addPanel(keyMetrics.keyServiceMetricsRow('web', '$stage'), gridPos={ x: 0, y: 4000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('web', '$stage'), gridPos={ x: 0, y: 5000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="web", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
+.addPanel(workhorseCommon.componentDetailsRow('web', selector), gridPos={ x: 0, y: 5000 })
+.addPanel(unicornCommon.componentDetailsRow('web', selector), gridPos={ x: 0, y: 5100 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
 .addPanel(saturationDetail.saturationDetailPanels('web', '$stage', components=[
   'cpu',
   'disk_space',

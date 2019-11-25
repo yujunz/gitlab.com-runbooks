@@ -65,11 +65,11 @@ local DETAILS = {
     |||,
     query: |||
       sum by (fqdn, type, tier, stage, environment) (
-        go_memstats_alloc_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s}
+        go_memstats_alloc_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
       )
       /
       sum by (fqdn, type, tier, stage, environment) (
-        node_memory_MemTotal_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s}
+        node_memory_MemTotal_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
       )
     |||,
     legendFormat: '{{ fqdn }}',

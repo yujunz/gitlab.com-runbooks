@@ -91,6 +91,7 @@ local tablePanel = grafana.tablePanel;
     interval='1m',
     intervalFactor=3,
     yAxisLabel='',
+    sort='decreasing',
     legend_show=true,
     legend_rightSide=false,
     linewidth=2,
@@ -98,7 +99,7 @@ local tablePanel = grafana.tablePanel;
   ):: graphPanel.new(
     title,
     description=description,
-    sort='decreasing',
+    sort=sort,
     linewidth=linewidth,
     fill=0,
     datasource='$PROMETHEUS_DS',

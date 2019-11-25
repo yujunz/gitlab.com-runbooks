@@ -1,5 +1,8 @@
 local basic = import 'basic.libsonnet';
+local grafana = import 'grafonnet/grafana.libsonnet';
 local layout = import 'layout.libsonnet';
+local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
+local row = grafana.row;
 
 {
   workhorsePanels(serviceType, serviceStage, startRow)::
@@ -149,4 +152,12 @@ local layout = import 'layout.libsonnet';
         intervalFactor=1,
       ),
     ], cols=2, rowHeight=10, startRow=startRow),
+
+  componentDetailsRow(serviceType, selector)::
+    local aggregationSets = [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'workhorse' },
+      { title: 'per Route', aggregationLabels: 'route', legendFormat: '{{ route }}' },
+      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
+    ];
+    metricsCatalogDashboards.componentDetailMatrix(serviceType, 'workhorse', selector, aggregationSets),
 }
