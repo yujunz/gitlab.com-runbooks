@@ -107,6 +107,8 @@ test:
     - scripts/validate_kibana_urls
     - scripts/validate-alerts
 
+# log.gitlab.net
+################################################################################
 update_elastic_log_dashboards:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
@@ -172,6 +174,23 @@ update_elastic_log_visualizations:
     variables:
       - $ES_LOG_URL
 
+# log.gprd.gitlab.net
+################################################################################
+update_elastic_log_gprd_ilm:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  script:
+  - ./elastic/managed-objects/log_gprd/ILM/update-ilm.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/log_gprd/ILM/*
+    variables:
+      - $ES_LOG_GPRD_URL
+
+# nonprod-log.gitlab.net
+################################################################################
 update_elastic_nonprod-log_watchers:
   stage: deploy
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
@@ -184,6 +203,20 @@ update_elastic_nonprod-log_watchers:
       - elastic/managed-objects/nonprod-log/watches/*
     variables:
       - $ES_NONPROD_URL
+
+update_elastic_nonprod-log_ilm:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  script:
+  - ./elastic/managed-objects/nonprod-log/ILM/update-ilm.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/nonprod-log/ILM/*
+    variables:
+      - $ES_NONPROD_URL
+################################################################################
 
 dryrun_pingdom_checks:
   stage: test
