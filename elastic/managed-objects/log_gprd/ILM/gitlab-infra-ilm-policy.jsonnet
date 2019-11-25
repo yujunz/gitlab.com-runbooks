@@ -13,7 +13,7 @@
         },
       },
       warm: {
-        min_age: '1d',  // keep some data on hot nodes, otherwise disk usage is < 20%
+        min_age: '1m',
         actions: {
           // skipping force merge for now for a performance optimisation test
           // forcemerge: {
