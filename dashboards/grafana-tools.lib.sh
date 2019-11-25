@@ -30,5 +30,5 @@ function prepare() {
 }
 
 function jsonnet_compile() {
-  jsonnet -J . -J vendor "$@"
+  jsonnet -J . -J ../metrics-catalog/ -J vendor "$@"
 }
