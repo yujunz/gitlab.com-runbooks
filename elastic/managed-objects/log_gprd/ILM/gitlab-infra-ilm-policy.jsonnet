@@ -13,7 +13,8 @@
         },
       },
       warm: {
-        min_age: '1m',
+        // if no criteria are set here, the move to warm will happen on rollover
+        // min_age: '1h',  // min value is 1h, if you set below that, the cluster will default to 1d
         actions: {
           // skipping force merge for now for a performance optimisation test
           // forcemerge: {
