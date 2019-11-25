@@ -6,7 +6,6 @@ local GRAFANA_BASE_URL = 'https://dashboards.gitlab.net/d/';
 
 // These services do not yet have their own dashboards, remove from this list as they get their own dashboards
 local USES_GENERIC_DASHBOARD = {
-  'ci-runners': true,
   pages: true,
   'web-pages': true,
 };

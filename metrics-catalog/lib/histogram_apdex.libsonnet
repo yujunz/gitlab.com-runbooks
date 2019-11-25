@@ -1,10 +1,36 @@
 local recordingRules = import './recording_rules.libsonnet';
 local selectors = import './selectors.libsonnet';
 
-local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration) =
+// A single threshold apdex score only has a SATISFACTORY threshold, no TOLERABLE threshold
+local generateSingleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration) =
   local selector = selectors.join([histogramApdex.selector, additionalSelectors]);
-  local satisfiedSelector = selectors.join([selector, 'le="%s"' % [histogramApdex.satisfiedThreshold]]);
-  local toleratedThresholdSelector = selectors.join([selector, 'le="%s"' % [histogramApdex.toleratedThreshold]]);
+  local satisfiedSelector = selectors.join([selector, 'le="%g"' % [histogramApdex.satisfiedThreshold]]);
+  local totalSelector = selectors.join([selector, 'le="+Inf"']);
+  |||
+    (
+      sum by (%(aggregationLabels)s) (
+        rate(%(histogram)s{%(satisfiedSelector)s}[%(duration)s])
+      )
+    )
+    /
+    (
+      sum by (%(aggregationLabels)s) (
+        rate(%(histogram)s{%(totalSelector)s}[%(duration)s])
+      ) > 0
+    )
+  ||| % {
+    aggregationLabels: aggregationLabels,
+    histogram: histogramApdex.histogram,
+    satisfiedSelector: satisfiedSelector,
+    totalSelector: totalSelector,
+    duration: duration,
+  };
+
+// A double threshold apdex score only has both SATISFACTORY threshold and TOLERABLE thresholds
+local generateDoubleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration) =
+  local selector = selectors.join([histogramApdex.selector, additionalSelectors]);
+  local satisfiedSelector = selectors.join([selector, 'le="%g"' % [histogramApdex.satisfiedThreshold]]);
+  local toleratedThresholdSelector = selectors.join([selector, 'le="%g"' % [histogramApdex.toleratedThreshold]]);
   local totalSelector = selectors.join([selector, 'le="+Inf"']);
   |||
     (
@@ -33,6 +59,12 @@ local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelec
     duration: duration,
   };
 
+
+local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration) =
+  if histogramApdex.toleratedThreshold == null then
+    generateSingleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration)
+  else
+    generateDoubleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration);
 
 local generatePercentileLatencyQuery(histogramApdex, percentile, aggregationLabels, additionalSelectors, duration) =
   local selector = selectors.join([histogramApdex.selector, additionalSelectors]);
@@ -73,7 +105,7 @@ local generateApdexWeightScoreQuery(histogramApdex, aggregationLabels, additiona
     histogram,
     selector='',
     satisfiedThreshold,
-    toleratedThreshold
+    toleratedThreshold=null
   ):: {
     histogram: histogram,
     selector: selector,

@@ -2688,7 +2688,7 @@ services:
   observability:
     monitors:
       grafana_folder: bpcbFeIiz
-      primary_grafana_dashboard: "000000159/ci"
+      primary_grafana_dashboard: "ci-runners-main/ci-runners-overview"
     alerts:
       - alert_link: https://alerts.gprd.gitlab.net/#/alerts?silenced=false&inhibited=false&filter=%7Bchannel%3D%22ci-cd%22%7D
 
