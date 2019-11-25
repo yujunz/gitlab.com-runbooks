@@ -18,8 +18,6 @@ local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
-local selector = 'environment="$environment", type="ci-runners", stage="$stage"';
-
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -35,6 +33,27 @@ dashboard.new(
 .addPanels(keyMetrics.headlineMetricsRow('ci-runners', '$stage', startRow=0))
 .addPanel(serviceHealth.row('ci-runners', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(keyMetrics.keyServiceMetricsRow('ci-runners', '$stage'), gridPos={ x: 0, y: 4000 })
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'ci-runners',
+    'polling',
+    'environment="$environment"',  // Fix when https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8456 arrives
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'polling' },
+      { title: 'By Status', aggregationLabels: 'status', legendFormat: '{{ status }}' },
+    ],
+  ), gridPos={ x: 0, y: 5000 }
+)
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'ci-runners',
+    'shared_runner_queues',
+    '',  // Fix this when https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8456 arrives
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'shared_runner_queues' },
+    ],
+  ), gridPos={ x: 0, y: 5100 }
+)
 .addPanel(saturationDetail.saturationDetailPanels('ci-runners', '$stage', components=[
             'private_runners',
             'shared_runners',
