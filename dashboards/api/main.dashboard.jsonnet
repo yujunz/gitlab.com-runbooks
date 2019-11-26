@@ -74,7 +74,7 @@ dashboard.new(
 .addPanel(unicornCommon.componentDetailsRow('api', selector), gridPos={ x: 0, y: 5100 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
 .addPanel(
-  saturationDetail.saturationDetailPanels('api', '$stage', components=[
+  saturationDetail.saturationDetailPanels(selector, components=[
     'cpu',
     'disk_space',
     'memory',

@@ -15,10 +15,10 @@ local platformLinks = import 'platform_links.libsonnet';
         title='Sidekiq Worker Saturation by Priority',
         description='Shows sidekiq worker saturation. Once saturated, all sidekiq workers will be busy processing jobs, and any new jobs that arrive will queue. Lower is better.',
         query=|||
-          max by(environment, type, tier, priority) (
-            sum without (queue) (sidekiq_running_jobs{%(nodeSelector)s})
+          max by(environment, tier, type, stage) (
+            sum by (fqdn, instance,  environment, tier, type, stage) (sidekiq_running_jobs{%(nodeSelector)s})
             /
-            sidekiq_concurrency{%(nodeSelector)s}
+            sum by (fqdn, instance,  environment, tier, type, stage) (sidekiq_concurrency{%(nodeSelector)s})
           )
         ||| % formatConfig,
         legendFormat='{{ priority }}',

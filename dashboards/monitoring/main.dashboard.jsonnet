@@ -76,8 +76,7 @@ dashboard.new(
     minLatency=0.001,
   ), gridPos={ x: 0, y: 5200 }
 )
-
-.addPanel(saturationDetail.saturationDetailPanels('monitoring', '$stage', components=[
+.addPanel(saturationDetail.saturationDetailPanels(selector, components=[
             'cpu',
             'disk_space',
             'memory',

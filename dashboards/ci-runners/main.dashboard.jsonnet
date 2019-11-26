@@ -18,6 +18,8 @@ local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
+local selector = 'environment="$environment", type="ci-runners", stage="$stage"';
+
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -54,7 +56,7 @@ dashboard.new(
     ],
   ), gridPos={ x: 0, y: 5100 }
 )
-.addPanel(saturationDetail.saturationDetailPanels('ci-runners', '$stage', components=[
+.addPanel(saturationDetail.saturationDetailPanels(selector, components=[
             'private_runners',
             'shared_runners',
             'shared_runners_gitlab',

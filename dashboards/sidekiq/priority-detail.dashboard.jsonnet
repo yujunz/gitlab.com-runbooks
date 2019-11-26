@@ -18,6 +18,9 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local sidekiq = import 'sidekiq.libsonnet';
+local saturationDetail = import 'saturation_detail.libsonnet';
+
+local selector = 'type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"';
 
 dashboard.new(
   'Priority Detail',
@@ -147,7 +150,7 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"', startRow=2001))
+.addPanels(sidekiq.priorityWorkloads(selector, startRow=2001))
 .addPanel(
   row.new(title='Rails Metrics', collapse=true)
   .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))
@@ -159,8 +162,20 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"'), gridPos={ x: 0, y: 6000 })
-.addPanel(capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 7000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 4000 })
+.addPanel(
+  saturationDetail.saturationDetailPanels(selector, components=[
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'sidekiq_workers',
+    'single_node_cpu',
+    'single_node_unicorn_workers',
+    'workers',
+  ]),
+  gridPos={ x: 0, y: 5000, w: 24, h: 1 }
+)
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('sidekiq') + platformLinks.services,
 }

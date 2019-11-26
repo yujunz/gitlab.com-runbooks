@@ -26,9 +26,9 @@ local DETAILS = {
     |||,
     query: |||
       sum without (state, datname) (
-        pg_stat_activity_count{datname="gitlabhq_production", state!="idle", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+        pg_stat_activity_count{datname="gitlabhq_production", state!="idle", %(selector)s}
       )
-      / pg_settings_max_connections{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+      / pg_settings_max_connections{%(selector)s}
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -46,12 +46,12 @@ local DETAILS = {
     |||,
     query: |||
       (
-        container_memory_usage_bytes{id="/system.slice/gitlab-runsvdir.service", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} -
-        container_memory_cache{id="/system.slice/gitlab-runsvdir.service", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"} -
-        container_memory_swap{id="/system.slice/gitlab-runsvdir.service", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+        container_memory_usage_bytes{id="/system.slice/gitlab-runsvdir.service", %(selector)s} -
+        container_memory_cache{id="/system.slice/gitlab-runsvdir.service", %(selector)s} -
+        container_memory_swap{id="/system.slice/gitlab-runsvdir.service", %(selector)s}
       )
       /
-      container_spec_memory_limit_bytes{id="/system.slice/gitlab-runsvdir.service", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+      container_spec_memory_limit_bytes{id="/system.slice/gitlab-runsvdir.service", %(selector)s}
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -65,11 +65,11 @@ local DETAILS = {
     |||,
     query: |||
       sum by (fqdn, type, tier, stage, environment) (
-        go_memstats_alloc_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+        go_memstats_alloc_bytes{%(selector)s}
       )
       /
       sum by (fqdn, type, tier, stage, environment) (
-        node_memory_MemTotal_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+        node_memory_MemTotal_bytes{%(selector)s}
       )
     |||,
     legendFormat: '{{ fqdn }}',
@@ -85,16 +85,16 @@ local DETAILS = {
     |||,
     query: |||
       (
-        pgbouncer_pools_server_active_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"} +
-        pgbouncer_pools_server_testing_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"} +
-        pgbouncer_pools_server_used_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"} +
-        pgbouncer_pools_server_login_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production_sidekiq"}
+        pgbouncer_pools_server_active_connections{user="gitlab", %(selector)s, database="gitlabhq_production_sidekiq"} +
+        pgbouncer_pools_server_testing_connections{user="gitlab", %(selector)s, database="gitlabhq_production_sidekiq"} +
+        pgbouncer_pools_server_used_connections{user="gitlab", %(selector)s, database="gitlabhq_production_sidekiq"} +
+        pgbouncer_pools_server_login_connections{user="gitlab", %(selector)s, database="gitlabhq_production_sidekiq"}
       )
       /
       on(environment, tier, type, stage, fqdn, instance) group_left()
       sum by (environment, tier, type, stage, fqdn, instance) (
-        pgbouncer_databases_pool_size{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", name="gitlabhq_production_sidekiq"}
-      ) 
+        pgbouncer_databases_pool_size{%(selector)s, name="gitlabhq_production_sidekiq"}
+      )
     |||,
     legendFormat: '{{ fqdn }}: {{ database }}',
   },
@@ -110,16 +110,16 @@ local DETAILS = {
     |||,
     query: |||
       (
-        pgbouncer_pools_server_active_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"} +
-        pgbouncer_pools_server_testing_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"} +
-        pgbouncer_pools_server_used_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"} +
-        pgbouncer_pools_server_login_connections{user="gitlab", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", database="gitlabhq_production"}
+        pgbouncer_pools_server_active_connections{user="gitlab", %(selector)s, database="gitlabhq_production"} +
+        pgbouncer_pools_server_testing_connections{user="gitlab", %(selector)s, database="gitlabhq_production"} +
+        pgbouncer_pools_server_used_connections{user="gitlab", %(selector)s, database="gitlabhq_production"} +
+        pgbouncer_pools_server_login_connections{user="gitlab", %(selector)s, database="gitlabhq_production"}
       )
       /
       on(environment, tier, type, stage, fqdn, instance) group_left()
       sum by (environment, tier, type, stage, fqdn, instance) (
-        pgbouncer_databases_pool_size{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", name="gitlabhq_production"}
-      ) 
+        pgbouncer_databases_pool_size{%(selector)s, name="gitlabhq_production"}
+      )
     |||,
     legendFormat: '{{ fqdn }}: {{ database }}',
   },
@@ -133,7 +133,7 @@ local DETAILS = {
       vertical scaling.
     |||,
     query: |||
-      avg(1 - rate(node_cpu_seconds_total{mode="idle", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
+      avg(1 - rate(node_cpu_seconds_total{mode="idle", %(selector)s}[$__interval])) by (fqdn)
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -144,7 +144,7 @@ local DETAILS = {
       Disk sustained read IOPS saturation per node.
     |||,
     query: |||
-      rate(node_disk_reads_completed_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_read_iops_maximum_magic_number)d)
+      rate(node_disk_reads_completed_total{type="gitaly", device="sdb", %(selector)s}[$__interval]) / (%(gitaly_disk_sustained_read_iops_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
     legendFormat: '{{ fqdn }}',
   },
@@ -155,7 +155,7 @@ local DETAILS = {
       Disk sustained read throughput saturation per node.
     |||,
     query: |||
-      rate(node_disk_read_bytes_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_read_throughput_bytes_maximum_magic_number)d)
+      rate(node_disk_read_bytes_total{type="gitaly", device="sdb", %(selector)s}[$__interval]) / (%(gitaly_disk_sustained_read_throughput_bytes_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
     legendFormat: '{{ fqdn }}',
   },
@@ -169,7 +169,7 @@ local DETAILS = {
       max(
         (
           1 -
-          instance:node_filesystem_avail:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s" ,fstype=~"ext.|xfs"}
+          instance:node_filesystem_avail:ratio{%(selector)s ,fstype=~"ext.|xfs"}
         )
       ) by (device, fqdn)
     |||,
@@ -189,7 +189,7 @@ local DETAILS = {
       https://cloud.google.com/compute/docs/disks/performance.
     |||,
     query: |||
-      rate(node_disk_writes_completed_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_write_iops_maximum_magic_number)d)
+      rate(node_disk_writes_completed_total{type="gitaly", device="sdb", %(selector)s}[$__interval]) / (%(gitaly_disk_sustained_write_iops_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
     legendFormat: '{{ fqdn }}',
   },
@@ -207,7 +207,7 @@ local DETAILS = {
       https://cloud.google.com/compute/docs/disks/performance.
     |||,
     query: |||
-      rate(node_disk_written_bytes_total{type="gitaly", device="sdb", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]) / (%(gitaly_disk_sustained_write_throughput_bytes_maximum_magic_number)d)
+      rate(node_disk_written_bytes_total{type="gitaly", device="sdb", %(selector)s}[$__interval]) / (%(gitaly_disk_sustained_write_throughput_bytes_maximum_magic_number)d)
     |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
     legendFormat: '{{ fqdn }}',
   },
@@ -218,7 +218,7 @@ local DETAILS = {
       Memory utilization per device per node.
     |||,
     query: |||
-      instance:node_memory_utilization:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+      instance:node_memory_utilization:ratio{%(selector)s}
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -235,16 +235,16 @@ local DETAILS = {
     query: |||
       max(
         label_replace(
-          process_open_fds{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+          process_open_fds{%(selector)s}
           /
-          process_max_fds{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+          process_max_fds{%(selector)s}
           , "client", "general", "", ""
         )
         or
         label_replace(
-          ruby_file_descriptors{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+          ruby_file_descriptors{%(selector)s}
           /
-          ruby_process_max_fds{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+          ruby_process_max_fds{%(selector)s}
           , "client", "ruby", "", ""
         )
       ) by (job, instance)
@@ -263,7 +263,7 @@ local DETAILS = {
     query: |||
       sum(
         rate(
-          namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[1m]
+          namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", %(selector)s}[1m]
         )
       ) by (groupname, fqdn, type, tier, stage, environment)
     |||,
@@ -304,9 +304,9 @@ local DETAILS = {
       More details at https://redis.io/topics/clients#maximum-number-of-clients
     |||,
     query: |||
-      redis_connected_clients{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+      redis_connected_clients{%(selector)s}
       /
-      redis_config_maxclients{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+      redis_config_maxclients{%(selector)s}
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -324,12 +324,12 @@ local DETAILS = {
     |||,
     query: |||
       max(
-        label_replace(redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}, "memtype", "rss","","")
+        label_replace(redis_memory_used_rss_bytes{%(selector)s}, "memtype", "rss","","")
         or
-        label_replace(redis_memory_used_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}, "memtype", "used","","")
+        label_replace(redis_memory_used_bytes{%(selector)s}, "memtype", "used","","")
       ) by (type, tier, stage, environment, fqdn)
       / on(fqdn) group_left
-      node_memory_MemTotal_bytes{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+      node_memory_MemTotal_bytes{%(selector)s}
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -391,9 +391,9 @@ local DETAILS = {
       this could impact user experience.
     |||,
     query: |||
-      sum without (queue) (sidekiq_running_jobs{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"})
+      sum by (fqdn, instance, environment, tier, type, stage) (sidekiq_running_jobs{%(selector)s})
       /
-      sidekiq_concurrency{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}
+      sum by (fqdn, instance, environment, tier, type, stage) (sidekiq_concurrency{%(selector)s})
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -408,7 +408,7 @@ local DETAILS = {
     |||,
     component: 'single_node_cpu',
     query: |||
-      avg(1 - rate(node_cpu_seconds_total{mode="idle", type="%(serviceType)s", environment="$environment", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
+      avg(1 - rate(node_cpu_seconds_total{mode="idle", %(selector)s}[$__interval])) by (fqdn)
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -426,9 +426,9 @@ local DETAILS = {
     |||,
     component: 'single_node_unicorn_workers',
     query: |||
-      sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
+      sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)", %(selector)s}[$__interval])) by (fqdn)
       /
-      sum(max(unicorn_workers{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) without (pid)) by (fqdn)
+      sum(max(unicorn_workers{%(selector)s}) without (pid)) by (fqdn)
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -444,7 +444,7 @@ local DETAILS = {
     |||,
     component: 'single_threaded_cpu',
     query: |||
-      instance:redis_cpu_usage:rate1m{environment="$environment", type="%(serviceType)s"}
+      instance:redis_cpu_usage:rate1m{%(selector)s}
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -461,9 +461,9 @@ local DETAILS = {
       Unicorn saturation can also be caused by traffic spikes.
     |||,
     query: |||
-      sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)", environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval])) by (fqdn)
+      sum(avg_over_time(unicorn_active_connections{job=~"gitlab-(rails|unicorn)", %(selector)s}[$__interval])) by (fqdn)
       /
-      sum(max(unicorn_workers{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) without (pid)) by (fqdn)
+      sum(max(unicorn_workers{%(selector)s}) without (pid)) by (fqdn)
     |||,
     legendFormat: '{{ fqdn }}',
   },
@@ -536,11 +536,10 @@ local DETAILS = {
     .addSeriesOverride(seriesOverrides.softSlo)
     .addSeriesOverride(seriesOverrides.hardSlo),
 
-  componentSaturationPanel(component, serviceType, serviceStage)::
+  componentSaturationPanel(component, selector)::
     local formatConfig = {
       component: component,
-      serviceType: serviceType,
-      serviceStage: serviceStage,
+      selector: selector,
     } + magicNumbers.magicNumbers;
     local componentDetails = DETAILS[component];
     local query = componentDetails.query % formatConfig;
@@ -554,10 +553,10 @@ local DETAILS = {
       legendFormat=componentDetails.legendFormat
     ),
 
-  saturationDetailPanels(serviceType, serviceStage, components)::
+  saturationDetailPanels(selector, components)::
     row.new(title='🌡 Saturation Details', collapse=true)
     .addPanels(layout.grid([
-      self.componentSaturationPanel(component, serviceType, serviceStage)
+      self.componentSaturationPanel(component, selector)
       for component in components
     ])),
 

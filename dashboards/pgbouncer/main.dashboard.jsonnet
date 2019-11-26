@@ -20,6 +20,8 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 
+local selector = 'type="pgbouncer", environment="$environment"';
+
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -37,37 +39,37 @@ dashboard.new(
   row.new(title='pgbouncer Workload'),
   gridPos={
     x: 0,
-    y: 0,
-    w: 24,
-    h: 1,
-  }
-)
-.addPanels(pgbouncerCommonGraphs.workloadStats('patroni', 1))
-.addPanel(
-  row.new(title='pgbouncer Connection Pooling'),
-  gridPos={
-    x: 0,
     y: 1000,
     w: 24,
     h: 1,
   }
 )
-.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('pgbouncer', 1001))
+.addPanels(pgbouncerCommonGraphs.workloadStats('patroni', startRow=2000))
 .addPanel(
-  row.new(title='pgbouncer Network'),
+  row.new(title='pgbouncer Connection Pooling'),
   gridPos={
     x: 0,
-    y: 2000,
+    y: 3000,
     w: 24,
     h: 1,
   }
 )
-.addPanels(pgbouncerCommonGraphs.networkStats('pgbouncer', 2001))
-.addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 3000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 4000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="pgbouncer", environment="$environment"'), gridPos={ x: 0, y: 5000 })
+.addPanels(pgbouncerCommonGraphs.connectionPoolingPanels('pgbouncer', 3001))
 .addPanel(
-  saturationDetail.saturationDetailPanels('pgbouncer', 'main', components=[
+  row.new(title='pgbouncer Network'),
+  gridPos={
+    x: 0,
+    y: 4000,
+    w: 24,
+    h: 1,
+  }
+)
+.addPanels(pgbouncerCommonGraphs.networkStats('pgbouncer', 4001))
+.addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 5000 })
+.addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 6000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 7000 })
+.addPanel(
+  saturationDetail.saturationDetailPanels(selector, components=[
     'cpu',
     'memory',
     'open_fds',
@@ -76,9 +78,9 @@ dashboard.new(
     'pgbouncer_sync_pool',
     'single_node_cpu',
   ]),
-  gridPos={ x: 0, y: 6000, w: 24, h: 1 }
+  gridPos={ x: 0, y: 8000, w: 24, h: 1 }
 )
-.addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 7000 })
+.addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 9000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer') + platformLinks.services,
 }

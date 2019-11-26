@@ -72,7 +72,7 @@ dashboard.new(
 .addPanel(workhorseCommon.componentDetailsRow('web', selector), gridPos={ x: 0, y: 5000 })
 .addPanel(unicornCommon.componentDetailsRow('web', selector), gridPos={ x: 0, y: 5100 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
-.addPanel(saturationDetail.saturationDetailPanels('web', '$stage', components=[
+.addPanel(saturationDetail.saturationDetailPanels(selector, components=[
   'cpu',
   'disk_space',
   'memory',

@@ -20,6 +20,8 @@ local serviceHealth = import 'service_health.libsonnet';
 local processExporter = import 'process_exporter.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 
+local selector = 'environment="$environment", type="frontend", stage="$stage"';
+
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -75,7 +77,7 @@ dashboard.new(
   }
 )
 .addPanel(
-  nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="frontend"'),
+  nodeMetrics.nodeMetricsDetailRow(selector),
   gridPos={
     x: 0,
     y: 5000,
@@ -84,7 +86,7 @@ dashboard.new(
   }
 )
 .addPanel(
-  saturationDetail.saturationDetailPanels('frontend', '$stage', components=[
+  saturationDetail.saturationDetailPanels(selector, components=[
     'cpu',
     'disk_space',
     'memory',

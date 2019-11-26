@@ -10,6 +10,8 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 
+local selector = 'environment="$environment", type="type", stage="$stage"';
+
 {
   saturationDashboard(
     dashboardTitle,
@@ -52,7 +54,7 @@ local annotation = grafana.annotation;
     self.saturationDashboard(
       dashboardTitle=component + ': Saturation Detail',
       component=component,
-      panel=saturationDetail.componentSaturationPanel(component, '$type', '$stage'),
+      panel=saturationDetail.componentSaturationPanel(component, selector),
       helpPanel=saturationDetail.componentSaturationHelpPanel(component),
     ),
 }

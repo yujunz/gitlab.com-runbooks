@@ -73,7 +73,7 @@ dashboard.new(
 .addPanel(workhorseCommon.componentDetailsRow('git', selector), gridPos={ x: 0, y: 5000 })
 .addPanel(unicornCommon.componentDetailsRow('git', selector), gridPos={ x: 0, y: 5100 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
-.addPanel(saturationDetail.saturationDetailPanels('git', '$stage', components=[
+.addPanel(saturationDetail.saturationDetailPanels(selector, components=[
             'cpu',
             'disk_space',
             'memory',
