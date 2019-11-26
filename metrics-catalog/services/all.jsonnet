@@ -4,5 +4,6 @@
   import 'git.jsonnet',
   import 'monitoring.jsonnet',
   import 'registry.jsonnet',
+  import 'sidekiq.jsonnet',
   import 'web.jsonnet',
 ]
