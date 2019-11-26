@@ -107,6 +107,14 @@ test:
     - scripts/validate_kibana_urls
     - scripts/validate-alerts
 
+ensure_generated_content_up_to_date:
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  stage: test
+  script:
+    - make generate
+    - git diff --exit-code || (echo "Please run 'make generate'" && exit 1)
+
+
 # log.gitlab.net
 ################################################################################
 update_elastic_log_dashboards:

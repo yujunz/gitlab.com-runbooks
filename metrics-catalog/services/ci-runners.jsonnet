@@ -6,9 +6,18 @@ local customQuery = metricsCatalog.customQuery;
 {
   type: 'ci-runners',
   tier: 'runners',
+  /*
+   * As per https://gitlab.com/gitlab-com/www-gitlab-com/issues/5341, the goal is for 95%
+   * of ci-runner jobs to start within 60s.
+   *
+   * Initially, until we can make improvements, this is wishful thinking, so we'll only
+   * alert when the p50 exceeds 60s. As the service improves, we can improve the target,
+   * but setting this to p95 initially will just generate a lot of unhelpful alerts.
+   */
   slos: {
     apdexRatio: 0.50,
-    errorRatio: 0.01,
+    errorRatio: 0.2,
+    alertTriggerDuration: 'long',
   },
   components: {
     polling: {
@@ -17,6 +26,7 @@ local customQuery = metricsCatalog.customQuery;
         selector=''
       ),
 
+      // See https://gitlab.com/gitlab-org/gitlab-workhorse/blob/master/internal/builds/register.go for details of each status label
       errorRate: rateMetric(
         counter='gitlab_workhorse_builds_register_handler_requests',
         selector='status=~"body-parse-error|body-read-error|missing-values|watch-error"'

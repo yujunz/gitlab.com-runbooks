@@ -157,16 +157,6 @@ groups:
         )
       ) by (environment, component)
 
-  # ci-runners
-  - record: gitlab_component_ops:rate
-    labels:
-      type: ci-runners
-      component: 'polling'
-      tier: runners
-    # See https://gitlab.com/gitlab-org/gitlab-workhorse/blob/master/internal/builds/register.go for details of each status label
-    expr: >
-      sum by (environment, stage) (rate(gitlab_workhorse_builds_register_handler_requests[1m]))
-
   # monitoring:thanos
   - record: gitlab_component_errors:rate
     labels:
