@@ -145,7 +145,7 @@ local row = grafana.row;
               aggregationSets
             )
           )
-        ), cols=colCount
+        ), cols=if colCount == 1 then 2 else colCount
       )
     ),
 }

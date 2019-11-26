@@ -21,6 +21,7 @@ local annotation = grafana.annotation;
 local sidekiq = import 'sidekiq.libsonnet';
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
+local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
 dashboard.new(
   'Overview',
@@ -257,6 +258,51 @@ dashboard.new(
 )
 .addPanel(keyMetrics.keyServiceMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 6000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 7000 })
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'sidekiq',
+    'latency_sensitive_job_execution',
+    'environment="$environment", type="sidekiq", stage="$stage"',
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'latency_sensitive_job_execution' },
+      { title: 'per Queue', aggregationLabels: 'queue', legendFormat: '{{ queue }}' },
+    ],
+  ), gridPos={ x: 0, y: 7100 }
+)
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'sidekiq',
+    'latency_sensitive_job_queueing',
+    'environment="$environment", type="sidekiq", stage="$stage"',
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'latency_sensitive_job_queueing' },
+      { title: 'per Queue', aggregationLabels: 'queue', legendFormat: '{{ queue }}' },
+    ],
+  ), gridPos={ x: 0, y: 7200 }
+)
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'sidekiq',
+    'non_latency_sensitive_job_execution',
+    'environment="$environment", type="sidekiq", stage="$stage"',
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'non_latency_sensitive_job_execution' },
+      { title: 'per Queue', aggregationLabels: 'queue', legendFormat: '{{ queue }}' },
+    ],
+  ), gridPos={ x: 0, y: 7300 }
+)
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'sidekiq',
+    'non_latency_sensitive_job_queueing',
+    'environment="$environment", type="sidekiq", stage="$stage"',
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'non_latency_sensitive_job_queueing' },
+      { title: 'per Queue', aggregationLabels: 'queue', legendFormat: '{{ queue }}' },
+    ],
+  ), gridPos={ x: 0, y: 7400 }
+)
+
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 8000 })
 .addPanel(
   saturationDetail.saturationDetailPanels('sidekiq', '$stage', components=[
