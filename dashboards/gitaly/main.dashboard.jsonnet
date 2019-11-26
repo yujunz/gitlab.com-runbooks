@@ -248,6 +248,7 @@ dashboard.new(
     'memory',
     'open_fds',
     'single_node_cpu',
+    'go_memory',
   ]),
   gridPos={ x: 0, y: 6000, w: 24, h: 1 }
 )

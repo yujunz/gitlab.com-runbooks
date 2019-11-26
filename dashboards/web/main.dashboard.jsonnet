@@ -80,6 +80,7 @@ dashboard.new(
   'single_node_cpu',
   'single_node_unicorn_workers',
   'workers',
+  'go_memory',
 ]), gridPos={ x: 0, y: 7000, w: 24, h: 1 })
 .addPanel(capacityPlanning.capacityPlanningRow('web', '$stage'), gridPos={ x: 0, y: 8000 })
 + {
