@@ -1,26 +1,26 @@
 local recordingRules = import './recording_rules.libsonnet';
 
-local AGGREGATION_LABELS = 'environment, tier, type, stage';
+local AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
 
 // Generates apdex score recording rules for a component definition
-local generatApdexRules(componentDefinition, labels) =
+local generateApdexRules(aggregationLabels, componentDefinition, labels) =
   if std.objectHas(componentDefinition, 'apdex') then
-    componentDefinition.apdex.apdexRecordingRules(AGGREGATION_LABELS, labels)
+    componentDefinition.apdex.apdexRecordingRules(aggregationLabels, labels)
   else
     [];
 
 // Generates an request rate recording rule for a component definition
-local generateRequestRateRules(componentDefinition, labels) =
+local generateRequestRateRules(aggregationLabels, componentDefinition, labels) =
   if std.objectHas(componentDefinition, 'requestRate') then
-    componentDefinition.requestRate.requestRateRecordingRules(AGGREGATION_LABELS, labels)
+    componentDefinition.requestRate.requestRateRecordingRules(aggregationLabels, labels)
   else
     [];
 
 
 // Generates an request rate recording rule for a component definition
-local generateErrorRateRules(componentDefinition, labels) =
+local generateErrorRateRules(aggregationLabels, componentDefinition, labels) =
   if std.objectHas(componentDefinition, 'errorRate') then
-    componentDefinition.errorRate.errorRateRecordingRules(AGGREGATION_LABELS, labels)
+    componentDefinition.errorRate.errorRateRecordingRules(aggregationLabels, labels)
   else
     [];
 
@@ -65,9 +65,13 @@ local generateComponentRecordingRules(componentName, serviceDefinition, componen
     component: componentName,
   } + staticLabels;
 
-  generatApdexRules(componentDefinition, labels) +
-  generateRequestRateRules(componentDefinition, labels) +
-  generateErrorRateRules(componentDefinition, labels);
+  // Remove any fixed labels from the aggregation labels
+  local aggregationLabelsArray = std.filter(function(label) !std.objectHas(labels, label), AGGREGATION_LABELS);
+  local aggregationLabels = std.join(', ', aggregationLabelsArray);
+
+  generateApdexRules(aggregationLabels, componentDefinition, labels) +
+  generateRequestRateRules(aggregationLabels, componentDefinition, labels) +
+  generateErrorRateRules(aggregationLabels, componentDefinition, labels);
 
 
 local generateServiceRecordingRules(serviceDefinition) =
