@@ -79,7 +79,7 @@ dashboard.new(
     description: |||
       # pgbouncer Sync (web/api) pool Saturation
     |||,
-    panel: saturationDetail.componentSaturationPanel('pgbouncer_sync_pool', 'pgbouncer', 'main'),
+    panel: saturationDetail.componentSaturationPanel('pgbouncer_sync_pool', 'environment="$environment", type="pgbouncer", stage="main"'),
   },
   {
     description: |||

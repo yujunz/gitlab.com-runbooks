@@ -468,7 +468,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       show=false,
     ),
 
-  saturationPanel(serviceType, serviceStage, compact=false):: self.componentSaturationPanel(serviceType, serviceStage, compact),
+  saturationPanel(serviceType, serviceStage, compact=false)::
+    self.componentSaturationPanel(serviceType, serviceStage, compact),
 
   componentSaturationPanel(serviceType, serviceStage, compact=false)::
     local formatConfig = {
@@ -518,20 +519,22 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       self.saturationPanel(serviceType, serviceStage, compact=true),
     ], cols=4, rowHeight=5, startRow=startRow + 1),
 
-  keyServiceMetricsRow(serviceType, serviceStage):: row.new(title='🏅 Key Service Metrics', collapse=true)
-                                                    .addPanels(layout.grid([
-    self.apdexPanel(serviceType, serviceStage),
-    self.errorRatesPanel(serviceType, serviceStage),
-    self.serviceAvailabilityPanel(serviceType, serviceStage),
-    self.qpsPanel(serviceType, serviceStage),
-    self.saturationPanel(serviceType, serviceStage),
-  ])),
-  keyComponentMetricsRow(serviceType, serviceStage):: row.new(title='🔩 Service Component Metrics', collapse=true)
-                                                      .addPanels(layout.grid([
-    self.componentApdexPanel(serviceType, serviceStage),
-    self.componentErrorRates(serviceType, serviceStage),
-    self.componentAvailabilityPanel(serviceType, serviceStage),
-    self.componentQpsPanel(serviceType, serviceStage),
-    self.componentSaturationPanel(serviceType, serviceStage),
-  ])),
+  keyServiceMetricsRow(serviceType, serviceStage)::
+    row.new(title='🏅 Key Service Metrics', collapse=true)
+    .addPanels(layout.grid([
+      self.apdexPanel(serviceType, serviceStage),
+      self.errorRatesPanel(serviceType, serviceStage),
+      self.serviceAvailabilityPanel(serviceType, serviceStage),
+      self.qpsPanel(serviceType, serviceStage),
+      self.saturationPanel(serviceType, serviceStage),
+    ])),
+  keyComponentMetricsRow(serviceType, serviceStage)::
+    row.new(title='🔩 Service Component Metrics', collapse=true)
+    .addPanels(layout.grid([
+      self.componentApdexPanel(serviceType, serviceStage),
+      self.componentErrorRates(serviceType, serviceStage),
+      self.componentAvailabilityPanel(serviceType, serviceStage),
+      self.componentQpsPanel(serviceType, serviceStage),
+      self.componentSaturationPanel(serviceType, serviceStage),
+    ])),
 }

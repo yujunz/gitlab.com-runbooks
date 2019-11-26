@@ -23,6 +23,8 @@ local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
+local selector = 'environment="$environment", type="sidekiq", stage="$stage"';
+
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -303,9 +305,9 @@ dashboard.new(
   ), gridPos={ x: 0, y: 7400 }
 )
 
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="sidekiq", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 8000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 8000 })
 .addPanel(
-  saturationDetail.saturationDetailPanels('sidekiq', '$stage', components=[
+  saturationDetail.saturationDetailPanels(selector, components=[
     'cpu',
     'disk_space',
     'memory',

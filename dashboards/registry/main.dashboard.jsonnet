@@ -56,7 +56,7 @@ dashboard.new(
 .addPanel(keyMetrics.keyServiceMetricsRow('registry', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(registryServerComponentDetailRow(), gridPos={ x: 0, y: 5000 })
 .addPanel(registryStorageComponentDetailRow(), gridPos={ x: 0, y: 5100 })
-.addPanel(saturationDetail.saturationDetailPanels('registry', '$stage', components=[
+.addPanel(saturationDetail.saturationDetailPanels(selector, components=[
             'cpu',
             'disk_space',
             'memory',

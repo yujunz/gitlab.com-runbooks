@@ -20,6 +20,8 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 
+local selector = 'type="redis", environment="$environment"';
+
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -77,7 +79,7 @@ dashboard.new(
 .addPanel(keyMetrics.keyComponentMetricsRow('redis', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow('type="redis", environment="$environment", fqdn=~"redis-\\\\d\\\\d.*"'), gridPos={ x: 0, y: 7000 })
 .addPanel(
-  saturationDetail.saturationDetailPanels('redis', 'main', components=[
+  saturationDetail.saturationDetailPanels(selector, components=[
     'cpu',
     'disk_space',
     'memory',

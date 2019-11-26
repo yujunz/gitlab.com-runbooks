@@ -21,6 +21,8 @@ local serviceHealth = import 'service_health.libsonnet';
 local processExporter = import 'process_exporter.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 
+local selector = 'environment="$environment", type="patroni", stage="main"';
+
 dashboard.new(
   'Overview',
   schemaVersion=16,
@@ -32,8 +34,8 @@ dashboard.new(
 .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
 .addTemplate(templates.ds)
 .addTemplate(templates.environment)
-.addPanels(keyMetrics.headlineMetricsRow('patroni', '$stage', startRow=0))
-.addPanel(serviceHealth.row('patroni', '$stage'), gridPos={ x: 0, y: 500 })
+.addPanels(keyMetrics.headlineMetricsRow('patroni', 'main', startRow=0))
+.addPanel(serviceHealth.row('patroni', 'main'), gridPos={ x: 0, y: 500 })
 .addPanel(
   row.new(title='pgbouncer Workload', collapse=false),
   gridPos={
@@ -78,9 +80,9 @@ dashboard.new(
 )
 .addPanel(keyMetrics.keyServiceMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 6000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="patroni", environment="$environment"'), gridPos={ x: 0, y: 7000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 7000 })
 .addPanel(
-  saturationDetail.saturationDetailPanels('patroni', 'main', components=[
+  saturationDetail.saturationDetailPanels(selector, components=[
     'active_db_connections',
     'cpu',
     'disk_space',

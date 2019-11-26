@@ -29,6 +29,8 @@ local gitalyConfig = {
   GITALY_DISK: GITALY_DISK,
 };
 
+local selector = 'environment="$environment", type="gitaly", stage="$stage"';
+
 local generalGraphPanel(title, description=null, linewidth=2, sort='increasing') =
   graphPanel.new(
     title,
@@ -235,9 +237,9 @@ dashboard.new(
 )
 .addPanel(keyMetrics.keyServiceMetricsRow('gitaly', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('gitaly', '$stage'), gridPos={ x: 0, y: 5000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow('type="gitaly", environment="$environment", stage="$stage"'), gridPos={ x: 0, y: 6000 })
+.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
 .addPanel(
-  saturationDetail.saturationDetailPanels('gitaly', '$stage', components=[
+  saturationDetail.saturationDetailPanels(selector, components=[
     'cgroup_memory',
     'cpu',
     'disk_space',
