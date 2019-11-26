@@ -64,19 +64,6 @@ groups:
       tier: 'lb'
     expr: '0.90'
 
-  # As per https://gitlab.com/gitlab-com/www-gitlab-com/issues/5341, the goal is for 95%
-  # of ci-runner jobs to start within 60s.
-  #
-  # Initially, until we can make improvements, this is wishful thinking, so we'll only
-  # alert when the p50 exceeds 60s. As the service improves, we can improve the target,
-  # but setting this to p95 initially will just generate a lot of unhelpful alerts.
-  - record: 'slo:min:gitlab_service_apdex:ratio'
-    labels:
-      type: ci-runners
-      tier: runners
-      alert_trigger_duration: long
-    expr: '0.50'
-
 - name: GitLab Apdex SLO observance status
   interval: 1m
   rules:

@@ -53,12 +53,6 @@ groups:
 
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
-      type: 'ci-runners'
-      tier: 'runners'
-    expr: '0.2'
-
-  - record: 'slo:max:gitlab_service_errors:ratio'
-    labels:
       type: 'gitaly'
       tier: 'stor'
     expr: '0.001'

@@ -6,6 +6,7 @@ local customQuery = metricsCatalog.customQuery;
 {
   type: 'git',
   tier: 'sv',
+  autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this service
   slos: {
     apdexRatio: 0.95,
     errorRatio: 0.005,

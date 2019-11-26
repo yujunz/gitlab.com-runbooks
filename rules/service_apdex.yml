@@ -428,28 +428,6 @@ groups:
     expr: >
       sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage)
 
-  # ci-runners: queueing duration
-  # ci-runners have a 60 second satisfaction threshold
-  - record: gitlab_component_apdex:ratio
-    labels:
-      type: ci-runners
-      tier: runners
-      stage: main
-      component: 'queuing'
-    expr: >
-      sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="60"}[1m])) by (environment)
-      /
-      sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1m])) by (environment)
-
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      type: ci-runners
-      tier: runners
-      stage: main
-      component: 'queuing'
-    expr: >
-      sum(rate(job_queue_duration_seconds_bucket{shared_runner="true", le="+Inf"}[1m])) by (environment)
-
   ######################
   # Aggregation Stage
   ######################

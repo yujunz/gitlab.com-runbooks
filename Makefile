@@ -34,3 +34,8 @@ jsonnet-fmt:
 .PHONY: shell-fmt
 shell-fmt:
 	shfmt $(SHELL_FMT_FLAGS) -w $(SHELL_FILES)
+
+.PHONY: generate
+generate:
+	./scripts/generate-key-metric-recording-rules.sh
+	./scripts/generate-sidekiq-worker-apdex-scores.sh

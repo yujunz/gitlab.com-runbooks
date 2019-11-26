@@ -5,6 +5,7 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'api',
   tier: 'sv',
+  autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this
   slos: {
     apdexRatio: 0.9,
     errorRatio: 0.005,
