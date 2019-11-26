@@ -25,7 +25,7 @@ groups:
       tier: runners
       type: ci-runners
     expr: |
-      sum by (environment, tier, type, stage) (
+      sum by (environment, stage) (
         rate(gitlab_workhorse_builds_register_handler_requests{}[1m])
       )
   - record: gitlab_component_errors:rate
@@ -34,7 +34,7 @@ groups:
       tier: runners
       type: ci-runners
     expr: |
-      sum by (environment, tier, type, stage) (
+      sum by (environment, stage) (
         rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[1m])
       )
   - record: gitlab_component_apdex:ratio
@@ -46,13 +46,13 @@ groups:
       type: ci-runners
     expr: |
       (
-        sum by (environment, tier, type, stage) (
+        sum by () (
           rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="60"}[1m])
         )
       )
       /
       (
-        sum by (environment, tier, type, stage) (
+        sum by () (
           rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1m])
         ) > 0
       )
@@ -64,7 +64,7 @@ groups:
       tier: runners
       type: ci-runners
     expr: |
-      sum by (environment, tier, type, stage) (
+      sum by () (
         rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
@@ -75,7 +75,7 @@ groups:
       tier: runners
       type: ci-runners
     expr: |
-      sum by (environment, tier, type, stage) (
+      sum by () (
         rate(gitlab_runner_jobs_total{job="shared-runners"}[1m])
       )
   - record: gitlab_component_errors:rate
@@ -86,6 +86,6 @@ groups:
       tier: runners
       type: ci-runners
     expr: |
-      sum by (environment, tier, type, stage) (
+      sum by () (
         rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[1m])
       )
