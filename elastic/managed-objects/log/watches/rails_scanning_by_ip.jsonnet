@@ -100,7 +100,7 @@ local painlessScript(script) = {
             list_path: 'ctx.payload.items',
             attachment_template: {
               title: 'ip: {{key}}',
-              title_link: "https://log.gitlab.net/app/kibana#/discover?_g=()&_a=(columns:!(json.remote_ip,json.path,json.duration,json.status),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AWOSvARQwig0Nc2UGcr2,key:json.remote_ip.keyword,negate:!f,type:phrase,value:'{{key}}'),query:(match:(json.remote_ip.keyword:(query:'{{key}}',type:phrase))))),index:AWOSvARQwig0Nc2UGcr2,interval:auto,query:(match_all:()),sort:!('@timestamp',desc))",
+              title_link: "https://log.gitlab.net/app/kibana#/discover?_g=()&_a=(columns:!(json.remote_ip,json.path,json.duration,json.status),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AW5F1e45qthdGjPJueGO,key:json.remote_ip.keyword,negate:!f,type:phrase,value:'{{key}}'),query:(match:(json.remote_ip.keyword:(query:'{{key}}',type:phrase))))),index:AW5F1e45qthdGjPJueGO,interval:auto,query:(match_all:()),sort:!('@timestamp',desc))",
               text: 'Total time in seconds per second: {{total_duration_s_per_second}}s/second\nAverage rate: requests per second {{invocation_rate_per_second}}ops/sec',
             },
           },
