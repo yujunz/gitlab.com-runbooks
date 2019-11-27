@@ -5,9 +5,13 @@ groups:
       # in this check
       - alert: gitlab_background_worker_queue_duration_apdex_slo_out_of_bounds_lower_5m
         expr: |
-          (avg(gitlab_background_worker_queue_duration_apdex:ratio) by (environment, stage, tier, type, queue, threshold) < 0.8)
+          avg by (environment, stage, tier, type, queue, threshold) (
+            gitlab_background_worker_queue_duration_apdex:ratio
+          ) < 0.8
           and ignoring(threshold)
-          (sum(rate(sidekiq_jobs_started_total[4h])) by (environment, stage, tier, type, queue) > 0.5)
+          sum by (environment, stage, tier, type, queue) (
+            rate(sidekiq_jobs_completion_seconds_count[4h])
+          ) > 0.5
         for: 10m
         labels:
           rules_domain: general
