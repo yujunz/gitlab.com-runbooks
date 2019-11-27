@@ -34,7 +34,8 @@ curl_data_close_index() {
   cat <<EOF
 {
     "conditions": {
-        "max_age": "1m"
+        "max_age": "1h",
+        "max_size": "1mb"
     }
 }
 EOF
