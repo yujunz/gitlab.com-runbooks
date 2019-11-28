@@ -61,9 +61,24 @@ BigQuery:
 
 ## Retention
 
-For retention in Elastic, see the ILM policy:
+See [ESC-tools clean up script](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/esc-tools/blob/master/cleanup_indices.sh) for up to date retention time.
 
-TODO: paste here a link to the ILM policy once the scripts are merged
+| Index                        | Production | Staging |
+|------------------------------|------------|---------|
+| pubsub-application-inf-gprd  | 10 days    | 1 day   |
+| pubsub-gitaly-inf-gprd       | 7 days     | 1 day   |
+| pubsub-haproxy-inf-gprd      | 2 days     | 1 day   |
+| pubsub-pages-inf-gprd        | 10 days    | 1 day   |
+| pubsub-postgres-inf-gprd     | 6 days     | 1 day   |
+| pubsub-rails-inf-gprd        | 7 days     | 1 day   |
+| pubsub-shell-inf-gprd        | 7 days     | 1 day   |
+| pubsub-sidekiq-inf-gprd      | 7 days     | 1 day   |
+| pubsub-system-inf-gprd       | 3 days     | 1 day   |
+| pubsub-unicorn-inf-gprd      | 10 days    | 1 day   |
+| pubsub-unstructured-inf-gprd | 3 days     | 1 day   |
+| pubsub-workhorse-inf-gprd    | 3 days     | 1 day   |
+| pubsub-consul-inf-gprd       | 6 days     | 1 day   |
+| default for everything else  | 1 day      | 1 day   |
 
 Logs indexed by Stackdriver are stored for 30 days
 
