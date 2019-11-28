@@ -56,5 +56,7 @@ function ES7_ILM_exec_jsonnet_and_upload_json() {
 
 function ES7_index-template_exec_jsonnet_and_upload_json() {
   json=$(execute_jsonnet -e "local generic_index_template = import '$1'; generic_index_template.get('$2', '$3')")
-  es_client "_template/gitlab_pubsub_$2_inf_$3_template" -X PUT --data-binary "${json}"
+  url="_template/gitlab_pubsub_$2_inf_$3_template"
+  echo "${url}"
+  es_client "${url}" -X PUT --data-binary "${json}"
 }
