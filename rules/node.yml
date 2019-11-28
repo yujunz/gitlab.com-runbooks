@@ -229,3 +229,21 @@ groups:
         Check `/var/log/kern.log` for more details. You may need to contact the cloud provider and possibly redeploy the VM.
       title: CPU stall warnings have been detected on {{ if $labels.fqdn }}{{ $labels.fqdn }}
         {{ else }}{{ $labels.instance }}{{ end }} for the past 10 minutes.
+
+# TODO eventually, once all kernels are upgraded to support
+# node_vmstat_oom_kill, we can deprecate the syslog_oom_events metric and remove
+# it from our mtail configuration.
+- name: OOM kills detected
+  rules:
+  - alert: TooManyOOMKills
+    expr: >
+      increase(node_vmstat_oom_kill[1h]) > 2
+      or
+      increase(syslog_oom_kills_total[1h]) > 2
+    labels:
+      severity: s3
+    annotations:
+      title: Several OOM kills detected on {{$labels.fqdn}} recently
+      description: >
+        Find out which process by running `dmesg | grep -i oom`, and continue
+        debugging.
