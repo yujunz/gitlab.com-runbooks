@@ -197,6 +197,20 @@ update_elastic_log_gprd_ilm:
     variables:
       - $ES_LOG_GPRD_URL
 
+update_elastic_log_gprd_index_templates:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  script:
+  - ./elastic/managed-objects/log_gprd/index-templates/update-index-templates.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/log_gprd/index-templates/*
+      - elastic/managed-objects/lib/log_gprd_index_template.libsonnet
+    variables:
+      - $ES_LOG_GPRD_URL
+
 # nonprod-log.gitlab.net
 ################################################################################
 update_elastic_nonprod-log_watchers:
