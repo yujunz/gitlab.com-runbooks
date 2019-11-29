@@ -267,6 +267,14 @@ BigQuery can be used to search logs that were "archived" to cold storage (GCS).
 The `haproxy` logs are also configured to be forwarded to a BigQuery dataset using
 a StackDriver sink: [gitlab-production:haproxy_logs](https://console.cloud.google.com/bigquery?organizationId=769164969568&project=gitlab-production&p=gitlab-production&d=haproxy_logs&page=dataset)
 
+## GCS (long-term storage) ##
+
+Logs from the export sink are saved to a GCS bucket which we manage with Terraform: https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/storage-buckets/blob/master/main.tf#L1
+
+We configure this bucket with GCP lifecycle rules: https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/storage-buckets/blob/master/main.tf#L14
+
+These rules are parameterized and are configured with defaults which are set in the module: https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/storage-buckets/blob/master/variables.tf#L150
+
 # FAQ #
 
 ## Why are we using StackDriver in addition to ElasticSearch? ##
