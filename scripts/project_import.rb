@@ -143,20 +143,11 @@ class GitlabProjectImport
     namespace = Groups::NestedCreateService.new(@current_user, group_path: namespace_path).execute
     upload = ImportExportUpload.new(import_file: File.open(@file_path))
 
-    # Until https://gitlab.com/gitlab-org/gitlab/issues/34091 is resolved we need
-    # to not have a timeout on idle transactions.  This has to happen inside a transaction
-    # of its own so it sticks to the connection (otherwise the SET has no effect)
-    # When 34091 is done, consider removing the transaction and the SET
-    # See also https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8383 for context
-    ActiveRecord::Base.transaction do
-      ActiveRecord::Base.connection.execute("SET idle_in_transaction_session_timeout TO '0'")
-
-      @project = LocalProjectService.new(@current_user,
-                                         namespace_id: namespace.id,
-                                         path: name,
-                                         import_type: 'gitlab_project',
-                                         import_export_upload: upload).execute
-    end
+    @project = LocalProjectService.new(@current_user,
+                                       namespace_id: namespace.id,
+                                       path: name,
+                                       import_type: 'gitlab_project',
+                                       import_export_upload: upload).execute
   end
 end
 
