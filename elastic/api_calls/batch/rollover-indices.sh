@@ -30,11 +30,12 @@ indices=(
 
 env=$1
 
+# max_age = 1m has been tested for rolling over indices and it worked!
 curl_data_close_index() {
   cat <<EOF
 {
     "conditions": {
-        "max_age": "1h",
+        "max_age": "1m",
         "max_size": "1mb"
     }
 }
