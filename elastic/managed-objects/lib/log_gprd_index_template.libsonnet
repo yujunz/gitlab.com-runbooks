@@ -18,7 +18,7 @@
           },
         },
       },
-      number_of_shards: 6,
+      number_of_shards: 8,
       // number_of_replicas: 1,
     },
 
