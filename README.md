@@ -218,6 +218,8 @@ During an incident there are at least 2 roles, and one more optional
 * [Test pushing through all the git nodes](troubleshooting/git.md)
 * [How to gracefully restart gitaly-ruby](howto/gracefully-restart-gitaly-ruby.md)
 * [Debugging gitaly with gitaly-debug](howto/gitaly-debugging-tool.md)
+* [Praefect is down](troubleshooting/praefect-startup.md)
+* [Praefect error rate is too high](troubleshooting/praefect-error-rate.md)
 
 ### CI
 
