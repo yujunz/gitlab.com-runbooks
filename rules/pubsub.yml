@@ -14,6 +14,6 @@ groups:
       description: >
         PubSub messages are queuing up.  Messages in {{ $labels.subscription_id }} have been
         un-acked for {{ $value | humanizeDuration }} in the queue for the last 5 minutes.
-        This will lead to a loss of log data.
+        This will lead to Elastic lagging behind with the log data.
       runbook: troubleshooting/pubsub-queing.md
       title: PubSub queuing high
