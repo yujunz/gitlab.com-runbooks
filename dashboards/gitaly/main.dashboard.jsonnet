@@ -18,6 +18,7 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
+local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
 local GITALY_PEAK_WRITE_THROUGHPUT_BYTES_PER_SECOND = 400 * 1024 * 1024;
 local GITALY_PEAK_READ_THROUGHPUT_BYTES_PER_SECOND = 1200 * 1024 * 1024;
@@ -254,8 +255,29 @@ dashboard.new(
   ]),
   gridPos={ x: 0, y: 6000, w: 24, h: 1 }
 )
-
-.addPanel(capacityPlanning.capacityPlanningRow('gitaly', '$stage'), gridPos={ x: 0, y: 7000 })
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'gitaly',
+    'goserver',
+    selector,
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'goserver' },
+      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
+    ],
+  ), gridPos={ x: 0, y: 7000 }
+)
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'gitaly',
+    'gitalyruby',
+    selector,
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'gitalyruby' },
+      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
+    ],
+  ), gridPos={ x: 0, y: 7100 }
+)
+.addPanel(capacityPlanning.capacityPlanningRow('gitaly', '$stage'), gridPos={ x: 0, y: 8000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('gitaly') + platformLinks.services +
           [platformLinks.dynamicLinks('Gitaly Detail', 'type:gitaly')],
