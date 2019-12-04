@@ -2154,7 +2154,7 @@ services:
       grafana_folder: Ymoh2MEmk
       primary_grafana_dashboard: "registry-main/registry-overview"
 
-- name: share
+- name: nfs
   tier: stor
   teams:
     - infrastructure
@@ -2218,7 +2218,7 @@ services:
   observability:
     monitors:
       grafana_folder:
-      primary_grafana_dashboard: "XrqPY11mk/nfs"
+      primary_grafana_dashboard: "nfs-main/nfs-overview"
 
 - name: sidekiq
   tier: sv
