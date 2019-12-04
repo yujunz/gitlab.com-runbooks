@@ -1,4 +1,5 @@
-FROM registry.gitlab.com/gitlab-com/runbooks/runtools_build-intermediate:latest
+ARG  CI_REGISTRY_IMAGE=registry.gitlab.com/gitlab-com/runbooks
+FROM ${CI_REGISTRY_IMAGE}/runtools_build-intermediate:latest
 
 COPY --from=nlknguyen/alpine-shellcheck:latest /usr/local/bin/shellcheck /usr/local/bin/shellcheck
 COPY --from=peterdavehello/shfmt:latest /bin/shfmt /usr/local/bin/shfmt

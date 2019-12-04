@@ -1,6 +1,5 @@
 ---
-
-image: registry.gitlab.com/gitlab-com/runbooks:3.0.2
+image: "${CI_REGISTRY_IMAGE}:3.0.5"
 
 stages:
   - images
@@ -31,7 +30,7 @@ stages:
       - rules-k8s
 
 .dashboards:
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   before_script:
     - dashboards/bundler.sh # Install jsonnet bundles
     - dashboards/generate-mixins.sh # Generate dashboards from mixins
@@ -41,7 +40,7 @@ stages:
 
 verify:
   stage: test
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
     - make verify
 
@@ -108,7 +107,7 @@ test:
     - scripts/validate-alerts
 
 ensure_generated_content_up_to_date:
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   stage: test
   script:
     - make generate
@@ -119,7 +118,7 @@ ensure_generated_content_up_to_date:
 ################################################################################
 update_elastic_log_dashboards:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/dashboards/update-dashboards.sh
   only:
@@ -132,7 +131,7 @@ update_elastic_log_dashboards:
 
 update_elastic_log_index_patterns:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/index-patterns/update-index-patterns.sh
   only:
@@ -145,7 +144,7 @@ update_elastic_log_index_patterns:
 
 update_elastic_log_searches:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/searches/update-searches.sh
   only:
@@ -158,7 +157,7 @@ update_elastic_log_searches:
 
 update_elastic_log_watchers:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/watches/update-watches.sh
   only:
@@ -171,7 +170,7 @@ update_elastic_log_watchers:
 
 update_elastic_log_visualizations:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/visualizations/update-visualizations.sh
   only:
@@ -186,7 +185,7 @@ update_elastic_log_visualizations:
 ################################################################################
 update_elastic_log_gprd_ilm:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log_gprd/ILM/update-ilm.sh
   only:
@@ -199,7 +198,7 @@ update_elastic_log_gprd_ilm:
 
 update_elastic_log_gprd_index_templates:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log_gprd/index-templates/update-index-templates.sh
   only:
@@ -215,7 +214,7 @@ update_elastic_log_gprd_index_templates:
 ################################################################################
 update_elastic_nonprod-log_watchers:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/nonprod-log/watches/update-watches.sh
   only:
@@ -228,7 +227,7 @@ update_elastic_nonprod-log_watchers:
 
 update_elastic_nonprod-log_ilm:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/nonprod-log/ILM/update-ilm.sh
   only:
@@ -241,7 +240,7 @@ update_elastic_nonprod-log_ilm:
 
 update_elastic_nonprod-log_index_templates:
   stage: deploy
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/nonprod-log/index-templates/update-index-templates.sh
   only:
@@ -313,12 +312,34 @@ build_runtools_build_image:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
     INTERMEDIATE_IMAGE: ${CI_REGISTRY_IMAGE}/runtools_build-intermediate:latest
-    IMAGE: ${CI_REGISTRY_IMAGE}/runtools_build:latest
+    IMAGE: ${CI_REGISTRY_IMAGE}/runtools_build
   script:
+    - export ci_image_tag=${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
     - apk add curl
     - git clone https://github.com/google/jsonnet.git
-    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" ${CI_REGISTRY}
+    - echo ${CI_JOB_TOKEN} | docker login --password-stdin -u $CI_REGISTRY_USER $CI_REGISTRY
     - cd jsonnet && docker build -t ${INTERMEDIATE_IMAGE} . && cd ..
-    - docker build -t ${IMAGE} images/runtools_build/
-    - docker push ${IMAGE}
-  when: manual
+    - docker build -t ${IMAGE}:$ci_image_tag -t ${IMAGE}:latest --build-arg CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE images/runtools_build/
+    - docker push ${IMAGE}:latest
+    - docker push ${IMAGE}:$ci_image_tag
+  only:
+    - tags
+
+build_runbooks_image:
+  stage: images
+  image: docker:19.03.1-git
+  services:
+    - docker:19.03.1-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    IMAGE: ${CI_REGISTRY_IMAGE}
+  script:
+    - export ci_image_tag=${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
+    - echo ${CI_JOB_TOKEN} | docker login --password-stdin -u $CI_REGISTRY_USER $CI_REGISTRY
+    - docker build -t ${IMAGE}:$ci_image_tag -t ${IMAGE}:latest .
+    - docker push ${IMAGE}:latest
+    - docker push ${IMAGE}:$ci_image_tag
+  only:
+    - tags
