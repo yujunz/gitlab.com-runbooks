@@ -18,6 +18,7 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
+local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
 local selector = 'environment="$environment", type="nfs", stage="$stage"';
 
@@ -37,6 +38,10 @@ dashboard.new(
 .addPanel(serviceHealth.row('nfs', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(keyMetrics.keyServiceMetricsRow('nfs', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
+.addPanel(metricsCatalogDashboards.componentDetailMatrix('nfs', 'nfs_service', selector, [
+  { title: 'Overall', aggregationLabels: '', legendFormat: 'server' },
+  { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
+]), gridPos={ x: 0, y: 7000 })
 .addPanel(saturationDetail.saturationDetailPanels(selector, components=[
             'cpu',
             'disk_space',
