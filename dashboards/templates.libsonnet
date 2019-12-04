@@ -36,6 +36,25 @@ local template = grafana.template;
     refresh='load',
     sort=1,
   ),
+  defaultEnvironment:: {
+    current: {
+      text: 'gprd',
+      value: 'gprd',
+    },
+    hide: 1,
+    label: null,
+    name: 'environment',
+    options: [
+      {
+        selected: true,
+        text: 'gprd',
+        value: 'gprd',
+      },
+    ],
+    query: 'gprd',
+    skipUrlSync: false,
+    type: 'constant',
+  },
   Node:: template.new(
     'Node',
     '$PROMETHEUS_DS',

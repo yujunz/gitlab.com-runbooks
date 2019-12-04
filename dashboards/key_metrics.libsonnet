@@ -507,9 +507,14 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       min=0,
       show=false,
     ),
-  headlineMetricsRow(serviceType, serviceStage, startRow)::
+  headlineMetricsRow(
+    serviceType,
+    serviceStage,
+    startRow,
+    rowTitle='🗞️ Headline Metrics - 𝘦𝘹𝘱𝘢𝘯𝘥 𝘬𝘦𝘺 𝘴𝘦𝘳𝘷𝘪𝘤𝘦 𝘮𝘦𝘵𝘳𝘪𝘤𝘴 𝘳𝘰𝘸 𝘧𝘰𝘳 𝘥𝘦𝘵𝘢𝘪𝘭𝘴'
+  )::
     layout.grid([
-      row.new(title='🗞️ Headline Metrics - 𝘦𝘹𝘱𝘢𝘯𝘥 𝘬𝘦𝘺 𝘴𝘦𝘳𝘷𝘪𝘤𝘦 𝘮𝘦𝘵𝘳𝘪𝘤𝘴 𝘳𝘰𝘸 𝘧𝘰𝘳 𝘥𝘦𝘵𝘢𝘪𝘭𝘴', collapse=false),
+      row.new(title=rowTitle, collapse=false),
     ], cols=1, rowHeight=1, startRow=startRow)
     +
     layout.grid([
