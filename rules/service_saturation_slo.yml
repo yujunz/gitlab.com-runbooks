@@ -188,23 +188,23 @@ groups:
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'disk_sustained_read_throughput'
-    expr: '0.80'
+    expr: '0.70'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'disk_sustained_read_throughput'
-    expr: '0.90'
+    expr: '0.80'
 
   ## disk_sustained_write_throughput
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
       component: 'disk_sustained_write_throughput'
-    expr: '0.80'
+    expr: '0.70'
 
   - record: 'slo:max:hard:gitlab_component_saturation:ratio'
     labels:
       component: 'disk_sustained_write_throughput'
-    expr: '0.90'
+    expr: '0.80'
 
   ## Open file descriptors
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'

@@ -145,7 +145,9 @@ local DETAILS = {
     |||,
     query: |||
       rate(node_disk_reads_completed_total{type="gitaly", device="sdb", %(selector)s}[$__interval]) / (%(gitaly_disk_sustained_read_iops_maximum_magic_number)d)
-    |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
+      or
+      rate(node_disk_reads_completed_total{type="nfs", device="sdb", %(selector)s}[$__interval]) / (%(nfs_disk_sustained_read_iops_maximum_magic_number)d)
+    |||,  // Note, this rate is specific to the specific nodes, hence the hardcoded type here
     legendFormat: '{{ fqdn }}',
   },
 
@@ -156,7 +158,9 @@ local DETAILS = {
     |||,
     query: |||
       rate(node_disk_read_bytes_total{type="gitaly", device="sdb", %(selector)s}[$__interval]) / (%(gitaly_disk_sustained_read_throughput_bytes_maximum_magic_number)d)
-    |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
+      or
+      rate(node_disk_read_bytes_total{type="nfs", device="sdb", %(selector)s}[$__interval]) / (%(nfs_disk_sustained_read_throughput_bytes_maximum_magic_number)d)
+    |||,  // Note, this rate is specific to the specific nodes, hence the hardcoded type here
     legendFormat: '{{ fqdn }}',
   },
 
@@ -190,7 +194,9 @@ local DETAILS = {
     |||,
     query: |||
       rate(node_disk_writes_completed_total{type="gitaly", device="sdb", %(selector)s}[$__interval]) / (%(gitaly_disk_sustained_write_iops_maximum_magic_number)d)
-    |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
+      or
+      rate(node_disk_writes_completed_total{type="nfs", device="sdb", %(selector)s}[$__interval]) / (%(nfs_disk_sustained_write_iops_maximum_magic_number)d)
+    |||,  // Note, this rate is specific to the specific nodes, hence the hardcoded type here
     legendFormat: '{{ fqdn }}',
   },
 
@@ -208,7 +214,9 @@ local DETAILS = {
     |||,
     query: |||
       rate(node_disk_written_bytes_total{type="gitaly", device="sdb", %(selector)s}[$__interval]) / (%(gitaly_disk_sustained_write_throughput_bytes_maximum_magic_number)d)
-    |||,  // Note, this rate is specific to our gitaly nodes, hence the hardcoded Gitaly type here
+      or
+      rate(node_disk_written_bytes_total{type="nfs", device="sdb", %(selector)s}[$__interval]) / (%(nfs_disk_sustained_write_throughput_bytes_maximum_magic_number)d)
+    |||,  // Note, this rate is specific to the specific nodes, hence the hardcoded type here
     legendFormat: '{{ fqdn }}',
   },
 

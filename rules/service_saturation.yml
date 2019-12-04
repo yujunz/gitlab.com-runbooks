@@ -282,6 +282,70 @@ groups:
         1
       )
 
+  # type: nfs
+  # Disk read IOPS saturation based on GCP estimate of 15000 IO operations/second
+  # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-c/disks/share-01-stor-gprd-data?project=gitlab-production
+  # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_sustained_read_iops'
+    expr: >
+      clamp_max(
+        max(
+          rate(node_disk_reads_completed_total{type="nfs", device="sdb"}[1m]) / (15000)
+        ) by (environment, tier, type, stage),
+        1
+      )
+
+  # type: nfs
+  # Disk write IOPS saturation based on GCP estimate of 15000 IO operations/second
+  # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-c/disks/share-01-stor-gprd-data?project=gitlab-production
+  # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_sustained_write_iops'
+    expr: >
+      clamp_max(
+        max(
+          rate(node_disk_writes_completed_total{type="nfs", device="sdb"}[1m]) / (15000)
+        ) by (environment, tier, type, stage),
+        1
+      )
+
+  # type: nfs
+  # Disk write throughput saturation based on GCP estimate of 400MB/s limit
+  # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-c/disks/share-01-stor-gprd-data?project=gitlab-production
+  # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_sustained_write_throughput'
+    expr: >
+      clamp_max(
+        max(
+          rate(node_disk_written_bytes_total{type="nfs", device="sdb"}[1m]) / (400 * 1024 * 1024)
+        ) by (environment, tier, type, stage),
+        1
+      )
+
+  # type: nfs
+  # Disk read throughput saturation based on GCP estimate of 800MB/s limit
+  # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-c/disks/share-01-stor-gprd-data?project=gitlab-production
+  # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_sustained_read_throughput'
+    expr: >
+      clamp_max(
+        max(
+          rate(node_disk_read_bytes_total{type="nfs", device="sdb"}[1m]) / (800 * 1024 * 1024)
+        ) by (environment, tier, type, stage),
+        1
+      )
+
   # Open file descriptors
   - record: gitlab_component_saturation:ratio
     labels:
