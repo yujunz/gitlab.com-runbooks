@@ -13,5 +13,11 @@
     gitaly_disk_sustained_read_throughput_bytes_maximum_magic_number: 1200 * 1024 * 1024,  // 1200MB/s
     gitaly_disk_sustained_write_iops_maximum_magic_number: 30000,
     gitaly_disk_sustained_write_throughput_bytes_maximum_magic_number: 400 * 1024 * 1024,  // 400MB/s
+
+    nfs_disk_sustained_read_iops_maximum_magic_number: 15000,
+    nfs_disk_sustained_read_throughput_bytes_maximum_magic_number: 800 * 1024 * 1024,  // 800MB/s
+    nfs_disk_sustained_write_iops_maximum_magic_number: 15000,
+    nfs_disk_sustained_write_throughput_bytes_maximum_magic_number: 400 * 1024 * 1024,  // 400MB/s
+
   },
 }
