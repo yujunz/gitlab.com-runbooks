@@ -381,7 +381,7 @@ groups:
       label_replace(
         clamp_max(
           max by(environment, component) (
-            sum without (stage, state, executor_stage) (
+            sum without (state, executor_stage, exported_stage) (
               label_replace(max_over_time(gitlab_runner_jobs{job="shared-runners"}[1m]), "component", "shared_runners", "", "")
               or
               label_replace(max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[1m]), "component", "shared_runners_gitlab", "", "")
