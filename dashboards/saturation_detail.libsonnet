@@ -289,7 +289,7 @@ local DETAILS = {
       or scaling the runner managers vertically and increasing their maximum runner capacity.
     |||,
     query: |||
-      sum without (stage, state, executor_stage) (
+      sum without (state, executor_stage, exported_stage) (
         gitlab_runner_jobs{job="private-runners"}
       )
       /
@@ -353,7 +353,7 @@ local DETAILS = {
       or scaling the runner managers vertically and increasing their maximum runner capacity.
     |||,
     query: |||
-      sum without (stage, state, executor_stage) (
+      sum without (state, executor_stage, exported_stage) (
         gitlab_runner_jobs{job="shared-runners"}
       )
       /
@@ -376,7 +376,7 @@ local DETAILS = {
       or scaling the runner managers vertically and increasing their maximum runner capacity.
     |||,
     query: |||
-      sum without (stage, state, executor_stage) (
+      sum without (state, executor_stage, exported_stage) (
         gitlab_runner_jobs{job="shared-runners-gitlab-org"}
       )
       /
