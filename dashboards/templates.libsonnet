@@ -101,5 +101,13 @@ local template = grafana.template;
     refresh='load',
     sort=1,
   ),
+  fqdn(query, current):: template.new(
+    'fqdn',
+    '$PROMETHEUS_DS',
+    'label_values(' + query + ', fqdn)',
+    current=current,
+    refresh='load',
+    sort=1,
+  ),
 
 }
