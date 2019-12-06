@@ -42,7 +42,7 @@ Example, the Container Registry is of service type `registry`.  Therefore,
 
 * Dashboards should be kept in files with the following name: `/dashboards/[grafana_folder_name]/[name].dashboard.jsonnet`
   * `grafana_folder_name` refers to the grafana folder where the files will be uploaded to. Note that the folder must already be created.
-  * These can be created via `./create-dashboard-folder.sh <grafana_folder_name> <friendly name>`
+  * These can be created via `./create-grafana-folder.sh <grafana_folder_name> <friendly name>`
   * Example: `./create-grafana-folder.sh registry 'Container Registry'`
   * Note that if a folder already contains the name, it'll need to be removed or
     renamed in order for the API to accept the creation of a new folder
