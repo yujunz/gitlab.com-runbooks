@@ -16,7 +16,7 @@ local customApdex = metricsCatalog.customApdex;
     goserver: {
       apdex: histogramApdex(
         histogram='grpc_server_handling_seconds_bucket',
-        selector='job="gitaly", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"',
+        selector='job="gitaly", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"',
         satisfiedThreshold=0.5,
         toleratedThreshold=1
       ),

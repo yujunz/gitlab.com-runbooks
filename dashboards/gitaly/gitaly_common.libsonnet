@@ -130,12 +130,12 @@ local perNodeApdex(selector) =
     description='Apdex is a measure of requests that complete within an acceptable threshold duration. Actual threshold vary per service or endpoint. Higher is better.',
     query=|||
       (
-        sum(rate(grpc_server_handling_seconds_bucket{%(selector)s, grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage, fqdn)
+        sum(rate(grpc_server_handling_seconds_bucket{%(selector)s, grpc_type="unary", le="0.5", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage, fqdn)
         +
-        sum(rate(grpc_server_handling_seconds_bucket{%(selector)s, grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage, fqdn)
+        sum(rate(grpc_server_handling_seconds_bucket{%(selector)s, grpc_type="unary", le="1", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage, fqdn)
       )
       /
-      2 / (sum(rate(grpc_server_handling_seconds_count{%(selector)s, grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage, fqdn))
+      2 / (sum(rate(grpc_server_handling_seconds_count{%(selector)s, grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"}[1m])) by (environment, type, tier, stage, fqdn))
     ||| % (gitalyConfig { selector: selector }),
     legendFormat='{{ fqdn }}',
     interval='1m',
