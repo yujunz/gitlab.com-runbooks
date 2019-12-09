@@ -406,6 +406,7 @@ Selected logging documents and resources:
 * [Setup and Use my Yubikey](howto/yubikey.md)
 * [Purge Git data](howto/purge-git-data.md)
 * [Getting Started with Kubernetes and GitLab.com](howto/k8s-gitlab.md)
+* [Using Chatops bot to run commands across the fleet](howto/deploycmd.md)
 
 ### Gitter
 * [MongoDB operations](howto/gitter/mongodb-operations.md)
