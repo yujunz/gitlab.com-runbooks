@@ -35,7 +35,7 @@ local ES_QUERY = {
   },
   condition: {
     compare: {
-      'ctx.payload.hits.total.value': {
+      'ctx.payload.hits.total': {
         gt: ALERT_THRESHOLD,
       },
     },
