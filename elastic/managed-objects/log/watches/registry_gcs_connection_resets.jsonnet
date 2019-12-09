@@ -37,7 +37,7 @@ local ES_QUERY = {
   },
   condition: {
     compare: {
-      'ctx.payload.hits.total.value': {
+      'ctx.payload.hits.total': {
         gt: ALERT_THRESHOLD,
       },
     },
@@ -56,7 +56,7 @@ local ES_QUERY = {
           attachments: [
             {
               title: 'Registry Connection Resets from GCS',
-              text: '{{ctx.payload.hits.total.value}} GCS connection resets in the last' + QUERY_PERIOD_MINS + 'minutes.',
+              text: '{{ctx.payload.hits.total}} GCS connection resets in the last' + QUERY_PERIOD_MINS + 'minutes.',
               color: 'danger',
             },
           ],
