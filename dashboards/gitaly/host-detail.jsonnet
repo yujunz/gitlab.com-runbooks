@@ -22,7 +22,7 @@ local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local magicNumbers = (import 'magic_numbers.libsonnet').magicNumbers;
 local gitalyCommon = import 'gitaly/gitaly_common.libsonnet';
 
-local selector = 'environment="$environment", fqdn="$fqdn"';
+local selector = 'environment="$environment", fqdn=~"$fqdn"';
 
 dashboard.new(
   'Host Detail',

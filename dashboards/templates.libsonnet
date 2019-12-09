@@ -106,6 +106,7 @@ local template = grafana.template;
     '$PROMETHEUS_DS',
     'label_values(' + query + ', fqdn)',
     current=current,
+    multi=true,
     refresh='load',
     sort=1,
   ),
