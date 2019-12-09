@@ -30,8 +30,9 @@ inside the deploy-tooling project. If a `CURRENT_DEPLOY_ENVIRONMENT`,
 attempt to run the `cmd.yml` playbook and specified command.
 
 If needed, a command can be executed by [running the CI pipeline](https://ops.gitlab.net/gitlab-com/gl-infra/deployer/pipelines/new)
-and specifying the required variables. If you want to make sure it runs and
-does not use `--check` mode, specify the variable `CHECKCOMMAND` to be `false`.
+and specifying the required variables. A dry-run can be specified by
+specifying the variable `CHECKCOMMAND` as `true`. If this is not done, the
+ansible script will make changes.
 
 ## Chatops Command
 
