@@ -8,7 +8,7 @@ local customApdex = metricsCatalog.customApdex;
   tier: 'stor',
   autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this service
   slos: {
-    apdexRatio: 0.995,
+    apdexRatio: 0.95,
     errorRatio: 0.001,
     alertTriggerDuration: 'long',
   },

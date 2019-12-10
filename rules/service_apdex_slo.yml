@@ -8,7 +8,7 @@ groups:
       type: 'gitaly'
       tier: 'stor'
       alert_trigger_duration: 'long'
-    expr: '0.995'
+    expr: '0.95'
 
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:
