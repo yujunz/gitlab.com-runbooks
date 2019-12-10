@@ -5,7 +5,7 @@
         actions: {
           rollover: {
             max_age: '3d',
-            max_size: '50gb',
+            max_size: '15gb',
           },
           set_priority: {
             priority: 100,
@@ -13,11 +13,7 @@
         },
       },
       warm: {
-        min_age: '1m',
         actions: {
-          forcemerge: {
-            max_num_segments: 1,
-          },
           allocate: {
             require: {
               data: 'warm',
