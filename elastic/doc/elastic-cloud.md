@@ -12,6 +12,7 @@
     - [Resizing a cluster](#resizing-a-cluster)
         - [Adding new availability zones](#adding-new-availability-zones)
         - [Resizing instances](#resizing-instances)
+        - [Failures caused by snapshoting](#failures-caused-by-snapshoting)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -73,8 +74,12 @@ Adding and removing availability zones was tested. elastic.co decides whether to
 
 ### Resizing instances ###
 
-Before resizing, you need to make sure the cluster is in a healthy state. If needed release some disk space or reallocate shards to distribute cpu load more evenly. Otherwise, the resize might fail in the middle, as it happened in the past.
+Before resizing, you need to make sure the cluster is in a healthy state. If needed, release some disk space or reallocate shards to distribute cpu load more evenly. Otherwise, the resize might fail in the middle, as it happened in the past.
 
-The way it works is new machines are created with the desired spec, they are then brought online, shards are moved across and once that is complete the old ones are taken offline and removed. This worked very smoothly.
+The way resizing works is new machines are created with the desired spec, they are then brought online, shards are moved across and once that is complete the old ones are taken offline and removed. This has worked very smoothly in the past.
 
 We can scale up and down. Resizing is done live.
+
+### Failures caused by snapshoting ###
+
+Resizing cannot succeed without a successful snapshot. This means that if Elastic Cloud is unable to take a snapshot (e.g. cluster is unhealthy), the resize will fail. It also means that if there is a snapshot in flight, the resize will fail.

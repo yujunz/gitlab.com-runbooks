@@ -11,12 +11,10 @@
     - [Searching logs](#searching-logs)
         - [Searching in Elastic](#searching-in-elastic)
             - [production (gitlab.com)](#production-gitlabcom)
-            - [dev (dev.gitlab.org), staging (staging.gitlab.com)](#dev-devgitlaborg-staging-staginggitlabcom)
-            - [dr, ops (ops.gitlab.com), preprod (pre.gitlab.com)](#dr-ops-opsgitlabcom-preprod-pregitlabcom)
+            - [dev (dev.gitlab.org), staging (staging.gitlab.com), dr, ops (ops.gitlab.com), preprod (pre.gitlab.com)](#dev-devgitlaborg-staging-staginggitlabcom-dr-ops-opsgitlabcom-preprod-pregitlabcom)
         - [Searching in StackDriver](#searching-in-stackdriver)
         - [Searching in object storage (GCS)](#searching-in-object-storage-gcs)
 - [Concepts](#concepts)
-    - [Design Document](#design-document)
     - [Logging infrastructure overview](#logging-infrastructure-overview)
     - [Fluentd](#fluentd)
     - [StackDriver](#stackdriver)
@@ -26,8 +24,9 @@
     - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm)
     - [Monitoring](#monitoring)
     - [BigQuery](#bigquery)
+    - [GCS (long-term storage)](#gcs-long-term-storage)
 - [FAQ](#faq)
-    - [Why are we using StackDriver in addition to ElasticSearch?](#why-are-we-using-stackdriver-in-addition-to-elasticsearch)
+    - [Why are we using StackDriver and GCS in addition to ElasticSearch?](#why-are-we-using-stackdriver-and-gcs-in-addition-to-elasticsearch)
     - [Why are we using pubsub queues instead of sending logs from fluentd directly to Elastic?](#why-are-we-using-pubsub-queues-instead-of-sending-logs-from-fluentd-directly-to-elastic)
     - [How do I find the right logs for my service?](#how-do-i-find-the-right-logs-for-my-service)
     - [A user sees an error on GitLab.com, how do I find logs for that user?](#a-user-sees-an-error-on-gitlabcom-how-do-i-find-logs-for-that-user)
@@ -49,7 +48,7 @@
 
 ## URLs ##
 
-Kibana in logging clusters:
+Logging clusters:
 - **https://log.gprd.gitlab.net**
 - **https://nonprod-log.gitlab.net**
 
@@ -82,7 +81,7 @@ See [ESC-tools clean up script](https://ops.gitlab.net/gitlab-com/gl-infra/gitla
 
 Logs indexed by Stackdriver are stored for 30 days
 
-All logs processed by StackDriver (even if excluded from indexing) are archived to object storage (GCS) for a minimum of 180days
+All logs processed by StackDriver (even if excluded from indexing) are archived to object storage (GCS). Retention in GCS is currently configured for 365 days. For more details see [gcs section below](#gcs-long-term-storage).
 
 ## What are we logging? ##
 
@@ -123,13 +122,15 @@ All logs processed by StackDriver (even if excluded from indexing) are archived 
 
 ## Historical notes ##
 
-All logs used to be available at https://log.gitlab.net/
+Logs from all environments used to be available at https://log.gitlab.net/ .
 
-Previously production logs were using the `pubsub-production-*` pattern, this has changed to `pubsub-rails-inf-gprd-*`. For more info see the [table](logging.md#what-are-we-logging).
+Previously production logs were using the `pubsub-production-*` pattern, this has changed to `pubsub-rails-inf-gprd-*`. For more info see the [table](#what-are-we-logging).
 
-production.log and haproxy logs are no longer being sent to elasticcloud because it was overwhelming our cluster, currently these logs are only available in StackDriver
+production.log, haproxy logs and nginx logs are no longer being sent to elasticcloud because it was overwhelming our cluster, currently these logs are only available in StackDriver.
 
 Runner logs used to be unstructured and mixed in with other syslog messages, structured logging was tracked with https://gitlab.com/gitlab-org/gitlab-runner/issues/3336 . Runner logs now have a dedicated index.
+
+Design document for migration to ES7: https://about.gitlab.com/handbook/engineering/infrastructure/design/logging-upgrade/
 
 # How-to guides
 
@@ -140,22 +141,17 @@ Runner logs used to be unstructured and mixed in with other syslog messages, str
 #### production (gitlab.com) ####
 
 1. Go to https://log.gprd.gitlab.net/
-1. in Kibana, in Discover application, select the relevant index pattern, e.g. `pubsub-rails-inf-gprd`
+1. in Kibana, in Discover application, select the relevant index pattern, e.g. `pubsub-rails-inf-gprd-*`
 
-#### dev (dev.gitlab.org), staging (staging.gitlab.com) ####
-
-(logs from dev are sent to staging indices)
+#### dev (dev.gitlab.org), staging (staging.gitlab.com), dr, ops (ops.gitlab.com), preprod (pre.gitlab.com) ####
 
 1. Go to https://nonprod-logs.gitlab.net/
-1. select the relevant index pattern, e.g. `pubsub-rails-inf-gstg`
-1. filter on the environment, e.g. `json.environment=gstg` or `json.environment=dev`
+1. select the relevant index pattern, e.g. `pubsub-rails-inf-gstg-*` or `pubsub-rails-inf-ops-*`
+1. (optional) filter on the environment, e.g. `json.environment=gstg` or `json.environment=dev`
 
-#### dr, ops (ops.gitlab.com), preprod (pre.gitlab.com) ####
-
-(almost no logs are forwarded from preprod)
-
-1. Go to https://nonprod-logs.gitlab.net/
-1. select the relevant index pattern, e.g. `pubsub-rails-inf-dr` or `pubsub-rails-inf-ops`
+Note:
+- logs from dev are sent to staging indices
+- almost no logs are forwarded from preprod
 
 ### Searching in StackDriver ###
 
@@ -164,10 +160,6 @@ Runner logs used to be unstructured and mixed in with other syslog messages, str
 [using BigQuery tutorial](./logging_gcs_archive_bigquery.md)
 
 # Concepts #
-
-## Design Document
-
-TODO: paste here a link to the design doc once it's merged
 
 ## Logging infrastructure overview ##
 
@@ -181,9 +173,9 @@ Files containing logs are parsed by Fluentd (td-agent). Fluentd runs directly on
 
 All logs reaching Stackdriver are saved to GCS using an export sink where they are stored long-term (e.g. 6 months) for compliance reasons and can be read using BigQuery. Kubernetes logs are also forwarded from Stackdriver to Pub/Sub (that's because Fluentd in kubernetes is not forwarding logs to Pub/Sub).
 
-All logs listed in the [table](logging.md#what-are-we-logging) are processed by StackDriver, but most are excluded from it's indexing for cost reasons. It is sometimes helpful to use it to search for logs over a 30day interval for the included logs. It also allows you to do basic queries for strings across all types and find errors.
+All logs listed in the [table](#what-are-we-logging) are processed by StackDriver, but most are excluded from indexing due to costs. It is sometimes helpful to use it to search for logs over a 30 day interval for the included logs. It also allows you to do basic queries for strings across all types and find errors.
 
-The current exclusions for StackDriver can be found in [terraform variables.tf](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/blob/master/shared/gstg-gprd/variables.tf),
+The current exclusions for StackDriver can be found in [terraform variables.tf](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/blob/master/environments/gprd/variables.tf),
 search for `sd_log_filters`.
 
 Logs sent to StackDriver are sent to "GCE VM instance" resource logs.
@@ -206,11 +198,19 @@ Aliases are referenced by Pubsubbeat when uploading logs to Elastic. When logs r
 
 Logs (documents) can be viewed in Kibana using index patterns, i.e. when you open the Discover application in Kibana, you can select the index pattern from a drop-down list and all searches you will submit will be performed against all indices matching the index pattern. There are also a number of other features in Kibana we're using: dashboards, saved searches, visualizations, watchers.
 
+More documentation on Elastic can be found here: [elastic/doc/](./elastic/doc/)
+
 ## Index Lifecycle Management (ILM)
 
-Indices can be managed in different ways e.g. custom scripts, Curator, Index Lifecycle Management (ILM) plugin. [The ILM plugin](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-index-lifecycle-management.html) has proved to be particularly useful and has become very popular in recent years, so it was integrated into Elastic.
+Indices can be managed in different ways e.g. custom scripts, Curator, Index Lifecycle Management (ILM) plugin. ILM meets a lot of our requirements so that's what we're using for logs sent to ES7 clusters.
 
-ILM meets a lot of our requirements so that's what we're using. ILM behavior is configured via policies assigned to indices and ILM config. The plugin triggers an ILM step of an index at a configurable frequency. The indices go through a number of steps, which can be simplified to: warm -> hot -> cold -> delete. Behavior of ILM at each of those steps is defined in the ILM policy. Here's an example policy:
+[The ILM plugin](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-index-lifecycle-management.html) has proved to be particularly useful and has become very popular in the Elastic community in recent years. For this reason, it was integrated into Elastic.
+
+ILM behavior is configured via policies assigned to indices. The plugin runs at a scheduled interval (like a cronjob). When triggered, ILM goes through each index that has a policy assigned to it and performs a step defined in the policy (assigned to that particular index). If the conditions are not met, ILM will do nothing. Notice that the conditions are evaluated on a scheduled basis (rather than being event driven).
+
+Policies can define a number of steps which in simple words translate to: warm -> hot -> cold -> delete. Behavior of ILM at each of those steps is defined in the ILM policy.
+
+Here's an example policy:
 ```
 {
     "policy": {
@@ -254,15 +254,20 @@ ILM meets a lot of our requirements so that's what we're using. ILM behavior is 
 ```
 Let's say ILM is configured to run every 10 mins and the above policy is assigned to a newly created index. What will happen, is after 10 mins, ILM will trigger the hot phase, which will check the size and age of the index. If the size exceeds 50GB or the age exceeds 3 days, the configured [action](https://www.elastic.co/guide/en/elasticsearch/reference/current/_actions.html) is triggered, which in this case would send a call to the [rollover api](https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-rollover-index.html). The rollover API will mark the current index as non-writable, mark it for the warm phase and create a new index from an index template. This way, we can control for example the size of shards within indices or logs retention period.
 
+See also:
+- https://www.elastic.co/blog/implementing-hot-warm-cold-in-elasticsearch-with-index-lifecycle-management
+- https://www.elastic.co/guide/en/elasticsearch/reference/current/index-lifecycle-management.html
+
 ## Monitoring
 
+For monitoring Elastic clusters see: [elastic/doc/README.md#monitoring](./elastic/doc/README.md#monitoring)
 Our Elastic clusters have monitoring enabled and the monitoring metrics are forwarded to a separate monitoring cluster.
 
 There is a VM in each environment called `sd-exporter-*`. This VM is created using a generic terraform module https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/generic-sv-with-group . The VM has a chef role assigned to it which downloads and runs the stackdriver exporter https://gitlab.com/gitlab-cookbooks/gitlab-exporters/ . The exporter service runs on a tcp port number 9255. Prometheus is configured through a role in chef-repo to scrape port 9255 on `sd-exporter-*` VMs. Metrics scraped this way are the basis for Prometheus pubsub alerts.
 
 ## BigQuery ##
 
-BigQuery can be used to search logs that were "archived" to cold storage (GCS).
+BigQuery can be used to search logs that are in cold storage (GCS).
 
 The `haproxy` logs are also configured to be forwarded to a BigQuery dataset using
 a StackDriver sink: [gitlab-production:haproxy_logs](https://console.cloud.google.com/bigquery?organizationId=769164969568&project=gitlab-production&p=gitlab-production&d=haproxy_logs&page=dataset)
@@ -277,14 +282,16 @@ These rules are parameterized and are configured with defaults which are set in 
 
 # FAQ #
 
-## Why are we using StackDriver in addition to ElasticSearch? ##
+## Why are we using StackDriver and GCS in addition to ElasticSearch? ##
 
-We are sending logs to stackdriver in addition to elasticsearch for
-longer retention and to preserve logs in object storage for 180days.
+We are sending logs to Stackdriver and GCS in addition to elasticsearch for
+longer retention and to preserve logs in object storage for 365 days.
 
 ## Why are we using pubsub queues instead of sending logs from fluentd directly to Elastic? ##
 
-We use it for two reasons. Firstly, to handle situations when our log sources emit more logs than Logstash/Elasticsearch can ingest at real time. In this scenario, pubsub serves the role of a buffer. Secondly, we were overloading Elastic Cloud with the number of connections. Thus, having only a few pubsubbeats helps to reduce the overhead of separate connnections.
+We use it for two reasons. Firstly, to handle situations when our log sources emit more logs than Elasticsearch can ingest at real time. In this scenario, pubsub serves the role of a buffer.
+
+Secondly, we were overloading Elastic Cloud with the number of connections. Having only a few pubsubbeats helps to reduce the overhead of a separate connection for each fluentd instance.
 
 ## How do I find the right logs for my service? ##
 
@@ -296,6 +303,8 @@ See [Quick start](./README.md#what-are-we-logging)
 * Search for `+json.username: <user>`
 
 If the request has `json.correlation_id` field set, you can use that id for checking logs from all gitlab.com components using the Correlation dashboard.
+
+see also: [searching logs](./README.md#searching-logs)
 
 ## Why do we have these annoying json. prefixes? ##
 
@@ -348,8 +357,8 @@ re-create them.
 ## Adding a new logfile ##
 
 * Decide whether you want a new pubsub topic (which means a new index) or use an existing one
-* If you want to use an existing index simply update one of [fluentd templates](https://gitlab.com/gitlab-cookbooks/gitlab_fluentd/tree/master/templates/default) and add a section for the new log.
-* If youw ant to create a new index, first modify the `variables.tf` of the `gprd` and `gstg` environment so that there is a new topic and a new pubsubbeat to monitor it.
+* If you want to use an existing index simply update one of [fluentd templates](https://gitlab.com/gitlab-cookbooks/gitlab_fluentd/tree/master/templates/default) and add a section for the new log file.
+* If you want to create a new index, first modify the `variables.tf` of the `gprd` and `gstg` environment so that there is a new topic and a new pubsubbeat to monitor it.
 * Add a new "name" and "machine type", see this example:
 
 ```
