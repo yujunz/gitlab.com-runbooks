@@ -105,7 +105,7 @@ local currentSaturationBreaches(nodeSelector) =
           gitlab_component_saturation:ratio{environment="$environment", %(nodeSelector)s}
           ,
           1
-        ) >= on(component, monitor, env) group_left slo:max:soft:gitlab_component_saturation:ratio
+        ) >= on(component, monitor, env, cluster) group_left slo:max:soft:gitlab_component_saturation:ratio
       )
     ||| % { nodeSelector: nodeSelector },
     saturationDays=1,
@@ -131,7 +131,7 @@ local currentSaturationWarnings(nodeSelector) =
               }
             , 1
           )
-          >= on(component, monitor, env) group_left slo:max:soft:gitlab_component_saturation:ratio
+          >= on(component, monitor, env, cluster) group_left slo:max:soft:gitlab_component_saturation:ratio
         )
       )
     ||| % { nodeSelector: nodeSelector },
@@ -158,7 +158,7 @@ local twoWeekSaturationWarnings(nodeSelector) =
               }
           , 1
           )
-          >= on(component, monitor, env) group_left slo:max:soft:gitlab_component_saturation:ratio
+          >= on(component, monitor, env, cluster) group_left slo:max:soft:gitlab_component_saturation:ratio
         )
       )
     ||| % { nodeSelector: nodeSelector },
