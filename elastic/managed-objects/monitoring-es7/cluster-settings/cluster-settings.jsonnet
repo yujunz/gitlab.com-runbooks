@@ -1,5 +1,5 @@
 {
   persistent: {
-    'xpack.monitoring.history.duration': '31d',
+    'xpack.monitoring.history.duration': '40d',
   },
 }
