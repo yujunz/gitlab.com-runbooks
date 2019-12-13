@@ -7,7 +7,7 @@ require 'json'
 require 'net/http'
 
 def parse_args
-  options = { dry_run: true }
+  options = { dry_run: true, wait: 2 * 60 }
 
   ARGV << '-?' if ARGV.empty?
 
@@ -26,6 +26,10 @@ def parse_args
 
     opt.on('-d', '--dry-run=[yes/no]', 'Show what would have been done; default: yes') do |dry_run|
       options[:dry_run] = (dry_run !~ /^(no|false)$/i)
+    end
+
+    opt.on('-w', '--wait=<N>', "Timeout in seconds for migration completion per repo; default: #{options[:wait]}") do |wait|
+      options[:wait] = [wait.to_i, 5].max
     end
 
     opt.on_tail('-?', '--help', 'Show this message') do
@@ -84,7 +88,7 @@ csv.each do |project, source, target|
     gitlab_client('PUT', project_path, "repository_storage=#{target}")
 
     print 'Waiting for migration to finish... '
-    24.times do
+    (options[:wait] / 5).times do
       project_info = gitlab_client('GET', project_path)
 
       break if project_info['repository_storage'] == target
