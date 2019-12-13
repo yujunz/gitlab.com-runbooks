@@ -122,13 +122,15 @@ dashboard.new(
   layout.grid([
     basic.slaTimeseries(
       title='SLA Trends - Aggregated',
-      description='1w rolling average SLO adherence across all primary services. Higher is better.',
+      description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
       query=|||
-        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[7d]))
+        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__interval]))
       ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='gitlab.com SLA',
-      intervalFactor=5,
+      interval='7d',
+      intervalFactor=1,
+      points=true,
     ),
   ], cols=1, rowHeight=10, startRow=1001)
 )
@@ -152,13 +154,15 @@ dashboard.new(
     ),
     basic.slaTimeseries(
       title='SLA Trends - Primary Services',
-      description='1w rolling average SLO adherence for primary services. Higher is better.',
+      description='Rolling average SLO adherence for primary services. Higher is better.',
       yAxisLabel='SLA',
       query=|||
-        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[7d])) by (type)
+        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__interval])) by (type)
       ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='{{ type }}',
-      intervalFactor=5,
+      interval='7d',
+      intervalFactor=1,
+      points=true,
     ),
   ], cols=1, rowHeight=10, startRow=2001)
 )
