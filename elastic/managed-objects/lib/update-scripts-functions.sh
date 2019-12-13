@@ -103,6 +103,6 @@ function ES7_set_cluster_settings() {
   source $array_file_path
 
   for json in "${json_array[@]}"; do
-    es_client "${url}" -X PUT --data-binary "@${json}"
+    es_client "${url}" -X PUT --data-binary "${json}"
   done
 }
