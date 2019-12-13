@@ -210,6 +210,19 @@ update_elastic_log_gprd_index_templates:
     variables:
       - $ES_LOG_GPRD_URL
 
+update_elastic_log_gprd_cluster_settings:
+  stage: deploy
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
+  script:
+  - ./elastic/managed-objects/log_gprd/cluster-settings/update-cluster-settings.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/log_gprd/cluster-settings/*
+    variables:
+      - $ES_LOG_GPRD_URL
+
 # nonprod-log.gitlab.net
 ################################################################################
 update_elastic_nonprod-log_watchers:
@@ -251,6 +264,23 @@ update_elastic_nonprod-log_index_templates:
       - elastic/managed-objects/lib/nonprod-log_index_template.libsonnet
     variables:
       - $ES_NONPROD_URL
+
+# monitoring-es7
+################################################################################
+
+update_elastic_monitoring-es7_cluster_settings:
+  stage: deploy
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
+  script:
+  - ./elastic/managed-objects/monitoring-es7/cluster-settings/update-cluster-settings.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/monitoring-es7/cluster-settings/*
+    variables:
+      - $ES_MONITORING_ES7_URL
+
 ################################################################################
 
 dryrun_pingdom_checks:
