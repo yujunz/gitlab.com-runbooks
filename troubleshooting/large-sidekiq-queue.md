@@ -8,6 +8,8 @@ the resolution below.
 It could also be possible that Sidekiq is just spending time jumping from one
 queue to the next not actually doing any job at all.
 
+It may also be abuse or over-zealous activity (particularly mailers, exports, or pipelines)
+
 ## Symptoms
 
 Open the [Sidekiq dashboard](http://dashboards.gitlab.net/dashboard/db/sidekiq-stats)
@@ -37,7 +39,18 @@ Let that run for around 30 seconds and then check the report `sudo perf report`
 
 ## Resolution
 
-The best way to deal with the large queue is to spin up more sidekiq worker
+### Mail queue
+
+If the queue is all in `mailers` and is in the many tens to hundreds of thousands it is
+possible we have a spam/junk issue problem.  If so, refer to the abuse team for assistance, 
+and also https://gitlab.com/gitlab-com/runbooks/snippets/1923045 for some spam-fighting
+techniques we have used in the past to clean up.  This is in a private snippet so as not 
+to tip our hand to the miscreants.  Often shows up in our gitlab public projects but could
+plausibly be in any other project as well. 
+
+### Other situations
+
+Another way to deal with the large queue is to spin up more sidekiq worker
 processes with fewer threads that specifically deal with troublesome queues.
 Often, this is the `pipelines` and `project_cache` queues.
 
