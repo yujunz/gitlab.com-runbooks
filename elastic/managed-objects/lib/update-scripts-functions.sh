@@ -21,17 +21,17 @@ function matches_exist() {
 }
 
 function get_json_and_jsonnet() {
-  export array_file_path=/tmp/get_json_and_jsonnet.array
-  declare -a json_array
+  export array_file_path="/tmp/get_json_and_jsonnet.array"
+  json_array=()
 
-  if matches_exist ./*.json; then
+  if matches_exist "${SCRIPT_DIR}"/*.json; then
     for i in "${SCRIPT_DIR}"/*.json; do
       json_content=$(jq -c '.' "${i}")
       json_array+=("${json_content}")
     done
   fi
 
-  if matches_exist ./*.jsonnet; then
+  if matches_exist "${SCRIPT_DIR}"/*.jsonnet; then
     for i in "${SCRIPT_DIR}"/*.jsonnet; do
       json_content="$(execute_jsonnet "${i}" | jq -c '.')" # Compile jsonnet and compact with jq
       json_array+=("${json_content}")
@@ -43,7 +43,7 @@ function get_json_and_jsonnet() {
     exit 1
   fi
 
-  declare -p json_array >$array_file_path
+  declare -p json_array >"${array_file_path}"
 }
 
 # ES5
@@ -100,7 +100,7 @@ function ES7_index-template_exec_jsonnet_and_upload_json() {
 function ES7_set_cluster_settings() {
   url="_cluster/settings"
   get_json_and_jsonnet
-  source $array_file_path
+  source "${array_file_path}"
 
   for json in "${json_array[@]}"; do
     es_client "${url}" -X PUT --data-binary "${json}"
