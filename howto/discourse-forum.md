@@ -102,7 +102,9 @@ The backup happens automatically once a day, it's stored in the
 gitlab-discourse-forum-backup S3 bucket, and we keep the [latest
 seven](https://forum.gitlab.com/admin/backups).
 
-## Running low on disk space
+## Troubleshooting
+
+### Running low on disk space
 
 Running low on disk space might affect backups among others. To clean up some
 space, run the `cleanup` command:
@@ -137,3 +139,22 @@ rm access.log.1
 truncate -s 1 access.log
 ```
 
+### Login is failing
+
+We don't know why this occurs, and we don't know why restarting the process
+fixed it one time
+(https://gitlab.com/gitlab-com/gl-infra/production/issues/1438).
+
+Stopping and restarting the application server results in a few minutes of
+downtime.
+
+```
+ssh forum.gitlab.com
+
+sudo -i
+docker stop app
+docker rm app
+/var/discourse/launcher start app
+```
+
+Check the container is running: `docker ps`, `docker logs app -f`.
