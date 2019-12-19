@@ -65,6 +65,15 @@ groups:
     expr: >
       sum by (environment, tier, type, stage) (rate(sidekiq_jobs_completion_seconds_count{job="gitlab-sidekiq", type = "sidekiq"}[1m]))
 
+  # sidekiq: pullmirror RPS rate
+  - record: gitlab_component_ops:rate
+    labels:
+      component: 'pullmirror'
+    expr: >
+      sum by (environment, tier, type, stage) (
+        rate(sidekiq_jobs_completion_seconds_count{job="gitlab-sidekiq",type="sidekiq",queue="repository_update_mirror"}[1m])
+      )
+
   # mailroom
   # TODO: zero placeholder as we have no metrics for mailroom at present
   - record: gitlab_component_ops:rate
