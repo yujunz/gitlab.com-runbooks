@@ -357,23 +357,26 @@ re-create them.
 
 ## Adding a new logfile ##
 
-* Decide whether you want a new pubsub topic (which means a new index) or use an existing one
-* If you want to use an existing index simply update one of [fluentd templates](https://gitlab.com/gitlab-cookbooks/gitlab_fluentd/tree/master/templates/default) and add a section for the new log file.
-* If you want to create a new index, first modify the `variables.tf` of the `gprd` and `gstg` environment so that there is a new topic and a new pubsubbeat to monitor it.
-* Add a new "name" and "machine type", see this example:
+* Decide whether you want to use an existing ES index or create a new one (which will also require making some changes using Terraform). Some hints about how to decide:
+    * You won't need a dedicated index if the amount of logs is small (at the moment of writing, the overhead related to operating a separate index is quite significant)
+    * It makes sense to use an existing index if the log file "conceptually" belongs to an existing log stream (for example it used be part of rails logs and it's simply going to be separated into a dedicate file)
 
-```
-variable "pubsubbeats" {
-  type = "map"
-
-  default = {
-    "names"         = ["gitaly", "haproxy", "pages", "postgres", "production", "system", "workhorse", "geo", "sidekiq", "api"]
-    "machine_types" = ["n1-standard-8", "n1-standard-8", "n1-standard-4", "n1-standard-4", "n1-standard-8", "n1-standard-8", "n1-standard-8", "n1-standard-4", "n1-standard-8", "n1-standard-4"]
-  }
-}
-```
-
-* Note: try to use a small instance type and increase it if necessary.
-* Run terraform
-* If you are using a new index you will need to add a [new template to fluentd](https://gitlab.com/gitlab-cookbooks/gitlab_fluentd/tree/master/templates/default).
-* After the template is created, add the recipe to the nodes that have the logfile.
+* Adding a logfile and using an existing ES index
+    * Update one of the [fluentd templates](https://gitlab.com/gitlab-cookbooks/gitlab_fluentd/tree/master/templates/default) and add a section for the new log file. Remember to bump the cookbook version in `metadata.rb`
+    * follow the chef roll out process
+* Adding a logfile and creating a dedicated index for it
+    * Add your index to the list of objects managed in the git repo, for example: https://gitlab.com/gitlab-com/runbooks/merge_requests/1736 . This will ensure that any changes to config will be applied to your new index and that in case of a disaster recovery the index will be recreated.
+    * Seed Elastic:
+        * Get credetials for the relevant ES cluster from 1password and source them in bash. You can find the name of the env var that you should use in the script that you'll run in the next step.
+        * Run the script updating index templates, for example for the nonprod cluster: https://gitlab.com/gitlab-com/runbooks/blob/master/elastic/managed-objects/nonprod-log/index-templates/update-index-templates.sh
+        * Initialize the alias and create the first index using an api call documented here: https://gitlab.com/gitlab-com/runbooks/blob/master/elastic/api_calls/single/initialize-alias-create-index.sh
+        * Make sure that all three exist in the relevant cluster: alias, index template, first index and that the index has an ILM policy assigned to it.
+        * Create an index-pattern in Kibana (in Kibana, go to Management -> Kibana -> Index Patterns -> Create index pattern -> start typing the name of the index -> Next step -> select `json.time` if available)
+        * The ES cluster is now ready to start receiving new logs.
+    * Terraform changes
+        * Modify the `variables.tf` file of the environment where you want to make the change, e.g. https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/merge_requests/1249/diffs . This will create a dedicated pubsub topic and a pubsubbeat VM. The VM will be configured with the relevant Chef role which will start a pubsubbeat process. The pubsubbeat process will be configured with the topic name and will automatically create a subscription to the topic. It is also configured not to create templates and indices (we do that over the api so that we have control over things like mappings and index settings).
+        * Follow our usual process for applying Terraform changes
+    * Chef changes
+        * Add a new recipe in the `gitlab_fluentd` cookbook for your log file, for example: https://gitlab.com/gitlab-cookbooks/gitlab_fluentd/merge_requests/99/diffs
+        * Edit the relevant roles in the chef repo to apply the new recipe to VMs managed with that role, for example: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/2367/diffs
+        * follow the chef roll out process
