@@ -397,6 +397,8 @@ Selected logging documents and resources:
 * [Working with Google Cloud secrets](howto/working-with-gcloud-secrets.md)
 
 ### Security
+
+* [Working with the CloudFlare WAF/CDN](howto/externalvendors/cloudflare.md)
 * [Uptycs osquery](howto/uptycs_osquery.md)
 * [Uptycs osquery troubleshooting](troubleshooting/uptycs_osqueryd.md)
 
