@@ -1,4 +1,10 @@
 teams:
+- name: observability
+  url: 
+  manager_slug: ansdval
+  slack_channel: observability
+  engagement_policy:
+  oncall_schedule:
 - name: create
   url: https://about.gitlab.com/handbook/engineering/dev-backend/create/
   manager_slug: douwe
@@ -106,8 +112,8 @@ services:
 - name: alertmanager
   tier: inf
   teams:
-    - infrastructure
-  infra_owner: reliability-engineering-secure--defend
+    - observability
+  infra_owner: ansdval
   label: Service:AlertManager
   business:
     requirement: We use Prometheus for our monitoring solution. Alerting with Prometheus is separated into two parts. Alerting rules in Prometheus servers send alerts to an Alertmanager. The Alertmanager then manages those alerts, including silencing, inhibition, aggregation and sending out notifications via, in our case, PagerDuty and Slack.
@@ -265,8 +271,8 @@ services:
 - name: blackbox
   tier: inf
   teams:
-    - infrastructure
-  infra_owner: reliability-engineering-secure--defend
+    - observability
+  infra_owner: ansdval
   label: Service:Blackbox
   business:
     requirement: |
@@ -537,8 +543,8 @@ services:
 - name: elk
   tier: inf
   teams:
-    - infrastructure
-  infra_owner: reliability-engineering-dev--ops
+    - observability
+  infra_owner: ansdval
   label: Service:ELK
   business:
     requirement: |
@@ -662,8 +668,8 @@ services:
 - name: logging
   tier: inf
   teams:
-    - infrastructure
-  infra_owner: reliability-engineering-secure--defend
+    - observability
+  infra_owner: ansdval
   label: Service:Logging
   business:
     requirement: We are required to keep logs, both on legal terms as well as for debugging production issues
@@ -1080,8 +1086,8 @@ services:
 - name: influxdb
   tier: inf
   teams:
-    - infrastructure
-  infra_owner: reliability-engineering-secure--defend
+    - observability
+  infra_owner: ansdval
   label: Service:Influxdb
   business:
     requirement: |
@@ -1738,8 +1744,8 @@ services:
 - name: monitoring
   tier: inf
   teams:
-    - infrastructure
-  infra_owner: reliability-engineering-secure--defend
+    - observability
+  infra_owner: ansdval
   label: Service:Prometheus
   business:
     requirement: |
@@ -2525,8 +2531,8 @@ services:
 - name: pubsub
   tier: inf
   teams:
-    - infrastructure
-  infra_owner: reliability-engineering-cicd--enablement
+    - observability
+  infra_owner: ansdval
   label: Service:PubSub
   business:
     requirement: |
@@ -2695,8 +2701,8 @@ services:
 - name: stackdriver
   tier: inf
   teams:
-    - infrastructure
-  infra_owner: reliability-engineering-dev--ops
+    - observability
+  infra_owner: ansdval
   label: Service:Stackdriver
   business:
     requirement: |
