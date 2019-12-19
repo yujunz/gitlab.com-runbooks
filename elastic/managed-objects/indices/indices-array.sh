@@ -13,6 +13,7 @@ export indices=(
   nginx
   pages
   postgres
+  puma
   rails
   redis
   registry
