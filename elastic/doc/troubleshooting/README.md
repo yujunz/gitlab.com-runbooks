@@ -106,11 +106,27 @@ for different reasons:
 
 storage usage in the web UI was in red and the absolute value was high (e.g. 99%)
 
-#### shards unallocated ####
+#### shards unassigned ####
 
 for different reasons:
 - no eligible nodes
 - pulled back kicked in (there is a pull back mechanism in ES, i.e. after a few failed attempts to assign shards Elastic will stop trying)
+- see https://www.datadoghq.com/blog/elasticsearch-unassigned-shards/ for a
+  detailed explanation of possible reasons
+
+finding unassigned shards:
+[api_calls/single/get-unassigned-shards.sh](../../api_calls/single/get-unassigned-shards.sh)
+
+#### shards unavailable (cluster unhealthy) ####
+
+This happens if both primary and replica for a shard are not available. Most
+probable reason is failure to allocate shards because of missing storage
+capacity. In this case deleting the affected index is the easiest way to come
+back to a healthy state.
+
+- find unassigned shards: [api_calls/single/get-unassigned-shards.sh](../../api_calls/single/get-unassigned-shards.sh)
+- identify shards where both primary (`p`) and replica (`r`) are unassigned
+- delete the affected index if it's a few days old already
 
 #### shards too big ####
 
