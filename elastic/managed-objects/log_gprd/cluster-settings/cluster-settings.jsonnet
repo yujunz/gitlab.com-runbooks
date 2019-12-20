@@ -6,5 +6,6 @@
     'cluster.routing.allocation.disk.watermark.low': '85%',
     'cluster.routing.allocation.disk.watermark.high': '90%',
     'cluster.routing.allocation.disk.watermark.flood_stage': '95%',
+    'index.routing.allocation.total_shards_per_node': '6',
   },
 }
