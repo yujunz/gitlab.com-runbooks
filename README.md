@@ -232,6 +232,10 @@ During an incident there are at least 2 roles, and one more optional
 * [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
 * [Too many connections on Runner's cache server](troubleshooting/ci_too_many_connections_on_runners_cache_server.md)
 
+### Geo
+
+* [Geo database replication](howto/geo-patroni-cluster.md)
+
 ### ELK
 
 * [`mapper_parsing_exception` errors](troubleshooting/elk_mapper_parsing_exception.md)
