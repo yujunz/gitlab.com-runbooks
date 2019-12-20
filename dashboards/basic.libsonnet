@@ -361,6 +361,7 @@ local tablePanel = grafana.tablePanel;
       legend_avg=true,
       legend_alignAsTable=true,
       legend_hideEmpty=true,
+      points=points,
     )
     .addTarget(
       promQuery.target(
@@ -369,7 +370,7 @@ local tablePanel = grafana.tablePanel;
         ||| % formatConfig,
         legendFormat=legendFormat,
         interval=interval,
-        intervalFactor=intervalFactor
+        intervalFactor=intervalFactor,
       )
     )
     .resetYaxes()
