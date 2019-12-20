@@ -339,6 +339,7 @@ local tablePanel = grafana.tablePanel;
     yAxisLabel='SLA',
     interval='1m',
     intervalFactor=3,
+    points=false,
   )::
     local formatConfig = {
       query: query,
