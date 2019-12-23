@@ -17,10 +17,12 @@ B --> D{recording rules}
 D --> B
 C -->E[alertmanager configured endpoints]
 end
-subgraph alertmanager
+subgraph alertmanager cluster
 E --> H[routing rules]
 H --> I["pagerduty receiver (its config includes a PD service key)"]
-H --> J[slack receiver]
+H --> J["slack receiver (Slack Channel Alerts)"]
+H --> S[Slackline webhook]
+H --> T[DeadMan's snitch webhook]
 H --> M[other receivers]
 end
 subgraph Pagerduty
@@ -29,8 +31,18 @@ K --> O["PD Escalation policy (e.g. if no response in 5 mins send a text)"]
 O --> P[individual PD users]
 O --> R[PD schedules: SRE, DBRE, Support, etc]
 end
+subgraph GCP cloud functions
+S --> V[alertManagerBridge]
+end
 subgraph Slack
+V --> L
 J --> L[Slack channels]
+end
+subgraph Grafana
+V --> U[Grafana]
+end
+subgraph DeadMan's Snitch
+T --> W[DeadMan's Snitch]
 end
 subgraph other
 M --> N[other]
@@ -173,3 +185,4 @@ mountpoint              /var/opt/gitlab
 * [Go text/template documentation](https://golang.org/pkg/text/template/)
 * [part V (chapters 18 and 19) of O'Reilly's "Prometheus up and running" book](https://learning.oreilly.com/library/view/prometheus-up/9781492034131/part05.html#part5)
 * [sre workbook, chapter 5](https://landing.google.com/sre/workbook/chapters/alerting-on-slos/#ch05fn5)
+* [Slackline git repo](https://gitlab.com/gitlab-com/gl-infra/slackline/)
