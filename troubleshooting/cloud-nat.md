@@ -37,7 +37,7 @@ Option 2: increase NAT port space:
 
    https://cloud.google.com/nat/docs/overview#number_of_nat_ports_and_connections
 
-1. If we would run out of ports according to the above forumla, raise either
+1. If we would run out of ports according to the above formula, raise either
    `nat_ip_count` or `imported_ip_count` (whichever is set). Note that
    `imported_ip_count` will only be a variable if
    https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/cloud-nat/merge_requests/11

@@ -5,9 +5,9 @@ environment `dns` on https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure
 
 ## Create, edit or delete DNS entries
 
-- Check if the hosted zone you're targetting is already in
+- Check if the hosted zone you're targeting is already in
 [variables.tf](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/blob/master/environments/dns/variables.tf).
-If not, create the varaible and get the zone id from AWS (remember that you have
+If not, create the variable and get the zone id from AWS (remember that you have
 to add that value to the CI/CD variables of the gitlab-com-infrastructure
 project, and update the `terraform-private/env_vars/common.env` file locally and
 in the Production vault in 1Password)

@@ -139,7 +139,7 @@ One way to workaround it is to investigate the container from the host. Below ar
 
 1. Get container id from PID: `cat /proc/<PID>/cgroup`
 1. Get container name from container id: `docker inspect --format '{{.Name}}' "<containerId>" | sed 's/^\///'`
-1. Create a container on the host: `docker run --rm -ti --net=container:<container_name> --pid=container:<conatiner_name> --name ubuntu ubuntu bash`
+1. Create a container on the host: `docker run --rm -ti --net=container:<container_name> --pid=container:<container_name> --name ubuntu ubuntu bash`
 
 For example:
 ```

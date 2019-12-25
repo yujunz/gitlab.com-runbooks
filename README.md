@@ -114,7 +114,7 @@ During an incident there are at least 2 roles, and one more optional
 
 * The point person will
   * Handle updating the @gitlabstatus account explaining what is going on in a simple yet reassuring way.
-  * Synchronize efforts accross the production engineering team
+  * Synchronize efforts across the production engineering team
   * Pull other people in when consultation is needed.
   * Declare a major outage when we are meeting the definition.
   * Post `@channel, we have a major outage and need help creating a live streaming war room, refer to [runbooks-production-incident]` into the #general slack channel.

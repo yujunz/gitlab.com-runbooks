@@ -318,7 +318,7 @@ earlier state:
 1. Start the machine.
 1. `ssh` to the machine and start postgres: `gitlab-ctl start postgresql`.
 1. Tail the log file at `/var/log/gitlab/postgresql/current`. You should see it
-   successfuly ingesting WAL segments in sequential order, e.g.: `LOG:  restored
+   successfully ingesting WAL segments in sequential order, e.g.: `LOG:  restored
    log file "00000017000128AC00000087" from archive`.
 1. You should also see a message "FATAL:  the database system is starting up"
    every 15s. These are due to attempted scrapes by the postgres exporter. After

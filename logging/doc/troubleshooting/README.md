@@ -93,7 +93,7 @@ for ILM troubleshooting procedures see (./elastic/doc/troubleshooting/README.md)
 
 ### Acknowledge all messages in a queue
 
-Acknowleding all messages currently in the queue is a destructive action (all logs in the queue will be lost!).
+Acknowledging all messages currently in the queue is a destructive action (all logs in the queue will be lost!).
 
 `gcloud beta pubsub subscriptions seek <subscription_name> --time=$(date +%Y-%m-%dT%H:%M:%S)`
 
@@ -110,7 +110,7 @@ https://cloud.google.com/pubsub/docs/replay-overview
   - `sv stop pubsubbeat`
   - `sv status pubsubbeat`
   - if it's still running:
-    - it might actually still be shutting down gracefuly, for example waiting until all uploads to ES are finished, check logs
+    - it might actually still be shutting down gracefully, for example waiting until all uploads to ES are finished, check logs
     - if it's not doing anything or you absolutely have to kill it now: `kill -9 <pubsubbeat_pid>` PLEASE BE SUPER CAREFUL WITH THIS COMMAND AND ONLY USE IF YOU HAVE NO OTHER CHOICE!
 
 ## Elastic

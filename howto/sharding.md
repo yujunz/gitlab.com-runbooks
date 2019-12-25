@@ -147,7 +147,7 @@ delete the repositories (marked `+moved`) which remain at those paths.
    - Example dry-run usage: `scripts/storage_cleanup.rb --verbose --dry-run=yes`
 1. For each unique storage node listed in the dry-run output, you should perform a GCP snapshot of its larger disk.  This way any deleted repository can be recovered, if needed. For example: `gcloud auth login; gcloud config set project gitlab-production; gcloud config set compute/region us-east1; gcloud config set compute/zone us-east1-c; gcloud compute disks list | grep file-24-stor-gprd-data;gcloud compute disks snapshot file-24-stor-gprd-data`
 1. Finally, execute the cleanup script.
- - If one is feeling particularly cautious, single storage node can be targetted.  For example: `scripts/storage_cleanup.rb --verbose --dry-run=no  --node=file-24-stor-gprd.c.gitlab-production.internal`
+ - If one is feeling particularly cautious, single storage node can be targeted.  For example: `scripts/storage_cleanup.rb --verbose --dry-run=no  --node=file-24-stor-gprd.c.gitlab-production.internal`
  - If one is feeling extra especially cautious, combine a dry-run with single node restriction: `scripts/storage_cleanup.rb --verbose --dry-run=yes  --node=file-24-stor-gprd.c.gitlab-production.internal`
 
 #### Verify Information
