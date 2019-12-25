@@ -1,6 +1,6 @@
 ## Alertmanager configuration
 
-Alertmanager configuration files are shared amoungst ALL alertmanagers across
+Alertmanager configuration files are shared amongst ALL alertmanagers across
 all environments.  In order to sync this configuration between any node
 via chef and any pod running in Kubernetes, this directory holds the necessary
 template file for the configuration, and allows CI to populate any secrets.  We

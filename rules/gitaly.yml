@@ -150,7 +150,7 @@ groups:
       pager: pagerduty
       severity: s1
     annotations:
-      description: Gitaly authention failing, authentication tokens might be misconfigured, or severe clockdrift is occuring.
+      description: Gitaly authention failing, authentication tokens might be misconfigured, or severe clockdrift is occurring.
       runbook: troubleshooting/gitaly-permission-denied.md
       title: 'Gitaly: Auth-tokens are invalid, failing RPCs'
 

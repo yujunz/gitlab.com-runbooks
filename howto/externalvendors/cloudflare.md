@@ -36,7 +36,7 @@ TODO: establish processes for doing temporary changes
 
 TODO:
 
-### Permamently Blocking Traffic
+### Permanently Blocking Traffic
 
 TODO:
 

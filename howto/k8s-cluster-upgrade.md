@@ -115,7 +115,7 @@ viewing the latest updates from the [GKE Release Notes]:
   said access.
 * Note that `tf apply` during a node upgrade may abort due to a timeout.  At
   this point, continue watching all of the items listed, more specifically, the
-  `gcloud conatiner operations wait` command.  When completed, perform a `tf
+  `gcloud container operations wait` command.  When completed, perform a `tf
   plan` to ensure the terraform state matches that of the environment.  The
   timeout is a hard-coded item inside of the google provider and is therefore
   not configurable.
