@@ -103,6 +103,7 @@ All logs processed by StackDriver (even if excluded from indexing) are archived 
 | rails.importer | gitlab-rails/importer.log | JSON | pubsub-rails-inf | |
 | rails.integrations | gitlab-rails/integrations\_json.log | JSON | pubsub-rails-inf | |
 | rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf | |
+| rails.exceptions | /var/log/gitlab/gitlab-rails/exceptions_json.log | JSON | pubsub-rails-inf | |
 | rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf | |
 | shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf | |
 | unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf | |
@@ -146,7 +147,7 @@ Design document for migration to ES7: https://about.gitlab.com/handbook/engineer
 
 #### dev (dev.gitlab.org), staging (staging.gitlab.com), dr, ops (ops.gitlab.com), preprod (pre.gitlab.com) ####
 
-1. Go to https://nonprod-logs.gitlab.net/
+1. Go to https://nonprod-log.gitlab.net/
 1. select the relevant index pattern, e.g. `pubsub-rails-inf-gstg-*` or `pubsub-rails-inf-ops-*`
 1. (optional) filter on the environment, e.g. `json.environment=gstg` or `json.environment=dev`
 
