@@ -103,7 +103,7 @@ All logs processed by StackDriver (even if excluded from indexing) are archived 
 | rails.importer | gitlab-rails/importer.log | JSON | pubsub-rails-inf | |
 | rails.integrations | gitlab-rails/integrations\_json.log | JSON | pubsub-rails-inf | |
 | rails.kubernetes | gitlab-rails/kubernetes.log | JSON | pubsub-rails-inf | |
-| rails.exceptions | /var/log/gitlab/gitlab-rails/exceptions_json.log | JSON | pubsub-rails-inf ||
+| rails.exceptions | /var/log/gitlab/gitlab-rails/exceptions_json.log | JSON | pubsub-rails-inf | |
 | rails.production | gitlab-rails/production\_json.log | JSON | pubsub-rails-inf | |
 | shell | gitlab-shell/gitlab-shell.log | JSON | pubsub-shell-inf | |
 | unicorn.current | /var/log/gitlab/unicorn/current | line regex | pubsub-unicorn-inf | |
