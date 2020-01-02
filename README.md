@@ -305,7 +305,7 @@ During an incident there are at least 2 roles, and one more optional
 ### Restore Backups
 
 * [Deleted Project Restoration](howto/deleted-project-restore.md)
-* [Database Backups and Replication with Encrypted WAL-E](howto/using-wale-gpg.md)
+* [Database Backups and Recovery using WAL-E / WAL-G](howto/using-wale-gpg.md)
 * [Work with Azure Snapshots](howto/azure-snapshots.md)
 * [Work with GCP Snapshots](howto/gcp-snapshots.md)
 * [PackageCloud Infrastructure And Recovery](howto/packagecloud-infrastructure.md)
