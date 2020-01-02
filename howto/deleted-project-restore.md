@@ -1,6 +1,6 @@
 # Deleted Project Restoration
 
-As long as we have database and Gitaly backups, we can restore deleted GitLab
+As long as we have the database and Gitaly backups, we can restore deleted GitLab
 projects.
 
 It is strongly suggested to read through this entire document before proceeding.
@@ -8,18 +8,20 @@ It is strongly suggested to read through this entire document before proceeding.
 ## Background
 
 There are two sources of data that we will be restoring: the project metadata
-(issues, merge requests, members etc), which is stored in the main database
-(postgres), and the repositories (main and wiki) which are stored on a Gitaly
+(issues, merge requests, members, etc.), which is stored in the main database
+(Postgres), and the repositories (main and wiki) which are stored on a Gitaly
 shard.
 
 Container images and CI artifacts are not restored by this process.
 
 ## Part 1: Restore the project metadata
 
-If a project is deleted in GitLab, it is entirely removed from the database. That is, we also lack necessary meta data to recover data from file servers. Recovering meta- and project data is a multi step process:
+If a project is deleted in GitLab, it is entirely removed from the database.
+That is, we also lack the necessary metadata to recover data from file servers.
+Recovering meta- and project data is a multi-step process:
 
-1. Restore a full database backup and perform point-in time recovery (PITR)
-2. Extract meta data necessary to recover from git/wiki data from file servers
+1. Restore a full database backup and perform point-in-time recovery (PITR)
+2. Extract metadata necessary to recover from git/wiki data from file servers
 3. Export the project from the database backup and import into GitLab
 
 ### Special procedure if the deletion was less than 8h ago
@@ -71,14 +73,14 @@ In order to restore from a database backup, we leverage the backup restore pipel
 The instance will progress through a series of operations:
 
 1. The basebackup will be downloaded
-1. The postgres server process will be started, and will begin progressing past
+1. The Postgres server process will be started, and will begin progressing past
    the basebackup by recovering from WAL segments downloaded from GCS.
-1. Initially postgres will be in crash recovery mode and will not accept
+1. Initially, Postgres will be in crash recovery mode and will not accept
    connections.
-1. At some point postgres will accept connections, and you can check its
+1. At some point, Postgres will accept connections, and you can check its
    recovery point by running `select pg_last_xact_replay_timestamp();` in a
    `gitlab-psql` shell.
-1. Check back every hour or so until the recovery point you wanted has been
+1. Check back every 30 minutes or so until the recovery point you wanted has been
    reached. You don't need to do anything to stop further recovery, your branch
    has configured it to pause at this point.
 
@@ -86,7 +88,7 @@ After the process completes, an instance with a full GitLab installation and a
 production copy of the database is available for the next steps.
 
 Note that the startup script will never actually exit due to the branch
-configuration that causes postgres to pause recovery when some point is reached.
+configuration that causes Postgres to pause recovery when some point is reached.
 It [loops
 forever](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/blob/8d011b3f8a29582d358374adde6f701fe382c03d/bootstrap.sh#L161-164)
 waiting for a recovery point equal to script start time.
