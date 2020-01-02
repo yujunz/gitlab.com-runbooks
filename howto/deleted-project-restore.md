@@ -51,7 +51,7 @@ Continue at "Export project from database backup and import into GitLab".
 If the request arrived promptly and you were able to follow the special
 procedure above, skip this section.
 
-In order to restore from a database backup, we leverage the backup restore pipeline in "gitlab-restore" project. It can be configured to start a new GCE instance and restore a backup to an exact point in time for later recovery ([example MR](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/merge_requests/8/diffs)). Currently, Postgres backups are created by WAL-E. Either WAL-G or WAL-E can be used from a backup created by WAL-E. The default is WAL-G, it is 3-4 times faster than WAL-E. Use `WAL_E_OR_WAL_G` CI variable to switch to WAL-E if needed.
+In order to restore from a database backup, we leverage the backup restore pipeline in "gitlab-restore" project. It can be configured to start a new GCE instance and restore a backup to an exact point in time for later recovery ([example MR](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/merge_requests/8/diffs)). Currently, Postgres backups are created by WAL-E. To restore from such backups, either WAL-G or WAL-E can be used. The default is WAL-G, as it gives 3-4 times better restoration speed than WAL-E. Use `WAL_E_OR_WAL_G` CI variable to switch to WAL-E if needed (see below).
 
 1. Push a commit similar to the example MR above. Note that you don't need to
    create an MR although you can if you like.
