@@ -9,7 +9,7 @@ Other examples here are largely based on taking a basebackup manually.
 If a replica gets out of sync or fails for some reason, you have several options to recover:
 
 1. Run pg_basebackup from the secondary
-2. Use [Wal-E](using-wale-gpg.md) to restore a backup and catch up from
+2. Use [WAL-G (or older WAL-E)](using-wale-gpg.md) to restore a backup and catch up from
    there
 3. Take a disk snapshot of the primary and clone it on the secondary. Be
    sure to [drop replication slots on the secondary after it comes up](postgresql-switchover.md#dropping-replication-slots).
@@ -56,5 +56,5 @@ primary_conninfo = 'user=gitlab-replicator password=REDACTED host='$upstream' po
 recovery_target_timeline = 'latest'
 primary_slot_name = $slot
 
-restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch -p 32 "%f" "%p"'
+restore_command = '/usr/bin/envdir /etc/wal-g.d/env /opt/wal-g/bin/wal-g wal-fetch -p 32 "%f" "%p"'
 ```

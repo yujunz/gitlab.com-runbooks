@@ -1,6 +1,6 @@
 # Deleted Project Restoration
 
-As long as we have database and Gitaly backups, we can restore deleted GitLab
+As long as we have the database and Gitaly backups, we can restore deleted GitLab
 projects.
 
 It is strongly suggested to read through this entire document before proceeding.
@@ -8,18 +8,20 @@ It is strongly suggested to read through this entire document before proceeding.
 ## Background
 
 There are two sources of data that we will be restoring: the project metadata
-(issues, merge requests, members etc), which is stored in the main database
-(postgres), and the repositories (main and wiki) which are stored on a Gitaly
+(issues, merge requests, members, etc.), which is stored in the main database
+(Postgres), and the repositories (main and wiki) which are stored on a Gitaly
 shard.
 
 Container images and CI artifacts are not restored by this process.
 
 ## Part 1: Restore the project metadata
 
-If a project is deleted in GitLab, it is entirely removed from the database. That is, we also lack necessary meta data to recover data from file servers. Recovering meta- and project data is a multi step process:
+If a project is deleted in GitLab, it is entirely removed from the database.
+That is, we also lack the necessary metadata to recover data from file servers.
+Recovering meta- and project data is a multi-step process:
 
-1. Restore a full database backup and perform point-in time recovery (PITR)
-2. Extract meta data necessary to recover from git/wiki data from file servers
+1. Restore a full database backup and perform point-in-time recovery (PITR)
+2. Extract metadata necessary to recover from git/wiki data from file servers
 3. Export the project from the database backup and import into GitLab
 
 ### Special procedure if the deletion was less than 8h ago
@@ -51,34 +53,34 @@ Continue at "Export project from database backup and import into GitLab".
 If the request arrived promptly and you were able to follow the special
 procedure above, skip this section.
 
-In order to restore a database backup, we leverage the backup restore pipeline. It can be configured to start a new GCE instance and restore a backup to an exact point in time for later recovery ([example MR](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/merge_requests/8/diffs)).
+In order to restore from a database backup, we leverage the backup restore pipeline in "gitlab-restore" project. It can be configured to start a new GCE instance and restore a backup to an exact point in time for later recovery ([example MR](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/merge_requests/8/diffs)). Currently, Postgres backups are created by WAL-E. To restore from such backups, either WAL-G or WAL-E can be used. The default is WAL-G, as it gives 3-4 times better restoration speed than WAL-E. Use `WAL_E_OR_WAL_G` CI variable to switch to WAL-E if needed (see below).
 
 1. Push a commit similar to the example MR above. Note that you don't need to
    create an MR although you can if you like.
 1. You can start the process in [CI/CD Pipelines](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/pipelines/new) of the "gitlab-restore" project.
-1. Select your branch, and configure the variables as detailed in the steps
-   below.
+1. Select your branch, and configure the variables as detailed in the steps below.
 1. To perform PITR for the production database, use CI/CD variable `ENVIRONMENT` set to `gprd`. The default value is `gstg` meaning that the staging database will be restored.
 1. To ensure that your instance won't get destroyed in the end, set CI/CD variable `NO_CLEANUP` to `1`.
-1. In CI/CD Pipelines, when starting a new pipeline, you can choose any Git branch. But if you use something except `master`, there are high chances that production DB copy won't fit the disk. So, use `GCE_DATADISK_SIZE` CI/CD variable to provision an instance with a large enough disk. As of October 2019, we need to use `5000` (5000 GiB). Check the `GCE_DATADISK_SIZE` value that is currently used in the backup verification schedules (see [CI/CD Schedules](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/pipeline_schedules)).
+1. In CI/CD Pipelines, when starting a new pipeline, you can choose any Git branch. But if you use something except `master`, there are high chances that production DB copy won't fit the disk. So, use `GCE_DATADISK_SIZE` CI/CD variable to provision an instance with a large enough disk. As of January 2020, we need to use at least `6000` (6000 GiB). Check the `GCE_DATADISK_SIZE` value that is currently used in the backup verification schedules (see [CI/CD Schedules](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/pipeline_schedules)).
+1. By default, an instance of `n1-standard-16` type will be used. Such instances have "good enough" IO throughput and IOPS quotas [Google throttles disk IO based on the disk size and the number of vCPUs](https://cloud.google.com/compute/docs/disks/performance#ssd-pd-performance)). In the case of urgency, to get the best performance possible on GCP, consider using `n1-highcpu-32`, specifying CI/CD variable `GCE_INSTANCE_TYPE` in the CI/CD pipeline launch interface. It is highly recommended to check the current resource consumption (total vCPUs, RAM, disk space, IP addresses, and the number of instances and disks in general) in the [GCP quotas interfaces of the "gitlab-restore" project](https://console.cloud.google.com/iam-admin/quotas?project=gitlab-restore).
 1. It is recommended (although not required) to specify the instance name using CI/CD variable `INSTANCE_NAME`. Custom names help distinguish GCE instances from auto-provisioned and from provisioned by someone else. An excellent example of custom name: `nik-gprd-infrastructure-issue-1234` (means: requested by `nik`, for environment `gprd`, for the the `infrastructure` issue `1234`). If the custom name is not set, your instance gets a name like `restore-postgres-gprd-XXXXX`, where `XXXXX` is the CI/CD pipeline ID.
+1. As mentioned above, by default, WAL-G will be used to restore from a backup. It is controlled by CI variable `WAL_E_OR_WAL_G` (default value: `wal-g`). If WAL-E is needed, set CI variable `WAL_E_OR_WAL_G` to `wal-e`, but expect that restoring will take much more time. For the "restore basebackup" phase, on `n1-standard-16`, the expected speed of filling the PGDATA directory is 0.5 TiB per hour for WAL-E and 2 TiB per hour for WAL-G.
 1. To control the process, SSH to the instance. The main items to check:
     - `df -hT /var/opt/gitlab` to ensure that the disk is not full (if it hits 100%, it won't be noticeable in the CI/CD interfaces, unfortunately),
     - `sudo journalctl -f` to see basebackup fetching and, later, WAL fetching/replaying happening.
-1. By default, the instance of `n1-standard-8` type will be used. Such instances have quite weak disks because [Google throttles disk IO based on the disk size and the number of vCPUs](https://cloud.google.com/compute/docs/disks/performance#ssd-pd-performance)), but budget spending is low and risks to reach the GCE quotas for the "gitlab-restore" project are low. It is crucial to minimize the risks to reach those quotas because the daily backup verification jobs also use the "gitlab-restore" project. However, if your case is urgent and you need to perform PITR within a few hours, use `n1-highcpu-32`, specifying CI/CD variable `GCE_INSTANCE_TYPE` in the CI/CD pipeline launch interface. It is highly recommended to check the current resource consumption (total vCPUs, RAM, disk space, IP addresses, and the number of instances and disks in general) in the [GCP quotas interfaces of the "gitlab-restore" project](https://console.cloud.google.com/iam-admin/quotas?project=gitlab-restore).
-1. Finally, especially if you have made multiple attempts to provision an instance via CI/CD Pipelines interface, check [VM Instances](https://console.cloud.google.com/compute/instances?project=gitlab-restore&instancessize=50) in GCP console to ensure that there are no stalled instances related to your work. If there are some, delete them manually.
+1. Finally, especially if you have made multiple attempts to provision an instance via CI/CD Pipelines interface, check [VM Instances](https://console.cloud.google.com/compute/instances?project=gitlab-restore&instancessize=50) in GCP console to ensure that there are no stalled instances related to your work. If there are some, delete them manually. If you suspect that your attempts failing because of some WAL-G issues, try WAL-E (see above).
 
 The instance will progress through a series of operations:
 
 1. The basebackup will be downloaded
-1. The postgres server process will be started, and will begin progressing past
+1. The Postgres server process will be started, and will begin progressing past
    the basebackup by recovering from WAL segments downloaded from GCS.
-1. Initially postgres will be in crash recovery mode and will not accept
+1. Initially, Postgres will be in crash recovery mode and will not accept
    connections.
-1. At some point postgres will accept connections, and you can check its
+1. At some point, Postgres will accept connections, and you can check its
    recovery point by running `select pg_last_xact_replay_timestamp();` in a
    `gitlab-psql` shell.
-1. Check back every hour or so until the recovery point you wanted has been
+1. Check back every 30 minutes or so until the recovery point you wanted has been
    reached. You don't need to do anything to stop further recovery, your branch
    has configured it to pause at this point.
 
@@ -86,7 +88,7 @@ After the process completes, an instance with a full GitLab installation and a
 production copy of the database is available for the next steps.
 
 Note that the startup script will never actually exit due to the branch
-configuration that causes postgres to pause recovery when some point is reached.
+configuration that causes Postgres to pause recovery when some point is reached.
 It [loops
 forever](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/blob/8d011b3f8a29582d358374adde6f701fe382c03d/bootstrap.sh#L161-164)
 waiting for a recovery point equal to script start time.

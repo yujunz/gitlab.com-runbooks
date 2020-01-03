@@ -1,25 +1,29 @@
-# Using Wal-E
+# Using WAL-E and WAL-G
 
-## Wal-E Overview
+## Wal-E and WAL-G Overview
 
-[Wal-E][Wal-E] was designed by Heroku to solve their PostgreSQL backup issues. It is a python based application that is invoked by the PostgreSQL process via the 'archive_command' as part of PostgreSQLs [continuous archiving][PSQL_Archiving] setup.
+[WAL-E][WAL-E] was designed by Heroku to solve their PostgreSQL backup issues. It is a python based application that is invoked by the PostgreSQL process via the 'archive_command' as part of PostgreSQLs [continuous archiving][PSQL_Archiving] setup.
 
-It works by taking [Write-Ahead Logging][PSQL_WAL] files, compressing them, and then archiving them off to a storage target in near realtime. On a nightly schedule Wal-E also pushes a full backup to the storage target, referred to as a 'base backup'. A restore then is a combination of a 'base backup' and all of the WAL transaction files since the backup to recover the database to a given point in time.
+It works by taking [Write-Ahead Logging][PSQL_WAL] files, compressing them, and then archiving them off to a storage target in near realtime. On a nightly schedule, WAL-E also pushes a full backup to the storage target, referred to as a 'base backup'. A restore then is a combination of a 'base backup' and all of the WAL transaction files since the backup to recover the database to a given point in time.
+
+[WAL-G](https://github.com/wal-g/wal-g) is [the successor of WAL-E](https://www.citusdata.com/blog/2017/08/18/introducing-wal-g-faster-restores-for-postgres/) with a number of key differences. WAL-G uses LZ4, LZMA, or Brotli compression, multiple processors, and non-exclusive base backups for Postgres. It is backward compatible with WAL-E: it is possible to restore from a WAL-E backup using WAL-G, but not vice versa.
+
+Currently (January 2020), the main backup tool for GitLab.com is still WAL-E, it is used for daily backups and to archive WALs. But to restore from such backups, WAL-G is being used, and there is work in progress to migrate to WAL-G completely (to use it for daily backups and WAL archive creation).
 
 ## Backing Our Data Up
 
 ### Where is Our Data Going
 
-Currently our production data is being pushed to Google Cloud Storage into a bucket labeled [`gitlab-gprd-postgres-backup`](https://console.cloud.google.com/storage/browser/gitlab-gprd-postgres-backup).
-All servers of an environment (like `gprd`) push their WAL to the same bucket location. This is because in the event of a failover, all the servers should have the same backup location to streamline both backups and restores. Secondary servers do not push WAL files or base backups, so they do not interfere. However, some replicas retrieve WAL from the bucket for archive recovery.
+Currently, our production data is being pushed using WAL-E to Google Cloud Storage into a bucket labeled [`gitlab-gprd-postgres-backup`](https://console.cloud.google.com/storage/browser/gitlab-gprd-postgres-backup).
+All servers of an environment (like `gprd`) push their WAL to the same bucket location. This is because, in the event of a failover, all the servers should have the same backup location to streamline both backups and restores. With WAL-E, secondary servers do not push WAL files or base backups, so they do not interfere. However, some replicas retrieve WALs from the bucket for archive recovery.
 
 The GCS bucket is configured with multi-regional storage (US location).
 
-Our secondary databases (version, customers, sentry, etc) are still in AWS S3 in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. The key can be found in the Production vault of 1Password.
+Our secondary databases (version, customers, sentry, etc.) are still in AWS S3 in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. The key can be found in the Production vault of 1Password.
 
 ### Interval and Retention
 
-We currently take a basebackup each day at 0am UTC and continuously stream WAL data to GCS. Taking a  basebackup currently takes about 3-4 hours (November 2018).
+We currently take a basebackup each day at 0 am UTC and continuously stream WAL data to GCS. As of January 2020, the daily backup process performed by WAL-E takes ~6.5 hours with Postgres cluster size ~4.5 TiB.
 
 Backups are kept for 14 days and cleaned up by a lifecycle rule on GCS.
 
@@ -27,23 +31,16 @@ Backups are kept for 14 days and cleaned up by a lifecycle rule on GCS.
 
 #### Production
 
-WAL-E on production is set up via the gitlab_wale cookbook. This cookbook installs all of the relevant python packages and installs a cronjob to create base_backups. The relevant cron command and settings is set via attributes on the chef roles.
+##### Daily basebackup
+
+WAL-E on production is set up via the gitlab_wale cookbook. This cookbook installs all of the relevant python packages and installs a cronjob to create base_backups. The relevant cron command and settings are set via attributes on the chef roles.
 
 ```cron
 # Chef Name: full wal-e backup
-0 2 * * * PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-push /var/opt/gitlab/postgresql/data &> /tmp/wal-e_backup_push.log
+0 0 * * * /opt/wal-e/bin/backup.sh >> /var/log/wal-e/wal-e_backup_push.log 2>&1
 ```
 
-#### Secondary Servers
-
-Cronjobs for taking base backups are added to the postgres user via chef. They are as follows:
-
-```cron
-# Chef Name: full wal-e backup
-0 2 * * * /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e --gpg-key-id 66B9829C backup-push /var/lib/postgresql/9.3/main > /tmp/wal-e_backup_push.log;
-# Chef Name: trim wal-e backups
-0 18 * * * /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e delete --confirm retain 8 > /tmp/wal-e_backup_delete.log;
-```
+##### Archiving WALs
 
 WAL files are sent via PostgreSQL's `archive_command` parameter, which looks something like the following:
 
@@ -51,12 +48,12 @@ WAL files are sent via PostgreSQL's `archive_command` parameter, which looks som
 archive_command = /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e --gpg-key-id 66B9829C wal-push %p
 ```
 
-### How do I Verify This?
+### How Do I Verify This?
 
 You can always check the GCS storage bucket, or you can check the logs of the PostgreSQL server:
 
 ```bash
-root@db1:~# tail -f /var/log/gitlab/postgresql/current
+root@db1:~# tail -f /var/log/gitlab/postgresql/postgresql.log
 2018-11-15_12:39:13.91682         DETAIL: Archiving to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/00000006000096F30000006A.lzo" complete at 10986.4KiB/s.
 2018-11-15_12:39:13.91682         STRUCTURED: time=2018-11-15T12:39:13.916366-00 pid=41960 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/00000006000096F30000006A.lzo prefix=pitr-wale-v1/ rate=10986.4 seg=00000006000096F30000006A state=complete
 2018-11-15_12:39:13.95760 wal_e.worker.upload INFO     MSG: completed archiving to a file
@@ -70,13 +67,15 @@ Before we start, take a deep breath and don't panic.
 
 #### Production
 
-Consider using the delayed replica to speed up PITR. The full database backup restore is also automated in a [CI pipeline](https://gitlab.com/gitlab-restore/postgres-gprd) which may be helpful depending on the type of disaster.
+Consider using the delayed replica to speed up PITR. The full database backup restore is also automated in a [CI pipeline](https://gitlab.com/gitlab-restore/postgres-gprd), which may be helpful depending on the type of disaster. To restore from WAL-E backups, either WAL-G or WAL-E can be used. In "gitlab-restore", the default is WAL-G, as it gives 3-4 times better restoration speed than WAL-E. Use `WAL_E_OR_WAL_G` CI variable to switch to WAL-E if needed (just set this variable to `wal-e`). For the "basebackup" phase of the restore process, on an `n1-standard-16` instance, the expected speed of filling the PGDATA directory is 0.5 TiB per hour for WAL-E and 2 TiB per hour for WAL-G.
 
-In order to restore, the following steps should be performed. It is assumed that you have already set up the new server and that server is configured with our current chef configuration.
+Below we describe the restore process step by step for the case of WAL-E (old procedure). For WAL-G, it is very similar, with a couple of nuances. For details, please see https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/blob/master/bootstrap.sh.
+
+In order to restore, the following steps should be performed. It is assumed that you have already set up the new server, and that server is configured with our current chef configuration.
 
 1. Log in to the `gitlab-psql` user (`su - gitlab-psql`)
 
-1. Create restore.conf file.
+1. Create restore.conf file:
 
     ```
     cat > /var/opt/gitlab/postgresql/data/recovery.conf <<RECOVERY
@@ -86,7 +85,7 @@ In order to restore, the following steps should be performed. It is assumed that
     chown gitlab-psql:gitlab-psql/var/opt/gitlab/postgresql/data/recovery.conf
     ```
 
-1. Restore the base backup
+1. Restore the base backup (run in a screen on tmux session and be ready to wait several hours):
 
     ```
     /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
@@ -94,7 +93,6 @@ In order to restore, the following steps should be performed. It is assumed that
     ```
 
     To restore latest backup you can use the following:
-
     ```
     /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
     PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data LATEST
