@@ -1150,6 +1150,72 @@ services:
       primary_grafana_dashboard:
       sentry_slug:
 
+- name: praefect
+  tier: stor
+  teams:
+    - gitaly
+  infra_owner: reliability-engineering-dev--ops
+  label: Service:Praefect
+  business:
+    requirement: |
+      Enable HA in Gitaly through replication
+    customers:
+      - Internally used by GitLab workers
+    business_value: |
+      Allow High Availability for repository storage on GitLab
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://gitlab.com/gitlab-org/gitaly
+    criticality: 2
+    slx:
+    documents:
+      design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/design_ha.md
+      architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      service:
+        - https://gitlab.com/gitlab-org/gitaly/blob/master/README.md
+      security:
+    dependencies:
+      - service: gitaly
+    configurations:
+      - config_name: Praefect config
+        location: /var/opt/gitlab/praefect/config.toml
+    chef_roles:
+      - gstg-base-be-praefect
+      - gprd-base-be-praefect
+    scalability:
+      bound: cpu
+      scalable: vertical
+    security:
+      security_reviewed:
+      data_classification: red
+      security_incidents:
+    logging:
+      - name: system
+        permalink: https://log.gitlab.net/goto/769b1e96dc189470332cd7005dd6f878
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/praefect-startup.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/praefect-error-rate.md
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      sentry_slug: gitlab/praefect-production
+      grafana_folder: SRXyrrSmk
+      primary_grafana_dashboard: "gitaly-main/praefect"
+
 - name: mailroom
   tier: sv
   teams:

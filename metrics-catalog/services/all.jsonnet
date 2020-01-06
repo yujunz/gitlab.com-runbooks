@@ -5,6 +5,7 @@
   import 'gitaly.jsonnet',
   import 'monitoring.jsonnet',
   import 'nfs.jsonnet',
+  import 'praefect.jsonnet',
   import 'registry.jsonnet',
   import 'sidekiq.jsonnet',
   import 'web.jsonnet',
