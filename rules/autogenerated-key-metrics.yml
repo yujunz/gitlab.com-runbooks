@@ -9,7 +9,7 @@ groups:
       alert_trigger_duration: long
       tier: runners
       type: ci-runners
-    expr: '0.5'
+    expr: '0.8'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       alert_trigger_duration: long

@@ -15,7 +15,7 @@ local customQuery = metricsCatalog.customQuery;
    * but setting this to p95 initially will just generate a lot of unhelpful alerts.
    */
   slos: {
-    apdexRatio: 0.50,
+    apdexRatio: 0.80,
     errorRatio: 0.2,
     alertTriggerDuration: 'long',
   },
