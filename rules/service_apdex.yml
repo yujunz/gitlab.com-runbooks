@@ -328,36 +328,6 @@ groups:
     expr: >
       sum(rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, tier, type, stage)
 
-  # patroni: indirectly measured with rails database durations
-  # We don't have latency histograms for patroni but for now we will
-  # use the rails controller SQL latencies as an indirect proxy.
-  # Satisfied -> 0.05 seconds
-  # Acceptable -> 0.1 seconds
-  - record: gitlab_component_apdex:ratio
-    labels:
-      type: patroni
-      tier: db
-      component: 'rails_sql'
-      stage: main
-    expr: >
-      (
-        sum(rate(gitlab_sql_duration_seconds_bucket{le="0.05"}[1m])) by (environment)
-        +
-        sum(rate(gitlab_sql_duration_seconds_bucket{le="0.1"}[1m])) by (environment)
-      )
-      / 2
-      /
-      sum(rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1m])) by (environment) >= 0
-
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      type: patroni
-      tier: db
-      component: 'rails_sql'
-      stage: main
-    expr: >
-      sum(rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1m])) by (environment)
-
   # redis-cache: indirectly measured with rails redis cache operations durations
   # We don't have latency histograms for patroni but for now we will
   # use the rails controller SQL latencies as an indirect proxy.

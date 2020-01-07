@@ -20,6 +20,7 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local processExporter = import 'process_exporter.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
+local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
 local selector = 'environment="$environment", type="patroni", stage="main"';
 
@@ -81,6 +82,10 @@ dashboard.new(
 .addPanel(keyMetrics.keyServiceMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('patroni', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 7000 })
+.addPanel(metricsCatalogDashboards.componentDetailMatrix('patroni', 'service', selector, [
+  { title: 'Overall', aggregationLabels: '', legendFormat: 'server' },
+  { title: 'per Server', aggregationLabels: 'fqdn', legendFormat: '{{fqdn}}' },
+]), gridPos={ x: 0, y: 8000 })
 .addPanel(
   saturationDetail.saturationDetailPanels(selector, components=[
     'active_db_connections',
@@ -93,9 +98,9 @@ dashboard.new(
     'pgbouncer_sync_pool',
     'single_node_cpu',
   ]),
-  gridPos={ x: 0, y: 8000, w: 24, h: 1 }
+  gridPos={ x: 0, y: 9000, w: 24, h: 1 }
 )
-.addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 9000 })
+.addPanel(capacityPlanning.capacityPlanningRow('patroni', 'main'), gridPos={ x: 0, y: 10000 })
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('patroni') + platformLinks.services,
 }
