@@ -237,17 +237,6 @@ dashboard.new(
 )
 .addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=3001))
 .addPanel(
-  row.new(title='Unicorn Metrics', collapse=true)
-  .addPanels(unicornCommon.unicornPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))
-  ,
-  gridPos={
-    x: 0,
-    y: 4000,
-    w: 24,
-    h: 1,
-  }
-)
-.addPanel(
   row.new(title='Rails Metrics', collapse=true)
   .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))
   ,
