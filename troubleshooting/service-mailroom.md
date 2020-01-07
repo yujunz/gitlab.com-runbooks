@@ -45,8 +45,9 @@ process the email.
 sudo gitlab-rails c
 require 'mail_room'
 require 'mail'
-imap = MailRoom::IMAP.new("imap.gmail.com", 993, :ssl => true)
-imap.login("incoming@gitlab.com", "REDACTED")
+imap = Net::IMAP.new("imap.gmail.com", 993, :ssl => true)
+config = Gitlab::MailRoom.config
+imap.login("incoming@gitlab.com", config[:password])
 imap.select("inbox")
 imap.uid_search("UNSEEN")
 ```
