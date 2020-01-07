@@ -132,6 +132,19 @@ groups:
       sum by (environment, stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[1m])
       )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: pgbouncer
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1m])
+      )
+      +
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1m])
+      )
   - record: gitlab_component_apdex:ratio
     labels:
       component: rails_sql
@@ -175,7 +188,6 @@ groups:
       sum by (environment, stage) (
         rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1m])
       )
-
       +
       sum by (environment, stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
@@ -188,6 +200,19 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: service
+      tier: db
+      type: pgbouncer
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[1m])
+      )
+      +
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:

@@ -86,6 +86,10 @@ dashboard.new(
   { title: 'Overall', aggregationLabels: '', legendFormat: 'server' },
   { title: 'per Server', aggregationLabels: 'fqdn', legendFormat: '{{fqdn}}' },
 ]), gridPos={ x: 0, y: 8000 })
+.addPanel(metricsCatalogDashboards.componentDetailMatrix('patroni', 'pgbouncer', selector, [
+  { title: 'Overall', aggregationLabels: '', legendFormat: 'pgbouncer' },
+  { title: 'per Server', aggregationLabels: 'fqdn', legendFormat: '{{fqdn}}' },
+]), gridPos={ x: 0, y: 8100 })
 .addPanel(
   saturationDetail.saturationDetailPanels(selector, components=[
     'active_db_connections',

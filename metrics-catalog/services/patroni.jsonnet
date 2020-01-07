@@ -44,5 +44,20 @@ local combined = metricsCatalog.combined;
         selector='type="patroni", tier="db"'
       ),
     },
+
+    // Records the operations rate for the pgbouncer instances running on the patroni nodes
+    pgbouncer: {
+      // The same query, with different labels is also used on the patroni nodes pgbouncer instances
+      requestRate: combined([
+        rateMetric(
+          counter='pgbouncer_stats_sql_transactions_pooled_total',
+          selector='type="patroni", tier="db"'
+        ),
+        rateMetric(
+          counter='pgbouncer_stats_queries_pooled_total',
+          selector='type="patroni", tier="db"'
+        ),
+      ]),
+    },
   },
 }
