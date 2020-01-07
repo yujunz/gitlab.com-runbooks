@@ -51,6 +51,21 @@ The native PackageCloud backups use [xbstream](https://www.percona.com/doc/perco
 This creates a full backup of the MySQL data without locking the database for the
 entire backup.
 
+## What can go wrong?
+
+We have a Dead Man's Snitch that should notice the job not running (no changes to the S3 bucket) or being somehow broken/stalled, and e-mail ops-contact+packagecloudbackups@gitlab.com
+
+In one case, the upload to S3 was stalled/locked, and no further backups were running (they run under sv; when one finishes it exits, sv starts the job again which immediately sleeps for 1 day before doing the next backup.  If it stalls/locks up, that's it until we take action).  This manifested as:
+1. a very long running process that was doing nothing,
+2. The last line of /var/log/packagecloud/database-backups/current being something like `uploading backups/packagecloud-streamed-database-backup.DATESTAMP/packagecloud-streamed-database-backup.DATESTAMP.xbstream`, and nothing else showing the backup completing
+3. `sudo packagecloud-ctl status database_backups` indicating a very long lifetime for the service process
+
+It can be resolved by restarting the service:
+
+`sudo packagecloud-ctl restart database_backups`
+
+which kills off the stuck process cleanly, and starts a new one.  The next backup will occur in approximately 24 hours after the sleep expires.
+
 ## So How Do We Actually Restore for testing?
 
 We're glad you asked! This process is subject to substantial change as we work out
