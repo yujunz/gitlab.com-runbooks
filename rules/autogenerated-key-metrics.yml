@@ -23,6 +23,16 @@ groups:
     expr: '0.0001'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
+      tier: db
+      type: patroni
+    expr: '0.95'
+  - record: slo:max:gitlab_service_errors:ratio
+    labels:
+      tier: db
+      type: patroni
+    expr: '0.005'
+  - record: slo:min:gitlab_service_apdex:ratio
+    labels:
       tier: stor
       type: praefect
     expr: '0.995'
@@ -121,6 +131,63 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: rails_sql
+      stage: main
+      tier: db
+      type: patroni
+    expr: |
+      (
+        sum by (environment) (
+          rate(gitlab_sql_duration_seconds_bucket{le="0.05"}[1m])
+        )
+        +
+        sum by (environment) (
+          rate(gitlab_sql_duration_seconds_bucket{le="0.1"}[1m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment) (
+          rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: rails_sql
+      stage: main
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment) (
+        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1m])
+      )
+
+      +
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
