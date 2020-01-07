@@ -110,6 +110,63 @@ tf import module.gitlab-gke.google_container_node_pool.node_pool[0] gitlab-produ
 * Pod Metrics for Mailroom: https://dashboards.gitlab.net/d/mailroom-pod/mailroom-pod-info?orgId=1&from=now-12h&to=now&var-PROMETHEUS_DS=Global&var-environment=gstg&var-cluster=gstg-gitlab-gke&var-namespace=gitlab&var-Node=All&var-Deployment=gitlab-mailroom
 * General service metrics for Registry: https://dashboards.gitlab.net/d/general-service/general-service-platform-metrics?orgId=1&var-type=registry&from=now-1h&to=now
 
+## Attaching to a running container
+
+### Using Docker
+
+Figure out what node/zone a Pod is running:
+
+```
+kubectl get pods -n gitlab -o wide # get the node name
+node_name=<NODE_NAME>
+zone=$(gcloud compute instances list --filter name=$node_name --format="value(zone)") # get the zone
+```
+
+SSH into the node:
+
+```
+gcloud compute ssh $node_name --zone=$zone
+```
+
+Discover which container we need to attach too
+
+```
+docker ps | grep <KEYWORD>
+```
+
+Example, we want to log into a specific sidekiq container:
+
+```
+$ docker ps | grep sidekiq-export-966444c8-sbpj5
+56a476f72f30        4a879bb96135                                          "/scripts/entrypoint…"   6 hours ago         Up 6 hours                              k8s_sidekiq_gitlab-sidekiq-export-966444c8-sbpj5_gitlab_148e5cfb-21a2-11ea-b2f5-4201ac100006_0
+f66cb9d37ec6        k8s.gcr.io/pause:3.1                                  "/pause"                 6 hours ago         Up 6 hours                              k8s_POD_gitlab-sidekiq-export-966444c8-sbpj5_gitlab_148e5cfb-21a2-11ea-b2f5-4201ac100006_0
+```
+
+You'll notice two containers are running, one using the `pause` image, and one
+that is executing the entry point script.  The `pause` image is NOT the one you
+are probably looking for.  Determining which container you need will greatly
+depend on both the knowledge you have for the desired container and what
+information you are trying to get too.  Knowing we need the first container
+listed, we can then attach a new container to it:
+
+```
+docker run \
+  -it \
+  --pid=container:k8s_sidekiq_gitlab-sidekiq-export-966444c8-sbpj5_gitlab_148e5cfb-21a2-11ea-b2f5-4201ac100006_0 \
+  --net=container:k8s_sidekiq_gitlab-sidekiq-export-966444c8-sbpj5_gitlab_148e5cfb-21a2-11ea-b2f5-4201ac100006_0 \
+  --cap-add sys_admin \
+  --cap-add sys_ptrace \
+  ubuntu /bin/bash
+```
+
+In the above example we attached an alpine container running `sh` to the desired
+sidekiq container we need.
+
+At this point we can install whatever tooling necessary and interrogate the best
+we can.  Note that we are provided a read only file system using this
+troubleshooting method, so certain tooling may not properly work.  In instances
+like this, we can try the `toolbox` documented [below](./#using-toolbox)
+
 ### Using Toolbox
 
 GKE nodes by design have a very limited subset of tools. If you need to conduct troubleshooting directly on the host, consider using toolbox. Toolbox is a container that is started with the host's root filesystem mounted under `/media/root/`. The toolbox's file system is available on the host at `/var/lib/toolbox/`.
