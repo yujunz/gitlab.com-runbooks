@@ -283,6 +283,19 @@ update_elastic_monitoring-es7_cluster_settings:
     variables:
       - $ES_MONITORING_ES7_URL
 
+update_elastic_monitoring-es7_ilm:
+  stage: deploy
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
+  script:
+  - ./elastic/managed-objects/monitoring-es7/ILM/update-ilm.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/monitoring-es7/ILM/*
+    variables:
+      - $ES_MONITORING_ES7_URL
+
 ################################################################################
 
 dryrun_pingdom_checks:
