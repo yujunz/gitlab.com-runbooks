@@ -5,9 +5,9 @@ local nodeMetrics = import 'node_metrics.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 
 {
-  priorityWorkloads(nodeSelector, startRow)::
+  priorityWorkloads(querySelector, startRow)::
     local formatConfig = {
-      nodeSelector: nodeSelector,
+      querySelector: querySelector,
     };
 
     layout.grid([
@@ -16,9 +16,9 @@ local platformLinks = import 'platform_links.libsonnet';
         description='Shows sidekiq worker saturation. Once saturated, all sidekiq workers will be busy processing jobs, and any new jobs that arrive will queue. Lower is better.',
         query=|||
           max by(environment, tier, type, stage) (
-            sum by (fqdn, instance,  environment, tier, type, stage) (sidekiq_running_jobs{%(nodeSelector)s})
+            sum by (fqdn, instance,  environment, tier, type, stage) (sidekiq_running_jobs{%(querySelector)s})
             /
-            sum by (fqdn, instance,  environment, tier, type, stage) (sidekiq_concurrency{%(nodeSelector)s})
+            sum by (fqdn, instance,  environment, tier, type, stage) (sidekiq_concurrency{%(querySelector)s})
           )
         ||| % formatConfig,
         legendFormat='{{ priority }}',
@@ -29,7 +29,7 @@ local platformLinks = import 'platform_links.libsonnet';
         'Node Average CPU Utilization per Priority',
         description='The maximum utilization of a single core on each node. Lower is better',
         query=|||
-          avg(1 - rate(node_cpu_seconds_total{%(nodeSelector)s, mode="idle"}[$__interval])) by (priority)
+          avg(1 - rate(node_cpu_seconds_total{%(querySelector)s, mode="idle"}[$__interval])) by (priority)
         ||| % formatConfig,
         legendFormat='{{ priority }}',
         legend_show=true,
@@ -39,7 +39,7 @@ local platformLinks = import 'platform_links.libsonnet';
         'Node Maximum Single Core Utilization per Priority',
         description='The maximum utilization of a single core on each node. Lower is better',
         query=|||
-          max(1 - rate(node_cpu_seconds_total{%(nodeSelector)s, mode="idle"}[$__interval])) by (priority)
+          max(1 - rate(node_cpu_seconds_total{%(querySelector)s, mode="idle"}[$__interval])) by (priority)
         ||| % formatConfig,
         legendFormat='{{ priority }}',
         legend_show=true,
@@ -50,7 +50,7 @@ local platformLinks = import 'platform_links.libsonnet';
         description='Memory utilization. Lower is better.',
         query=|||
           max by (priority) (
-            instance:node_memory_utilization:ratio{%(nodeSelector)s}
+            instance:node_memory_utilization:ratio{%(querySelector)s}
           )
         ||| % formatConfig,
         legendFormat='{{ priority }}',
