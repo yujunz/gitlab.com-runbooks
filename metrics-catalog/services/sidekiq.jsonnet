@@ -15,25 +15,25 @@ local customQuery = metricsCatalog.customQuery;
     latency_sensitive_job_execution: {
       apdex: histogramApdex(
         histogram='sidekiq_jobs_completion_seconds_bucket',
-        selector='job="gitlab-sidekiq",latency_sensitive="yes"',
+        selector='latency_sensitive="yes"',
         satisfiedThreshold=10,
       ),
 
       requestRate: rateMetric(
         counter='sidekiq_jobs_completion_seconds_bucket',
-        selector='job="gitlab-sidekiq",latency_sensitive="yes",le="+Inf"'
+        selector='latency_sensitive="yes",le="+Inf"'
       ),
 
       errorRate: rateMetric(
         counter='sidekiq_jobs_failed_total',
-        selector='job="gitlab-sidekiq",latency_sensitive="yes"'
+        selector='latency_sensitive="yes"'
       ),
     },
 
     latency_sensitive_job_queueing: {
       apdex: histogramApdex(
         histogram='sidekiq_jobs_queue_duration_seconds_bucket',
-        selector='job="gitlab-sidekiq",latency_sensitive="yes"',
+        selector='latency_sensitive="yes"',
         satisfiedThreshold=2.5,
       ),
 
@@ -43,25 +43,25 @@ local customQuery = metricsCatalog.customQuery;
     non_latency_sensitive_job_execution: {
       apdex: histogramApdex(
         histogram='sidekiq_jobs_completion_seconds_bucket',
-        selector='job="gitlab-sidekiq",latency_sensitive="no"',
+        selector='latency_sensitive="no"',
         satisfiedThreshold=300,  // 5 minutes
       ),
 
       requestRate: rateMetric(
         counter='sidekiq_jobs_completion_seconds_bucket',
-        selector='job="gitlab-sidekiq",latency_sensitive="no",le="+Inf"'
+        selector='latency_sensitive="no",le="+Inf"'
       ),
 
       errorRate: rateMetric(
         counter='sidekiq_jobs_failed_total',
-        selector='job="gitlab-sidekiq",latency_sensitive="no"'
+        selector='latency_sensitive="no"'
       ),
     },
 
     non_latency_sensitive_job_queueing: {
       apdex: histogramApdex(
         histogram='sidekiq_jobs_queue_duration_seconds_bucket',
-        selector='job="gitlab-sidekiq",latency_sensitive="no"',
+        selector='latency_sensitive="no"',
         satisfiedThreshold=60,
       ),
 
