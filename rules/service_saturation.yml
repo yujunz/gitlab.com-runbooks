@@ -63,6 +63,18 @@ groups:
         1
       )
 
+  # type: *, component: pod_count
+  # This measures the HPA that manages our Deployments. If we are running low on
+  # ability to scale up by hitting our maximum HPA Pod allowance, we will have
+  # fully saturated this service.
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'pod_count'
+    expr: >
+      avg_over_time(kube_hpa_status_current_replicas[1m])
+      /
+      avg_over_time(kube_hpa_spec_max_replicas[1m])
+
   # type: web/api/git, component: single_node_unicorn_workers
   # Single node workers is a similar metric to the normal unicorn `worker` metric,
   # except that it only measures a single host. This reason for this is that once HAProxy has routed
