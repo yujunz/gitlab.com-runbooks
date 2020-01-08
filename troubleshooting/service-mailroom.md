@@ -36,15 +36,9 @@ leave emails hanging around in the inbox until manual intervention.  Utilize
 this process to clear the unread count which will force Mailroom to reattempt to
 process the email.
 
-* ssh into the console server for the environment which fired the alert
-* grab the password from `gitlab.rb` under attribute
-  `gitlab_rails['incoming_email_password']`
 * Clear the unread count
-
+From a gitlab-console session:
 ```
-sudo gitlab-rails c
-require 'mail_room'
-require 'mail'
 imap = Net::IMAP.new("imap.gmail.com", 993, :ssl => true)
 config = Gitlab::MailRoom.config
 imap.login("incoming@gitlab.com", config[:password])
