@@ -7,8 +7,7 @@ containing a "main" VM running most GitLab services, including postgres. The
 database here is a singleton and not managed by patroni.
 
 1. `systemctl stop chef-client.service`
-1. `gitlab-ctl stop postgresql`, or alternatively `gitlab-ctl stop` to stop all
-   omnibus services.
+1. `gitlab-ctl stop`
 1. See step 2 in the cluster instructions below to back up config files if need
    be, although if this is a fresh node there is no need for this.
 1. Find the most recent backup:
@@ -30,7 +29,9 @@ database here is a singleton and not managed by patroni.
 
    The backups are sorted in chronological order, newest last. Check the date to
    make sure it's actually from today, otherwise that indicates backups are
-   failing and we have a problem.
+   failing and we have a problem. Even if there is no backup from today, we
+   should be able to use an older backup, and postgres should recover using old
+   WAL segments in the same way.
 
    The first column, "name", is what you'll want to copy for later.
 
@@ -47,6 +48,8 @@ database here is a singleton and not managed by patroni.
    recovery_target_timeline = 'latest'
    ```
 
+   `chown` it to `gitlab-psql:gitlab-psql` and `chmod` it to `600`.
+
 1. `gitlab-ctl reconfigure`. This will cause postgres to start at some point,
    and you will see the message "psql: FATAL:  the database system is starting
    up" repeated for some time. This might cause the reconfigure operation to
@@ -57,7 +60,7 @@ database here is a singleton and not managed by patroni.
 1. If you stopped all services earlier, run `gitlab-ctl start`.
 1. `curl localhost:9187/metrics`. If it hangs, `sv restart postgres_exporter`
 1. `systemctl start chef-client.service`
-1. Check metrics for pg_replication_lag for this node. As long as it is
+1. Check the `pg_replication_lag` metric for this node. As long as it is
    generally decreasing over time, archive recovery is working.
 
 ## Setup replication for a patroni-managed cluster
