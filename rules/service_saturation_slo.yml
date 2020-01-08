@@ -51,6 +51,17 @@ groups:
       component: 'go_memory'
     expr: '0.98'
 
+  ## Pod Saturation
+  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
+    labels:
+      component: 'pod_count'
+    expr: '0.80'
+
+  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
+    labels:
+      component: 'pod_count'
+    expr: '0.90'
+
   ## Worker Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
