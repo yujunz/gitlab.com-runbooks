@@ -18,7 +18,7 @@ local layout = import 'layout.libsonnet';
 
   generalCounters(startRow):: layout.grid([
     basic.timeseries(
-      title='Registry Process CPU Time',
+      title='Process CPU Time',
       query='rate(process_cpu_seconds_total{service=~"^$Deployment.*", cluster="$cluster", namespace="$namespace"}[$__interval])',
       legendFormat='{{ pod }}',
     ),
@@ -30,6 +30,24 @@ local layout = import 'layout.libsonnet';
     basic.timeseries(
       title='Open File Descriptors',
       query='process_open_fds{service=~"^$Deployment.*", cluster="$cluster", namespace="$namespace"}',
+      legendFormat='{{ pod }}',
+    ),
+  ], cols=3, rowHeight=10, startRow=startRow),
+
+  generalRubyCounters(startRow):: layout.grid([
+    basic.timeseries(
+      title='Process CPU Time',
+      query='rate(ruby_process_cpu_seconds_total{pod=~"^$Deployment.*", cluster="$cluster", namespace="$namespace"}[$__interval])',
+      legendFormat='{{ pod }}',
+    ),
+    basic.timeseries(
+      title='Resident Memory Usage',
+      query='ruby_process_resident_memory_bytes{pod=~"^$Deployment.*", cluster="$cluster", namespace="$namespace"}',
+      legendFormat='{{ pod }}',
+    ),
+    basic.timeseries(
+      title='Open File Descriptors',
+      query='ruby_process_max_fds{pod=~"^$Deployment.*", cluster="$cluster", namespace="$namespace"}',
       legendFormat='{{ pod }}',
     ),
   ], cols=3, rowHeight=10, startRow=startRow),
