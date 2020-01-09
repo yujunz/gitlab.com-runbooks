@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-shell-inf-ops-*",
+    "timeFieldName": "json.time"
+  }
+}

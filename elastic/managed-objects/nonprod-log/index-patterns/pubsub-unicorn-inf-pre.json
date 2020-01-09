@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-unicorn-inf-pre-*",
+    "timeFieldName": "publish_time"
+  }
+}

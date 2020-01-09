@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-gke-inf-pre-*",
+    "timeFieldName": "json.timestamp"
+  }
+}

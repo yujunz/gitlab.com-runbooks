@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-nginx-inf-ops-*",
+    "timeFieldName": "json.time"
+  }
+}

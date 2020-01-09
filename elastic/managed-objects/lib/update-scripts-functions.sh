@@ -9,6 +9,12 @@ function es_client() {
   curl --retry 3 --fail -H 'Content-Type: application/json' "${ES_URL}/${url}" "$@"
 }
 
+function kibana_client() {
+  url=$1
+  shift
+  curl --retry 3 --fail -H 'Content-Type: application/json' -H 'kbn-xsrf: true' "${KIBANA_URL}/${url}" "$@"
+}
+
 function execute_jsonnet() {
   # MARQUEE_CUSTOMERS_TOP_LEVEL_DOMAINS should be comma-delimited
   jsonnet -J "${SCRIPT_DIR}/../../lib" \
@@ -49,9 +55,11 @@ function get_json_and_jsonnet() {
 # ES5
 ################################################################################
 
-function ES5_upload_json() {
+function ES5_watches_upload_json() {
   for i in "${SCRIPT_DIR}"/*.json; do
     base_name=$(basename "$i")
+    echo ""
+    echo "$base_name"
     name=${base_name%.json}
     es_client "_xpack/watcher/watch/${name}?pretty=true" -X PUT --data-binary "@${i}"
   done
@@ -60,6 +68,7 @@ function ES5_upload_json() {
 function ES5_watches_exec_jsonnet_and_upload_json() {
   for i in "${SCRIPT_DIR}"/*.jsonnet; do
     base_name=$(basename "$i")
+    echo ""
     echo "$base_name"
     name=${base_name%.jsonnet}
     watch_json="$(execute_jsonnet "${i}" | jq -c '.')" # Compile jsonnet and compact with jq
@@ -69,10 +78,45 @@ function ES5_watches_exec_jsonnet_and_upload_json() {
 
 # ES7
 ################################################################################
+function ES7_put_json() {
+  # args:
+  # $1 URL to use when uploading
+  for i in "${SCRIPT_DIR}"/*.json; do
+    base_name=$(basename "$i")
+    echo ""
+    echo "$base_name"
+    name=${base_name%.json}
+    es_client "$1${name}" -X PUT --data-binary "@${i}"
+  done
+}
 
+function kibana_post_json() {
+  # args:
+  # $1 URL to use when uploading
+  for i in "${SCRIPT_DIR}"/*.json; do
+    base_name=$(basename "$i")
+    echo ""
+    echo "$base_name"
+    name=${base_name%.json}
+    kibana_client "$1${name}" -X POST --data-binary "@${i}"
+  done
+}
+
+function kibana_put_json() {
+  # args:
+  # $1 URL to use when uploading
+  for i in "${SCRIPT_DIR}"/*.json; do
+    base_name=$(basename "$i")
+    echo ""
+    echo "$base_name"
+    name=${base_name%.json}
+    kibana_client "$1${name}" -X PUT --data-binary "@${i}"
+  done
+}
 function ES7_watches_exec_jsonnet_and_upload_json() {
   for i in "${SCRIPT_DIR}"/*.jsonnet; do
     base_name=$(basename "$i")
+    echo ""
     echo "$base_name"
     name=${base_name%.jsonnet}
     watch_json="$(execute_jsonnet "${i}" | jq -c '.')" # Compile jsonnet and compact with jq
@@ -83,6 +127,7 @@ function ES7_watches_exec_jsonnet_and_upload_json() {
 function ES7_ILM_exec_jsonnet_and_upload_json() {
   for i in "${SCRIPT_DIR}"/*.jsonnet; do
     base_name=$(basename "$i")
+    echo ""
     echo "$base_name"
     name=${base_name%.jsonnet}
     json="$(execute_jsonnet "${i}" | jq -c '.')" # Compile jsonnet and compact with jq

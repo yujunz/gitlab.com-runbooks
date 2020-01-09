@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-unicorn-inf-gstg-*",
+    "timeFieldName": "publish_time"
+  }
+}

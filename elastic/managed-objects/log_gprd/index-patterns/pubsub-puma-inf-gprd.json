@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-puma-inf-gprd-*",
+    "timeFieldName": "json.timestamp"
+  }
+}

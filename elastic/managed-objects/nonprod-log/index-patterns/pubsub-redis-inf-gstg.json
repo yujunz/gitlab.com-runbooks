@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-redis-inf-gstg-*",
+    "timeFieldName": "publish_time"
+  }
+}

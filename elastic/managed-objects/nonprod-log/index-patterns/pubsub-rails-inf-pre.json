@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-rails-inf-pre-*",
+    "timeFieldName": "json.time"
+  }
+}

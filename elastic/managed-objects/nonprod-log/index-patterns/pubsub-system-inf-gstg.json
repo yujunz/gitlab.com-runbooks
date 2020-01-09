@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-system-inf-gstg-*",
+    "timeFieldName": "publish_time"
+  }
+}

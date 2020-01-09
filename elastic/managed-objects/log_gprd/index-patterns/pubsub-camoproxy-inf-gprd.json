@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-camoproxy-inf-gprd-*",
+    "timeFieldName": "publish_time"
+  }
+}

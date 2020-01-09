@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-postgres-inf-gstg-*",
+    "timeFieldName": "publish_time"
+  }
+}
