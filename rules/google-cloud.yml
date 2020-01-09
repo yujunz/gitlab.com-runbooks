@@ -46,7 +46,7 @@ groups:
         )
       )
 
-  - alert: GCPLoadBalancerUnhealthyBackends
+  - alert: GCPLoadBalancerImbalancedBackends
     expr: load_balancer_name:health_backend:ratio <= 0.5
     for: 5m
     labels:
