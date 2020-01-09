@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-unstructured-inf-gprd-*",
+    "timeFieldName": "json.time"
+  }
+}

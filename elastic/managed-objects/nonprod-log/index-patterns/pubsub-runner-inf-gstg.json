@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-runner-inf-gstg-*",
+    "timeFieldName": "publish_time"
+  }
+}

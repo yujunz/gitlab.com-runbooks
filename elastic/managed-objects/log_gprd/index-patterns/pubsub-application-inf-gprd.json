@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-application-inf-gprd-*",
+    "timeFieldName": "publish_time"
+  }
+}

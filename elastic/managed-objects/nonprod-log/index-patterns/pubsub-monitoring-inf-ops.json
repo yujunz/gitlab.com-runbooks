@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-monitoring-inf-ops-*",
+    "timeFieldName": "json.ts"
+  }
+}

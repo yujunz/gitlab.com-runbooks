@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-sidekiq-inf-pre-*",
+    "timeFieldName": "json.time"
+  }
+}

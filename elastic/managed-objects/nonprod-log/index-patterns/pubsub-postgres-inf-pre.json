@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "title": "pubsub-postgres-inf-pre-*",
+    "timeFieldName": "publish_time"
+  }
+}
