@@ -29,6 +29,7 @@ groups:
 - name: PG Stat Statements
   interval: 1m
   rules:
+  # Calls.
   - record: queryid:pg_stat_statements_calls:rate1m
     expr: >
       sum without (fqdn,instance) (
@@ -36,10 +37,19 @@ groups:
       )
   - record: job:pg_stat_statements_calls:rate1m
     expr: sum without (queryid) (queryid:pg_stat_statements_calls:rate1m)
+  # Rows.
   - record: queryid:pg_stat_statements_rows:rate1m
     expr: >
       sum without (fqdn,instance) (
         rate(pg_stat_statements_rows[1m])
       )
   - record: job:pg_stat_statements_rows:rate1m
-    expr: sum without (queryid) (ueryid:pg_stat_statements_rows:rate1m)
+    expr: sum without (queryid) (queryid:pg_stat_statements_rows:rate1m)
+  # Query time.
+  - record: queryid:pg_stat_statements_seconds_total:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(pg_stat_statements_seconds_total[1m])
+      )
+  - record: job:pg_stat_statements_seconds_total:rate1m
+    expr: sum without (queryid) (queryid:pg_stat_statements_seconds_total:rate1m)
