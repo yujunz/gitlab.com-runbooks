@@ -186,6 +186,8 @@ Logs sent to StackDriver are sent to "GCE VM instance" resource logs.
 
 Logs from different components have designated topics in Pub/Sub and each topic has a corresponding subscription. There is a subscriber for each subscription. At the moment of writing we are using pubsubbeat to subscribe to Pub/Sub subscriptions and forward logs to an Elastic cluster.
 
+Cloud PubSub [quotas and limits](https://cloud.google.com/pubsub/quotas). Note: there's a 10MB/s per StreamingPull limit
+
 Examples of alternatives to Cloud Pub/Sub include: Kafka
 
 ## Pubsubbeat VMs
