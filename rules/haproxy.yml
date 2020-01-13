@@ -176,10 +176,11 @@ groups:
       runbook: troubleshooting/ssh-maxstartups-breach.md
       title: Possible breach of SSH MaxStartups limit
   - alert: HAProxyExtraneousProcesses
-    expr: sum(namedprocess_namegroup_num_procs{fqdn=~"fe-[0-9].*", groupname="haproxy"}) by (fqdn) > 2
+    # DR environment is excluded here due to https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8897
+    expr: sum(namedprocess_namegroup_num_procs{fqdn=~"fe-[0-9].*", groupname="haproxy", env!="dr"}) by (fqdn) > 2
     for: 2h
     labels:
-      severity: s3
+      severity: s2
     annotations:
       title: Extraneous processes detected on haproxy front-end
       runbook: troubleshooting/haproxy.md
