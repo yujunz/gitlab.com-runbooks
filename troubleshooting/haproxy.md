@@ -27,3 +27,38 @@
     * To block: In https://gitlab.com/gitlab-com/security-tools/front-end-security/ edit deny-403-ips.lst.  commit, push, MR, ensure it has pull mirrored to ops.gitlab.net, then run chef on the pages haproxy nodes to deploy.  This will block that IP across *all* frontend (pages, web, api etc), so be sure you want to do this.
   * Problem sites/projects/domains can be identified with the `Gitlab-Pages activity` dashboard on kibana - https://log.gitlab.net/app/kibana#/dashboard/AW6GlNKPqthdGjPJ2HqH
     * To block: In https://gitlab.com/gitlab-com/security-tools/front-end-security/ edit deny-403-ips.lst.  commit, push, MR, ensure it has pull mirrored to ops.gitlab.net, then run chef on the pages haproxy nodes to deploy.  This will block only the named domain (exact match) in pages, preventing the request ever making it to the web-pages servers.  This is very low-risk
+
+## Extraneous processes
+
+HAProxy forks on reload and old processes will continue to service requests, for
+long-lived ssh connections we use the `hard-stop-after` [configuration parameter](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/6156b09464c18bc5b584f5bf5e363fd50ded4af7/roles/gprd-base-lb-fe.json#L6-10)
+to prevent processes from lingering more than 5 minutes.
+
+In https://gitlab.com/gitlab-com/gl-infra/delivery/issues/588 we have observed that processes remain for longer than this interval, this may require manual intervention:
+
+* Display the process tree for haproxy, for example here it shows two processes where we expect one:
+
+```
+# pstree -pals $(pgrep -u root -f /usr/sbin/haproxy)
+systemd,1 --system --deserialize 36
+  └─haproxy,28214 -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -sf 1827
+      ├─haproxy,1827 -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -sf 1639
+      └─haproxy,2002 -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -sf
+```
+
+* Show the elapsed time of the haproxy processes:
+
+```
+# for p in $(pgrep -u haproxy -f haproxy); do ps -o user,pid,etimes,command $p; done
+USER       PID ELAPSED COMMAND
+haproxy   1827   99999 /usr/sbin/haproxy -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -sf 1639
+USER       PID ELAPSED COMMAND
+haproxy   2002      20 /usr/sbin/haproxy -Ws -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid -sf 1827
+
+```
+
+* Kill the process with the longer elapsed time:
+
+```
+# kill -TERM 1827
+```

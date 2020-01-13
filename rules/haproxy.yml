@@ -175,3 +175,16 @@ groups:
       description: We have detected conditions which suggest SSH's MaxStartups limit is being breached for git+ssh connections
       runbook: troubleshooting/ssh-maxstartups-breach.md
       title: Possible breach of SSH MaxStartups limit
+  - alert: HAProxyExtraneousProcesses
+    expr: sum(namedprocess_namegroup_num_procs{fqdn=~"fe-[0-9].*", groupname="haproxy"}) by (fqdn) > 2
+    for: 2h
+    labels:
+      severity: s3
+    annotations:
+      title: Extraneous processes detected on haproxy front-end
+      runbook: troubleshooting/haproxy.md
+      description: |
+        We are seeing extraneous processes on {{$labels.fqdn}}. These processes can interfere with state
+        changes and may cause issues with deployments. Normally on reload old HAProxy processes with active
+        connections should only remain active for 5 minutes. See the runbook for how to remove the extraneous
+        processes
