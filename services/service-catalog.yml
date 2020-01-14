@@ -2,40 +2,40 @@ teams:
 
 - name: infrastructure-database
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: glopezfernandez
+  manager_slug: gerir
   team_members:
-    - jfinotto
-    - glopezfernandez
+    - jose-finotto
+    - gerir
   slack_channel: ongres-gitlab
   engagement_policy:
   oncall_schedule: https://gitlab.pagerduty.com/services/PZ6SJXH
 
 - name: infrastructure-observability
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: ansdval
+  manager_slug: asandoval
   team_members:
-    - craigf
-    - bjk-gitlab
-    - aamarsanaa
-    - igorwwwwwwwwwwwwwwwwwwww
-    - hphilipps
-    - craig
-    - cindy
+    - craigfurman
+    - ben-k
+    - amarbayar-amarsanaa
+    - iwiedler
+    - henri-philipps
+    - craig-barrett
+    - cindy-p
   slack_channel: observability
   engagement_policy:
   oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
 
 - name: infrastructure-webapp
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: ansdval
+  manager_slug: asandoval
   team_members:
-    - alejandro
+    - alejandro-r
     - msmiley
-    - cindy
-    - aamarsanaa
-    - ahmadsherif
-    - bjk-gitlab
-    - hphilipps
+    - cindy-p
+    - amarbayar-amarsanaa
+    - ahmad-s
+    - ben-k
+    - henri-philipps
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
@@ -43,15 +43,15 @@ teams:
 
 - name: infrastructure-coreinfra
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: ansdval
+  manager_slug: asandoval
   team_members:
-    - nnelson
-    - craig
-    - T4cC0re
-    - ggillies
-    - ahanselka
-    - cmcfarland
-    - cmiskell
+    - nelsnelson
+    - craig-barrett
+    - hendrik-meyer
+    - graemegillies
+    - alex-h
+    - cameron-mcfarland
+    - craigmiskell
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
@@ -59,15 +59,15 @@ teams:
 
 - name: infrastructure-git
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: dawsmith
+  manager_slug: dave-smith
   team_members:
-    - nnelson
-    - hphillips
-    - ahmadsherif
-    - alejandro
-    - cmiskell
-    - devin
-    - T4cC0re
+    - nelsnelson
+    - henri-philipps
+    - ahmad-s
+    - alejandro-r
+    - craigmiskell
+    - devin-s
+    - hendrik-meyer
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
@@ -75,15 +75,15 @@ teams:
 
 - name: infrastructure-caches-ci-queues
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: dawsmith
+  manager_slug: dave-smith
   team_members:
-    - mwasilewski-gitlab
-    - cmcfarland
-    - ahanselka
+    - michal-w
+    - cameron-mcfarland
+    - alex-h
     - msmiley
-    - igorwwwwwwwwwwwwwwwwwwww
-    - craigf
-    - ggillies
+    - iwiedler
+    - craigfurman
+    - graemegillies
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
@@ -91,13 +91,13 @@ teams:
 
 - name: infrastructure-businessops
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: dawsmith
+  manager_slug: dave-smith
   team_members:
-    - cmcfarland
-    - devin
-    - ggillies
-    - alejandro
-    - mwasilewski-gitlab
+    - cameron-mcfarland
+    - devin-s
+    - graemegillies
+    - alejandro-r
+    - michal-w
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
