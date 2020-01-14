@@ -3,7 +3,9 @@ teams:
 - name: infrastructure-database
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
   manager_slug: glopezfernandez
-  team_members: "jfinotto,glopezfernandez" 
+  team_members:
+    - jfinotto
+    - glopezfernandez
   slack_channel: ongres-gitlab
   engagement_policy:
   oncall_schedule: https://gitlab.pagerduty.com/services/PZ6SJXH
@@ -11,7 +13,14 @@ teams:
 - name: infrastructure-observability
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
   manager_slug: ansdval
-  team_members: "craigf,bjk-gitlab,aamarsanaa,igorwwwwwwwwwwwwwwwwwwww,hphilipps,craig,cindy" 
+  team_members:
+    - craigf
+    - bjk-gitlab
+    - aamarsanaa
+    - igorwwwwwwwwwwwwwwwwwwww
+    - hphilipps
+    - craig
+    - cindy
   slack_channel: observability
   engagement_policy:
   oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
@@ -19,7 +28,14 @@ teams:
 - name: infrastructure-webapp
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
   manager_slug: ansdval
-  team_members: "alejandro,msmiley,cindy,aamarsanaa,ahmadsherif,bjk-gitlab,hphilipps"
+  team_members:
+    - alejandro
+    - msmiley
+    - cindy
+    - aamarsanaa
+    - ahmadsherif
+    - bjk-gitlab
+    - hphilipps
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
@@ -28,7 +44,14 @@ teams:
 - name: infrastructure-coreinfra
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
   manager_slug: ansdval
-  team_members: "nnelson,craig,T4cC0re,ggillies,ahanselka,cmcfarland,cmiskell"
+  team_members:
+    - nnelson
+    - craig
+    - T4cC0re
+    - ggillies
+    - ahanselka
+    - cmcfarland
+    - cmiskell
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
@@ -37,7 +60,14 @@ teams:
 - name: infrastructure-git
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
   manager_slug: dawsmith
-  team_members: "nnelson,hphillips,ahmadsherif,alejandro,cmiskell,devin,T4cC0re"  
+  team_members:
+    - nnelson
+    - hphillips
+    - ahmadsherif
+    - alejandro
+    - cmiskell
+    - devin
+    - T4cC0re
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
@@ -46,7 +76,14 @@ teams:
 - name: infrastructure-caches-ci-queues
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
   manager_slug: dawsmith
-  team_members: "mwasilewski-gitlab,cmcfarland,ahanselka,msmiley,igorwwwwwwwwwwwwwwwwwwww,craigf,ggillies"   
+  team_members:
+    - mwasilewski-gitlab
+    - cmcfarland
+    - ahanselka
+    - msmiley
+    - igorwwwwwwwwwwwwwwwwwwww
+    - craigf
+    - ggillies
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
@@ -55,7 +92,12 @@ teams:
 - name: infrastructure-businessops
   url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
   manager_slug: dawsmith
-  team_members: "cmcfarland,devin,ggillies,alejandro,mwasilewski-gitlab"  
+  team_members:
+    - cmcfarland
+    - devin
+    - ggillies
+    - alejandro
+    - mwasilewski-gitlab
   slack_channel: production
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
