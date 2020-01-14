@@ -26,15 +26,18 @@ groups:
       title: '{{$labels.job}} is unreachable'
 
   - alert: PrometheusNotConnectedToAlertmanagers
-    expr: prometheus_notifications_alertmanagers_discovered < 1
+    expr: >
+      sum without (fqdn,instance,pod) (
+        prometheus_notifications_alertmanagers_discovered
+      ) < 1
     for: 10m
     labels:
       pager: pagerduty
       service: prometheus
       severity: s1
     annotations:
-      description: 'Prometheus {{$labels.pod}} {{$labels.fqdn}}
-       is not connected to any Alertmanagers'
+      description: > 
+        Prometheus {{$labels.shard}} is not connected to any Alertmanagers
       runbook: troubleshooting/prometheus-is-down.md
       title: 'Prometheus not connected to any Alertmanagers'
 
