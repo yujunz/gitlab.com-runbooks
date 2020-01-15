@@ -340,6 +340,7 @@ local tablePanel = grafana.tablePanel;
     interval='1m',
     intervalFactor=3,
     points=false,
+    pointradius=3,
   )::
     local formatConfig = {
       query: query,
@@ -362,6 +363,7 @@ local tablePanel = grafana.tablePanel;
       legend_alignAsTable=true,
       legend_hideEmpty=true,
       points=points,
+      pointradius=pointradius,
     )
     .addTarget(
       promQuery.target(

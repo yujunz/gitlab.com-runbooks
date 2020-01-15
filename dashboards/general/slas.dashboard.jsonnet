@@ -16,6 +16,43 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
+local thresholds = import 'thresholds.libsonnet';
+
+// These charts have a very high interval factor, to create a wide trend line
+local INTERVAL_FACTOR = 50;
+local INTERVAL = '1d';
+
+local timeRegions = {
+  timeRegions: [
+    {
+      op: 'time',
+      from: '00:00',
+      to: '00:00',
+      colorMode: 'gray',
+      fill: false,
+      line: true,
+      lineColor: 'rgba(237, 46, 24, 0.10)',
+    },
+    {
+      op: 'time',
+      fromDayOfWeek: 1,
+      from: '00:00',
+      toDayOfWeek: 1,
+      to: '23:59',
+      colorMode: 'gray',
+      fill: true,
+      line: false,
+      // lineColor: "rgba(237, 46, 24, 0.80)"
+      fillColor: 'rgba(237, 46, 24, 0.80)',
+    },
+  ],
+};
+
+local thresholdsValues = {
+  thresholds: [
+    thresholds.errorLevel('lt', 0.995),
+  ],
+};
 
 local keyServices = serviceCatalog.findServices(function(service)
   std.objectHas(service.business.SLA, 'primary_sla_service') &&
@@ -97,45 +134,66 @@ dashboard.new(
     h: 1,
   }
 )
-.addPanels(
-  layout.grid([
-    grafana.singlestat.new(
-      'SLA Status',
-      datasource='$PROMETHEUS_DS',
-      format='percentunit',
-    )
-    .addTarget(
-      promQuery.target(
-        |||
-          sort(
-            avg(
-              avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])
-            )
+
+.addPanel(
+  grafana.singlestat.new(
+    'SLA - GitLab.com',
+    datasource='$PROMETHEUS_DS',
+    format='percentunit',
+  )
+  .addTarget(
+    promQuery.target(
+      |||
+        sort(
+          avg(
+            avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])
           )
-        ||| % { keyServiceRegExp: keyServiceRegExp },
-        instant=true
-      )
-    ),
-  ], cols=6, rowHeight=5, startRow=1)
+        )
+      ||| % { keyServiceRegExp: keyServiceRegExp },
+      instant=true
+    )
+  ),
+  gridPos={ x: 0, y: 0, w: 4, h: 4 },
+)
+.addPanel(
+  grafana.text.new(
+    title='GitLab SLA Dashboard Explainer',
+    mode='markdown',
+    content=|||
+      This dashboard shows the SLA trends for each of the _primary_ services in the GitLab fleet ("primary" services are those which are directly user-facing).
+
+      * For each service we measure two key metrics/SLIs (Service Level Indicators): error-rate and apdex score
+      * For each service, for each SLI, we have an SLO target
+        * For error-rate, the SLI should remain _below_ the SLO
+        * For apdex score, the SLI should remain _above_ the SLO
+      * The SLA for each service is the percentage of time that the _both_ SLOs are being met
+      * The SLA for GitLab.com is the average SLO across each primary service
+
+      _To see instanteous SLI values for these services, visit the [`general-public-splashscreen`](d/general-public-splashscreen) dashboard._
+    |||
+  ),
+  gridPos={ x: 4, y: 0, w: 20, h: 6 },
 )
 .addPanels(
   layout.grid([
     basic.slaTimeseries(
-      title='SLA Trends - Aggregated',
+      title='Overall SLA over time period - gitlab.com',
       description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
       query=|||
         avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__interval]))
       ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='gitlab.com SLA',
-      interval='7d',
-      intervalFactor=1,
+      interval=INTERVAL,
+      intervalFactor=INTERVAL_FACTOR,
       points=true,
-    ),
+    )
+    .addSeriesOverride(seriesOverrides.goldenMetric('gitlab.com SLA'))
+    + timeRegions + thresholdsValues,
   ], cols=1, rowHeight=10, startRow=1001)
 )
 .addPanel(
-  row.new(title='Primary Services'),
+  row.new(title='SLA Trends - Per Primary Service'),
   gridPos={
     x: 0,
     y: 2000,
@@ -160,10 +218,10 @@ dashboard.new(
         avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__interval])) by (type)
       ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='{{ type }}',
-      interval='7d',
-      intervalFactor=1,
+      interval=INTERVAL,
+      intervalFactor=INTERVAL_FACTOR,
       points=true,
-    ),
+    ) + timeRegions + thresholdsValues,
   ], cols=1, rowHeight=10, startRow=2001)
 )
 + {
