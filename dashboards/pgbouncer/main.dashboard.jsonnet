@@ -19,6 +19,7 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
+local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
 local selector = 'type="pgbouncer", environment="$environment"';
 
@@ -68,6 +69,11 @@ dashboard.new(
 .addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 5000 })
 .addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 6000 })
 .addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 7000 })
+.addPanel(metricsCatalogDashboards.componentDetailMatrix('pgbouncer', 'service', selector, [
+  { title: 'Overall', aggregationLabels: '', legendFormat: 'pgbouncer' },
+  { title: 'per Server', aggregationLabels: 'fqdn', legendFormat: '{{fqdn}}' },
+]), gridPos={ x: 0, y: 8000 })
+
 .addPanel(
   saturationDetail.saturationDetailPanels(selector, components=[
     'cpu',

@@ -3,11 +3,11 @@ local selectors = import './selectors.libsonnet';
 
 local generateRateQuery(c, aggregationLabels, selector, rangeInterval) =
   local rateQueries = std.map(function(i) i.rateQuery(aggregationLabels, selector, rangeInterval), c.metrics);
-  std.join('\n+\n', rateQueries);
+  std.join('+\n', rateQueries);
 
 local generateChangesQuery(c, aggregationLabels, selector, rangeInterval) =
   local rateQueries = std.map(function(i) i.changesQuery(aggregationLabels, selector, rangeInterval), c.metrics);
-  std.join('\n+\n', rateQueries);
+  std.join('+\n', rateQueries);
 
 
 // "combined" allows two counter metrics to be added together

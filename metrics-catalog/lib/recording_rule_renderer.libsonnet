@@ -25,7 +25,9 @@ local generateErrorRateRules(aggregationLabels, componentDefinition, labels) =
     [];
 
 local generateServiceSLORules(serviceDefinition) =
-  local triggerDurationLabels = if std.objectHas(serviceDefinition.slos, 'alertTriggerDuration') then
+  local hasSlos = std.objectHas(serviceDefinition, 'slos');
+
+  local triggerDurationLabels = if hasSlos && std.objectHas(serviceDefinition.slos, 'alertTriggerDuration') then
     {
       alert_trigger_duration: serviceDefinition.slos.alertTriggerDuration,
     }
@@ -37,14 +39,14 @@ local generateServiceSLORules(serviceDefinition) =
   } + triggerDurationLabels;
 
   std.prune([
-    if std.objectHas(serviceDefinition.slos, 'apdexRatio') then
+    if hasSlos && std.objectHas(serviceDefinition.slos, 'apdexRatio') then
       recordingRules.minApdexSLO(
         labels=labels,
         expr='%g' % [serviceDefinition.slos.apdexRatio]
       )
     else null,
 
-    if std.objectHas(serviceDefinition.slos, 'errorRatio') then
+    if hasSlos && std.objectHas(serviceDefinition.slos, 'errorRatio') then
       recordingRules.maxErrorsSLO(
         labels=labels,
         expr='%g' % [serviceDefinition.slos.errorRatio],
