@@ -32,6 +32,15 @@
       properties: {
         json: {
           properties: {
+            args: {
+              type: 'text',
+              fields: {
+                keyword: {
+                  type: 'keyword',
+                  ignore_above: 256,
+                },
+              },
+            },
             target_id: {
               type: 'text',
               fields: {
