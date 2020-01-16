@@ -182,6 +182,14 @@ In order to fix:
 
 ### remove oldest indices ###
 
+### Fixing conflicts in index mappings ###
+
+In ES7 we rely on dynamic mappings set by the cluster. These mappings are set when the first document arrives at the cluster. If the type of a field is incorrectly detected, the cluster will fail to parse subsequent documents and will refuse to index them. The fix is to set mappings statically in those cases.
+
+Here's an example of a static mapping set for `json.args`: https://gitlab.com/gitlab-com/runbooks/merge_requests/1782
+
+Once the index templates are updated (the above MR is merged and CI job successfully uploaded templates) you'll also need to [force a rollover of indices](../../api_calls/single/force-index-rollover.sh) and [mark the old index as complete](mark-index-complete.sh).
+
 ## Index Lifecycle Management (ILM)
 
 ### esc-tools
