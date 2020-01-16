@@ -24,3 +24,14 @@ groups:
           Warnings could be a result of pubsubbeat being unable to connect to
           Elasticsearch. Consider checking /var/log/pubsubbeat/current on the affected
           host and see what's the cause of the errors.
+    - alert: DroppedLogs
+      expr: rate(pubsubbeat_libbeat_output_events{env="gprd",type="dropped"}[1m]) > 1
+      for: 1m
+      labels:
+        severity: s4
+      annotations:
+        title: Cluster is refusing to process logs sent to it by pubsubbeat
+        description: >
+          pubsubbeat internal metric is reporting logs being dropped by the cluster.
+          Consider checking /var/log/pubsubbeat/current on the affected
+          host and see what's the cause of the errors. One potential source of the problem are conflicting mappings in the index.
