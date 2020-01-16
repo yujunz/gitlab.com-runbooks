@@ -97,20 +97,6 @@ groups:
     expr: >
       sum by (environment, tier, type, stage) (rate(grpc_server_handled_total{type="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1m]))
 
-  # monitoring:thanos
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'thanos'
-    expr: >
-      sum(rate(http_requests_total{job="thanos", code=~"^5.*"}[1m])) by (environment, tier, type, stage)
-
-  # monitoring:prometheus
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'prometheus'
-    expr: >
-      sum(rate(prometheus_http_requests_total{job="prometheus", code=~"^5.*"}[1m])) by (environment, tier, type, stage)
-
 - name: GitLab Service Errors-per-Second Rates
   interval: 1m
   rules:

@@ -5,6 +5,12 @@ local metricsCatalog = import 'metrics-catalog.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local row = grafana.row;
 
+local getLatencyPercentileForService(service) =
+  if std.objectHas(service, 'slos') && std.objectHas(service.slos, 'apdexRatio') then
+    service.slos.apdexRatio
+  else
+    0.95;
+
 {
   componentLatencyPanel(
     title=null,
@@ -19,7 +25,7 @@ local row = grafana.row;
   )::
     local service = metricsCatalog.getService(serviceType);
     local component = service.components[componentName];
-    local percentile = service.slos.apdexRatio;
+    local percentile = getLatencyPercentileForService(service);
 
     basic.latencyTimeseries(
       title=if title == null then 'Estimated latency for ' + componentName else title,

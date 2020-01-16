@@ -76,6 +76,17 @@ dashboard.new(
     minLatency=0.001,
   ), gridPos={ x: 0, y: 5200 }
 )
+.addPanel(
+  metricsCatalogDashboards.componentDetailMatrix(
+    'monitoring',
+    'grafana',
+    selector,
+    [
+      { title: 'Overall', aggregationLabels: '', legendFormat: 'grafana' },
+      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
+    ],
+  ), gridPos={ x: 0, y: 5300 }
+)
 .addPanel(saturationDetail.saturationDetailPanels(selector, components=[
             'cpu',
             'disk_space',
