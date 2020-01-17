@@ -1,3 +1,4 @@
+local basic = import 'basic.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
 local common = import 'container_common_graphs.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
@@ -8,17 +9,10 @@ local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 
-dashboard.new(
+basic.dashboard(
   'Application Info',
-  schemaVersion=16,
   tags=['sidekiq'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.gkeCluster)
 .addTemplate(templates.namespaceGitlab)
 .addTemplate(

@@ -22,17 +22,10 @@ local saturationDetail = import 'saturation_detail.libsonnet';
 
 local selector = 'type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"';
 
-dashboard.new(
+basic.dashboard(
   'Priority Detail',
-  schemaVersion=16,
   tags=['type:sidekiq', 'detail'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addTemplate(template.new(
   'priority',

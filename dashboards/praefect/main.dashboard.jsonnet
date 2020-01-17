@@ -23,17 +23,10 @@ local gitalyCommon = import 'gitaly/gitaly_common.libsonnet';
 
 local selector = 'environment="$environment", type="praefect", stage="$stage"';
 
-dashboard.new(
+basic.dashboard(
   'Praefect',
-  schemaVersion=16,
   tags=['type:praefect'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)
 .addPanels(keyMetrics.headlineMetricsRow('praefect', '$stage', startRow=0))

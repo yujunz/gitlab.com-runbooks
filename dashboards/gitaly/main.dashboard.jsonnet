@@ -23,17 +23,10 @@ local gitalyCommon = import 'gitaly/gitaly_common.libsonnet';
 
 local selector = 'environment="$environment", type="gitaly", stage="$stage"';
 
-dashboard.new(
+basic.dashboard(
   'Overview',
-  schemaVersion=16,
   tags=['type:gitaly'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)
 .addPanels(keyMetrics.headlineMetricsRow('gitaly', '$stage', startRow=0))

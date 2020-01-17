@@ -20,17 +20,10 @@ local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
 local selector = 'environment="$environment", type="ci-runners", stage="$stage"';
 
-dashboard.new(
+basic.dashboard(
   'Overview',
-  schemaVersion=16,
-  tags=['overview'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
+  tags=['ci-runners', 'overview'],
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addPanels(keyMetrics.headlineMetricsRow('ci-runners', '$stage', startRow=0))
 .addPanel(serviceHealth.row('ci-runners', '$stage'), gridPos={ x: 0, y: 500 })

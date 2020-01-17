@@ -9,6 +9,7 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
+local basic = import 'basic.libsonnet';
 
 local generalGraphPanel(
   title,
@@ -131,16 +132,10 @@ local envTemplate = template.new(
   sort=1,
 );
 
-dashboard.new(
+basic.dashboard(
   'Camoproxy',
-  schemaVersion=16,
   tags=['general'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
 .addTemplate(envTemplate)
 .addPanel(
   requestsPanel(),

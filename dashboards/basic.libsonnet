@@ -7,8 +7,55 @@ local row = grafana.row;
 local seriesOverrides = import 'series_overrides.libsonnet';
 local singlestatPanel = grafana.singlestat;
 local tablePanel = grafana.tablePanel;
+local timepickerlib = import 'grafonnet/timepicker.libsonnet';
+local templates = import 'templates.libsonnet';
+local commonAnnotations = import 'common_annotations.libsonnet';
 
 {
+  dashboard(
+    title,
+    tags,
+    editable=false,
+    time_from='now-6h',
+    time_to='now',
+    refresh='',
+    timepicker=timepickerlib.new(),
+    graphTooltip='shared_crosshair',
+    hideControls=false,
+    description=null,
+    includeStandardEnvironmentAnnotations=true,
+    includeEnvironmentTemplate=true,
+  )::
+    local dashboard = grafana.dashboard.new(
+      title,
+      style='light',
+      schemaVersion=16,
+      tags=tags,
+      timezone='utc',
+      graphTooltip=graphTooltip,
+      editable=editable,
+      refresh=refresh,
+      hideControls=false,
+      description=null,
+    )
+                      .addTemplate(templates.ds);  // All dashboards include the `ds` variable
+
+    local dashboardWithAnnotations = if includeStandardEnvironmentAnnotations then
+      dashboard
+      .addAnnotation(commonAnnotations.deploymentsForEnvironment)
+      .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
+      .addAnnotation(commonAnnotations.featureFlags)
+    else
+      dashboard;
+
+    local dashboardWithEnvTemplate = if includeEnvironmentTemplate then
+      dashboardWithAnnotations
+      .addTemplate(templates.environment)
+    else
+      dashboardWithAnnotations;
+
+    dashboardWithEnvTemplate,
+
   heatmap(
     title='Heatmap',
     description='',

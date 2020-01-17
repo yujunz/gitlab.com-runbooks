@@ -9,19 +9,12 @@ local seriesOverrides = import 'series_overrides.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
 local text = grafana.text;
 
-dashboard.new(
+basic.dashboard(
   '2019-07-01 Degraded performance on GitLab.com',
-  schemaVersion=16,
   tags=['rca', 'redis-cache'],
-  timezone='UTC',
-  graphTooltip='shared_crosshair',
   time_from='2019-07-01 00:00:00',
   time_to='2019-07-04 00:00:00',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(layout.grid([
   text.new(
     title='Web apdex',

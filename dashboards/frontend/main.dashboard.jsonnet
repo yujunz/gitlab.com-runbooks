@@ -22,17 +22,10 @@ local saturationDetail = import 'saturation_detail.libsonnet';
 
 local selector = 'environment="$environment", type="frontend", stage="$stage"';
 
-dashboard.new(
+basic.dashboard(
   'Overview',
-  schemaVersion=16,
   tags=['type:frontend', 'haproxy'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)
 .addPanels(keyMetrics.headlineMetricsRow('frontend', '$stage', startRow=0))

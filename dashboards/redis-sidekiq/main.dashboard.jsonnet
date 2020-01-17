@@ -22,17 +22,10 @@ local saturationDetail = import 'saturation_detail.libsonnet';
 
 local selector = 'environment="$environment", type="registry", stage="$stage"';
 
-dashboard.new(
+basic.dashboard(
   'Overview',
-  schemaVersion=16,
-  tags=['redis', 'overview'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
+  tags=['redis-sidekiq', 'overview'],
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(keyMetrics.headlineMetricsRow('redis-sidekiq', '$stage', startRow=0))
 .addPanel(serviceHealth.row('redis-sidekiq', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(

@@ -1,5 +1,6 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 
+local basic = import 'basic.libsonnet';
 local layout = import 'layout.libsonnet';
 local panels = import 'panels.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
@@ -42,16 +43,11 @@ local errorsPanel =
     ),
   );
 
-grafana.dashboard.new(
+basic.dashboard(
   'Cloud NAT',
-  schemaVersion=16,
-  tags=[],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
+  tags=['general'],
   refresh='30s',
 )
-.addTemplate(templates.ds)
-.addTemplate(environmentTemplate)
 .addTemplate(gatewayNameTemplate)
 .addPanels(layout.grid([
   errorsPanel,

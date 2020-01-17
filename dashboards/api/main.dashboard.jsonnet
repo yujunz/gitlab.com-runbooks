@@ -24,17 +24,10 @@ local saturationDetail = import 'saturation_detail.libsonnet';
 
 local selector = 'environment="$environment", type="api", stage="$stage"';
 
-dashboard.new(
+basic.dashboard(
   'Overview',
-  schemaVersion=16,
-  tags=['overview'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
+  tags=['api', 'overview'],
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addPanels(keyMetrics.headlineMetricsRow('api', '$stage', startRow=0))
 .addPanel(serviceHealth.row('api', '$stage'), gridPos={ x: 0, y: 500 })

@@ -21,20 +21,12 @@ local serviceHealth = import 'service_health.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local magicNumbers = (import 'magic_numbers.libsonnet').magicNumbers;
 local gitalyCommon = import 'gitaly/gitaly_common.libsonnet';
-
 local selector = 'environment="$environment", fqdn=~"$fqdn"';
 
-dashboard.new(
+basic.dashboard(
   'Host Detail',
-  schemaVersion=16,
   tags=['type:gitaly'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.fqdn(query='gitlab_version_info{type="gitaly", component="gitaly", environment="$environment"}', current='file-01-stor-gprd.c.gitlab-production.internal'))
 .addPanel(
   row.new(title='Node Performance'),

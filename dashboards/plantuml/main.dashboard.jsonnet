@@ -9,15 +9,10 @@ local heatmapPanel = grafana.heatmapPanel;
 local row = grafana.row;
 local text = grafana.text;
 
-dashboard.new(
+basic.dashboard(
   'Overview',
-  schemaVersion=16,
-  tags=['overview'],
-  timezone='utc',
-  graphTooltip='shared_crosshair'
+  tags=['plantuml', 'overview'],
 )
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.gkeCluster)
 .addPanel(
   row.new(title='Stackdriver Logs'),
