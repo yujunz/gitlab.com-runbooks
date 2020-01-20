@@ -19,7 +19,7 @@
         },
         routing: {
           allocation: {
-            total_shards_per_node: 6,
+            total_shards_per_node: 3,
           },
         },
       },
