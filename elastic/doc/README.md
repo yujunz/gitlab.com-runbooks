@@ -7,6 +7,7 @@
     - [Historical notes](#historical-notes)
 - [How-to guides](#how-to-guides)
     - [Performing operations on the Elastic cluster](#performing-operations-on-the-elastic-cluster)
+    - [Estimating Log Volume and Cluster Size](#estimating-log-volume-and-cluster-size)
 - [Concepts](#concepts)
     - [Elastic learning materials](#elastic-learning-materials)
     - [Design Document (Elastic at Gitlab)](#design-document-elastic-at-gitlab)
@@ -45,7 +46,53 @@ TODO: link here design docs once they are ready
 
 ## Performing operations on the Elastic cluster ##
 
-One time Elastic operations should be documented as `api_call` s in this repo. Everything else should be managed using CI.
+One time Elastic operations should be documented as `api_call` s in this repo. Everything else, for example cluster config, index templates, should be managed using CI (with the exception of dashboards and visualizations created in Kibana by users).
+
+## Estimating Log Volume and Cluster Size
+
+If we know how much log volume we are indexing per day, how many resources we
+are using on our cluster, the desired retention period and how much log volume
+we want to add, then we can estimate the needed cluster size.
+
+Currently, fluentd is sending all logs to stackdriver and some logs to GCP
+PubSub. We have pubsubbeat nodes for each topic, sending the logs into elastic.
+
+### What is going to Stackdriver?
+
+Stackdriver is ingesting everything - around **50TiB** per month as of 17-01-2020: [Resources
+view](https://console.cloud.google.com/logs/usage?authuser=1&project=gitlab-production)
+
+[haproxy logs](https://console.cloud.google.com/monitoring/metrics-explorer?pageState=%7B%22xyChart%22:%7B%22dataSets%22:%5B%7B%22timeSeriesFilter%22:%7B%22filter%22:%22metric.type%3D%5C%22logging.googleapis.com%2Fexports%2Fbyte_count%5C%22%20resource.type%3D%5C%22logging_sink%5C%22%20resource.label.%5C%22name%5C%22%3D%5C%22haproxy_logs%5C%22%22,%22perSeriesAligner%22:%22ALIGN_RATE%22,%22crossSeriesReducer%22:%22REDUCE_NONE%22,%22secondaryCrossSeriesReducer%22:%22REDUCE_NONE%22,%22minAlignmentPeriod%22:%2260s%22,%22groupByFields%22:%5B%5D,%22unitOverride%22:%22By%22%7D,%22targetAxis%22:%22Y1%22,%22plotType%22:%22LINE%22%7D%5D,%22options%22:%7B%22mode%22:%22COLOR%22%7D,%22constantLines%22:%5B%5D,%22timeshiftDuration%22:%220s%22,%22y1Axis%22:%7B%22label%22:%22y1Axis%22,%22scale%22:%22LINEAR%22%7D%7D,%22isAutoRefresh%22:true,%22timeSelection%22:%7B%22timeRange%22:%221w%22%7D%7D&project=gitlab-production)
+are send into a GCP sink instead of to pubsub/elastic because of their
+size (10MiB/s or **850GiB/day**).
+
+### What is the Volume of our PubSub topics?
+
+[Average daily pubsub volume per topic in GiB](https://thanos-query.ops.gitlab.net/graph?g0.range_input=2w&g0.max_source_resolution=0s&g0.expr=avg_over_time(stackdriver_pubsub_topic_pubsub_googleapis_com_topic_byte_cost%7Benv%3D%22gprd%22%7D%5B1d%5D)*60*24%2F1024%2F1024%2F1024&g0.tab=0)
+(base unit in prometheus is Byte/minute for this metric).
+
+[Same metric in Stackdriver metrics explorer](https://console.cloud.google.com/monitoring/metrics-explorer?authuser=1&project=gitlab-production&pageState=%7B%22xyChart%22:%7B%22dataSets%22:%5B%7B%22timeSeriesFilter%22:%7B%22filter%22:%22metric.type%3D%5C%22pubsub.googleapis.com%2Ftopic%2Fbyte_cost%5C%22%20resource.type%3D%5C%22pubsub_topic%5C%22%22,%22perSeriesAligner%22:%22ALIGN_RATE%22,%22crossSeriesReducer%22:%22REDUCE_NONE%22,%22secondaryCrossSeriesReducer%22:%22REDUCE_NONE%22,%22minAlignmentPeriod%22:%2260s%22,%22groupByFields%22:%5B%5D,%22unitOverride%22:%22By%22%7D,%22targetAxis%22:%22Y1%22,%22plotType%22:%22LINE%22%7D%5D,%22options%22:%7B%22mode%22:%22COLOR%22%7D,%22constantLines%22:%5B%5D,%22timeshiftDuration%22:%220s%22,%22y1Axis%22:%7B%22label%22:%22y1Axis%22,%22scale%22:%22LINEAR%22%7D%7D,%22isAutoRefresh%22:true,%22timeSelection%22:%7B%22timeRange%22:%221m%22%7D%7D) (Byte/s)
+
+Total of **1.3TiB/day** as of 17-01-2020 (nginx being excluded).
+
+### How much elastic storage are we using per day?
+
+As we have one index alias per pubsub topic and in ES5 cluster (`gitlab-production`) we use a naming convention for
+rolled-over indices to add the date and a counter, we can grep the elastic cat
+api for each pubsub index alias and add together the size of all indices
+belonging to the same alias with the same day in the name to get the daily index
+volume.  [../api_calls/single/get-index-stats-summary.sh]
+is doing that for you.
+
+The results as of 16-01-2020 are analyzed in
+[this sheet](https://docs.google.com/spreadsheets/d/1RN7Ry2pI7iTFURqb0G5zjhNp7xkiPSVG-YsoBOO3TFw).
+
+**We can conclude from this, that index volume (with one replica shard) is around
+3 times the volume of the corresponding pubsub topic.**
+
+As of 17-01-2020 we are using ca. **4TiB elastic storage per day** (only pubsub topics, excluding
+nginx). That means for a **7 day retention** we consume around 28TiB storage. Adding
+nginx logs would increase that by 0.6TiB/day (15%), haproxy logs by 2.5TiB/day (63%).
 
 # Concepts #
 
