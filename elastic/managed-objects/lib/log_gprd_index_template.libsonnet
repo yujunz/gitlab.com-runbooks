@@ -50,10 +50,21 @@
                 },
               },
             },
+            jsonPayload: {
+              properties: {
+                err: {
+                  properties: {
+                    detail: {
+                      type: 'text',
+                      index: false,
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
     },
-
   },
 }
