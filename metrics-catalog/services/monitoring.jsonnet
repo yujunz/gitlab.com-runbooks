@@ -6,10 +6,12 @@ local customQuery = metricsCatalog.customQuery;
 {
   type: 'monitoring',
   tier: 'inf',
-  autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this service
   slos: {
+    /*
+    TODO: enable SLOs for monitoring service
     apdexRatio: 0.95,
     errorRatio: 0.005,
+    */
   },
   components: {
     thanos_query: {
@@ -47,6 +49,18 @@ local customQuery = metricsCatalog.customQuery;
       errorRate: rateMetric(
         counter='grpc_server_handled_total',
         selector='job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"'
+      ),
+    },
+
+    grafana: {
+      requestRate: rateMetric(
+        counter='http_request_total',
+        selector='job="grafana"'
+      ),
+
+      errorRate: rateMetric(
+        counter='http_request_total',
+        selector='job="grafana", statuscode=~"^5.*"'
       ),
     },
 

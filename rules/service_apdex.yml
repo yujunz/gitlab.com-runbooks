@@ -358,46 +358,6 @@ groups:
     expr: >
       sum(job:gitlab_cache_operation_duration_seconds_bucket:rate1m{le="+Inf"}) by (environment)
 
-  # monitoring: thanos
-  - record: gitlab_component_apdex:ratio
-    labels:
-      component: 'thanos'
-    expr: >
-      (
-        sum(rate(http_request_duration_seconds_bucket{job="thanos", le="1"}[1m])) by (environment, tier, type, stage)
-        +
-        sum(rate(http_request_duration_seconds_bucket{job="thanos", le="5"}[1m])) by (environment, tier, type, stage)
-      )
-      / 2
-      /
-      sum(rate(http_request_duration_seconds_bucket{job="thanos", le="+Inf"}[1m])) by (environment, tier, type, stage) >= 0
-
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      component: 'thanos'
-    expr: >
-      sum(rate(http_request_duration_seconds_bucket{job="thanos", le="+Inf"}[1m])) by (environment, tier, type, stage)
-
-  # metrics: prometheus http request
-  - record: gitlab_component_apdex:ratio
-    labels:
-      component: 'prometheus_http'
-    expr: >
-      (
-        sum(rate(prometheus_http_request_duration_seconds_bucket{le="1", type="monitoring"}[1m])) by (environment, tier, type, stage)
-        +
-        sum(rate(prometheus_http_request_duration_seconds_bucket{le="0.4", type="monitoring"}[1m])) by (environment, tier, type, stage)
-      )
-      / 2
-      /
-      sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage) >= 0
-
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      component: 'prometheus_http'
-    expr: >
-      sum(rate(prometheus_http_request_duration_seconds_bucket{le="+Inf", type="monitoring"}[1m])) by (environment, tier, type, stage)
-
   ######################
   # Aggregation Stage
   ######################

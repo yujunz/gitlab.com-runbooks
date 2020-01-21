@@ -114,27 +114,6 @@ groups:
     expr: >
       sum(rate(haproxy_backend_http_responses_total{backend=~"canary_.*"}[1m])) by (environment, tier)
 
-  # monitoring: thanos_instant_query
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'thanos_instant_query'
-    expr: >
-      sum(rate(thanos_query_api_instant_query_duration_seconds_count{type="monitoring"}[1m])) by (environment, tier, type, stage)
-
-  # monitoring: thanos_range_query
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'thanos_range_query'
-    expr: >
-      sum(rate(thanos_query_api_range_query_duration_seconds_count{type="monitoring"}[1m])) by (environment, tier, type, stage)
-
-  # monitoring: prometheus http request
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'prometheus_http'
-    expr: >
-      sum(rate(prometheus_http_request_duration_seconds_count{type="monitoring"}[1m])) by (environment, tier, type, stage)
-
   # Stackdriver
   - record: gitlab_component_ops:rate
     labels:
