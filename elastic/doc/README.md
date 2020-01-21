@@ -109,6 +109,8 @@ Because Elastic Cloud is running on infrastructure that we do not manage or have
 
 When monitoring is enabled and configured to send metrics to another Elastic cluster, it's the receiving clusters' responsibility to handle metrics rotation, i.e. the receiving cluster needs to have retention configured. For more details see: https://www.elastic.co/guide/en/cloud/current/ec-enable-monitoring.html#ec-monitoring-retention  and https://www.elastic.co/guide/en/elasticsearch/reference/current/monitoring-settings.html
 
+Apart from monitoring using x-pack metrics + watches, we are also using a blackbox exporter in our infrastructure. It's used for monitoring selected API endpoints, such as ILM explain API.
+
 ## Alerting ##
 
 Since we cannot use our Alertmanager, Elasticsearch Watches have to be used for alerting. They will be configured on the Elastic cluster used for storing monitoring indices.
