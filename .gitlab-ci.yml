@@ -60,6 +60,24 @@ rubocop:
     - gem install bundler etc json --no-document
     - bundle
     - rubocop ./bin/create_kubernetes_rules.rb ./lib/* ./spec/*
+    # Until https://gitlab.com/gitlab-com/runbooks/issues/26
+    # - rubocop ./scripts/*.rb
+
+# Until https://gitlab.com/gitlab-com/runbooks/issues/26
+rubocop-storage_cleanup:
+  stage: test
+  script:
+    - gem install bundler etc json --no-document
+    - bundle
+    - rubocop ./scripts/storage_cleanup.rb
+
+rubocop-scripts:
+  stage: test
+  allow_failure: true # Until https://gitlab.com/gitlab-com/runbooks/issues/26
+  script:
+    - gem install bundler etc json --no-document
+    - bundle
+    - rubocop ./scripts/*.rb
 
 rspec:
   stage: test
