@@ -110,6 +110,44 @@ tf import module.gitlab-gke.google_container_node_pool.node_pool[0] gitlab-produ
 * Pod Metrics for Mailroom: https://dashboards.gitlab.net/d/mailroom-pod/mailroom-pod-info?orgId=1&from=now-12h&to=now&var-PROMETHEUS_DS=Global&var-environment=gstg&var-cluster=gstg-gitlab-gke&var-namespace=gitlab&var-Node=All&var-Deployment=gitlab-mailroom
 * General service metrics for Registry: https://dashboards.gitlab.net/d/general-service/general-service-platform-metrics?orgId=1&var-type=registry&from=now-1h&to=now
 
+## Manual Scaling a Deployment
+
+In times of emergency, whether it be a security issue, identified abuse, and/or
+an incident where there's great pressure in our infrastructure, it may be
+necessary to manually set the scale of a Deployment.  When a Deployment is setup
+with a Horizontal Pod Autoscaler (HPA), and we need to manually scale, be aware
+that the HPA will fail to autoscale if we scale down to 0 Pods.  Also keep in
+mind that an HPA will process metrics on a regular cadence, if you scale w/i the
+window of the HPA configuration, the manual override will quickly be taken over
+by the HPA.
+
+To scale a deployment, run the following example command:
+
+```
+kubectl scale <DEPLOYMENT_NAME> --replicas=<X>
+```
+
+Example, scale Deployment `gitlab-sidekiq-export` to 0 Pods:
+
+```
+kubectl scale deployments/gitlab-sidekiq-export --replicas=0
+```
+
+The `DEPLOYMENT_NAME` represents the Deployment associated and managing the Pods
+that are running.  `X` represents the desired number of Pods you wish to run.
+
+After an event is over, the HPA will need at least 1 Pod running in order to
+perform its task of autoscaling the Deployment.  For this, we can rerun a
+similar command above, using the below as an example:
+
+```
+kubectl scale deployments/gitlab-sidekiq-export --replicas=1
+```
+
+Refer to existing Kubernetes documentation for reference and further details:
+* https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+* https://github.com/kubernetes/community/blob/master/contributors/design-proposals/autoscaling/horizontal-pod-autoscaler.md
+
 ## Attaching to a running container
 
 ### Using Docker
