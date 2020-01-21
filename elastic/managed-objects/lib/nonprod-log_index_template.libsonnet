@@ -50,8 +50,12 @@
                 err: {
                   properties: {
                     detail: {
-                      type: 'text',
-                      index: false,
+                      // json.jsonPayload.err.detail, emitted by docker registry
+                      // pods (currently in the GKE index), is irregularly
+                      // formed: sometimes it's a string, sometimes a json. We
+                      // must skip processing entirely to avoid dropping some
+                      // logs, and view this field in _source only.
+                      enabled: false,
                     },
                   },
                 },
