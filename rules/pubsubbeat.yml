@@ -25,7 +25,7 @@ groups:
           Elasticsearch. Consider checking /var/log/pubsubbeat/current on the affected
           host and see what's the cause of the errors.
     - alert: DroppedLogs
-      expr: rate(pubsubbeat_libbeat_output_events{env="gprd",type="dropped"}[1m]) > 1
+      expr: rate(pubsubbeat_libbeat_output_events{type="dropped"}[1m]) > 1
       for: 1m
       labels:
         severity: s4
