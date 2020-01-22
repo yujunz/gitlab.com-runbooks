@@ -28,17 +28,10 @@ local sidekiqQueueLatency() =
   )
   .addSeriesOverride(seriesOverrides.thresholdSeries('threshold'));
 
-dashboard.new(
+basic.dashboard(
   'Worker Apdex Violation Alert',
-  schemaVersion=16,
   tags=['alert-target', 'sidekiq'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.sidekiqQueue)
 .addTemplate(
   template.custom(

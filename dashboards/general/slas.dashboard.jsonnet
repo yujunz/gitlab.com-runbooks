@@ -101,30 +101,10 @@ local slaBarGauge(title, query, legendFormat) = {
   type: 'bargauge',
 };
 
-dashboard.new(
+basic.dashboard(
   'SLAs',
-  schemaVersion=16,
-  tags=['overview'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
-  time_from='now-30d',
-  time_to='now',
-  timepicker={
-    refresh_intervals: [],
-    time_options: [
-      '7d',
-      '14d',
-      '30d',
-      '45d',
-      '60d',
-      '90d',
-      '120d',
-      '180d',
-    ],
-  },
+  tags=['general'],
 )
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanel(
   row.new(title='Headline'),
   gridPos={

@@ -6,21 +6,15 @@ local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
+local basic = import 'basic.libsonnet';
 
 local rowHeight = 8;
 local colWidth = 12;
 
-dashboard.new(
+basic.dashboard(
   'Capacity Planning',
-  schemaVersion=16,
   tags=['general'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(capacityPlanning.environmentCapacityPlanningPanels())
 + {
   links+: platformLinks.services,

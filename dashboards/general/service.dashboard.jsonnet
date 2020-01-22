@@ -15,6 +15,7 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
+local basic = import 'basic.libsonnet';
 
 local generalGraphPanel(title, description=null, linewidth=2, sort='increasing') =
   graphPanel.new(
@@ -47,18 +48,10 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing')
   .addSeriesOverride(seriesOverrides.outageSlo)
   .addSeriesOverride(seriesOverrides.slo);
 
-
-dashboard.new(
+basic.dashboard(
   'Service Platform Metrics',
-  schemaVersion=16,
   tags=['general'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.type)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)

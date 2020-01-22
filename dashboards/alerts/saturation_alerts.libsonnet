@@ -9,6 +9,7 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
+local basic = import 'basic.libsonnet';
 
 local selector = 'environment="$environment", type="$type", stage="$stage"';
 
@@ -19,21 +20,14 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
     panel,
     helpPanel
   )::
-    dashboard.new(
+    basic.dashboard(
       dashboardTitle,
-      schemaVersion=16,
       tags=[
         'alert-target',
         'saturationdetail',
         if component != '$component' then 'saturationdetail:' + component else 'saturationdetail:general',
       ],
-      timezone='utc',
-      graphTooltip='shared_crosshair',
     )
-    .addAnnotation(commonAnnotations.deploymentsForEnvironment)
-    .addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-    .addTemplate(templates.ds)
-    .addTemplate(templates.environment)
     .addTemplate(templates.type)
     .addTemplate(templates.stage)
     .addPanel(panel, gridPos={ x: 0, y: 0, h: 20, w: 24 })

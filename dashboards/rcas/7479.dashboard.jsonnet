@@ -7,19 +7,12 @@ local layout = import 'layout.libsonnet';
 local basic = import 'basic.libsonnet';
 local text = grafana.text;
 
-dashboard.new(
+basic.dashboard(
   'Gitaly n+1 calls causing bad latency and sidekiq queues to grow',
-  schemaVersion=16,
   tags=['rca'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
   time_from='2019-08-07 22:00:00',
   time_to='2019-08-08 18:00:00',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(layout.grid([
   text.new(
     title='CPU on Gitaly',

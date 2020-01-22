@@ -8,17 +8,10 @@ local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 
-dashboard.new(
+basic.dashboard(
   'Application Info',
-  schemaVersion=16,
   tags=['mailroom'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.gkeCluster)
 .addTemplate(templates.namespaceGitlab)
 .addTemplate(

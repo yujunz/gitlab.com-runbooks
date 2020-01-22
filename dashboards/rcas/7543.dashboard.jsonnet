@@ -1,38 +1,18 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 local dashboard = grafana.dashboard;
 
-// local seriesOverrides = import 'series_overrides.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
-// local promQuery = import 'prom_query.libsonnet';
 local templates = import 'templates.libsonnet';
-// local colors = import 'colors.libsonnet';
-// local platformLinks = import 'platform_links.libsonnet';
-// local capacityPlanning = import 'capacity_planning.libsonnet';
 local layout = import 'layout.libsonnet';
 local basic = import 'basic.libsonnet';
-// local redisCommon = import 'redis_common_graphs.libsonnet';
-// local nodeMetrics = import 'node_metrics.libsonnet';
-// local keyMetrics = import 'key_metrics.libsonnet';
-// local serviceCatalog = import 'service_catalog.libsonnet';
-// local row = grafana.row;
-// local template = grafana.template;
-// local graphPanel = grafana.graphPanel;
-// local annotation = grafana.annotation;
 local text = grafana.text;
 
-dashboard.new(
+basic.dashboard(
   '2019-08-14 long degradation after postgres failover',
-  schemaVersion=16,
   tags=['rca'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
   time_from='2019-08-14 06:00:00',
   time_to='2019-08-14 22:00:00',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(layout.grid([
   text.new(
     title='Loopback traffic on patroni-01',

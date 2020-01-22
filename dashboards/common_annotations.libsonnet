@@ -16,4 +16,11 @@ local annotation = grafana.annotation;
     builtIn=1,
     iconColor='#FFEE52',
   ),
+  featureFlags:: annotation.datasource(
+    'feature-flags',
+    '-- Grafana --',
+    tags=['feature-flag', '${environment}'],
+    builtIn=1,
+    iconColor='#CA95E5',
+  ),
 }

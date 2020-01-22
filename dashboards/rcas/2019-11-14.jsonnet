@@ -15,18 +15,12 @@ local text = grafana.text;
 local rcaLayout = import 'rcas/rca.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 
-dashboard.new(
+basic.dashboard(
   '2019-11-14',
-  schemaVersion=16,
   tags=['rca'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
   time_from='2019-11-11T00:00:00.000Z',
   time_to='now',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(rcaLayout.rcaLayout([
   {
     description: |||

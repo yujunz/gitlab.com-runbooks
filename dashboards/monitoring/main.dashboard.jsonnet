@@ -25,17 +25,10 @@ local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
 local selector = 'environment="$environment", type="monitoring", stage="$stage"';
 
-dashboard.new(
+basic.dashboard(
   'Overview',
-  schemaVersion=16,
   tags=['overview'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addPanels(keyMetrics.headlineMetricsRow('monitoring', '$stage', startRow=0))
 .addPanel(serviceHealth.row('monitoring', '$stage'), gridPos={ x: 0, y: 500 })

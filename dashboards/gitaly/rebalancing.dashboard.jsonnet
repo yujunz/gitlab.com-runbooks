@@ -1,3 +1,4 @@
+local basic = import 'basic.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
 local layout = import 'layout.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
@@ -41,15 +42,10 @@ local balanceChart(title, description, format, legendFormat, query) =
     },
   };
 
-dashboard.new(
+basic.dashboard(
   'Rebalance Dashboard',
-  schemaVersion=16,
   tags=['gitaly', 'type:gitaly'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(
   layout.grid([
     balanceChart(

@@ -11,6 +11,7 @@ local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
+local basic = import 'basic.libsonnet';
 
 local rowHeight = 8;
 local colWidth = 12;
@@ -160,17 +161,10 @@ local activeAlertsPanel =
     )
   );
 
-dashboard.new(
+basic.dashboard(
   'Platform Triage',
-  schemaVersion=16,
   tags=['general'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addTemplate(templates.stage)
 .addPanel(activeAlertsPanel, gridPos=genGridPos(0, 0, w=2, h=0.5))
 .addPanel(

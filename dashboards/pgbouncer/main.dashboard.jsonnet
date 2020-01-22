@@ -23,17 +23,10 @@ local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 
 local selector = 'type="pgbouncer", environment="$environment"';
 
-dashboard.new(
+basic.dashboard(
   'Overview',
-  schemaVersion=16,
   tags=['pgbouncer'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(keyMetrics.headlineMetricsRow('pgbouncer', '$stage', startRow=0))
 .addPanel(serviceHealth.row('pgbouncer', '$stage'), gridPos={ x: 0, y: 500 })
 .addPanel(

@@ -20,16 +20,13 @@ local healthRatioPanel() = basic.timeseries(
   linewidth=2
 );
 
-dashboard.new(
+
+basic.dashboard(
   'GCP Load Balancer Alert',
-  schemaVersion=16,
   tags=['alert-target', 'gcp'],
-  timezone='utc',
   graphTooltip='shared_crosshair',
+  includeEnvironmentTemplate=false
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addAnnotation(commonAnnotations.deploymentsForEnvironmentCanary)
-.addTemplate(templates.ds)
 .addTemplate(template.new(
   'load_balancer_name',
   '$PROMETHEUS_DS',
