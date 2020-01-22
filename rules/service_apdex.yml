@@ -2,28 +2,6 @@ groups:
 - name: GitLab Component Apdex Scores
   interval: 1m
   rules:
-
-  # registry
-  # Satisfied -> 1 seconds
-  # Acceptable -> 2.5 seconds
-  - record: gitlab_component_apdex:ratio
-    labels:
-      component: 'registry'
-    expr: >
-      (
-        sum(rate(registry_http_request_duration_seconds_bucket{type="registry", le="1"}[1m])) by (environment, type, tier, stage)
-      +
-        sum(rate(registry_http_request_duration_seconds_bucket{type="registry", le="2.5"}[1m])) by (environment, type, tier, stage)
-      )
-      /
-      2 / sum(rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])) by (environment, type, tier, stage)
-
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      component: 'registry'
-    expr: >
-      sum(rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])) by (environment, type, tier, stage)
-
   # web:workhorse
   # Satisfied -> 1 seconds
   # Acceptable -> 10 seconds
