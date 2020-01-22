@@ -1,6 +1,7 @@
 [
   import 'api.jsonnet',
   import 'ci-runners.jsonnet',
+  import 'frontend.jsonnet',
   import 'git.jsonnet',
   import 'gitaly.jsonnet',
   import 'monitoring.jsonnet',

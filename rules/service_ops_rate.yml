@@ -99,21 +99,6 @@ groups:
     expr: >
       sum(rate(gitlab_pages_http_requests_total{}[1m])) by (environment, tier, type, stage)
 
-  # HAProxy
-  - record: gitlab_component_ops:rate
-    labels:
-      type: 'frontend'
-      stage: 'main'
-    expr: >
-      sum(rate(haproxy_backend_http_responses_total{backend!~"canary_.*"}[1m])) by (environment, tier)
-
-  - record: gitlab_component_ops:rate
-    labels:
-      type: 'frontend'
-      stage: 'cny'
-    expr: >
-      sum(rate(haproxy_backend_http_responses_total{backend=~"canary_.*"}[1m])) by (environment, tier)
-
   # Stackdriver
   - record: gitlab_component_ops:rate
     labels:
