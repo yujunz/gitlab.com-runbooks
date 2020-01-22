@@ -170,7 +170,7 @@ groups:
       type: frontend
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_response_errors_total{type="frontend", backend=~"canary_.*", }[1m])
+        rate(haproxy_backend_response_errors_total{type="frontend", backend=~"canary_.*"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:

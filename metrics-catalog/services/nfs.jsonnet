@@ -20,6 +20,19 @@ local customQuery = metricsCatalog.customQuery;
         counter='node_nfsd_rpc_errors_total',
         selector='type="nfs"'
       ),
+
+      significantLabels: ['fqdn'],
     },
   },
+
+  saturationTypes: [
+    'cpu',
+    'disk_space',
+    'disk_sustained_read_iops',
+    'disk_sustained_read_throughput',
+    'disk_sustained_write_iops',
+    'disk_sustained_write_throughput',
+    'memory',
+    'open_fds',
+  ],
 }

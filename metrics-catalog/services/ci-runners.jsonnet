@@ -58,4 +58,10 @@ local customQuery = metricsCatalog.customQuery;
       ),
     },
   },
+
+  saturationTypes: [
+    'private_runners',
+    'shared_runners',
+    'shared_runners_gitlab',
+  ],
 }

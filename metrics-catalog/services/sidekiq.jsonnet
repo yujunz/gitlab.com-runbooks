@@ -28,6 +28,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='sidekiq_jobs_failed_total',
         selector='latency_sensitive="yes"'
       ),
+
+      significantLabels: ['queue'],
     },
 
     latency_sensitive_job_queueing: {
@@ -38,6 +40,8 @@ local customQuery = metricsCatalog.customQuery;
       ),
 
       // TODO: monitor enqueing rates, once we have the appropriate instrumentation
+
+      significantLabels: ['queue'],
     },
 
     non_latency_sensitive_job_execution: {
@@ -56,6 +60,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='sidekiq_jobs_failed_total',
         selector='latency_sensitive="no"'
       ),
+
+      significantLabels: ['queue'],
     },
 
     non_latency_sensitive_job_queueing: {
@@ -66,7 +72,19 @@ local customQuery = metricsCatalog.customQuery;
       ),
 
       // TODO: monitor enqueing rates, once we have the appropriate instrumentation
-    },
 
+      significantLabels: ['queue'],
+    },
   },
+
+  saturationTypes: [
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'sidekiq_workers',
+    'single_node_cpu',
+    'single_node_unicorn_workers',
+    'workers',
+  ],
 }

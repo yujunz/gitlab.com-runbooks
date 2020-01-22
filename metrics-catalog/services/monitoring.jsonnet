@@ -31,6 +31,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='http_requests_total',
         selector='job="thanos", type="monitoring", code=~"^5.*"'
       ),
+
+      significantLabels: ['fqdn'],
     },
 
     thanos_store: {
@@ -50,6 +52,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='grpc_server_handled_total',
         selector='job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"'
       ),
+
+      significantLabels: ['fqdn'],
     },
 
     grafana: {
@@ -62,6 +66,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='http_request_total',
         selector='job="grafana", statuscode=~"^5.*"'
       ),
+
+      significantLabels: ['fqdn'],
     },
 
     prometheus: {
@@ -81,7 +87,17 @@ local customQuery = metricsCatalog.customQuery;
         counter='prometheus_http_requests_total',
         selector='job="prometheus", type="monitoring", code=~"^5.*"'
       ),
-    },
 
+      significantLabels: ['fqdn'],
+    },
   },
+
+  saturationTypes: [
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'single_node_cpu',
+    'go_memory',
+  ],
 }

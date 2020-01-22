@@ -29,6 +29,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='gitlab_workhorse_http_requests_total',
         selector='job="gitlab-workhorse-git", type="git", code=~"^5.*"'
       ),
+
+      significantLabels: ['fqdn', 'route'],
     },
 
     unicorn: {
@@ -48,6 +50,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='http_request_duration_seconds_count',
         selector='job="gitlab-rails", type="git", status=~"5.."'
       ),
+
+      significantLabels: ['fqdn', 'method'],
     },
 
     gitlab_shell: {
@@ -59,6 +63,18 @@ local customQuery = metricsCatalog.customQuery;
       requestRate: customQuery(|||
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
       |||),
+
+      significantLabels: [],
     },
   },
+
+  saturationTypes: [
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'single_node_cpu',
+    'single_node_unicorn_workers',
+    'workers',
+  ],
 }

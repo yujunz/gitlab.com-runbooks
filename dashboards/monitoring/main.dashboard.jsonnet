@@ -22,74 +22,9 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
+local serviceDashboard = import 'service_dashboard.libsonnet';
 
 local selector = 'environment="$environment", type="monitoring", stage="$stage"';
 
-basic.dashboard(
-  'Overview',
-  tags=['overview'],
-)
-.addTemplate(templates.stage)
-.addPanels(keyMetrics.headlineMetricsRow('monitoring', '$stage', startRow=0))
-.addPanel(serviceHealth.row('monitoring', '$stage'), gridPos={ x: 0, y: 500 })
-.addPanel(keyMetrics.keyServiceMetricsRow('monitoring', '$stage'), gridPos={ x: 0, y: 4000 })
-.addPanel(
-  metricsCatalogDashboards.componentDetailMatrix(
-    'monitoring',
-    'prometheus',
-    selector,
-    [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'prometheus' },
-      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
-    ],
-    minLatency=0.001,
-  ), gridPos={ x: 0, y: 5000 }
-)
-.addPanel(
-  metricsCatalogDashboards.componentDetailMatrix(
-    'monitoring',
-    'thanos_query',
-    selector,
-    [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'thanos_query' },
-      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
-    ],
-    minLatency=0.001,
-  ), gridPos={ x: 0, y: 5100 }
-)
-.addPanel(
-  metricsCatalogDashboards.componentDetailMatrix(
-    'monitoring',
-    'thanos_store',
-    selector,
-    [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'thanos_store' },
-      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
-    ],
-    minLatency=0.001,
-  ), gridPos={ x: 0, y: 5200 }
-)
-.addPanel(
-  metricsCatalogDashboards.componentDetailMatrix(
-    'monitoring',
-    'grafana',
-    selector,
-    [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'grafana' },
-      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
-    ],
-  ), gridPos={ x: 0, y: 5300 }
-)
-.addPanel(saturationDetail.saturationDetailPanels(selector, components=[
-            'cpu',
-            'disk_space',
-            'memory',
-            'open_fds',
-            'single_node_cpu',
-            'go_memory',
-          ]),
-          gridPos={ x: 0, y: 7000, w: 24, h: 1 })
-.addPanel(capacityPlanning.capacityPlanningRow('monitoring', '$stage'), gridPos={ x: 0, y: 8000 })
-+ {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('monitoring') + platformLinks.services,
-}
+serviceDashboard.overview('monitoring', 'inf')
+.overviewTrailer()

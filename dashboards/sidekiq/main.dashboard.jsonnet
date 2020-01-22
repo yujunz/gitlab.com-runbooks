@@ -1,37 +1,14 @@
 local basic = import 'basic.libsonnet';
-local capacityPlanning = import 'capacity_planning.libsonnet';
 local colors = import 'colors.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
-local keyMetrics = import 'key_metrics.libsonnet';
 local layout = import 'layout.libsonnet';
-local nodeMetrics = import 'node_metrics.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
 local railsCommon = import 'rails_common_graphs.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
-local serviceCatalog = import 'service_catalog.libsonnet';
-local templates = import 'templates.libsonnet';
-local unicornCommon = import 'unicorn_common_graphs.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
-local template = grafana.template;
-local graphPanel = grafana.graphPanel;
-local annotation = grafana.annotation;
 local sidekiq = import 'sidekiq.libsonnet';
-local serviceHealth = import 'service_health.libsonnet';
-local saturationDetail = import 'saturation_detail.libsonnet';
-local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
+local serviceDashboard = import 'service_dashboard.libsonnet';
 
-local selector = 'environment="$environment", type="sidekiq", stage="$stage"';
-
-basic.dashboard(
-  'Overview',
-  tags=['type:sidekiq', 'overview'],
-)
-.addTemplate(templates.stage)
-.addPanels(keyMetrics.headlineMetricsRow('sidekiq', '$stage', startRow=0))
-.addPanel(serviceHealth.row('sidekiq', '$stage'), gridPos={ x: 0, y: 500 })
+serviceDashboard.overview('sidekiq', 'sv')
 .addPanel(
   row.new(title='Sidekiq Queues'),
   gridPos={
@@ -240,73 +217,4 @@ basic.dashboard(
     h: 1,
   }
 )
-.addPanel(keyMetrics.keyServiceMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 6000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('sidekiq', '$stage'), gridPos={ x: 0, y: 7000 })
-.addPanel(
-  metricsCatalogDashboards.componentDetailMatrix(
-    'sidekiq',
-    'latency_sensitive_job_execution',
-    'environment="$environment", type="sidekiq", stage="$stage"',
-    [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'latency_sensitive_job_execution' },
-      { title: 'per Queue', aggregationLabels: 'queue', legendFormat: '{{ queue }}' },
-    ],
-  ), gridPos={ x: 0, y: 7100 }
-)
-.addPanel(
-  metricsCatalogDashboards.componentDetailMatrix(
-    'sidekiq',
-    'latency_sensitive_job_queueing',
-    'environment="$environment", type="sidekiq", stage="$stage"',
-    [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'latency_sensitive_job_queueing' },
-      { title: 'per Queue', aggregationLabels: 'queue', legendFormat: '{{ queue }}' },
-    ],
-  ), gridPos={ x: 0, y: 7200 }
-)
-.addPanel(
-  metricsCatalogDashboards.componentDetailMatrix(
-    'sidekiq',
-    'non_latency_sensitive_job_execution',
-    'environment="$environment", type="sidekiq", stage="$stage"',
-    [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'non_latency_sensitive_job_execution' },
-      { title: 'per Queue', aggregationLabels: 'queue', legendFormat: '{{ queue }}' },
-    ],
-  ), gridPos={ x: 0, y: 7300 }
-)
-.addPanel(
-  metricsCatalogDashboards.componentDetailMatrix(
-    'sidekiq',
-    'non_latency_sensitive_job_queueing',
-    'environment="$environment", type="sidekiq", stage="$stage"',
-    [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'non_latency_sensitive_job_queueing' },
-      { title: 'per Queue', aggregationLabels: 'queue', legendFormat: '{{ queue }}' },
-    ],
-  ), gridPos={ x: 0, y: 7400 }
-)
-
-.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 8000 })
-.addPanel(
-  saturationDetail.saturationDetailPanels(selector, components=[
-    'cpu',
-    'disk_space',
-    'memory',
-    'open_fds',
-    'sidekiq_workers',
-    'single_node_cpu',
-    'single_node_unicorn_workers',
-    'workers',
-  ]),
-  gridPos={ x: 0, y: 9000, w: 24, h: 1 }
-)
-.addPanel(
-  capacityPlanning.capacityPlanningRow('sidekiq', '$stage'), gridPos={ x: 0, y: 10000 }
-)
-+ {
-  links+: platformLinks.triage +
-          serviceCatalog.getServiceLinks('sidekiq') +
-          platformLinks.services +
-          [platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq')],
-}
+.overviewTrailer()

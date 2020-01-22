@@ -30,6 +30,8 @@ local customApdex = metricsCatalog.customApdex;
         counter='grpc_server_handled_total',
         selector='job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"'
       ),
+
+      significantLabels: ['fqdn'],
     },
 
     gitalyruby: {
@@ -52,6 +54,22 @@ local customApdex = metricsCatalog.customApdex;
         counter='grpc_client_handled_total',
         selector='job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"'
       ),
+
+      significantLabels: ['fqdn'],
     },
   },
+
+  saturationTypes: [
+    'cgroup_memory',
+    'cpu',
+    'disk_space',
+    'disk_sustained_read_iops',
+    'disk_sustained_read_throughput',
+    'disk_sustained_write_iops',
+    'disk_sustained_write_throughput',
+    'memory',
+    'open_fds',
+    'single_node_cpu',
+    'go_memory',
+  ],
 }
