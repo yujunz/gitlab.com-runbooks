@@ -36,21 +36,9 @@ groups:
 
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:
-      type: 'frontend'
-      tier: 'lb'
-    expr: '0.90'
-
-  - record: 'slo:min:gitlab_service_apdex:ratio'
-    labels:
       type: 'redis-cache'
       tier: 'db'
     expr: '0.95'
-
-  - record: 'slo:min:gitlab_service_apdex:ratio'
-    labels:
-      type: 'frontend'
-      tier: 'lb'
-    expr: '0.90'
 
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:

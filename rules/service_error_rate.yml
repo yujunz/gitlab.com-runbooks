@@ -2,38 +2,6 @@ groups:
 - name: GitLab Component Errors-per-Second Rates
   interval: 1m
   rules:
-  # haproxy - treat each backend as a component - Main stage
-  - record: gitlab_component_errors:rate
-    labels:
-      type: 'frontend'
-      stage: 'main'
-    expr: >
-      avg by (environment, tier, component) (
-        label_replace(
-          sum(rate(haproxy_backend_response_errors_total{backend!~"canary_.*"}[1m])) by (environment, tier, backend),
-          "component",
-          "backend-$1",
-          "backend",
-          "(.*)"
-        )
-      )
-
-  # haproxy - treat each backend as a component - CANARY
-  - record: gitlab_component_errors:rate
-    labels:
-      type: 'frontend'
-      stage: 'cny'
-    expr: >
-      avg by (environment, tier, component) (
-        label_replace(
-          sum(rate(haproxy_backend_response_errors_total{backend=~"canary_.*"}[1m])) by (environment, tier, backend),
-          "component",
-          "backend-$1",
-          "backend",
-          "canary_(.*)"
-        )
-      )
-
   # Registry Service
   - record: gitlab_component_errors:rate
     labels:
