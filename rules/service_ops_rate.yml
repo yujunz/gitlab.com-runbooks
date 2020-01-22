@@ -10,13 +10,6 @@ groups:
     expr: >
       sum by (environment, tier, type) (redis:commands_processed:irate1m)
 
-  # Registry Service
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'server'
-    expr: >
-      sum by (environment, tier, type, stage) (rate(registry_http_requests_total[1m]))
-
   # gitlab_shell
   - record: gitlab_component_ops:rate
     labels:

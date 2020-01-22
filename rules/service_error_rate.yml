@@ -2,13 +2,6 @@ groups:
 - name: GitLab Component Errors-per-Second Rates
   interval: 1m
   rules:
-  # Registry Service
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'server'
-    expr: >
-      sum by (environment, tier, type, stage) (rate(registry_http_requests_total{code=~"5.."}[1m]))
-
   # pages - haproxy service in front of GitLab pages
   - record: gitlab_component_errors:rate
     labels:
