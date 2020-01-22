@@ -29,6 +29,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='registry_http_requests_total',
         selector='type="registry", code=~"5.."'
       ),
+
+      significantLabels: ['handler'],
     },
 
     storage: {
@@ -42,6 +44,17 @@ local customQuery = metricsCatalog.customQuery;
       requestRate: rateMetric(
         counter='registry_storage_action_seconds_count',
       ),
+
+      significantLabels: ['action'],
     },
   },
+
+  saturationTypes: [
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'single_node_cpu',
+    'go_memory',
+  ],
 }

@@ -25,6 +25,8 @@ local combined = metricsCatalog.combined;
         satisfiedThreshold=0.05,
         toleratedThreshold=0.1
       ),
+
+      significantLabels: ['fqdn'],
     },
 
     service: {
@@ -43,6 +45,8 @@ local combined = metricsCatalog.combined;
         counter='pg_stat_database_xact_rollback',
         selector='type="patroni", tier="db"'
       ),
+
+      significantLabels: ['fqdn'],
     },
 
     // Records the operations rate for the pgbouncer instances running on the patroni nodes
@@ -58,6 +62,20 @@ local combined = metricsCatalog.combined;
           selector='type="patroni", tier="db"'
         ),
       ]),
+
+      significantLabels: ['fqdn'],
     },
   },
+
+  saturationTypes: [
+    'active_db_connections',
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'pgbouncer_async_pool',
+    'pgbouncer_single_core',
+    'pgbouncer_sync_pool',
+    'single_node_cpu',
+  ],
 }

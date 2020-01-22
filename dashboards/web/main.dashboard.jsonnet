@@ -21,16 +21,11 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
+local serviceDashboard = import 'service_dashboard.libsonnet';
 
 local selector = 'environment="$environment", type="web", stage="$stage"';
 
-basic.dashboard(
-  'Overview',
-  tags=['web', 'overview'],
-)
-.addTemplate(templates.stage)
-.addPanels(keyMetrics.headlineMetricsRow('web', '$stage', startRow=0))
-.addPanel(serviceHealth.row('web', '$stage'), gridPos={ x: 0, y: 500 })
+serviceDashboard.overview('web', 'sv')
 .addPanel(
   row.new(title='Workhorse'),
   gridPos={
@@ -61,21 +56,6 @@ basic.dashboard(
   }
 )
 .addPanels(railsCommon.railsPanels(serviceType='web', serviceStage='$stage', startRow=3001))
-.addPanel(keyMetrics.keyServiceMetricsRow('web', '$stage'), gridPos={ x: 0, y: 4000 })
 .addPanel(workhorseCommon.componentDetailsRow('web', selector), gridPos={ x: 0, y: 5000 })
 .addPanel(unicornCommon.componentDetailsRow('web', selector), gridPos={ x: 0, y: 5100 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
-.addPanel(saturationDetail.saturationDetailPanels(selector, components=[
-  'cpu',
-  'disk_space',
-  'memory',
-  'open_fds',
-  'single_node_cpu',
-  'single_node_unicorn_workers',
-  'workers',
-  'go_memory',
-]), gridPos={ x: 0, y: 7000, w: 24, h: 1 })
-.addPanel(capacityPlanning.capacityPlanningRow('web', '$stage'), gridPos={ x: 0, y: 8000 })
-+ {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('web') + platformLinks.services,
-}
+.overviewTrailer()

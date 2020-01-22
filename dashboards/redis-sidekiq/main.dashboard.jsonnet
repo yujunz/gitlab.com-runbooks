@@ -19,6 +19,8 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
+local serviceDashboard = import 'service_dashboard.libsonnet';
+local serviceDashboard = import 'service_dashboard.libsonnet';
 
 local selector = 'environment="$environment", type="registry", stage="$stage"';
 

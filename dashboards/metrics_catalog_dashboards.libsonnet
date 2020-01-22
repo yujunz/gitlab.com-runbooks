@@ -1,5 +1,6 @@
 local basic = import 'basic.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
+local keyMetrics = import 'key_metrics.libsonnet';
 local layout = import 'layout.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
@@ -10,6 +11,32 @@ local getLatencyPercentileForService(service) =
     service.slos.apdexRatio
   else
     0.95;
+
+local componentOverviewMatrixRow(serviceType, serviceStage, componentName, component, startRow) =
+  layout.grid(
+    std.prune([
+      // Component apdex
+      if std.objectHas(component, 'apdex') then
+        keyMetrics.singleComponentApdexPanel(serviceType, serviceStage, componentName)
+      else
+        null,
+
+      // Error rate
+      if std.objectHas(component, 'errorRate') then
+        keyMetrics.singleComponentErrorRates(serviceType, serviceStage, componentName)
+      else
+        null,
+
+      // Component request rate
+      if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'rateQuery') then
+        keyMetrics.singleComponentQPSPanel(serviceType, serviceStage, componentName)
+      else
+        null,
+    ]),
+    cols=3,
+    startRow=startRow,
+    rowHeight=7
+  );
 
 {
   componentLatencyPanel(
@@ -26,9 +53,10 @@ local getLatencyPercentileForService(service) =
     local service = metricsCatalog.getService(serviceType);
     local component = service.components[componentName];
     local percentile = getLatencyPercentileForService(service);
+    local formatConfig = { percentile_humanized: 'p' + (percentile * 100), componentName: componentName };
 
     basic.latencyTimeseries(
-      title=if title == null then 'Estimated latency for ' + componentName else title,
+      title=(if title == null then 'Estimated %(percentile_humanized)s latency for %(componentName)s' + componentName else title) % formatConfig,
       query=component.apdex.percentileLatencyQuery(
         percentile=percentile,
         aggregationLabels=aggregationLabels,
@@ -36,7 +64,7 @@ local getLatencyPercentileForService(service) =
         rangeInterval='$__interval',
       ),
       logBase=logBase,
-      legendFormat=legendFormat % { percentile_humanized: 'p' + (percentile * 100), componentName: componentName },
+      legendFormat=legendFormat % formatConfig,
       min=min,
       intervalFactor=intervalFactor,
     ) + {
@@ -95,13 +123,25 @@ local getLatencyPercentileForService(service) =
       yAxisLabel='Errors'
     ),
 
+  componentOverviewMatrix(serviceType, serviceStage, startRow)::
+    local service = metricsCatalog.getService(serviceType);
+    [
+      row.new(title='🔬 Component Level Indicators', collapse=false) { gridPos: { x: 0, y: startRow, w: 24, h: 1 } },
+    ] +
+    std.prune(
+      std.flattenArrays(
+        std.mapWithIndex(function(i, c) componentOverviewMatrixRow(serviceType, serviceStage, c, service.components[c], startRow=startRow + 1 + i), std.objectFields(service.components))
+      )
+    ),
+
   componentDetailMatrix(serviceType, componentName, selector, aggregationSets, minLatency=0.01)::
     local service = metricsCatalog.getService(serviceType);
     local component = service.components[componentName];
     local colCount =
       (if std.objectHas(component, 'apdex') then 1 else 0) +
-      (if std.objectHas(component, 'requestRate') then 1 else 0) +
+      (if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'rateQuery') then 1 else 0) +
       (if std.objectHas(component, 'errorRate') then 1 else 0);
+
 
     row.new(title='🔬 %(componentName)s Component Detail' % { componentName: componentName }, collapse=true)
     .addPanels(
@@ -113,25 +153,13 @@ local getLatencyPercentileForService(service) =
                 [
                   if std.objectHas(component, 'apdex') then
                     self.componentLatencyPanel(
-                      title='Estimated ' + componentName + ' Latency - ' + aggregationSet.title,
+                      title='Estimated %(percentile_humanized)s ' + componentName + ' Latency - ' + aggregationSet.title,
                       serviceType=serviceType,
                       componentName=componentName,
                       selector=selector,
                       legendFormat='%(percentile_humanized)s ' + aggregationSet.legendFormat,
                       aggregationLabels=aggregationSet.aggregationLabels,
                       min=minLatency,
-                    )
-                  else
-                    null,
-
-                  if std.objectHas(component, 'requestRate') then
-                    self.componentRPSPanel(
-                      title=componentName + ' RPS - ' + aggregationSet.title,
-                      serviceType=serviceType,
-                      componentName=componentName,
-                      selector=selector,
-                      legendFormat=aggregationSet.legendFormat,
-                      aggregationLabels=aggregationSet.aggregationLabels
                     )
                   else
                     null,
@@ -147,11 +175,40 @@ local getLatencyPercentileForService(service) =
                     )
                   else
                     null,
+
+                  if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'rateQuery') then
+                    self.componentRPSPanel(
+                      title=componentName + ' RPS - ' + aggregationSet.title,
+                      serviceType=serviceType,
+                      componentName=componentName,
+                      selector=selector,
+                      legendFormat=aggregationSet.legendFormat,
+                      aggregationLabels=aggregationSet.aggregationLabels
+                    )
+                  else
+                    null,
                 ],
               aggregationSets
             )
           )
         ), cols=if colCount == 1 then 2 else colCount
       )
+    ),
+
+  autoDetailRows(serviceType, selector, startRow)::
+    local s = self;
+    local service = metricsCatalog.getService(serviceType);
+
+    layout.grid(
+      std.mapWithIndex(function(i, componentName)
+                         local component = service.components[componentName];
+                         local aggregationSets = [
+                                                   { title: 'Overall', aggregationLabels: '', legendFormat: 'overall' },
+                                                 ] +
+                                                 std.map(function(c) { title: 'per ' + c, aggregationLabels: c, legendFormat: '{{' + c + '}}' }, component.significantLabels);
+
+                         s.componentDetailMatrix(serviceType, componentName, selector, aggregationSets),
+                       std.objectFields(service.components))
+      , cols=1, startRow=startRow
     ),
 }

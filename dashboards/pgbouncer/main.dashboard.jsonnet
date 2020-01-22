@@ -1,7 +1,6 @@
 local basic = import 'basic.libsonnet';
 local capacityPlanning = import 'capacity_planning.libsonnet';
 local colors = import 'colors.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
 local layout = import 'layout.libsonnet';
@@ -17,18 +16,9 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
-local serviceHealth = import 'service_health.libsonnet';
-local saturationDetail = import 'saturation_detail.libsonnet';
-local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
+local serviceDashboard = import 'service_dashboard.libsonnet';
 
-local selector = 'type="pgbouncer", environment="$environment"';
-
-basic.dashboard(
-  'Overview',
-  tags=['pgbouncer'],
-)
-.addPanels(keyMetrics.headlineMetricsRow('pgbouncer', '$stage', startRow=0))
-.addPanel(serviceHealth.row('pgbouncer', '$stage'), gridPos={ x: 0, y: 500 })
+serviceDashboard.overview('pgbouncer', 'db', stage='main')
 .addPanel(
   row.new(title='pgbouncer Workload'),
   gridPos={
@@ -59,27 +49,4 @@ basic.dashboard(
   }
 )
 .addPanels(pgbouncerCommonGraphs.networkStats('pgbouncer', 4001))
-.addPanel(keyMetrics.keyServiceMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 5000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('pgbouncer', 'main'), gridPos={ x: 0, y: 6000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 7000 })
-.addPanel(metricsCatalogDashboards.componentDetailMatrix('pgbouncer', 'service', selector, [
-  { title: 'Overall', aggregationLabels: '', legendFormat: 'pgbouncer' },
-  { title: 'per Server', aggregationLabels: 'fqdn', legendFormat: '{{fqdn}}' },
-]), gridPos={ x: 0, y: 8000 })
-
-.addPanel(
-  saturationDetail.saturationDetailPanels(selector, components=[
-    'cpu',
-    'memory',
-    'open_fds',
-    'pgbouncer_async_pool',
-    'pgbouncer_single_core',
-    'pgbouncer_sync_pool',
-    'single_node_cpu',
-  ]),
-  gridPos={ x: 0, y: 8000, w: 24, h: 1 }
-)
-.addPanel(capacityPlanning.capacityPlanningRow('pgbouncer', 'main'), gridPos={ x: 0, y: 9000 })
-+ {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('pgbouncer') + platformLinks.services,
-}
+.overviewTrailer()

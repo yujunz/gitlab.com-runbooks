@@ -29,6 +29,8 @@ local customQuery = metricsCatalog.customQuery;
         counter='gitlab_workhorse_http_requests_total',
         selector='job="gitlab-workhorse-web", type="web", code=~"^5.*"'
       ),
+
+      significantLabels: ['fqdn', 'route'],
     },
 
     unicorn: {
@@ -48,6 +50,19 @@ local customQuery = metricsCatalog.customQuery;
         counter='http_request_duration_seconds_count',
         selector='job="gitlab-rails", type="web", status=~"5.."'
       ),
+
+      significantLabels: ['fqdn', 'method'],
     },
   },
+
+  saturationTypes: [
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'single_node_cpu',
+    'single_node_unicorn_workers',
+    'workers',
+    'go_memory',
+  ],
 }

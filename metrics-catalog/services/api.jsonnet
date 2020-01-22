@@ -10,6 +10,7 @@ local rateMetric = metricsCatalog.rateMetric;
     apdexRatio: 0.9,
     errorRatio: 0.005,
   },
+
   components: {
     workhorse: {
       apdex: histogramApdex(
@@ -28,6 +29,8 @@ local rateMetric = metricsCatalog.rateMetric;
         counter='gitlab_workhorse_http_requests_total',
         selector='job="gitlab-workhorse-api", type="api", code=~"^5.*"'
       ),
+
+      significantLabels: ['fqdn'],
     },
 
     unicorn: {
@@ -47,6 +50,19 @@ local rateMetric = metricsCatalog.rateMetric;
         counter='http_request_duration_seconds_count',
         selector='job="gitlab-rails", type="api", status=~"5.."'
       ),
+
+      significantLabels: ['fqdn'],
     },
   },
+
+  saturationTypes: [
+    'cpu',
+    'disk_space',
+    'memory',
+    'open_fds',
+    'single_node_cpu',
+    'single_node_unicorn_workers',
+    'workers',
+    'go_memory',
+  ],
 }
