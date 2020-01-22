@@ -228,9 +228,15 @@ groups:
     expr: |
       (
         sum by (environment, stage) (
-          rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="8"}[1m])
+          rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="16"}[1m])
+        )
+        +
+        sum by (environment, stage) (
+          rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="32"}[1m])
         )
       )
+      /
+      2
       /
       (
         sum by (environment, stage) (

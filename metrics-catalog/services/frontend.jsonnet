@@ -59,14 +59,14 @@ local customQuery = metricsCatalog.customQuery;
       apdex: histogramApdex(
         histogram='haproxy_ssh_request_duration_seconds_bucket',
         selector='type="frontend"',
-        satisfiedThreshold=8
+        satisfiedThreshold=16,
+        toleratedThreshold=32,
       ),
 
       requestRate: rateMetric(
         counter='haproxy_ssh_requests_total',
         selector='type="frontend"'
       ),
-
 
       // We only want to keep track of errors that our our fault (not the clients)
       // These are some explanations of the relevant codes, from the haproxy docs
