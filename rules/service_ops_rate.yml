@@ -34,13 +34,6 @@ groups:
     expr: >
       count by (environment, tier, type, stage) (up{type="mailroom"}) - count by (environment, tier, type) (up{type="mailroom"})
 
-  # gitaly:goserver
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'goserver'
-    expr: >
-      sum by (environment, tier, type, stage) (rate(grpc_server_started_total{type="gitaly"}[1m]))
-
   # pages - haproxy service in front of GitLab pages
   - record: gitlab_component_ops:rate
     labels:

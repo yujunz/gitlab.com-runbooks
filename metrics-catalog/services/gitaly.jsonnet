@@ -6,7 +6,6 @@ local customApdex = metricsCatalog.customApdex;
 {
   type: 'gitaly',
   tier: 'stor',
-  autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this service
   slos: {
     apdexRatio: 0.95,
     errorRatio: 0.001,
@@ -39,8 +38,9 @@ local customApdex = metricsCatalog.customApdex;
       // go gitaly-ruby client call times
       apdex: customApdex(
         rateQueryTemplate=|||
-          rate(grpc_server_handling_seconds_bucket{job="gitaly",grpc_type="unary", %(selector)s}[%(rangeInterval)s]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
+          rate(grpc_server_handling_seconds_bucket{%(selector)s}[%(rangeInterval)s]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
         |||,
+        selector='job="gitaly",grpc_type="unary"',
         satisfiedThreshold=10,
         toleratedThreshold=30
       ),

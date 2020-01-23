@@ -46,6 +46,18 @@ groups:
       tier: sv
       type: git
     expr: '0.005'
+  - record: slo:min:gitlab_service_apdex:ratio
+    labels:
+      alert_trigger_duration: long
+      tier: stor
+      type: gitaly
+    expr: '0.95'
+  - record: slo:max:gitlab_service_errors:ratio
+    labels:
+      alert_trigger_duration: long
+      tier: stor
+      type: gitaly
+    expr: '0.001'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: stor
@@ -524,6 +536,110 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git", code=~"^5.*"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment, stage) (
+           rate(grpc_server_handling_seconds_bucket{job="gitaly",grpc_type="unary", le="10"}[1m]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
+
+        )
+        +
+        sum by (environment, stage) (
+          rate(grpc_server_handling_seconds_bucket{job="gitaly",grpc_type="unary", le="30"}[1m]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
+
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment, stage) (
+          rate(grpc_server_handling_seconds_bucket{job="gitaly",grpc_type="unary", le="+Inf"}[1m]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
+
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+          rate(grpc_server_handling_seconds_bucket{le="+Inf"}[1m]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
+
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef", le="0.5"}[1m])
+        )
+        +
+        sum by (environment, stage) (
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef", le="1"}[1m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment, stage) (
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef", le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef", le="+Inf"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="gitaly"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
