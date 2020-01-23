@@ -108,10 +108,12 @@ local generateApdexWeightScoreQuery(customApdex, aggregationLabels, additionalSe
 {
   customApdex(
     rateQueryTemplate,
+    selector,
     satisfiedThreshold,
     toleratedThreshold=null
   ):: {
     rateQueryTemplate: rateQueryTemplate,
+    selector: selector,
     satisfiedThreshold: satisfiedThreshold,
     toleratedThreshold: toleratedThreshold,
     apdexRecordingRules(aggregationLabels, labels)::
