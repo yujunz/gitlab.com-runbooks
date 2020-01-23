@@ -6,7 +6,6 @@ local customQuery = metricsCatalog.customQuery;
 {
   type: 'git',
   tier: 'sv',
-  autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this service
   slos: {
     apdexRatio: 0.95,
     errorRatio: 0.005,
@@ -60,6 +59,8 @@ local customQuery = metricsCatalog.customQuery;
         stage: 'main',
       },
 
+      // Unfortunately we don't have a better way of measuring this at present,
+      // so we rely on HAProxy metrics
       requestRate: customQuery(|||
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
       |||),

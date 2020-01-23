@@ -10,37 +10,6 @@ groups:
     expr: >
       sum by (environment, tier, type) (redis:commands_processed:irate1m)
 
-  # gitlab_shell
-  - record: gitlab_component_ops:rate
-    labels:
-      tier: 'sv'
-      type: 'git'
-      component: 'gitlab_shell'
-      stage: 'main'
-    expr: >
-      sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
-
-  # web:workhorse
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'workhorse'
-    expr: >
-      sum by (environment, tier, type, stage) (rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web"}[1m]))
-
-  # api:workhorse
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'workhorse'
-    expr: >
-      sum by (environment, tier, type, stage) (rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api"}[1m]))
-
-  # api/web/sidekiq/git:unicorn
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'unicorn'
-    expr: >
-      sum by (environment, tier, type, stage) (rate(http_request_duration_seconds_count{job=~"gitlab-(rails|unicorn)"}[1m]))
-
   # sidekiq: job RPS rate
   - record: gitlab_component_ops:rate
     labels:

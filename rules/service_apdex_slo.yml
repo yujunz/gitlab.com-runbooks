@@ -18,24 +18,6 @@ groups:
 
   - record: 'slo:min:gitlab_service_apdex:ratio'
     labels:
-      type: 'api'
-      tier: 'sv'
-    expr: '0.90'
-
-  - record: 'slo:min:gitlab_service_apdex:ratio'
-    labels:
-      type: 'web'
-      tier: 'sv'
-    expr: '0.95'
-
-  - record: 'slo:min:gitlab_service_apdex:ratio'
-    labels:
-      type: 'git'
-      tier: 'sv'
-    expr: '0.95'
-
-  - record: 'slo:min:gitlab_service_apdex:ratio'
-    labels:
       type: 'redis-cache'
       tier: 'db'
     expr: '0.95'

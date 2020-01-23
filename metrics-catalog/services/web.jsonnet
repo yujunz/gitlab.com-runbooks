@@ -6,7 +6,6 @@ local customQuery = metricsCatalog.customQuery;
 {
   type: 'web',
   tier: 'sv',
-  autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this service
   slos: {
     apdexRatio: 0.95,
     errorRatio: 0.005,
@@ -15,7 +14,10 @@ local customQuery = metricsCatalog.customQuery;
     workhorse: {
       apdex: histogramApdex(
         histogram='gitlab_workhorse_http_request_duration_seconds_bucket',
-        selector='job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"',
+        // Note, using `|||` avoids having to double-escape the backslashes in the selector query
+        selector=|||
+          job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"
+        |||,
         satisfiedThreshold=1,
         toleratedThreshold=10
       ),
