@@ -21,6 +21,16 @@ groups:
       description: ILM errors have been detected in the logging cluster!
       runbook: elastic/doc/troubleshooting/README.md
       title: ILM errors have been detected in the logging cluster!
+  - alert: Elasticsearch production logging cluster unhealthy
+    expr: probe_success{instance="https://92c87c26b16049b0a30af16b94105528.us-central1.gcp.cloud.es.io:9243/_cluster/health",job="blackbox"} == 0
+    for: 5m
+    labels:
+      severity: s3
+      environment: gprd
+    annotations:
+      description: Production logging cluster is unhealthy
+      runbook: elastic/doc/troubleshooting/README.md
+      title: Production logging cluster is unhealthy
   - alert: Elasticsearch ILM errors in monitoring cluster
     expr: probe_success{instance="https://0ea4e34a81444a95a1adeb1f90ed9dfa.us-central1.gcp.cloud.es.io:9243/*/_ilm/explain",job="blackbox"} == 0
     for: 5m
