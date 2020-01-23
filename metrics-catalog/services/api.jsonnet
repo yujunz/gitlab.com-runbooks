@@ -5,17 +5,18 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'api',
   tier: 'sv',
-  autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this
   slos: {
     apdexRatio: 0.9,
     errorRatio: 0.005,
   },
-
   components: {
     workhorse: {
       apdex: histogramApdex(
         histogram='gitlab_workhorse_http_request_duration_seconds_bucket',
-        selector='job="gitlab-workhorse-api", type="api", route!="^/api/v4/jobs/request\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"',
+        // Note, using `|||` avoids having to double-escape the backslashes in the selector query
+        selector=|||
+          job="gitlab-workhorse-api", type="api", route!="^/api/v4/jobs/request\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"
+        |||,
         satisfiedThreshold=1,
         toleratedThreshold=10
       ),
