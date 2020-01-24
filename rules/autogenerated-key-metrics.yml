@@ -1152,5 +1152,5 @@ groups:
       type: web
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web", code=~"^5.*"}[1m])
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$}[1m])
       )
