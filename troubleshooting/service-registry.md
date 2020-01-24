@@ -1,9 +1,10 @@
-<!-- MARKER: do not edit this section directly. Edit services/service-mappings.yml then run scripts/generate-docs -->
+<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->
 #  Registry Service
 
-* **Responsible Team**: [package](https://about.gitlab.com/handbook/engineering/dev-backend/)
-* **Slack Channel**: [#backend](https://gitlab.slack.com/archives/backend)
-* **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=registry&orgId=1
+* **Responsible Teams**:
+  * [package](https://about.gitlab.com/handbook/engineering/dev-backend/). **Slack Channel**: [#backend](https://gitlab.slack.com/archives/backend)
+  * [infrastructure-caches-ci-queues](https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/). **Slack Channel**: [#production](https://gitlab.slack.com/archives/production)
+* **General Triage Dashboard**: https://dashboards.gitlab.net/d/26q8nTzZz/service-platform-metrics?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=registry&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22registry%22%2C%20tier%3D%22sv%22%7D
 * **Label**: gitlab-com/gl-infra/production~"Service:Registry"
 
@@ -15,9 +16,8 @@
 
 ## Troubleshooting Pointers
 
-* [ci_pending_builds.md](ci_pending_builds.md)
-* [ci_too_many_connections_on_runners_cache_server.md](ci_too_many_connections_on_runners_cache_server.md)
 * [gitlab-registry.md](gitlab-registry.md)
+* [kubernetes.md](kubernetes.md)
 * [runners-cache.md](runners-cache.md)
 * [runners_cache_disk_space.md](runners_cache_disk_space.md)
 * [runners_cache_is_down.md](runners_cache_is_down.md)
