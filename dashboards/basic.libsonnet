@@ -366,7 +366,7 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
       .resetYaxes()
       .addYaxis(
-    format='s',
+    format=format,
     min=min,
     label=yAxisLabel,
     logBase=logBase,
