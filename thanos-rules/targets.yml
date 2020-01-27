@@ -1,0 +1,6 @@
+groups:
+- name: targets
+  interval: 60s
+  rules:
+  - record: job:up:count
+    expr: count by (env,job,shard,stage,tier,type) (up)
