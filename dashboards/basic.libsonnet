@@ -67,13 +67,14 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     yAxisLabel='',
     legend_show=true,
     linewidth=2
-  ):: heatmapPanel.new(
-    title,
-    description=description,
-    datasource='$PROMETHEUS_DS',
-    legend_show=false,
-  )
-      .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor)),
+  )::
+    heatmapPanel.new(
+      title,
+      description=description,
+      datasource='$PROMETHEUS_DS',
+      legend_show=false,
+    )
+    .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor)),
 
   singlestat(
     title='SingleStat',
@@ -98,19 +99,20 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     legend_show=true,
     linewidth=2,
     valueName='current',
-  ):: singlestatPanel.new(
-    title,
-    description=description,
-    datasource='$PROMETHEUS_DS',
-    colors=colors,
-    format=format,
-    gaugeMaxValue=gaugeMaxValue,
-    gaugeShow=gaugeShow,
-    postfix=postfix,
-    thresholds=thresholds,
-    valueName=valueName,
-  )
-      .addTarget(promQuery.target(query, instant)),
+  )::
+    singlestatPanel.new(
+      title,
+      description=description,
+      datasource='$PROMETHEUS_DS',
+      colors=colors,
+      format=format,
+      gaugeMaxValue=gaugeMaxValue,
+      gaugeShow=gaugeShow,
+      postfix=postfix,
+      thresholds=thresholds,
+      valueName=valueName,
+    )
+    .addTarget(promQuery.target(query, instant)),
 
   table(
     title='Table',
@@ -119,15 +121,16 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     min_span=null,
     styles=[],
     columns=[],
-  ):: tablePanel.new(
-    title,
-    description=description,
-    span=span,
-    min_span=min_span,
-    datasource='$PROMETHEUS_DS',
-    styles=[],
-    columns=[],
-  ),
+  )::
+    tablePanel.new(
+      title,
+      description=description,
+      span=span,
+      min_span=min_span,
+      datasource='$PROMETHEUS_DS',
+      styles=[],
+      columns=[],
+    ),
 
   timeseries(
     title='Timeseries',
@@ -143,39 +146,40 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     legend_rightSide=false,
     linewidth=2,
     max=null,
-  ):: graphPanel.new(
-    title,
-    description=description,
-    sort=sort,
-    linewidth=linewidth,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
-    decimals=0,
-    legend_rightSide=legend_rightSide,
-    legend_show=legend_show,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
-  )
-      .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
-      .resetYaxes()
-      .addYaxis(
-    format=format,
-    min=0,
-    max=max,
-    label=yAxisLabel,
-  )
-      .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
+  )::
+    graphPanel.new(
+      title,
+      description=description,
+      sort=sort,
+      linewidth=linewidth,
+      fill=0,
+      datasource='$PROMETHEUS_DS',
+      decimals=0,
+      legend_rightSide=legend_rightSide,
+      legend_show=legend_show,
+      legend_values=true,
+      legend_min=true,
+      legend_max=true,
+      legend_current=true,
+      legend_total=false,
+      legend_avg=true,
+      legend_alignAsTable=true,
+      legend_hideEmpty=true,
+    )
+    .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+    .resetYaxes()
+    .addYaxis(
+      format=format,
+      min=0,
+      max=max,
+      label=yAxisLabel,
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 
   queueLengthTimeseries(
     title='Timeseries',
@@ -187,37 +191,38 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     intervalFactor=3,
     yAxisLabel='Queue Length',
     linewidth=2,
-  ):: graphPanel.new(
-    title,
-    description=description,
-    sort='decreasing',
-    linewidth=linewidth,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
-    decimals=0,
-    legend_show=true,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
-  )
-      .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
-      .resetYaxes()
-      .addYaxis(
-    format=format,
-    min=0,
-    label=yAxisLabel,
-  )
-      .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
+  )::
+    graphPanel.new(
+      title,
+      description=description,
+      sort='decreasing',
+      linewidth=linewidth,
+      fill=0,
+      datasource='$PROMETHEUS_DS',
+      decimals=0,
+      legend_show=true,
+      legend_values=true,
+      legend_min=true,
+      legend_max=true,
+      legend_current=true,
+      legend_total=false,
+      legend_avg=true,
+      legend_alignAsTable=true,
+      legend_hideEmpty=true,
+    )
+    .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+    .resetYaxes()
+    .addYaxis(
+      format=format,
+      min=0,
+      label=yAxisLabel,
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 
   saturationTimeseries(
     title='Saturation',
@@ -345,38 +350,39 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     decimals=2,
     linewidth=2,
     min=0,
-  ):: graphPanel.new(
-    title,
-    description=description,
-    sort='decreasing',
-    linewidth=linewidth,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
-    decimals=decimals,
-    legend_show=legend_show,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
-  )
-      .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
-      .resetYaxes()
-      .addYaxis(
-    format=format,
-    min=min,
-    label=yAxisLabel,
-    logBase=logBase,
-  )
-      .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
+  )::
+    graphPanel.new(
+      title,
+      description=description,
+      sort='decreasing',
+      linewidth=linewidth,
+      fill=0,
+      datasource='$PROMETHEUS_DS',
+      decimals=decimals,
+      legend_show=legend_show,
+      legend_values=true,
+      legend_min=true,
+      legend_max=true,
+      legend_current=true,
+      legend_total=false,
+      legend_avg=true,
+      legend_alignAsTable=true,
+      legend_hideEmpty=true,
+    )
+    .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+    .resetYaxes()
+    .addYaxis(
+      format=format,
+      min=min,
+      label=yAxisLabel,
+      logBase=logBase,
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 
   slaTimeseries(
     title='SLA',
@@ -443,43 +449,44 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     receiveQuery,
     intervalFactor=3,
     legend_show=true
-  ):: graphPanel.new(
-    title,
-    linewidth=1,
-    fill=0,
-    description=description,
-    datasource='$PROMETHEUS_DS',
-    decimals=2,
-    sort='decreasing',
-    legend_show=legend_show,
-    legend_values=false,
-    legend_alignAsTable=false,
-    legend_hideEmpty=true,
-  )
-      .addSeriesOverride(seriesOverrides.networkReceive)
-      .addTarget(
-    promQuery.target(
-      sendQuery,
-      legendFormat='send ' + legendFormat,
-      intervalFactor=intervalFactor,
+  )::
+    graphPanel.new(
+      title,
+      linewidth=1,
+      fill=0,
+      description=description,
+      datasource='$PROMETHEUS_DS',
+      decimals=2,
+      sort='decreasing',
+      legend_show=legend_show,
+      legend_values=false,
+      legend_alignAsTable=false,
+      legend_hideEmpty=true,
     )
-  )
-      .addTarget(
-    promQuery.target(
-      receiveQuery,
-      legendFormat='receive ' + legendFormat,
-      intervalFactor=intervalFactor,
+    .addSeriesOverride(seriesOverrides.networkReceive)
+    .addTarget(
+      promQuery.target(
+        sendQuery,
+        legendFormat='send ' + legendFormat,
+        intervalFactor=intervalFactor,
+      )
     )
-  )
-      .resetYaxes()
-      .addYaxis(
-    format='Bps',
-    label='Network utilization',
-  )
-      .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  ),
+    .addTarget(
+      promQuery.target(
+        receiveQuery,
+        legendFormat='receive ' + legendFormat,
+        intervalFactor=intervalFactor,
+      )
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='Bps',
+      label='Network utilization',
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 }
