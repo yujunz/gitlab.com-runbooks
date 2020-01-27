@@ -1,6 +1,0 @@
-{
-  "attributes": {
-    "title": "pubsub-consul-inf-pre-*",
-    "timeFieldName": "publish_time"
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "attributes": {
-    "title": "pubsub-gitaly-inf-ops-*",
-    "timeFieldName": "json.time"
-  }
-}

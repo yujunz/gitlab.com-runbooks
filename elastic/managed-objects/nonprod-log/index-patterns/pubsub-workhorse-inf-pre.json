@@ -1,6 +1,0 @@
-{
-  "attributes": {
-    "title": "pubsub-workhorse-inf-pre-*",
-    "timeFieldName": "json.time"
-  }
-}
