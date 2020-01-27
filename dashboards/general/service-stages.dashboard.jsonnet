@@ -115,39 +115,6 @@ local errorRatesPanel() =
     show=false,
   );
 
-local serviceAvailabilityPanel() =
-  generalGraphPanel(
-    'Service Availability',
-    description='Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.'
-  )
-  .addSeriesOverride(seriesOverrides.mainStage)
-  .addSeriesOverride(seriesOverrides.cnyStage)
-  .addTarget(  // Primary metric
-    promQuery.target(
-      |||
-        min(
-          min_over_time(
-            gitlab_service_availability:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
-          )
-        ) by (stage)
-      |||,
-      intervalFactor=5,
-      legendFormat='{{ stage }} stage',
-    )
-  )
-  .resetYaxes()
-  .addYaxis(
-    format='percentunit',
-    max=1,
-    label='Availability %',
-  )
-  .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  );
-
 local qpsPanel() =
   generalGraphPanel(
     'RPS - Service Requests per Second',
@@ -200,15 +167,6 @@ basic.dashboard(
   gridPos={
     x: 12,
     y: 10,
-    w: 12,
-    h: 10,
-  }
-)
-.addPanel(
-  serviceAvailabilityPanel(),
-  gridPos={
-    x: 0,
-    y: 20,
     w: 12,
     h: 10,
   }
