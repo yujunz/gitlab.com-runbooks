@@ -1,12 +1,17 @@
-<!-- MARKER: do not edit this section directly. Edit services/service-mappings.yml then run scripts/generate-docs -->
+<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->
 #  Api Service
 
-* **Responsible Team**: [backend](https://about.gitlab.com/handbook/engineering/dev-backend/)
-* **Slack Channel**: [#backend](https://gitlab.slack.com/archives/backend)
-* **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=api&orgId=1
+* **Responsible Teams**:
+  * [create](https://about.gitlab.com/handbook/engineering/dev-backend/create/). **Slack Channel**: [#g_create](https://gitlab.slack.com/archives/g_create)
+  * [distribution](https://about.gitlab.com/handbook/engineering/dev-backend/distribution/). **Slack Channel**: [#distribution](https://gitlab.slack.com/archives/distribution)
+  * [geo](https://about.gitlab.com/handbook/engineering/dev-backend/geo/). **Slack Channel**: [#g_geo](https://gitlab.slack.com/archives/g_geo)
+  * [gitaly](https://about.gitlab.com/handbook/engineering/dev-backend/gitaly/). **Slack Channel**: [#gitaly](https://gitlab.slack.com/archives/gitaly)
+  * [gitter](https://about.gitlab.com/handbook/engineering/dev-backend/gitter/). **Slack Channel**: [#g_gitaly](https://gitlab.slack.com/archives/g_gitaly)
+  * [manage](https://about.gitlab.com/handbook/engineering/dev-backend/manage/). **Slack Channel**: [#g_manage](https://gitlab.slack.com/archives/g_manage)
+  * [plan](https://about.gitlab.com/handbook/engineering/dev-backend/manage/). **Slack Channel**: [#g_plan](https://gitlab.slack.com/archives/g_plan)
+* **General Triage Dashboard**: https://dashboards.gitlab.net/d/26q8nTzZz/service-platform-metrics?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=api&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22api%22%2C%20tier%3D%22sv%22%7D
 * **Label**: gitlab-com/gl-infra/production~"Service:API"
-* **Sentry**: https://sentry.gitlab.net/gitlab/gitlabcom/?query=program%3A%22rails%22
 
 ## Logging
 
@@ -20,11 +25,11 @@
 ## Troubleshooting Pointers
 
 * [alertmanager-notification-failures.md](alertmanager-notification-failures.md)
-* [ci_graphs.md](ci_graphs.md)
-* [ci_introduction.md](ci_introduction.md)
-* [ci_pending_builds.md](ci_pending_builds.md)
-* [ci_runner_manager_errors.md](ci_runner_manager_errors.md)
+* [blocked-user-logins.md](blocked-user-logins.md)
 * [gemnasium_is_down.md](gemnasium_is_down.md)
+* [haproxy.md](haproxy.md)
 * [large-sidekiq-queue.md](large-sidekiq-queue.md)
+* [pgbouncer.md](pgbouncer.md)
 * [postgres.md](postgres.md)
+* [ssh-maxstartups-breach.md](ssh-maxstartups-breach.md)
 <!-- END_MARKER -->

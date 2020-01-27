@@ -1,3 +1,18 @@
+<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->
+#  Ci-runners Service
+
+* **Responsible Teams**:
+  * [infrastructure-caches-ci-queues](https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/). **Slack Channel**: [#production](https://gitlab.slack.com/archives/production)
+* **General Triage Dashboard**: https://dashboards.gitlab.net/d/26q8nTzZz/service-platform-metrics?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=ci-runners&orgId=1
+* **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22ci-runners%22%2C%20tier%3D%22sv%22%7D
+* **Label**: gitlab-com/gl-infra/production~"Service:CI Runner"
+
+## Logging
+
+* [shared runners](https://log.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a)
+
+<!-- END_MARKER -->
+
 ## Purpose of the service
 
 CI Runners are used by customers to run CI jobs for any project hosted on GitLab.com.

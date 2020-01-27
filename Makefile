@@ -39,3 +39,4 @@ shell-fmt:
 generate:
 	./scripts/generate-key-metric-recording-rules.sh
 	./scripts/generate-sidekiq-worker-apdex-scores.sh
+	./scripts/generate-docs

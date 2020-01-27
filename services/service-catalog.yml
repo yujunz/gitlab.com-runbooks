@@ -2756,7 +2756,7 @@ services:
       - name: stackdriver
         permalink: https://console.cloud.google.com/logs
       - name: multiple indexes in Kibana
-        permalink: https://log.gitlab.net/app/kibana#/discover?_g=()&_a=(columns:!(_source),index:AWQepqf0ihEw2C1phQJl,interval:auto,query:(match_all:()),sort:!('@timestamp',desc))
+        permalink: https://log.gitlab.net/goto/2fc394521558a0bfed59f791295ffe51
   infrastructure:
     provider: gcp
     architecture:

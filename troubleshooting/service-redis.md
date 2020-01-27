@@ -1,12 +1,12 @@
-<!-- MARKER: do not edit this section directly. Edit services/service-mappings.yml then run scripts/generate-docs -->
+<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->
 #  Redis Service
 
-* **Responsible Team**: [infrastructure](https://about.gitlab.com/handbook/engineering/infrastructure/)
-* **Slack Channel**: [#production](https://gitlab.slack.com/archives/production)
-* **General Triage Dashboard**: https://dashboards.gitlab.net/d/WOtyonOiz/general-triage-service?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=redis&orgId=1
+* **Responsible Teams**:
+  * [infrastructure-caches-ci-queues](https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/). **Slack Channel**: [#production](https://gitlab.slack.com/archives/production)
+  * [infrastructure-webapp](https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/). **Slack Channel**: [#production](https://gitlab.slack.com/archives/production)
+* **General Triage Dashboard**: https://dashboards.gitlab.net/d/26q8nTzZz/service-platform-metrics?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=redis&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22redis%22%2C%20tier%3D%22db%22%7D
 * **Label**: gitlab-com/gl-infra/production~"Service:Redis"
-* **Grafana Folder**: https://dashboards.gitlab.net/dashboards/f/D5R0peIik
 
 ## Logging
 
@@ -15,10 +15,11 @@
 
 ## Troubleshooting Pointers
 
-* [ci_graphs.md](ci_graphs.md)
-* [ci_introduction.md](ci_introduction.md)
 * [large-pull-mirror-queue.md](large-pull-mirror-queue.md)
-* [postgres.md](postgres.md)
+* [redis.md](redis.md)
+* [redis_flapping.md](redis_flapping.md)
+* [redis_latency.md](redis_latency.md)
+* [redis_monitoring.md](redis_monitoring.md)
 * [redis_replication.md](redis_replication.md)
 * [sentry-is-down.md](sentry-is-down.md)
 * [sidekiq_stats_no_longer_showing.md](sidekiq_stats_no_longer_showing.md)

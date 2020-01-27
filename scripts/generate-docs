@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
-
 require 'yaml'
 require 'erb'
 require 'ostruct'
 require 'open3'
 
-START_MARKER="<!-- MARKER: do not edit this section directly. Edit services/service-mappings.yml then run scripts/generate-docs -->"
+START_MARKER="<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->"
 STOP_MARKER="<!-- END_MARKER -->"
 
 def find_troubleshooting_docs(service_name)
@@ -24,25 +23,28 @@ end
 def replace_header(file, header)
   lines = File.readlines(file)
   start = lines.find_index { |line| line.chomp == START_MARKER }
-  throw "Unable to find start marker" if start.nil?
+
+  throw "Unable to find start marker for #{file}" if start.nil?
   stop = lines.find_index { |line| line.chomp == STOP_MARKER }
-  throw "Unable to find stop marker" if stop.nil?
+  throw "Unable to find stop marker for #{file}" if stop.nil?
 
   lines.slice! start, stop - start + 1
   lines.insert start, header
 
-  IO.write(file, lines.join("\n"))
+  IO.write(file, lines.join)
 end
 
-def generate_header(service, team, tier)
+def generate_header(service, teams, tier)
   service_name = service["name"]
   troubeshooting_docs = find_troubleshooting_docs(service_name)
   template = <<-EOF
 #{START_MARKER}
 #  <%= service["name"].capitalize %> Service
 
-* **Responsible Team**: [<%= team["name"] %>](<%= team["url"] %>)
-* **Slack Channel**: [\#<%= team["slack_channel"] %>](https://gitlab.slack.com/archives/<%= team["slack_channel"] %>)
+* **Responsible Teams**:
+<%- teams.each do |team| -%>
+  * [<%= team["name"] %>](<%= team["url"] %>). **Slack Channel**: [\#<%= team["slack_channel"] %>](https://gitlab.slack.com/archives/<%= team["slack_channel"] %>)
+<%- end -%>
 * **General Triage Dashboard**: https://dashboards.gitlab.net/d/26q8nTzZz/service-platform-metrics?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=<%= service_name %>&orgId=1
 * **Alerts**: https://alerts.gprd.gitlab.net/#/alerts?filter=%7Btype%3D%22<%= service_name %>%22%2C%20tier%3D%22<%= service["tier"] %>%22%7D
 <% if service["label"] -%>
@@ -57,7 +59,7 @@ def generate_header(service, team, tier)
 
 ## Logging
 
-<%- service["logging"].each do |logging_location| -%>
+<%- service["technical"]["logging"].each do |logging_location| -%>
 * [<%= logging_location["name"] %>](<%= logging_location["permalink"] %>)
 <%- end -%>
 
@@ -71,11 +73,18 @@ def generate_header(service, team, tier)
 #{STOP_MARKER}
 EOF
 
-  ERB.new(template, 0, "-").result(OpenStruct.new({ team: team, service: service, tier: tier, troubeshooting_docs: troubeshooting_docs }).instance_eval { binding })
+  data = OpenStruct.new(
+    teams: teams,
+    service: service,
+    tier: tier,
+    troubeshooting_docs: troubeshooting_docs
+  )
+
+  ERB.new(template, 0, "-").result(data.instance_eval { binding })
 end
 
 def generate_docs()
-  service_mapping_yaml = YAML.load_file(File.join(__dir__, "..", "services", "service-mappings.yml"))
+  service_mapping_yaml = YAML.load_file(File.join(__dir__, "..", "services", "service-catalog.yml"))
   services = service_mapping_yaml["services"]
 
   team_map = service_mapping_yaml["teams"].inject({}) { |map, team| map[team["name"]] = team; map }
@@ -84,11 +93,11 @@ def generate_docs()
 
   services.each do |service|
     service_name = service["name"]
-    team = team_map[service["team"]]
+    teams = service["teams"].map { |team| team_map[team] }
     tier = tier_map[service["tier"]]
 
     troubleshooting_doc =  File.join(__dir__, "..", "troubleshooting", "service-#{service_name}.md")
-    details = generate_header(service, team, tier)
+    details = generate_header(service, teams, tier)
     if File.exist?(troubleshooting_doc)
       replace_header(troubleshooting_doc, details)
     else
