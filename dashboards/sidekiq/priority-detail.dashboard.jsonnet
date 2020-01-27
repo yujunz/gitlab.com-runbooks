@@ -63,19 +63,6 @@ basic.dashboard(
       yAxisLabel='Job time completed per second',
     ),
     basic.timeseries(
-      title='Sidekiq Total Execution Time for Priority',
-      description='The sum of job execution times',
-      query=|||
-        sum(rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", priority=~"$priority"}[$__interval])) by (priority)
-      |||,
-      legendFormat='{{ priority }}',
-      interval='1m',
-      format='s',
-      intervalFactor=1,
-      legend_show=true,
-      yAxisLabel='Job time completed per second',
-    ),
-    basic.timeseries(
       title='Sidekiq Aggregated Throughput for Priority',
       description='The total number of jobs being completed',
       query=|||
@@ -116,6 +103,23 @@ basic.dashboard(
       linewidth=1,
       min=0.01,
     ),
+    basic.latencyTimeseries(
+      title='Sidekiq Estimated p95 Job Queue Time for priority',
+      description='The 95th percentile queue time, between when the job is enqueued and executed, by priority. Lower is better.',
+      query=|||
+        histogram_quantile(0.95, sum(rate(sidekiq_jobs_queue_duration_seconds_bucket{environment="$environment", priority=~"$priority"}[$__interval])) by (le, priority))
+      |||,
+      legendFormat='{{ priority }}',
+      format='s',
+      yAxisLabel='Queue Duration',
+      interval='1m',
+      intervalFactor=3,
+      legend_show=true,
+      logBase=10,
+      linewidth=1,
+      min=0.01,
+    ),
+
     basic.latencyTimeseries(
       title='Sidekiq Estimated p95 Job Latency for priority',
       description='The 95th percentile duration, once a job starts executing, that it runs for, by priority. Lower is better.',
