@@ -69,7 +69,6 @@ basic.dashboard(
   layout.grid([
     keyMetrics.apdexPanel('$type', '$stage'),
     keyMetrics.errorRatesPanel('$type', '$stage'),
-    keyMetrics.serviceAvailabilityPanel('$type', '$stage'),
     keyMetrics.qpsPanel('$type', '$stage'),
     keyMetrics.saturationPanel('$type', '$stage'),
   ], startRow=1001)

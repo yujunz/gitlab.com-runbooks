@@ -361,44 +361,6 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       show=false,
     ),
 
-  serviceAvailabilityPanel(serviceType, serviceStage):: self.componentAvailabilityPanel(serviceType, serviceStage),
-
-  componentAvailabilityPanel(serviceType, serviceStage)::
-    local formatConfig = {
-      serviceType: serviceType,
-      serviceStage: serviceStage,
-    };
-    generalGraphPanel(
-      'Component Availability',
-      description='Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.',
-      linewidth=1,
-      sort='decreasing',
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        |||
-          min(
-            min_over_time(
-              gitlab_component_availability:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
-            )
-          ) by (component)
-        ||| % formatConfig,
-        legendFormat='{{ component }} component',
-      )
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      max=1,
-      label='Availability %',
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
-    ),
-
   qpsPanel(serviceType, serviceStage, compact=false)::
     local formatConfig = {
       serviceType: serviceType,
@@ -606,7 +568,6 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     .addPanels(layout.grid([
       self.apdexPanel(serviceType, serviceStage),
       self.errorRatesPanel(serviceType, serviceStage),
-      self.serviceAvailabilityPanel(serviceType, serviceStage),
       self.qpsPanel(serviceType, serviceStage),
       self.saturationPanel(serviceType, serviceStage),
     ])),
@@ -615,7 +576,6 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     .addPanels(layout.grid([
       self.componentApdexPanel(serviceType, serviceStage),
       self.componentErrorRates(serviceType, serviceStage),
-      self.componentAvailabilityPanel(serviceType, serviceStage),
       self.componentQpsPanel(serviceType, serviceStage),
       self.componentSaturationPanel(serviceType, serviceStage),
     ])),

@@ -357,55 +357,6 @@ basic.dashboard(
 )
 .addPanel(
   generalGraphPanel(
-    'Service Availability',
-    description='Availability measures the ratio of component processes in the service that are currently healthy and able to handle requests. The closer to 100% the better.'
-  )
-  .addTarget(  // Primary metric
-    promQuery.target(
-      |||
-        min(
-          min_over_time(
-            gitlab_service_availability:ratio{environment="$environment", stage="$stage"}[$__interval]
-          )
-        ) by (type)
-      |||,
-      legendFormat='{{ type }} service',
-      intervalFactor=3,
-    )
-  )
-  .resetYaxes()
-  .addYaxis(
-    format='percentunit',
-    max=1,
-    label='Availability %',
-  )
-  .addYaxis(
-    format='short',
-    max=1,
-    min=0,
-    show=false,
-  )
-  , gridPos=genGridPos(0, 3.5)
-)
-.addPanel(
-  generateAnomalyPanel(
-    'Anomaly detection: Availability',
-    |||
-      (
-      gitlab_service_availability:ratio{environment="$environment", stage="$stage"}
-      -
-      gitlab_service_availability:ratio:avg_over_time_1w{environment="$environment", stage="$stage"}
-      )
-      /
-      gitlab_service_availability:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-    |||,
-    maxY=0.5,
-    minY=-12
-  )
-  , gridPos=genGridPos(1, 3.5)
-)
-.addPanel(
-  generalGraphPanel(
     'Saturation',
     description='Saturation is a measure of the most saturated component of the service. Lower is better.',
     sort='decreasing',

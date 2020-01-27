@@ -1,27 +1,6 @@
 groups:
   - name: general-missing-series-alerts.yml
     rules:
-      # Availability
-      - alert: gitlab_component_availability_missing_series
-        expr: |
-          (gitlab_component_availability:ratio offset 1d)
-          unless
-          gitlab_component_availability:ratio
-        for: 1h
-        labels:
-          rules_domain: general
-          severity: s4
-        annotations:
-          title: "Availability data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
-          description: >
-            The data used to generate the `gitlab_component_availability:ratio` metrics are missing for the
-            `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
-            might indicate that our observability has been affected.
-          grafana_dashboard_id: "Z4W91Zbmk/general-triage-missing-component-series-data"
-          grafana_panel_id: "4"
-          grafana_variables: "environment,type,component,stage"
-          grafana_min_zoom_hours: "24"
-
       # Ops Rate
       - alert: gitlab_component_opsrate_missing_series
         expr: |

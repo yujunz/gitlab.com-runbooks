@@ -21,7 +21,7 @@ Note, importantly that requests are only considered satisfactory and torelarable
 This implies that the apdex score includes a error-rate factor - as more request fail, the apdex score will tend to zero,
 no matter the latency of the failures.
 
-## Determining availability
+## Determining Apdex
 
 The apdex score for a service depends on the service exporting Prometheus latency histograms. For this reason, we currently to do have
 apdex scores for postgres or redis.
@@ -31,6 +31,6 @@ request latency is a function of repository size and time since last GC. In norm
 Including this in the apdex score is unhelpful and does not provide insight into the state of the service, so it is excluded from
 the metric.
 
-## Service Availability Definitions
+## Service Apdex Definitions
 
 The definitions of service availability are defined in https://gitlab.com/gitlab-com/runbooks/blob/master/rules/service_apdex.yml
