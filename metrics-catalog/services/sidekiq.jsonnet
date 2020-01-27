@@ -39,7 +39,10 @@ local customQuery = metricsCatalog.customQuery;
         satisfiedThreshold=2.5,
       ),
 
-      // TODO: monitor enqueing rates, once we have the appropriate instrumentation
+      requestRate: rateMetric(
+        counter='sidekiq_enqueued_jobs_total',
+        selector='latency_sensitive="yes"'
+      ),
 
       significantLabels: ['queue'],
     },
@@ -71,7 +74,10 @@ local customQuery = metricsCatalog.customQuery;
         satisfiedThreshold=60,
       ),
 
-      // TODO: monitor enqueing rates, once we have the appropriate instrumentation
+      requestRate: rateMetric(
+        counter='sidekiq_enqueued_jobs_total',
+        selector='latency_sensitive="no"'
+      ),
 
       significantLabels: ['queue'],
     },
