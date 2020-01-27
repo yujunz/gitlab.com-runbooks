@@ -70,10 +70,13 @@ local overviewDashboard(type, tier, stage) =
       _stage: stage,
       overviewTrailer()::
         local s = self;
-        s.addPanel(capacityPlanning.capacityPlanningRow(s._serviceType, s._stage), gridPos={ x: 0, y: 100000 })
-        + {
-          links+: platformLinks.triage + serviceCatalog.getServiceLinks(s._serviceType) + platformLinks.services + [platformLinks.dynamicLinks(s._serviceType + ' Detail', 'type:' + s._serviceType)],
-        },
+        local p =
+          s.addPanel(capacityPlanning.capacityPlanningRow(s._serviceType, s._stage), gridPos={ x: 0, y: 100000 })
+          + {
+            links+: platformLinks.triage + serviceCatalog.getServiceLinks(s._serviceType) + platformLinks.services + [platformLinks.dynamicLinks(s._serviceType + ' Detail', 'type:' + s._serviceType)],
+          };
+
+        p.trailer(),
     },
 
 }

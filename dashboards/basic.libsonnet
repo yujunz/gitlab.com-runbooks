@@ -4,6 +4,7 @@ local graphPanel = grafana.graphPanel;
 local grafana = import 'grafonnet/grafana.libsonnet';
 local heatmapPanel = grafana.heatmapPanel;
 local row = grafana.row;
+local text = grafana.text;
 local seriesOverrides = import 'series_overrides.libsonnet';
 local singlestatPanel = grafana.singlestat;
 local tablePanel = grafana.tablePanel;
@@ -54,7 +55,24 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     else
       dashboardWithAnnotations;
 
-    dashboardWithEnvTemplate,
+    dashboardWithEnvTemplate {
+      trailer()::
+        self.addPanel(
+          text.new(
+            title='Source',
+            mode='markdown',
+            content=|||
+              Made with ❤️ and [Grafonnet](https://github.com/grafana/grafonnet-lib). [Contribute to this dashboard on GitLab.com](https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards/%(filePath)s)
+            ||| % { filePath: std.extVar('dashboardPath') },
+          ),
+          gridPos={
+            x: 0,
+            y: 110000,
+            w: 24,
+            h: 2,
+          }
+        ),
+    },
 
   heatmap(
     title='Heatmap',

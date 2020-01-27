@@ -30,5 +30,5 @@ function prepare() {
 }
 
 function jsonnet_compile() {
-  jsonnet -J . -J ../metrics-catalog/ -J vendor "$@"
+  jsonnet -J . -J ../metrics-catalog/ -J vendor --ext-str "dashboardPath=${1}" "$@"
 }
