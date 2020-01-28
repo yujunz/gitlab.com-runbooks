@@ -159,32 +159,76 @@ Putting script in `/tmp` is one way of making sure its readable by `git` user
 with default umask setting. Otherwise rails console will treat the path as
 Ruby string and [most likely err](https://github.com/rails/rails/blob/v4.2.8/railties/lib/rails/commands/runner.rb#L58-L63).
 
-## Dropping jobs for a specific user
+## Dropping jobs with certain metadata from a queue
 
-Suppose user `foo` is generating a lot of import jobs. You can use the Sidekiq
-API in the Rails console to remove those specific jobs. To do this, we must
-first identify the arguments that are run with this Sidekiq job.
+We currently track metadata in sidekiq jobs, this allows us to remove
+sidekiq jobs based on that metadata.
 
-1. Find the worker in question in https://gitlab.com/gitlab-org/gitlab-ee/tree/master/app/workers.
-For example, jobs in the `repository_import` queue correspond to `repository_import_worker.rb`: https://gitlab.com/gitlab-org/gitlab-ee/blob/master/app/workers/repository_import_worker.rb.
-
-2. Look at the arguments specified in `def perform` method. In this example,
-   `project_id` is the only argument.
-
-Now that we know we are looking for jobs that have a `project_id`, we can find out which
-projects are owned by the user. In the Rails console (`sudo gitlab-rails console`):
+Interesting attributes to remove jobs from a queue are
+`root_namespace`, `project` and `user`. The following snippet in a
+rails console can help:
 
 ```ruby
-user = User.find_by(username: 'foo')
-id_list = user.projects.pluck(:id)
+def start!(queue_name, username, namespace, project)
+  metadata = {
+    "meta.user" => username.presence,
+    "meta.project" => project.presence,
+    "meta.root_namespace" => namespace.presence
+  }.compact
+  raise "No metadata" if metadata.empty?
+
+  queue = Sidekiq::Queue.all.find { |q| q.name == queue_name }
+  raise "Invalid queue name" unless queue
+
+  count = 0
+  queue.to_enum.each.with_index do |job, index|
+    if index % 1000 == 0
+      puts "Scanned #{index} jobs, deleted #{count} from #{queue_name}"
+    end
+
+    next unless metadata.all? { |name, value| job[name] == value }
+
+    job.delete
+    count += 1
+  end
+
+  puts "Deleted #{count} jobs from #{queue_name}"
+end
+
+queue_name = "<enter the queue you want to remove jobs from>"
+username = "<enter the username>"
+namespace = "<enter the root namespace>"
+project = "<enter the full project path>"
+
+start!(queue_name, username, namespace, project)
 ```
 
-To kill any matching projects, we can run the following in the same console:
+By setting any of the variables specified to something non-empty, the
+values in the job need to match that specified value.
+
+For example using these values:
 
 ```ruby
-queue = Sidekiq::Queue.new('repository_import')
-queue.each { |job| job.delete if id_list.include?(job.args[0]) }
+queue_name = "post_receive"
+username = "reprazent"
+namespace = ""
+project = "gitlab-org/gitlab"
 ```
+
+Will delete all jobs from `post_receive` triggered by a user with
+username `reprazent` for the project `gitlab-org/gitlab`.
+
+While setting these values:
+
+```
+queue_name = "post_receive"
+username = ""
+namespace = ""
+project = "gitlab-org"
+```
+
+Will delete all the jobs from `post_receive` for any project in the
+`gitlab-org` namespace, triggered by any user.
 
 ### Kill running jobs (as opposed to removing jobs from a queue) ###
 
