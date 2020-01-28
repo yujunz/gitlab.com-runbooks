@@ -116,8 +116,8 @@ module Config
       production: 'console-01-sv-gprd.c.gitlab-production.internal'
     },
     disk_space_command: {
-      used: 'df -P /dev/sdb | awk "NR==2 {print \\$2}"',
-      available: 'df -P /dev/sdb | awk "NR==2 {print \\$3}"'
+      total: 'df -P /dev/sdb | awk "NR==2 {print \\$2}"',
+      used: 'df -P /dev/sdb | awk "NR==2 {print \\$3}"'
     },
     nodes_whitelist: []
   }.freeze
@@ -366,7 +366,7 @@ module Storage
 
   def print_estimate(hostname, paths)
     estimate = estimate_reclaimed_disk_space(hostname, paths)
-    percentage = percentage_of_total_disk_space(estimate, disk_space(hostname, :available))
+    percentage = percentage_of_total_disk_space(estimate, disk_space(hostname, :total))
     log.info "Estimated reclaimed disk space: #{human_friendly_filesize(estimate)} \
 (#{percentage}% of total)"
   end
@@ -375,7 +375,7 @@ module Storage
     used_initial = disk_space(hostname, :used)
     yield
     reclaimed = used_initial - disk_space(hostname, :used)
-    percentage = percentage_of_total_disk_space(reclaimed, disk_space(hostname, :available))
+    percentage = percentage_of_total_disk_space(reclaimed, disk_space(hostname, :total))
     log.info "Initial used disk space: #{human_friendly_filesize(used_initial)}"
     log.info "Reclaimed disk space: #{human_friendly_filesize(reclaimed)} \
 (#{percentage}% of total)"
