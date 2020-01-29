@@ -14,6 +14,7 @@ Currently we have multiple ways of deploying certificates. Please see the `Manag
 - [Gitter.im][gitter]
 - [GCP Load Balancer][gcp]
 - [GKMS][gkms] (mostly automated using [Certificates Updater](https://gitlab.com/gitlab-com/gl-infra/certificates-updater))
+- [manual Cloudflare][manual_cf] (planned to be used intermittently in the migration phase)
 - [Status.io][statusio]
 - [ZenDesk][zd]
 
@@ -134,7 +135,7 @@ By editing list inside `prometheus.jobs.blackbox-ssl.target` attribute in the ro
 | dr.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | Disaster recovery instance | [GKMS][gkms] | item: `frontend-loadbalancer dr`, fields: `gitlab-haproxy.ssl.gitlab_crt`,  `gitlab-haproxy.ssl.gitlab_key`|
 | ee.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | Redirect to EE repo, hosted on about-src., no CDN | [Chef Vault][cv] | data bag: `about-gitlab-com`, item: `_default`, fields: `[ee.gitlab.com][ssl_certificate]`, `[ee.gitlab.com][ssl_key]` |
 | forum.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | GitLab forum | [Forum][fo] | |
-| gitlab.com | Sectigo RSA Domain Validation Secure Server CA | Duh | [GKMS][gkms] | item: `frontend-loadbalancer gprd`, fields: `gitlab-haproxy.ssl.gitlab_crt`,  `gitlab-haproxy.ssl.gitlab_key` |
+| gitlab.com | Sectigo RSA Domain Validation Secure Server CA | Duh | [GKMS][gkms] & [manual Cloudflare][manual_cf] | item: `frontend-loadbalancer gprd`, fields: `gitlab-haproxy.ssl.gitlab_crt`,  `gitlab-haproxy.ssl.gitlab_key` |
 | gitlab.org | GlobalSign CloudSSL CA - SHA256 - G3 | Redirect to about.gitlab.com, hosted on fastly | [Fastly][f] | Auto-renewed shared certificate |
 | hub.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | redirects to https://lab.github.com/ (https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/6667), hosted on about-src, no CDN | [Chef Vault][cv] | data bag: `about-gitlab-com`, item: `_default`, fields: `[hub.gitlab.com][ssl_certificate]`, `[hub.gitlab.com][ssl_key]` |
 | jobs.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | redirects to https://about.gitlab.com/jobs/, Hosted on about-src | [Fastly][f] & [Chef Vault][cv] | data bag: `about-gitlab-com`, item: `_default`, fields: `[jobs.gitlab.com][ssl_certificate]`, `[jobs.gitlab.com][ssl_key]` |
@@ -143,7 +144,7 @@ By editing list inside `prometheus.jobs.blackbox-ssl.target` attribute in the ro
 | monitor.gitlab.net | Amazon Server CA 1B | AWS CloudFront redirect to dashboards.gitlab.net. | - | Auto-renewed by Amazon |
 | next.gitlab.com | Let's Encrypt Authority X3 | - | automatic (GitLab Pages managed) | |
 | nonprod-log.gitlab.net | Sectigo ECC Domain Validation Secure Server CA | non prod logs | [GCP Load Balancer][gcp]  | project: `gitlab-ops` ops-nonprod-proxy |
-| ops.gitlab.net | COMODO RSA Domain Validation Secure Server CA | ops instance  | [GKMS][gkms] | item: `gitlab-omnibus-secrets ops`, fields: `omnibus-gitlab.ssl.certificate`,  `omnibus-gitlab.ssl.private_key` |
+| ops.gitlab.net | COMODO RSA Domain Validation Secure Server CA | ops instance  | [GKMS][gkms] & [manual Cloudflare][manual_cf] | item: `gitlab-omnibus-secrets ops`, fields: `omnibus-gitlab.ssl.certificate`,  `omnibus-gitlab.ssl.private_key` |
 | packages.gitlab.com | COMODO RSA Domain Validation Secure Server CA | packagecoud instance | [Chef Vault][cv] | data bag: `packages-gitlab.com`, item: `_default`, fields: `ssl.certificate`, `ssl.private_key` |
 | pre.gitlab.com | COMODO RSA Domain Validation Secure Server CA | prerelease instance | [GKMS][gkms] | item: `frontend-loadbalancer pre`, fields: `gitlab-haproxy.ssl.gitlab_crt`,  `gitlab-haproxy.ssl.gitlab_key` |
 | prod.pages-check.gitlab.net | COMODO RSA Domain Validation Secure Server CA | [GitLab pages check](https://gitlab.com/gitlab-com/pages-ip-check) | automatic (GitLab Pages managed) | |
@@ -155,7 +156,7 @@ By editing list inside `prometheus.jobs.blackbox-ssl.target` attribute in the ro
 | registry.pre.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | | [GKMS][gkms] | item: `frontend-loadbalancer pre`, fields: `gitlab-haproxy.ssl.registry_crt`,  `gitlab-haproxy.ssl.registry_key` |
 | registry.staging.gitlab.com | COMODO RSA Domain Validation Secure Server CA | | [GKMS][gkms] | item: `frontend-loadbalancer gstg`, fields: `gitlab-haproxy.ssl.registry_crt`,  `gitlab-haproxy.ssl.registry_key` |
 | sentry.gitlab.net | COMODO RSA Domain Validation Secure Server CA | | [Chef hybrid][chef_hybrid] | cert role: `ops-infra-sentry` cert field: `default_attributes.gitlab-sentry.ssl_certificate`, key data bag: `gitlab-sentry`, key items: `_default` *and* `prd`, key fields: `gitlab-sentry.ssl_key` |
-| staging.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | staging instance | [GKMS][gkms] | item: `frontend-loadbalancer gstg`, fields: `gitlab-haproxy.ssl.gitlab_crt`,  `gitlab-haproxy.ssl.gitlab_key` |
+| staging.gitlab.com, auth.staging.gitlab.com, geo.staging.gitlab.com, gstg.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | staging instance | [GKMS][gkms] & [manual Cloudflare][manual_cf] | item: `frontend-loadbalancer gstg`, fields: `gitlab-haproxy.ssl.gitlab_crt`,  `gitlab-haproxy.ssl.gitlab_key` |
 | staging.pages-check.gitlab.net | COMODO RSA Domain Validation Secure Server CA | [GitLab pages check](https://staging.gitlab.com/gitlab-com/pages-ip-check) | automatic (GitLab Pages managed) | |
 | status.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | status.io | | [Status.io][statusio] |
 | support.gitlab.com | Let's Encrypt Authority X3 | General zendesk | [ZenDesk][zd] | |
@@ -169,9 +170,11 @@ By editing list inside `prometheus.jobs.blackbox-ssl.target` attribute in the ro
 | *.gstg.gitlab.io | Sectigo RSA Domain Validation Secure Server CA | GitLab pages on gstg | [GKMS][gkms] | item: `gitlab-omnibus-secrets gstg`, fields: `omnibus-gitlab.ssl.pages_certificate`,  `omnibus-gitlab.ssl.pages_private_key` |
 | *.gstg.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp]  | project: `gitlab-staging` |
 | *.ops.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] | project: `gitlab-ops` |
+| *.ops.gitlab.net | CloudFlare Inc ECC CA-2 | | automated Cloudflare | |
 | *.pre.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] | project: `gitlab-pre` |
 | *.pre.gitlab.io | Sectigo RSA Domain Validation Secure Server CA | GitLab pages for pre | [GKMS][gkms] | item: `gitlab-omnibus-secrets pre`, fields: `omnibus-gitlab.ssl.pages_certificate`,  `omnibus-gitlab.ssl.pages_private_key` |
 | *.qa-tunnel.gitlab.info | Sectigo RSA Domain Validation Secure Server CA | QA Tunnel | [Chef Vault][cv] | data bag: `gitlab-qa-tunnel`, item: `ci-prd`, fields: `"gitlab-qa-tunnel".ssl_certificate`, `"gitlab-qa-tunnel".ssl_key`|
+| *.staging.gitlab.net | CloudFlare Inc ECC CA-2 | | automated Cloudflare | |
 
 Defunct certs (dead hosts, no longer used, etc)
 
@@ -254,5 +257,6 @@ Other Certs (Unknown maintainer)
 [gitter]: https://gitlab.com/gitlab-com/gl-infra/gitter-infrastructure/tree/master#update-sslhttps-certs
 [gkms]: gkms.md
 [gcp]: gcp.md
+[manual_cf]: manual_cloudflare.md
 [statusio]: https://app.status.io/dashboard/5b36dc6502d06804c08349f7/settings/ssl
 [zd]: zendesk.md
