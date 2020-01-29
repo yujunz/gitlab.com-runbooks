@@ -26,11 +26,11 @@
 
 * [blackbox-git-exporter.md](blackbox-git-exporter.md)
 * [blocked-user-logins.md](blocked-user-logins.md)
+* [git-stuck-processes.md](git-stuck-processes.md)
+* [git.md](git.md)
 * [gitaly-down.md](gitaly-down.md)
 * [gitaly-latency.md](gitaly-latency.md)
 * [gitaly-rate-limiting.md](gitaly-rate-limiting.md)
-* [git.md](git.md)
-* [git-stuck-processes.md](git-stuck-processes.md)
 * [haproxy.md](haproxy.md)
 * [large-sidekiq-queue.md](large-sidekiq-queue.md)
 * [missing_repos.md](missing_repos.md)
