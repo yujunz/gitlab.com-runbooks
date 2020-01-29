@@ -28,7 +28,6 @@
 * [blocked-user-logins.md](blocked-user-logins.md)
 * [gemnasium_is_down.md](gemnasium_is_down.md)
 * [haproxy.md](haproxy.md)
-* [large-sidekiq-queue.md](large-sidekiq-queue.md)
 * [pgbouncer.md](pgbouncer.md)
 * [postgres.md](postgres.md)
 * [ssh-maxstartups-breach.md](ssh-maxstartups-breach.md)

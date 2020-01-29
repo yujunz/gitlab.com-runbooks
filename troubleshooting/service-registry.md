@@ -18,8 +18,8 @@
 
 * [gitlab-registry.md](gitlab-registry.md)
 * [kubernetes.md](kubernetes.md)
-* [runners-cache.md](runners-cache.md)
 * [runners_cache_disk_space.md](runners_cache_disk_space.md)
 * [runners_cache_is_down.md](runners_cache_is_down.md)
+* [runners-cache.md](runners-cache.md)
 * [runners_registry_is_down.md](runners_registry_is_down.md)
 <!-- END_MARKER -->
