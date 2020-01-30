@@ -288,7 +288,7 @@ services:
       Allows GitLab.com customers to interact with GitLab.com programmatically
       through a uniform interface
     SLA:
-      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
+      overall_sla_weighting: 5 # If this exists, this service will be included in the overall SLA, using this value as a weighted average
       availability:
       response_time:
   technical:
@@ -867,7 +867,7 @@ services:
     business_value: |
       Allows GitLab.com customers to interact with GitLab.com through web-based interface.
     SLA:
-      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
+      overall_sla_weighting: 5 # If this exists, this service will be included in the overall SLA, using this value as a weighted average
       availability:
       response_time:
   technical:
@@ -1023,7 +1023,7 @@ services:
     business_value:
       This is the standard way of working with and managing remote repositories.
     SLA:
-      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
+      overall_sla_weighting: 5 # If this exists, this service will be included in the overall SLA, using this value as a weighted average
       availability:
       response_time:
   technical:
@@ -1392,7 +1392,6 @@ services:
     business_value: |
       It acts as a load-balancer in front of our pages service
     SLA:
-      primary_sla_service: false # True if this service's SLA contributed to the headline SLA metric for GitLab.com
       availability:
       response_time:
   technical:
@@ -1455,7 +1454,6 @@ services:
       It allows hosting static websites on GitLab.com for free, which can be an incentive
       for new users to join and use GitLab.com.
     SLA:
-      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
       availability:
       response_time:
   technical:
@@ -2275,7 +2273,7 @@ services:
       GitLab is all about having a single, integrated experience and registry is no exception.
       Customers can easily use their images for GitLab CI, create images specific for tags or branches and much more.
     SLA:
-      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
+      overall_sla_weighting: 1 # If this exists, this service will be included in the overall SLA, using this value as a weighted average
       availability:
       response_time:
   technical:
@@ -2419,7 +2417,7 @@ services:
       # For a list of available background workers, see https://gitlab.com/gitlab-org/gitlab-ee/tree/master/app/workers
       # and https://gitlab.com/gitlab-org/gitlab-ee/tree/master/ee/app/workers
     SLA:
-      primary_sla_service: true # True if this service's SLA contributed to the headline SLA metric for GitLab.com
+      overall_sla_weighting: 2 # If this exists, this service will be included in the overall SLA, using this value as a weighted average
       availability:
       response_time:
   technical:
@@ -2802,7 +2800,7 @@ services:
       account up to 2000 minutes, but more can be purchased by upgrading
       to a higher plan.
     SLA:
-      primary_sla_service: true # The intention is for this to be set to true once the service is responding within it's SLA: https://gitlab.com/gitlab-com/www-gitlab-com/issues/5341
+      overall_sla_weighting: 3 # If this exists, this service will be included in the overall SLA, using this value as a weighted average
       availability:
       response_time: p95 of 60 second job pick up latency
   technical:
