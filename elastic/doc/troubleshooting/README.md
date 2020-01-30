@@ -14,6 +14,8 @@
             - [get current node allocation](#get-current-node-allocation)
         - [past incidents](#past-incidents)
             - [Ideas of things to check (based on previous incidents)](#ideas-of-things-to-check-based-on-previous-incidents)
+            - [high CPU load on a single node](#high-cpu-load-on-a-single-node)
+            - [cluster lags behind with logs after a node was added](#cluster-lags-behind-with-logs-after-a-node-was-added)
             - [too many active shards on a single node](#too-many-active-shards-on-a-single-node)
             - [running out of disk space](#running-out-of-disk-space)
             - [shards unassigned](#shards-unassigned)
@@ -95,9 +97,22 @@ on ES cluster:
 - what's the indexing latency? (if it's high, there's a problem with performance)
 - what's the cpu/memory/io usage?
 
+#### high CPU load on a single node ####
+
+See [below](#too-many-active-shards-on-a-single-node)
+
+#### cluster lags behind with logs after a node was added ####
+
+See [below](#too-many-active-shards-on-a-single-node)
+
 #### too many active shards on a single node ####
 
-resulting in hot-spotting, we used high cpu usage as an indicator, but it was based on a guess (there was no hard evidence showing the cpu was used by processes related to shards)
+As the new node is starting with no assigned shards, it will get all new shards
+assigned after a rollover, resulting in hot-spotting. We used high cpu usage as
+an indicator, but it was based on a guess (there was no hard evidence showing
+the cpu was used by processes related to shards).
+
+Solution:  See [retry shard allocation](#retry-shard-allocation)
 
 #### running out of disk space ####
 
@@ -177,6 +192,40 @@ In order to fix:
 - if shards are distributed unequally, one node might receive a disproportionate amount of traffic causing high CPU usage and as a result the indexing latency might go up
 - stop routing to the overloaded node and force an index rollover (incoming documents are only saved to new indeces, regardless of the timestamp in the document)
 - alternatively you can trigger shard reballancing -> this might actually not be such a good idea. If the node is already heavily loaded, making it move a shard, which uses even more resources, will only make things worse.
+
+```
+NODE=instance-0000000016
+# find small inactive shards on other nodes:
+curl -u 'xxx:yyy' "https://<deployment-id>.us-central1.gcp.cloud.es.io:9243/_cat/shards?v&bytes=b&h=store,index,node,shard,p,state" | grep -v $NODE | sort -r
+
+# find active shards on overloaded node (last number is index operations -
+# take shards with more than 0 index operations):
+curl -u 'xxx:yyy' "https://<deployment-id>.us-central1.gcp.cloud.es.io:9243/_cat/shards?v&bytes=b&h=store,index,node,shard,p,state,iic&s=iic,store" | grep $NODE
+
+# create file move.json with shards to move around:
+{
+    "commands" : [{
+            "move" : {
+                "index" : "pubsub-consul-inf-gprd-2020.01.26-000007", "shard" : 3,
+                "from_node" : "instance-0000000072", "to_node" : "instance-0000000016"
+            }
+     },
+     {
+            "move" : {
+                "index" : "pubsub-rails-inf-gprd-2020.01.29-000007", "shard" : 0,
+                "from_node" : "instance-0000000016", "to_node" : "instance-0000000072"
+            }
+     }]
+}
+
+# Post the change:
+curl -XPOST -u 'xxx:yyy' -d @move.json https://<deployment-id>.us-central1.gcp.cloud.es.io:9243/_cluster/reroute?retry_failed=true
+
+# this may fail if shards are not placed according to allocation constraints,
+# e.g. all shards of an index should end up on different nodes. Try again with
+# different shards or nodes.
+```
+
 
 ### restarting an ES deployment ###
 
