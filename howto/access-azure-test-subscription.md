@@ -10,4 +10,5 @@ For the infrastructure and IT/ops teams, access can be provisioned by:
 
 1. Logging in to the [Azure portal](https://portal.azure.com)
 2. Going to All Services > Identity > Users > New Guest User
-3. Once the invite is accepted, under Subscriptions > IAM, add the new user to the Contributor Role for the Pay-As-You-Go Testing Subscription
+    - **Note**: The user may already be a member, in which case you may proceed directly to adding the IAM role in the next step.
+3. Once the invite is accepted, under Home > Subscriptions > Pay-As-You-Go > IAM, add the new user to the Contributor Role for the Pay-As-You-Go Testing Subscription
