@@ -26,9 +26,9 @@ function prepare() {
   fi
 
   # Convert the service catalog yaml into a JSON file in a format thats consumable by jsonnet
-  ruby -rjson -ryaml -e "puts YAML.load(ARGF.read).to_json" ../services/service-catalog.yml >service_catalog.json
+  ruby -rjson -ryaml -e "puts YAML.load(ARGF.read).to_json" ../services/service-catalog.yml >../services/service_catalog.json
 }
 
 function jsonnet_compile() {
-  jsonnet -J . -J ../metrics-catalog/ -J vendor --ext-str "dashboardPath=${1}" "$@"
+  jsonnet -J . -J ../metrics-catalog/ -J vendor -J ../services --ext-str "dashboardPath=${1}" "$@"
 }

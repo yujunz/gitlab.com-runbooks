@@ -55,8 +55,7 @@ local thresholdsValues = {
 };
 
 local keyServices = serviceCatalog.findServices(function(service)
-  std.objectHas(service.business.SLA, 'primary_sla_service') &&
-  service.business.SLA.primary_sla_service);
+  std.objectHas(service.business.SLA, 'overall_sla_weighting') && service.business.SLA.overall_sla_weighting > 0);
 
 local keyServiceRegExp = std.join('|', std.map(function(service) service.name, keyServices));
 
