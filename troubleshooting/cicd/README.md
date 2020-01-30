@@ -30,7 +30,7 @@ Let's shortly describe data flow and most crucial components of Shared Runners s
 1. GitLab Unicorn executes SQL query that checks for list of "potential" jobs that should be executed by runner in question,
 1. We validate that potential runner can run job, if this is true we transition the job from `pending` to `running` and attach `runner_id`,
 1. Job serialized data is returned to Runner Manager,
-1. Runner Manager when receives a job is starting an executor (docker, kubernetes or docker+machine),
+1. Runner Manager, when receiving a job, is starting an executor (docker, kubernetes, [custom autoscaler](https://gitlab.com/gitlab-org/ci-cd/custom-executors/autoscaler), or docker+machine),
 1. Runner reads received payload and creates a set of containers: helper (to clone sources, to download/upload artifacts and caches), build (to run user-provided script), services (provided in `.gitlab-ci.yml`),
 1. Once all containers do finish the result of the job is sent do GitLab,
 
@@ -43,4 +43,4 @@ namespaces from being too large.
 
 ### Creating machines
 
-Runner Manager does manage Machines as described in this document: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/configuration/autoscale.md#autoscaling-algorithm-and-parameters.
+Runner Manager manages Machines as described in the [documentation for the auto-scaling algorithm](https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/configuration/autoscale.md#autoscaling-algorithm-and-parameters).
