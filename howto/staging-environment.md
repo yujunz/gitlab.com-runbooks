@@ -1,8 +1,11 @@
 # GitLab staging environment
 
-The GitLab.com staging environment keeps a copy of the whole production database, ~~anonymised~~, and ~~automatically updated every weekend~~
+The GitLab.com staging environment has a copy of the production database that
+is not current, ways to keep staging updates are being discussed but no plan are
+yet made to keep it regularly updated.
 
-This environment also contains a copy of the GitLab groups repos accessible through NFS to provide a similar experience to what we actually have in production.
+This environment also contains a copy of some GitLab groups that are on storage
+nodes
 
 ## What is this for?
 
@@ -11,15 +14,7 @@ If you have any idea on how to improve such feedback loop or you are missing any
 
 ## What is it made of?
 
-* One front-end load balancer: `fe01.stg.gitlab.com`
-* One API node: `api01.stg.gitlab.com`
-* One git node: `git01.stg.gitlab.com`
-* One Sidekiq node: `sidekiq01.stg.gitlab.com`
-* One web node: `web01.stg.gitlab.com`
-* One Redis node: `redis1.staging.gitlab.com`
-* Four Postgres nodes: `db3.staging.gitlab.com`, `db4.staging.gitlab.com`, `db5.staging.gitlab.com` and `db6.staging.gitlab.com`
-* One Elasticsearch node: `es1.staging.gitlab.com`
-* One storage node: `nfs5.staging.gitlab.com`
+For all hosts running in the staging environment see the [host dashboard](https://dashboards.gitlab.net/d/fasrTtKik/hosts?orgId=1&var-environment=gstg&var-prometheus=prometheus-01-inf-gstg).
 
 Access to staging environment is treated the same as production as per
 [handbook](https://about.gitlab.com/handbook/engineering/infrastructure/#production-and-staging-access).
