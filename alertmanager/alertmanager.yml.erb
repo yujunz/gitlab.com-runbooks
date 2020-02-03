@@ -1,20 +1,20 @@
 ################################################
-# This file needs to be kept in sync with gitlab-cookbooks/gitlab-alertmanager/templates/default/alertmanager.yml.erb
-# It's a temporary state until all config is moved here, see: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7071
+# This file needs to be kept in sync with runbooks/alertmanager/alertmanager.yml.erb
+# It's a temporary state until all config is moved over to the other file, see: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7071
 ################################################
 
-templates:<% @template_locations.each do |location| %>
-   - <%= location %>
-<% end %>
+templates:
+- "<%= node["alertmanager"]["templates"]["dir"] %>/*.tmpl"
 
 route:
   repeat_interval: 8h
 
   # Route most alerts to the main alerts channel in slack
   receiver: main_alerts_channel
-  group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
+  group_by: ['env', 'tier', 'type', 'alertname', 'stage']
 
   routes:
+<% if @conf['snitch']['api_key'] -%>
   ################################################
   # Send heartbeats to Dead Man's Snitch.
   ################################################
@@ -26,22 +26,30 @@ route:
     repeat_interval: 5m
     continue: false
 
+<% end -%>
   ################################################
   # General Alerts
   # Treat these specially until https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/4881 is complete
   ################################################
+<% if @conf['slack_bridge'] && @conf['slack_bridge']['webhook_url'] %>
+  - match:
+      rules_domain: general
+    receiver: slack_bridge
+    group_by: ['env', 'tier', 'type', 'alertname', 'stage']
+    continue: true
+<% end %>
 
   - match:
       rules_domain: general
       pager: ""
-    group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
+    group_by: ['env', 'tier', 'type', 'alertname', 'stage']
     receiver: slack_alerts_general
     continue: false
 
   - match:
       rules_domain: general
-      pager: "pagerduty"
-    group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
+      pager: pagerduty
+    group_by: ['env', 'tier', 'type', 'alertname', 'stage']
     receiver: slack_alerts_general
     continue: true
 
@@ -53,7 +61,7 @@ route:
   - match:
       channel: gitaly
       severity: warn
-    group_by: ['environment', 'alertname','instance','job', 'stage']
+    group_by: ['env', 'alertname','instance','job', 'stage']
     receiver: gitaly_low_priority_alerts_channel
     continue: false
 
@@ -61,13 +69,13 @@ route:
   - match:
       channel: gitaly
       severity: error
-    group_by: ['environment', 'alertname','instance','job', 'stage']
+    group_by: ['env', 'alertname','instance','job', 'stage']
     receiver: gitaly_alerts_channel
     continue: false
 
   - match:
       channel: gitaly
-    group_by: ['environment', 'alertname','instance','job', 'stage']
+    group_by: ['env', 'alertname','instance','job', 'stage']
     receiver: gitaly_alerts_channel
     continue: true
 
@@ -75,7 +83,7 @@ route:
   - match:
       channel: ci-cd
       severity: warn
-    group_by: ['environment', 'alertname', 'stage']
+    group_by: ['env', 'alertname', 'stage']
     receiver: cicd_alerts_channel
     continue: false
 
@@ -83,13 +91,13 @@ route:
   - match:
       channel: ci-cd
       severity: error
-    group_by: ['environment', 'alertname', 'stage']
+    group_by: ['env', 'alertname', 'stage']
     receiver: cicd_alerts_channel
     continue: false
 
   - match:
       channel: ci-cd
-    group_by: ['environment', 'alertname', 'stage']
+    group_by: ['env', 'alertname', 'stage']
     receiver: cicd_alerts_channel
     continue: true
 
@@ -97,7 +105,7 @@ route:
   - match:
       channel: database
       severity: warn
-    group_by: ['environment', 'alertname', 'stage']
+    group_by: ['env', 'alertname', 'stage']
     receiver: database_low_priority_alerts_channel
     continue: false
 
@@ -105,16 +113,35 @@ route:
   - match:
       channel: database
       severity: error
-    group_by: ['environment', 'alertname', 'stage']
+    group_by: ['env', 'alertname', 'stage']
     receiver: database_alerts_channel
     continue: false
 
   - match:
       channel: database
-    group_by: ['environment', 'alertname', 'stage']
+    group_by: ['env', 'alertname', 'stage']
     receiver: database_alerts_channel
     continue: true
 
+<% if @conf['issues'] -%>
+  ################################################
+  # Issue routes: GitLab issues
+  ################################################
+  - match:
+      pager: issue
+    group_by: ['env', 'alertname', 'stage']
+    group_wait: 10m
+    group_interval: 1h
+    repeat_interval: 3d
+    continue: true
+    routes:
+<% @conf['issues'].each do |project, token| -%>
+      - match:
+          project: '<%= project %>'
+        receiver: 'issue:<%= project %>'
+<% end -%>
+
+<% end -%>
   ################################################
   # Endgate routes: pagerduty and slack
   ################################################
@@ -123,42 +150,44 @@ route:
   - match:
       pager: pagerduty
     routes:
+    <% if node['alertmanager']['non_critical_pagerduty_environments'].any? %>
     - receiver: non_prod_pagerduty
       match_re:
-        environment: gstg|dr|pre
-      group_by: ['environment', 'alertname', 'stage']
+        env: <%= node['alertmanager']['non_critical_pagerduty_environments'].join('|') %>
+      group_by: ['env', 'alertname', 'stage']
       continue: false
+    <% end %>
     - receiver: slo_dr
       match:
         slo_alert: yes
-        environment: dr
+        env: dr
       continue: false
     - receiver: slo_gprd_cny
       match:
         slo_alert: yes
-        environment: gprd
+        env: gprd
         stage: cny
       continue: true
     - receiver: slo_gprd_main
       match:
         slo_alert: yes
-        environment: gprd
+        env: gprd
         stage: main
       continue: true
     - receiver: pager_alerts_channel
       match:
         slo_alert: yes
-      group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
+      group_by: ['env', 'tier', 'type', 'alertname', 'stage']
       continue: false
     - receiver: slo_non_prod
       match:
         slo_alert: yes
       continue: false
     - receiver: prod_pagerduty
-      group_by: ['environment', 'alertname', 'stage']
+      group_by: ['env', 'alertname', 'stage']
       continue: true
     - receiver: pager_alerts_channel
-      group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
+      group_by: ['env', 'tier', 'type', 'alertname', 'stage']
       continue: true
 
     continue: false
@@ -166,140 +195,46 @@ route:
   # Everything else goes to #alerts
   # NOTE: Make sure this is the last matcher
   - receiver: main_alerts_channel
-    group_by: ['environment', 'tier', 'type', 'alertname', 'stage']
+    group_by: ['env', 'tier', 'type', 'alertname', 'stage']
     continue: false
 
 receivers:
 ################################################
 # Pagerduty
 ################################################
-- name: prod_pagerduty
+<% %w(prod_pagerduty non_prod_pagerduty slo_dr slo_gprd_cny slo_gprd_main slo_non_prod).each do |pagerduty| %>
+<% if @conf[pagerduty] %>
+- name: <%= pagerduty %>
   pagerduty_configs:
-  - service_key: "<%= prod_pagerduty %>"
+  - service_key: "<%= @conf[pagerduty]['service_key'] %>"
     description: '{{ template "slack.title" . }}'
     client: 'GitLab Alertmanager'
     client_url: '{{ template "slack.link" . }}'
     details: { note : '{{ template "slack.text" . }}'}
     send_resolved: true
-- name: non_prod_pagerduty
-  pagerduty_configs:
-  - service_key: "<%= non_prod_pagerduty %>"
-    description: '{{ template "slack.title" . }}'
-    client: 'GitLab Alertmanager'
-    client_url: '{{ template "slack.link" . }}'
-    details: { note : '{{ template "slack.text" . }}'}
-    send_resolved: true
-- name: slo_dr
-  pagerduty_configs:
-  - service_key: "<%= slo_dr %>"
-    description: '{{ template "slack.title" . }}'
-    client: 'GitLab Alertmanager'
-    client_url: '{{ template "slack.link" . }}'
-    details: { note : '{{ template "slack.text" . }}'}
-    send_resolved: true
-- name: slo_gprd_cny
-  pagerduty_configs:
-  - service_key: "<%= slo_gprd_cny %>"
-    description: '{{ template "slack.title" . }}'
-    client: 'GitLab Alertmanager'
-    client_url: '{{ template "slack.link" . }}'
-    details: { note : '{{ template "slack.text" . }}'}
-    send_resolved: true
-- name: slo_gprd_main
-  pagerduty_configs:
-  - service_key: "<%= slo_gprd_main %>"
-    description: '{{ template "slack.title" . }}'
-    client: 'GitLab Alertmanager'
-    client_url: '{{ template "slack.link" . }}'
-    details: { note : '{{ template "slack.text" . }}'}
-    send_resolved: true
-- name: slo_non_prod
-  pagerduty_configs:
-  - service_key: "<%= slo_non_prod %>"
-    description: '{{ template "slack.title" . }}'
-    client: 'GitLab Alertmanager'
-    client_url: '{{ template "slack.link" . }}'
-    details: { note : '{{ template "slack.text" . }}'}
-    send_resolved: true
+<% end %>
+<% end %>
 
 ################################################
 # Slack Channel Alerts
 ################################################
-- name: "main_alerts_channel"
+<% %w(main_alerts_channel pager_alerts_channel database_alerts_channel database_low_priority_alerts_channel gitaly_alerts_channel gitaly_low_priority_alerts_channel cicd_alerts_channel).each do   |slack_channel| %>
+- name: "<%=slack_channel%>"
   slack_configs:
-  - api_url: "<%= slack_hook %>"
+  - api_url: "<%= @conf['slack']['api_url'] %>"
     send_resolved: true
-    channel: "#alerts"
+    channel: "<%= node['alertmanager']['slack'][slack_channel] %>"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
     title_link: '{{ template "slack.link" . }}'
     text: '{{ template "slack.text" . }}'
-- name: "pager_alerts_channel"
-  slack_configs:
-  - api_url: "<%= slack_hook %>"
-    send_resolved: true
-    channel: "#alerts"
-    icon_emoji: '{{ template "slack.icon" . }}'
-    color: '{{ template "slack.color" . }}'
-    title: '{{ template "slack.title" . }}'
-    title_link: '{{ template "slack.link" . }}'
-    text: '{{ template "slack.text" . }}'
-- name: "database_alerts_channel"
-  slack_configs:
-  - api_url: "<%= slack_hook %>"
-    send_resolved: true
-    channel: "#alerts"
-    icon_emoji: '{{ template "slack.icon" . }}'
-    color: '{{ template "slack.color" . }}'
-    title: '{{ template "slack.title" . }}'
-    title_link: '{{ template "slack.link" . }}'
-    text: '{{ template "slack.text" . }}'
-- name: "database_low_priority_alerts_channel"
-  slack_configs:
-  - api_url: "<%= slack_hook %>"
-    send_resolved: true
-    channel: "#alerts"
-    icon_emoji: '{{ template "slack.icon" . }}'
-    color: '{{ template "slack.color" . }}'
-    title: '{{ template "slack.title" . }}'
-    title_link: '{{ template "slack.link" . }}'
-    text: '{{ template "slack.text" . }}'
-- name: "gitaly_alerts_channel"
-  slack_configs:
-  - api_url: "<%= slack_hook %>"
-    send_resolved: true
-    channel: "#alerts"
-    icon_emoji: '{{ template "slack.icon" . }}'
-    color: '{{ template "slack.color" . }}'
-    title: '{{ template "slack.title" . }}'
-    title_link: '{{ template "slack.link" . }}'
-    text: '{{ template "slack.text" . }}'
-- name: "gitaly_low_priority_alerts_channel"
-  slack_configs:
-  - api_url: "<%= slack_hook %>"
-    send_resolved: true
-    channel: "#alerts"
-    icon_emoji: '{{ template "slack.icon" . }}'
-    color: '{{ template "slack.color" . }}'
-    title: '{{ template "slack.title" . }}'
-    title_link: '{{ template "slack.link" . }}'
-    text: '{{ template "slack.text" . }}'
-- name: "cicd_alerts_channel"
-  slack_configs:
-  - api_url: "<%= slack_hook %>"
-    send_resolved: true
-    channel: "#alerts"
-    icon_emoji: '{{ template "slack.icon" . }}'
-    color: '{{ template "slack.color" . }}'
-    title: '{{ template "slack.title" . }}'
-    title_link: '{{ template "slack.link" . }}'
-    text: '{{ template "slack.text" . }}'
+<% end %>
 
 # This is temporary while https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/4881 is ongoing
 - name: slack_alerts_general
   slack_configs:
-  - api_url: "<%= slack_hook %>"
+  - api_url: "<%= @conf['slack']['api_url'] %>"
     channel: '#alerts-gen-svc-test'
     send_resolved: true
     icon_emoji: '{{ template "slack.icon" . }}'
@@ -310,7 +245,27 @@ receivers:
 ################################################
 # WebHooks
 ################################################
+<% if @conf['snitch']['api_key'] -%>
 - name: dead_mans_snitch
   webhook_configs:
-  - url: "<%= snitch_hook %>"
+  - url: "https://nosnch.in/<%= @conf['snitch']['api_key'] %>"
     send_resolved: false
+<% end -%>
+<% if @conf['slack_bridge'] && @conf['slack_bridge']['webhook_url'] %>
+- name: slack_bridge
+  webhook_configs:
+  - url: "<%= @conf['slack_bridge']['webhook_url'] %>"
+    send_resolved: true
+    http_config:
+      bearer_token: "<%= @conf['slack_bridge']['bearer_token'] %>"
+<% end %>
+<% if @conf['issues'] -%>
+<% @conf['issues'].each do |project, token| -%>
+- name: "issue:<%= project %>"
+  webhook_configs:
+  - url: "https://<%= project %>/prometheus/alerts/notify.json"
+    send_resolved: true
+    http_config:
+      bearer_token: "<%= token %>"
+<% end -%>
+<% end -%>
