@@ -102,7 +102,13 @@ groups:
       expr: sum(rate(gitlab_transaction_duration_seconds_sum[5m])) without (fqdn, instance)
 
     - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
-      expr: sum(rate(gitlab_transaction_duration_seconds_bucket[5m])) without (fqdn, instance)
+      expr: sum(rate(gitlab_transaction_duration_seconds_bucket{type="api"}[5m])) without (fqdn, instance)
+    - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_transaction_duration_seconds_bucket{type="git"}[5m])) without (fqdn, instance)
+    - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_transaction_duration_seconds_bucket{type="sidekiq"}[5m])) without (fqdn, instance)
+    - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_transaction_duration_seconds_bucket{type="web"}[5m])) without (fqdn, instance)
 
     - record: controller_action:gitlab_transaction_latency_seconds:rate5m
       expr: >
@@ -203,7 +209,13 @@ groups:
       expr: sum(rate(gitlab_sql_duration_seconds_sum[5m])) without (fqdn, instance)
 
     - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
-      expr: sum(rate(gitlab_sql_duration_seconds_bucket[5m])) without (fqdn, instance)
+      expr: sum(rate(gitlab_sql_duration_seconds_bucket{type="api"}[5m])) without (fqdn, instance)
+    - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_sql_duration_seconds_bucket{type="git"}[5m])) without (fqdn, instance)
+    - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_sql_duration_seconds_bucket{type="sidekiq"}[5m])) without (fqdn, instance)
+    - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
+      expr: sum(rate(gitlab_sql_duration_seconds_bucket{type="web"}[5m])) without (fqdn, instance)
 
     - record: controller_action:gitlab_sql_latency_seconds:rate5m
       expr: >
