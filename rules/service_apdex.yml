@@ -111,36 +111,6 @@ groups:
     expr: >
       sum(rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", priority="pipeline"}[1m])) by (environment, tier, type, stage)
 
-  # redis-cache: indirectly measured with rails redis cache operations durations
-  # We don't have latency histograms for patroni but for now we will
-  # use the rails controller SQL latencies as an indirect proxy.
-  # Satisfied -> 0.01 seconds
-  # Acceptable -> 0.1 seconds
-  - record: gitlab_component_apdex:ratio
-    labels:
-      type: redis-cache
-      tier: db
-      component: 'rails_cache'
-      stage: main
-    expr: >
-      (
-        sum(job:gitlab_cache_operation_duration_seconds_bucket:rate1m{le="0.01"}) by (environment)
-        +
-        sum(job:gitlab_cache_operation_duration_seconds_bucket:rate1m{le="0.1"}) by (environment)
-      )
-      / 2
-      /
-      sum(job:gitlab_cache_operation_duration_seconds_bucket:rate1m{le="+Inf"}) by (environment) >= 0
-
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      type: redis-cache
-      tier: db
-      component: 'rails_cache'
-      stage: main
-    expr: >
-      sum(job:gitlab_cache_operation_duration_seconds_bucket:rate1m{le="+Inf"}) by (environment)
-
   ######################
   # Aggregation Stage
   ######################
