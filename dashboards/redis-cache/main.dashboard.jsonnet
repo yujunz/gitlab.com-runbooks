@@ -1,33 +1,9 @@
-local basic = import 'basic.libsonnet';
-local capacityPlanning = import 'capacity_planning.libsonnet';
-local colors = import 'colors.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
-local keyMetrics = import 'key_metrics.libsonnet';
-local layout = import 'layout.libsonnet';
-local nodeMetrics = import 'node_metrics.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
 local redisCommon = import 'redis_common_graphs.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
-local serviceCatalog = import 'service_catalog.libsonnet';
-local templates = import 'templates.libsonnet';
-local dashboard = grafana.dashboard;
 local row = grafana.row;
-local template = grafana.template;
-local graphPanel = grafana.graphPanel;
-local annotation = grafana.annotation;
-local serviceHealth = import 'service_health.libsonnet';
-local saturationDetail = import 'saturation_detail.libsonnet';
+local serviceDashboard = import 'service_dashboard.libsonnet';
 
-local selector = 'type="redis-cache", environment="$environment"';
-
-basic.dashboard(
-  'Overview',
-  tags=['redis-cache', 'overview'],
-)
-.addPanels(keyMetrics.headlineMetricsRow('redis-cache', '$stage', startRow=0))
-.addPanel(serviceHealth.row('redis-cache', '$stage'), gridPos={ x: 0, y: 500 })
+serviceDashboard.overview('redis-cache', 'db')
 .addPanel(
   row.new(title='Clients'),
   gridPos={
@@ -68,24 +44,4 @@ basic.dashboard(
   }
 )
 .addPanels(redisCommon.replication(serviceType='redis-cache', startRow=4001))
-
-.addPanel(keyMetrics.keyServiceMetricsRow('redis-cache', 'main'), gridPos={ x: 0, y: 5000 })
-.addPanel(keyMetrics.keyComponentMetricsRow('redis-cache', 'main'), gridPos={ x: 0, y: 6000 })
-.addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 7000 })
-.addPanel(
-  saturationDetail.saturationDetailPanels(selector, components=[
-    'cpu',
-    'disk_space',
-    'memory',
-    'open_fds',
-    'redis_clients',
-    'redis_memory',
-    'single_node_cpu',
-    'single_threaded_cpu',
-  ]),
-  gridPos={ x: 0, y: 8000, w: 24, h: 1 }
-)
-.addPanel(capacityPlanning.capacityPlanningRow('redis-cache', 'main'), gridPos={ x: 0, y: 9000 })
-+ {
-  links+: platformLinks.triage + serviceCatalog.getServiceLinks('redis-cache') + platformLinks.services,
-}
+.overviewTrailer()
