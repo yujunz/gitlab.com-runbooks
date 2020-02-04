@@ -57,7 +57,7 @@ test-rules:
 rubocop:
   stage: test
   script:
-    - gem install bundler etc --no-document
+    - gem install bundler --no-document
     - bundle install --with=test
     - bundle exec rubocop
 
