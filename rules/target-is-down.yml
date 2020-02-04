@@ -12,6 +12,5 @@ groups:
       annotations:
         title: Some prometheus job targets are down
         description: >
-          Some prometheus job targets are down. Discover which by navigating to
-          the appropriate monitor's target page, e.g.
-          https://prometheus-app.gprd.gitlab.net/targets
+          Some targets for {{ $labels.job }} are down.
+          See 'https://thanos-query.ops.gitlab.net/graph?g0.expr=up%7Benv%3D"{{ $externalLabels.env }}"%2Cjob%3D"{{ $labels.job }}"%7D%20%3D%3D%200'
