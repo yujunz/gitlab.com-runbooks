@@ -54,7 +54,7 @@ basic.dashboard(
       query=|||
         increase(marquee_customers_requests_server_errors_total{env="$environment", salesforce_url="https://gitlab.my.salesforce.com/${customer_id}"}[$__interval])
       |||,
-      legendFormat='RPS',
+      legendFormat='Errors',
       interval='2m',
       linewidth=2,
       intervalFactor=1,
