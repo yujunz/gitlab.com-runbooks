@@ -2,6 +2,7 @@ local metricsCatalog = import '../lib/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local customApdex = metricsCatalog.customApdex;
+local combined = metricsCatalog.combined;
 
 {
   type: 'gitaly',
@@ -21,14 +22,20 @@ local customApdex = metricsCatalog.customApdex;
       ),
 
       requestRate: rateMetric(
-        counter='grpc_server_handled_total',
+        counter='gitaly_service_client_requests_total',
         selector='job="gitaly"'
       ),
 
-      errorRate: rateMetric(
-        counter='grpc_server_handled_total',
-        selector='job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"'
-      ),
+      errorRate: combined([
+        rateMetric(
+          counter='gitaly_service_client_requests_total',
+          selector='job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"'
+        ),
+        rateMetric(
+          counter='gitaly_service_client_requests_total',
+          selector='job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"'
+        ),
+      ]),
 
       significantLabels: ['fqdn'],
     },
