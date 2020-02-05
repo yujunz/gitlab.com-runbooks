@@ -46,7 +46,18 @@ database here is a singleton and not managed by patroni.
    standby_mode = 'on'
    restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
    recovery_target_timeline = 'latest'
+
+   # Omit this setting if not using streaming replication and relying solely on
+   # archive recovery.
+   primary_conninfo = 'user=gitlab-replicator password=<password> host=<target> port=5432 sslmode=prefer application_name=<output of hostname -f>'
    ```
+
+   Target should be the IP of a replica node in the main postgres cluster,
+   patroni-tagged "nofailover,noloadbalance". This should have already been set
+   up in advance, and the tags can be examined by the chef attribute
+   `gitlab-patroni.patroni.conf.tags`.
+
+   The password can be obtained from the recovery.conf file on this replica.
 
    `chown` it to `gitlab-psql:gitlab-psql` and `chmod` it to `600`.
 
@@ -62,6 +73,11 @@ database here is a singleton and not managed by patroni.
 1. `systemctl start chef-client.service`
 1. Check the `pg_replication_lag` metric for this node. As long as it is
    generally decreasing over time, archive recovery is working.
+1. Once the replication lag is near zero, the geo postgres should switch to
+   using streaming replication rather than archive recovery. You can check this
+   is working by logging onto the target replica, and running `select * from
+   pg_stat_replication;` in `sudo gitlab-psql`. You should see state =
+   'streaming'.
 
 ## Setup replication for a patroni-managed cluster
 
