@@ -635,7 +635,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="gitaly"}[1m])
+        rate(gitaly_service_client_requests_total{job="gitaly"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -644,7 +644,11 @@ groups:
       type: gitaly
     expr: |
       sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1m])
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[1m])
+      )
+      +
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
