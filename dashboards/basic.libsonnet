@@ -27,19 +27,20 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     includeStandardEnvironmentAnnotations=true,
     includeEnvironmentTemplate=true,
   )::
-    local dashboard = grafana.dashboard.new(
-      title,
-      style='light',
-      schemaVersion=16,
-      tags=tags,
-      timezone='utc',
-      graphTooltip=graphTooltip,
-      editable=editable,
-      refresh=refresh,
-      hideControls=false,
-      description=null,
-    )
-                      .addTemplate(templates.ds);  // All dashboards include the `ds` variable
+    local dashboard =
+      grafana.dashboard.new(
+        title,
+        style='light',
+        schemaVersion=16,
+        tags=tags,
+        timezone='utc',
+        graphTooltip=graphTooltip,
+        editable=editable,
+        refresh=refresh,
+        hideControls=false,
+        description=null,
+      )
+      .addTemplate(templates.ds);  // All dashboards include the `ds` variable
 
     local dashboardWithAnnotations = if includeStandardEnvironmentAnnotations then
       dashboard
@@ -242,16 +243,18 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       show=false,
     ),
 
-  saturationTimeseries(
-    title='Saturation',
+  percentageTimeseries(
+    title,
     description='',
     query='',
     legendFormat='',
-    yAxisLabel='Saturation',
+    yAxisLabel='Percent',
     interval='1m',
     intervalFactor=3,
     linewidth=2,
     legend_show=true,
+    min=null,
+    max=null,
   )::
     local formatConfig = {
       query: query,
@@ -287,8 +290,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     .resetYaxes()
     .addYaxis(
       format='percentunit',
-      min=0,
-      max=1,
+      min=min,
+      max=max,
       label=yAxisLabel,
     )
     .addYaxis(
@@ -296,6 +299,33 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       max=1,
       min=0,
       show=false,
+    ),
+
+  saturationTimeseries(
+    title='Saturation',
+    description='',
+    query='',
+    legendFormat='',
+    yAxisLabel='Saturation',
+    interval='1m',
+    intervalFactor=3,
+    linewidth=2,
+    legend_show=true,
+    min=0,
+    max=1,
+  )::
+    self.percentageTimeseries(
+      title=title,
+      description=description,
+      query=query,
+      legendFormat=legendFormat,
+      yAxisLabel=yAxisLabel,
+      interval=interval,
+      intervalFactor=intervalFactor,
+      linewidth=linewidth,
+      legend_show=legend_show,
+      min=min,
+      max=max,
     ),
 
   apdexTimeseries(
