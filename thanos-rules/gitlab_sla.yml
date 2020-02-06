@@ -1,0 +1,12 @@
+groups:
+- name: gitlab_sla
+  interval: 1m
+  rules:
+  # This calculates the GitLab SLA rating for the past minute.
+  # It needs to occur at the Thanos level, since it needs to
+  # metric data each individual Prometheus instances into a single metric
+  - record: sla:gitlab:ratio
+    expr: >
+      sum by (env, environment, stage) (sla:gitlab:score)
+      /
+      sum by (env, environment, stage) (sla:gitlab:weights)

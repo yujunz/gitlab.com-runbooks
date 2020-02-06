@@ -42,7 +42,6 @@ local timeRegions = {
       colorMode: 'gray',
       fill: true,
       line: false,
-      // lineColor: "rgba(237, 46, 24, 0.80)"
       fillColor: 'rgba(237, 46, 24, 0.80)',
     },
   ],
@@ -102,7 +101,10 @@ local slaBarGauge(title, query, legendFormat) = {
 
 basic.dashboard(
   'SLAs',
-  tags=['general'],
+  tags=['general', 'slas', 'service-levels'],
+  includeStandardEnvironmentAnnotations=false,
+  time_from='now-7d',
+  time_to='now',
 )
 .addPanel(
   row.new(title='Headline'),
@@ -113,7 +115,6 @@ basic.dashboard(
     h: 1,
   }
 )
-
 .addPanel(
   grafana.singlestat.new(
     'SLA - GitLab.com',
@@ -123,12 +124,14 @@ basic.dashboard(
   .addTarget(
     promQuery.target(
       |||
-        sort(
-          avg(
-            avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])
-          )
+        avg_over_time(
+          (
+            sum (sla:gitlab:score{env="$environment", environment="$environment", stage="main"})
+            /
+            sum (sla:gitlab:weights{env="$environment", environment="$environment", stage="main"})
+          )[$__range:5m]
         )
-      ||| % { keyServiceRegExp: keyServiceRegExp },
+      |||,
       instant=true
     )
   ),
@@ -160,8 +163,10 @@ basic.dashboard(
       description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
       query=|||
-        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__interval]))
-      ||| % { keyServiceRegExp: keyServiceRegExp },
+        sum (sla:gitlab:score{env="$environment", environment="$environment", stage="main"})
+        /
+        sum (sla:gitlab:weights{env="$environment", environment="$environment", stage="main"})
+      |||,
       legendFormat='gitlab.com SLA',
       interval=INTERVAL,
       intervalFactor=INTERVAL_FACTOR,
@@ -203,6 +208,7 @@ basic.dashboard(
     ) + timeRegions + thresholdsValues,
   ], cols=1, rowHeight=10, startRow=2001)
 )
+.trailer()
 + {
   links+: platformLinks.services + platformLinks.triage,
 }

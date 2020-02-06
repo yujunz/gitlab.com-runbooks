@@ -34,7 +34,7 @@ local getWeightQuery(weights) =
 {
   groups: [{
     name: 'SLA weight calculations',
-    interval: '5m',
+    interval: '1m',
     rules: [{
       record: 'sla:gitlab:score',
       expr: |||
