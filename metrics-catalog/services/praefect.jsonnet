@@ -1,6 +1,7 @@
 local metricsCatalog = import '../lib/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
+local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 
 {
   type: 'praefect',
@@ -13,7 +14,7 @@ local rateMetric = metricsCatalog.rateMetric;
     proxy: {
       apdex: histogramApdex(
         histogram='grpc_server_handling_seconds_bucket',
-        selector='job="praefect", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"',
+        selector='job="praefect", grpc_type="unary", grpc_method!~"%(gitalyApdexIgnoredMethodsRegexp)s"' % { gitalyApdexIgnoredMethodsRegexp: gitalyHelpers.gitalyApdexIgnoredMethodsRegexp },
         satisfiedThreshold=0.5,
         toleratedThreshold=1
       ),
