@@ -39,6 +39,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
         refresh=refresh,
         hideControls=false,
         description=null,
+        time_from=time_from,
+        time_to=time_to,
       )
       .addTemplate(templates.ds);  // All dashboards include the `ds` variable
 
