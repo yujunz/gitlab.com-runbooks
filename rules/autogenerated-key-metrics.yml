@@ -645,9 +645,7 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[1m])
-      )
-      +
-      sum by (environment, stage) (
+        or
         rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[1m])
       )
   - record: gitlab_component_ops:rate
@@ -844,9 +842,7 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1m])
-      )
-      +
-      sum by (environment, stage) (
+        or
         rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1m])
       )
   - record: gitlab_component_apdex:ratio
@@ -891,9 +887,7 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1m])
-      )
-      +
-      sum by (environment, stage) (
+        or
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
       )
   - record: gitlab_component_errors:rate
@@ -913,9 +907,7 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[1m])
-      )
-      +
-      sum by (environment, stage) (
+        or
         rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[1m])
       )
   - record: gitlab_component_apdex:ratio

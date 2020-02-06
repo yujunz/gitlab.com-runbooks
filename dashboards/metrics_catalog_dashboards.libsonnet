@@ -28,7 +28,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
         null,
 
       // Component request rate
-      if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'rateQuery') then
+      if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'aggregatedRateQuery') then
         keyMetrics.singleComponentQPSPanel(serviceType, serviceStage, componentName)
       else
         null,
@@ -88,7 +88,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
 
     basic.timeseries(
       title=if title == null then 'RPS for ' + componentName else title,
-      query=component.requestRate.rateQuery(
+      query=component.requestRate.aggregatedRateQuery(
         aggregationLabels=aggregationLabels,
         selector=selector,
         rangeInterval='$__interval',
@@ -113,7 +113,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
 
     basic.timeseries(
       title=if title == null then 'Errors for ' + componentName else title,
-      query=component.errorRate.changesQuery(
+      query=component.errorRate.aggregatedChangesQuery(
         aggregationLabels=aggregationLabels,
         selector=selector,
         rangeInterval='$__interval',
@@ -139,7 +139,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
     local component = service.components[componentName];
     local colCount =
       (if std.objectHas(component, 'apdex') then 1 else 0) +
-      (if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'rateQuery') then 1 else 0) +
+      (if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'aggregatedRateQuery') then 1 else 0) +
       (if std.objectHas(component, 'errorRate') then 1 else 0);
 
 
@@ -176,7 +176,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
                   else
                     null,
 
-                  if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'rateQuery') then
+                  if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'aggregatedRateQuery') then
                     self.componentRPSPanel(
                       title=componentName + ' RPS - ' + aggregationSet.title,
                       serviceType=serviceType,
