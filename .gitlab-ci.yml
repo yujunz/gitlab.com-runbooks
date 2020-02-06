@@ -51,39 +51,39 @@ test-rules:
   stage: test
   script:
     - gem install bundler --no-document
-    - bundle
-    - ./bin/create_kubernetes_rules.rb --create --validate
+    - bundle install --with=test
+    - bundle exec ./bin/create_kubernetes_rules.rb --create --validate
 
 rubocop:
   stage: test
   script:
-    - gem install bundler etc json --no-document
-    - bundle
-    - rubocop ./bin/create_kubernetes_rules.rb ./lib/* ./spec/*
+    - gem install bundler --no-document
+    - bundle install --with=test
+    - bundle exec rubocop ./bin/create_kubernetes_rules.rb ./lib/* ./spec/*
     # Until https://gitlab.com/gitlab-com/runbooks/issues/26
     # - rubocop ./scripts/*.rb
 
 # Until https://gitlab.com/gitlab-com/runbooks/issues/26
-rubocop-storage_cleanup:
+rubocop-scripts-passing:
   stage: test
   script:
-    - gem install bundler etc json --no-document
-    - bundle
-    - rubocop ./scripts/storage_cleanup.rb
+    - gem install bundler --no-document
+    - bundle install --with=test
+    - bundle exec rubocop ./scripts/storage_cleanup.rb
 
 rubocop-scripts:
   stage: test
   allow_failure: true # Until https://gitlab.com/gitlab-com/runbooks/issues/26
   script:
-    - gem install bundler etc json --no-document
-    - bundle
-    - rubocop ./scripts/*.rb
+    - gem install bundler --no-document
+    - bundle install --with=test
+    - bundle exec rubocop ./scripts/*.rb
 
 rspec:
   stage: test
   script:
     - gem install bundler --no-document
-    - bundle
+    - bundle install --with=test
     - bundle exec rspec
 
 deploy-rules-gstg:
