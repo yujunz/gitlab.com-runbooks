@@ -22,7 +22,7 @@ local getScoreQuery(weights) =
 
 local getWeightQuery(weights) =
   local items = [
-    'max without(slo) (slo_observation_status{type="%(type)s"} / slo_observation_status{type="%(type)s"}) * %(weight)d' % {
+    'max without(slo) (clamp_max(clamp_min(slo_observation_status{type="%(type)s"}, 1), 1)) * %(weight)d' % {
       type: type,
       weight: keyServiceWeights[type],
     }
