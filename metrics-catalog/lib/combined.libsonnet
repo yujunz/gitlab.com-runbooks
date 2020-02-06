@@ -1,14 +1,14 @@
+local aggregations = import './aggregations.libsonnet';
 local recordingRules = import './recording_rules.libsonnet';
 local selectors = import './selectors.libsonnet';
 
-local generateRateQuery(c, aggregationLabels, selector, rangeInterval) =
-  local rateQueries = std.map(function(i) i.rateQuery(aggregationLabels, selector, rangeInterval), c.metrics);
-  std.join('+\n', rateQueries);
+local generateRateQuery(c, selector, rangeInterval) =
+  local rateQueries = std.map(function(i) i.rateQuery(selector, rangeInterval), c.metrics);
+  std.join('\n  or\n  ', rateQueries);
 
-local generateChangesQuery(c, aggregationLabels, selector, rangeInterval) =
-  local rateQueries = std.map(function(i) i.changesQuery(aggregationLabels, selector, rangeInterval), c.metrics);
-  std.join('+\n', rateQueries);
-
+local generateChangesQuery(c, selector, rangeInterval) =
+  local changesQueries = std.map(function(i) i.changesQuery(selector, rangeInterval), c.metrics);
+  std.join('\n  or\n  ', changesQueries);
 
 // "combined" allows two counter metrics to be added together
 // to generate a new metric value
@@ -23,7 +23,7 @@ local generateChangesQuery(c, aggregationLabels, selector, rangeInterval) =
       [
         recordingRules.requestRate(
           labels=labels,
-          expr=generateRateQuery(s, aggregationLabels, '', '1m'),
+          expr=s.aggregatedRateQuery(aggregationLabels, '', '1m'),
         ),
       ],
 
@@ -32,14 +32,30 @@ local generateChangesQuery(c, aggregationLabels, selector, rangeInterval) =
       [
         recordingRules.errorRate(
           labels=labels,
-          expr=generateRateQuery(s, aggregationLabels, '', '1m'),
+          expr=s.aggregatedRateQuery(aggregationLabels, '', '1m'),
         ),
       ],
 
-    rateQuery(aggregationLabels, selector, rangeInterval)::
-      generateRateQuery(self, aggregationLabels, selector, rangeInterval),
+    // This creates a rate query of the form
+    // rate(....{<selector>}[<rangeInterval>])
+    rateQuery(selector, rangeInterval)::
+      generateRateQuery(self, selector, rangeInterval),
 
-    changesQuery(aggregationLabels, selector, rangeInterval)::
-      generateChangesQuery(self, aggregationLabels, selector, rangeInterval),
+    // This creates a changes query of the form
+    // rate(....{<selector>}[<rangeInterval>])
+    changesQuery(selector, rangeInterval)::
+      generateChangesQuery(self, selector, rangeInterval),
+
+    // This creates an aggregated rate query of the form
+    // sum by(<aggregationLabels>) (...)
+    aggregatedRateQuery(aggregationLabels, selector, rangeInterval)::
+      local query = generateRateQuery(self, selector, rangeInterval);
+      aggregations.aggregateOverQuery('sum', aggregationLabels, query),
+
+    // This creates an aggregated changes query of the form
+    // sum by(<aggregationLabels>) (...)
+    aggregatedChangesQuery(aggregationLabels, selector, rangeInterval)::
+      local query = generateChangesQuery(self, selector, rangeInterval);
+      aggregations.aggregateOverQuery('sum', aggregationLabels, query),
   },
 }
