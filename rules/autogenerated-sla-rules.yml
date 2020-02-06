@@ -7,11 +7,11 @@ groups:
   - record: sla:gitlab:score
     expr: |
       sum by (environment, stage) (
-        min without(slo) (avg_over_time(slo_observation_status{type="api"}[5m])) * 3
+        min without(slo) (avg_over_time(slo_observation_status{type="api"}[5m])) * 5
         or
         min without(slo) (avg_over_time(slo_observation_status{type="ci-runners"}[5m])) * 3
         or
-        min without(slo) (avg_over_time(slo_observation_status{type="git"}[5m])) * 3
+        min without(slo) (avg_over_time(slo_observation_status{type="git"}[5m])) * 5
         or
         min without(slo) (avg_over_time(slo_observation_status{type="registry"}[5m])) * 1
         or
@@ -22,15 +22,15 @@ groups:
   - record: sla:gitlab:weights
     expr: |
       sum by (environment, stage) (
-        max without(slo) (slo_observation_status{type="api"} / slo_observation_status{type="api"}) * 3
+        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="api"}, 1), 1)) * 5
         or
-        max without(slo) (slo_observation_status{type="ci-runners"} / slo_observation_status{type="ci-runners"}) * 3
+        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="ci-runners"}, 1), 1)) * 3
         or
-        max without(slo) (slo_observation_status{type="git"} / slo_observation_status{type="git"}) * 3
+        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="git"}, 1), 1)) * 5
         or
-        max without(slo) (slo_observation_status{type="registry"} / slo_observation_status{type="registry"}) * 1
+        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="registry"}, 1), 1)) * 1
         or
-        max without(slo) (slo_observation_status{type="sidekiq"} / slo_observation_status{type="sidekiq"}) * 2
+        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="sidekiq"}, 1), 1)) * 2
         or
-        max without(slo) (slo_observation_status{type="web"} / slo_observation_status{type="web"}) * 5
+        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="web"}, 1), 1)) * 5
       )
