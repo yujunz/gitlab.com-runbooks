@@ -3,6 +3,7 @@ local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local customApdex = metricsCatalog.customApdex;
 local combined = metricsCatalog.combined;
+local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 
 {
   type: 'gitaly',
@@ -16,7 +17,7 @@ local combined = metricsCatalog.combined;
     goserver: {
       apdex: histogramApdex(
         histogram='grpc_server_handling_seconds_bucket',
-        selector='job="gitaly", grpc_type="unary", grpc_method!~"GarbageCollect|Fsck|RepackFull|RepackIncremental|CommitLanguages|CreateRepositoryFromURL|UserFFBranch|UserRebase|UserSquash|CreateFork|UserUpdateBranch|FindRemoteRepository|UserCherryPick|FetchRemote|UserRevert|FindRemoteRootRef"',
+        selector='job="gitaly", grpc_type="unary", grpc_method!~"%(gitalyApdexIgnoredMethodsRegexp)s"' % { gitalyApdexIgnoredMethodsRegexp: gitalyHelpers.gitalyApdexIgnoredMethodsRegexp },
         satisfiedThreshold=0.5,
         toleratedThreshold=1
       ),
