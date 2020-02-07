@@ -1,27 +1,27 @@
 {
-  apdex(labels, expr):: {
-    record: 'gitlab_component_apdex:ratio',
+  apdex(name, labels, expr):: {
+    record: name,
     labels: labels,
     expr: expr,
   },
 
-  apdexWeight(labels, expr)::
+  apdexWeight(name, labels, expr)::
     {
-      record: 'gitlab_component_apdex:weight:score',
+      record: name,
       labels: labels,
       expr: expr,
     },
 
-  requestRate(labels, expr)::
+  requestRate(name, labels, expr)::
     {
-      record: 'gitlab_component_ops:rate',
+      record: name,
       labels: labels,
       expr: expr,
     },
 
-  errorRate(labels, expr)::
+  errorRate(name, labels, expr)::
     {
-      record: 'gitlab_component_errors:rate',
+      record: name,
       labels: labels,
       expr: expr,
     },
