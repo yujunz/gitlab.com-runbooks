@@ -35,6 +35,10 @@ groups:
         }[1m])
       )
 
+######################
+# Aggregation Stage
+######################
+
 - name: GitLab Service Errors-per-Second Rates
   interval: 1m
   rules:
@@ -42,6 +46,11 @@ groups:
   - record: gitlab_service_errors:rate
     expr: >
       sum by (environment, tier, type, stage) (gitlab_component_errors:rate >= 0)
+
+  # Aggregate over all components within a service, for a node
+  - record: gitlab_service_node_errors:rate
+    expr: >
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate >= 0)
 
 - name: GitLab Component Errors-per-Second Rate Stats
   interval: 5m

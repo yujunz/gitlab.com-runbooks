@@ -127,6 +127,13 @@ groups:
       /
       sum by (environment, tier, type, stage) (avg_over_time(gitlab_component_apdex:weight:score[1h]) >= 0)
 
+  # Node-level aggregation
+  - record: gitlab_service_node_apdex:ratio
+    expr: >
+      sum by (environment, tier, type, stage, shard, fqdn) ((gitlab_component_node_apdex:ratio >= 0) * (avg_over_time(gitlab_component_node_apdex:weight:score[1h]) >= 0))
+      /
+      sum by (environment, tier, type, stage, shard, fqdn) (avg_over_time(gitlab_component_node_apdex:weight:score[1h]) >= 0)
+
 - name: GitLab Component Apdex Score Stats
   interval: 5m
   rules:
@@ -150,3 +157,4 @@ groups:
   - record: gitlab_service_apdex:ratio:stddev_over_time_1w
     expr: >
       stddev_over_time(gitlab_service_apdex:ratio[1w])
+

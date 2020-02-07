@@ -7,6 +7,11 @@ groups:
     expr: >
       gitlab_service_errors:rate / (gitlab_service_ops:rate > 0)
 
+  # Calculate for node-level metrics
+  - record: gitlab_service_node_errors:ratio
+    expr: >
+      gitlab_service_node_errors:rate / (gitlab_service_node_ops:rate > 0)
+
 - name: GitLab Service Error Ratio Stats
   interval: 5m
   rules:
