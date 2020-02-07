@@ -26,14 +26,6 @@ groups:
         rate(sidekiq_jobs_completion_seconds_count{type="sidekiq",queue="repository_update_mirror"}[1m])
       )
 
-  # mailroom
-  # TODO: zero placeholder as we have no metrics for mailroom at present
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'service'
-    expr: >
-      count by (environment, tier, type, stage) (up{type="mailroom"}) - count by (environment, tier, type) (up{type="mailroom"})
-
   # pages - haproxy service in front of GitLab pages
   - record: gitlab_component_ops:rate
     labels:
@@ -66,20 +58,6 @@ groups:
           stackdriver_gce_instance_logging_googleapis_com_log_entry_count, "component", "$1", "log", "(.*)"
         )
       ) by (environment, component)
-
-  # monitoring:thanos
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'thanos'
-    expr: >
-      sum(rate(http_requests_total{job="thanos"}[1m])) by (environment, tier, type, stage)
-
-  # monitoring:prometheus
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'prometheus'
-    expr: >
-      sum(rate(prometheus_http_requests_total{job="prometheus"}[1m])) by (environment, tier, type, stage)
 
 ######################
 # Aggregation Stage
