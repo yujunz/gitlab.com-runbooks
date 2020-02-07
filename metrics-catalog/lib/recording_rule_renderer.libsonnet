@@ -3,24 +3,42 @@ local recordingRules = import './recording_rules.libsonnet';
 local AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
 
 // Generates apdex score recording rules for a component definition
-local generateApdexRules(aggregationLabels, componentDefinition, labels) =
+local generateApdexRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
   if std.objectHas(componentDefinition, 'apdex') then
-    componentDefinition.apdex.apdexRecordingRules(aggregationLabels, labels)
+    [
+      recordingRules.apdex(
+        labels=recordingRuleStaticLabels,
+        expr=componentDefinition.apdex.apdexQuery(aggregationLabels, selector='', rangeInterval='1m')
+      ),
+      recordingRules.apdexWeight(
+        labels=recordingRuleStaticLabels,
+        expr=componentDefinition.apdex.apdexWeightQuery(aggregationLabels, selector='', rangeInterval='1m')
+      ),
+    ]
   else
     [];
 
 // Generates an request rate recording rule for a component definition
-local generateRequestRateRules(aggregationLabels, componentDefinition, labels) =
+local generateRequestRateRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
   if std.objectHas(componentDefinition, 'requestRate') then
-    componentDefinition.requestRate.requestRateRecordingRules(aggregationLabels, labels)
+    [
+      recordingRules.requestRate(
+        labels=recordingRuleStaticLabels,
+        expr=componentDefinition.requestRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval='1m'),
+      ),
+    ]
   else
     [];
 
-
 // Generates an request rate recording rule for a component definition
-local generateErrorRateRules(aggregationLabels, componentDefinition, labels) =
+local generateErrorRateRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
   if std.objectHas(componentDefinition, 'errorRate') then
-    componentDefinition.errorRate.errorRateRecordingRules(aggregationLabels, labels)
+    [
+      recordingRules.errorRate(
+        labels=recordingRuleStaticLabels,
+        expr=componentDefinition.errorRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval='1m'),
+      ),
+    ]
   else
     [];
 

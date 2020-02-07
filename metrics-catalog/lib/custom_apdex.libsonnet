@@ -1,4 +1,3 @@
-local recordingRules = import './recording_rules.libsonnet';
 local selectors = import './selectors.libsonnet';
 
 local generateQuery(rateQueryTemplate, selector, rangeInterval) =
@@ -116,21 +115,14 @@ local generateApdexWeightScoreQuery(customApdex, aggregationLabels, additionalSe
     selector: selector,
     satisfiedThreshold: satisfiedThreshold,
     toleratedThreshold: toleratedThreshold,
-    apdexRecordingRules(aggregationLabels, labels)::
-      local s = self;
-      [
-        recordingRules.apdex(
-          labels=labels,
-          expr=generateApdexScoreQuery(s, aggregationLabels, '', '1m')
-        ),
-        recordingRules.apdexWeight(
-          labels=labels,
-          expr=generateApdexWeightScoreQuery(s, aggregationLabels, '', '1m')
-        ),
-      ],
+
     apdexQuery(aggregationLabels, selector, rangeInterval)::
       local s = self;
       generateApdexScoreQuery(s, aggregationLabels, selector, rangeInterval),
+
+    apdexWeightQuery(aggregationLabels, selector, rangeInterval)::
+      local s = self;
+      generateApdexWeightScoreQuery(s, aggregationLabels, selector, rangeInterval),
 
     percentileLatencyQuery(percentile, aggregationLabels, selector, rangeInterval)::
       local s = self;

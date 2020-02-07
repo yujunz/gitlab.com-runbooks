@@ -1,7 +1,6 @@
 local metricsCatalog = import '../lib/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
-local customQuery = metricsCatalog.customQuery;
 
 {
   type: 'web',

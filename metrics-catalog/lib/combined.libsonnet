@@ -1,5 +1,4 @@
 local aggregations = import './aggregations.libsonnet';
-local recordingRules = import './recording_rules.libsonnet';
 local selectors = import './selectors.libsonnet';
 
 local generateRateQuery(c, selector, rangeInterval) =
@@ -17,24 +16,6 @@ local generateChangesQuery(c, selector, rangeInterval) =
     metrics
   ):: {
     metrics: metrics,
-
-    requestRateRecordingRules(aggregationLabels, labels)::
-      local s = self;
-      [
-        recordingRules.requestRate(
-          labels=labels,
-          expr=s.aggregatedRateQuery(aggregationLabels, '', '1m'),
-        ),
-      ],
-
-    errorRateRecordingRules(aggregationLabels, labels)::
-      local s = self;
-      [
-        recordingRules.errorRate(
-          labels=labels,
-          expr=s.aggregatedRateQuery(aggregationLabels, '', '1m'),
-        ),
-      ],
 
     // This creates a rate query of the form
     // rate(....{<selector>}[<rangeInterval>])

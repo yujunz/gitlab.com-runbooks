@@ -1,7 +1,7 @@
 local metricsCatalog = import '../lib/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
-local customQuery = metricsCatalog.customQuery;
+local customRateQuery = metricsCatalog.customRateQuery;
 
 {
   type: 'git',
@@ -61,7 +61,7 @@ local customQuery = metricsCatalog.customQuery;
 
       // Unfortunately we don't have a better way of measuring this at present,
       // so we rely on HAProxy metrics
-      requestRate: customQuery(|||
+      requestRate: customRateQuery(|||
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
       |||),
 
