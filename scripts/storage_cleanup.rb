@@ -157,9 +157,7 @@ module CommandLineSupport
     def define_nodes_option
       description = 'One or more FQDNs of nodes to clean'
       @parser.on('-n', '--node=<hostname>,...', Array, description) do |node_fqdns|
-        unless node_fqdns.is_a?(Array)
-          raise OptionParser::InvalidArgument, 'Invalid argument given for --node'
-        end
+        raise OptionParser::InvalidArgument, 'Invalid argument given for --node' unless node_fqdns.is_a?(Array)
 
         @options[:nodes_whitelist] ||= []
         @options[:nodes_whitelist].concat node_fqdns

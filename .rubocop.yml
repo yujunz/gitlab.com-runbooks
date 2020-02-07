@@ -1,13 +1,9 @@
----
-
-Metrics/AbcSize:
-  Max: 16
-
-Metrics/BlockLength:
-  Max: 41
-
-Metrics/MethodLength:
-  Max: 21
-
-Layout/LineLength:
-  Max: 100
+inherit_gem:
+  gitlab-styles:
+  - rubocop-bundler.yml
+  - rubocop-gemspec.yml
+  - rubocop-layout.yml
+  - rubocop-lint.yml
+  - rubocop-metrics.yml
+  - rubocop-naming.yml
+  - rubocop-style.yml

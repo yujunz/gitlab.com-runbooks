@@ -1,4 +1,4 @@
-#!/usr/bin/env /opt/gitlab/embedded/bin/ruby
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 require 'rubygems'
@@ -16,7 +16,7 @@ using Rainbow
 options = {}
 
 parser = OptionParser.new do |opts|
-  opts.banner = "Usage: #{$0} [options]"
+  opts.banner = "Usage: #{$PROGRAM_NAME} [options]"
   opts.on('-u', '--username gitlabuser', 'Username') do |user|
     options[:user] = user
   end
@@ -38,7 +38,7 @@ end
 
 parser.parse!
 
-abort("Missing options. Use #{$0} --help to see the list of options available".red) if options.values.empty?
+abort("Missing options. Use #{$PROGRAM_NAME} --help to see the list of options available".red) if options.values.empty?
 
 require '/opt/gitlab/embedded/service/gitlab-rails/config/environment.rb'
 
@@ -59,7 +59,7 @@ class SlackWebhook
   def self.done(project)
     fire_hook("#{username} finished a foreground import of *#{project}*")
   end
-  
+
   def self.username
     @username ||= `logname`.strip
   end
@@ -77,7 +77,6 @@ class SlackWebhook
 
   private_class_method :fire_hook
 end
-
 
 class LocalProjectService < ::Projects::CreateService
   IMPORT_JOBS_EXPIRATION = 48.hours.to_i

@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 
+# frozen_string_literal: true
+
 require 'erb'
 
+# rubocop:disable Lint/UselessAssignment
 slack_hook = ENV.fetch('AM_SLACK_HOOK_URL')
 snitch_hook = ENV.fetch('AM_SNITCH_HOOK_URL')
 prod_pagerduty = ENV.fetch('AM_PAGERDUTY_PROD')
@@ -10,6 +13,7 @@ slo_dr = ENV.fetch('AM_SLO_DR')
 slo_gprd_cny = ENV.fetch('AM_SLO_GPRD_CNY')
 slo_gprd_main = ENV.fetch('AM_SLO_GPRD_MAIN')
 slo_non_prod = ENV.fetch('AM_SLO_NON_PROD')
+# rubocop:enable Lint/UselessAssignment
 
 def render_for_chef
   @template_locations = ['/opt/prometheus/alertmanager/templates/*.tmpl']
@@ -24,12 +28,12 @@ def render_for_chef
 end
 
 def k8s_template
-  %{---
+  %(---
 
 alertmanager:
   config:
     <%= @k8s_alertmanager_template %>
-  }
+  )
 end
 
 def render_for_k8s

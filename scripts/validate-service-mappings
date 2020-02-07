@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
-
+# frozen_string_literal: true
 require 'yaml'
 
+# rubocop:disable Metrics/PerceivedComplexity
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/AbcSize
 def validate(service_catalog_path)
   service_catalog_yaml = YAML.load_file(service_catalog_path)
   services = service_catalog_yaml["services"]
@@ -10,24 +13,24 @@ def validate(service_catalog_path)
   raise "Service catalog must contain one or more tiers" unless service_catalog_yaml["tiers"] && !service_catalog_yaml["tiers"].empty?
   raise "Service catalog must contain one or more services" unless services && !services.empty?
 
-  team_map = service_catalog_yaml["teams"].inject({}) { |map, team| map[team["name"]] = team; map }
-  tier_map = service_catalog_yaml["tiers"].inject({}) { |map, tier| map[tier["name"]] = tier; map }
+  team_map = service_catalog_yaml["teams"].each_with_object({}) { |team, map| map[team["name"]] = team;  }
+  tier_map = service_catalog_yaml["tiers"].each_with_object({}) { |tier, map| map[tier["name"]] = tier;  }
 
   services.each do |service|
     # name
-    service_name =service["name"]
+    service_name = service["name"]
     raise "'#{service_name}' | service.name field must be string" unless service_name.is_a? String
 
     # tier
     service_tier = service["tier"]
     raise "'#{service_name}' | tier field must be string" unless service_tier.is_a? String
-    raise "unknown tier '#{service["tier"]}''" unless tier_map[service["tier"]]
+    raise "unknown tier '#{service['tier']}''" unless tier_map[service["tier"]]
 
     # teams
     service_teams = service["teams"]
     raise "'#{service_name}' | teams field must be list" unless service_teams.is_a? Array
 
-    service_teams.each do |team| 
+    service_teams.each do |team|
       raise "'#{service_name}' | unknown team: '#{team}''" unless team_map[team]
     end
 
@@ -52,18 +55,18 @@ def validate(service_catalog_path)
 
     # availability
     availability = service["business"]["SLA"]["availability"]
-    raise "'#{service_name}' | availability field must be string" unless availability.is_a? String or availability.nil?
+    raise "'#{service_name}' | availability field must be string" unless availability.is_a?(String) || availability.nil?
 
     # response_time
     response_time = service["business"]["SLA"]["response_time"]
-    raise "'#{service_name}' | response_time field must be string" unless response_time.is_a? String or response_time.nil?
-    
+    raise "'#{service_name}' | response_time field must be string" unless response_time.is_a?(String) || response_time.nil?
+
     # Technical
     # =========
 
     # project
     project = service["technical"]["project"]
-    raise "'#{service_name}' | project field must be list" unless project.is_a? Array or project.nil?
+    raise "'#{service_name}' | project field must be list" unless project.is_a?(Array) || project.nil?
 
     # criticality
     criticality = service["technical"]["criticality"]
@@ -71,81 +74,77 @@ def validate(service_catalog_path)
 
     # slx
     slx = service["technical"]["slx"]
-    raise "'#{service_name}' | slx field must be string" unless slx.is_a? String or slx.nil?
+    raise "'#{service_name}' | slx field must be string" unless slx.is_a?(String) || slx.nil?
 
     # design
     design_doc = service["technical"]["documents"]["design"]
-    raise "'#{service_name}' | design document field must be string" unless design_doc.is_a? String or design_doc.nil?
+    raise "'#{service_name}' | design document field must be string" unless design_doc.is_a?(String) || design_doc.nil?
 
     # architecture
     architecture_doc = service["technical"]["documents"]["architecture"]
-    raise "'#{service_name}' | architecture document field must be string" unless architecture_doc.is_a? String or architecture_doc.nil?
+    raise "'#{service_name}' | architecture document field must be string" unless architecture_doc.is_a?(String) || architecture_doc.nil?
 
     # service
     service_doc = service["technical"]["documents"]["service"]
-    raise "'#{service_name}' | service document field must be list" unless service_doc.is_a? Array or service_doc.nil?
+    raise "'#{service_name}' | service document field must be list" unless service_doc.is_a?(Array) || service_doc.nil?
 
     # security
     security_doc = service["technical"]["documents"]["security"]
-    raise "'#{service_name}' | security document field must be string" unless security_doc.is_a? String or security_doc.nil?
+    raise "'#{service_name}' | security document field must be string" unless security_doc.is_a?(String) || security_doc.nil?
 
     # dependencies
     dependencies = service["technical"]["dependencies"]
-    raise "'#{service_name}' | dependencies field must be list" unless dependencies.is_a? Array or dependencies.nil?
+    raise "'#{service_name}' | dependencies field must be list" unless dependencies.is_a?(Array) || dependencies.nil?
 
-    if !dependencies.nil?
-      dependencies.each do |dependency|
-        raise "'#{service_name}' | dependency value must be string" unless dependency["service"].is_a? String or dependency["service"].nil?
-      end
+    dependencies&.each do |dependency|
+      raise "'#{service_name}' | dependency value must be string" unless dependency["service"].is_a?(String) || dependency["service"].nil?
     end
 
     # configurations
     configurations = service["technical"]["configurations"]
-    raise "'#{service_name}' | configurations field must be list" unless configurations.is_a? Array or configurations.nil?
+    raise "'#{service_name}' | configurations field must be list" unless configurations.is_a?(Array) || configurations.nil?
 
-    if !configurations.nil?
-      configurations.each do |configuration|
-        raise "'#{service_name}' | config_name value must be string" unless configuration["config_name"].is_a? String or configuration["config_name"].nil?
-        raise "'#{service_name}' | location value must be string" unless configuration["location"].is_a? String or configuration["location"].nil?
-      end
+    configurations&.each do |configuration|
+      raise "'#{service_name}' | config_name value must be string" unless configuration["config_name"].is_a?(String) || configuration["config_name"].nil?
+      raise "'#{service_name}' | location value must be string" unless configuration["location"].is_a?(String) || configuration["location"].nil?
     end
 
     # chef_roles
     chef_roles = service["technical"]["chef_roles"]
-    raise "'#{service_name}' | chef_roles field must be list" unless chef_roles.is_a? Array or chef_roles.nil?
+    raise "'#{service_name}' | chef_roles field must be list" unless chef_roles.is_a?(Array) || chef_roles.nil?
 
     # scalability
     # node
     node = service["technical"]["scalability"]["note"]
-    raise "'#{service_name}' | node field must be string" unless node.is_a? String or node.nil?
+    raise "'#{service_name}' | node field must be string" unless node.is_a?(String) || node.nil?
 
     # bound
     bound = service["technical"]["scalability"]["bound"]
-    raise "'#{service_name}' | bound field must be string" unless bound.is_a? String or bound.nil?
+    raise "'#{service_name}' | bound field must be string" unless bound.is_a?(String) || bound.nil?
 
     # scalable
     scalable = service["technical"]["scalability"]["scalable"]
-    raise "'#{service_name}' | scalable field must be string" unless scalable.is_a? String or scalable.nil?
+    raise "'#{service_name}' | scalable field must be string" unless scalable.is_a?(String) || scalable.nil?
 
     # security_reviewed
     security_reviewed = service["technical"]["security"]["security_reviewed"]
-    raise "'#{service_name}' | security_reviewed field must be string" unless security_reviewed.is_a? String or security_reviewed.nil?
+    raise "'#{service_name}' | security_reviewed field must be string" unless security_reviewed.is_a?(String) || security_reviewed.nil?
 
     # data_classification
     data_classification = service["technical"]["security"]["data_classification"]
-    raise "'#{service_name}' | data_classification field must be string" unless data_classification.is_a? String or data_classification.nil?
+    raise "'#{service_name}' | data_classification field must be string" unless data_classification.is_a?(String) || data_classification.nil?
 
     # security_incidents
     security_incidents = service["technical"]["security"]["security_incidents"]
-    raise "'#{service_name}' | security_incidents field must be list" unless security_incidents.is_a? Array or security_incidents.nil?
+    raise "'#{service_name}' | security_incidents field must be list" unless security_incidents.is_a?(Array) || security_incidents.nil?
 
     # logging
     logging = service["technical"]["logging"]
     raise "'#{service_name}' | logging field must be list" unless logging.is_a? Array
 
     logging.each do |log|
-      raise "'#{service_name}' | log name field must be string" unless log["name"].is_a? String or log["name"].nil?
-      raise "'#{service_name}' | log permalink field must be string" unless log["permalink"].is_a? String or log["permalink"].nil?
+      raise "'#{service_name}' | log name field must be string" unless log["name"].is_a?(String) || log["name"].nil?
+      raise "'#{service_name}' | log permalink field must be string" unless log["permalink"].is_a?(String) || log["permalink"].nil?
     end
 
     # provider
@@ -154,58 +153,56 @@ def validate(service_catalog_path)
 
     # architecture
     architecture = service["infrastructure"]["architecture"]
-    raise "'#{service_name}' | architecture field must be string" unless architecture.is_a? String or architecture.nil?
+    raise "'#{service_name}' | architecture field must be string" unless architecture.is_a?(String) || architecture.nil?
 
     # provisioning
     provisioning = service["infrastructure"]["provisioning"]
-    raise "'#{service_name}' | provisioning field must be string" unless provisioning.is_a? String or provisioning.nil?
+    raise "'#{service_name}' | provisioning field must be string" unless provisioning.is_a?(String) || provisioning.nil?
 
     # accesses
     accesses = service["infrastructure"]["accesses"]
-    raise "'#{service_name}' | accesses field must be list" unless accesses.is_a? Array or accesses.nil?
+    raise "'#{service_name}' | accesses field must be list" unless accesses.is_a?(Array) || accesses.nil?
 
-    if !accesses.nil?
-      accesses.each do |access|
-        raise "'#{service_name}' | access account_name field must be string" unless access["account_name"].is_a? Array or access["account_name"].nil?
-        raise "'#{service_name}' | access access_type field must be string" unless access["access_type"].is_a? Array or access["access_type"].nil?
-        raise "'#{service_name}' | access reviewed field must be string" unless access["reviewed"].is_a? Array or access["reviewed"].nil?
-      end
+    accesses&.each do |access|
+      raise "'#{service_name}' | access account_name field must be string" unless access["account_name"].is_a?(Array) || access["account_name"].nil?
+      raise "'#{service_name}' | access access_type field must be string" unless access["access_type"].is_a?(Array) || access["access_type"].nil?
+      raise "'#{service_name}' | access reviewed field must be string" unless access["reviewed"].is_a?(Array) || access["reviewed"].nil?
     end
 
     # maintenance
     maintenance = service["operations"]["maintenance"]
-    raise "'#{service_name}' | maintenance field must be string" unless maintenance.is_a? String or maintenance.nil?
+    raise "'#{service_name}' | maintenance field must be string" unless maintenance.is_a?(String) || maintenance.nil?
 
     # runbooks
     runbooks = service["operations"]["runbooks"]
-    raise "'#{service_name}' | runbooks field must be list" unless runbooks.is_a? Array or runbooks.nil?
+    raise "'#{service_name}' | runbooks field must be list" unless runbooks.is_a?(Array) || runbooks.nil?
 
     # playbooks
     playbooks = service["operations"]["playbooks"]
-    raise "'#{service_name}' | playbooks field must be list" unless playbooks.is_a? Array or playbooks.nil?
+    raise "'#{service_name}' | playbooks field must be list" unless playbooks.is_a?(Array) || playbooks.nil?
 
     # error_budget
     error_budget = service["operations"]["error_budget"]
-    raise "'#{service_name}' | error_budget field must be string" unless error_budget.is_a? String or error_budget.nil?
+    raise "'#{service_name}' | error_budget field must be string" unless error_budget.is_a?(String) || error_budget.nil?
 
     # observability
     # monitors
     monitors = service["observability"]["monitors"]
 
-    if !monitors.nil?
+    unless monitors.nil?
       if monitors.key?("grafana_folder")
         grafana_folder = monitors["grafana_folder"]
-        raise "'#{service_name}' | grafana_folder field must be string" unless grafana_folder.is_a? String or grafana_folder.nil?
+        raise "'#{service_name}' | grafana_folder field must be string" unless grafana_folder.is_a?(String) || grafana_folder.nil?
       end
 
       if monitors.key?("primary_grafana_dashboard")
         primary_grafana_dashboard = monitors["primary_grafana_dashboard"]
-        raise "'#{service_name}' | primary_grafana_dashboard field must be string" unless primary_grafana_dashboard.is_a? String or primary_grafana_dashboard.nil?
+        raise "'#{service_name}' | primary_grafana_dashboard field must be string" unless primary_grafana_dashboard.is_a?(String) || primary_grafana_dashboard.nil?
       end
 
       if monitors.key?("sentry_slug")
         sentry_slug = monitors["sentry_slug"]
-        raise "'#{service_name}' | sentry_slug field must be string" unless sentry_slug.is_a? String or sentry_slug.nil?
+        raise "'#{service_name}' | sentry_slug field must be string" unless sentry_slug.is_a?(String) || sentry_slug.nil?
       end
     end
 
@@ -213,10 +210,13 @@ def validate(service_catalog_path)
     raise "service '#{service_name}' requires at least one logging configuration" unless service["technical"]["logging"] && !service["technical"]["logging"].empty?
   end
 end
+# rubocop:enable Metrics/PerceivedComplexity
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/AbcSize
 
 begin
   validate(File.join(__dir__, "..", "services", "service-catalog.yml"))
 rescue StandardError => e
-  STDERR.puts "error: #{e.message}"
+  warn "error: #{e.message}"
   exit 1
 end

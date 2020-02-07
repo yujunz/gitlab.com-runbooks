@@ -1,3 +1,6 @@
+#! /usr/bin/env ruby
+# frozen_string_literal: true
+
 removed = 0
 
 Gitlab::Redis::Cache.with do |redis|
@@ -15,6 +18,7 @@ Gitlab::Redis::Cache.with do |redis|
     removed += keys.length
 
     break if cursor == '0'
+
     print '.' # for feedback
     sleep 0.1 # to leave room to redis to do something else
   end
