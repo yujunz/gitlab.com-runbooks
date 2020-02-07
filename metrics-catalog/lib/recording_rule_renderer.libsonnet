@@ -1,16 +1,33 @@
 local recordingRules = import './recording_rules.libsonnet';
 
-local AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
+local COMPONENT_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
+local NODE_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage', 'shard', 'fqdn'];
+
+local COMPONENT_LEVEL_RECORDING_RULE_NAMES = {
+  apdexRatio: 'gitlab_component_apdex:ratio',
+  apdexWeight: 'gitlab_component_apdex:weight:score',
+  requestRate: 'gitlab_component_ops:rate',
+  errorRate: 'gitlab_component_errors:rate',
+};
+
+local NODE_LEVEL_RECORDING_RULE_NAMES = {
+  apdexRatio: 'gitlab_component_node_apdex:ratio',
+  apdexWeight: 'gitlab_component_node_apdex:weight:score',
+  requestRate: 'gitlab_component_node_ops:rate',
+  errorRate: 'gitlab_component_node_errors:rate',
+};
 
 // Generates apdex score recording rules for a component definition
-local generateApdexRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
+local generateApdexRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels, recordingRuleNames) =
   if std.objectHas(componentDefinition, 'apdex') then
     [
       recordingRules.apdex(
+        name=recordingRuleNames.apdexRatio,
         labels=recordingRuleStaticLabels,
         expr=componentDefinition.apdex.apdexQuery(aggregationLabels, selector='', rangeInterval='1m')
       ),
       recordingRules.apdexWeight(
+        name=recordingRuleNames.apdexWeight,
         labels=recordingRuleStaticLabels,
         expr=componentDefinition.apdex.apdexWeightQuery(aggregationLabels, selector='', rangeInterval='1m')
       ),
@@ -19,10 +36,11 @@ local generateApdexRules(aggregationLabels, componentDefinition, recordingRuleSt
     [];
 
 // Generates an request rate recording rule for a component definition
-local generateRequestRateRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
+local generateRequestRateRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels, recordingRuleNames) =
   if std.objectHas(componentDefinition, 'requestRate') then
     [
       recordingRules.requestRate(
+        name=recordingRuleNames.requestRate,
         labels=recordingRuleStaticLabels,
         expr=componentDefinition.requestRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval='1m'),
       ),
@@ -31,10 +49,11 @@ local generateRequestRateRules(aggregationLabels, componentDefinition, recording
     [];
 
 // Generates an request rate recording rule for a component definition
-local generateErrorRateRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
+local generateErrorRateRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels, recordingRuleNames) =
   if std.objectHas(componentDefinition, 'errorRate') then
     [
       recordingRules.errorRate(
+        name=recordingRuleNames.errorRate,
         labels=recordingRuleStaticLabels,
         expr=componentDefinition.errorRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval='1m'),
       ),
@@ -72,7 +91,7 @@ local generateServiceSLORules(serviceDefinition) =
     else null,
   ]);
 
-local generateComponentRecordingRules(componentName, serviceDefinition, componentDefinition) =
+local generateComponentRecordingRules(componentName, serviceDefinition, componentDefinition, recordingRuleNames, aggregationLabels) =
   local staticLabels =
     if std.objectHas(componentDefinition, 'staticLabels') then
       componentDefinition.staticLabels
@@ -86,27 +105,36 @@ local generateComponentRecordingRules(componentName, serviceDefinition, componen
   } + staticLabels;
 
   // Remove any fixed labels from the aggregation labels
-  local aggregationLabelsArray = std.filter(function(label) !std.objectHas(labels, label), AGGREGATION_LABELS);
-  local aggregationLabels = std.join(', ', aggregationLabelsArray);
+  local aggregationLabelsArray = std.filter(function(label) !std.objectHas(labels, label), aggregationLabels);
+  local aggregationLabelsString = std.join(', ', aggregationLabelsArray);
 
-  generateApdexRules(aggregationLabels, componentDefinition, labels) +
-  generateRequestRateRules(aggregationLabels, componentDefinition, labels) +
-  generateErrorRateRules(aggregationLabels, componentDefinition, labels);
+  generateApdexRules(aggregationLabelsString, componentDefinition, labels, recordingRuleNames) +
+  generateRequestRateRules(aggregationLabelsString, componentDefinition, labels, recordingRuleNames) +
+  generateErrorRateRules(aggregationLabelsString, componentDefinition, labels, recordingRuleNames);
 
-
-local generateServiceRecordingRules(serviceDefinition) =
+local generateComponentRecordingRulesForAggregations(serviceDefinition, recordingRuleNames, aggregationLabels) =
   local components = serviceDefinition.components;
 
   std.flattenArrays(
     std.map(
-      function(componentName) generateComponentRecordingRules(componentName, serviceDefinition, components[componentName]),
+      function(componentName) generateComponentRecordingRules(componentName, serviceDefinition, components[componentName], recordingRuleNames, aggregationLabels),
       std.objectFields(components)
     )
   );
 
+local generateComponentRecordingRules(serviceDefinition) =
+  generateComponentRecordingRulesForAggregations(serviceDefinition, COMPONENT_LEVEL_RECORDING_RULE_NAMES, COMPONENT_LEVEL_AGGREGATION_LABELS);
+
+local generateNodeRecordingRules(serviceDefinition) =
+  generateComponentRecordingRulesForAggregations(serviceDefinition, NODE_LEVEL_RECORDING_RULE_NAMES, NODE_LEVEL_AGGREGATION_LABELS);
+
 {
   yaml(services)::
+    // Select all services with `autogenerateRecordingRules` (default on)
     local selectedServices = std.filter(function(service) ({ autogenerateRecordingRules: true } + service).autogenerateRecordingRules, services);
+
+    // Subselect services with `nodeLevelMonitoring` (default off)
+    local servicesWithNodeLevelMonitoring = std.filter(function(service) ({ nodeLevelMonitoring: false } + service).nodeLevelMonitoring, selectedServices);
 
     std.manifestYamlDoc({
       groups: [
@@ -116,9 +144,14 @@ local generateServiceRecordingRules(serviceDefinition) =
           rules: std.flattenArrays(std.map(generateServiceSLORules, selectedServices)),
         },
         {
-          name: 'Autogenerated Component Recording Rules',
+          name: 'Autogenerated Component-Level SLIs',
           interval: '1m',
-          rules: std.flattenArrays(std.map(generateServiceRecordingRules, selectedServices)),
+          rules: std.flattenArrays(std.map(generateComponentRecordingRules, selectedServices)),
+        },
+        {
+          name: 'Autogenerated Node-Level SLIs',
+          interval: '1m',
+          rules: std.flattenArrays(std.map(generateNodeRecordingRules, servicesWithNodeLevelMonitoring)),
         },
       ],
     }),
