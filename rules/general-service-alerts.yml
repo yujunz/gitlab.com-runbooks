@@ -6,9 +6,12 @@ groups:
       # ------------------------------------------------------------------------------
 
       # Warn: Latency SLO not being met, default alert_trigger_duration (short, 5m)
+      # Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
+      # only care about the main stage alert Alternatively, we have the bad canary alerts
+      # specifically for canary stage
       - alert: service_apdex_slo_out_of_bounds_lower_5m
         expr: |
-          avg(gitlab_service_apdex:ratio) by (environment, tier, type, stage)
+          avg(gitlab_service_apdex:ratio{stage!="cny"}) by (environment, tier, type, stage)
           < ignoring(environment, stage) group_left
             avg(slo:min:gitlab_service_apdex:ratio{alert_trigger_duration!="long"}) by (tier, type)
         for: 5m
@@ -40,9 +43,12 @@ groups:
           promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
 
       # Warn: Latency SLO not being met, long alert_trigger_duration (15m)
+      # Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
+      # only care about the main stage alert Alternatively, we have the bad canary alerts
+      # specifically for canary stage
       - alert: service_apdex_slo_out_of_bounds_lower_15m
         expr: |
-          avg(gitlab_service_apdex:ratio) by (environment, tier, type, stage)
+          avg(gitlab_service_apdex:ratio{stage!="cny"}) by (environment, tier, type, stage)
           < ignoring(environment, stage) group_left
             avg(slo:min:gitlab_service_apdex:ratio{alert_trigger_duration="long"}) by (tier, type)
         for: 15m
@@ -78,9 +84,12 @@ groups:
       # ------------------------------------------------------------------------------
 
       # Warn: Error ratio SLO not being met, default alert_trigger_duration (short, 5m)
+      # Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
+      # only care about the main stage alert Alternatively, we have the bad canary alerts
+      # specifically for canary stage
       - alert: service_error_ratio_slo_out_of_bounds_upper_5m
         expr: |
-          avg(gitlab_service_errors:ratio) by (environment, tier, type, stage)
+          avg(gitlab_service_errors:ratio{stage!="cny"}) by (environment, tier, type, stage)
           > ignoring(environment, stage) group_left
           avg(slo:max:gitlab_service_errors:ratio{alert_trigger_duration!="long"}) by (tier, type)
         for: 5m
@@ -111,9 +120,12 @@ groups:
           promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
 
       # Warn: Error ratio SLO not being met, long alert_trigger_duration (15m)
+      # Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
+      # only care about the main stage alert Alternatively, we have the bad canary alerts
+      # specifically for canary stage
       - alert: service_error_ratio_slo_out_of_bounds_upper_15m
         expr: |
-          avg(gitlab_service_errors:ratio) by (environment, tier, type, stage)
+          avg(gitlab_service_errors:ratio{stage!="cny"}) by (environment, tier, type, stage)
           > ignoring(environment, stage) group_left
           avg(slo:max:gitlab_service_errors:ratio{alert_trigger_duration="long"}) by (tier, type)
         for: 15m
@@ -288,20 +300,36 @@ groups:
       # Bad canary: we are experiencing errors or latency issues in
       # canary, but not in production. This probably indicates that
       # we have a dud canary
+      #
+      # When traffic volume to the canary is below 1% of the
+      # traffic to the main production stage, the bad-canary
+      # alerts will not fire. This avoids low-traffic
+      # random noise alerts.
+      #
       ################################################
 
       - alert: service_cny_apdex_slo_out_of_bounds_lower_5m
         expr: |
           (
-            avg(gitlab_service_apdex:ratio{stage="cny"}) by (environment, tier, type)
-            < ignoring(environment, stage) group_left
-              avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+            (
+              avg(gitlab_service_apdex:ratio{stage="cny"}) by (environment, tier, type)
+              < ignoring(environment, stage) group_left
+                avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+            )
+            unless ignoring(stage)
+            (
+              avg(gitlab_service_apdex:ratio{stage="main"}) by (environment, tier, type)
+              < ignoring(environment, stage) group_left
+                avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+            )
           )
-          unless ignoring(stage)
+          and on(environment, tier, type)
           (
-            avg(gitlab_service_apdex:ratio{stage="main"}) by (environment, tier, type)
-            < ignoring(environment, stage) group_left
-              avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+            (
+              gitlab_service_ops:rate{stage="cny"}
+              / ignoring(stage)
+              gitlab_service_ops:rate{stage="main"}
+            ) >= 0.01
           )
         for: 5m
         labels:
@@ -341,15 +369,25 @@ groups:
       - alert: service_cny_error_ratio_slo_out_of_bounds_upper_5m
         expr: |
           (
-            avg(gitlab_service_errors:ratio{stage="cny"}) by (environment, tier, type, stage)
-            > ignoring(environment, stage) group_left
-            avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+            (
+              avg(gitlab_service_errors:ratio{stage="cny"}) by (environment, tier, type, stage)
+              > ignoring(environment, stage) group_left
+              avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+            )
+            unless ignoring(stage)
+            (
+              avg(gitlab_service_errors:ratio{stage="main"}) by (environment, tier, type, stage)
+              > ignoring(environment, stage) group_left
+              avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+            )
           )
-          unless ignoring(stage)
+          and on(environment, tier, type)
           (
-            avg(gitlab_service_errors:ratio{stage="main"}) by (environment, tier, type, stage)
-            > ignoring(environment, stage) group_left
-            avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+            (
+              gitlab_service_ops:rate{stage="cny"}
+              / ignoring(stage)
+              gitlab_service_ops:rate{stage="main"}
+            ) >= 0.01
           )
         for: 5m
         labels:
