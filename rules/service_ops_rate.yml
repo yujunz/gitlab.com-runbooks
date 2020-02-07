@@ -81,6 +81,10 @@ groups:
     expr: >
       sum(rate(prometheus_http_requests_total{job="prometheus"}[1m])) by (environment, tier, type, stage)
 
+######################
+# Aggregation Stage
+######################
+
 - name: GitLab Service Operations-per-Second Aggregated Rates
   interval: 1m
   rules:
@@ -88,6 +92,11 @@ groups:
   - record: gitlab_service_ops:rate
     expr: >
       sum by (environment, tier, type, stage) (gitlab_component_ops:rate >= 0)
+
+  # Aggregate over all components within a service, for a node
+  - record: gitlab_service_node_ops:rate
+    expr: >
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate >= 0)
 
 - name: GitLab Component Operations-per-Second Rate Stats
   interval: 5m
