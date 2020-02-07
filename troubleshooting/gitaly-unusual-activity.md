@@ -7,8 +7,8 @@
 ## 1. Review the suspicious activity
 
 - **Check out the abuse dashboard**: https://dashboards.gitlab.net/d/9T-wXWbik/abuse-dashboard?orgId=1&panelId=2&from=now-1h&to=now
-- **Review the abuse reporting data in Kibana**: https://log.gitlab.net/goto/6636a49add992f6326862df0afc6ae54
-- **Review the abuse dashboard**:  https://log.gitlab.net/app/kibana#/dashboard/AWSIfVZhTIzC7JP6Xxn1
+- **Review the abuse reporting data in Kibana**: https://log.gprd.gitlab.net/goto/6636a49add992f6326862df0afc6ae54
+- **Review the abuse dashboard**:  https://log.gprd.gitlab.net/app/kibana#/dashboard/AWSIfVZhTIzC7JP6Xxn1
 - Keep in mind that this is an open-ended alert, so it alerts to suspicious activity, rather than pin-pointing an issue.
 - Use this as an informational alert, combine it with other signals
 

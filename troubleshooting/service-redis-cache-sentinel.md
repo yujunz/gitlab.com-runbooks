@@ -9,6 +9,6 @@
 
 ## Logging
 
-* [system](https://log.gitlab.net/goto/0b28cb1d20663b4359f8bc05995a22ad)
+* [system](https://log.gprd.gitlab.net/goto/0b28cb1d20663b4359f8bc05995a22ad)
 
 <!-- END_MARKER -->

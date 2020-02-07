@@ -9,7 +9,7 @@
 
 ## Logging
 
-* [Consul](https://log.gitlab.net/goto/7f15b1f04a0f09fbb18fc62adefe3ed1)
-* [system](https://log.gitlab.net/goto/a22fbb60e45a3f6d7860908a5427301c)
+* [Consul](https://log.gprd.gitlab.net/goto/7f15b1f04a0f09fbb18fc62adefe3ed1)
+* [system](https://log.gprd.gitlab.net/goto/a22fbb60e45a3f6d7860908a5427301c)
 
 <!-- END_MARKER -->

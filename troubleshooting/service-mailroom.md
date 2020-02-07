@@ -15,7 +15,7 @@
 
 ## Logging
 
-* [system](https://log.gitlab.net/goto/0ce3bf67abafcfc0f81f3d6e7a066912)
+* [system](https://log.gprd.gitlab.net/goto/0ce3bf67abafcfc0f81f3d6e7a066912)
 
 <!-- END_MARKER -->
 

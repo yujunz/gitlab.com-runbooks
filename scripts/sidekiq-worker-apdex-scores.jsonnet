@@ -2,7 +2,7 @@
 // Please be sure to run `scripts/generate-sidekiq-worker-apdex-scores.sh` after changing this file
 
 // Weekly p95 job execution duration values
-// Calculated using the following ELK query: https://log.gitlab.net/goto/3bd0a288bd965a9e5ada6869740ae54c
+// Calculated using the following ELK query: https://log.gprd.gitlab.net/goto/3bd0a288bd965a9e5ada6869740ae54c
 // Our thanos cluster is unable to handle this query, but if could it would
 // be: `histogram_quantile(0.95, sum(rate(sidekiq_jobs_completion_seconds_bucket{environment="gprd"}[1w])) by (le, queue, environment))`
 local P95_VALUES_FOR_QUEUES = {

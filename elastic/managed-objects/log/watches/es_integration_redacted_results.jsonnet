@@ -50,7 +50,7 @@ local ES_QUERY = {
           to: [
             '#sec-appsec-private',
           ],
-          text: 'Search results from the ES integration were redacted. Visit https://log.gitlab.net/goto/7bd8f00adef19fd604175185e3828941 for more details',
+          text: 'Search results from the ES integration were redacted. Visit https://log.gprd.gitlab.net/goto/7bd8f00adef19fd604175185e3828941 for more details',
         },
       },
     },

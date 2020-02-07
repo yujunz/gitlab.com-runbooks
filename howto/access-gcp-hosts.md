@@ -35,7 +35,7 @@ fi
 
 Logs for gprd & gstg:
 
-- https://log.gitlab.net ([read](logging.md) on how to filter logs per environment)
+- https://log.gprd.gitlab.net ([read](logging.md) on how to filter logs per environment)
 
 Grafana:
 
@@ -50,5 +50,3 @@ Alerts:
 
 - gprd: https://alerts.gprd.gitlab.net/
 - gstg: https://alerts.gstg.gitlab.net/
-
-

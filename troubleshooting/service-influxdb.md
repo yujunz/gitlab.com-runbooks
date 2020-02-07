@@ -9,7 +9,7 @@
 
 ## Logging
 
-* [system](https://log.gitlab.net/goto/bf44358a81c549827fd8142a4da59d4a)
+* [system](https://log.gprd.gitlab.net/goto/bf44358a81c549827fd8142a4da59d4a)
 
 ## Troubleshooting Pointers
 

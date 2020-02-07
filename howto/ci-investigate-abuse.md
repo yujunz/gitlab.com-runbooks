@@ -8,7 +8,7 @@ one build before it is destroyed.
 
 ## Do a search through logs
 
-First, let's log into https://log.gitlab.net/
+First, let's log into https://log.gprd.gitlab.net/
 
 To find if the IP was used by Runner:
 
@@ -137,4 +137,3 @@ shared-runners-manager-2:~$
 
 In this case, the IP address and the time of the abuse report do not match up. As such, this was
 most likely not us.
-

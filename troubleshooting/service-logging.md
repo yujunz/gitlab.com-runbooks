@@ -9,7 +9,7 @@
 
 ## Logging
 
-* [Kibana](https://log.gitlab.net/app/kibana)
+* [Kibana](https://log.gprd.gitlab.net/app/kibana)
 * [Stackdriver](https://console.cloud.google.com/logs/viewer?project=gitlab-production)
 
 ## Troubleshooting Pointers
