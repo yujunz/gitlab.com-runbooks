@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 STORAGE = 'nfs-file02' # Change this to the right storage
 
 # First expire all projects with no subgroups
@@ -22,15 +23,14 @@ projects = Project.select("projects.id, namespaces.path, projects.path").joins(:
 Gitlab::Redis::Cache.with do |redis|
   removed = 0
   projects.find_each do |project|
-    begin
-      next unless project.full_path.count('/') > 1
-      cache_key = "cache:gitlab:exists?:#{project.full_path}:#{project.id}"
-      puts "Expiring #{cache_key}"
-      redis.del(cache_key)
-      removed += 1
-    rescue => e
-      puts "Error handling #{project.id}: #{e}"
-    end
+    next unless project.full_path.count('/') > 1
+
+    cache_key = "cache:gitlab:exists?:#{project.full_path}:#{project.id}"
+    puts "Expiring #{cache_key}"
+    redis.del(cache_key)
+    removed += 1
+  rescue StandardError => e
+    puts "Error handling #{project.id}: #{e}"
   end
   puts "\n#{removed} keys removed"
 end

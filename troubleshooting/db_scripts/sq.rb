@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 #
 # A sidekick for Sidekiq
 #
@@ -150,11 +152,9 @@ if $PROGRAM_NAME == __FILE__
   options = parse_options(ARGV)
   configure_sidekiq(options)
 
-  if options.dry_run
-    puts "Running dry run:"
-  end
+  puts "Running dry run:" if options.dry_run
 
-  show_sidekiq_data unless options.command.length > 0
+  show_sidekiq_data if options.command.empty?
 
   case options.command[0]
   when 'show'

@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'optparse'
 require 'csv'
@@ -47,15 +48,15 @@ def gitlab_client(method, url, body = nil)
   http.use_ssl = true
 
   request = case method.downcase
-    when 'get'
-      Net::HTTP::Get.new(uri)
-    when 'post'
-      Net::HTTP::Post.new(uri)
-    when 'put'
-      Net::HTTP::Put.new(uri)
-    else
-      raise "Unknown method #{method}"
-    end
+            when 'get'
+              Net::HTTP::Get.new(uri)
+            when 'post'
+              Net::HTTP::Post.new(uri)
+            when 'put'
+              Net::HTTP::Put.new(uri)
+            else
+              raise "Unknown method #{method}"
+            end
 
   request["PRIVATE-TOKEN"] = ENV['PRIVATE_TOKEN']
   request.body = body if body
@@ -70,43 +71,37 @@ options = parse_args
 
 csv = CSV.new(ARGF)
 csv.each do |project, source, target|
-  begin
-    project_path = "https://gitlab.com/api/v4/projects/#{CGI.escape(project)}"
+  project_path = "https://gitlab.com/api/v4/projects/#{CGI.escape(project)}"
+  project_info = gitlab_client('GET', project_path)
+
+  raise "Source (#{source}) doesn't match current project storage (#{project_info['repository_storage']})" if project_info['repository_storage'] != source
+
+  puts "--- Moving #{project_info['path_with_namespace']} from #{source} to #{target}... "
+
+  if options[:dry_run]
+    puts 'Running in dry-run mode, nothing done'
+    next
+  end
+
+  gitlab_client('PUT', project_path, "repository_storage=#{target}")
+
+  print 'Waiting for migration to finish... '
+  (options[:wait] / 5).times do
     project_info = gitlab_client('GET', project_path)
 
-    if project_info['repository_storage'] != source
-      raise "Source (#{source}) doesn't match current project storage (#{project_info['repository_storage']})"
-    end
+    break if project_info['repository_storage'] == target
 
-    puts "--- Moving #{project_info['path_with_namespace']} from #{source} to #{target}... "
-
-    if options[:dry_run]
-      puts 'Running in dry-run mode, nothing done'
-      next
-    end
-
-    gitlab_client('PUT', project_path, "repository_storage=#{target}")
-
-    print 'Waiting for migration to finish... '
-    (options[:wait] / 5).times do
-      project_info = gitlab_client('GET', project_path)
-
-      break if project_info['repository_storage'] == target
-
-      sleep 5
-    end
-
-    if project_info['repository_storage'] != target
-      raise "migration didn't complete in 2 minutes"
-    end
-
-    puts 'done'
-
-    print 'Running housekeeping... '
-    gitlab_client('POST', "#{project_path}/housekeeping")
-    puts 'done'
-  rescue RuntimeError => e
-    puts "Error moving #{project}: #{e.message}"
-    exit
+    sleep 5
   end
+
+  raise "migration didn't complete in 2 minutes" if project_info['repository_storage'] != target
+
+  puts 'done'
+
+  print 'Running housekeeping... '
+  gitlab_client('POST', "#{project_path}/housekeeping")
+  puts 'done'
+rescue RuntimeError => e
+  puts "Error moving #{project}: #{e.message}"
+  exit
 end

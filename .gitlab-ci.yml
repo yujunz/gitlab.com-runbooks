@@ -57,27 +57,9 @@ test-rules:
 rubocop:
   stage: test
   script:
-    - gem install bundler --no-document
+    - gem install bundler etc --no-document
     - bundle install --with=test
-    - bundle exec rubocop ./bin/create_kubernetes_rules.rb ./lib/* ./spec/*
-    # Until https://gitlab.com/gitlab-com/runbooks/issues/26
-    # - rubocop ./scripts/*.rb
-
-# Until https://gitlab.com/gitlab-com/runbooks/issues/26
-rubocop-scripts-passing:
-  stage: test
-  script:
-    - gem install bundler --no-document
-    - bundle install --with=test
-    - bundle exec rubocop ./scripts/storage_cleanup.rb
-
-rubocop-scripts:
-  stage: test
-  allow_failure: true # Until https://gitlab.com/gitlab-com/runbooks/issues/26
-  script:
-    - gem install bundler --no-document
-    - bundle install --with=test
-    - bundle exec rubocop ./scripts/*.rb
+    - bundle exec rubocop
 
 rspec:
   stage: test

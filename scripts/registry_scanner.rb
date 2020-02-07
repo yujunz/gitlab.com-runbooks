@@ -38,8 +38,8 @@ class RegistryScanner
   def parse_path(path)
     path =~ %r{/v2/(.*)/manifests/(.*)}
 
-    @registry_path = $1
-    @sha = $2
+    @registry_path = Regexp.last_match(1)
+    @sha = Regexp.last_match(2)
   end
 
   def base_path

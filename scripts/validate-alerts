@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'yaml'
 require 'logger'
@@ -6,6 +7,8 @@ require 'logger'
 LOGGER = Logger.new(STDERR)
 LOGGER.level = Logger::DEBUG
 
+# rubocop:disable Metrics/PerceivedComplexity
+# rubocop:disable Metrics/CyclomaticComplexity
 def validate_rule(alert_file_path, rule)
   return if rule["record"] # Don't validate recordings
 
@@ -20,14 +23,14 @@ def validate_rule(alert_file_path, rule)
   LOGGER.warn "#{alert_file_path}: #{alert}: Rules should contain a `description` annotation" unless annotations["description"]
 
   raise StandardError, " #{alert}: rules must contain a `severity` label" unless labels["severity"]
-  raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels["severity"]}" unless ["s1", "s2", "s3", "s4"].include?(labels["severity"])
+  raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels['severity']}" unless %w[s1 s2 s3 s4].include?(labels["severity"])
 
   if labels["pager"]
-    raise StandardError, " #{alert}: rules contains an invalid `pager` label: #{labels["pager"]}" unless ["pagerduty", "issue"].include?(labels["pager"])
-    raise StandardError, " #{alert}: only severity s1 and s2 errors should page" unless labels["severity"] == "s1" or labels["severity"] == "s2"
-    raise StandardError, " #{alert}: 'pager: issue' alerts need a project label" if labels["pager"] == "issue" and labels["project"].nil?
-  else
-    raise StandardError, " #{alert}: s1 and s2 alerts must be configured to send to pagerduty" if labels["severity"] == "s1" or labels["severity"] == "s2"
+    raise StandardError, " #{alert}: rules contains an invalid `pager` label: #{labels['pager']}" unless %w[pagerduty issue].include?(labels["pager"])
+    raise StandardError, " #{alert}: only severity s1 and s2 errors should page" unless (labels["severity"] == "s1") || (labels["severity"] == "s2")
+    raise StandardError, " #{alert}: 'pager: issue' alerts need a project label" if (labels["pager"] == "issue") && labels["project"].nil?
+  elsif (labels["severity"] == "s1") || (labels["severity"] == "s2")
+    raise StandardError, " #{alert}: s1 and s2 alerts must be configured to send to pagerduty"
   end
 
   if annotations["runbook"]
@@ -35,14 +38,13 @@ def validate_rule(alert_file_path, rule)
     runbook_file = runbook_relative_link.gsub(/#.*$/, "")
     # We can't validate files that include template values eg: "{{ $labels.type }}"
     # but for other files, ensure that they exist
-    if !runbook_file.include?("{{") && !File.file?(File.join(__dir__, "..", runbook_file))
-      raise StandardError, " #{alert}: rule references a non-existent runbook #{runbook_file}"
-    end
+    raise StandardError, " #{alert}: rule references a non-existent runbook #{runbook_file}" if !runbook_file.include?("{{") && !File.file?(File.join(__dir__, "..", runbook_file))
   else
     LOGGER.warn "#{alert_file_path}: #{alert}: alerts should reference a runbook"
   end
-
 end
+# rubocop:enable Metrics/PerceivedComplexity
+# rubocop:enable Metrics/CyclomaticComplexity
 
 def validate_group(alert_file_path, group)
   name = group["name"]
@@ -59,17 +61,15 @@ def validate_group(alert_file_path, group)
 end
 
 def validate(alert_file_path)
-  begin
-    alert_yaml = YAML.load_file(alert_file_path)
-    raise StandardError, "Invalid configuration" if !alert_yaml
+  alert_yaml = YAML.load_file(alert_file_path)
+  raise StandardError, "Invalid configuration" unless alert_yaml
 
-    groups = alert_yaml["groups"]
-    groups.each do |group|
-      validate_group alert_file_path, group
-    end
-  rescue StandardError => e
-    raise StandardError, "Unable to validate file #{alert_file_path}: #{e.message}"
+  groups = alert_yaml["groups"]
+  groups.each do |group|
+    validate_group alert_file_path, group
   end
+rescue StandardError => e
+  raise StandardError, "Unable to validate file #{alert_file_path}: #{e.message}"
 end
 
 begin
@@ -79,7 +79,7 @@ begin
   end
 
 rescue StandardError => e
-  STDERR.puts "error: #{e.message}"
+  warn "error: #{e.message}"
   exit 1
 ensure
   LOGGER.close
