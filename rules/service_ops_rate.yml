@@ -2,14 +2,6 @@ groups:
 - name: GitLab Component Operations-per-Second Rates
   interval: 1m
   rules:
-  # Redis Service
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'server'
-      stage: 'main'
-    expr: >
-      sum by (environment, tier, type) (redis:commands_processed:irate1m)
-
   # sidekiq: job RPS rate
   - record: gitlab_component_ops:rate
     labels:
