@@ -10,6 +10,42 @@ local rateMetric = metricsCatalog.rateMetric;
     errorRatio: 0.005,
   },
   components: {
+    loadbalancer: {
+      staticLabels: {
+        stage: 'main',
+      },
+
+      requestRate: rateMetric(
+        counter='haproxy_backend_http_responses_total',
+        selector='backend="registry",job="haproxy"'
+      ),
+
+      errorRate: rateMetric(
+        counter='haproxy_backend_http_responses_total',
+        selector='backend="registry",job="haproxy",code="5xx"'
+      ),
+
+      significantLabels: [],
+    },
+
+    loadbalancer_cny: {
+      staticLabels: {
+        stage: 'cny',
+      },
+
+      requestRate: rateMetric(
+        counter='haproxy_backend_http_responses_total',
+        selector='backend="canary_registry",job="haproxy"'
+      ),
+
+      errorRate: rateMetric(
+        counter='haproxy_backend_http_responses_total',
+        selector='backend="canary_registry",job="haproxy",code="5xx"'
+      ),
+
+      significantLabels: [],
+    },
+
     server: {
       apdex: histogramApdex(
         histogram='registry_http_request_duration_seconds_bucket',

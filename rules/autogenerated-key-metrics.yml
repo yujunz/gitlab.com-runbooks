@@ -1058,6 +1058,46 @@ groups:
       sum by (environment, stage) (
         rate(redis_commands_processed_total{type="redis-sidekiq"}[1m]) and on (instance) redis_instance_info{role="slave"}
       )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[1m])
+      )
   - record: gitlab_component_apdex:ratio
     labels:
       component: server
