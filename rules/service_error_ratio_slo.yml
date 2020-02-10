@@ -5,12 +5,6 @@ groups:
   rules:
   - record: 'slo:max:gitlab_service_errors:ratio'
     labels:
-      type: 'sidekiq'
-      tier: 'sv'
-    expr: '0.05'
-
-  - record: 'slo:max:gitlab_service_errors:ratio'
-    labels:
       type: 'pages'
       tier: 'sv'
     expr: '0.005'
