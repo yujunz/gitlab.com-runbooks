@@ -7,7 +7,3 @@ inherit_gem:
   - rubocop-metrics.yml
   - rubocop-naming.yml
   - rubocop-style.yml
-
-AllCops:
-  Exclude:
-    - 'elastic/query-perf/**/*'

@@ -1,3 +1,20 @@
+# rubocop:disable Style/TrailingCommaInHashLiteral
+# rubocop:disable Style/TrailingCommaInArguments
+# rubocop:disable Style/TrailingCommaInArrayLiteral
+# rubocop:disable Style/NumericPredicate
+# rubocop:disable Style/ZeroLengthPredicate
+# rubocop:disable Style/BlockDelimiters
+# rubocop:disable Style/MultilineBlockChain
+# rubocop:disable Layout/SpaceAroundOperators
+# rubocop:disable Layout/EmptyLineAfterGuardClause
+# rubocop:disable Layout/IndentFirstHashElement
+# rubocop:disable Layout/AlignHash
+# rubocop:disable Layout/SpaceAfterColon
+# rubocop:disable Layout/SpaceInsideHashLiteralBraces
+# rubocop:disable Layout/SpaceAfterComma
+# rubocop:disable Layout/SpaceInsideBlockBraces
+# rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
+
 require 'http'
 require 'uri'
 require 'json'
@@ -45,8 +62,8 @@ uri = URI.parse(url)
 client = HTTP
   .persistent(url)
   .basic_auth(
-    user: URI.decode(uri.user),
-    pass: URI.decode(uri.password),
+    user: URI.decode_www_form_component(uri.user),
+    pass: URI.decode_www_form_component(uri.password),
   )
 
 resp = client.get('/')
@@ -90,8 +107,8 @@ clusters.each do |cluster, url|
   client = HTTP
     .persistent(url)
     .basic_auth(
-      user: URI.decode(uri.user),
-      pass: URI.decode(uri.password),
+      user: URI.decode_www_form_component(uri.user),
+      pass: URI.decode_www_form_component(uri.password),
     )
 
   resp = client.get('/')
@@ -99,7 +116,6 @@ clusters.each do |cluster, url|
   body = JSON.parse(resp.body)
 
   correlation_queries.each do |index, query_json|
-    # stats[cluster]["correlation_client_#{index}"] = new_histogram
     stats[cluster]["correlation_server_#{index}"] = new_histogram
 
     puts "index: #{index}"
@@ -107,74 +123,70 @@ clusters.each do |cluster, url|
     correlation_ids.each do |correlation_id|
       puts "correlation_id: #{correlation_id}"
 
-      duration = measure do
-        query_json = query_json
-          .gsub('PUT_CORRELATION_ID_HERE', correlation_id)
-          .gsub('TIMESTAMP_FROM', timestamp_from.to_s)
-          .gsub('TIMESTAMP_UNTIL', timestamp_until.to_s)
+      query_json = query_json
+        .gsub('PUT_CORRELATION_ID_HERE', correlation_id)
+        .gsub('TIMESTAMP_FROM', timestamp_from.to_s)
+        .gsub('TIMESTAMP_UNTIL', timestamp_until.to_s)
 
-        if profile
-          query = JSON.parse(query_json)
-          query['profile'] = true
-          query_json = JSON.generate(query)
-        end
+      if profile
+        query = JSON.parse(query_json)
+        query['profile'] = true
+        query_json = JSON.generate(query)
+      end
 
-        resp = client.post(
-          "/#{index}/_search",
-          headers: { 'Content-Type': 'application/json; charset=utf-8' },
-          body: query_json,
-        )
-        raise "expected status 200, got #{resp.status.code}, response #{resp}" unless resp.status.success?
-        body = JSON.parse(resp.body)
+      resp = client.post(
+        "/#{index}/_search",
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: query_json,
+      )
+      raise "expected status 200, got #{resp.status.code}, response #{resp}" unless resp.status.success?
+      body = JSON.parse(resp.body)
 
-        stats[cluster]["correlation_server_#{index}"].record(body['took'])
+      stats[cluster]["correlation_server_#{index}"].record(body['took'])
 
-        if profile
-          # [nodeID][indexName][shardID]
-          profile_shards = body['profile']['shards'].map { |s| s['id'].scan(/\[(.+?)\]/).flatten }
-          unique_nodes = profile_shards.map { |s| s[0] }.uniq.size
-          unique_indices = profile_shards.map { |s| [s[0], s[1]] }.uniq.size
-          unique_shards = profile_shards.map { |s| [s[0], s[1], s[2]] }.uniq.size
-          puts "unique nodes / indices / shards: #{unique_nodes} #{unique_indices} #{unique_shards}"
-          puts
+      if profile
+        # [nodeID][indexName][shardID]
+        profile_shards = body['profile']['shards'].map { |s| s['id'].scan(/\[(.+?)\]/).flatten }
+        unique_nodes = profile_shards.map { |s| s[0] }.uniq.size
+        unique_indices = profile_shards.map { |s| [s[0], s[1]] }.uniq.size
+        unique_shards = profile_shards.map { |s| [s[0], s[1], s[2]] }.uniq.size
+        puts "unique nodes / indices / shards: #{unique_nodes} #{unique_indices} #{unique_shards}"
+        puts
 
-          time_per_node = body['profile']['shards']
-            .group_by { |s| s['id'].scan(/\[(.+?)\]/).flatten[0] }
-            .map { |node, shards|
-              sum = shards.map { |s|
-                s['searches'].map { |search|
-                  search['query'].map { |q| q['time_in_nanos'].to_i / 1_000_000 }
-                }
-              }.flatten.sum
-              [node, sum]
-            }
-            .select { |node, sum| sum > 10 }
-            .to_h
+        time_per_node = body['profile']['shards']
+          .group_by { |s| s['id'].scan(/\[(.+?)\]/).flatten[0] }
+          .map { |node, shards|
+            sum = shards.map { |s|
+              s['searches'].map { |search|
+                search['query'].map { |q| q['time_in_nanos'].to_i / 1_000_000 }
+              }
+            }.flatten.sum
+            [node, sum]
+          }
+          .select { |node, sum| sum > 10 }
+          .to_h
 
-          # cumulative -- these are supposedly concurrent
-          puts "cumulative profiled time: #{time_per_node.map { |_, n| n }.sum}"
-          puts
+        # cumulative -- these are supposedly concurrent
+        puts "cumulative profiled time: #{time_per_node.map { |_, n| n }.sum}"
+        puts
 
-          puts "cumulative time per node: #{time_per_node.inspect}"
-          puts
+        puts "cumulative time per node: #{time_per_node.inspect}"
+        puts
 
-          shards_per_node = body['profile']['shards']
-            .group_by { |s| s['id'].scan(/\[(.+?)\]/).flatten[0] }
-            .map { |node, shards| [node, shards.size] }
-            .select { |node, sum| sum > 2 }
-            .to_h
+        shards_per_node = body['profile']['shards']
+          .group_by { |s| s['id'].scan(/\[(.+?)\]/).flatten[0] }
+          .map { |node, shards| [node, shards.size] }
+          .select { |node, sum| sum > 2 }
+          .to_h
 
-          puts "shards per node: #{shards_per_node.inspect}"
-          puts
-        end
-
-        body.delete('hits')
-        body.delete('profile')
-        puts body
+        puts "shards per node: #{shards_per_node.inspect}"
         puts
       end
 
-      # stats[cluster]["correlation_client_#{index}"].record(duration)
+      body.delete('hits')
+      body.delete('profile')
+      puts body
+      puts
     end
   end
 
@@ -182,3 +194,20 @@ clusters.each do |cluster, url|
 end
 
 puts stats.map { |c,v| [c,v.map { |k,h| [k,h.stats([ 50.0, 75.0, 90.0, 99.0, 100.0 ])] }] }
+
+# rubocop:enable Style/TrailingCommaInHashLiteral
+# rubocop:enable Style/TrailingCommaInArguments
+# rubocop:enable Style/TrailingCommaInArrayLiteral
+# rubocop:enable Style/NumericPredicate
+# rubocop:enable Style/ZeroLengthPredicate
+# rubocop:enable Style/BlockDelimiters
+# rubocop:enable Style/MultilineBlockChain
+# rubocop:enable Layout/SpaceAroundOperators
+# rubocop:enable Layout/EmptyLineAfterGuardClause
+# rubocop:enable Layout/IndentFirstHashElement
+# rubocop:enable Layout/AlignHash
+# rubocop:enable Layout/SpaceAfterColon
+# rubocop:enable Layout/SpaceInsideHashLiteralBraces
+# rubocop:enable Layout/SpaceAfterComma
+# rubocop:enable Layout/SpaceInsideBlockBraces
+# rubocop:enable Layout/SpaceInsideArrayLiteralBrackets
