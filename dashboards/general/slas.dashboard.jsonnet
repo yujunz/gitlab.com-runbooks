@@ -124,13 +124,7 @@ basic.dashboard(
   .addTarget(
     promQuery.target(
       |||
-        avg_over_time(
-          (
-            sum (sla:gitlab:score{env="$environment", environment="$environment", stage="main"})
-            /
-            sum (sla:gitlab:weights{env="$environment", environment="$environment", stage="main"})
-          )[$__range:5m]
-        )
+        avg_over_time(sla:gitlab:ratio{environment="$environment", stage="main"}[$__range])
       |||,
       instant=true
     )
@@ -163,9 +157,7 @@ basic.dashboard(
       description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
       query=|||
-        sum (sla:gitlab:score{env="$environment", environment="$environment", stage="main"})
-        /
-        sum (sla:gitlab:weights{env="$environment", environment="$environment", stage="main"})
+        avg_over_time(sla:gitlab:ratio{environment="$environment", stage="main"}[$__interval])
       |||,
       legendFormat='gitlab.com SLA',
       interval=INTERVAL,
