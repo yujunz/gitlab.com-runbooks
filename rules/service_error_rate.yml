@@ -22,19 +22,6 @@ groups:
     expr: >
       sum(rate(gitlab_pages_http_requests_total{code=~"5.*"}[1m])) by (environment, tier, type, stage)
 
-  # sidekiq: job failure rate
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'jobs'
-    expr: >
-      sum by (environment, tier, type, stage) (
-        rate(sidekiq_jobs_failed_total{
-          type="sidekiq",
-          queue!="repository_update_mirror",
-          queue!="repository_update_remote_mirror"
-        }[1m])
-      )
-
 ######################
 # Aggregation Stage
 ######################

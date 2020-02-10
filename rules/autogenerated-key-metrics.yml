@@ -101,6 +101,16 @@ groups:
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv
+      type: sidekiq
+    expr: '0.95'
+  - record: slo:max:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: sidekiq
+    expr: '0.05'
+  - record: slo:min:gitlab_service_apdex:ratio
+    labels:
+      tier: sv
       type: web
     expr: '0.95'
   - record: slo:max:gitlab_service_errors:ratio
@@ -1188,6 +1198,164 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(registry_storage_action_seconds_count{}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes", le="10"}[1m])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes", le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes", le="+Inf"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes",le="+Inf"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="yes"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{latency_sensitive="yes", le="10"}[1m])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{latency_sensitive="yes", le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{latency_sensitive="yes", le="+Inf"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="yes"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no", le="300"}[1m])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no", le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no", le="+Inf"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no",le="+Inf"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="no"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: non_latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{latency_sensitive="no", le="60"}[1m])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{latency_sensitive="no", le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: non_latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{latency_sensitive="no", le="+Inf"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: non_latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="no"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
