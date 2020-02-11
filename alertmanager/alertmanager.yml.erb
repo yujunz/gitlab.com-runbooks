@@ -123,6 +123,13 @@ route:
     receiver: database_alerts_channel
     continue: true
 
+  # observability alerts
+  - match:
+      channel: observability
+    group_by: ['env', 'alertname', 'stage']
+    receiver: observability_alerts_channel
+    continue: true
+
 <% if @conf['issues'] -%>
   ################################################
   # Issue routes: GitLab issues
@@ -218,7 +225,7 @@ receivers:
 ################################################
 # Slack Channel Alerts
 ################################################
-<% %w(main_alerts_channel pager_alerts_channel database_alerts_channel database_low_priority_alerts_channel gitaly_alerts_channel gitaly_low_priority_alerts_channel cicd_alerts_channel).each do   |slack_channel| %>
+<% %w(main_alerts_channel pager_alerts_channel database_alerts_channel database_low_priority_alerts_channel gitaly_alerts_channel gitaly_low_priority_alerts_channel cicd_alerts_channel observability_alerts_channel).each do   |slack_channel| %>
 - name: "<%=slack_channel%>"
   slack_configs:
   - api_url: "<%= @conf['slack']['api_url'] %>"
