@@ -111,6 +111,16 @@ groups:
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv
+      type: web-pages
+    expr: '0.9'
+  - record: slo:max:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: web-pages
+    expr: '0.005'
+  - record: slo:min:gitlab_service_apdex:ratio
+    labels:
+      tier: sv
       type: web
     expr: '0.95'
   - record: slo:max:gitlab_service_errors:ratio
@@ -1356,6 +1366,78 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(sidekiq_enqueued_jobs_total{latency_sensitive="no"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1m])
+        or
+        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(gitlab_pages_http_request_duration_seconds_bucket{type="web-pages", le="1"}[1m])
+        )
+        +
+        sum by (environment, stage) (
+          rate(gitlab_pages_http_request_duration_seconds_bucket{type="web-pages", le="10"}[1m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment, stage) (
+          rate(gitlab_pages_http_request_duration_seconds_bucket{type="web-pages", le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_request_duration_seconds_bucket{type="web-pages", le="+Inf"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{code=~"5.."}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
