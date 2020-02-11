@@ -31,7 +31,7 @@
         },
       },
       delete: {
-        min_age: '5d',  //7d after documents are received by the cluster, not from the log timestamp
+        min_age: '7d',  //7d after rollover
         actions: {
           delete: {},
         },
