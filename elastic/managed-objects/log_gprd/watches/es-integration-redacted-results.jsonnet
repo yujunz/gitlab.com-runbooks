@@ -17,7 +17,7 @@ local ES_QUERY = {
           { range: { '@timestamp': { gte: std.format('now-%dm', QUERY_PERIOD_MINS), lte: 'now' } } },
         ],
         must_not: [
-          { match_phrase: { 'json.message': { query: 'read_blob' } } },
+          { match_phrase: { message: { query: 'read_blob' } } },
         ],
       },
     },
