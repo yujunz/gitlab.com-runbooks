@@ -1,6 +1,0 @@
-{
-  "attributes": {
-    "title": "pubsub-registry-inf-dr-*",
-    "timeFieldName": "json.time"
-  }
-}
