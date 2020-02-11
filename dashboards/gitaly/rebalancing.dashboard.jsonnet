@@ -171,6 +171,6 @@ basic.dashboard(
 )
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('gitaly') + platformLinks.services + [
-    link.dashboards('ELK: Repository Utilization Report for Gitaly Rebalancing', '', type='link', keepTime=false, targetBlank=true, url='https://log.gitlab.net/goto/34aa59a70ff732505a88bf94d6e8beb1'),
+    link.dashboards('ELK: Repository Utilization Report for Gitaly Rebalancing', '', type='link', keepTime=false, targetBlank=true, url='https://log.gprd.gitlab.net/goto/34aa59a70ff732505a88bf94d6e8beb1'),
   ],
 }

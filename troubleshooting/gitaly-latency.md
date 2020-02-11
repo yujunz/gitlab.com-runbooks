@@ -18,7 +18,7 @@ This runbook will be deprecated in favor of the [gitaly pprof runbook](https://g
 ## 2. Drill down
 
 - Look at the [RPC time by project
-  graph](https://log.gitlab.net/app/kibana#/visualize/edit/AW3YxmNOzxfRAgEaOtW6).
+  graph](https://log.gprd.gitlab.net/app/kibana#/visualize/edit/AW3YxmNOzxfRAgEaOtW6).
   Does it reveal any few projects that are responsible for RPC time?
 - If a project is responsible for a lot of RPC time, filter the graph by that
   project and change the X-axis grouping to method.
@@ -33,7 +33,7 @@ issues here are usually transient.
 ### GetBlob on project
 
 Open the [Rails request duration by controller per project
-graph](https://log.gitlab.net/app/kibana#/visualize/edit/AW3Z_bgiQ7jyVXjiZ19E).
+graph](https://log.gprd.gitlab.net/app/kibana#/visualize/edit/AW3Z_bgiQ7jyVXjiZ19E).
 Change the project filter appropriately. If the RawController is using most
 time, it's possible that the repo is being used as a static content backend.
 This is often fine, but it's worth looking inside the repo using your admin

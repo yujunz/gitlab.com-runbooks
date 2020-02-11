@@ -24,4 +24,4 @@ source "${SCRIPT_DIR}"/../../lib/update-scripts-functions.sh
 #
 #echo ""
 #
-#echo 'https://log.gitlab.net/app/kibana#/visualize/edit/AWxNxiqsysVgSEDmrJd1?_g=()'
+#echo 'https://log.gprd.gitlab.net/app/kibana#/visualize/edit/AWxNxiqsysVgSEDmrJd1?_g=()'

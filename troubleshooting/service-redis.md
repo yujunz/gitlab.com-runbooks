@@ -10,8 +10,8 @@
 
 ## Logging
 
-* [Redis](https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc)
-* [system](https://log.gitlab.net/goto/e107ce00a9adede2e130d0c8ec1a2ac7)
+* [Redis](https://log.gprd.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc)
+* [system](https://log.gprd.gitlab.net/goto/e107ce00a9adede2e130d0c8ec1a2ac7)
 
 ## Troubleshooting Pointers
 

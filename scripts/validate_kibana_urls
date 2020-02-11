@@ -2,7 +2,7 @@
 
 ROOT_DIR="$( cd "$( dirname "$0" )/.." && pwd )"
 
-BAD_URLS=$(find "${ROOT_DIR}" -type f -name '*.md' -print0 | xargs -0 grep -Eo 'log.gitlab.net/app/kibana\S*_g=\S+_a=\S+')
+BAD_URLS=$(find "${ROOT_DIR}" -type f -name '*.md' -print0 | xargs -0 grep -Eo 'log.gprd.gitlab.net/app/kibana\S*_g=\S+_a=\S+')
 
 if [ -n "${BAD_URLS}" ]; then
   echo "Please convert your Kibana URLS to shortlinks using the Share | Shortlink menu in Kibana"

@@ -10,9 +10,9 @@
 
 ## Logging
 
-* [Gitaly](https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d)
-* [gitlab-shell](https://log.gitlab.net/goto/ba97a9597863f0df1c3b894b44eb1db6)
-* [system](https://log.gitlab.net/goto/7cfb513706cffc0789ad0842674e108a)
+* [Gitaly](https://log.gprd.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d)
+* [gitlab-shell](https://log.gprd.gitlab.net/goto/ba97a9597863f0df1c3b894b44eb1db6)
+* [system](https://log.gprd.gitlab.net/goto/7cfb513706cffc0789ad0842674e108a)
 
 ## Troubleshooting Pointers
 
