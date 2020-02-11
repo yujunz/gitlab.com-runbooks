@@ -15,13 +15,6 @@ groups:
     expr: >
       sum(haproxy_backend_current_session_rate{backend="pages_https", type="pages"}) by (environment, type, tier, stage)
 
-  # web-pages
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'http'
-    expr: >
-      sum(rate(gitlab_pages_http_requests_total{}[1m])) by (environment, tier, type, stage)
-
   # Stackdriver
   - record: gitlab_component_ops:rate
     labels:

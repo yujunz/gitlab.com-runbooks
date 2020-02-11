@@ -1502,8 +1502,8 @@ services:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
-      grafana_folder: v2ZhpeSik
-      primary_grafana_dashboard: "_IQB_rSmk/pages"
+      grafana_folder: web-pages
+      primary_grafana_dashboard: "web-pages-main/web-pages-overview"
 
 - name: pgbouncer
   tier: db
