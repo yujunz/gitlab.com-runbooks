@@ -14,7 +14,7 @@
       },
       warm: {
         // if no criteria are set here, the move to warm will happen on rollover
-        // min_age: '1h',  // min value is 1h, if you set below that, the cluster will default to 1d
+        min_age: '2d',  // min value is 1h, if you set below that, the cluster will default to 1d
         actions: {
           // skipping force merge for now for a performance optimisation test
           // forcemerge: {
@@ -31,7 +31,7 @@
         },
       },
       delete: {
-        min_age: '7d',  //7d after documents are received by the cluster, not from the log timestamp
+        min_age: '5d',  //7d after documents are received by the cluster, not from the log timestamp
         actions: {
           delete: {},
         },
