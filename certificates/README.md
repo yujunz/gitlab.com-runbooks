@@ -143,7 +143,7 @@ By editing list inside `prometheus.jobs.blackbox-ssl.target` attribute in the ro
 | log.gprd.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] | project: `gitlab-ops` ops-proxy |
 | monitor.gitlab.net | Amazon Server CA 1B | AWS CloudFront redirect to dashboards.gitlab.net. | - | Auto-renewed by Amazon |
 | next.gitlab.com | Let's Encrypt Authority X3 | - | automatic (GitLab Pages managed) | |
-| nonprod-log.gitlab.net | Sectigo ECC Domain Validation Secure Server CA | non prod logs | [GCP Load Balancer][gcp]  | project: `gitlab-ops` ops-nonprod-proxy |
+| nonprod-log.gitlab.net, www.nonprod-log.gitlab.net, log.gstg.gitlab.net, log.dr.gitlab.net, log.pre.gitlab.net, log.ops.gitlab.net | Sectigo ECC Domain Validation Secure Server CA | non prod logs | [GCP Load Balancer][gcp]  | project: `gitlab-ops` ops-nonprod-proxy |
 | ops.gitlab.net | COMODO RSA Domain Validation Secure Server CA | ops instance  | [GKMS][gkms] & [manual Cloudflare][manual_cf] | item: `gitlab-omnibus-secrets ops`, fields: `omnibus-gitlab.ssl.certificate`,  `omnibus-gitlab.ssl.private_key` |
 | packages.gitlab.com | COMODO RSA Domain Validation Secure Server CA | packagecoud instance | [Chef Vault][cv] | data bag: `packages-gitlab.com`, item: `_default`, fields: `ssl.certificate`, `ssl.private_key` |
 | pre.gitlab.com | COMODO RSA Domain Validation Secure Server CA | prerelease instance | [GKMS][gkms] | item: `frontend-loadbalancer pre`, fields: `gitlab-haproxy.ssl.gitlab_crt`,  `gitlab-haproxy.ssl.gitlab_key` |
