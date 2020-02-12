@@ -15,4 +15,5 @@ export ELASTICSEARCH_URL_ES7=...
 
 ```
 bundle exec ruby run.rb
+bundle exec ruby run.rb --window 1 --correlation-ids 1 --correlation-query 'pubsub-rails-inf-gprd-*'
 ```
