@@ -16,3 +16,7 @@
 * [praefect-error-rate.md](praefect-error-rate.md)
 * [praefect-startup.md](praefect-startup.md)
 <!-- END_MARKER -->
+
+## How To...
+
+* [Add and remove file storages to praefect](../howto/praefect-file-storages.md)
