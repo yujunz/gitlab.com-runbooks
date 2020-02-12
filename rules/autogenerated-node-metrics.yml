@@ -40,6 +40,15 @@ groups:
           rate(grpc_server_handling_seconds_bucket{le="+Inf"}[1m]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
 
       )
+  - record: gitlab_component_node_ops:rate_1h
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(grpc_client_handled_total{job="gitaly"}[1h])
+      )
   - record: gitlab_component_node_ops:rate
     labels:
       component: gitalyruby
@@ -49,6 +58,42 @@ groups:
       sum by (environment, stage, shard, fqdn) (
         rate(grpc_client_handled_total{job="gitaly"}[1m])
       )
+  - record: gitlab_component_node_ops:rate_30m
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(grpc_client_handled_total{job="gitaly"}[30m])
+      )
+  - record: gitlab_component_node_ops:rate_5m
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(grpc_client_handled_total{job="gitaly"}[5m])
+      )
+  - record: gitlab_component_node_ops:rate_6h
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(grpc_client_handled_total{job="gitaly"}[6h])
+      )
+  - record: gitlab_component_node_errors:rate_1h
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1h])
+      )
   - record: gitlab_component_node_errors:rate
     labels:
       component: gitalyruby
@@ -57,6 +102,33 @@ groups:
     expr: |
       sum by (environment, stage, shard, fqdn) (
         rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1m])
+      )
+  - record: gitlab_component_node_errors:rate_30m
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[30m])
+      )
+  - record: gitlab_component_node_errors:rate_5m
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[5m])
+      )
+  - record: gitlab_component_node_errors:rate_6h
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[6h])
       )
   - record: gitlab_component_node_apdex:ratio
     labels:
@@ -90,6 +162,15 @@ groups:
       sum by (environment, stage, shard, fqdn) (
         rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
       )
+  - record: gitlab_component_node_ops:rate_1h
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(gitaly_service_client_requests_total{job="gitaly"}[1h])
+      )
   - record: gitlab_component_node_ops:rate
     labels:
       component: goserver
@@ -98,6 +179,44 @@ groups:
     expr: |
       sum by (environment, stage, shard, fqdn) (
         rate(gitaly_service_client_requests_total{job="gitaly"}[1m])
+      )
+  - record: gitlab_component_node_ops:rate_30m
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(gitaly_service_client_requests_total{job="gitaly"}[30m])
+      )
+  - record: gitlab_component_node_ops:rate_5m
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(gitaly_service_client_requests_total{job="gitaly"}[5m])
+      )
+  - record: gitlab_component_node_ops:rate_6h
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(gitaly_service_client_requests_total{job="gitaly"}[6h])
+      )
+  - record: gitlab_component_node_errors:rate_1h
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[1h])
+        or
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[1h])
       )
   - record: gitlab_component_node_errors:rate
     labels:
@@ -109,4 +228,37 @@ groups:
         rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[1m])
         or
         rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[1m])
+      )
+  - record: gitlab_component_node_errors:rate_30m
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[30m])
+        or
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[30m])
+      )
+  - record: gitlab_component_node_errors:rate_5m
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[5m])
+        or
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[5m])
+      )
+  - record: gitlab_component_node_errors:rate_6h
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage, shard, fqdn) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[6h])
+        or
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[6h])
       )

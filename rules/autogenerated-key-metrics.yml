@@ -36,6 +36,15 @@ groups:
       sum by (environment, stage) (
         rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: unicorn
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: unicorn
@@ -45,6 +54,42 @@ groups:
       sum by (environment, stage) (
         rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: unicorn
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: unicorn
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: unicorn
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: unicorn
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api", status=~"5.."}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: unicorn
@@ -53,6 +98,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(http_request_duration_seconds_count{job="gitlab-rails", type="api", status=~"5.."}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: unicorn
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api", status=~"5.."}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: unicorn
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api", status=~"5.."}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: unicorn
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api", status=~"5.."}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -90,6 +162,15 @@ groups:
         rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-api", type="api", route!="^/api/v4/jobs/request\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"
       , le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: workhorse
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: workhorse
@@ -98,6 +179,42 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: workhorse
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: workhorse
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: workhorse
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: workhorse
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[1h])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -108,6 +225,42 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[1m])
       )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: workhorse
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: workhorse
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: workhorse
+      tier: sv
+      type: api
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_builds_register_handler_requests{}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: polling
@@ -117,6 +270,42 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_workhorse_builds_register_handler_requests{}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_builds_register_handler_requests{}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_builds_register_handler_requests{}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_builds_register_handler_requests{}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: polling
@@ -125,6 +314,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -156,6 +372,17 @@ groups:
       sum by () (
         rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(gitlab_runner_jobs_total{job="shared-runners"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: shared_runner_queues
@@ -167,6 +394,50 @@ groups:
       sum by () (
         rate(gitlab_runner_jobs_total{job="shared-runners"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(gitlab_runner_jobs_total{job="shared-runners"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(gitlab_runner_jobs_total{job="shared-runners"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(gitlab_runner_jobs_total{job="shared-runners"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: shared_runner_queues
@@ -177,6 +448,39 @@ groups:
     expr: |
       sum by () (
         rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -206,6 +510,16 @@ groups:
       sum by (environment) (
         rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: cnyHttpServices
+      stage: cny
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="frontend", backend=~"canary_.*"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: cnyHttpServices
@@ -216,6 +530,46 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{type="frontend", backend=~"canary_.*"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: cnyHttpServices
+      stage: cny
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="frontend", backend=~"canary_.*"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: cnyHttpServices
+      stage: cny
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="frontend", backend=~"canary_.*"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: cnyHttpServices
+      stage: cny
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="frontend", backend=~"canary_.*"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: cnyHttpServices
+      stage: cny
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_response_errors_total{type="frontend", backend=~"canary_.*"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: cnyHttpServices
@@ -225,6 +579,36 @@ groups:
     expr: |
       sum by (environment) (
         rate(haproxy_backend_response_errors_total{type="frontend", backend=~"canary_.*"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: cnyHttpServices
+      stage: cny
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_response_errors_total{type="frontend", backend=~"canary_.*"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: cnyHttpServices
+      stage: cny
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_response_errors_total{type="frontend", backend=~"canary_.*"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: cnyHttpServices
+      stage: cny
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_response_errors_total{type="frontend", backend=~"canary_.*"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -254,6 +638,16 @@ groups:
       sum by (environment) (
         rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: mainHttpServices
+      stage: main
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="frontend", backend!~"canary_.*"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: mainHttpServices
@@ -264,6 +658,46 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{type="frontend", backend!~"canary_.*"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: mainHttpServices
+      stage: main
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="frontend", backend!~"canary_.*"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: mainHttpServices
+      stage: main
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="frontend", backend!~"canary_.*"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: mainHttpServices
+      stage: main
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="frontend", backend!~"canary_.*"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: mainHttpServices
+      stage: main
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_response_errors_total{type="frontend", backend!~"canary_.*"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: mainHttpServices
@@ -273,6 +707,36 @@ groups:
     expr: |
       sum by (environment) (
         rate(haproxy_backend_response_errors_total{type="frontend", backend!~"canary_.*"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: mainHttpServices
+      stage: main
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_response_errors_total{type="frontend", backend!~"canary_.*"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: mainHttpServices
+      stage: main
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_response_errors_total{type="frontend", backend!~"canary_.*"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: mainHttpServices
+      stage: main
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_response_errors_total{type="frontend", backend!~"canary_.*"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -306,6 +770,15 @@ groups:
       sum by (environment, stage) (
         rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment, stage) (
+        rate(haproxy_ssh_requests_total{type="frontend"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: sshServices
@@ -314,6 +787,42 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(haproxy_ssh_requests_total{type="frontend"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment, stage) (
+        rate(haproxy_ssh_requests_total{type="frontend"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment, stage) (
+        rate(haproxy_ssh_requests_total{type="frontend"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment, stage) (
+        rate(haproxy_ssh_requests_total{type="frontend"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment, stage) (
+        rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[1h])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -324,7 +833,78 @@ groups:
       sum by (environment, stage) (
         rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[1m])
       )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment, stage) (
+        rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment, stage) (
+        rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: |
+      sum by (environment, stage) (
+        rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: gitlab_shell
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
+
+      )
   - record: gitlab_component_ops:rate
+    labels:
+      component: gitlab_shell
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
+
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: gitlab_shell
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
+
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: gitlab_shell
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
+
+      )
+  - record: gitlab_component_ops:rate_6h
     labels:
       component: gitlab_shell
       stage: main
@@ -367,6 +947,15 @@ groups:
       sum by (environment, stage) (
         rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="git", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: unicorn
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="git"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: unicorn
@@ -376,6 +965,42 @@ groups:
       sum by (environment, stage) (
         rate(http_request_duration_seconds_count{job="gitlab-rails", type="git"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: unicorn
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="git"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: unicorn
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="git"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: unicorn
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="git"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: unicorn
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="git", status=~"5.."}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: unicorn
@@ -384,6 +1009,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(http_request_duration_seconds_count{job="gitlab-rails", type="git", status=~"5.."}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: unicorn
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="git", status=~"5.."}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: unicorn
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="git", status=~"5.."}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: unicorn
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="git", status=~"5.."}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -417,6 +1069,15 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-git", type="git", route!="^/-/health$", route!="^/-/(readiness|liveness)$", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: workhorse
@@ -426,6 +1087,42 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git", code=~"^5.*"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: workhorse
@@ -434,6 +1131,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git", code=~"^5.*"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git", code=~"^5.*"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git", code=~"^5.*"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git", code=~"^5.*"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -471,6 +1195,15 @@ groups:
           rate(grpc_server_handling_seconds_bucket{le="+Inf"}[1m]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
 
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: gitalyruby
@@ -480,6 +1213,42 @@ groups:
       sum by (environment, stage) (
         rate(grpc_client_handled_total{job="gitaly"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: gitalyruby
@@ -488,6 +1257,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_client_handled_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -521,6 +1317,15 @@ groups:
       sum by (environment, stage) (
         rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: goserver
@@ -529,6 +1334,44 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(gitaly_service_client_requests_total{job="gitaly"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[1h])
+        or
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[1h])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -541,6 +1384,48 @@ groups:
         or
         rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[1m])
       )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[30m])
+        or
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[5m])
+        or
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment, stage) (
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"}[6h])
+        or
+        rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_total{job="grafana"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: grafana
@@ -550,6 +1435,42 @@ groups:
       sum by (environment, stage) (
         rate(http_request_total{job="grafana"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_total{job="grafana"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_total{job="grafana"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_total{job="grafana"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: grafana
@@ -558,6 +1479,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(http_request_total{job="grafana", statuscode=~"^5.*"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -591,6 +1539,15 @@ groups:
       sum by (environment, stage) (
         rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: prometheus
@@ -600,6 +1557,42 @@ groups:
       sum by (environment, stage) (
         rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: prometheus
@@ -608,6 +1601,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -641,6 +1661,15 @@ groups:
       sum by (environment, stage) (
         rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_requests_total{job="thanos", type="monitoring"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: thanos_query
@@ -650,6 +1679,42 @@ groups:
       sum by (environment, stage) (
         rate(http_requests_total{job="thanos", type="monitoring"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_requests_total{job="thanos", type="monitoring"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_requests_total{job="thanos", type="monitoring"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_requests_total{job="thanos", type="monitoring"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: thanos_query
@@ -658,6 +1723,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -691,6 +1783,15 @@ groups:
       sum by (environment, stage) (
         rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: thanos_store
@@ -699,6 +1800,42 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[1h])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -709,6 +1846,42 @@ groups:
       sum by (environment, stage) (
         rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[1m])
       )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: |
+      sum by (environment, stage) (
+        rate(node_nfsd_server_rpcs_total{type="nfs"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: nfs_service
@@ -718,6 +1891,42 @@ groups:
       sum by (environment, stage) (
         rate(node_nfsd_server_rpcs_total{type="nfs"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: |
+      sum by (environment, stage) (
+        rate(node_nfsd_server_rpcs_total{type="nfs"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: |
+      sum by (environment, stage) (
+        rate(node_nfsd_server_rpcs_total{type="nfs"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: |
+      sum by (environment, stage) (
+        rate(node_nfsd_server_rpcs_total{type="nfs"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: |
+      sum by (environment, stage) (
+        rate(node_nfsd_rpc_errors_total{type="nfs"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: nfs_service
@@ -726,6 +1935,44 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: |
+      sum by (environment, stage) (
+        rate(node_nfsd_rpc_errors_total{type="nfs"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: |
+      sum by (environment, stage) (
+        rate(node_nfsd_rpc_errors_total{type="nfs"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: |
+      sum by (environment, stage) (
+        rate(node_nfsd_rpc_errors_total{type="nfs"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: pgbouncer
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1h])
+        or
+        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1h])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -737,6 +1984,39 @@ groups:
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1m])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: pgbouncer
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[30m])
+        or
+        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: pgbouncer
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[5m])
+        or
+        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: pgbouncer
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[6h])
+        or
+        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -772,6 +2052,17 @@ groups:
       sum by (environment) (
         rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1h])
+        or
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: service
@@ -783,6 +2074,48 @@ groups:
         or
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[30m])
+        or
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[5m])
+        or
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[6h])
+        or
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: service
@@ -791,6 +2124,44 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment, stage) (
+        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: service
+      tier: db
+      type: pgbouncer
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[1h])
+        or
+        rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[1h])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -802,6 +2173,39 @@ groups:
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[1m])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: service
+      tier: db
+      type: pgbouncer
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[30m])
+        or
+        rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: service
+      tier: db
+      type: pgbouncer
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[5m])
+        or
+        rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: service
+      tier: db
+      type: pgbouncer
+    expr: |
+      sum by (environment, stage) (
+        rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[6h])
+        or
+        rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -835,6 +2239,15 @@ groups:
       sum by (environment, stage) (
         rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="praefect"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: proxy
@@ -843,6 +2256,42 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(grpc_server_handled_total{job="praefect"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="praefect"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="praefect"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="praefect"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="praefect", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1h])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -853,6 +2302,42 @@ groups:
       sum by (environment, stage) (
         rate(grpc_server_handled_total{job="praefect", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[1m])
       )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="praefect", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="praefect", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment, stage) (
+        rate(grpc_server_handled_total{job="praefect", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: primary_server
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis"}[1h]) and on (instance) redis_instance_info{role="master"}
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: primary_server
@@ -861,6 +2346,42 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(redis_commands_processed_total{type="redis"}[1m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: primary_server
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis"}[30m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: primary_server
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis"}[5m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: primary_server
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis"}[6h]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis"}[1h]) and on (instance) redis_instance_info{role="slave"}
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -871,6 +2392,42 @@ groups:
       sum by (environment, stage) (
         rate(redis_commands_processed_total{type="redis"}[1m]) and on (instance) redis_instance_info{role="slave"}
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis"}[30m]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis"}[5m]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis"}[6h]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: primary_server
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-cache"}[1h]) and on (instance) redis_instance_info{role="master"}
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: primary_server
@@ -879,6 +2436,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(redis_commands_processed_total{type="redis-cache"}[1m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: primary_server
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-cache"}[30m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: primary_server
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-cache"}[5m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: primary_server
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-cache"}[6h]) and on (instance) redis_instance_info{role="master"}
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -914,6 +2498,16 @@ groups:
       sum by (environment) (
         rate(gitlab_cache_operation_duration_seconds_bucket{le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: rails_cache
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_cache_operation_duration_seconds_count{}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: rails_cache
@@ -924,6 +2518,45 @@ groups:
       sum by (environment) (
         rate(gitlab_cache_operation_duration_seconds_count{}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: rails_cache
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_cache_operation_duration_seconds_count{}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: rails_cache
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_cache_operation_duration_seconds_count{}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: rails_cache
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_cache_operation_duration_seconds_count{}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-cache"}[1h]) and on (instance) redis_instance_info{role="slave"}
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: secondary_servers
@@ -932,6 +2565,42 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(redis_commands_processed_total{type="redis-cache"}[1m]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-cache"}[30m]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-cache"}[5m]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-cache"}[6h]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: primary_server
+      tier: db
+      type: redis-sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-sidekiq"}[1h]) and on (instance) redis_instance_info{role="master"}
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -942,6 +2611,42 @@ groups:
       sum by (environment, stage) (
         rate(redis_commands_processed_total{type="redis-sidekiq"}[1m]) and on (instance) redis_instance_info{role="master"}
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: primary_server
+      tier: db
+      type: redis-sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-sidekiq"}[30m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: primary_server
+      tier: db
+      type: redis-sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-sidekiq"}[5m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: primary_server
+      tier: db
+      type: redis-sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-sidekiq"}[6h]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis-sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-sidekiq"}[1h]) and on (instance) redis_instance_info{role="slave"}
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: secondary_servers
@@ -950,6 +2655,43 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(redis_commands_processed_total{type="redis-sidekiq"}[1m]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis-sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-sidekiq"}[30m]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis-sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-sidekiq"}[5m]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis-sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(redis_commands_processed_total{type="redis-sidekiq"}[6h]) and on (instance) redis_instance_info{role="slave"}
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[1h])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -961,6 +2703,46 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: loadbalancer
@@ -970,6 +2752,46 @@ groups:
     expr: |
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[1h])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -981,6 +2803,46 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: loadbalancer_cny
@@ -990,6 +2852,36 @@ groups:
     expr: |
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: loadbalancer_cny
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1023,6 +2915,15 @@ groups:
       sum by (environment, stage) (
         rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_http_requests_total{type="registry"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: server
@@ -1032,6 +2933,42 @@ groups:
       sum by (environment, stage) (
         rate(registry_http_requests_total{type="registry"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_http_requests_total{type="registry"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_http_requests_total{type="registry"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_http_requests_total{type="registry"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_http_requests_total{type="registry", code=~"5.."}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: server
@@ -1040,6 +2977,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_http_requests_total{type="registry", code=~"5.."}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_http_requests_total{type="registry", code=~"5.."}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_http_requests_total{type="registry", code=~"5.."}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1073,6 +3037,15 @@ groups:
       sum by (environment, stage) (
         rate(registry_storage_action_seconds_bucket{le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_storage_action_seconds_count{}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: storage
@@ -1081,6 +3054,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(registry_storage_action_seconds_count{}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_storage_action_seconds_count{}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_storage_action_seconds_count{}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment, stage) (
+        rate(registry_storage_action_seconds_count{}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1108,6 +3108,15 @@ groups:
       sum by (environment, stage) (
         rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes",le="+Inf"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: latency_sensitive_job_execution
@@ -1117,6 +3126,42 @@ groups:
       sum by (environment, stage) (
         rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes",le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes",le="+Inf"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes",le="+Inf"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="yes",le="+Inf"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="yes"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: latency_sensitive_job_execution
@@ -1125,6 +3170,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(sidekiq_jobs_failed_total{latency_sensitive="yes"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="yes"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="yes"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="yes"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1152,6 +3224,15 @@ groups:
       sum by (environment, stage) (
         rate(sidekiq_jobs_queue_duration_seconds_bucket{latency_sensitive="yes", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="yes"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: latency_sensitive_job_queueing
@@ -1160,6 +3241,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(sidekiq_enqueued_jobs_total{latency_sensitive="yes"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="yes"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="yes"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="yes"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1187,6 +3295,15 @@ groups:
       sum by (environment, stage) (
         rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no",le="+Inf"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: non_latency_sensitive_job_execution
@@ -1196,6 +3313,42 @@ groups:
       sum by (environment, stage) (
         rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no",le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no",le="+Inf"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no",le="+Inf"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{latency_sensitive="no",le="+Inf"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="no"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: non_latency_sensitive_job_execution
@@ -1204,6 +3357,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(sidekiq_jobs_failed_total{latency_sensitive="no"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="no"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="no"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: non_latency_sensitive_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{latency_sensitive="no"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1231,6 +3411,15 @@ groups:
       sum by (environment, stage) (
         rate(sidekiq_jobs_queue_duration_seconds_bucket{latency_sensitive="no", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: non_latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="no"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: non_latency_sensitive_job_queueing
@@ -1239,6 +3428,43 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(sidekiq_enqueued_jobs_total{latency_sensitive="no"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: non_latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="no"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: non_latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="no"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: non_latency_sensitive_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{latency_sensitive="no"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[1h])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -1249,6 +3475,48 @@ groups:
     expr: |
       sum by (environment) (
         rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1h])
+        or
+        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1h])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -1261,6 +3529,42 @@ groups:
         rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1m])
         or
         rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[30m])
+        or
+        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[5m])
+        or
+        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[6h])
+        or
+        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1294,6 +3598,15 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_pages_http_request_duration_seconds_bucket{type="web-pages", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: server
@@ -1303,6 +3616,42 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_pages_http_requests_total{}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{code=~"5.."}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: server
@@ -1311,6 +3660,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(gitlab_pages_http_requests_total{code=~"5.."}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{code=~"5.."}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{code=~"5.."}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_pages_http_requests_total{code=~"5.."}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1344,6 +3720,15 @@ groups:
       sum by (environment, stage) (
         rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="web", le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: unicorn
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="web"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: unicorn
@@ -1353,6 +3738,42 @@ groups:
       sum by (environment, stage) (
         rate(http_request_duration_seconds_count{job="gitlab-rails", type="web"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: unicorn
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="web"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: unicorn
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="web"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: unicorn
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="web"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: unicorn
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="web", status=~"5.."}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: unicorn
@@ -1361,6 +3782,33 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(http_request_duration_seconds_count{job="gitlab-rails", type="web", status=~"5.."}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: unicorn
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="web", status=~"5.."}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: unicorn
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="web", status=~"5.."}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: unicorn
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(http_request_duration_seconds_count{job="gitlab-rails", type="web", status=~"5.."}[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -1398,6 +3846,15 @@ groups:
         rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"
       , le="+Inf"}[1m])
       )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web"}[1h])
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: workhorse
@@ -1407,6 +3864,42 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web"}[1m])
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[1h])
+      )
   - record: gitlab_component_errors:rate
     labels:
       component: workhorse
@@ -1415,4 +3908,31 @@ groups:
     expr: |
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: |
+      sum by (environment, stage) (
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[6h])
       )

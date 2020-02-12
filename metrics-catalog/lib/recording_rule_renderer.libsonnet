@@ -4,33 +4,78 @@ local COMPONENT_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stag
 local NODE_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage', 'shard', 'fqdn'];
 
 local COMPONENT_LEVEL_RECORDING_RULE_NAMES = {
-  apdexRatio: 'gitlab_component_apdex:ratio',
-  apdexWeight: 'gitlab_component_apdex:weight:score',
-  requestRate: 'gitlab_component_ops:rate',
-  errorRate: 'gitlab_component_errors:rate',
+  '1m': {
+    // TODO: consider renaming the 1m rates for consistency
+    apdexRatio: 'gitlab_component_apdex:ratio',
+    apdexWeight: 'gitlab_component_apdex:weight:score',
+    requestRate: 'gitlab_component_ops:rate',
+    errorRate: 'gitlab_component_errors:rate',
+  },
+  '5m': {
+    requestRate: 'gitlab_component_ops:rate_5m',
+    errorRate: 'gitlab_component_errors:rate_5m',
+  },
+  '30m': {
+    requestRate: 'gitlab_component_ops:rate_30m',
+    errorRate: 'gitlab_component_errors:rate_30m',
+  },
+  '1h': {
+    requestRate: 'gitlab_component_ops:rate_1h',
+    errorRate: 'gitlab_component_errors:rate_1h',
+  },
+  '6h': {
+    requestRate: 'gitlab_component_ops:rate_6h',
+    errorRate: 'gitlab_component_errors:rate_6h',
+  },
 };
 
 local NODE_LEVEL_RECORDING_RULE_NAMES = {
-  apdexRatio: 'gitlab_component_node_apdex:ratio',
-  apdexWeight: 'gitlab_component_node_apdex:weight:score',
-  requestRate: 'gitlab_component_node_ops:rate',
-  errorRate: 'gitlab_component_node_errors:rate',
+  '1m': {
+    // TODO: consider renaming the 1m rates for consistency
+    apdexRatio: 'gitlab_component_node_apdex:ratio',
+    apdexWeight: 'gitlab_component_node_apdex:weight:score',
+    requestRate: 'gitlab_component_node_ops:rate',
+    errorRate: 'gitlab_component_node_errors:rate',
+  },
+  '5m': {
+    requestRate: 'gitlab_component_node_ops:rate_5m',
+    errorRate: 'gitlab_component_node_errors:rate_5m',
+  },
+  '30m': {
+    requestRate: 'gitlab_component_node_ops:rate_30m',
+    errorRate: 'gitlab_component_node_errors:rate_30m',
+  },
+  '1h': {
+    requestRate: 'gitlab_component_node_ops:rate_1h',
+    errorRate: 'gitlab_component_node_errors:rate_1h',
+  },
+  '6h': {
+    requestRate: 'gitlab_component_node_ops:rate_6h',
+    errorRate: 'gitlab_component_node_errors:rate_6h',
+  },
 };
 
 // Generates apdex score recording rules for a component definition
 local generateApdexRules(aggregationLabels, componentDefinition, recordingRuleStaticLabels, recordingRuleNames) =
   if std.objectHas(componentDefinition, 'apdex') then
+    // We don't currently maintain multiburn, multiwindow apdex scores
+    local rangeIntervals = std.filter(function(rangeInterval) std.objectHas(recordingRuleNames[rangeInterval], 'apdexRatio'), std.objectFields(recordingRuleNames));
+
     [
       recordingRules.apdex(
-        name=recordingRuleNames.apdexRatio,
+        name=recordingRuleNames[rangeInterval].apdexRatio,
         labels=recordingRuleStaticLabels,
-        expr=componentDefinition.apdex.apdexQuery(aggregationLabels, selector='', rangeInterval='1m')
-      ),
+        expr=componentDefinition.apdex.apdexQuery(aggregationLabels, selector='', rangeInterval=rangeInterval)
+      )
+      for rangeInterval in rangeIntervals
+    ] +
+    [
       recordingRules.apdexWeight(
-        name=recordingRuleNames.apdexWeight,
+        name=recordingRuleNames[rangeInterval].apdexWeight,
         labels=recordingRuleStaticLabels,
-        expr=componentDefinition.apdex.apdexWeightQuery(aggregationLabels, selector='', rangeInterval='1m')
-      ),
+        expr=componentDefinition.apdex.apdexWeightQuery(aggregationLabels, selector='', rangeInterval=rangeInterval)
+      )
+      for rangeInterval in rangeIntervals
     ]
   else
     [];
@@ -40,10 +85,11 @@ local generateRequestRateRules(aggregationLabels, componentDefinition, recording
   if std.objectHas(componentDefinition, 'requestRate') then
     [
       recordingRules.requestRate(
-        name=recordingRuleNames.requestRate,
+        name=recordingRuleNames[rangeInterval].requestRate,
         labels=recordingRuleStaticLabels,
-        expr=componentDefinition.requestRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval='1m'),
-      ),
+        expr=componentDefinition.requestRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval=rangeInterval),
+      )
+      for rangeInterval in std.objectFields(recordingRuleNames)
     ]
   else
     [];
@@ -53,10 +99,11 @@ local generateErrorRateRules(aggregationLabels, componentDefinition, recordingRu
   if std.objectHas(componentDefinition, 'errorRate') then
     [
       recordingRules.errorRate(
-        name=recordingRuleNames.errorRate,
+        name=recordingRuleNames[rangeInterval].errorRate,
         labels=recordingRuleStaticLabels,
-        expr=componentDefinition.errorRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval='1m'),
-      ),
+        expr=componentDefinition.errorRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval=rangeInterval),
+      )
+      for rangeInterval in std.objectFields(recordingRuleNames)
     ]
   else
     [];
