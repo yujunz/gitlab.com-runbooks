@@ -7,10 +7,58 @@ groups:
     expr: >
       gitlab_service_errors:rate / (gitlab_service_ops:rate > 0)
 
+  - record: gitlab_service_errors:ratio_5m
+    expr: >
+      sum by (environment, tier, type, stage) (gitlab_component_errors:rate_5m >= 0)
+      /
+      sum by (environment, tier, type, stage) (gitlab_component_ops:rate_5m > 0)
+
+  - record: gitlab_service_errors:ratio_30m
+    expr: >
+      sum by (environment, tier, type, stage) (gitlab_component_errors:rate_30m >= 0)
+      /
+      sum by (environment, tier, type, stage) (gitlab_component_ops:rate_30m > 0)
+
+  - record: gitlab_service_errors:ratio_1h
+    expr: >
+      sum by (environment, tier, type, stage) (gitlab_component_errors:rate_1h >= 0)
+      /
+      sum by (environment, tier, type, stage) (gitlab_component_ops:rate_1h > 0)
+
+  - record: gitlab_service_errors:ratio_6h
+    expr: >
+      sum by (environment, tier, type, stage) (gitlab_component_errors:rate_6h >= 0)
+      /
+      sum by (environment, tier, type, stage) (gitlab_component_ops:rate_6h > 0)
+
   # Calculate for node-level metrics
   - record: gitlab_service_node_errors:ratio
     expr: >
       gitlab_service_node_errors:rate / (gitlab_service_node_ops:rate > 0)
+
+  - record: gitlab_service_node_errors:ratio_5m
+    expr: >
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate_5m >= 0)
+      /
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate_5m > 0)
+
+  - record: gitlab_service_node_errors:ratio_30m
+    expr: >
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate_30m >= 0)
+      /
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate_30m > 0)
+
+  - record: gitlab_service_node_errors:ratio_1h
+    expr: >
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate_1h >= 0)
+      /
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate_1h > 0)
+
+  - record: gitlab_service_node_errors:ratio_6h
+    expr: >
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate_6h >= 0)
+      /
+      sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate_6h > 0)
 
 - name: GitLab Service Error Ratio Stats
   interval: 5m
