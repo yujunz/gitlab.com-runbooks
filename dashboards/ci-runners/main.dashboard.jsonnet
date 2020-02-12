@@ -17,8 +17,15 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
+local selectors = import 'lib/selectors.libsonnet';
 
-local selector = 'environment="$environment", type="ci-runners", stage="$stage"';
+local selectorHash = {
+  environment: '$environment',
+  type: 'ci-runners',
+  stage: '$stage',
+};
+
+local selector = selectors.serializeHash(selectorHash);
 
 basic.dashboard(
   'Overview',
@@ -32,7 +39,7 @@ basic.dashboard(
   metricsCatalogDashboards.componentDetailMatrix(
     'ci-runners',
     'polling',
-    'environment="$environment"',  // Fix when https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8456 arrives
+    selectorHash,
     [
       { title: 'Overall', aggregationLabels: '', legendFormat: 'polling' },
       { title: 'By Status', aggregationLabels: 'status', legendFormat: '{{ status }}' },
@@ -43,7 +50,7 @@ basic.dashboard(
   metricsCatalogDashboards.componentDetailMatrix(
     'ci-runners',
     'shared_runner_queues',
-    '',  // Fix this when https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8456 arrives
+    selectorHash,
     [
       { title: 'Overall', aggregationLabels: '', legendFormat: 'shared_runner_queues' },
     ],
