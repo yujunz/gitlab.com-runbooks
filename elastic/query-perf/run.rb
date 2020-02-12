@@ -19,6 +19,10 @@ require 'http'
 require 'uri'
 require 'json'
 require 'HDRHistogram'
+require 'optparse'
+
+raise 'please provide the env var ELASTICSEARCH_URL_ES5' unless ENV['ELASTICSEARCH_URL_ES5']
+raise 'please provide the env var ELASTICSEARCH_URL_ES7' unless ENV['ELASTICSEARCH_URL_ES7']
 
 clusters = {
   es5: ENV['ELASTICSEARCH_URL_ES5'],
@@ -26,20 +30,45 @@ clusters = {
 }
 
 correlation_queries = {
-  # 'pubsub-workhorse-inf-gprd*' => '{"version":true,"query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}},"size":500,"sort":[{"@timestamp":{"order":"desc","unmapped_type":"boolean"}}],"_source":{"excludes":[]},"stored_fields":["*"],"script_fields":{},"docvalue_fields":["@timestamp","json.time","publish_time"],"highlight":{"pre_tags":["@kibana-highlighted-field@"],"post_tags":["@/kibana-highlighted-field@"],"fields":{"*":{"highlight_query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}}}},"fragment_size":2147483647}}',
+  'pubsub-workhorse-inf-gprd*' => '{"version":true,"query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}},"size":500,"sort":[{"@timestamp":{"order":"desc","unmapped_type":"boolean"}}],"_source":{"excludes":[]},"stored_fields":["*"],"script_fields":{},"docvalue_fields":["@timestamp","json.time","publish_time"],"highlight":{"pre_tags":["@kibana-highlighted-field@"],"post_tags":["@/kibana-highlighted-field@"],"fields":{"*":{"highlight_query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}}}},"fragment_size":2147483647}}',
   'pubsub-rails-inf-gprd-*' => '{"version":true,"query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}},"size":500,"sort":[{"@timestamp":{"order":"desc","unmapped_type":"boolean"}}],"_source":{"excludes":[]},"stored_fields":["*"],"script_fields":{},"docvalue_fields":["@timestamp","json.expiry_from","json.expiry_to","json.extra.commits.timestamp","json.extra.context.project.created_at","json.extra.context.project.last_activity_at","json.extra.context.project.last_repository_updated_at","json.extra.context.project.updated_at","json.extra.created_after","json.extra.created_at","json.extra.created_before","json.extra.head_commit.timestamp","json.extra.raw_response.created_on","json.extra.raw_response.updated_on","json.extra.repository.updated_at","json.extra.request_forgery_protection.commits.timestamp","json.extra.request_forgery_protection.head_commit.timestamp","json.extra.request_forgery_protection.repository.updated_at","json.extra.since","json.extra.updated_after","json.time","publish_time"],"highlight":{"pre_tags":["@kibana-highlighted-field@"],"post_tags":["@/kibana-highlighted-field@"],"fields":{"*":{"highlight_query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}}}},"fragment_size":2147483647}}',
-  # 'pubsub-sidekiq-inf-gprd*' => '{"version":true,"query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}},"size":500,"sort":[{"@timestamp":{"order":"desc","unmapped_type":"boolean"}}],"_source":{"excludes":[]},"stored_fields":["*"],"script_fields":{},"docvalue_fields":["@timestamp","json.completed_at","json.created_at","json.enqueued_at","json.failed_at","json.retried_at","json.time","publish_time"],"highlight":{"pre_tags":["@kibana-highlighted-field@"],"post_tags":["@/kibana-highlighted-field@"],"fields":{"*":{"highlight_query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}}}},"fragment_size":2147483647}}',
-  # 'pubsub-gitaly-inf-gprd-*' => '{"version":true,"query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}},"size":500,"sort":[{"@timestamp":{"order":"desc","unmapped_type":"boolean"}}],"_source":{"excludes":[]},"stored_fields":["*"],"script_fields":{},"docvalue_fields":["@timestamp","json.grpc.request.deadline","json.grpc.start_time","json.time","publish_time"],"highlight":{"pre_tags":["@kibana-highlighted-field@"],"post_tags":["@/kibana-highlighted-field@"],"fields":{"*":{"highlight_query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}}}},"fragment_size":2147483647}}',
+  'pubsub-sidekiq-inf-gprd*' => '{"version":true,"query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}},"size":500,"sort":[{"@timestamp":{"order":"desc","unmapped_type":"boolean"}}],"_source":{"excludes":[]},"stored_fields":["*"],"script_fields":{},"docvalue_fields":["@timestamp","json.completed_at","json.created_at","json.enqueued_at","json.failed_at","json.retried_at","json.time","publish_time"],"highlight":{"pre_tags":["@kibana-highlighted-field@"],"post_tags":["@/kibana-highlighted-field@"],"fields":{"*":{"highlight_query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}}}},"fragment_size":2147483647}}',
+  'pubsub-gitaly-inf-gprd-*' => '{"version":true,"query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}},"size":500,"sort":[{"@timestamp":{"order":"desc","unmapped_type":"boolean"}}],"_source":{"excludes":[]},"stored_fields":["*"],"script_fields":{},"docvalue_fields":["@timestamp","json.grpc.request.deadline","json.grpc.start_time","json.time","publish_time"],"highlight":{"pre_tags":["@kibana-highlighted-field@"],"post_tags":["@/kibana-highlighted-field@"],"fields":{"*":{"highlight_query":{"bool":{"must":[{"match_all":{}},{"match_phrase":{"json.correlation_id":{"query":"PUT_CORRELATION_ID_HERE"}}},{"match_all":{}},{"range":{"json.time":{"gte":TIMESTAMP_FROM,"lte":TIMESTAMP_UNTIL,"format":"epoch_millis"}}}],"must_not":[]}}}},"fragment_size":2147483647}}',
 }
 
-profile = true
-window_days = 3
-num_correlation_ids = 1
+options = {
+  window_days: 3,
+  num_correlation_ids: 10,
+}
+OptionParser.new do |opts|
+  opts.banner = "Usage: query-perf [options]"
+
+  opts.on("", "--[no-]profile", "Profile queries") do |v|
+    options[:profile] = v
+  end
+
+  opts.on("--window=N", "Time window to consider, in days") do |v|
+    options[:window_days] = v.to_i
+  end
+
+  opts.on("--correlation-ids=N", "Number of correlation ids to query") do |v|
+    options[:num_correlation_ids] = v.to_i
+  end
+
+  opts.on("--correlation-query=Q", "Specific correlation query to run (defaults to all of them)") do |v|
+    raise "correlation query must be one of: #{correlation_queries.keys}" unless correlation_queries[v]
+    options[:correlation_query] = v
+  end
+
+  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+end.parse!
 
 now = Time.now
 
 timestamp_until = now.to_time.to_i*1000
-timestamp_from = (now - (window_days*86400)).to_time.to_i*1000
+timestamp_from = (now - (options[:window_days]*86400)).to_time.to_i*1000
 timestamp_yesterday = (now - (1*86400)).to_time.to_i*1000
 
 stats = {}
@@ -78,7 +107,7 @@ req = JSON.generate({
       {"range":{"json.time":{"gte":timestamp_yesterday,"lte":timestamp_until,"format":"epoch_millis"}}},
     ]}
   },
-  "size": num_correlation_ids,
+  "size": options[:num_correlation_ids],
 })
 resp = client.post(
   '/pubsub-rails-inf-gprd-*/_search',
@@ -91,17 +120,21 @@ body = JSON.parse(resp.body)
 raise "expected a hit on correlation_id, found none" unless body['hits']['hits'].size > 0
 correlation_ids = body['hits']['hits'].map {|hit| hit['_source']['json']['correlation_id']}
 
-puts "correlation_id"
-puts correlation_ids
-puts
+if options[:verbose]
+  puts "correlation_id"
+  puts correlation_ids
+  puts
+end
 
 # start benchmark
 
 clusters.each do |cluster, url|
   stats[cluster] = {}
 
-  puts cluster
-  puts
+  if options[:verbose]
+    puts cluster
+    puts
+  end
 
   uri = URI.parse(url)
   client = HTTP
@@ -116,19 +149,21 @@ clusters.each do |cluster, url|
   body = JSON.parse(resp.body)
 
   correlation_queries.each do |index, query_json|
+    next if options[:correlation_query] && options[:correlation_query] != index
+
     stats[cluster]["correlation_server_#{index}"] = new_histogram
 
-    puts "index: #{index}"
+    puts "index: #{index}" if options[:verbose]
 
     correlation_ids.each do |correlation_id|
-      puts "correlation_id: #{correlation_id}"
+      puts "correlation_id: #{correlation_id}" if options[:verbose]
 
       query_json = query_json
         .gsub('PUT_CORRELATION_ID_HERE', correlation_id)
         .gsub('TIMESTAMP_FROM', timestamp_from.to_s)
         .gsub('TIMESTAMP_UNTIL', timestamp_until.to_s)
 
-      if profile
+      if options[:profile]
         query = JSON.parse(query_json)
         query['profile'] = true
         query_json = JSON.generate(query)
@@ -144,7 +179,7 @@ clusters.each do |cluster, url|
 
       stats[cluster]["correlation_server_#{index}"].record(body['took'])
 
-      if profile
+      if options[:profile] && options[:verbose]
         # [nodeID][indexName][shardID]
         profile_shards = body['profile']['shards'].map { |s| s['id'].scan(/\[(.+?)\]/).flatten }
         unique_nodes = profile_shards.map { |s| s[0] }.uniq.size
@@ -185,12 +220,15 @@ clusters.each do |cluster, url|
 
       body.delete('hits')
       body.delete('profile')
-      puts body
-      puts
+
+      if options[:verbose]
+        puts body
+        puts
+      end
     end
   end
 
-  puts
+  puts if options[:verbose]
 end
 
 puts stats.map { |c,v| [c,v.map { |k,h| [k,h.stats([ 50.0, 75.0, 90.0, 99.0, 100.0 ])] }] }
