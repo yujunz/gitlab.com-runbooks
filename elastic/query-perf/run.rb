@@ -163,7 +163,7 @@ clusters.each do |cluster, url|
             }.flatten.sum
             [node, sum]
           }
-          .select { |node, sum| sum > 10 }
+          .sort_by { |k, v| -v }
           .to_h
 
         # cumulative -- these are supposedly concurrent
@@ -176,7 +176,7 @@ clusters.each do |cluster, url|
         shards_per_node = body['profile']['shards']
           .group_by { |s| s['id'].scan(/\[(.+?)\]/).flatten[0] }
           .map { |node, shards| [node, shards.size] }
-          .select { |node, sum| sum > 2 }
+          .sort_by { |k, v| -v }
           .to_h
 
         puts "shards per node: #{shards_per_node.inspect}"
