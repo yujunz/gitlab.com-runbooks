@@ -624,11 +624,11 @@ groups:
     expr: |
       (
         sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="0.5"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="0.5"}[1m])
         )
         +
         sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="1"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="1"}[1m])
         )
       )
       /
@@ -636,7 +636,7 @@ groups:
       /
       (
         sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -646,7 +646,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment, stage) (
-        rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
+        rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -938,11 +938,11 @@ groups:
     expr: |
       (
         sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="0.5"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="0.5"}[1m])
         )
         +
         sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="1"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="1"}[1m])
         )
       )
       /
@@ -950,7 +950,7 @@ groups:
       /
       (
         sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -960,7 +960,7 @@ groups:
       type: praefect
     expr: |
       sum by (environment, stage) (
-        rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
+        rate(grpc_server_handling_seconds_bucket{job="praefect", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -1608,11 +1608,11 @@ groups:
     expr: |
       (
         sum by (environment, stage, shard, fqdn) (
-          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="0.5"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="0.5"}[1m])
         )
         +
         sum by (environment, stage, shard, fqdn) (
-          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="1"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="1"}[1m])
         )
       )
       /
@@ -1620,7 +1620,7 @@ groups:
       /
       (
         sum by (environment, stage, shard, fqdn) (
-          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
+          rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_node_apdex:weight:score
@@ -1630,7 +1630,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment, stage, shard, fqdn) (
-        rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
+        rate(grpc_server_handling_seconds_bucket{job="gitaly", grpc_type="unary", grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchRemote|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|RepackFull|RepackIncremental|ReplicateRepository|UserCherryPick|UserFFBranch|UserRebase|UserRevert|UserSquash|UserUpdateBranch", le="+Inf"}[1m])
       )
   - record: gitlab_component_node_ops:rate
     labels:
