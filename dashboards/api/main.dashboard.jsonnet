@@ -45,6 +45,4 @@ serviceDashboard.overview('api', 'sv')
   }
 )
 .addPanels(railsCommon.railsPanels(serviceType='api', serviceStage='$stage', startRow=3001))
-.addPanel(workhorseCommon.componentDetailsRow('api', selector), gridPos={ x: 0, y: 5000 })
-.addPanel(unicornCommon.componentDetailsRow('api', selector), gridPos={ x: 0, y: 5100 })
 .overviewTrailer()

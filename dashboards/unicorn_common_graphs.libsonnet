@@ -118,12 +118,4 @@ local row = grafana.row;
         linewidth=1
       ),
     ], cols=2, rowHeight=10, startRow=startRow),
-
-  componentDetailsRow(serviceType, selector)::
-    local aggregationSets = [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'unicorn' },
-      { title: 'per Method', aggregationLabels: 'method', legendFormat: '{{ method }}' },
-      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
-    ];
-    metricsCatalogDashboards.componentDetailMatrix(serviceType, 'unicorn', selector, aggregationSets),
 }

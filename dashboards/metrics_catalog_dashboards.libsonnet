@@ -5,6 +5,7 @@ local layout = import 'layout.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local row = grafana.row;
+local selectors = import './lib/selectors.libsonnet';
 
 local getLatencyPercentileForService(service) =
   if std.objectHas(service, 'slos') && std.objectHas(service.slos, 'apdexRatio') then
@@ -134,7 +135,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
       )
     ),
 
-  componentDetailMatrix(serviceType, componentName, selector, aggregationSets, minLatency=0.01)::
+  componentDetailMatrix(serviceType, componentName, selectorHash, aggregationSets, minLatency=0.01)::
     local service = metricsCatalog.getService(serviceType);
     local component = service.components[componentName];
     local colCount =
@@ -142,6 +143,15 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
       (if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'aggregatedRateQuery') then 1 else 0) +
       (if std.objectHas(component, 'errorRate') then 1 else 0);
 
+    local staticLabelNames = if std.objectHas(component, 'staticLabels') then std.objectFields(component.staticLabels) else [];
+
+    // Note that we always want to ignore `type` filters, since the metricsCatalog selectors will
+    // already have correctly filtered labels to ensure the right values, and if we inject the type
+    // we may lose metrics 'proxied' from nodes with other types
+    local filteredSelectorHash = selectors.without(selectorHash, [
+      'type',
+    ] + staticLabelNames);
+    local selector = selectors.serializeHash(filteredSelectorHash);
 
     row.new(title='🔬 %(componentName)s Component Detail' % { componentName: componentName }, collapse=true)
     .addPanels(
@@ -195,7 +205,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
       )
     ),
 
-  autoDetailRows(serviceType, selector, startRow)::
+  autoDetailRows(serviceType, selectorHash, startRow)::
     local s = self;
     local service = metricsCatalog.getService(serviceType);
 
@@ -207,7 +217,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
                                                  ] +
                                                  std.map(function(c) { title: 'per ' + c, aggregationLabels: c, legendFormat: '{{' + c + '}}' }, component.significantLabels);
 
-                         s.componentDetailMatrix(serviceType, componentName, selector, aggregationSets),
+                         s.componentDetailMatrix(serviceType, componentName, selectorHash, aggregationSets),
                        std.objectFields(service.components))
       , cols=1, startRow=startRow
     ),
