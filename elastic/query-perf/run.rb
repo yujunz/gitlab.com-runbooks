@@ -153,11 +153,6 @@ clusters.each do |cluster, url|
 
     stats[cluster]["correlation_server_#{index}"] = new_histogram
 
-    if options[:profile]
-      stats[cluster]["correlation_cumulative_#{index}"] = new_histogram
-      stats[cluster]["correlation_shard_#{index}"] = new_histogram
-    end
-
     puts "index: #{index}" if options[:verbose]
 
     correlation_ids.each do |correlation_id|
@@ -204,19 +199,6 @@ clusters.each do |cluster, url|
           .sort_by { |k, v| -v }
           .to_h
 
-        time_per_shard = body['profile']['shards']
-          .group_by { |s| s['id'] }
-          .map { |node, shards|
-            sum = shards.map { |s|
-              s['searches'].map { |search|
-                search['query'].map { |q| q['time_in_nanos'].to_i / 1_000_000 }
-              }
-            }.flatten.sum
-            [node, sum]
-          }
-          .sort_by { |k, v| -v }
-          .to_h
-
         shards_per_node = body['profile']['shards']
           .group_by { |s| s['id'].scan(/\[(.+?)\]/).flatten[0] }
           .map { |node, shards| [node, shards.size] }
@@ -225,13 +207,6 @@ clusters.each do |cluster, url|
 
         # cumulative -- these are supposedly concurrent
         cumulative = time_per_node.map { |_, n| n }.sum
-
-        stats[cluster]["correlation_cumulative_#{index}"].record(cumulative)
-
-        # histogram of all shard timings
-        time_per_shard.values.each do |v|
-          stats[cluster]["correlation_shard_#{index}"].record(v)
-        end
 
         if options[:verbose]
           puts "unique nodes / indices / shards: #{unique_nodes} #{unique_indices} #{unique_shards}"
