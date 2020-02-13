@@ -96,6 +96,30 @@ groups:
   - record: operation:gitlab_cache_operation_duration_seconds:p99
     expr: histogram_quantile(0.99, operation:gitlab_cache_operation_duration_seconds_bucket:rate5m)
 
+- name: Puma Connections
+  interval: 15s
+  rules:
+  - record: instance:puma_active_connections:sum
+    expr: >
+      sum without (pid,worker) (
+        puma_active_connections
+      )
+  - record: job:puma_active_connections:sum
+    expr: >
+      sum without (fqdn,instance) (
+        instance:puma_active_connections:sum
+      )
+  - record: instance:puma_queued_connections:sum
+    expr: >
+      sum without (pid,worker) (
+        puma_queued_connections
+      )
+  - record: job:puma_queued_connections:sum
+    expr: >
+      sum without (fqdn,instance) (
+        instance:puma_queued_connections:sum
+      )
+
 - name: Unicorn Connections
   interval: 15s
   rules:
@@ -148,7 +172,7 @@ groups:
     expr: >
       sum without (fqdn, instance) (
         rate(gitlab_transaction_duration_seconds_sum[1m])
-    )
+      )
   - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate1m
     expr: >
       sum without (fqdn, instance) (
