@@ -82,7 +82,7 @@ groups:
   - record: operation:gitlab_cache_operation_duration_seconds:p99
     expr: histogram_quantile(0.99, operation:gitlab_cache_operation_duration_seconds_bucket:rate1m)
 
-- name: Unicorn Cache 5m
+- name: Rails Cache 5m
   interval: 1m
   rules:
   # Cache data, per operation.
@@ -95,3 +95,283 @@ groups:
     expr: histogram_quantile(0.95, operation:gitlab_cache_operation_duration_seconds_bucket:rate5m)
   - record: operation:gitlab_cache_operation_duration_seconds:p99
     expr: histogram_quantile(0.99, operation:gitlab_cache_operation_duration_seconds_bucket:rate5m)
+
+- name: Unicorn Connections
+  interval: 15s
+  rules:
+  - record: job:unicorn_active_connections:sum
+    expr: >
+      sum without (fqdn,instance) (
+        unicorn_active_connections
+      )
+  - record: job:unicorn_queued_connections:sum
+    expr: >
+      sum without (fqdn,instance) (
+        unicorn_queued_connections
+      )
+
+- name: Unicorn Worker Churn
+  interval: 1m
+  rules:
+  - record: job:unicorn_exceeds_memory_limit_total:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(unicorn_exceeds_memory_limit_total[1m])
+      )
+  - record: job:unicorn_killer_terminations_total:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(unicorn_killer_terminations_total[1m])
+      )
+  - record: job:unicorn_pid_timeouts_total:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(unicorn_pid_timeouts_total[1m])
+      )
+
+  - record: job:unicorn_process_reaped_total:rate1m
+    expr: >
+      sum without (fqdn,instance) (
+        rate(unicorn_process_reaped_total[1m])
+      )
+
+- name: Rails Transactions 1m
+  interval: 1m
+  rules:
+  # Request data, per controller/action.
+  - record: controller_action:gitlab_transaction_duration_seconds_count:rate1m
+    expr: >
+      sum without (fqdn, instance) (
+        rate(gitlab_transaction_duration_seconds_count[1m])
+      )
+  - record: controller_action:gitlab_transaction_duration_seconds_sum:rate1m
+    expr: >
+      sum without (fqdn, instance) (
+        rate(gitlab_transaction_duration_seconds_sum[1m])
+    )
+  - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate1m
+    expr: >
+      sum without (fqdn, instance) (
+         rate(gitlab_transaction_duration_seconds_bucket[1m])
+      )
+  - record: controller_action:gitlab_transaction_latency_seconds:rate1m
+    expr: >
+      controller_action:gitlab_transaction_duration_seconds_sum:rate1m
+        /
+      controller_action:gitlab_transaction_duration_seconds_count:rate1m
+  - record: controller_action:gitlab_transaction_duration_seconds:p95
+    expr: histogram_quantile(0.95, controller_action:gitlab_transaction_duration_seconds_bucket:rate1m)
+  - record: controller_action:gitlab_transaction_duration_seconds:p99
+    expr: histogram_quantile(0.99, controller_action:gitlab_transaction_duration_seconds_bucket:rate1m)
+  # Request data, across the board.
+  - record: job_environment:gitlab_transaction_duration_seconds_count:rate1m
+    expr: >
+      sum without (controller,action) (
+        controller_action:gitlab_transaction_duration_seconds_count:rate1m
+      )
+  - record: job_environment:gitlab_transaction_duration_seconds_sum:rate1m
+    expr: >
+      sum without (controller,action) (
+        controller_action:gitlab_transaction_duration_seconds_sum:rate1m
+      )
+  - record: job_environment:gitlab_transaction_duration_seconds_bucket:rate1m
+    expr: >
+      sum without (controller,action) (
+        controller_action:gitlab_transaction_duration_seconds_bucket:rate1m
+      )
+  - record: job_environment:gitlab_transaction_duration_latency_seconds:rate1m
+    expr: >
+      job_environment:gitlab_transaction_duration_seconds_sum:rate1m
+        /
+      job_environment:gitlab_transaction_duration_seconds_count:rate1m
+  - record: job_environment:gitlab_transaction_duration_seconds:p95
+    expr: histogram_quantile(0.95, job_environment:gitlab_transaction_duration_seconds_bucket:rate1m)
+  - record: job_environment:gitlab_transaction_duration_seconds:p99
+    expr: histogram_quantile(0.99, job_environment:gitlab_transaction_duration_seconds_bucket:rate1m)
+
+- name: Rails Transactions 5m
+  interval: 1m
+  rules:
+  # Request data, per controller/action.
+  - record: controller_action:gitlab_transaction_duration_seconds_count:rate5m
+    expr: sum(rate(gitlab_transaction_duration_seconds_count[5m])) without (fqdn, instance)
+
+  - record: controller_action:gitlab_transaction_duration_seconds_sum:rate5m
+    expr: sum(rate(gitlab_transaction_duration_seconds_sum[5m])) without (fqdn, instance)
+
+  - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitlab_transaction_duration_seconds_bucket{type="api"}[5m])) without (fqdn, instance)
+  - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitlab_transaction_duration_seconds_bucket{type="git"}[5m])) without (fqdn, instance)
+  - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitlab_transaction_duration_seconds_bucket{type="sidekiq"}[5m])) without (fqdn, instance)
+  - record: controller_action:gitlab_transaction_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitlab_transaction_duration_seconds_bucket{type="web"}[5m])) without (fqdn, instance)
+
+  - record: controller_action:gitlab_transaction_latency_seconds:rate5m
+    expr: >
+      controller_action:gitlab_transaction_duration_seconds_sum:rate5m
+        /
+      controller_action:gitlab_transaction_duration_seconds_count:rate5m
+
+  - record: controller_action:gitlab_transaction_duration_seconds:p95
+    expr: histogram_quantile(0.95, controller_action:gitlab_transaction_duration_seconds_bucket:rate5m)
+
+  - record: controller_action:gitlab_transaction_duration_seconds:p99
+    expr: histogram_quantile(0.99, controller_action:gitlab_transaction_duration_seconds_bucket:rate5m)
+
+  # Request data, across the board.
+  - record: job_environment:gitlab_transaction_duration_seconds_count:rate5m
+    expr: sum(controller_action:gitlab_transaction_duration_seconds_count:rate5m) without (controller,action)
+
+  - record: job_environment:gitlab_transaction_duration_seconds_sum:rate5m
+    expr: sum(controller_action:gitlab_transaction_duration_seconds_sum:rate5m) without (controller,action)
+
+  - record: job_environment:gitlab_transaction_duration_seconds_bucket:rate5m
+    expr: sum(controller_action:gitlab_transaction_duration_seconds_bucket:rate5m) without (controller,action)
+
+  - record: job_environment:gitlab_transaction_duration_latency_seconds:rate5m
+    expr: >
+      job_environment:gitlab_transaction_duration_seconds_sum:rate5m
+        /
+      job_environment:gitlab_transaction_duration_seconds_count:rate5m
+
+  - record: job_environment:gitlab_transaction_duration_seconds:p95
+    expr: histogram_quantile(0.95, job_environment:gitlab_transaction_duration_seconds_bucket:rate5m)
+
+  - record: job_environment:gitlab_transaction_duration_seconds:p99
+    expr: histogram_quantile(0.99, job_environment:gitlab_transaction_duration_seconds_bucket:rate5m)
+
+- name: Rails SQL 1m
+  interval: 1m
+  rules:
+  # SQL data, per controller/action.
+  - record: controller_action:gitlab_sql_duration_seconds_count:rate1m
+    expr: >
+      sum without (fqdn, instance) (
+        rate(gitlab_sql_duration_seconds_count[1m])
+      )
+  - record: controller_action:gitlab_sql_duration_seconds_sum:rate1m
+    expr: >
+      sum without (fqdn, instance) (
+        rate(gitlab_sql_duration_seconds_sum[1m])
+      )
+  - record: controller_action:gitlab_sql_duration_seconds_bucket:rate1m
+    expr: >
+      sum without (fqdn, instance) (
+        rate(gitlab_sql_duration_seconds_bucket[1m])
+      )
+  - record: controller_action:gitlab_sql_latency_seconds:rate1m
+    expr: >
+      controller_action:gitlab_sql_duration_seconds_sum:rate1m
+        /
+      controller_action:gitlab_sql_duration_seconds_count:rate1m
+  - record: controller_action:gitlab_sql_duration_seconds:p95
+    expr: histogram_quantile(0.95, controller_action:gitlab_sql_duration_seconds_bucket:rate1m)
+  - record: controller_action:gitlab_sql_duration_seconds:p99
+    expr: histogram_quantile(0.99, controller_action:gitlab_sql_duration_seconds_bucket:rate1m)
+  # SQL data, across the board.
+  - record: job_environment:gitlab_sql_duration_seconds_sum:rate1m
+    expr: >
+      sum without (controller, action) (
+        controller_action:gitlab_sql_duration_seconds_sum:rate1m
+      )
+  - record: job_environment:gitlab_sql_duration_seconds_count:rate1m
+    expr: >
+      sum without (controller, action) (
+        controller_action:gitlab_sql_duration_seconds_count:rate1m
+      )
+  - record: job_environment:gitlab_sql_duration_seconds_bucket:rate1m
+    expr: >
+      sum without (controller,action) (
+        controller_action:gitlab_sql_duration_seconds_bucket:rate1m
+      )
+  - record: job_environment:gitlab_sql_latency_seconds:rate1m
+    expr: >
+      job_environment:gitlab_sql_duration_seconds_sum:rate1m
+        /
+      job_environment:gitlab_sql_duration_seconds_count:rate1m
+  - record: job_environment:gitlab_sql_duration_seconds:p95
+    expr: histogram_quantile(0.95, job_environment:gitlab_sql_duration_seconds_bucket:rate1m)
+  - record: job_environment:gitlab_sql_duration_seconds:p99
+    expr: histogram_quantile(0.99, job_environment:gitlab_sql_duration_seconds_bucket:rate1m)
+
+- name: Rails SQL 5m
+  interval: 1m
+  rules:
+  # SQL data, per controller/action.
+  - record: controller_action:gitlab_sql_duration_seconds_count:rate5m
+    expr: sum(rate(gitlab_sql_duration_seconds_count[5m])) without (fqdn, instance)
+
+  - record: controller_action:gitlab_sql_duration_seconds_sum:rate5m
+    expr: sum(rate(gitlab_sql_duration_seconds_sum[5m])) without (fqdn, instance)
+
+  - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitlab_sql_duration_seconds_bucket{type="api"}[5m])) without (fqdn, instance)
+  - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitlab_sql_duration_seconds_bucket{type="git"}[5m])) without (fqdn, instance)
+  - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitlab_sql_duration_seconds_bucket{type="sidekiq"}[5m])) without (fqdn, instance)
+  - record: controller_action:gitlab_sql_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitlab_sql_duration_seconds_bucket{type="web"}[5m])) without (fqdn, instance)
+
+  - record: controller_action:gitlab_sql_latency_seconds:rate5m
+    expr: >
+      controller_action:gitlab_sql_duration_seconds_sum:rate5m
+        /
+      controller_action:gitlab_sql_duration_seconds_count:rate5m
+
+  - record: controller_action:gitlab_sql_duration_seconds:p95
+    expr: histogram_quantile(0.95, controller_action:gitlab_sql_duration_seconds_bucket:rate5m)
+
+  - record: controller_action:gitlab_sql_duration_seconds:p99
+    expr: histogram_quantile(0.99, controller_action:gitlab_sql_duration_seconds_bucket:rate5m)
+
+  # SQL data, across the board.
+  - record: job_environment:gitlab_sql_duration_seconds_sum:rate5m
+    expr: sum(controller_action:gitlab_sql_duration_seconds_sum:rate5m) without (controller, action)
+
+  - record: job_environment:gitlab_sql_duration_seconds_count:rate5m
+    expr: sum(controller_action:gitlab_sql_duration_seconds_count:rate5m) without (controller, action)
+
+  - record: job_environment:gitlab_sql_duration_seconds_bucket:rate5m
+    expr: sum(controller_action:gitlab_sql_duration_seconds_bucket:rate5m) without (controller,action)
+
+  - record: job_environment:gitlab_sql_latency_seconds:rate5m
+    expr: >
+      job_environment:gitlab_sql_duration_seconds_sum:rate5m
+        /
+      job_environment:gitlab_sql_duration_seconds_count:rate5m
+
+  - record: job_environment:gitlab_sql_duration_seconds:p95
+    expr: histogram_quantile(0.95, job_environment:gitlab_sql_duration_seconds_bucket:rate5m)
+
+  - record: job_environment:gitlab_sql_duration_seconds:p99
+    expr: histogram_quantile(0.99, job_environment:gitlab_sql_duration_seconds_bucket:rate5m)
+
+- name: Rails Gitaly 1m
+  interval: 1m
+  rules:
+  # Gitaly data, per controller/action.
+  - record: controller_action:gitaly_duration_seconds_bucket:rate1m
+    expr: >
+      sum without (fqdn, instance, rpc, gitaly_service) (
+        rate(gitaly_controller_action_duration_seconds_bucket[1m])
+      )
+  - record: controller_action:gitaly_duration_seconds:p95
+    expr: histogram_quantile(0.95, controller_action:gitaly_duration_seconds_bucket:rate1m)
+  - record: controller_action:gitaly_duration_seconds:p99
+    expr: histogram_quantile(0.99, controller_action:gitaly_duration_seconds_bucket:rate1m)
+
+- name: Rails Gitaly 5m
+  interval: 1m
+  rules:
+  # Gitaly data, per controller/action.
+  - record: controller_action:gitaly_duration_seconds_bucket:rate5m
+    expr: sum(rate(gitaly_controller_action_duration_seconds_bucket[5m])) without(fqdn, instance, rpc, gitaly_service)
+
+  - record: controller_action:gitaly_duration_seconds:p95
+    expr: histogram_quantile(0.95, controller_action:gitaly_duration_seconds_bucket:rate5m)
+
+  - record: controller_action:gitaly_duration_seconds:p99
+    expr: histogram_quantile(0.99, controller_action:gitaly_duration_seconds_bucket:rate5m)
