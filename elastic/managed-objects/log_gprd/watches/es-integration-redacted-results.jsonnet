@@ -50,7 +50,7 @@ local ES_QUERY = {
         message: {
           from: 'ElasticCloud Watcher: es-integration-redacted-results',
           to: [
-            '#alerts-test',
+            '#sec-appsec-private',
           ],
           text: 'Search results from the ES integration were redacted. Visit https://log.gprd.gitlab.net/goto/40f98515a7e26975caf5f102baaea8d7 for more details',
         },

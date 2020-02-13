@@ -60,7 +60,7 @@
         "message": {
           "from": "ElasticCloud Watcher: gitlab_admin_created",
           "to": [
-            "#alerts-test"
+            "#sec-appsec-private"
           ],
           "text": "A GitLab account has been created with `Admin` privilege.\n\nURL: {{ctx.payload.hits.hits.0._source.json.location}}\n\nCreated by: `{{ctx.payload.hits.hits.0._source.json.username}}`\n\n\nFull Message Trace: ```{{ctx.payload.hits.hits.0._source.message}}```"
         }

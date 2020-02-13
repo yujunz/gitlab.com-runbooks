@@ -50,7 +50,7 @@ local ES_QUERY = {
         message: {
           from: 'ElasticCloud Watcher: registry_gcs_connection_resets',
           to: [
-            '#alerts-test',
+            '#alerts',
           ],
           text: 'Registry is seeing Connection Resets talking to GCS.  This may indicate an outage is being caused by GCS connectivity',
           attachments: [

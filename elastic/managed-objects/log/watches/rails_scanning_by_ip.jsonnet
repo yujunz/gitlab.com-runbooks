@@ -93,7 +93,7 @@ local painlessScript(script) = {
         message: {
           from: 'ElasticCloud Watcher: rails_scanning_by_ip',
           to: [
-            '#alerts-prod-abuse',
+            '#alerts-test',
           ],
           text: 'Unusual Rail scan activity for an IP has been detected. Click the title of the description to find associated activity in the Rails logs.',
           dynamic_attachments: {
