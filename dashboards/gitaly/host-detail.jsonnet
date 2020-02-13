@@ -21,7 +21,14 @@ local serviceHealth = import 'service_health.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local magicNumbers = (import 'magic_numbers.libsonnet').magicNumbers;
 local gitalyCommon = import 'gitaly/gitaly_common.libsonnet';
-local selector = 'environment="$environment", fqdn=~"$fqdn"';
+local selectors = import 'lib/selectors.libsonnet';
+
+local selectorHash = {
+  environment: '$environment',
+  fqdn: { re: '$fqdn' },
+};
+
+local selector = selectors.serializeHash(selectorHash);
 
 basic.dashboard(
   'Host Detail',
@@ -81,7 +88,7 @@ basic.dashboard(
   metricsCatalogDashboards.componentDetailMatrix(
     'gitaly',
     'goserver',
-    selector,
+    selectorHash,
     [
       { title: 'Overall', aggregationLabels: '', legendFormat: 'goserver' },
     ],
@@ -91,7 +98,7 @@ basic.dashboard(
   metricsCatalogDashboards.componentDetailMatrix(
     'gitaly',
     'gitalyruby',
-    selector,
+    selectorHash,
     [
       { title: 'Overall', aggregationLabels: '', legendFormat: 'gitalyruby' },
     ],

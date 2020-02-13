@@ -20,9 +20,15 @@ local serviceHealth = import 'service_health.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
+local selectors = import './lib/selectors.libsonnet';
 
 local overviewDashboard(type, tier, stage) =
-  local selector = 'environment="$environment", type="%s", stage="%s"' % [type, stage];
+  local selectorHash = {
+    environment: '$environment',
+    type: type,
+    stage: stage,
+  };
+  local selector = selectors.serializeHash(selectorHash);
   local catalogServiceInfo = serviceCatalog.lookupService(type);
   local metricsCatalogServiceInfo = metricsCatalog.getService(type);
 
@@ -41,7 +47,7 @@ local overviewDashboard(type, tier, stage) =
       )
     )
     .addPanels(
-      metricsCatalogDashboards.autoDetailRows(type, selector, startRow=100)
+      metricsCatalogDashboards.autoDetailRows(type, selectorHash, startRow=100)
     )
     .addPanel(
       nodeMetrics.nodeMetricsDetailRow(selector),

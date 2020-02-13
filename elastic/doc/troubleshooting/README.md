@@ -30,6 +30,7 @@
         - [moving shards between nodes](#moving-shards-between-nodes)
         - [restarting an ES deployment](#restarting-an-es-deployment)
         - [remove oldest indices](#remove-oldest-indices)
+        - [Fixing conflicts in index mappings](#fixing-conflicts-in-index-mappings)
     - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm-1)
         - [esc-tools](#esc-tools)
             - [mark index as complete](#mark-index-as-complete)

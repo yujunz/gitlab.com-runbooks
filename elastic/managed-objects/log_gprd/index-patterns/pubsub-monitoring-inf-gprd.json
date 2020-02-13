@@ -1,6 +1,0 @@
-{
-  "attributes": {
-    "title": "pubsub-monitoring-inf-gprd-*",
-    "timeFieldName": "json.ts"
-  }
-}

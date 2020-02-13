@@ -225,19 +225,6 @@ update_elastic_log_gprd_cluster_settings:
     variables:
       - $ES_LOG_GPRD_URL
 
-update_elastic_log_gprd_index_patterns:
-  stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
-  script:
-  - ./elastic/managed-objects/log_gprd/index-patterns/update-index-patterns.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log_gprd/index-patterns/*
-    variables:
-      - $KIBANA_LOG_GPRD_URL
-
 # nonprod-log.gitlab.net
 ################################################################################
 update_elastic_nonprod-log_watches:
@@ -292,19 +279,6 @@ update_elastic_nonprod-log_cluster_settings:
       - elastic/managed-objects/nonprod-log/cluster-settings/*
     variables:
       - $ES_NONPROD_URL
-
-update_elastic_nonprod-log_index_patterns:
-  stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
-  script:
-  - ./elastic/managed-objects/nonprod-log/index-patterns/update-index-patterns.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/nonprod-log/index-patterns/*
-    variables:
-      - $KIBANA_NONPROD_URL
 
 # monitoring-es7
 ################################################################################

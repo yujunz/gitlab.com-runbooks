@@ -54,6 +54,7 @@ https://gitlab.com/gitlab-com/gl-infra/elastic/issues
 1. Configure index patterns in Kibana (logs have to be present in the cluster):
   - where possible, use json.time (timestamp of the log) rather than timestamp (when the log was received by the cluster)
   - it's currently impossible to configure index patterns through api: https://github.com/elastic/kibana/issues/2310 and https://github.com/elastic/kibana/issues/3709
+1. Check all ILM policies (in particular the ones for APM indices) and make sure that they use node attributes when moving shards between phase. You might also want to review times shards spend in different phases.
 
 ## Creating a cluster (general notes)
 

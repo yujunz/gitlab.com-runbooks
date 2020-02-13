@@ -199,70 +199,6 @@ tiers:
 - name: inf
 
 services:
-- name: alertmanager
-  tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
-  label: Service:AlertManager
-  business:
-    requirement: We use Prometheus for our monitoring solution. Alerting with Prometheus is separated into two parts. Alerting rules in Prometheus servers send alerts to an Alertmanager. The Alertmanager then manages those alerts, including silencing, inhibition, aggregation and sending out notifications via, in our case, PagerDuty and Slack.
-    customers:
-      - infrastructure
-    business_value: AlertManager handles deduping, grouping and routing of alerts. It also takes care of silencing and inhibition of alerts. Therefore, it helps us get informed of possible issues in an efficient way so that we can focus on fixing the issues rather than figuring out how to manage and configure the alerts.
-    SLA:
-      availability:
-      response_time:
-  technical:
-    project:
-      - https://gitlab.com/gitlab-org/build/omnibus-mirror/alertmanager
-    criticality: 3
-    slx:
-    documents:
-      design: https://docs.google.com/document/d/1-4jefGkFo71jlaLo4lHz40ZBoCv9ycBBBbjzbXifGyY
-      architecture: https://github.com/prometheus/alertmanager/blob/master/doc/arch.svg
-      service:
-        - https://github.com/prometheus/alertmanager/blob/master/README.md
-      security: https://prometheus.io/docs/operating/security/#alertmanager
-    dependencies:
-      - service: prometheus
-    configurations:
-      - config_name: alertmanager.yml
-        location: /opt/prometheus/alertmanager/alertmanager.yml
-    chef_roles:
-      - gprd-infra-alerts
-      - gstg-infra-alerts
-    scalability:
-      note: We run AlertManager in HA, where we have multiple instances in a cluster with gossip protcol. Given that AlertManager does deduping, grouping, silencing, inhibiting...etc it could run a series of checks against incoming alerts and could end up taking up a lot of CPU. Users reported issues where, due to misconfiuration, AlertManager was taking up all of available CPU as well. This indicates that AlertManager is CPU-bound and thus a vertically scalable service.
-      bound: cpu
-      scalable: vertical
-    security:
-      security_reviewed:
-      data_classification:
-      security_incidents:
-    logging:
-      - name:
-        permalink:
-  infrastructure:
-    provider: gcp
-    architecture: https://drive.google.com/open?id=1aKSvWfsnrSo_XWm7ZVY3oHLqsd2czZcs
-    provisioning: terraform
-    accesses:
-      - account_name:
-        access_type:
-        reviewed:
-  operations:
-    maintenance:
-    runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/alertmanager-notification-failures.md
-    playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/alerts_manual.md
-    error_budget:
-  observability:
-    monitors:
-      grafana_folder:
-      primary_grafana_dashboard:
-
 - name: api
   tier: sv
   teams:
@@ -329,17 +265,17 @@ services:
         - https://gitlab.com/gitlab-org/gitlab-ce/issues/54865
     logging:
       - name: Rails
-        permalink: https://log.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684
+        permalink: https://log.gprd.gitlab.net/goto/0238ddb1480bb4bd19c09f0467b6e684
       - name: Workhorse
-        permalink: https://log.gitlab.net/goto/eb99f28c17cfcdfd30969a1c85e209dc
+        permalink: https://log.gprd.gitlab.net/goto/eb99f28c17cfcdfd30969a1c85e209dc
       - name: Unicorn
-        permalink: https://log.gitlab.net/goto/c8f89b2415788b46978fcd2910b4afec
+        permalink: https://log.gprd.gitlab.net/goto/c8f89b2415788b46978fcd2910b4afec
       - name: nginx
-        permalink: https://log.gitlab.net/goto/0d1c84486d6fb28a785f1c21473e5611
+        permalink: https://log.gprd.gitlab.net/goto/0d1c84486d6fb28a785f1c21473e5611
       - name: Unstructured Rails
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22api%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
-        permalink: https://log.gitlab.net/goto/2b9679dab019791136cb8ae1535fb781
+        permalink: https://log.gprd.gitlab.net/goto/2b9679dab019791136cb8ae1535fb781
   infrastructure:
     provider: gcp
     architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
@@ -405,7 +341,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/b4618f79f80f44cb21a32623a275a0e6
+        permalink: https://log.gprd.gitlab.net/goto/b4618f79f80f44cb21a32623a275a0e6
   infrastructure:
     provider: gcp
     architecture:
@@ -552,9 +488,9 @@ services:
       security_incidents:
     logging:
       - name: Consul
-        permalink: https://log.gitlab.net/goto/7f15b1f04a0f09fbb18fc62adefe3ed1
+        permalink: https://log.gprd.gitlab.net/goto/7f15b1f04a0f09fbb18fc62adefe3ed1
       - name: system
-        permalink: https://log.gitlab.net/goto/a22fbb60e45a3f6d7860908a5427301c
+        permalink: https://log.gprd.gitlab.net/goto/a22fbb60e45a3f6d7860908a5427301c
   infrastructure:
     provider: gcp
     architecture:
@@ -630,69 +566,6 @@ services:
   observability:
     monitors:
       primary_grafana_dashboard:
-      sentry_slug:
-
-- name: elk
-  tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
-  label: Service:ELK
-  business:
-    requirement: |
-      Managing an Elasticsearch cluster in-house turned out to be not an easy undertaking,
-      so we're turned to a hosted solution that can handle our volume of logs and provide
-      professional support for it.
-    customers:
-      - Used internally by GitLab teams
-    business_value: |
-      Allows visibility into the infrastructure, aides in debugging issues and
-      incidents handling.
-    SLA:
-      availability:
-      response_time: 4 hours (critical), 1 day (L2), 2 days (L3)
-  technical:
-    project:
-    criticality: 3
-    slx:
-    documents:
-      design:
-      architecture:
-      service:
-      security:
-    dependencies:
-    configurations:
-      - config_name: Elasticsearch config
-        location: https://cloud.elastic.co/region/gcp-us-central1/deployment/022d92a4ba7ff6fdacc2a7182948cb0a/edit # Under "User settings overrides"
-    chef_roles:
-    scalability:
-      bound: disk
-      scalable: horizontal
-    security:
-      security_reviewed:
-      data_classification:
-      security_incidents:
-    logging:
-      - name: Elasticsearch
-        permalink: https://cloud.elastic.co/region/gcp-us-central1/deployment/022d92a4ba7ff6fdacc2a7182948cb0a/elasticsearch/logs
-  infrastructure:
-    provider: gcp # managed by Elastic Cloud (elastic.co/cloud)
-    architecture:
-    provisioning:
-    accesses:
-      - account_name:
-        access_type:
-        reviewed:
-  operations:
-    maintenance:
-    runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/elk_mapper_parsing_exception.md
-    playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/elastic-cloud.md
-    error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
-  observability:
-    monitors:
-      primary_grafana_dashboard: "USVj3qHmk/logging"
       sentry_slug:
 
 - name: forum
@@ -827,7 +700,7 @@ services:
       security_incidents:
     logging:
       - name: Kibana
-        permalink: https://log.gitlab.net/app/kibana
+        permalink: https://log.gprd.gitlab.net/app/kibana
       - name: Stackdriver
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production
   infrastructure:
@@ -902,17 +775,17 @@ services:
       security_incidents:
     logging:
       - name: Rails
-        permalink: https://log.gitlab.net/goto/5e1aa9dac377ff2282c70748e9278860
+        permalink: https://log.gprd.gitlab.net/goto/5e1aa9dac377ff2282c70748e9278860
       - name: Workhorse
-        permalink: https://log.gitlab.net/goto/cebefc3cf285ce2a94fbfdcadc55f1a4
+        permalink: https://log.gprd.gitlab.net/goto/cebefc3cf285ce2a94fbfdcadc55f1a4
       - name: Unicorn
-        permalink: https://log.gitlab.net/goto/766f73d879983f5ec962d5d6c0ae1cf4
+        permalink: https://log.gprd.gitlab.net/goto/766f73d879983f5ec962d5d6c0ae1cf4
       - name: nginx
-        permalink: https://log.gitlab.net/goto/4844ecfa4a7e6f0491685b2cc9224eb0
+        permalink: https://log.gprd.gitlab.net/goto/4844ecfa4a7e6f0491685b2cc9224eb0
       - name: Unstructured Rails
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22web%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
-        permalink: https://log.gitlab.net/goto/c93fb9b8e5df92ed79d993d3a62b5452
+        permalink: https://log.gprd.gitlab.net/goto/c93fb9b8e5df92ed79d993d3a62b5452
   infrastructure:
     provider: gcp
     architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
@@ -1060,17 +933,17 @@ services:
       security_incidents:
     logging:
       - name: Rails
-        permalink: https://log.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
+        permalink: https://log.gprd.gitlab.net/goto/b368513b02f183a06d28c2a958b00602
       - name: Workhorse
-        permalink: https://log.gitlab.net/goto/3ddd4ee7141ba2ec1a8b3bb0cb1476fe
+        permalink: https://log.gprd.gitlab.net/goto/3ddd4ee7141ba2ec1a8b3bb0cb1476fe
       - name: Unicorn
-        permalink: https://log.gitlab.net/goto/0cf60e9a1c94236eefb23348c39feaeb
+        permalink: https://log.gprd.gitlab.net/goto/0cf60e9a1c94236eefb23348c39feaeb
       - name: nginx
-        permalink: https://log.gitlab.net/goto/8a5fb5820ec7c8daebf719c51fa00ce0
+        permalink: https://log.gprd.gitlab.net/goto/8a5fb5820ec7c8daebf719c51fa00ce0
       - name: Unstructured Rails
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22git%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
-        permalink: https://log.gitlab.net/goto/bd680ccb3c21567e47a821bbf52a7c09
+        permalink: https://log.gprd.gitlab.net/goto/bd680ccb3c21567e47a821bbf52a7c09
   infrastructure:
     provider: gcp
     architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
@@ -1144,11 +1017,11 @@ services:
       security_incidents:
     logging:
       - name: Gitaly
-        permalink: https://log.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d
+        permalink: https://log.gprd.gitlab.net/goto/4f0bd7f08b264e7de970bb0cc9530f9d
       - name: gitlab-shell
-        permalink: https://log.gitlab.net/goto/ba97a9597863f0df1c3b894b44eb1db6
+        permalink: https://log.gprd.gitlab.net/goto/ba97a9597863f0df1c3b894b44eb1db6
       - name: system
-        permalink: https://log.gitlab.net/goto/7cfb513706cffc0789ad0842674e108a
+        permalink: https://log.gprd.gitlab.net/goto/7cfb513706cffc0789ad0842674e108a
   infrastructure:
     provider: gcp
     architecture:
@@ -1226,7 +1099,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/bf44358a81c549827fd8142a4da59d4a
+        permalink: https://log.gprd.gitlab.net/goto/bf44358a81c549827fd8142a4da59d4a
   infrastructure:
     provider: gcp
     architecture:
@@ -1290,7 +1163,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/769b1e96dc189470332cd7005dd6f878
+        permalink: https://log.gprd.gitlab.net/goto/769b1e96dc189470332cd7005dd6f878
   infrastructure:
     provider: gcp
     architecture:
@@ -1358,7 +1231,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/0ce3bf67abafcfc0f81f3d6e7a066912
+        permalink: https://log.gprd.gitlab.net/goto/0ce3bf67abafcfc0f81f3d6e7a066912
   infrastructure:
     provider: gcp
     architecture: gke
@@ -1481,11 +1354,11 @@ services:
       security_incidents:
     logging:
       - name: Pages
-        permalink: https://log.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
+        permalink: https://log.gprd.gitlab.net/goto/00a732029c1448a741c8730c04038fd9
       - name: haproxy
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22&advancedFilter=labels.tag%3D%22haproxy%22%0Alabels.%22compute.googleapis.com%2Fresource_name%22%3A%22fe-pages-%22
       - name: system
-        permalink: https://log.gitlab.net/goto/3384c89c5a828db866d2fa8ec86cd97f
+        permalink: https://log.gprd.gitlab.net/goto/3384c89c5a828db866d2fa8ec86cd97f
   infrastructure:
     provider: gcp
     architecture:
@@ -1502,8 +1375,8 @@ services:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
-      grafana_folder: v2ZhpeSik
-      primary_grafana_dashboard: "_IQB_rSmk/pages"
+      grafana_folder: web-pages
+      primary_grafana_dashboard: "web-pages-main/web-pages-overview"
 
 - name: pgbouncer
   tier: db
@@ -1552,9 +1425,9 @@ services:
       security_incidents:
     logging:
       - name: pgbouncer
-        permalink: https://log.gitlab.net/goto/3fb9391e5ef07b47aac2fce6fda175d9
+        permalink: https://log.gprd.gitlab.net/goto/3fb9391e5ef07b47aac2fce6fda175d9
       - name: system
-        permalink: https://log.gitlab.net/goto/ae311f6f133cc1c45b62541977081043
+        permalink: https://log.gprd.gitlab.net/goto/ae311f6f133cc1c45b62541977081043
   infrastructure:
     provider:   gcp
     architecture:   https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
@@ -1633,9 +1506,9 @@ services:
       security_incidents:
     logging:
       - name: Postgres
-        permalink: https://log.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c
+        permalink: https://log.gprd.gitlab.net/goto/d0f8993486c9007a69d85e3a08f1ea7c
       - name: system
-        permalink: https://log.gitlab.net/goto/3669d551a595a3a5cf1e9318b74e6c22
+        permalink: https://log.gprd.gitlab.net/goto/3669d551a595a3a5cf1e9318b74e6c22
   infrastructure:
     provider:  gcp
     architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
@@ -1723,9 +1596,9 @@ services:
       security_incidents:
     logging:
       - name: postgres
-        permalink: https://log.gitlab.net/goto/0b7a4ff726bfd3e4eb4b51da82979efc
+        permalink: https://log.gprd.gitlab.net/goto/0b7a4ff726bfd3e4eb4b51da82979efc
       - name: system
-        permalink: https://log.gitlab.net/goto/4a5ab78f128dcf1b40ad16b75e521609
+        permalink: https://log.gprd.gitlab.net/goto/4a5ab78f128dcf1b40ad16b75e521609
   infrastructure:
     provider: gcp
     architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
@@ -1808,7 +1681,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/3fea946a232d2288e90e575c912fa3e7
+        permalink: https://log.gprd.gitlab.net/goto/3fea946a232d2288e90e575c912fa3e7
   infrastructure:
     provider: gcp
     architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
@@ -1954,7 +1827,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/3a0b51d10d33c9558765e97640acb325
+        permalink: https://log.gprd.gitlab.net/goto/3a0b51d10d33c9558765e97640acb325
   infrastructure:
     provider: gcp
     architecture:
@@ -2041,9 +1914,9 @@ services:
       security_incidents:
     logging:
       - name: Redis
-        permalink: https://log.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc
+        permalink: https://log.gprd.gitlab.net/goto/27a6bf4e347ef9da754f06eb0a54aedc
       - name: system
-        permalink: https://log.gitlab.net/goto/e107ce00a9adede2e130d0c8ec1a2ac7
+        permalink: https://log.gprd.gitlab.net/goto/e107ce00a9adede2e130d0c8ec1a2ac7
   infrastructure:
     provider: gcp
     architecture: https://drive.google.com/open?id=1DOIKubC0edztw3_t7ZW-Lqh24heVlrdQ
@@ -2109,7 +1982,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/1a4342231de57c0ceabc8f5e0e402909
+        permalink: https://log.gprd.gitlab.net/goto/1a4342231de57c0ceabc8f5e0e402909
   infrastructure:
     provider: gcp
     architecture: https://drive.google.com/open?id=1H5s5EonMX0Mzz6jahAotMOb349TNO7YK
@@ -2173,7 +2046,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/0b28cb1d20663b4359f8bc05995a22ad
+        permalink: https://log.gprd.gitlab.net/goto/0b28cb1d20663b4359f8bc05995a22ad
   infrastructure:
     provider: gcp
     architecture: https://drive.google.com/open?id=1xJfH7XhfcRzYhgHIelenAn3AZbco6HN0
@@ -2237,7 +2110,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/80a1ff609f91b0fb2b770a3a70784be0
+        permalink: https://log.gprd.gitlab.net/goto/80a1ff609f91b0fb2b770a3a70784be0
   infrastructure:
     provider: gcp
     architecture: https://drive.google.com/open?id=1H5s5EonMX0Mzz6jahAotMOb349TNO7YK
@@ -2301,11 +2174,11 @@ services:
       security_incidents:
     logging:
       - name: Registry
-        permalink: https://log.gitlab.net/goto/1c2fe46c1db40a7aa7d31875f3fd2ad1
+        permalink: https://log.gprd.gitlab.net/goto/1c2fe46c1db40a7aa7d31875f3fd2ad1
       - name: haproxy
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22&advancedFilter=labels.tag%3D%22haproxy%22%0Alabels.%22compute.googleapis.com%2Fresource_name%22%3A%22fe-registry-%22
       - name: system
-        permalink: https://log.gitlab.net/goto/b68e1a4183a652dc8d5e52a1fc2c1aba
+        permalink: https://log.gprd.gitlab.net/goto/b68e1a4183a652dc8d5e52a1fc2c1aba
   infrastructure:
     provider: gcp
     architecture: gke
@@ -2373,7 +2246,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/3a1a0019df2f6b555866b6f11eb92172
+        permalink: https://log.gprd.gitlab.net/goto/3a1a0019df2f6b555866b6f11eb92172
   infrastructure:
     provider: gcp
     architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#storage-architecture
@@ -2451,15 +2324,15 @@ services:
       security_incidents:
     logging:
       - name: Sidekiq
-        permalink: https://log.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
+        permalink: https://log.gprd.gitlab.net/goto/d7e4791e63d2a2b192514ac821c9f14f
       - name: Rails
-        permalink: https://log.gitlab.net/goto/86fbcd537588abef69339a352ef81d72
+        permalink: https://log.gprd.gitlab.net/goto/86fbcd537588abef69339a352ef81d72
       - name: Unicorn
-        permalink: https://log.gitlab.net/goto/c87a39cf228c45ed8691c855aa583170
+        permalink: https://log.gprd.gitlab.net/goto/c87a39cf228c45ed8691c855aa583170
       - name: Unstructured
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&interval=PT1H&resource=gce_instance&advancedFilter=jsonPayload.hostname%3A%22sidekiq%22%0Alabels.tag%3D%22unstructured.production%22&customFacets=labels.%22compute.googleapis.com%2Fresource_name%22
       - name: system
-        permalink: https://log.gitlab.net/goto/72d0f3fdfd8db18db9800cc04d8b6f55
+        permalink: https://log.gprd.gitlab.net/goto/72d0f3fdfd8db18db9800cc04d8b6f55
   infrastructure:
     provider: gcp
     architecture:
@@ -2529,7 +2402,7 @@ services:
       security_incidents:
     logging:
       - name: system
-        permalink: https://log.gitlab.net/goto/9b8322ad2ddacec15c7c1691d6c67733
+        permalink: https://log.gprd.gitlab.net/goto/9b8322ad2ddacec15c7c1691d6c67733
   infrastructure:
     provider: gcp
     architecture:
@@ -2754,7 +2627,7 @@ services:
       - name: stackdriver
         permalink: https://console.cloud.google.com/logs
       - name: multiple indexes in Kibana
-        permalink: https://log.gitlab.net/goto/2fc394521558a0bfed59f791295ffe51
+        permalink: https://log.gprd.gitlab.net/goto/2fc394521558a0bfed59f791295ffe51
   infrastructure:
     provider: gcp
     architecture:
@@ -2832,7 +2705,7 @@ services:
       security_incidents:
     logging:
       - name: shared runners
-        permalink: https://log.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a
+        permalink: https://log.gprd.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a
   infrastructure:
     provider: gcp and do
     architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/ci-architecture.html

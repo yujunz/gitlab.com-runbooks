@@ -102,8 +102,8 @@ tf import module.gitlab-gke.google_container_node_pool.node_pool[0] gitlab-produ
 
 ## Monitoring and Troubleshooting
 
-* All GKE logs: https://log.gitlab.net/goto/fcf1a37403d6a035e3dfd3a3b406bf34
-* Registry errors in GKE: https://log.gitlab.net/goto/763017c05032e98ee79ef18165da7703
+* All GKE logs: https://log.gprd.gitlab.net/goto/fcf1a37403d6a035e3dfd3a3b406bf34
+* Registry errors in GKE: https://log.gprd.gitlab.net/goto/763017c05032e98ee79ef18165da7703
 * Registry in GKE application overview: https://dashboards.gitlab.net/d/registry-app/registry-application-info?orgId=1
 * Mailroom in GKE application overview: https://dashboards.gitlab.net/d/mailroom-app/mailroom-application-info?orgId=1
 * Pod Metrics for Registry: https://dashboards.gitlab.net/d/registry-pod/registry-pod-info?orgId=1

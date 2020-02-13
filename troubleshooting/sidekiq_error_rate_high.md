@@ -5,9 +5,9 @@
 ## Troubleshooting
 
 * It's important to mind which sidekiq job is having issues. This
-  [chart](https://log.gitlab.net/app/kibana#/visualize/edit/AW3J3Lc4zkPhEGn_VsuR)
+  [chart](https://log.gprd.gitlab.net/app/kibana#/visualize/edit/AW3J3Lc4zkPhEGn_VsuR)
   shows the worker classes with the most errors. You might want to drill down
-  [to service class](https://log.gitlab.net/app/kibana#/visualize/edit/AW2moVRdUOguGaJ_mRPG).
+  [to service class](https://log.gprd.gitlab.net/app/kibana#/visualize/edit/AW2moVRdUOguGaJ_mRPG).
 * For most of them, ideally we'd contact the #backend and ask for insight
 * Some we can potentially troubleshoot ourselves
 

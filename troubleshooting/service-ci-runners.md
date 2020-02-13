@@ -9,7 +9,7 @@
 
 ## Logging
 
-* [shared runners](https://log.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a)
+* [shared runners](https://log.gprd.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a)
 
 <!-- END_MARKER -->
 

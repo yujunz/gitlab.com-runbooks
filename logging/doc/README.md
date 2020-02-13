@@ -329,7 +329,7 @@ instructions on loading logs into `BigQuery` from their GCS archive files.
 
 There are three cookbooks that configure logging on gitlab.com
 
-* gitlab-proxy - Sets up the nginx proxy so that users can access elastic cloud via log.gitlab.net
+* gitlab-proxy - Sets up the nginx proxy so that users can access elastic cloud via log.gprd.gitlab.net
 * gitlab_fluentd - Sets up td-agent on all nodes, forwards logs to pubsub topics.
 * gitlab-elk - Sets up the pubsub beat which reads from the topics and forwards to elastic cloud.
 

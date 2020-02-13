@@ -4,7 +4,7 @@ WAL-E is running on all machines in the patroni cluster. However, backups are ac
 
 you can check wale logs in two ways:
 1. using Kibana (bear in mind that there were cases in the past when logs where not shipped):
-  - [`log.gitlab.net`](log.gitlab.net)
+  - [`log.gprd.gitlab.net`](log.gprd.gitlab.net)
   - index: `pubsub-postgres-inf-gprd`
   - document field: `json.tag` with value `db.wale`
 2. by logging directly into the VM:

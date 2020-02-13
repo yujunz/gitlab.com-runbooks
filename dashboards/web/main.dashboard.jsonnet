@@ -56,6 +56,4 @@ serviceDashboard.overview('web', 'sv')
   }
 )
 .addPanels(railsCommon.railsPanels(serviceType='web', serviceStage='$stage', startRow=3001))
-.addPanel(workhorseCommon.componentDetailsRow('web', selector), gridPos={ x: 0, y: 5000 })
-.addPanel(unicornCommon.componentDetailsRow('web', selector), gridPos={ x: 0, y: 5100 })
 .overviewTrailer()

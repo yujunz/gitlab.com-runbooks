@@ -153,11 +153,4 @@ local row = grafana.row;
       ),
     ], cols=2, rowHeight=10, startRow=startRow),
 
-  componentDetailsRow(serviceType, selector)::
-    local aggregationSets = [
-      { title: 'Overall', aggregationLabels: '', legendFormat: 'workhorse' },
-      { title: 'per Route', aggregationLabels: 'route', legendFormat: '{{ route }}' },
-      { title: 'per Node', aggregationLabels: 'fqdn', legendFormat: '{{ fqdn }}' },
-    ];
-    metricsCatalogDashboards.componentDetailMatrix(serviceType, 'workhorse', selector, aggregationSets),
 }

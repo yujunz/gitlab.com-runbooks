@@ -1,6 +1,0 @@
-{
-  "attributes": {
-    "title": "pubsub-puma-inf-ops-*",
-    "timeFieldName": "json.timestamp"
-  }
-}

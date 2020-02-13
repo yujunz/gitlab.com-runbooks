@@ -10,8 +10,8 @@
 
 ## Logging
 
-* [pgbouncer](https://log.gitlab.net/goto/3fb9391e5ef07b47aac2fce6fda175d9)
-* [system](https://log.gitlab.net/goto/ae311f6f133cc1c45b62541977081043)
+* [pgbouncer](https://log.gprd.gitlab.net/goto/3fb9391e5ef07b47aac2fce6fda175d9)
+* [system](https://log.gprd.gitlab.net/goto/ae311f6f133cc1c45b62541977081043)
 
 ## Troubleshooting Pointers
 

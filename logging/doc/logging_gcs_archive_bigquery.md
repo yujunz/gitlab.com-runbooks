@@ -27,7 +27,7 @@ In order to load a BQ table from a SD produced log archive stored in GCS a datas
 ### Why
 
 
- * You need to query logs older than seven days and thus are no longer in our [ELK](https://log.gitlab.net) instance.
+ * You need to query logs older than seven days and thus are no longer in our [ELK](https://log.gprd.gitlab.net) instance.
  * You need to query logs older than 30 days and thus are no longer in our SD.
  * You need aggregate operators, summarized reports or output visualizations.
 

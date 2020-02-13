@@ -17,7 +17,7 @@ local ES_QUERY = {
           { range: { '@timestamp': { gte: std.format('now-%dm', QUERY_PERIOD_MINS), lte: 'now' } } },
         ],
         must_not: [
-          { match_phrase: { 'json.message': { query: 'read_blob' } } },
+          { match_phrase: { message: { query: 'read_blob' } } },
         ],
       },
     },
@@ -53,7 +53,7 @@ local ES_QUERY = {
           to: [
             '#sec-appsec-private',
           ],
-          text: 'Search results from the ES integration were redacted. Visit https://log.gitlab.net/goto/7bd8f00adef19fd604175185e3828941 for more details',
+          text: 'Search results from the ES integration were redacted. Visit https://log.gprd.gitlab.net/goto/7bd8f00adef19fd604175185e3828941 for more details',
         },
       },
     },

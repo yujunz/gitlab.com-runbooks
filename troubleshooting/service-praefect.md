@@ -9,10 +9,14 @@
 
 ## Logging
 
-* [system](https://log.gitlab.net/goto/769b1e96dc189470332cd7005dd6f878)
+* [system](https://log.gprd.gitlab.net/goto/769b1e96dc189470332cd7005dd6f878)
 
 ## Troubleshooting Pointers
 
 * [praefect-error-rate.md](praefect-error-rate.md)
 * [praefect-startup.md](praefect-startup.md)
 <!-- END_MARKER -->
+
+## How To...
+
+* [Add and remove file storages to praefect](../howto/praefect-file-storages.md)

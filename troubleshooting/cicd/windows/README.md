@@ -54,3 +54,21 @@ incredibly detailed information on processes, and it is substantially better tha
 task manager. If you need to find out info on any processes, you should use this instead.
 
 Additionally, `cmder` is an easier to use terminal emulator.
+
+## Troubleshooting
+
+### Shared Runners Manager Offline
+
+If a shared runners manager is [shown offline](https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/9186):
+
+- connect to the manager:
+  - `sft rdp --via lb-bastion.windows-ci.gitlab.com windows-shared-runners-manager-1`
+- start powershell as _admin_ (right click on powershell -> "start as Admin")
+- in powershell:
+
+```
+C:\Gitlab-Runner\gitlab-runner.exe status
+
+# if down:
+C:\Gitlab-Runner\gitlab-runner.exe start
+```

@@ -10,9 +10,9 @@
     - [When disabling ES integration did not help](#when-disabling-es-integration-did-not-help)
     - [Disabling elastic backed search, but leaving the integration on](#disabling-elastic-backed-search-but-leaving-the-integration-on)
     - [Creating and removing indices](#creating-and-removing-indices)
-        - [Creating and removing indices - TLDR](#creating-and-removing-indices-tldr)
         - [Recreating an index](#recreating-an-index)
         - [Creating an index (shards considerations)](#creating-an-index-shards-considerations)
+        - [Removing an index](#removing-an-index)
     - [Shards management](#shards-management)
     - [Cleaning up index](#cleaning-up-index)
     - [Triggering indexing](#triggering-indexing)
@@ -44,6 +44,8 @@ Before you make any changes to config and click save, make sure you are aware of
 - if you only want to enable indexing for a specific namespace, use the limiting feature and only then click save
 - in order to allow for initial indexing to take place (which depending on the size of the instance can take a few hours/days) without breaking the search feature, do not enable searching with Elasticsearch. Do it after the initial indexing.
 
+You can tell which sidekiq jobs are from initial indexing by looking at `json.meta.user` in the sidekiq logs.
+
 ## Disabling ES integration ##
 
 Disabling the elasticsearch integration (unticking the box and clicking save) will disable all integration related features in gitlab (e.g. there should be no further search requests to the ES cluster).
@@ -57,7 +59,7 @@ Disabling the elasticsearch integration (unticking the box and clicking save) wi
 
 Disabling the integration does not kill the ongoing sidekiq jobs and does not remove them from the queue. This means that if for example you accidentally enabled the integration on a huge instance, which resulted in lots of sidekiq jobs being created and enqueued, and your cluster got overwhelmed, simply disabling the integration will only prevent creation of new jobs, but will not get rid of existing ones.
 
-To remove jobs from queues and kill running ones follow the steps described in `troubleshooting/large-sidekiq-queue.md` in this repo. After you removed all jobs, check monitoring metrics of the ES cluster to see if indexing requests stopped coming in. You should also keep an eye on [logs in kibana](https://log.gitlab.net/goto/370fba905cd3f79770854466210ec506)
+To remove jobs from queues and kill running ones follow the steps described in `troubleshooting/large-sidekiq-queue.md` in this repo. After you removed all jobs, check monitoring metrics of the ES cluster to see if indexing requests stopped coming in. You should also keep an eye on [logs in kibana](https://log.gprd.gitlab.net/goto/370fba905cd3f79770854466210ec506)
 
 *Note*
 You might want to remove namespaces from the list of indexed namespaces (e.g. to prevent creation of new elastic_namespace_indexer jobs). There is a [bug](https://gitlab.com/gitlab-org/gitlab-ee/issues/11225) which prevents removal of indexed namespaces from the admin panel, for this reason it has to be done from the console. See the description of the linked issue for more info on how to do it.
@@ -79,27 +81,25 @@ You can prevent Gitlab from using ES integration for searching, but leave the in
 
 ## Creating and removing indices ##
 
-### Creating and removing indices - TLDR ###
-
-Creating:
-- The rake task that creates the index is also setting up mapping, so the easiest way to create the index is by using [the rake task](https://docs.gitlab.com/ee/integration/elasticsearch.html#gitlab-elasticsearch-rake-tasks). If you don't use that rake task you'll have to create mappings yourself!
-
-Removing:
-- Removing can be done through kibana's index management page
-
 ### Recreating an index ###
 
 In gitlab's admin panel, disable for all namespaces -> wipe elastic cluster -> use clear_index_status rake task to "forget" all indexing progress -> recreate index
 
 ### Creating an index (shards considerations) ###
 
-At the time of writing, the rake task does not allow you to specify the number of shards ( https://gitlab.com/gitlab-org/gitlab-ee/issues/2087 ). This will result in number_of_routing_shards being set to 5 and this prevents the index from being split.
+[The rake task](https://docs.gitlab.com/ee/integration/elasticsearch.html#gitlab-elasticsearch-rake-tasks) that creates the index is also setting up mappings, so the easiest way to create the index is by using it rather than creating the index manually. If you don't use that rake task you'll have to create mappings yourself!
+
+The rake task actually will schedule 4 other tasks, which includes index_snippets which will index all index_snippets. Make sure this is what you want.
 
 You can only split the index if you have a sufficient number of routing_shards. The number_of_routing_shards translates to the number of keys in the hashing table so it cannot be adjusted after the index has been created.
 
 ELK 6.x will by default create as many routing shards as there were shards defined during index creation. By default, indeces are created with 5 shards, which means that by default there will be 5 routing shards, which means you cannot split the index once it's created using defaults.
 
 ELK 7.x by default uses a very high number of routing shards which allows you to split the index.
+
+### Removing an index ###
+
+Removing can be done through kibana's index management page
 
 ## Shards management ##
 

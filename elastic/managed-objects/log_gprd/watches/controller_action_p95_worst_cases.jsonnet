@@ -84,7 +84,7 @@ local painlessScript(script) = {
 };
 
 local searchLinkTemplate() =
-  "https://log.gitlab.net/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&_a=(columns:!(json.controller,json.action,json.duration,json.path,json.status),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AW5F1e45qthdGjPJueGO,key:json.controller,negate:!f,type:phrase,value:'{{controller}}'),query:(match:(json.controller:(query:'{{controller}}',type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AW5F1e45qthdGjPJueGO,key:json.action,negate:!f,type:phrase,value:'{{actionKey}}'),query:(match:(json.action:(query:'{{actionKey}}',type:phrase))))),index:AW5F1e45qthdGjPJueGO,interval:auto,query:(match_all:()),sort:!(json.duration,desc))";
+  "https://log.gprd.gitlab.net/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&_a=(columns:!(json.controller,json.action,json.duration,json.path,json.status),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AW5F1e45qthdGjPJueGO,key:json.controller,negate:!f,type:phrase,value:'{{controller}}'),query:(match:(json.controller:(query:'{{controller}}',type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AW5F1e45qthdGjPJueGO,key:json.action,negate:!f,type:phrase,value:'{{actionKey}}'),query:(match:(json.action:(query:'{{actionKey}}',type:phrase))))),index:AW5F1e45qthdGjPJueGO,interval:auto,query:(match_all:()),sort:!(json.duration,desc))";
 
 {
   trigger: {

@@ -5,7 +5,6 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'sidekiq',
   tier: 'sv',
-  autogenerateRecordingRules: false,  // TODO: enable autogeneration of recording rules for this service
   slos: {
     apdexRatio: 0.95,
     errorRatio: 0.05,
@@ -28,14 +27,14 @@ local rateMetric = metricsCatalog.rateMetric;
         selector='latency_sensitive="yes"'
       ),
 
-      significantLabels: ['queue'],
+      significantLabels: ['priority'],
     },
 
     latency_sensitive_job_queueing: {
       apdex: histogramApdex(
         histogram='sidekiq_jobs_queue_duration_seconds_bucket',
         selector='latency_sensitive="yes"',
-        satisfiedThreshold=2.5,
+        satisfiedThreshold=10,
       ),
 
       requestRate: rateMetric(
@@ -43,7 +42,7 @@ local rateMetric = metricsCatalog.rateMetric;
         selector='latency_sensitive="yes"'
       ),
 
-      significantLabels: ['queue'],
+      significantLabels: ['priority'],
     },
 
     non_latency_sensitive_job_execution: {
@@ -63,7 +62,7 @@ local rateMetric = metricsCatalog.rateMetric;
         selector='latency_sensitive="no"'
       ),
 
-      significantLabels: ['queue'],
+      significantLabels: ['priority'],
     },
 
     non_latency_sensitive_job_queueing: {
@@ -78,7 +77,7 @@ local rateMetric = metricsCatalog.rateMetric;
         selector='latency_sensitive="no"'
       ),
 
-      significantLabels: ['queue'],
+      significantLabels: ['priority'],
     },
   },
 

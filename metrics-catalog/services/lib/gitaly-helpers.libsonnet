@@ -1,7 +1,9 @@
 local gitalyApdexIgnoredMethods = std.set([
+  'CalculateChecksum',
   'CommitLanguages',
   'CreateFork',
   'CreateRepositoryFromURL',
+  'FetchInternalRemote',
   'FetchRemote',
   'FindRemoteRepository',
   'FindRemoteRootRef',
