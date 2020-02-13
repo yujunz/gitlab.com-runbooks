@@ -52,3 +52,19 @@
     If ipaddress contains a wrong public ip update /etc/ipaddress.txt on the node and run chef-client
     
     If ipaddress contains a private (local) ip make sure /etc/ipaddress.txt is set and the node has at least the chef role base-X where X is the OS type like debian etc. check chef-repo/roles/base-* for all current base roles.
+
+## Alerts
+
+### Chef client failures have reached critical levels
+
+Alert name: ChefClientErrorCritical
+Alert text: At least 10% of type TYPE are failing chef-runs
+
+What to do: 
+1. Find one of the nodes that is affected
+   * The alert is summarized; click the link to the prometheus graph from the alert (to get to the alerting environment easily), and adjust the query to just be `chef_client_error > 0`.  It should list a metric for each node that is currently broken, from which you can select one of the type that is alerting.  There will often be some correlation/commonality that may stand out and allow you to select a suitable first candidate.
+1. On that node, inspect the chef logs (`sudo grep chef-client /var/log/syslog|less`) to determine what's broken.
+  * It could be anything, but td-agent and incompatible gem combinations is common.  In that case you can use `td-agent-gem` to manually adjust installed versions until the list of gems, often google-related, are all compatible with each other (compare to a still functional node for versions if necessary).  Or delete all the installed gems and start again (running chef-client may bootstrap things again in that case).
+
+
+
