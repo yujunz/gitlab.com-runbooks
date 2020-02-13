@@ -60,6 +60,10 @@ OptionParser.new do |opts|
     options[:correlation_query] = v
   end
 
+  opts.on("--sleep=N", "Number of seconds to sleep between queries") do |v|
+    options[:sleep] = v.to_i
+  end
+
   opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
     options[:verbose] = v
   end
@@ -230,6 +234,8 @@ clusters.each do |cluster, url|
         puts body
         puts
       end
+
+      sleep options[:sleep] if options[:sleep]
     end
   end
 
