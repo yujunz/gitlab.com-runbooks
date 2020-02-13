@@ -41,6 +41,9 @@
                 },
               },
             },
+            db: {
+              type: 'float',
+            },
             target_id: {
               type: 'text',
               fields: {
