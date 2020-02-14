@@ -15,6 +15,15 @@
    information from key management services into local configurations.
 
 
+```mermaid
+sequenceDiagram
+  participant TF as Terraform Project
+  participant VM as New VM
+  participant GKMS as Secrets Vault
+  participant GM as Google Metadata
+  participant CS as Chef Server
+```
+
 ## VM Teardown Process with Terraform and Chef
 
 Note: When a virtual machine is provisioned, a shutdown script that
