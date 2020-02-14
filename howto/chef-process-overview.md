@@ -24,7 +24,11 @@ sequenceDiagram
   participant CS as Chef Server
 
   TF->>GM: Add Chef and Scripts
-  TF->>VM: Create Machine
+  TF->>+VM: Create Machine
+  Note over TF,VM: Startup Script Runs
+  VM->GKMS: Retrieve Secrets
+  VM->GM: Retrieve Metadata
+  VM->>-CS: Register in Chef
 ```
 
 ## VM Teardown Process with Terraform and Chef
