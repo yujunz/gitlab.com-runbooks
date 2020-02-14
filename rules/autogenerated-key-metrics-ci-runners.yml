@@ -11,7 +11,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{}[1h])
+        rate(gitlab_workhorse_http_requests_total{route="^/api/v4/jobs/request\\z"
+      }[1h])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -20,7 +21,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{}[1m])
+        rate(gitlab_workhorse_http_requests_total{route="^/api/v4/jobs/request\\z"
+      }[1m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -29,7 +31,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{}[30m])
+        rate(gitlab_workhorse_http_requests_total{route="^/api/v4/jobs/request\\z"
+      }[30m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -38,7 +41,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{}[5m])
+        rate(gitlab_workhorse_http_requests_total{route="^/api/v4/jobs/request\\z"
+      }[5m])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -47,7 +51,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{}[6h])
+        rate(gitlab_workhorse_http_requests_total{route="^/api/v4/jobs/request\\z"
+      }[6h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -56,7 +61,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[1h])
+        rate(gitlab_workhorse_http_requests_total{code=~"5..", route="^/api/v4/jobs/request\\z"
+      }[1h])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -65,7 +71,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[1m])
+        rate(gitlab_workhorse_http_requests_total{code=~"5..", route="^/api/v4/jobs/request\\z"
+      }[1m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -74,7 +81,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[30m])
+        rate(gitlab_workhorse_http_requests_total{code=~"5..", route="^/api/v4/jobs/request\\z"
+      }[30m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -83,7 +91,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[5m])
+        rate(gitlab_workhorse_http_requests_total{code=~"5..", route="^/api/v4/jobs/request\\z"
+      }[5m])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -92,7 +101,8 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_builds_register_handler_requests{status=~"body-parse-error|body-read-error|missing-values|watch-error"}[6h])
+        rate(gitlab_workhorse_http_requests_total{code=~"5..", route="^/api/v4/jobs/request\\z"
+      }[6h])
       )
   - record: gitlab_component_apdex:ratio
     labels:
