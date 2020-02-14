@@ -106,7 +106,7 @@ local searchLinkTemplate() =
         message: {
           from: 'ElasticCloud Watcher: worst-case p95',
           to: [
-            '#alerts-test',
+            '#mech_symp_alerts',
           ],
           text: '*Worst performing Rails controllers in the applications, by p95 latency*\nClick through the attachment title to find events in the logs...',
           dynamic_attachments: {

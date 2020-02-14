@@ -113,7 +113,7 @@ local painlessScript(script) = {
         message: {
           from: 'ElasticCloud Watcher: gitaly_abuse_1',
           to: [
-            '#alerts-prod-abuse',
+            '#alerts-test',
           ],
           text: 'Unusual Gitaly activity for a project has been detected. Review the runbook at https://gitlab.com/gitlab-com/runbooks/tree/master/troubleshooting/gitaly-unusual-activity.md for more details',
           dynamic_attachments: {
