@@ -16,3 +16,12 @@
 
 
 ## VM Teardown Process with Terraform and Chef
+
+Note: When a virtual machine is provisioned, a shutdown script that
+de-registers the VM from Chef is put in place. This process depends on that
+script.
+
+1. The Terraform configuration is adjusted to remove virtual machines and is
+   applied.
+1. As the virtual machines are stopped, they de-register themselves from Chef
+   by way of the shutdown script before being deleted.
