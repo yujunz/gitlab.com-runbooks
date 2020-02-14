@@ -17,11 +17,14 @@
 
 ```mermaid
 sequenceDiagram
-  participant TF as Terraform Project
+  participant TF as Terraform Project CI
   participant VM as New VM
   participant GKMS as Secrets Vault
   participant GM as Google Metadata
   participant CS as Chef Server
+
+  TF->>GM: Add Chef and Scripts
+  TF->>VM: Create Machine
 ```
 
 ## VM Teardown Process with Terraform and Chef
