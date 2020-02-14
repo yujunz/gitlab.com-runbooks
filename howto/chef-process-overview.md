@@ -23,9 +23,9 @@ sequenceDiagram
   participant GM as Google Metadata
   participant CS as Chef Server
 
-  TF->>GM: Add Chef and Scripts
+  TF->>GM: Add Chef Metadata and Scripts
   TF->>+VM: Create Machine
-  Note over TF,VM: Startup Script Runs
+  Note over VM: Startup Script Runs
   VM->GKMS: Retrieve Secrets
   VM->GM: Retrieve Metadata
   VM->>-CS: Register in Chef
