@@ -3,8 +3,8 @@
 1. The Terrafom configuration defines the number, role, and configuration of
    virtual machines that will be built.
 1. When the Terraform configuration is applied in order to create a new VM,
-   Chef metadata is also added to the instance along with a startup script
-   that will run on each boot of the VM.
+   Chef metadata (such as the role, server URL, etc) is added to the instance
+   along with a startup script that will run on each boot of the VM.
 1. The startup script installs the Chef client, retrieves a Chef key from the
    secure key management system, and boot-straps itself into Chef using the
    provided metadata.
