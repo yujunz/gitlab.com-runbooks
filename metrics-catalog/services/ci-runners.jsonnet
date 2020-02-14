@@ -21,14 +21,18 @@ local rateMetric = metricsCatalog.rateMetric;
   components: {
     polling: {
       requestRate: rateMetric(
-        counter='gitlab_workhorse_builds_register_handler_requests',
-        selector=''
+        counter='gitlab_workhorse_http_requests_total',
+        // Note, using `|||` avoids having to double-escape the backslashes in the selector query
+        selector=|||
+          route="^/api/v4/jobs/request\\z"
+        |||,
       ),
 
-      // See https://gitlab.com/gitlab-org/gitlab-workhorse/blob/master/internal/builds/register.go for details of each status label
       errorRate: rateMetric(
-        counter='gitlab_workhorse_builds_register_handler_requests',
-        selector='status=~"body-parse-error|body-read-error|missing-values|watch-error"'
+        counter='gitlab_workhorse_http_requests_total',
+        selector=|||
+          code=~"5..", route="^/api/v4/jobs/request\\z"
+        |||,
       ),
     },
 
