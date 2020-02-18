@@ -175,6 +175,55 @@ local generateComponentRecordingRules(serviceDefinition) =
 local generateNodeRecordingRules(serviceDefinition) =
   generateComponentRecordingRulesForAggregations(serviceDefinition, NODE_LEVEL_RECORDING_RULE_NAMES, NODE_LEVEL_AGGREGATION_LABELS);
 
+local componentErrorRatioTemplate = |||
+  gitlab_component_errors:rate%(prefix)s
+  /
+  gitlab_component_ops:rate%(prefix)s
+|||;
+
+local serviceErrorRatioTemplate = |||
+  sum by (environment, tier, type, stage) (gitlab_component_errors:rate%(prefix)s >= 0)
+  /
+  sum by (environment, tier, type, stage) (gitlab_component_ops:rate%(prefix)s > 0)
+|||;
+
+local serviceNodeErrorRatioTemplate = |||
+  sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate%(prefix)s >= 0)
+  /
+  sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate%(prefix)s > 0)
+|||;
+
+
+// generateMultiWindowErrorRatios generates a single window error ratio
+// recording rules for the given prefix
+local generateErrorRatiosForPrefix(prefix) =
+  local format = { prefix: prefix };
+
+  [
+    {
+      record: 'gitlab_component_errors:ratio%(prefix)s' % format,
+      expr: componentErrorRatioTemplate % format,
+    },
+    {
+      record: 'gitlab_service_errors:ratio%(prefix)s' % format,
+      expr: serviceErrorRatioTemplate % format,
+    },
+    {
+      record: 'gitlab_service_node_errors:ratio%(prefix)s' % format,
+      expr: serviceNodeErrorRatioTemplate % format,
+    },
+  ];
+
+// generateMultiWindowErrorRatios generates a set of multiwindow error ratio
+// recording rules for the given set of prefixes
+local generateMultiWindowErrorRatios(prefixes) =
+  std.flattenArrays(
+    std.map(
+      function(prefix) generateErrorRatiosForPrefix(prefix),
+      prefixes
+    )
+  );
+
 {
   keyMetrics(services)::
     std.flattenArrays(std.map(generateComponentRecordingRules, services)),
@@ -184,5 +233,15 @@ local generateNodeRecordingRules(serviceDefinition) =
 
   nodeMetrics(services)::
     std.flattenArrays(std.map(generateNodeRecordingRules, services)),
+
+
+  multiwindowErrorRatios()::
+    generateMultiWindowErrorRatios([
+      '',  // For historical reasons, no prefix implies 1m
+      '_5m',
+      '_30m',
+      '_1h',
+      '_6h',
+    ]),
 
 }
