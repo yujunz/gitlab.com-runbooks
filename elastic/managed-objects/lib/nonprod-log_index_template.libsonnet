@@ -64,6 +64,23 @@
                 },
               },
             },
+            extra: {
+              properties: {
+                sidekiq: {
+                  properties: {
+                    args: {
+                      type: 'text',
+                    },
+                    retry: {
+                      type: 'text',
+                    },
+                  },
+                },
+              },
+            },
+            user_id: {
+              type: 'long',
+            },
           },
         },
       },
