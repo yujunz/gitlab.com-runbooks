@@ -56,6 +56,9 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
         toleratedThreshold=30
       ),
 
+      /*
+      TODO: Uncomment these lines once Gitaly Ruby observability issues are solved.
+      See https://gitlab.com/gitlab-org/gitaly/issues/2467
       requestRate: rateMetric(
         counter='grpc_client_handled_total',
         selector='job="gitaly"'
@@ -65,6 +68,7 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
         counter='grpc_client_handled_total',
         selector='job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"'
       ),
+      */
 
       significantLabels: ['fqdn'],
     },
