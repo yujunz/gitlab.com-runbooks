@@ -69,6 +69,17 @@
                 },
               },
             },
+            extra: {
+              properties: {
+                sidekiq: {
+                  properties: {
+                    args: {
+                      type: 'text',
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
