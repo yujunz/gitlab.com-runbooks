@@ -5,7 +5,7 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'monitoring',
   tier: 'inf',
-  slos: {
+  monitoringThresholds: {
     /*
     TODO: enable SLOs for monitoring service
     apdexRatio: 0.95,

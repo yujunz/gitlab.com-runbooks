@@ -14,6 +14,11 @@ groups:
       tier: sv
       type: api
     expr: '0.005'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: api
+    expr: '0.001'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       alert_trigger_duration: long

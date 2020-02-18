@@ -5,7 +5,7 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'frontend',
   tier: 'lb',
-  slos: {
+  monitoringThresholds: {
     apdexRatio: 0.9,
     errorRatio: 0.0005,
   },

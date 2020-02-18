@@ -8,8 +8,8 @@ local row = grafana.row;
 local selectors = import './lib/selectors.libsonnet';
 
 local getLatencyPercentileForService(service) =
-  if std.objectHas(service, 'slos') && std.objectHas(service.slos, 'apdexRatio') then
-    service.slos.apdexRatio
+  if std.objectHas(service, 'monitoringThresholds') && std.objectHas(service.monitoringThresholds, 'apdexRatio') then
+    service.monitoringThresholds.apdexRatio
   else
     0.95;
 

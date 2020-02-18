@@ -39,4 +39,11 @@
       labels: labels,
       expr: expr,
     },
+
+  maxErrorsEventRateSLO(labels, expr)::
+    {
+      record: 'slo:max:events:gitlab_service_errors:ratio',
+      labels: labels,
+      expr: expr,
+    },
 }

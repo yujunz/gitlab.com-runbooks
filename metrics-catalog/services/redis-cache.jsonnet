@@ -5,7 +5,7 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'redis-cache',
   tier: 'db',
-  slos: {
+  monitoringThresholds: {
     apdexRatio: 0.95,
   },
   components: {

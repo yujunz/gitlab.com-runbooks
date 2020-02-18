@@ -6,7 +6,7 @@ local combined = metricsCatalog.combined;
 {
   type: 'patroni',
   tier: 'db',
-  slos: {
+  monitoringThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.005,
   },

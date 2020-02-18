@@ -6,7 +6,7 @@ local combined = metricsCatalog.combined;
 {
   type: 'web-pages',
   tier: 'sv',
-  slos: {
+  monitoringThresholds: {
     apdexRatio: 0.9,
     errorRatio: 0.005,
   },
