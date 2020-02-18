@@ -71,6 +71,9 @@
                     args: {
                       type: 'text',
                     },
+                    retry: {
+                      type: 'text',
+                    },
                   },
                 },
               },
