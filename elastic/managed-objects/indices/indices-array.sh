@@ -13,6 +13,7 @@ export indices=(
   nginx
   pages
   postgres
+  praefect
   puma
   rails
   redis
