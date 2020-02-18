@@ -156,6 +156,50 @@ groups:
           promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
 
       # ------------------------------------------------------------------------------
+      # Multiwindow/Multiburn Error Rate Monitoring for COMPONENTS. EXPERIMENTAL
+      # ------------------------------------------------------------------------------
+
+      # The error rate SLO target for a component is not being met. EXPERIMENTAL
+      - alert: component_error_ratio_burn_rate_slo_out_of_bounds_upper
+        expr: |
+          (
+            gitlab_component_errors:ratio_1h > on(tier, type) group_left() (14.4*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
+          and
+            gitlab_component_errors:ratio_5m > on(tier, type) group_left()  (14.4*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
+          )
+          or
+          (
+            gitlab_component_errors:ratio_6h > on(tier, type) group_left() (6*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
+          and
+            gitlab_component_errors:ratio_30m > on(tier, type) group_left() (6*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
+          )
+        for: 2m
+        labels:
+          rules_domain: general
+          metric: gitlab_component_errors:ratio_1h
+          severity: s3
+          slo_alert: 'yes'
+          experimental: 'yes'
+          period: 2m
+          bound: upper
+          # pager: pagerduty uncomment after trimming down 4xx errors that we don't control
+        annotations:
+          title: "The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage, has an error burn-rate exceeding SLO"
+          description: >
+            The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage has an error burn-rate outside of SLO
+
+            The error-burn rate for this service is outside of SLO over multiple windows.
+            Currently the error-rate is {{ $value | humanizePercentage }}%.
+          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          grafana_dashboard_id: "general-service/service-platform-metrics"
+          grafana_panel_id: "8"
+          grafana_variables: "environment,type,stage"
+          grafana_min_zoom_hours: "6"
+          link1_title: "Definition"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
+          promql_template_1: 'gitlab_component_errors:ratio_5m {environment="$environment", type="$type", stage="$stage", component="$component"}'
+
+      # ------------------------------------------------------------------------------
       # Saturation alerts
       # ------------------------------------------------------------------------------
 

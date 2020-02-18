@@ -109,11 +109,12 @@ local generateErrorRateRules(aggregationLabels, componentDefinition, recordingRu
     [];
 
 local generateServiceSLORules(serviceDefinition) =
-  local hasSlos = std.objectHas(serviceDefinition, 'slos');
+  local hasMonitoringThresholds = std.objectHas(serviceDefinition, 'monitoringThresholds');
+  local hasEventBasedSLOTargets = std.objectHas(serviceDefinition, 'eventBasedSLOTargets');
 
-  local triggerDurationLabels = if hasSlos && std.objectHas(serviceDefinition.slos, 'alertTriggerDuration') then
+  local triggerDurationLabels = if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'alertTriggerDuration') then
     {
-      alert_trigger_duration: serviceDefinition.slos.alertTriggerDuration,
+      alert_trigger_duration: serviceDefinition.monitoringThresholds.alertTriggerDuration,
     }
   else {};
 
@@ -123,17 +124,25 @@ local generateServiceSLORules(serviceDefinition) =
   } + triggerDurationLabels;
 
   std.prune([
-    if hasSlos && std.objectHas(serviceDefinition.slos, 'apdexRatio') then
+    if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'apdexRatio') then
       recordingRules.minApdexSLO(
         labels=labels,
-        expr='%g' % [serviceDefinition.slos.apdexRatio]
+        expr='%g' % [serviceDefinition.monitoringThresholds.apdexRatio]
       )
     else null,
 
-    if hasSlos && std.objectHas(serviceDefinition.slos, 'errorRatio') then
+    if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'errorRatio') then
       recordingRules.maxErrorsSLO(
         labels=labels,
-        expr='%g' % [serviceDefinition.slos.errorRatio],
+        expr='%g' % [serviceDefinition.monitoringThresholds.errorRatio],
+      )
+    else null,
+
+    // Note: the max error rate is `1 - sla`
+    if hasEventBasedSLOTargets && std.objectHas(serviceDefinition.eventBasedSLOTargets, 'errorRatio') then
+      recordingRules.maxErrorsEventRateSLO(
+        labels=labels,
+        expr='%g' % [1 - serviceDefinition.eventBasedSLOTargets.errorRatio],
       )
     else null,
   ]);

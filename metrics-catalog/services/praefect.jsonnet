@@ -6,7 +6,7 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 {
   type: 'praefect',
   tier: 'stor',
-  slos: {
+  monitoringThresholds: {
     apdexRatio: 0.995,
     errorRatio: 0.001,
   },

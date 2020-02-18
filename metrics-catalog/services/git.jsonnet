@@ -6,7 +6,7 @@ local customRateQuery = metricsCatalog.customRateQuery;
 {
   type: 'git',
   tier: 'sv',
-  slos: {
+  monitoringThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.005,
   },

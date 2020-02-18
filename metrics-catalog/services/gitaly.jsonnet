@@ -11,7 +11,7 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
   // Since each Gitaly node is a SPOF for a subset of repositories, we need to ensure that
   // we have node-level monitoring on these hosts
   nodeLevelMonitoring: true,
-  slos: {
+  monitoringThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.001,
     alertTriggerDuration: 'long',

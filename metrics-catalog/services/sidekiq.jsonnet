@@ -5,7 +5,7 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'sidekiq',
   tier: 'sv',
-  slos: {
+  monitoringThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.05,
   },
