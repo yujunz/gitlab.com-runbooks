@@ -1,5 +1,5 @@
 ---
-image: "${CI_REGISTRY_IMAGE}:3.0.5"
+image: "${CI_REGISTRY_IMAGE}:3.0.6"
 
 stages:
   - images
