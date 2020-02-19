@@ -127,14 +127,14 @@ local generateServiceSLORules(serviceDefinition) =
     if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'apdexRatio') then
       recordingRules.minApdexSLO(
         labels=labels,
-        expr='%g' % [serviceDefinition.monitoringThresholds.apdexRatio]
+        expr='%f' % [serviceDefinition.monitoringThresholds.apdexRatio]
       )
     else null,
 
     if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'errorRatio') then
       recordingRules.maxErrorsSLO(
         labels=labels,
-        expr='%g' % [serviceDefinition.monitoringThresholds.errorRatio],
+        expr='%f' % [serviceDefinition.monitoringThresholds.errorRatio],
       )
     else null,
 
@@ -142,7 +142,7 @@ local generateServiceSLORules(serviceDefinition) =
     if hasEventBasedSLOTargets && std.objectHas(serviceDefinition.eventBasedSLOTargets, 'errorRatio') then
       recordingRules.maxErrorsEventRateSLO(
         labels=labels,
-        expr='%g' % [1 - serviceDefinition.eventBasedSLOTargets.errorRatio],
+        expr='%f' % [1 - serviceDefinition.eventBasedSLOTargets.errorRatio],
       )
     else null,
   ]);

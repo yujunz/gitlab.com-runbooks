@@ -10,6 +10,9 @@ local customRateQuery = metricsCatalog.customRateQuery;
     apdexRatio: 0.95,
     errorRatio: 0.005,
   },
+  eventBasedSLOTargets: {
+    errorRatio: 0.995,  // 99.5% of Git requests should succeed, over multiple window periods
+  },
   components: {
     workhorse: {
       apdex: histogramApdex(

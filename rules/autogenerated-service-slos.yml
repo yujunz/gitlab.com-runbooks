@@ -8,128 +8,160 @@ groups:
     labels:
       tier: sv
       type: api
-    expr: '0.9'
+    expr: '0.900000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: sv
       type: api
-    expr: '0.005'
+    expr: '0.005000'
   - record: slo:max:events:gitlab_service_errors:ratio
     labels:
       tier: sv
       type: api
-    expr: '0.001'
+    expr: '0.001000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       alert_trigger_duration: long
       tier: runners
       type: ci-runners
-    expr: '0.8'
+    expr: '0.800000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       alert_trigger_duration: long
       tier: runners
       type: ci-runners
-    expr: '0.2'
+    expr: '0.200000'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      alert_trigger_duration: long
+      tier: runners
+      type: ci-runners
+    expr: '0.005000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: lb
       type: frontend
-    expr: '0.9'
+    expr: '0.900000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: lb
       type: frontend
-    expr: '0.0005'
+    expr: '0.000500'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv
       type: git
-    expr: '0.95'
+    expr: '0.950000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: sv
       type: git
-    expr: '0.005'
+    expr: '0.005000'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: git
+    expr: '0.005000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       alert_trigger_duration: long
       tier: stor
       type: gitaly
-    expr: '0.95'
+    expr: '0.950000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       alert_trigger_duration: long
       tier: stor
       type: gitaly
-    expr: '0.001'
+    expr: '0.001000'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      alert_trigger_duration: long
+      tier: stor
+      type: gitaly
+    expr: '0.001000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: stor
       type: nfs
-    expr: '0.0001'
+    expr: '0.000100'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      tier: stor
+      type: nfs
+    expr: '0.000100'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: db
       type: patroni
-    expr: '0.95'
+    expr: '0.950000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: db
       type: patroni
-    expr: '0.005'
+    expr: '0.005000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: stor
       type: praefect
-    expr: '0.995'
+    expr: '0.995000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: stor
       type: praefect
-    expr: '0.001'
+    expr: '0.001000'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      tier: stor
+      type: praefect
+    expr: '0.001000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: db
       type: redis-cache
-    expr: '0.95'
+    expr: '0.950000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv
       type: registry
-    expr: '0.9'
+    expr: '0.900000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: sv
       type: registry
-    expr: '0.005'
+    expr: '0.005000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv
       type: sidekiq
-    expr: '0.95'
+    expr: '0.950000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: sv
       type: sidekiq
-    expr: '0.05'
+    expr: '0.050000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv
       type: web-pages
-    expr: '0.9'
+    expr: '0.900000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: sv
       type: web-pages
-    expr: '0.005'
+    expr: '0.005000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv
       type: web
-    expr: '0.95'
+    expr: '0.950000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: sv
       type: web
-    expr: '0.005'
+    expr: '0.005000'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: web
+    expr: '0.000100'

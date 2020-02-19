@@ -16,6 +16,9 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
     errorRatio: 0.001,
     alertTriggerDuration: 'long',
   },
+  eventBasedSLOTargets: {
+    errorRatio: 0.999,  // 99.9% of Gitaly requests should succeed, over multiple window periods
+  },
   components: {
     goserver: {
       apdex: histogramApdex(

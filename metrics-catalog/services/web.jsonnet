@@ -9,6 +9,9 @@ local rateMetric = metricsCatalog.rateMetric;
     apdexRatio: 0.95,
     errorRatio: 0.005,
   },
+  eventBasedSLOTargets: {
+    errorRatio: 0.9999,  // 99.99% of Web requests should succeed, over multiple window periods
+  },
   components: {
     workhorse: {
       apdex: histogramApdex(
