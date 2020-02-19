@@ -545,6 +545,7 @@ local commonAnnotations = import 'common_annotations.libsonnet';
     description='Availability',
     query,
     legendFormat='',
+    links=[],
   )::
     {
       datasource: '$PROMETHEUS_DS',
@@ -603,7 +604,7 @@ local commonAnnotations = import 'common_annotations.libsonnet';
             color: {
               mode: 'thresholds',
             },
-            links: [],
+            links: links,
           },
           overrides: [],
           thresholds: [

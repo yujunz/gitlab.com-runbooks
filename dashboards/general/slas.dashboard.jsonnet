@@ -22,6 +22,13 @@ local thresholds = import 'thresholds.libsonnet';
 local INTERVAL_FACTOR = 50;
 local INTERVAL = '1d';
 
+local overviewDashboardLinks = [
+  {
+    url: '/d/${__field.labels.type}-main/${__field.labels.type}-overview?orgId=1',
+    title: '${__field.labels.type} service: Overview Dashboard',
+  },
+];
+
 local timeRegions = {
   timeRegions: [
     {
@@ -136,7 +143,8 @@ basic.dashboard(
       query=|||
         avg(avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])) by (type)
       ||| % { keyServiceRegExp: keyServiceRegExp },
-      legendFormat='{{ type }}'
+      legendFormat='{{ type }}',
+      links=overviewDashboardLinks,
     ),
   ], cols=1, rowHeight=5, startRow=2001)
 )
@@ -153,7 +161,10 @@ basic.dashboard(
       interval=INTERVAL,
       intervalFactor=INTERVAL_FACTOR,
       points=true,
-    ) + timeRegions + thresholdsValues,
+    ) + timeRegions + thresholdsValues +
+    {
+      options: { dataLinks: overviewDashboardLinks },
+    },
   ], cols=1, rowHeight=10, startRow=2101)
 )
 .trailer()
