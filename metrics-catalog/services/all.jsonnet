@@ -1,6 +1,7 @@
 [
   import 'api.jsonnet',
   import 'ci-runners.jsonnet',
+  import 'elasticsearch.jsonnet',
   import 'frontend.jsonnet',
   import 'git.jsonnet',
   import 'gitaly.jsonnet',

@@ -95,6 +95,46 @@ groups:
         1
       )
 
+  # type: elasticsearch, component: elastic_cpu
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'elastic_cpu'
+    expr: >
+      avg by (type, tier, stage, environment) (
+          elasticsearch_os_cpu_percent/100
+        )
+
+  # type: elasticsearch, component: single_node_cpu_usage
+  # this measures the maximum cpu saturation across all the nodes on a single server
+  # this can be helpful if CPU is not even distributed across the fleet.
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'elastic_single_node_cpu'
+    expr: >
+      max(
+        avg by (name, type, tier, stage, environment) (
+            elasticsearch_os_cpu_percent/100
+        )
+      ) without (name)
+
+  # type: elasticsearch, component: elastic_disk_space
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'elastic_disk_space'
+    expr: >
+      max by (type, tier, stage, environment) (
+        (elasticsearch_filesystem_data_size_bytes - elasticsearch_filesystem_data_free_bytes) / elasticsearch_filesystem_data_size_bytes
+      )
+
+  # type: elasticsearch, component: elastic_jvm_heap_memory
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'elastic_jvm_heap_memory'
+    expr: >
+      max by (type, tier, stage, environment) (
+        elasticsearch_jvm_memory_used_bytes{area="heap"} / elasticsearch_jvm_memory_max_bytes{area="heap"}
+      )
+
   # type: redis/redis cache, component: single_threaded_cpu
   - record: gitlab_component_saturation:ratio
     labels:
