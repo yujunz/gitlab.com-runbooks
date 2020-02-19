@@ -19,5 +19,10 @@
     nfs_disk_sustained_write_iops_maximum_magic_number: 15000,
     nfs_disk_sustained_write_throughput_bytes_maximum_magic_number: 400 * 1024 * 1024,  // 400MB/s
 
+    // Obtained from https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/patroni-02-db-gprd-data?project=gitlab-production
+    patroni_disk_sustained_read_iops_maximum_magic_number: 100000,
+    patroni_disk_sustained_read_throughput_bytes_maximum_magic_number: 1200 * 1024 * 1024,  // 1200MB/s
+    patroni_disk_sustained_write_iops_maximum_magic_number: 30000,
+    patroni_disk_sustained_write_throughput_bytes_maximum_magic_number: 800 * 1024 * 1024,  // 800MB/s
   },
 }
