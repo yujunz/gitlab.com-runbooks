@@ -10,6 +10,9 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
     apdexRatio: 0.995,
     errorRatio: 0.001,
   },
+  eventBasedSLOTargets: {
+    errorRatio: 0.999,  // 99.9% of Praefect requests should succeed, over multiple window periods
+  },
   components: {
     proxy: {
       apdex: histogramApdex(

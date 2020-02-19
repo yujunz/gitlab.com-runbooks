@@ -8,6 +8,9 @@ local rateMetric = metricsCatalog.rateMetric;
   monitoringThresholds: {
     errorRatio: 0.0001,
   },
+  eventBasedSLOTargets: {
+    errorRatio: 0.9999,  // 99.99% of nfs requests should succeed, over multiple window periods
+  },
   components: {
     nfs_service: {
       requestRate: rateMetric(
