@@ -58,47 +58,6 @@ local keyServices = serviceCatalog.findServices(function(service)
 
 local keyServiceRegExp = std.join('|', std.map(function(service) service.name, keyServices));
 
-local slaBarGauge(title, query, legendFormat) = {
-  options: {
-    displayMode: 'gradient',
-    fieldOptions: {
-      calcs: [
-        'last',
-      ],
-      defaults: {
-        decimals: 1,
-        max: 1,
-        min: 0,
-        unit: 'percentunit',
-      },
-      mappings: [],
-      override: {},
-      thresholds: [{
-        color: 'green',
-        index: 0,
-        value: null,
-      }],
-      values: false,
-    },
-    orientation: 'horizontal',
-  },
-  targets: [
-    {
-      expr: query,
-      format: 'time_series',
-      instant: true,
-      interval: '',
-      intervalFactor: 1,
-      legendFormat: legendFormat,
-      refId: 'A',
-    },
-  ],
-  timeFrom: null,
-  timeShift: null,
-  title: title,
-  type: 'bargauge',
-};
-
 basic.dashboard(
   'SLAs',
   tags=['general', 'slas', 'service-levels'],
@@ -116,20 +75,13 @@ basic.dashboard(
   }
 )
 .addPanel(
-  grafana.singlestat.new(
-    'SLA - GitLab.com',
-    datasource='$PROMETHEUS_DS',
-    format='percentunit',
-  )
-  .addTarget(
-    promQuery.target(
-      |||
-        avg_over_time(sla:gitlab:ratio{environment="$environment", stage="main"}[$__range])
-      |||,
-      instant=true
-    )
+  basic.slaStats(
+    title='Weighted Availability Score - GitLab.com',
+    query=|||
+      avg_over_time(sla:gitlab:ratio{environment="$environment", stage="main"}[$__range])
+    |||,
   ),
-  gridPos={ x: 0, y: 0, w: 4, h: 4 },
+  gridPos={ x: 0, y: 0, w: 8, h: 8 },
 )
 .addPanel(
   grafana.text.new(
@@ -148,7 +100,7 @@ basic.dashboard(
       _To see instanteous SLI values for these services, visit the [`general-public-splashscreen`](d/general-public-splashscreen) dashboard._
     |||
   ),
-  gridPos={ x: 4, y: 0, w: 20, h: 6 },
+  gridPos={ x: 8, y: 0, w: 16, h: 8 },
 )
 .addPanels(
   layout.grid([
@@ -179,13 +131,17 @@ basic.dashboard(
 )
 .addPanels(
   layout.grid([
-    slaBarGauge(
+    basic.slaStats(
       title='Primary Services Average Availability for Period',
       query=|||
-        sort(avg(avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])) by (type))
+        avg(avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])) by (type)
       ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='{{ type }}'
     ),
+  ], cols=1, rowHeight=5, startRow=2001)
+)
+.addPanels(
+  layout.grid([
     basic.slaTimeseries(
       title='SLA Trends - Primary Services',
       description='Rolling average SLO adherence for primary services. Higher is better.',
@@ -198,7 +154,7 @@ basic.dashboard(
       intervalFactor=INTERVAL_FACTOR,
       points=true,
     ) + timeRegions + thresholdsValues,
-  ], cols=1, rowHeight=10, startRow=2001)
+  ], cols=1, rowHeight=10, startRow=2101)
 )
 .trailer()
 + {

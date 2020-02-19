@@ -539,4 +539,82 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       min=0,
       show=false,
     ),
+
+  slaStats(
+    title,
+    description='Availability',
+    query,
+    legendFormat='',
+  )::
+    {
+      datasource: '$PROMETHEUS_DS',
+      targets: [promQuery.target(query, legendFormat=legendFormat, instant=true)],
+      title: title,
+      type: 'stat',
+      pluginVersion: '6.6.1',
+      options: {
+        graphMode: 'none',
+        colorMode: 'background',
+        justifyMode: 'auto',
+        fieldOptions: {
+          values: true,
+          calcs: [
+            'last',
+          ],
+          defaults: {
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                {
+                  color: 'red',
+                  value: null,
+                },
+                {
+                  value: 0.95,
+                  color: 'light-red',
+                },
+                {
+                  value: 0.99,
+                  color: 'orange',
+                },
+                {
+                  value: 0.995,
+                  color: 'light-orange',
+                },
+                {
+                  value: 0.9994,
+                  color: 'yellow',
+                },
+                {
+                  value: 0.9995,
+                  color: 'light-yellow',
+                },
+                {
+                  value: 0.9998,
+                  color: 'green',
+                },
+              ],
+            },
+            mappings: [],
+            decimals: 2,
+            max: 1,
+            min: 0,
+            unit: 'percentunit',
+            color: {
+              mode: 'thresholds',
+            },
+            links: [],
+          },
+          overrides: [],
+          thresholds: [
+            {
+              color: 'green',
+              index: 0,
+              value: null,
+            },
+          ],
+        },
+        orientation: 'auto',
+      },
+    },
 }
