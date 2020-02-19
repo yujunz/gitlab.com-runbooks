@@ -3,38 +3,41 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Troubleshooting](#troubleshooting)
-    - [Elastic](#elastic)
-        - [How to check cluster health](#how-to-check-cluster-health)
-        - [How to check cluster logs](#how-to-check-cluster-logs)
-        - [Running commands directly against the API](#running-commands-directly-against-the-api)
-        - [esc-tools scripts](#esc-tools-scripts)
-            - [get shards allocation errors](#get-shards-allocation-errors)
-            - [get shards allocation](#get-shards-allocation)
-            - [get number of threads](#get-number-of-threads)
-            - [get current node allocation](#get-current-node-allocation)
-        - [past incidents](#past-incidents)
-            - [Ideas of things to check (based on previous incidents)](#ideas-of-things-to-check-based-on-previous-incidents)
-            - [high CPU load on a single node](#high-cpu-load-on-a-single-node)
-            - [cluster lags behind with logs after a node was added](#cluster-lags-behind-with-logs-after-a-node-was-added)
-            - [too many active shards on a single node](#too-many-active-shards-on-a-single-node)
-            - [running out of disk space](#running-out-of-disk-space)
-            - [shards unassigned](#shards-unassigned)
-            - [shards unavailable (cluster unhealthy)](#shards-unavailable-cluster-unhealthy)
-            - [shards too big](#shards-too-big)
-    - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm)
-        - [Failure to move an index from a hot node to a warm node](#failure-to-move-an-index-from-a-hot-node-to-a-warm-node)
+  - [Elastic](#elastic)
+    - [How to check cluster health](#how-to-check-cluster-health)
+    - [How to check cluster logs](#how-to-check-cluster-logs)
+    - [Running commands directly against the API](#running-commands-directly-against-the-api)
+    - [esc-tools scripts](#esc-tools-scripts)
+      - [get shards allocation errors](#get-shards-allocation-errors)
+      - [get shards allocation](#get-shards-allocation)
+      - [get number of threads](#get-number-of-threads)
+      - [get current node allocation](#get-current-node-allocation)
+    - [past incidents](#past-incidents)
+      - [Ideas of things to check (based on previous incidents)](#ideas-of-things-to-check-based-on-previous-incidents)
+      - [high CPU load on a single node](#high-cpu-load-on-a-single-node)
+      - [cluster lags behind with logs after a node was added](#cluster-lags-behind-with-logs-after-a-node-was-added)
+      - [too many active shards on a single node](#too-many-active-shards-on-a-single-node)
+      - [running out of disk space](#running-out-of-disk-space)
+    - [Cluster unhealthy](#cluster-unhealthy)
+    - [Shard Allocation Failure](#shard-allocation-failure)
+      - [shards unassigned](#shards-unassigned)
+      - [shards unavailable (cluster unhealthy)](#shards-unavailable-cluster-unhealthy)
+      - [shards too big](#shards-too-big)
+  - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm)
+    - [Failure to move an index from a hot node to a warm node](#failure-to-move-an-index-from-a-hot-node-to-a-warm-node)
 - [Failover and Recovery procedures](#failover-and-recovery-procedures)
-    - [Elastic](#elastic-1)
-        - [delete an index](#delete-an-index)
-        - [retry shard allocation](#retry-shard-allocation)
-        - [moving shards between nodes](#moving-shards-between-nodes)
-        - [restarting an ES deployment](#restarting-an-es-deployment)
-        - [remove oldest indices](#remove-oldest-indices)
-        - [Fixing conflicts in index mappings](#fixing-conflicts-in-index-mappings)
-    - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm-1)
-        - [esc-tools](#esc-tools)
-            - [mark index as complete](#mark-index-as-complete)
-            - [force index rollover](#force-index-rollover)
+  - [Elastic](#elastic-1)
+    - [delete an index](#delete-an-index)
+    - [retry shard allocation](#retry-shard-allocation)
+    - [moving shards between nodes](#moving-shards-between-nodes)
+    - [restarting an ES deployment](#restarting-an-es-deployment)
+    - [remove oldest indices](#remove-oldest-indices)
+    - [Fixing conflicts in index mappings](#fixing-conflicts-in-index-mappings)
+  - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm-1)
+      - [Index Roll-over Failure](#index-roll-over-failure)
+    - [esc-tools](#esc-tools)
+      - [mark index as complete](#mark-index-as-complete)
+      - [force index rollover](#force-index-rollover)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -122,6 +125,30 @@ for different reasons:
 - rebalancing taking place
 
 storage usage in the web UI was in red and the absolute value was high (e.g. 99%)
+
+We plan to alert on that: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8548
+
+### Cluster unhealthy
+
+`_cluster/health` endpoint returns anything other than `green`.
+
+We have alerts for the production logging cluster:
+https://gitlab.com/gitlab-com/runbooks/blob/master/rules/elastic-clusters.yml#L24-33
+and monitoring cluster:
+https://gitlab.com/gitlab-com/runbooks/blob/master/rules/elastic-clusters.yml#L44-53
+being in a state other than `green`.
+
+### Shard Allocation Failure
+
+In the past we saw this happen in multiple scenarios. Here are a few examples:
+
+ - an ILM policy has requirements that no node can meet (there is no prior
+   indication of that)
+ - max allocation retry limit was reached, allocation was stopped and never
+   retried (for example when a cluster is unhealthy and recovers by itself)
+ - storage watermarks on nodes were reached (the scheduler will refuse to
+   allocate shards to those nodes)
+ - read-only blocks on node/cluster
 
 #### shards unassigned ####
 
@@ -241,6 +268,27 @@ Here's an example of a static mapping set for `json.args`: https://gitlab.com/gi
 Once the index templates are updated (the above MR is merged and CI job successfully uploaded templates) you'll also need to [force a rollover of indices](../../api_calls/single/force-index-rollover.sh) and [mark the old index as complete](mark-index-complete.sh).
 
 ## Index Lifecycle Management (ILM)
+
+#### Index Roll-over Failure
+
+Can be caused by:
+
+  - ILM errors (this can happen for a number of reasons, here's an example bug
+    that leads to ILM errors:
+    https://github.com/elastic/elasticsearch/issues/44175)
+  - ILM stopped (the cluster remains healthy, but no indices are rolled over and
+    there is no indicator of that happening until nodes run out of disk space at
+    which point shards can be multiple TBs in size)
+  - reaching storage watermarks (which causes ILM failures and the index is
+    never rolled over and it continues to grow causing disk usage to grow
+    indefinitely despite the node reaching watermarks and there is nothing
+    stopping it from reaching 100% disk usage at which point indices **have to
+    be dropped**)
+ 
+We already monitor for ILM errors:
+https://gitlab.com/gitlab-com/runbooks/blob/master/rules/elastic-clusters.yml#L4-23
+We also intend to monitor for ILM being in a stopped state:
+https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8972
 
 ### esc-tools
 
