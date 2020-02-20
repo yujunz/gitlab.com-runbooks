@@ -12,6 +12,14 @@ local timepickerlib = import 'grafonnet/timepicker.libsonnet';
 local templates = import 'templates.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
 
+local panelMethods = {
+  addDataLink(datalink):: self + {
+    options+: {
+      dataLinks+: [datalink],
+    },
+  },
+};
+
 {
   dashboard(
     title,
@@ -95,7 +103,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       datasource='$PROMETHEUS_DS',
       legend_show=false,
     )
-    .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor)),
+    .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
+    + panelMethods,
 
   singlestat(
     title='SingleStat',
@@ -133,7 +142,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       thresholds=thresholds,
       valueName=valueName,
     )
-    .addTarget(promQuery.target(query, instant)),
+    .addTarget(promQuery.target(query, instant)) +
+    panelMethods,
 
   table(
     title='Table',
@@ -151,7 +161,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       datasource='$PROMETHEUS_DS',
       styles=[],
       columns=[],
-    ),
+    ) +
+    panelMethods,
 
   timeseries(
     title='Timeseries',
@@ -200,7 +211,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       max=1,
       min=0,
       show=false,
-    ),
+    ) +
+    panelMethods,
 
   queueLengthTimeseries(
     title='Timeseries',
@@ -243,7 +255,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       max=1,
       min=0,
       show=false,
-    ),
+    ) +
+    panelMethods,
 
   percentageTimeseries(
     title,
@@ -301,7 +314,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       max=1,
       min=0,
       show=false,
-    ),
+    ) +
+    panelMethods,
 
   saturationTimeseries(
     title='Saturation',
@@ -328,7 +342,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       legend_show=legend_show,
       min=min,
       max=max,
-    ),
+    ) +
+    panelMethods,
 
   apdexTimeseries(
     title='Apdex',
@@ -384,7 +399,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       max=1,
       min=0,
       show=false,
-    ),
+    ) +
+    panelMethods,
 
   latencyTimeseries(
     title='Latency',
@@ -432,7 +448,7 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       max=1,
       min=0,
       show=false,
-    ),
+    ) + panelMethods,
 
   slaTimeseries(
     title='SLA',
@@ -489,7 +505,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       max=1,
       min=0,
       show=false,
-    ),
+    ) +
+    panelMethods,
 
   networkTrafficGraph(
     title='Node Network Utilization',
@@ -538,7 +555,8 @@ local commonAnnotations = import 'common_annotations.libsonnet';
       max=1,
       min=0,
       show=false,
-    ),
+    ) +
+    panelMethods,
 
   slaStats(
     title,
@@ -617,5 +635,6 @@ local commonAnnotations = import 'common_annotations.libsonnet';
         },
         orientation: 'auto',
       },
-    },
+    } +
+    panelMethods,
 }
