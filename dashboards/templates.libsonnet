@@ -88,6 +88,15 @@ local template = grafana.template;
       '0.5,1,1.5,2,2.5,3',
       '2',
     ),
+  component::
+    template.new(
+      'component',
+      '$PROMETHEUS_DS',
+      'label_values(gitlab_component_ops:rate{environment="$environment", type="$type", stage="$stage"}, component)',
+      current='',
+      refresh='load',
+      sort=1,
+    ),
   // Once the stage change is fully rolled out, change the default to main
   stage::
     template.custom(

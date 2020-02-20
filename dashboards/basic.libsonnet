@@ -270,6 +270,7 @@ local panelMethods = {
     legend_show=true,
     min=null,
     max=null,
+    decimals=0,
   )::
     local formatConfig = {
       query: query,
@@ -281,7 +282,7 @@ local panelMethods = {
       linewidth=linewidth,
       fill=0,
       datasource='$PROMETHEUS_DS',
-      decimals=0,
+      decimals=decimals,
       legend_show=legend_show,
       legend_values=true,
       legend_min=true,
@@ -562,6 +563,7 @@ local panelMethods = {
     title,
     description='Availability',
     query,
+    fieldTitle='',
     legendFormat='',
     links=[],
   )::
@@ -618,6 +620,7 @@ local panelMethods = {
             decimals: 2,
             max: 1,
             min: 0,
+            title: fieldTitle,
             unit: 'percentunit',
             color: {
               mode: 'thresholds',

@@ -1,3 +1,6 @@
+local generateColumnOffsets(columnWidths) =
+  std.foldl(function(columnOffsets, width) columnOffsets + [width + columnOffsets[std.length(columnOffsets) - 1]], columnWidths, [0]);
+
 {
   grid(panels, cols=2, rowHeight=10, startRow=0)::
     std.mapWithIndex(
@@ -11,5 +14,27 @@
           },
         },
       panels
+    ),
+
+  columnGrid(rowsOfPanels, columnWidths, rowHeight=10, startRow=0)::
+    local columnOffsets = generateColumnOffsets(columnWidths);
+
+    std.flattenArrays(
+      std.mapWithIndex(
+        function(rowIndex, rowOfPanels)
+          std.mapWithIndex(
+            function(colIndex, panel)
+              panel {
+                gridPos: {
+                  x: columnOffsets[colIndex],
+                  y: rowIndex * rowHeight + startRow,
+                  w: columnWidths[colIndex],
+                  h: rowHeight,
+                },
+              },
+            rowOfPanels
+          ),
+        rowsOfPanels
+      )
     ),
 }
