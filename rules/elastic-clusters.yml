@@ -7,7 +7,6 @@ groups:
     labels:
       severity: s4
       environment: gstg
-      channel: observability
     annotations:
       description: ILM errors have been detected in the nonproduction logging cluster!
       runbook: elastic/doc/troubleshooting/README.md
@@ -18,7 +17,6 @@ groups:
     labels:
       severity: s3
       environment: gprd
-      channel: observability
     annotations:
       description: ILM errors have been detected in the logging cluster!
       runbook: elastic/doc/troubleshooting/README.md
@@ -29,7 +27,6 @@ groups:
     labels:
       severity: s3
       environment: gprd
-      channel: observability
     annotations:
       description: Production logging cluster is unhealthy
       runbook: elastic/doc/troubleshooting/README.md
@@ -40,7 +37,6 @@ groups:
     labels:
       severity: s3
       environment: gprd
-      channel: observability
     annotations:
       description: ILM errors have been detected in the monitoring cluster!
       runbook: elastic/doc/troubleshooting/README.md
@@ -51,7 +47,6 @@ groups:
     labels:
       severity: s3
       environment: gprd
-      channel: observability
     annotations:
       description: Monitoring cluster is unhealthy
       runbook: elastic/doc/troubleshooting/README.md
