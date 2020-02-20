@@ -59,7 +59,7 @@ class SlackWebhook
   def self.done(project)
     fire_hook("#{username} finished a foreground import of *#{project}*")
   end
-  
+
   def self.username
     @username ||= `logname`.strip
   end
