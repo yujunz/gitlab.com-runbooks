@@ -152,10 +152,9 @@ groups:
       title: Postgres Replication lag (in bytes) is high
   - alert: PostgreSQL_XLOGConsumptionTooHigh
     expr: rate(pg_xlog_position_bytes[2m]) > 36700160 and ON(instance) (pg_replication_is_replica == 0)
-    for: 10m
+    for: 20m
     labels:
-      pager: pagerduty
-      severity: s1
+      severity: s3
       channel: database
     annotations:
       description: XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s
