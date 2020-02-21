@@ -191,13 +191,13 @@ groups:
             The error-burn rate for this service is outside of SLO over multiple windows.
             Currently the error-rate is {{ $value | humanizePercentage }}%.
           runbook: "troubleshooting/service-{{ $labels.type }}.md"
-          grafana_dashboard_id: "general-service/service-platform-metrics"
-          grafana_panel_id: "8"
-          grafana_variables: "environment,type,stage"
+          grafana_dashboard_id: "alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo"
+          grafana_panel_id: "4"
+          grafana_variables: "environment,type,stage,component"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
-          promql_template_1: 'gitlab_component_errors:ratio_5m {environment="$environment", type="$type", stage="$stage", component="$component"}'
+          promql_template_1: 'gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'
 
       # ------------------------------------------------------------------------------
       # Saturation alerts
