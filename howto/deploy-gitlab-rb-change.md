@@ -47,7 +47,8 @@ Note also that running chef by hand will cause the daemon to be started up, so t
 ## Rolling out changes that require restarts
 
 You will need to perform a rolling "hard restart" of rails server fleets in
-order to propagate environment variable changes.
+order to propagate environment variable changes for unicorn. For puma on
+GitLab.com this is no longer necessary.
 
 If [this issue](https://gitlab.com/gitlab-com/gl-infra/delivery/issues/75) is
 complete, then these steps are likely not necessary and should be changed.
