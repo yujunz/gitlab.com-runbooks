@@ -41,3 +41,4 @@ generate:
 	./scripts/generate-sidekiq-worker-apdex-scores.sh
 	./scripts/generate-docs
 	./scripts/generate-sla-recording-rules.sh
+	./scripts/generate-gitlab-dashboards.sh
