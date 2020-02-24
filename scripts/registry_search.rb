@@ -11,7 +11,7 @@
 #
 # gcloud config set project gitlab-production
 # gsutil acl ch -u gitlab-object-storage-ro@gitlab-production.iam.gserviceaccount.com:READ gs://gitlab-gprd-registry
-# gcloud iam service-accounts keys create ~/gitlab-object-storage-ro.json --iam-account gitlab-object-storage-ro@gitlab-production.iam.gserviceaccount.com
+# gcloud iam service-accounts keys create ~/.gcloud/gitlab-object-storage-ro.json --iam-account gitlab-object-storage-ro@gitlab-production.iam.gserviceaccount.com
 #
 # Execution:
 #
@@ -22,11 +22,11 @@
 # need to add WRITE privileges to the service account.
 #
 # gsutil acl ch -u gitlab-object-storage@gitlab-production.iam.gserviceaccount.com:WRITE gs://gitlab-gprd-registry
-# gcloud iam service-accounts keys create ~/gitlab-object-storage-rw.json --iam-account gitlab-object-storage-ro@gitlab-production.iam.gserviceaccount.com
+# gcloud iam service-accounts keys create ~/.gcloud/gitlab-object-storage-rw.json --iam-account gitlab-object-storage@gitlab-production.iam.gserviceaccount.com
 #
 # To delete all files older than 30 days:
 #
-# bundle exec scripts/registry_search.rb --dry-run=yes --age=30 --operation=delete --path=docker/registry/v2/repositories/vulcans/vulcan_instance/master/data/_manifests/tags/ --key=~/gitlab-object-storage-rw.json
+# bundle exec scripts/registry_search.rb --dry-run=yes --age=30 --operation=delete --path=docker/registry/v2/repositories/vulcans/vulcan_instance/master/data/_manifests/tags/ --key=~/.gcloud/gitlab-object-storage-rw.json
 #
 
 require 'date'
@@ -84,7 +84,7 @@ module Registry
     DEFAULTS = {
       dry_run: true,
       project: 'gitlab-production',
-      key_file_path: '~/gitlab-object-storage-ro.json',
+      key_file_path: '~/.gcloud/gitlab-object-storage-ro.json',
       bucket: 'gitlab-gprd-registry',
       age: 30,
       valid_operations: [:delete],
