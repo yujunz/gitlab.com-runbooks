@@ -4,7 +4,8 @@ We operate 2 runner manager servers that run Windows and build Windows shared ru
 must use Windows as the manager and executors talk via WinRM. However, the data flow
 of the Windows runners managers are the same as the Linux runner described in
 [the README](../README.md). We use a [custom autoscaler](https://gitlab.com/gitlab-org/ci-cd/custom-executor-drivers/autoscaler)
-instead of `docker-machine` for these Windows runners.
+instead of `docker-machine` for these Windows runners. There is an architecture diagram that
+can be found in [architecture.md](./architecture.md)
 
 ## Windows Configurations
 
