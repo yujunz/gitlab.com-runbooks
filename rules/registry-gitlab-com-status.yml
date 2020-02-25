@@ -9,6 +9,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: symptom
     annotations:
       description: GitLab registry is down for 1 minute! Consider !tweet 'GitLab Registry
         is not responding, we are investigating the root cause.' if problem exists.
@@ -23,6 +24,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: symptom
     annotations:
       description: >
         Haproxy is seeing/reporting 5xx HTTP responses.  Investigate the following

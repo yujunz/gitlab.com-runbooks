@@ -8,6 +8,7 @@ groups:
     for: 5m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: >
         The rate of Sidekiq {{ $labels.controller }} Exceptions in {{ $labels.environment }} is high.

@@ -7,6 +7,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: symptom
     annotations:
       description: The development site is returning status codes other than 200,
         this usually means that a nightly deployment went wrong and took the site

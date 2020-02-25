@@ -7,6 +7,7 @@ groups:
     labels:
       severity: s1
       pager: pagerduty
+      alert_type: cause
     annotations:
       description: This usually means that we lost an NFS mount somewhere in the fleet,
         check https://prometheus.gitlab.com/graph?g0.range_input=1d&g0.expr=rate(rails_git_no_repository_for_such_path%5B1m%5D)%20%3E%200.001&g0.tab=0

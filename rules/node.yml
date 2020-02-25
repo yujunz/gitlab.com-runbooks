@@ -56,6 +56,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
         }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
@@ -117,6 +118,7 @@ groups:
     for: 30m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       title: 'Filesystem will be full SOON'
       description: >
@@ -130,6 +132,7 @@ groups:
     for: 10m
     labels:
       severity: s3
+      alert_type: cause
     annotations:
       title: 'Less than 10% disk space left'
       description: >
@@ -145,6 +148,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s2
+      alert_type: cause
     annotations:
       title: '5% disk space left'
       description: "There's only 5% disk space left"
@@ -159,6 +163,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       title: "High number of inode usage"
       description: >
@@ -179,6 +184,7 @@ groups:
     labels:
       channel: production
       severity: s4
+      alert_type: cause
     annotations:
       description: The {{ $labels.type }} fleet has changed, this can be due to having
         more or less, if it's the latter it can be because nodes went down silently
@@ -189,6 +195,7 @@ groups:
     labels:
       channel: production
       severity: s4
+      alert_type: cause
     annotations:
       description: The node is under heavy memory pressure.  The available memory is under 5% and
         there is a high rate of major page faults.
@@ -205,6 +212,7 @@ groups:
     for: 30m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: Kernel versions are deviating across fleet, see https://dashboards.gitlab.net/d/6xx-DC7ik/gitlab-kernel-versions for details. https://gitlab.com/gitlab-com/infrastructure/issues/4221
       title: 'Different kernel versions are running in production for an hour'
@@ -214,6 +222,7 @@ groups:
     labels:
       channel: production
       severity: s4
+      alert_type: cause
     annotations:
       description: The node is encountering RCU CPU stall warnings, which may cause the node to lock up occasionally.
         Check `/var/log/kern.log` for more details. You may need to contact the cloud provider and possibly redeploy the VM.
@@ -232,6 +241,7 @@ groups:
       increase(syslog_oom_kills_total[1h]) > 2
     labels:
       severity: s3
+      alert_type: cause
     annotations:
       title: Several OOM kills detected on {{$labels.fqdn}} recently
       description: >

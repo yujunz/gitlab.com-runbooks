@@ -16,6 +16,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: WALE syncs to GCS might be not working. Please follow the runbook
         to review the problem.
@@ -27,6 +28,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: WALE basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.

@@ -64,6 +64,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: symptom
     annotations:
       description: We are having more 5xx returns than any other reply. Web traffic
         is being impacted and the service is probably down. Have you thought about
@@ -71,26 +72,30 @@ groups:
       runbook: troubleshooting/haproxy.md
       title: High Error Rate on Front End Web
   - alert: High4xxApiRateLimit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",tier="lb"}) by (environment)
+    expr: |
+      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",tier="lb"}) by (environment)
       / sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb"}) by (environment)
       > 0.1
     for: 5m
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing api
         rate limiting backend, more than 10% of http requests for at least 5 minutes.
       runbook: troubleshooting/haproxy.md
       title: High 4xx Error Rate on Front End Web on backend api_rate_limit
   - alert: High4xxRateLimit
-    expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",code="4xx",tier="lb"}) by (environment)
+    expr: |
+      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",code="4xx",tier="lb"}) by (environment)
       / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",tier="lb"}) by (environment)
       > 0.25
     for: 5m
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing across
         all backends, more than 25% of http requests for at least 5 minutes.
@@ -102,6 +107,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: We are having a high rate of 5xx on https_git backend. It's likely that customers are impacted.
       runbook: troubleshooting/high-error-rate.md
@@ -112,6 +118,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: We are having a high rate of 5xx across other backends (web(sockets)?/api/registry/etc, anything except https_git). It's likely that customers are impacted.
       runbook: troubleshooting/high-error-rate.md
@@ -122,6 +129,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: We are seeing an increase in backend connection errors on {{$labels.fqdn}} for backend {{$labels.backend}}.
         This likely indicates that requests are being sent to servers in a backend that are unable to fulfil them which will
@@ -134,6 +142,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: We are seeing an increase in server response errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.
         This likely indicates that requests are being sent to servers and there are errors reported to users.
@@ -145,6 +154,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: We are seeing an increase in server connection errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.
         This likely indicates that requests are being sent to servers and there are errors reported to users.
@@ -156,6 +166,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: HAProxy process high CPU usage on {{ $labels.fqdn }}
       runbook: troubleshooting/haproxy.md
@@ -171,6 +182,7 @@ groups:
     for: 30s
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: We have detected conditions which suggest SSH's MaxStartups limit is being breached for git+ssh connections
       runbook: troubleshooting/ssh-maxstartups-breach.md
@@ -181,6 +193,7 @@ groups:
     for: 2h
     labels:
       severity: s3
+      alert_type: cause
     annotations:
       title: Extraneous processes detected on haproxy front-end
       runbook: troubleshooting/haproxy.md

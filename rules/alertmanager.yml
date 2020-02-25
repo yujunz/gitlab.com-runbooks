@@ -8,6 +8,7 @@ groups:
       pager: pagerduty
       service: alertmanager
       severity: s1
+      alert_type: cause
     annotations:
       title: Alertmanager is failing sending notifications
       runbook: troubleshooting/alertmanager-notification-failures.md

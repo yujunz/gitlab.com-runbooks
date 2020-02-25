@@ -6,6 +6,7 @@ groups:
       for: 5m
       labels:
         severity: s4
+        alert_type: cause
       annotations:
         title: Pubsubbeat is logging warnings
         description: >
@@ -18,6 +19,7 @@ groups:
       for: 5m
       labels:
         severity: s4
+        alert_type: cause
       annotations:
         title: Pubsubbeat is logging errors
         description: >
@@ -33,6 +35,7 @@ groups:
       for: 1m
       labels:
         severity: s4
+        alert_type: cause
       annotations:
         title: Cluster is refusing to process logs sent to it by pubsubbeat
         description: >

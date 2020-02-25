@@ -8,6 +8,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: >
         {{ $labels.type }} has lost redundancy. Only {{ $value }}% of servers are online.
@@ -15,11 +16,13 @@ groups:
       title: Loss of Redundancy
 
   - alert: FeLoadBalancerMissingNodes
-    expr: sum (up{tier="lb",job="node"}) by (type) == 0
+    expr: |
+      sum (up{tier="lb",job="node"}) by (type) == 0
       > 0
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: >
         {{ $labels.type }} have no instances online to serve traffic.

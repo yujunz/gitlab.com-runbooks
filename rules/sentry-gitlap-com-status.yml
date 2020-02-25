@@ -8,6 +8,7 @@ groups:
     labels:
       severity: s1
       pager: pagerduty
+      alert_type: symptom
     annotations:
       description: GitLab sentry has been down for 1 minute!
       runbook: troubleshooting/sentry-is-down.md

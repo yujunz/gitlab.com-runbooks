@@ -8,6 +8,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: 'The number of pending builds for projects with shared runners will be
         too high in 1h: {{$value | printf "%.2f" }}'
@@ -22,6 +23,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: 'Number of pending jobs per namespace too high: {{$value}}'
       description: 'Number of pending jobs for namespace {{$labels.namespace}} is too high: {{$value}}.
@@ -34,6 +36,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: 'Number of running jobs per namespace too high: {{$value}}'
       description: 'Number of running jobs for namespace {{$labels.namespace}} running on regular Shared Runners is too high: {{$value}}.
@@ -46,6 +49,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: 'Number of running jobs per namespace too high: {{$value}}'
       description: 'Number of running jobs for namespace {{$labels.namespace}} running on gitlab-org Shared Runners is too high: {{$value}}.
@@ -58,6 +62,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: 'Number of builds running on shared runners is too low: {{$value}}'
       description: "Number of builds running on shared runners for the last 5 minutes
@@ -70,6 +75,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: "{{ $labels.job }} runners are using 85% of concurrent limit for more than 5 minutes."
       description: 'This may suggest problems with our autoscaled machines fleet OR
@@ -81,6 +87,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s3
+      alert_type: cause
     annotations:
       title: "{{ $labels.job }} runners are using 95% of concurrent limit for more than 5 minutes."
       description: 'This may suggest problems with our autoscaled machines fleet OR
@@ -92,6 +99,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s3
+      alert_type: cause
     annotations:
       title: Runners manager is down on {{ $labels.instance }}
       description: 'This impacts CI execution builds, consider tweeting: !tweet ''Builds
@@ -106,6 +114,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s3
+      alert_type: cause
     annotations:
       title: 'Machine creation rate for runners is too high: {{$value | printf "%.2f" }}'
       description: 'Machine creation rate for the last 1 minute is at least {{$value}}
@@ -121,6 +130,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: Number of used file descriptors on {{ $labels.instance }} is too high
       description: '{{ $labels.instance }} is using more than 80% of available FDs
@@ -133,6 +143,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: CI Prometheus server {{ $labels.instance }} is down
       description: 'One or more of CI Prometheus servers is down: {{ $labels.instance }}.'
@@ -146,6 +157,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: GCP Quota usage of {{ $labels.quota }} is too high
       description: >
@@ -162,6 +174,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s3
+      alert_type: cause
     annotations:
       title: GCP Quota usage of {{ $labels.quota }} is near limit
       description: >
@@ -178,6 +191,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: Namespace with constant number of long running jobs with repeated commands
       description: >
@@ -196,6 +210,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s3
+      alert_type: cause
     annotations:
       title: Job queue duration performance for '0 - 10s' is to low
       description: >
@@ -216,6 +231,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s3
+      alert_type: cause
     annotations:
       title: 90% of request queued on Workhorse is longer than 30s
       description: >
@@ -230,6 +246,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s4
+      alert_type: cause
     annotations:
       title: 'Too big number of traces archiving failures: {{$value}}'
       description: >
@@ -245,6 +262,7 @@ groups:
     labels:
       channel: ci-cd
       severity: s3
+      alert_type: cause
     annotations:
       title: 'Sidekiq queues for CI/CD are growing: {{$value}}'
       description: >

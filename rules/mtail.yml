@@ -14,6 +14,7 @@ groups:
     for: 5m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       runbook: monitoring/README.md
       title: Prometheus is failing to scrape mtail

@@ -6,6 +6,7 @@ groups:
     for: 1m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -16,6 +17,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -25,6 +27,7 @@ groups:
     for: 1m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -35,6 +38,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -44,6 +48,7 @@ groups:
     for: 1m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.
         Please check the Triage Dashboard in Grafana.
@@ -53,6 +58,7 @@ groups:
     for: 5m
     labels:
       severity: s1
+      alert_type: cause
       pager: pagerduty
     annotations:
       description: This might be causing a slowdown on the site and/or affecting users.

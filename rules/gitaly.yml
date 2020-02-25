@@ -26,6 +26,7 @@ groups:
       channel: g_create_gitaly
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: Gitaly error rate for the last 5 minutes is over 5 on {{$labels.instance}}.
         Check Gitaly logs and consider disabling it on that host.
@@ -98,6 +99,7 @@ groups:
       channel: g_create_gitaly
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: Gitaly has been marked as down for the past minute on {{$labels.instance}}.
         Check Gitaly logs and restart the process if necessary
@@ -115,6 +117,7 @@ groups:
       channel: g_create_gitaly
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: During a deployment, two distinct versions of Gitaly may be running
         alongside one another, but this should not be the case for more than 30m.
@@ -135,6 +138,7 @@ groups:
       channel: g_create_gitaly
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: Three of more versions of Gitaly are currently running alongside
         one another in production. This should never occur and indicates serious deployment
@@ -149,6 +153,7 @@ groups:
       channel: g_create_gitaly
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: Gitaly authention failing, authentication tokens might be misconfigured, or severe clockdrift is occurring.
       runbook: troubleshooting/gitaly-permission-denied.md
@@ -164,6 +169,7 @@ groups:
     labels:
       channel: g_create_gitaly
       severity: s4
+      alert_type: cause
     annotations:
       description: >
         Reach out to the Gitaly team, ensure logging is set properly.
@@ -176,6 +182,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: Reach out to the Gitaly team and mitigate the problem restarting
         gitaly on the affected node if it's causing a partial outage.
@@ -194,6 +201,7 @@ groups:
     labels:
       channel: g_create_gitaly
       severity: s4
+      alert_type: cause
     annotations:
       title: New Gitaly version is being deployed
       description: >

@@ -8,6 +8,7 @@ groups:
       channel: production
       severity: s1
       pager: pagerduty
+      alert_type: cause
     annotations:
       description: ProcessCommitWorker sidekiq jobs are piling up for the last 10
         minutes, this may be under control, but I'm just letting you know that this

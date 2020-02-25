@@ -11,6 +11,7 @@ groups:
       severity: s1
       channel: backend
       pager: pagerduty
+      alert_type: cause
     annotations:
       title: 'Large number of overdue pull mirror jobs'
       description: >

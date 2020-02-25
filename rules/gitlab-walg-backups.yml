@@ -15,6 +15,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: symptom
     annotations:
       description: walg syncs to GCS might be not working. Please follow the runbook
         to review the problem.
@@ -26,6 +27,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: symptom
     annotations:
       description: walg basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.

@@ -7,6 +7,7 @@ groups:
     labels:
       severity: s4
       channel: backend
+      alert_type: cause
     annotations:
       description: There have been over 20,000 Sidekiq queued jobs for the last 20 minutes. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
         Note that PagesDomainVerificationWorker is excluded from job count.
@@ -18,6 +19,7 @@ groups:
     labels:
       severity: s1
       pager: pagerduty
+      alert_type: cause
     annotations:
       description: The new_note sidekiq queue is piling up. This may mean that users are not receiving email notifications
         for comments on issues, or that we are being spammed/abused and other ASAP jobs will be affected badly.
@@ -29,6 +31,7 @@ groups:
     labels:
       severity: s1
       pager: pagerduty
+      alert_type: cause
     annotations:
       description: There have been over 50,000 Sidekiq jobs queued for the last half hour.
         Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.

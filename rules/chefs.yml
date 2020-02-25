@@ -6,6 +6,7 @@ groups:
     for: 5h
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: Check failed chef executions on host {{ $labels.fqdn }}
       grafana_dashboard_id: "000000231/chef-client"
@@ -15,6 +16,7 @@ groups:
     expr: time() - chef_client_last_run_timestamp_seconds > 5 * 3600
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration }} ago
       grafana_dashboard_id: "000000231/chef-client"
@@ -27,6 +29,7 @@ groups:
       severity: s2
       pager: issue
       project: gitlab.com/gitlab-com/gl-infra/infrastructure
+      alert_type: cause
     annotations:
       description: Last Chef run for {{ $labels.fqdn }} was over {{ $value | humanizeDuration }} ago
       grafana_dashboard_id: "000000231/chef-client"
@@ -38,6 +41,7 @@ groups:
     labels:
       severity: s1
       pager: pagerduty
+      alert_type: cause
     annotations:
       description: >
         At least 10% of type {{ $labels.type }} are failing chef-runs, this likely points to a configuration

@@ -9,6 +9,7 @@ groups:
           deadman_15m_checkin
         labels:
           severity: s4
+          alert_type: cause
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
           description: >
@@ -26,6 +27,7 @@ groups:
           deadman_30m_checkin
         labels:
           severity: s4
+          alert_type: cause
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
           description: >
@@ -43,6 +45,7 @@ groups:
           deadman_6h_checkin
         labels:
           severity: s4
+          alert_type: cause
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
           description: >
@@ -60,6 +63,7 @@ groups:
           deadman_1d_checkin
         labels:
           severity: s4
+          alert_type: cause
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
           description: >
@@ -77,6 +81,7 @@ groups:
           deadman_1d6h_checkin
         labels:
           severity: s4
+          alert_type: cause
         annotations:
           title: "Availability data for the deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) is missing"
           description: >
@@ -93,6 +98,7 @@ groups:
         labels:
           # pager: pagerduty
           severity: s4
+          alert_type: cause
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: >
@@ -109,6 +115,7 @@ groups:
         labels:
           # pager: pagerduty
           severity: s4
+          alert_type: cause
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: >
@@ -125,6 +132,7 @@ groups:
         labels:
           # pager: pagerduty
           severity: s4
+          alert_type: cause
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: >
@@ -141,6 +149,7 @@ groups:
         labels:
           # pager: pagerduty
           severity: s4
+          alert_type: cause
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: >
@@ -157,6 +166,7 @@ groups:
         labels:
           # pager: pagerduty
           severity: s4
+          alert_type: cause
         annotations:
           title: "Deadman switch of `{{ $labels.resource }}` ({{ $labels.tier }}/{{ $labels.type }}) has expired"
           description: >

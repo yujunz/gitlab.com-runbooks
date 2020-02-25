@@ -48,6 +48,7 @@ groups:
       period: 5m
       bound: lower
       threshold_sigma: "4"
+      alert_type: cause
     annotations:
       description: >
         This may be caused by an upstream load-balancer issue, DNS issue or authentication issues.
@@ -82,6 +83,7 @@ groups:
       period: 5m
       bound: lower
       threshold_sigma: "4"
+      alert_type: cause
     annotations:
       description: >
         The number of Git HTTP sessions is unusually high. This could be because of a surge in traffic,

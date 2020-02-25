@@ -16,6 +16,7 @@ groups:
         for: 5m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeMemOvercommit
         annotations:
@@ -33,3 +34,4 @@ groups:
         for: 5m
         labels:
           severity: s3
+          alert_type: cause

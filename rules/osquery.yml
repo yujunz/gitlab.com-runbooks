@@ -1,11 +1,12 @@
 groups:
 - name: osquery resource usage
-  rules:  
+  rules:
   - alert: OSQueryHighCPU
     expr: sum(rate(namedprocess_namegroup_cpu_seconds_total{groupname="osqueryd"}[5m])) by (fqdn) > 0.1
     for: 15m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: The osqueryd process is using more than 10% CPU on {{ $labels.fqdn }}.
       runbook: howto/uptycs_osquery.md
