@@ -1,6 +1,7 @@
 local metricsCatalog = import '../lib/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
+local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
 
 {
   type: 'sidekiq',
@@ -14,7 +15,7 @@ local rateMetric = metricsCatalog.rateMetric;
       apdex: histogramApdex(
         histogram='sidekiq_jobs_completion_seconds_bucket',
         selector='latency_sensitive="yes"',
-        satisfiedThreshold=10,
+        satisfiedThreshold=sidekiqHelpers.slos.urgent.executionDurationSeconds,
       ),
 
       requestRate: rateMetric(
@@ -34,7 +35,7 @@ local rateMetric = metricsCatalog.rateMetric;
       apdex: histogramApdex(
         histogram='sidekiq_jobs_queue_duration_seconds_bucket',
         selector='latency_sensitive="yes"',
-        satisfiedThreshold=10,
+        satisfiedThreshold=sidekiqHelpers.slos.urgent.queueingDurationSeconds,
       ),
 
       requestRate: rateMetric(
@@ -49,7 +50,7 @@ local rateMetric = metricsCatalog.rateMetric;
       apdex: histogramApdex(
         histogram='sidekiq_jobs_completion_seconds_bucket',
         selector='latency_sensitive="no"',
-        satisfiedThreshold=300,  // 5 minutes
+        satisfiedThreshold=sidekiqHelpers.slos.nonUrgent.executionDurationSeconds,
       ),
 
       requestRate: rateMetric(
@@ -69,7 +70,7 @@ local rateMetric = metricsCatalog.rateMetric;
       apdex: histogramApdex(
         histogram='sidekiq_jobs_queue_duration_seconds_bucket',
         selector='latency_sensitive="no"',
-        satisfiedThreshold=60,
+        satisfiedThreshold=sidekiqHelpers.slos.nonUrgent.queueingDurationSeconds,
       ),
 
       requestRate: rateMetric(
