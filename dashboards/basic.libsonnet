@@ -640,4 +640,61 @@ local panelMethods = {
       },
     } +
     panelMethods,
+
+
+  // This is a useful hack for displaying a label value in a stat panel
+  labelStat(
+    query,
+    title,
+    panelTitle,
+    color,
+    legendFormat,
+    links=[],
+  )::
+    {
+      type: 'stat',
+      title: panelTitle,
+      targets: [promQuery.target(query, legendFormat=legendFormat, instant=true)],
+      pluginVersion: '6.6.1',
+      links: [],
+      options: {
+        graphMode: 'none',
+        colorMode: 'background',
+        justifyMode: 'auto',
+        fieldOptions: {
+          values: false,
+          calcs: [
+            'lastNotNull',
+          ],
+          defaults: {
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                {
+                  value: null,
+                  color: color,
+                },
+              ],
+            },
+            mappings: [
+              {
+                value: 'null',
+                op: '=',
+                text: title,
+                id: 0,
+                type: 2,
+                from: '-10000000',
+                to: '10000000',
+              },
+            ],
+            unit: 'none',
+            nullValueMode: 'connected',
+            title: '${__field.name}',
+            links: links,
+          },
+          overrides: [],
+        },
+        orientation: 'vertical',
+      },
+    },
 }
