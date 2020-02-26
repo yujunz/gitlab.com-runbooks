@@ -1,0 +1,14 @@
+groups:
+  - name: cloudflare.rules
+    rules:
+      - alert: CloudflareExporterScrapeErrors
+        expr: rate(cloudflare_graphql_scrape_errors_total[10m]) > 0
+        for: 1m
+        labels:
+          severity: s4
+        annotations:
+          title: Scrape errors in Cloudflare exporter
+          description: >
+            The cloudflare exporter has failed to scrape Cloudflare. Note that
+            this refers to a background scrape loop in the exporter itself, and
+            that prometheus may be successfully scraping the exporter.
