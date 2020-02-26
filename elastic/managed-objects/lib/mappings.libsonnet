@@ -58,6 +58,20 @@ local mapping(index) =
       },
     },
   }
+  else if index == 'runner' then {
+    json: {
+      properties: {
+        project: {
+          // this field was defaulting to float
+          // performing a search on a flot was not returning expected results
+          // e.g. searching for 17066052 returns 17066051 and 17066053
+          // converting to long to avoid that
+          // see: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/9303
+          type: 'long',
+        },
+      },
+    },
+  }
   else if index == 'gke' then {
     json: {
       properties: {
