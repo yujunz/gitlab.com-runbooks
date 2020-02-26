@@ -97,3 +97,6 @@ The image that the spawned VMs use is created by the [windows-container](https:/
 project and defined in the [group_vars](https://ops.gitlab.net/gitlab-com/gl-infra/ci-infrastructure-windows/-/blob/master/ansible/group_vars/gcp_role_runner_manager.yml#L48)
 in Ansible.
 
+## Architecture Diagram
+
+![windows runner diagram](./img/windows-diagram.svg)
