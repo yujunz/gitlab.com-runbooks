@@ -69,8 +69,8 @@ basic.dashboard(
   'SLAs',
   tags=['general', 'slas', 'service-levels'],
   includeStandardEnvironmentAnnotations=false,
-  time_from='now-7d',
-  time_to='now',
+  time_from='now-7d/d',
+  time_to='now/d',
 )
 .addPanel(
   row.new(title='Headline'),
