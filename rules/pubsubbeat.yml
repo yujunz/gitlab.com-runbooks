@@ -2,7 +2,7 @@ groups:
 - name: pubsubbeats.rules
   rules:
     - alert: TooManyPubsubbeatWarnings
-      expr: rate(pubsubbeat_warnings_total[5m]) > 0
+      expr: rate(pubsubbeat_warnings_total[5m]) > 0.5
       for: 5m
       labels:
         severity: s4
@@ -14,7 +14,7 @@ groups:
           host and see what's the cause of the warnings.
 
     - alert: TooManyPubsubbeatErrors
-      expr: rate(pubsubbeat_errors_total[5m]) > 0
+      expr: rate(pubsubbeat_errors_total[5m]) > 0.1
       for: 5m
       labels:
         severity: s4
@@ -25,7 +25,11 @@ groups:
           Elasticsearch. Consider checking /var/log/pubsubbeat/current on the affected
           host and see what's the cause of the errors.
     - alert: DroppedLogs
-      expr: rate(pubsubbeat_libbeat_output_events{type="dropped"}[5m]) > 0
+      expr: >
+        (rate(pubsubbeat_libbeat_output_events{type="dropped"}[5m]))
+        / ignoring (type) group_left
+        sum without (type) (rate(pubsubbeat_libbeat_output_events[5m]))
+        > 0.005
       for: 1m
       labels:
         severity: s4
