@@ -27,7 +27,7 @@ local saturationTable(title, description, query, saturationDays, valueColumnName
         link: true,
         linkTargetBlank: true,
         linkTooltip: 'Click the link to review the past %d day(s) history for this saturation point.' % [saturationDays],
-        linkUrl: 'https://dashboards.gitlab.net/d/alerts-saturation_component/alerts-saturation-component-alert?var-environment=gprd&var-type=${__cell_3}&var-stage=${__cell_2}&var-component=${__cell_1}&from=now-' + saturationDays + 'd&to=now',
+        linkUrl: 'https://dashboards.gitlab.net/d/alerts-saturation_component/alerts-saturation-component-alert?var-environment=gprd&var-type=${__cell_3}&var-stage=${__cell_2}&var-component=${__cell_1}&from=now-' + saturationDays + 'd/d&to=now/h',
         mappingType: 1,
         pattern: 'component',
         type: 'string',
