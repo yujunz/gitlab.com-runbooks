@@ -73,3 +73,30 @@ C:\Gitlab-Runner\gitlab-runner.exe status
 # if down:
 C:\Gitlab-Runner\gitlab-runner.exe start
 ```
+
+### Autoscaler Logs and Docs
+
+The autoscaler is a [custom executor](https://docs.gitlab.com/runner/executors/custom.html) plugin
+for the GitLab Runner.
+
+The autoscaler logs to a file located at `C:\GitLab-Runner\autoscaler\autoscaler.log`. This file
+will contain all the information regarding creation, connection, and deletion of VMs. You may want to look
+here if VM creation is failing or connections from the managers are failing. This is likely
+the best first place to check when issues arise.
+
+### Firewall rules for winrm
+
+The managers must be able to connect to the spawned VMs via port 5985-5986.
+The relevant GCP firewall rules are defined in [firewall.tf](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/-/blob/master/environments/windows-ci/firewall.tf#L15-30)
+in our terraform repo. The port should be open by default on the spawned
+VMs during [packer image creation](https://gitlab.com/gitlab-org/ci-cd/shared-runners/images/gcp/windows-containers/-/blob/master/packer.json#L28-31).
+
+### Using the wrong image, with missing dependencies
+
+The image that the spawned VMs use is created by the [windows-container](https://gitlab.com/gitlab-org/ci-cd/shared-runners/images/gcp/windows-containers)
+project and defined in the [group_vars](https://ops.gitlab.net/gitlab-com/gl-infra/ci-infrastructure-windows/-/blob/master/ansible/group_vars/gcp_role_runner_manager.yml#L48)
+in Ansible.
+
+## Architecture Diagram
+
+![windows runner diagram](./img/windows-diagram.svg)
