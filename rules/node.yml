@@ -12,40 +12,41 @@ groups:
   - record: instance_cpu:node_cpu_seconds_not_idle:rate1m
     expr: >
       sum without (mode) (
-        rate(node_cpu_seconds_total{mode!="idle"}[1m])
+        1 - rate(node_cpu_seconds_total{mode="idle"}[1m])
       )
   # CPU in use by mode.
+  # Split recording for iowait to avoid reset bugs.
   - record: instance_mode:node_cpu_seconds:rate1m
     expr: >
       sum without (cpu) (
-        rate(node_cpu_seconds_total[1m])
+        rate(node_cpu_seconds_total{mode!="iowait"}[1m])
       )
-  - record: instance_mode:node_cpu_seconds:rate5m
+  - record: instance_mode:node_cpu_seconds:rate1m
     expr: >
       sum without (cpu) (
-        rate(node_cpu_seconds_total[5m])
+        deriv(node_cpu_seconds_total{mode="iowait"}[1m]) > 0
       )
   # CPU in use ratio.
   - record: instance:node_cpu_utilization:ratio
     expr: >
-      sum without (mode) (
-        instance_mode:node_cpu_seconds:rate1m{mode!="idle"}
-      ) / instance:node_cpus:count
+      avg without (cpu) (
+        instance_cpu:node_cpu_seconds_not_idle:rate1m
+      )
   # CPU summaries
   - record: job:node_cpu_utilization:min_ratio
     expr: >
       min without (fqdn, instance) (
-        instance:node_cpu_in_use:ratio
+        instance:node_cpu_utilization:ratio
       )
   - record: job:node_cpu_utilization:avg_ratio
     expr: >
       avg without (fqdn, instance) (
-        instance:node_cpu_in_use:ratio
+        instance:node_cpu_utilization:ratio
       )
   - record: job:node_cpu_utilization:max_ratio
     expr: >
       max without (fqdn, instance) (
-        instance:node_cpu_in_use:ratio
+        instance:node_cpu_utilization:ratio
       )
 
   # CPU Alerts
@@ -61,17 +62,6 @@ groups:
       runbook: troubleshooting/node_cpu.md
       title: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
         }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
-
-- name: Old CPU rules
-  rules:
-  - record: instance:node_cpus:count
-    expr: count(node_cpu_seconds_total{mode="idle"}) WITHOUT (cpu, mode)
-  - record: instance_cpu:node_cpu_not_idle:rate5m
-    expr: sum(rate(node_cpu_seconds_total{mode!="idle"}[5m])) WITHOUT (mode)
-  - record: instance_mode:node_cpu:rate5m
-    expr: sum(rate(node_cpu_seconds_total[5m])) WITHOUT (cpu)
-  - record: instance:node_cpu_in_use:ratio
-    expr: sum(instance_mode:node_cpu:rate5m{mode!="idle"}) WITHOUT (mode) / instance:node_cpus:count
 
 # Rules for calculating and alerting on long-term node utilization issues.
 - name: Utilization

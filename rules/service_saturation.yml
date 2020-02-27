@@ -8,7 +8,9 @@ groups:
     labels:
       component: 'cpu'
     expr: >
-      avg(1 - rate(node_cpu_seconds_total{mode="idle", type!="", type!~"console-node|deploy-node"}[1m])) by (type, tier, stage, environment)
+      avg by (type, tier, stage, environment) (
+        instance:node_cpu_utilization:ratio{type!="", type!~"console-node|deploy-node"}
+      )
 
   # type: *, component: single_node_cpu
   # this measures the maximum cpu availability across all the codes on a single server
@@ -18,7 +20,9 @@ groups:
       component: 'single_node_cpu'
     expr: >
       max(
-        avg(1 - rate(node_cpu_seconds_total{mode="idle", type!="", type!~"console-node|deploy-node"}[1m])) by (fqdn, type, tier, stage, environment)
+        avg by (fqdn, type, tier, stage, environment) (
+          instance:node_cpu_utilization:ratio{type!="", type!~"console-node|deploy-node"}
+        )
       ) without (fqdn)
 
   - record: gitlab_component_saturation:ratio
