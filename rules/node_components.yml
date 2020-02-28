@@ -5,8 +5,11 @@ groups:
   - record: node:iowait:rate1m
     labels:
       component: 'iowait'
+    # Note that this uses deriv() not rate() due to bugs in iowait.
     expr: >
-      avg by(environment, tier, type, stage, fqdn) (rate(node_cpu_seconds_total{mode="iowait"}[1m]))
+      avg by(environment, tier, type, stage, fqdn) (
+        deriv(node_cpu_seconds_total{mode="iowait"}[1m]) > 0
+      )
   - record: node:network_rx_bytes:rate1m
     labels:
       component: 'network_rx_bytes'
