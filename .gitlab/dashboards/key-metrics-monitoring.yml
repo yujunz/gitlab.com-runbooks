@@ -6,7 +6,7 @@ panel_groups:
   panels:
   - metrics:
     - id: line-chart-latency-apdex-monitoring-service
-      label: monitoring Service
+      label: "{{type}} Service"
       query_range: avg(avg_over_time(gitlab_service_apdex:ratio{environment="gprd",
         type="monitoring", stage="main"}[1m])) by (type)
       unit: "%"
@@ -15,7 +15,7 @@ panel_groups:
     y_label: Apdex %
   - metrics:
     - id: line-chart-monitoring-service-error-ratios
-      label: monitoring Service
+      label: "{{type}} Service"
       query_range: avg(avg_over_time(gitlab_service_errors:ratio{environment="gprd",
         type="monitoring", stage="main"}[1m])) by (type)
       unit: "%"
@@ -24,7 +24,7 @@ panel_groups:
     y_label: "% Requests in Error"
   - metrics:
     - id: line_chart_rps_monitoring_service_normal
-      label: "%(type)s service"
+      label: "{{type}} service"
       query_range: sum(avg_over_time(gitlab_service_ops:rate{environment="gprd", type="monitoring",
         stage="main"}[1m])) by (type)
       unit: "%"
