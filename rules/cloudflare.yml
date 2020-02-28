@@ -2,7 +2,7 @@ groups:
   - name: cloudflare.rules
     rules:
       - alert: CloudflareExporterScrapeErrors
-        expr: rate(cloudflare_graphql_scrape_errors_total[10m]) > 0
+        expr: sum without (pod, instance) (rate(cloudflare_graphql_scrape_errors_total[10m])) > 0
         for: 1m
         labels:
           severity: s4
