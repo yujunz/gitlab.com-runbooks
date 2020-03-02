@@ -5,7 +5,7 @@ groups:
   - record: gitaly_grpc:grpc_server_handled_total:rate1m
     expr: >
       sum without (fqdn,instance) (
-       rate(grpc_server_handled_total{job="gitaly"}[1m])
+        rate(grpc_server_handled_total{job="gitaly"}[1m])
       )
   - record: gitaly:grpc_server_handled_total:rate1m
     expr: >
@@ -32,18 +32,45 @@ groups:
       runbook: troubleshooting/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
 
-- name: Gitaly grpc buckets
+- name: Gitaly grpc server handling buckets
+  interval: 1m
   rules:
-  - record: gitaly:grpc_server_handling_seconds_bucket:rate1m
+  - record: gitaly_instance:grpc_server_handling_seconds_bucket:rate1m
     expr: >
-      sum without (fqdn, instance, grpc_service, grpc_type) (
+      sum without (grpc_service, grpc_type) (
         rate(grpc_server_handling_seconds_bucket{job="gitaly"}[1m])
       )
+  - record: gitaly:grpc_server_handling_seconds_bucket:rate1m
+    expr: >
+      sum without (fqdn, instance) (
+        gitaly_instance:grpc_server_handling_seconds_bucket:rate1m
+      )
+  - record: gitaly:grpc_server_handling_seconds:p95
+    expr: >
+      histogram_quantile(0.95,
+        sum without (grpc_method) (
+          gitaly_instance:grpc_server_handling_seconds_bucket:rate1m
+        )
+      )
+  - record: gitaly:grpc_server_handling_seconds:p50
+    expr: >
+      histogram_quantile(0.5,
+        sum without (grpc_method) (
+          gitaly_instance:grpc_server_handling_seconds_bucket:rate1m
+        )
+      )
+
+- name: Gitaly grpc server handled
+  rules:
   - record: gitaly_instance_grpc_method_code:grpc_server_handled_total:irate1m
     expr: >
       sum without (fqdn, instance, grpc_service, grpc_type) (
         irate(grpc_server_handled_total{job="gitaly"}[1m])
       )
+
+- name: Gitaly grpc misc
+  interval: 1m
+  rules:
   - record: gitaly:grpc_server_handling_seconds:avg5m
     expr: >
        avg without (fqdn, instance, grpc_service, grpc_type) (
@@ -51,21 +78,6 @@ groups:
            /
          rate(grpc_server_handling_seconds_count{job="gitaly"}[5m]) > 0
        )
-
-  - record: gitaly:grpc_server_handling_seconds:p95
-    expr: >
-      histogram_quantile(0.95,
-        sum without (grpc_method, grpc_service, grpc_type) (
-          rate(grpc_server_handling_seconds_bucket{job="gitaly"}[1m])
-        )
-      )
-  - record: gitaly:grpc_server_handling_seconds:p50
-    expr: >
-      histogram_quantile(0.5,
-        sum without (grpc_method, grpc_service, grpc_type) (
-          rate(grpc_server_handling_seconds_bucket{job="gitaly"}[1m])
-        )
-      )
   - record: instance:gitaly_grpc_errors_total:rate1m
     expr: >
       sum without (grpc_method, grpc_type, grpc_service, grpc_code) (
