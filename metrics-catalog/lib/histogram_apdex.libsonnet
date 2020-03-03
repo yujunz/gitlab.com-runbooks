@@ -121,5 +121,13 @@ local generateApdexWeightScoreQuery(histogramApdex, aggregationLabels, additiona
     percentileLatencyQuery(percentile, aggregationLabels, selector, rangeInterval)::
       local s = self;
       generatePercentileLatencyQuery(s, percentile, aggregationLabels, selector, rangeInterval),
+
+    describe()::
+      local s = self;
+      // TODO: don't assume the metric is in seconds!
+      if s.toleratedThreshold == null then
+        '%ds' % [s.satisfiedThreshold]
+      else
+        '%ds/%ds' % [s.satisfiedThreshold, s.toleratedThreshold],
   },
 }
