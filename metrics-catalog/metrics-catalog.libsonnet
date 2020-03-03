@@ -9,6 +9,7 @@ local serviceHasComponentWith(service, keymetricName) =
   );
 
 {
+  services:: services,
   getService(serviceType)::
     local service = serviceMap[serviceType];
 

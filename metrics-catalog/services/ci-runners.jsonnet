@@ -21,6 +21,9 @@ local rateMetric = metricsCatalog.rateMetric;
   eventBasedSLOTargets: {
     errorRatio: 0.995,  // 99.5% of ci-runner requests should succeed, over multiple window periods
   },
+  serviceDependencies: {
+    api: true,
+  },
   components: {
     polling: {
       requestRate: rateMetric(

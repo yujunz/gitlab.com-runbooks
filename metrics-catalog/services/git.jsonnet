@@ -13,6 +13,15 @@ local customRateQuery = metricsCatalog.customRateQuery;
   eventBasedSLOTargets: {
     errorRatio: 0.995,  // 99.5% of Git requests should succeed, over multiple window periods
   },
+  serviceDependencies: {
+    gitaly: true,
+    'redis-sidekiq': true,
+    'redis-cache': true,
+    redis: true,
+    patroni: true,
+    pgbouncer: true,
+    praefect: true,
+  },
   components: {
     workhorse: {
       apdex: histogramApdex(

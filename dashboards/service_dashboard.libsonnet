@@ -21,6 +21,7 @@ local saturationDetail = import 'saturation_detail.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local selectors = import './lib/selectors.libsonnet';
+local systemDiagramPanel = import 'system_diagram_panel.libsonnet';
 
 local listComponentThresholds(service) =
   std.prune([
@@ -110,13 +111,25 @@ local overviewDashboard(type, tier, stage) =
       _stage: stage,
       overviewTrailer()::
         local s = self;
-        local p =
-          s.addPanel(capacityPlanning.capacityPlanningRow(s._serviceType, s._stage), gridPos={ x: 0, y: 100000 })
-          + {
-            links+: platformLinks.triage + serviceCatalog.getServiceLinks(s._serviceType) + platformLinks.services + [platformLinks.dynamicLinks(s._serviceType + ' Detail', 'type:' + s._serviceType)],
-          };
-
-        p.trailer(),
+        self
+        .addPanel(
+          capacityPlanning.capacityPlanningRow(s._serviceType, s._stage),
+          gridPos={ x: 0, y: 100000 }
+        )
+        .addPanel(
+          systemDiagramPanel.systemDiagramRowForService(s._serviceType),
+          gridPos={ x: 0, y: 100010 }
+        )
+        .trailer()
+        + {
+          links+:
+            platformLinks.triage +
+            serviceCatalog.getServiceLinks(s._serviceType) +
+            platformLinks.services +
+            [
+              platformLinks.dynamicLinks(s._serviceType + ' Detail', 'type:' + s._serviceType),
+            ],
+        },
     },
 
 }

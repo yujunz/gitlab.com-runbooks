@@ -10,6 +10,16 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
     apdexRatio: 0.95,
     errorRatio: 0.05,
   },
+  serviceDependencies: {
+    gitaly: true,
+    'redis-sidekiq': true,
+    'redis-cache': true,
+    redis: true,
+    patroni: true,
+    pgbouncer: true,
+    nfs: true,
+    praefect: true,
+  },
   components: {
     latency_sensitive_job_execution: {
       apdex: histogramApdex(
