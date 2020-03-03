@@ -12,6 +12,15 @@ local rateMetric = metricsCatalog.rateMetric;
   eventBasedSLOTargets: {
     errorRatio: 0.999,  // 99.9% of API requests should succeed, over multiple window periods
   },
+  serviceDependencies: {
+    gitaly: true,
+    'redis-sidekiq': true,
+    'redis-cache': true,
+    redis: true,
+    patroni: true,
+    pgbouncer: true,
+    praefect: true,
+  },
   components: {
     workhorse: {
       apdex: histogramApdex(

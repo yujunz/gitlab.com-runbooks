@@ -6,6 +6,9 @@ local combined = metricsCatalog.combined;
 {
   type: 'pgbouncer',
   tier: 'db',
+  serviceDependencies: {
+    patroni: true,
+  },
   components: {
     service: {
       // The same query, with different labels is also used on the patroni nodes pgbouncer instances

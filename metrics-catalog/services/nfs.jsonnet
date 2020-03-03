@@ -26,7 +26,6 @@ local rateMetric = metricsCatalog.rateMetric;
       significantLabels: ['fqdn'],
     },
   },
-
   saturationTypes: [
     'cpu',
     'disk_space',

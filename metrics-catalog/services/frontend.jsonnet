@@ -9,6 +9,12 @@ local rateMetric = metricsCatalog.rateMetric;
     apdexRatio: 0.9,
     errorRatio: 0.0005,
   },
+  serviceDependencies: {
+    web: true,
+    api: true,
+    git: true,
+    registry: true,
+  },
   components: {
     mainHttpServices: {
       staticLabels: {
