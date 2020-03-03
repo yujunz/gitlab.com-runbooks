@@ -38,6 +38,8 @@
     - [esc-tools](#esc-tools)
       - [mark index as complete](#mark-index-as-complete)
       - [force index rollover](#force-index-rollover)
+  - [Kibana](#kibana)
+    - [refreshing index mappings cache](#refreshing-index-mappings-cache)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -284,7 +286,7 @@ Can be caused by:
     indefinitely despite the node reaching watermarks and there is nothing
     stopping it from reaching 100% disk usage at which point indices **have to
     be dropped**)
- 
+
 We already monitor for ILM errors:
 https://gitlab.com/gitlab-com/runbooks/blob/master/rules/elastic-clusters.yml#L4-23
 We also intend to monitor for ILM being in a stopped state:
@@ -295,3 +297,22 @@ https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8972
 #### mark index as complete ####
 
 #### force index rollover ####
+
+## Kibana ##
+
+### refreshing index mappings cache ###
+
+Example error message:
+```
+illegal_argument_exception
+
+Fielddata is disabled on text fields by default. Set fielddata=true on [json.extra.since] in order to load fielddata in memory by uninverting the inverted index. Note that this can however use significant memory. Alternatively use a keyword field instead.
+```
+
+In some cases, log records have an inconsistent structure which results in mapping conflicts. This can result in search queries failing on a subset of shards. When that happens, searches using Kibana fail.
+
+The short term solution is to refresh index mappings cached in Kibana. This can be done by going to: Kibana -> Management -> Index Patterns -> select an index pattern -> click "Refresh field list" in the top right corner of the page
+
+Long term we would like to have more consistency in logging fields so that we can avoid mapping conflicts completely.
+
+see: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/9364 for more details.
