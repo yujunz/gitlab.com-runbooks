@@ -22,6 +22,40 @@ local metricsCatalog = import 'metrics-catalog.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local selectors = import './lib/selectors.libsonnet';
 
+local listComponentThresholds(service) =
+  std.prune([
+    if std.objectHas(service.components[componentName], 'apdex') then
+      ' * %s: %s' % [componentName, service.components[componentName].apdex.describe()]
+    else
+      null
+    for componentName in std.objectFields(service.components)
+  ]);
+
+local getApdexDescription(metricsCatalogServiceInfo) =
+  std.join('  \n', [
+    '_Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better._\n',
+    '### Component Thresholds',
+    '_Satisfactory/Tolerable_',
+  ] + listComponentThresholds(metricsCatalogServiceInfo));
+
+local headlineMetricsRow(serviceType, serviceStage, startRow, metricsCatalogServiceInfo) =
+  local hasApdex = metricsCatalogServiceInfo.hasApdex();
+  local hasErrorRate = metricsCatalogServiceInfo.hasErrorRate();
+  local hasRequestRate = metricsCatalogServiceInfo.hasRequestRate();
+
+  local cells = std.prune([
+    if hasApdex then keyMetrics.apdexPanel(serviceType, serviceStage, compact=true, description=getApdexDescription(metricsCatalogServiceInfo)) else null,
+    if hasErrorRate then keyMetrics.errorRatesPanel(serviceType, serviceStage, compact=true) else null,
+    if hasRequestRate then keyMetrics.qpsPanel(serviceType, serviceStage, compact=true) else null,
+    keyMetrics.saturationPanel(serviceType, serviceStage, compact=true),
+  ]);
+
+  layout.grid([
+    row.new(title='🌡️ Service Level Indicators (𝙎𝙇𝙄𝙨)', collapse=false),
+  ], cols=1, rowHeight=1, startRow=startRow)
+  +
+  layout.grid(cells, cols=std.length(cells), rowHeight=5, startRow=startRow + 1);
+
 local overviewDashboard(type, tier, stage) =
   local selectorHash = {
     environment: '$environment',
@@ -37,7 +71,7 @@ local overviewDashboard(type, tier, stage) =
       'Overview',
       tags=['type:' + type, 'tier:' + tier, type, 'service overview'],
     )
-    .addPanels(keyMetrics.headlineMetricsRow(type, stage, startRow=0))
+    .addPanels(headlineMetricsRow(type, stage, 0, metricsCatalogServiceInfo))
     .addPanel(serviceHealth.row(type, stage), gridPos={ x: 0, y: 10 })
     .addPanels(
       metricsCatalogDashboards.componentOverviewMatrix(

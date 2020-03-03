@@ -43,11 +43,16 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
 
 
 {
-  apdexPanel(serviceType, serviceStage, compact=false)::
+  apdexPanel(
+    serviceType,
+    serviceStage,
+    compact=false,
+    description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.'
+  )::
     local formatConfig = { serviceType: serviceType, serviceStage: serviceStage };
     generalGraphPanel(
       'Latency: Apdex',
-      description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
+      description=description,
       sort=0,
       legend_show=!compact,
       linewidth=if compact then 1 else 2,
