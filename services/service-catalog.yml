@@ -2799,3 +2799,62 @@ services:
     monitors:
       primary_grafana_dashboard: "USVj3qHmk/logging"
       sentry_slug:
+
+- name: elasticsearch
+  tier: inf
+  teams:
+    - infrastructure-observability
+  infra_owner: infrastructure-observability
+  label: Service:ELK
+  business:
+    requirement: |
+      Provide centralised log search for GitLab.com.
+    customers:
+      - Used internally by GitLab teams
+    business_value: |
+      Allows visibility into the infrastructure, aides in debugging issues and
+      incidents handling.
+    SLA:
+      availability:
+        response_time: "Elastic Support SLA: L1 - 4 business hours, L2 - 1 business day, L3 - 2 business days"
+  technical:
+    project: https://gitlab.com/gitlab-com/runbooks/-/tree/master/elastic
+    criticality: 3
+    slx:
+    documents:
+      design: https://gitlab.com/gitlab-com/www-gitlab-com/-/merge_requests/23545
+      architecture: https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/es-logging-cluster/index.md
+      service:
+      security:
+    dependencies:
+    configurations:
+      - config_name: managed objects
+        location: https://gitlab.com/gitlab-com/runbooks/-/tree/master/elastic%2Fmanaged-objects
+    chef_roles:
+    scalability:
+      bound: cpu, disk
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: elastic stack monitoring
+        permalink: https://00a4ef3362214c44a044feaa539b4686.us-central1.gcp.cloud.es.io:9243/app/monitoring#/home?_g=(cluster_uuid:RM2uqM76TnWT3JL5n5NzCw)
+  infrastructure:
+    provider: elastic.io
+    architecture:
+    provisioning:
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks: https://gitlab.com/gitlab-com/runbooks/-/tree/master/elastic%2Fdoc
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      primary_grafana_dashboard:
+      sentry_slug:
