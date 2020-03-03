@@ -80,6 +80,75 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
 
       significantLabels: ['priority'],
     },
+    urgency_job_execution: {
+      apdex: histogramApdex(
+        histogram='sidekiq_jobs_completion_seconds_bucket',
+        selector='urgency="high"',
+        satisfiedThreshold=sidekiqHelpers.slos.urgent.executionDurationSeconds,
+      ),
+
+      requestRate: rateMetric(
+        counter='sidekiq_jobs_completion_seconds_bucket',
+        selector='urgency="high",le="+Inf"'
+      ),
+
+      errorRate: rateMetric(
+        counter='sidekiq_jobs_failed_total',
+        selector='urgency="high"'
+      ),
+
+      significantLabels: ['priority'],
+    },
+
+    urgency_job_queueing: {
+      apdex: histogramApdex(
+        histogram='sidekiq_jobs_queue_duration_seconds_bucket',
+        selector='urgency="high"',
+        satisfiedThreshold=sidekiqHelpers.slos.urgent.queueingDurationSeconds,
+      ),
+
+      requestRate: rateMetric(
+        counter='sidekiq_enqueued_jobs_total',
+        selector='urgency="high"'
+      ),
+
+      significantLabels: ['priority'],
+    },
+
+    non_urgency_job_execution: {
+      apdex: histogramApdex(
+        histogram='sidekiq_jobs_completion_seconds_bucket',
+        selector='urgency!="high"',
+        satisfiedThreshold=sidekiqHelpers.slos.nonUrgent.executionDurationSeconds,
+      ),
+
+      requestRate: rateMetric(
+        counter='sidekiq_jobs_completion_seconds_bucket',
+        selector='urgency!="high",le="+Inf"'
+      ),
+
+      errorRate: rateMetric(
+        counter='sidekiq_jobs_failed_total',
+        selector='urgency!="high"'
+      ),
+
+      significantLabels: ['priority'],
+    },
+
+    non_urgency_job_queueing: {
+      apdex: histogramApdex(
+        histogram='sidekiq_jobs_queue_duration_seconds_bucket',
+        selector='urgency!="high"',
+        satisfiedThreshold=sidekiqHelpers.slos.nonUrgent.queueingDurationSeconds,
+      ),
+
+      requestRate: rateMetric(
+        counter='sidekiq_enqueued_jobs_total',
+        selector='urgency!="high"'
+      ),
+
+      significantLabels: ['priority'],
+    },
   },
 
   saturationTypes: [
