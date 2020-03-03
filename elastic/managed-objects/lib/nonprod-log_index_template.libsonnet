@@ -15,6 +15,7 @@ local mappings = import 'mappings.libsonnet';
           rollover_alias: 'pubsub-%s-inf-%s' % [index, env],
         },
         mapping: {
+          ignore_malformed: true,
           total_fields: {
             limit: 10000,
           },
