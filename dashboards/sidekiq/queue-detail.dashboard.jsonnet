@@ -163,8 +163,8 @@ basic.dashboard(
       links=attribute.links
     )
     for attribute in [{
-      label: 'latency_sensitive',
-      title: 'Latency Sensitive',
+      label: 'urgency',
+      title: 'Urgency',
       color: 'yellow',
       default: 'unknown',
       links: [],
@@ -202,9 +202,9 @@ basic.dashboard(
       'Max Queuing Duration SLO',
       'light-red',
       |||
-        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", latency_sensitive="no"}
+        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency!="high"}
         or
-        vector(%(urgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", latency_sensitive="yes"}
+        vector(%(urgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="high"}
       ||| % {
         nonUrgentSLO: sidekiqHelpers.slos.nonUrgent.queueingDurationSeconds,
         urgentSLO: sidekiqHelpers.slos.urgent.queueingDurationSeconds,
@@ -216,9 +216,9 @@ basic.dashboard(
       'Max Execution Duration SLO',
       'red',
       |||
-        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", latency_sensitive="no"}
+        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency!="high"}
         or
-        vector(%(urgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", latency_sensitive="yes"}
+        vector(%(urgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="high"}
       ||| % {
         nonUrgentSLO: sidekiqHelpers.slos.nonUrgent.executionDurationSeconds,
         urgentSLO: sidekiqHelpers.slos.urgent.executionDurationSeconds,
