@@ -11,6 +11,7 @@
 
 * [Kibana](https://log.gprd.gitlab.net/app/kibana)
 * [Stackdriver](https://console.cloud.google.com/logs/viewer?project=gitlab-production)
+* [elastic stack monitoring](https://00a4ef3362214c44a044feaa539b4686.us-central1.gcp.cloud.es.io:9243/app/monitoring#/home?_g=(cluster_uuid:RM2uqM76TnWT3JL5n5NzCw))
 
 ## Troubleshooting Pointers
 

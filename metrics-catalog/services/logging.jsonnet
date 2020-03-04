@@ -4,17 +4,17 @@ local rateMetric = metricsCatalog.rateMetric;
 local customQuery = metricsCatalog.customQuery;
 
 {
-  type: 'elasticsearch',
+  type: 'logging',
   tier: 'inf',
   slos: {
     /*
-    TODO: enable SLOs for elasticsearch service
+    TODO: enable SLOs for logging service
     apdexRatio: 0.95,
     errorRatio: 0.005,
     */
   },
   components: {
-    search: {
+    elk_searching: {
       requestRate: rateMetric(
         counter='elasticsearch_indices_search_query_total',
         selector='job="elasticsearch"'
@@ -23,7 +23,7 @@ local customQuery = metricsCatalog.customQuery;
       significantLabels: ['name'],
     },
 
-    indexing: {
+    elk_indexing: {
       requestRate: rateMetric(
         counter='elasticsearch_indices_indexing_index_total',
         selector='job="elasticsearch"'
