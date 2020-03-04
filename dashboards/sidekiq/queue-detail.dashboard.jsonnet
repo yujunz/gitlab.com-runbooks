@@ -237,6 +237,10 @@ basic.dashboard(
     latencyTimeseries('Execution Time per Node', aggregators='fqdn, queue', legendFormat='p95 {{ queue }} - {{ fqdn }}'),
     qpsTimeseries('QPS per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
     errorRateTimeseries('Error Rate per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
+    basic.heatmap(
+      title='CPU Time',
+      query='sum without (fqdn, instance) (rate(sidekiq_jobs_cpu_seconds_bucket{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue"}[1m]))'
+    ),
   ], cols=4, startRow=100)
 )
 .trailer()

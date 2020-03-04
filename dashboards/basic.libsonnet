@@ -102,6 +102,8 @@ local panelMethods = {
       description=description,
       datasource='$PROMETHEUS_DS',
       legend_show=false,
+      yAxis_format='s',
+      color_mode='opacity',
     )
     .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
     + panelMethods,
