@@ -36,11 +36,10 @@ mailbox.
 
 ### Clear e-mail that are piling up
 
-Until we are able to [upgrade Mailroom], there exists the possibility that a
-problem occurred when processing a message via Mailroom which can sometimes
-leave emails hanging around in the inbox until manual intervention.  Utilize
-this process to clear the unread count which will force Mailroom to reattempt to
-process the email.
+If for some reason Mailroom is unable to process email, an alert will let us
+know.  If that alert does not clear, we may need to manually intervene .
+Utilize this process to clear the unread count which will force Mailroom to
+reattempt to process the email.
 
 * Clear the unread count
 From a gitlab-console session:
@@ -112,22 +111,19 @@ this is reasonable from a raw technical standpoint.
 
 Currently emails are sent to the trash, but they are not, by default, expunged.
 Utilize this process to remove those emails.  This is a lightweight process that
-operates at roughly 100 messages per second.  Eventually we shouldn't need to do
-this after we [upgrade Mailroom].
+operates at roughly 100 messages per second.  The only time this is needed is if
+something happened with Mailroom's ability to expunge emails and the amount of
+left over deleted emails is building up over time.
 
-* ssh into the console server for the environment which fired the alert
+* ssh into a console server for the environment which fired the alert
 * grab the password from `gitlab.rb` under attribute
   `gitlab_rails['incoming_email_password']`
 * Expunge
 
 ```
 sudo gitlab-rails c
-require 'mail_room'
-require 'mail'
-imap = MailRoom::IMAP.new("imap.gmail.com", 993, :ssl => true)
+imap = Net::IMAP.new("imap.gmail.com", 993, :ssl => true)
 imap.login("incoming@gitlab.com", "REDACTED")
 imap.uid_search("DELETED").length # Informational, shows how many messages are deleted but not expunged
 imap.expunge()
 ```
-
-[upgrade Mailroom]: https://gitlab.com/gitlab-org/gitlab/issues/35108
