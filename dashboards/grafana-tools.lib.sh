@@ -22,7 +22,7 @@ function resolve_folder_id() {
 function prepare() {
   if [[ ! -d "vendor" ]]; then
     echo >&2 "vendor directory not found, running bundler.sh to install dependencies..."
-    "bundler.sh"
+    "./bundler.sh"
   fi
 
   # Convert the service catalog yaml into a JSON file in a format thats consumable by jsonnet
