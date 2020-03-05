@@ -362,6 +362,70 @@ groups:
         1
       )
 
+  # type: patroni
+  # Disk read IOPS saturation based on GCP estimate of 100000 IO operations/second
+  # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/patroni-02-db-gprd-data?project=gitlab-production
+  # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_sustained_read_iops'
+    expr: >
+      clamp_max(
+        max(
+          rate(node_disk_reads_completed_total{type="patroni", device="sdb"}[1m]) / (100000)
+        ) by (environment, tier, type, stage),
+        1
+      )
+
+  # type: patroni
+  # Disk write IOPS saturation based on GCP estimate of 30000 IO operations/second
+  # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/patroni-02-db-gprd-data?project=gitlab-production
+  # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_sustained_write_iops'
+    expr: >
+      clamp_max(
+        max(
+          rate(node_disk_writes_completed_total{type="patroni", device="sdb"}[1m]) / (30000)
+        ) by (environment, tier, type, stage),
+        1
+      )
+
+  # type: patroni
+  # Disk write throughput saturation based on GCP estimate of 800MB/s limit
+  # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/patroni-02-db-gprd-data?project=gitlab-production
+  # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_sustained_write_throughput'
+    expr: >
+      clamp_max(
+        max(
+          rate(node_disk_written_bytes_total{type="patroni", device="sdb"}[1m]) / (800 * 1024 * 1024)
+        ) by (environment, tier, type, stage),
+        1
+      )
+
+  # type: patroni
+  # Disk read throughput saturation based on GCP estimate of 1200MB/s limit
+  # This value can be found in the GCP console, here https://console.cloud.google.com/compute/disksDetail/zones/us-east1-d/disks/patroni-02-db-gprd-data?project=gitlab-production
+  # For now, we hard-code the device as `sdb`
+  # Note: please update `magic_numbers.libsonnet` when updating this value!
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'disk_sustained_read_throughput'
+    expr: >
+      clamp_max(
+        max(
+          rate(node_disk_read_bytes_total{type="patroni", device="sdb"}[1m]) / (1200 * 1024 * 1024)
+        ) by (environment, tier, type, stage),
+        1
+      )
+
   # Open file descriptors
   - record: gitlab_component_saturation:ratio
     labels:
