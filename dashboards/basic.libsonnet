@@ -166,6 +166,60 @@ local panelMethods = {
     ) +
     panelMethods,
 
+  multiTimeseries(
+    title='Multi timeseries',
+    description='',
+    queries=[],
+    format='short',
+    interval='1m',
+    intervalFactor=3,
+    yAxisLabel='',
+    sort='decreasing',
+    legend_show=true,
+    legend_rightSide=false,
+    linewidth=2,
+    max=null,
+    decimals=0
+  )::
+    local panel = graphPanel.new(
+      title,
+      description=description,
+      sort=sort,
+      linewidth=linewidth,
+      fill=0,
+      datasource='$PROMETHEUS_DS',
+      decimals=decimals,
+      legend_rightSide=legend_rightSide,
+      legend_show=legend_show,
+      legend_values=true,
+      legend_min=true,
+      legend_max=true,
+      legend_current=true,
+      legend_total=false,
+      legend_avg=true,
+      legend_alignAsTable=true,
+      legend_hideEmpty=true,
+    );
+
+    local addPanelTarget(panel, query) =
+      panel.addTarget(promQuery.target(query.query, legendFormat=query.legendFormat, interval=interval, intervalFactor=intervalFactor));
+
+    std.foldl(addPanelTarget, queries, panel)
+    .resetYaxes()
+    .addYaxis(
+      format=format,
+      min=0,
+      max=max,
+      label=yAxisLabel,
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ) +
+    panelMethods,
+
   timeseries(
     title='Timeseries',
     description='',

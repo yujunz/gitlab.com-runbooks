@@ -84,6 +84,17 @@ local errorRateTimeseries(title, aggregators, legendFormat) =
     legendFormat=legendFormat,
   );
 
+local multiQuantileTimeseries(title, bucketMetric, aggregators) =
+  local queries = std.map(
+    function(p) {
+      query: latencyHistogramQuery(p / 100, bucketMetric, selector, aggregators, '$__interval'),
+      legendFormat: '{{ queue }} p%s' % [p],
+    },
+    [50, 90, 95, 99]
+  );
+
+  basic.multiTimeseries(title=title, decimals=2, queries=queries, yAxisLabel='Duration', format='s');
+
 local statPanel(
   title,
   panelTitle,
@@ -237,10 +248,7 @@ basic.dashboard(
     latencyTimeseries('Execution Time per Node', aggregators='fqdn, queue', legendFormat='p95 {{ queue }} - {{ fqdn }}'),
     qpsTimeseries('QPS per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
     errorRateTimeseries('Error Rate per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
-    basic.heatmap(
-      title='CPU Time',
-      query='sum without (fqdn, instance) (rate(sidekiq_jobs_cpu_seconds_bucket{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue"}[1m]))'
-    ),
+    multiQuantileTimeseries('CPU Time', bucketMetric='sidekiq_jobs_cpu_seconds_bucket', aggregators='queue'),
   ], cols=4, startRow=100)
 )
 .trailer()
