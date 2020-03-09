@@ -484,26 +484,6 @@ local DETAILS = {
     legendFormat: '{{ name }}',
   },
 
-  single_node_puma_workers: {
-    title: 'Puma Worker Saturation per Node',
-    description: |||
-      Puma worker saturation per node.
-
-      Each concurrent HTTP request being handled in the application needs a dedicated puma worker. When this resource is saturated,
-      we will see puma queuing taking place. Leading to slowdowns across the application.
-
-      Puma saturation is usually caused by latency problems in downstream services: usually Gitaly or Postgres, but possibly also Redis.
-      Puma saturation can also be caused by traffic spikes.
-    |||,
-    component: 'single_node_puma_workers',
-    query: |||
-      sum by(fqdn) (avg_over_time(puma_active_connections{%(selector)s}[$__interval]))
-      /
-      sum by(fqdn) (puma_max_threads{pid="puma_master", %(selector)s})
-    |||,
-    legendFormat: '{{ fqdn }}',
-  },
-
   single_node_unicorn_workers: {
     title: 'Unicorn Worker Saturation per Node',
     description: |||

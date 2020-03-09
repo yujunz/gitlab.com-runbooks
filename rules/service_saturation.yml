@@ -99,26 +99,6 @@ groups:
         1
       )
 
-  # type: web/api/git, component: single_node_puma_workers
-  # Single node workers is a similar metric to the normal puma `worker` metric,
-  # except that it only measures a single host. This reason for this is that once HAProxy has routed
-  # a request to a single host it is (for now) trapped on that host until its complete.
-  # There are cases where a single host will receive an unbalanced amount of traffic. In this case,
-  # puma saturation could occur on that host without happening across the fleet in general.
-  # An example of this was https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7916
-  - record: gitlab_component_saturation:ratio
-    labels:
-      component: 'single_node_puma_workers'
-    expr: >
-      clamp_max(
-        max(
-          sum by(fqdn, type, tier, stage, environment) (avg_over_time(puma_active_connections[1m]))
-          /
-          sum by(fqdn, type, tier, stage, environment) (puma_max_threads{pid="puma_master"})
-        ) without(fqdn),
-        1
-      )
-
   # type: elasticsearch, component: elastic_cpu
   - record: gitlab_component_saturation:ratio
     labels:

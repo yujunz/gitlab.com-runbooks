@@ -6,7 +6,7 @@ groups:
   rules:
   - record: gitlab_component_apdex:ratio
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -29,7 +29,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -38,7 +38,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_1h
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -47,7 +47,7 @@ groups:
       )
   - record: gitlab_component_ops:rate
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -56,7 +56,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_30m
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -65,7 +65,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_5m
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -74,7 +74,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_6h
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -83,7 +83,7 @@ groups:
       )
   - record: gitlab_component_errors:rate_1h
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -92,7 +92,7 @@ groups:
       )
   - record: gitlab_component_errors:rate
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -101,7 +101,7 @@ groups:
       )
   - record: gitlab_component_errors:rate_30m
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -110,7 +110,7 @@ groups:
       )
   - record: gitlab_component_errors:rate_5m
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
@@ -119,7 +119,7 @@ groups:
       )
   - record: gitlab_component_errors:rate_6h
     labels:
-      component: puma
+      component: unicorn
       tier: sv
       type: api
     expr: |
