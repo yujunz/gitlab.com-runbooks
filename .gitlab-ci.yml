@@ -100,13 +100,7 @@ update-alert-manager:
 test:
   stage: test
   script:
-    - scripts/validate-service-mappings
-    - find . -name \*.y*ml | xargs yaml-lint
-    - /prometheus/promtool check rules rules/*.yml thanos-rules/*.yml
-    # Prometheus config checks are stricter than rules checks, so use a fake config to check this too
-    - /prometheus/promtool check config scripts/prometheus.yml
-    - scripts/validate_kibana_urls
-    - scripts/validate-alerts
+    - make test
 
 ensure_generated_content_up_to_date:
   image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
