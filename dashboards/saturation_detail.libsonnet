@@ -138,6 +138,20 @@ local DETAILS = {
     legendFormat: '{{ fqdn }}',
   },
 
+  elastic_cpu: {
+    title: 'Average CPU Saturation per Node',
+    description: |||
+      Average CPU per Node.
+
+      This resource measures all CPU across a fleet. If it is becoming saturated, it may indicate that the fleet needs horizontal or
+      vertical scaling. The metrics are coming from elasticsearch_exporter.
+    |||,
+    query: |||
+      avg_over_time(elasticsearch_os_cpu_percent{%(selector)s}[$__interval]) / 100
+    |||,
+    legendFormat: '{{ name }}',
+  },
+
   disk_sustained_read_iops: {
     title: 'Disk Sustained Read IOPS Saturation per Node',
     description: |||
@@ -182,6 +196,22 @@ local DETAILS = {
       ) by (device, fqdn)
     |||,
     legendFormat: '{{ fqdn }} {{ device }}',
+  },
+
+  elastic_disk_space: {
+    title: 'Disk Utilization per Device per Node',
+    description: |||
+      Disk utilization per device per node.
+    |||,
+    query: |||
+      max(
+        (
+          (elasticsearch_filesystem_data_size_bytes{%(selector)s} - elasticsearch_filesystem_data_free_bytes{%(selector)s})
+          / elasticsearch_filesystem_data_size_bytes{%(selector)s}
+        )
+      ) by (name)
+    |||,
+    legendFormat: '{{ name }}',
   },
 
   disk_sustained_write_iops: {
@@ -237,6 +267,17 @@ local DETAILS = {
       instance:node_memory_utilization:ratio{%(selector)s}
     |||,
     legendFormat: '{{ fqdn }}',
+  },
+
+  elastic_jvm_heap_memory: {
+    title: 'JVM Heap Utilization per Node',
+    description: |||
+      JVM heap memory utilizationper node.
+    |||,
+    query: |||
+      elasticsearch_jvm_memory_used_bytes{area="heap", %(selector)s} / elasticsearch_jvm_memory_max_bytes{area="heap", %(selector)s}
+    |||,
+    legendFormat: '{{ name }}',
   },
 
   open_fds: {
@@ -427,6 +468,20 @@ local DETAILS = {
       avg(1 - rate(node_cpu_seconds_total{mode="idle", %(selector)s}[$__interval])) by (fqdn)
     |||,
     legendFormat: '{{ fqdn }}',
+  },
+
+  elastic_single_node_cpu: {
+    title: 'Average CPU Saturation per Node',
+    description: |||
+      Average CPU per Node.
+
+      This resource measures all CPU across a fleet. If it is becoming saturated, it may indicate that the fleet needs horizontal or
+      vertical scaling. The metrics are coming from elasticsearch_exporter.
+    |||,
+    query: |||
+      avg_over_time(elasticsearch_os_cpu_percent{%(selector)s}[$__interval]) / 100
+    |||,
+    legendFormat: '{{ name }}',
   },
 
   single_node_unicorn_workers: {

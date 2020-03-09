@@ -4,6 +4,7 @@
   import 'frontend.jsonnet',
   import 'git.jsonnet',
   import 'gitaly.jsonnet',
+  import 'logging.jsonnet',
   import 'monitoring.jsonnet',
   import 'nfs.jsonnet',
   import 'patroni.jsonnet',

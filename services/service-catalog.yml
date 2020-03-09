@@ -640,29 +640,31 @@ services:
   business:
     requirement: We are required to keep logs, both on legal terms as well as for debugging production issues
     customers:
-      - infrastructure
+      - infrastructure, security, engineering
     business_value: Without logging we might not be able to comply with legal requirements and are unable to debug production issues.
     SLA:
       availability:
-      response_time:
+      response_time: "Elastic Support SLA: L1 - 4 business hours, L2 - 1 business day, L3 - 2 business days"
   technical:
     project:
     criticality: 2
     slx:
     documents:
-      design:
+      design: https://gitlab.com/gitlab-com/www-gitlab-com/-/merge_requests/23545
       architecture: https://gitlab.com/gitlab-com/runbooks/raw/master/img/logging-infr.png
       service:
         - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+        - https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/es-logging-cluster/index.md
       security:
     dependencies:
-      - service: elk
+      - service:
     sub_components:
       - fluentd
       - google-pubsub-topics
       - pubsubbeat
       - stackdriver
       - stackdriver-exporter
+      - elk
     configurations:
       - config_name: td-agent/fluentd main configuration
         location: /etc/td-agent/td-agent.conf
@@ -676,7 +678,8 @@ services:
         location: https://gitlab.com/gitlab-cookbooks/gitlab-exporters/blob/master/attributes/stackdriver_exporter.rb#L8
       - config_name: stackdriver scrape config on Prometheus
         location: /opt/prometheus/prometheus/inventory/stackdriver.yml
-
+      - config_name: ELK managed objects
+        location: https://gitlab.com/gitlab-com/runbooks/-/tree/master/elastic%2Fmanaged-objects
     chef_roles:
       - gprd-base
       - gstg-base
@@ -691,9 +694,9 @@ services:
       - gstg-infra-sd-exporter
       - ops-infra-sd-exporter
     scalability:
-      note: We run fluentd for logs on each host; Google PubSub topics and stackdriver are cloud services; We can only sensibly scale out pubsubbeats.
-      bound: cpu
-      scalable: vertical
+      note: We run fluentd for logs on each host; Google PubSub topics and stackdriver are cloud services; We can only sensibly scale out pubsubbeats. ELK can be scaled horizontally.
+      bound: cpu, memory, storage
+      scalable: vertical, horizontal
     security:
       security_reviewed:
       data_classification:
@@ -703,8 +706,10 @@ services:
         permalink: https://log.gprd.gitlab.net/app/kibana
       - name: Stackdriver
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production
+      - name: elastic stack monitoring
+        permalink: https://00a4ef3362214c44a044feaa539b4686.us-central1.gcp.cloud.es.io:9243/app/monitoring#/home?_g=(cluster_uuid:RM2uqM76TnWT3JL5n5NzCw)
   infrastructure:
-    provider: gcp
+    provider: gcp, elastic.io
     architecture: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
     provisioning: terraform
     accesses:
@@ -712,6 +717,7 @@ services:
     maintenance:
     runbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+      - https://gitlab.com/gitlab-com/runbooks/-/tree/master/elastic%2Fdoc
     playbooks:
     error_budget:
   observability:
