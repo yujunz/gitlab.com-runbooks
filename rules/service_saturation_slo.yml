@@ -84,18 +84,6 @@ groups:
       component: 'single_node_unicorn_workers'
     expr: '0.90'
 
-  ## single_node_puma_workers Saturation
-  - record: 'slo:max:soft:gitlab_component_saturation:ratio'
-    labels:
-      component: 'single_node_puma_workers'
-    expr: '0.85'
-
-  - record: 'slo:max:hard:gitlab_component_saturation:ratio'
-    labels:
-      component: 'single_node_puma_workers'
-    expr: '0.90'
-
-
   ## CPU Saturation
   - record: 'slo:max:soft:gitlab_component_saturation:ratio'
     labels:
