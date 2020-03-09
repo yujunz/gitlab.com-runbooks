@@ -12,18 +12,26 @@ local COMPONENT_LEVEL_RECORDING_RULE_NAMES = {
     errorRate: 'gitlab_component_errors:rate',
   },
   '5m': {
+    apdexRatio: 'gitlab_component_apdex:ratio_5m',
+    apdexWeight: 'gitlab_component_apdex:weight:score_5m',
     requestRate: 'gitlab_component_ops:rate_5m',
     errorRate: 'gitlab_component_errors:rate_5m',
   },
   '30m': {
+    apdexRatio: 'gitlab_component_apdex:ratio_30m',
+    apdexWeight: 'gitlab_component_apdex:weight:score_30m',
     requestRate: 'gitlab_component_ops:rate_30m',
     errorRate: 'gitlab_component_errors:rate_30m',
   },
   '1h': {
+    apdexRatio: 'gitlab_component_apdex:ratio_1h',
+    apdexWeight: 'gitlab_component_apdex:weight:score_1h',
     requestRate: 'gitlab_component_ops:rate_1h',
     errorRate: 'gitlab_component_errors:rate_1h',
   },
   '6h': {
+    apdexRatio: 'gitlab_component_apdex:ratio_6h',
+    apdexWeight: 'gitlab_component_apdex:weight:score_6h',
     requestRate: 'gitlab_component_ops:rate_6h',
     errorRate: 'gitlab_component_errors:rate_6h',
   },
