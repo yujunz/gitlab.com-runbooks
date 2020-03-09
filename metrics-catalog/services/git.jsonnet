@@ -44,7 +44,7 @@ local customRateQuery = metricsCatalog.customRateQuery;
       significantLabels: ['fqdn', 'route'],
     },
 
-    unicorn: {
+    puma: {
       apdex: histogramApdex(
         histogram='http_request_duration_seconds_bucket',
         selector='job="gitlab-rails", type="git"',
@@ -87,6 +87,7 @@ local customRateQuery = metricsCatalog.customRateQuery;
     'memory',
     'open_fds',
     'single_node_cpu',
+    'single_node_puma_workers',
     'single_node_unicorn_workers',
     'workers',
   ],
