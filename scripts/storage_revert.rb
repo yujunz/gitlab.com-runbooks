@@ -31,12 +31,16 @@ end
 
 # Storage module
 module Storage
-  DEFAULT_NODE_CONFIG = {}.freeze
+  # RevertScript module
+  module RevertScript
+    LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
+    DEFAULT_NODE_CONFIG = {}.freeze
+  end
 
   def self.get_node_configuration
     return ::Gitlab.config.repositories.storages.dup if defined? ::Gitlab
 
-    DEFAULT_NODE_CONFIG
+    ::RevertScript::DEFAULT_NODE_CONFIG
   end
 
   def self.node_configuration
@@ -48,14 +52,13 @@ end
 module Storage
   # This module defines logging methods
   module Logging
-    LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
-
     def initialize_log
       STDOUT.sync = true
+      timestamp_format = ::Storage::RevertScript::LOG_TIMESTAMP_FORMAT
       log = Logger.new STDOUT
       log.level = Logger::INFO
       log.formatter = proc do |level, t, _name, msg|
-        fields = { timestamp: t.strftime(LOG_TIMESTAMP_FORMAT), level: level, msg: msg }
+        fields = { timestamp: t.strftime(timestamp_format), level: level, msg: msg }
         Kernel.format("%<timestamp>s %-5<level>s %<msg>s\n", **fields)
       end
       log
@@ -74,13 +77,16 @@ end
 
 # Re-open the Storage module to define the Configuration defaults
 module Storage
-  # Configuration defaults
-  module Config
-    DEFAULTS = {
-      dry_run: true,
-      log_level: Logger::INFO,
-      env: :production
-    }.freeze
+  # RebalanceScript module
+  module RevertScript
+    # Config module
+    module Config
+      DEFAULTS = {
+        dry_run: true,
+        log_level: Logger::INFO,
+        env: :production
+      }.freeze
+    end
   end
 end
 
@@ -94,7 +100,7 @@ module Storage
 
       def initialize
         @parser = OptionParser.new
-        @options = ::Storage::Config::DEFAULTS.dup
+        @options = ::Storage::RevertScript::Config::DEFAULTS.dup
         define_options
       end
 

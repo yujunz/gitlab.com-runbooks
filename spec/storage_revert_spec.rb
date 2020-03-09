@@ -18,7 +18,7 @@ describe ::Storage::Reverter do
   let(:gitaly_address) { 'test://test' }
   let(:node_configuration) { { node_name => { 'gitaly_address' => gitaly_address } } }
   let(:args) { { original_file_server: node_name, project_id: test_project_id, dry_run: dry_run } }
-  let(:defaults) { ::Storage::Config::DEFAULTS.dup.merge(args) }
+  let(:defaults) { ::Storage::RevertScript::Config::DEFAULTS.dup.merge(args) }
   let(:options) { defaults }
 
   describe '#list_nodes' do
@@ -71,12 +71,12 @@ describe ::Storage::Reverter do
   end
 end
 
-describe ::Registry::SearchScript do
+describe ::Storage::RevertScript do
   subject { Object.new.extend(::Storage::RevertScript) }
   let(:dry_run) { true }
   let(:node_configuration) { { 'nfs-file03': 'test://test' } }
   let(:args) { { original_file_server: 'nfs-file03', project_id: 1, dry_run: dry_run } }
-  let(:defaults) { ::Storage::Config::DEFAULTS.dup.merge(args) }
+  let(:defaults) { ::Storage::RevertScript::Config::DEFAULTS.dup.merge(args) }
   let(:options) { defaults }
   let(:reverter) { double('::Registry::Reverter') }
 
