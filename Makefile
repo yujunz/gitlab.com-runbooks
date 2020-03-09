@@ -5,6 +5,7 @@ SHELL_FMT_FLAGS := -i 2 -ci
 SHELL_FILES = $(shell find . -name "*.sh" -type f -not -path "./dashboards/vendor/*")
 
 JSONET_COMMAND = $(shell which jsonnetfmt || (which jsonnet && echo " fmt"))
+PROMTOOL_COMMAND = $(shell which promtool || echo "/prometheus/promtool")
 
 SHELLCHECK_FLAGS := -e SC1090,SC1091
 
@@ -42,3 +43,15 @@ generate:
 	./scripts/generate-docs
 	./scripts/generate-sla-recording-rules.sh
 	./scripts/generate-gitlab-dashboards.sh
+
+.PHONY: test
+test:
+	./scripts/validate-service-mappings
+	$(PROMTOOL_COMMAND) check rules rules/*.yml thanos-rules/*.yml
+	# Prometheus config checks are stricter than rules checks, so use a fake config to check this too
+	$(PROMTOOL_COMMAND)  check config scripts/prometheus.yml
+	./scripts/validate_kibana_urls
+	./scripts/validate-alerts
+	if ! $$(command -v yaml-lint); then echo "Please install yaml-lint with 'gem install -N yaml-lint'"; exit 1; fi
+	find . -name \*.y*ml | xargs yaml-lint
+
