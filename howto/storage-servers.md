@@ -67,7 +67,7 @@ $ knife ssh -C 2 "roles:gprd-base" "sudo chef-client"
 
 To confirm new storage nodes are operational:
 1. Create a NEW project, do not push any data to it
-1. Use the API to [move it to a new storage server](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/sharding.md#manual-method) before pushing any data to it
+1. Use the API to [move it to a new storage server](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/storage-sharding.md#manual-method) before pushing any data to it
 1. Now that the project is moved, push some data to it and ensure that everything works. Namely, be sure that the
 web interface updates with the data you've pushed.
 

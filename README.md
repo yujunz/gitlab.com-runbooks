@@ -312,7 +312,8 @@ During an incident there are at least 2 roles, and one more optional
 
 ### Work with storage
 
-* [Understanding GitLab Storage Shards](howto/sharding.md)
+* [Understanding GitLab Storage Shards](howto/storage-sharding.md)
+* [How to re-balance GitLab Storage Shards](howto/storage-rebalancing.md)
 * [Build and Deploy New Storage Servers](howto/storage-servers.md)
 * [Manage uploads](howto/uploads.md)
 

@@ -13,7 +13,7 @@
 # Because this script's functionality is destructive in nature,
 # it is recommended that one make a manual snapshot of the storage node disk,
 # per the instructions found in the Sharding runbook:
-# https://gitlab.com/gitlab-com/runbooks/blob/master/howto/sharding.md#how-to-use-it
+# https://gitlab.com/gitlab-com/runbooks/blob/master/howto/storage-sharding.md#how-to-use-it
 # Like so:
 #
 #    gcloud auth login
