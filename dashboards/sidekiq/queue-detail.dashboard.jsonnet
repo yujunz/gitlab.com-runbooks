@@ -249,6 +249,8 @@ basic.dashboard(
     qpsTimeseries('QPS per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
     errorRateTimeseries('Error Rate per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
     multiQuantileTimeseries('CPU Time', bucketMetric='sidekiq_jobs_cpu_seconds_bucket', aggregators='queue'),
+    multiQuantileTimeseries('Gitaly Time', bucketMetric='sidekiq_jobs_gitaly_seconds_bucket', aggregators='queue'),
+    multiQuantileTimeseries('Database Time', bucketMetric='sidekiq_jobs_db_seconds_bucket', aggregators='queue'),
   ], cols=4, startRow=100)
 )
 .trailer()
