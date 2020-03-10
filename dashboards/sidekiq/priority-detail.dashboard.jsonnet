@@ -168,6 +168,7 @@ basic.dashboard(
     'open_fds',
     'sidekiq_workers',
     'single_node_cpu',
+    'single_node_puma_workers',
     'single_node_unicorn_workers',
     'workers',
   ]),
