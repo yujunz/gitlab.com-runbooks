@@ -235,4 +235,6 @@ local rulesFile = {
   }],
 };
 
-std.manifestYamlDoc(rulesFile)
+{
+  'sidekiq-worker-apdex-scores.yml': std.manifestYamlDoc(rulesFile),
+}
