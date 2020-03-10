@@ -385,7 +385,7 @@ sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
 gpg> save
 ```
 
-Place a reminder in your calendar in about 11 months to extend the expiry of your sub-keys
+Place a reminder in your calendar in about 11 months to [extend the expiry](#extend-the-expiry-of-sub-keys) of your sub-keys
 
 ## Backup and Publish your Public Key
 
@@ -574,6 +574,92 @@ PTY allocation request failed on channel 0
 Welcome to GitLab, @user!
 Connection to gitlab.com closed.
 ```
+
+## Extend the expiry of sub keys
+Remount your encrypted secrets image using the [veracrypt mount](#linux) or [hidutil attach](#macos) commands
+Setup env vars:
+```
+export MOUNTPOINT=/path/to/mountpoint
+export GNUPGHOME=$MOUNTPOINT/gpg_config/
+```
+Optionally take a backup of the original gpg\_config, inside your encrypted volume (size is tiny, it's a small price to pay)
+```bash
+cp -r $MOUNTPOINT/gpg_config $MOUNTPOINT/gpg_config.$(date +%Y-%m-%d).bak
+```
+Edit the key:
+```bash
+$ gpg --edit-key <youremail>
+# Ensure that after the boilerplate license it reports "Secret key is available", 
+# and not "Secret subkeys are available".  The former means you correctly have access
+# to the master key/secret, the latter means you're using your exported sub-keys 
+# (you probably still have your gpg pointing at $HOME/.gnupg; check $GNUPGHOME is set 
+# per above).
+# Select the 3 sub keys (signature, authentication, encryption):
+
+gpg> key 1
+
+pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2023-08-25  usage: C
+                     trust: ultimate      validity: ultimate
+sub* 4096R/AE86E89B  created: 2017-08-25  expires: 2018-08-25  usage: E
+sub  4096R/79BF274F  created: 2017-08-25  expires: 2018-08-25  usage: S
+sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
+
+gpg> key 2
+
+pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2023-08-25  usage: C
+                     trust: ultimate      validity: ultimate
+sub* 4096R/AE86E89B  created: 2017-08-25  expires: 2018-08-25  usage: E
+sub* 4096R/79BF274F  created: 2017-08-25  expires: 2018-08-25  usage: S
+sub  4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
+
+gpg> key 3
+
+pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2023-08-25  usage: C
+                     trust: ultimate      validity: ultimate
+sub* 4096R/AE86E89B  created: 2017-08-25  expires: 2018-08-25  usage: E
+sub* 4096R/79BF274F  created: 2017-08-25  expires: 2018-08-25  usage: S
+sub* 4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
+# You should see an asterisk appear next to a sub key  after each `key` command, 
+# and have 3 of them starred at the end.
+# Update the expiry key with the (distressingly named) `expire` command:
+
+gpg> expire
+Are you sure you want to change the expiration time for multiple subkeys? (y/N) y
+Please specify how long the key should be valid.
+         0 = key does not expire
+      <n>  = key expires in n days
+      <n>w = key expires in n weeks
+      <n>m = key expires in n months
+      <n>y = key expires in n years
+Key is valid for? (0) 13m
+# Enter how long the keys should be valid for *from now*; typically use 12-13 months (12m or 13m),
+# aiming for ~1 year past the previous expiry but taking care to avoid creeping forward or 
+# backward into common annual holiday periods in your country.
+Key expires at Sun Aug  25 01:21:41 2019 CST
+Is this correct? (y/N) y
+# Verify the expiry date is what you expect, and if so, type 'y'
+
+pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2023-08-25  usage: C
+                     trust: ultimate      validity: ultimate
+sub* 4096R/AE86E89B  created: 2017-08-25  expires: 2019-08-25  usage: E
+sub* 4096R/79BF274F  created: 2017-08-25  expires: 2019-08-25  usage: S
+sub* 4096R/DE86E396  created: 2017-08-25  expires: 2019-08-25  usage: A
+# save and exit
+gpg> save
+gpg> quit
+```
+
+Export the updated key information:
+```
+$ gpg --armor --export FAEFD83E > $MOUNTPOINT/gpg_config/FAEFD83E.asc
+```
+
+From a fresh terminal (using your normal ~/.gnupg GPG directory:
+```
+$ gpg --import $MOUNTPOINT/gpg_config/FAEFD83E.asc
+```
+
+Unmount your encrypted volume, re-copy the image file to your external safe storage (e.g. USB flash drive)
 
 ## Troubleshooting
 
