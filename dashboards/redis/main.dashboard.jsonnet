@@ -2,6 +2,7 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 local redisCommon = import 'redis_common_graphs.libsonnet';
 local row = grafana.row;
 local serviceDashboard = import 'service_dashboard.libsonnet';
+local processExporter = import 'process_exporter.libsonnet';
 
 serviceDashboard.overview('redis', 'db')
 .addPanel(
@@ -44,4 +45,16 @@ serviceDashboard.overview('redis', 'db')
   }
 )
 .addPanels(redisCommon.replication(serviceType='redis', startRow=4001))
+.addPanel(
+  row.new(title='Sentinel Processes', collapse=true)
+    .addPanels(
+      processExporter.namedGroup('sentinel', 'redis-sentinel 0.0.0.0:26379 [sentinel]', 'redis', '$stage', startRow=1)
+    ),
+  gridPos={
+    x: 0,
+    y: 5000,
+    w: 24,
+    h: 1,
+  },
+)
 .overviewTrailer()
