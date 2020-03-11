@@ -7,6 +7,7 @@
   import 'logging.jsonnet',
   import 'monitoring.jsonnet',
   import 'nfs.jsonnet',
+  import 'pages.jsonnet',
   import 'patroni.jsonnet',
   import 'pgbouncer.jsonnet',
   import 'praefect.jsonnet',

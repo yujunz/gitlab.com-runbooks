@@ -2,19 +2,6 @@ groups:
 - name: GitLab Component Operations-per-Second Rates
   interval: 1m
   rules:
-  # pages - haproxy service in front of GitLab pages
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'haproxy_http'
-    expr: >
-      sum (rate(haproxy_backend_http_responses_total{type="pages"}[1m])) by (environment, type, tier, stage)
-
-  - record: gitlab_component_ops:rate
-    labels:
-      component: 'haproxy_https'
-    expr: >
-      sum(haproxy_backend_current_session_rate{backend="pages_https", type="pages"}) by (environment, type, tier, stage)
-
   # Stackdriver
   - record: gitlab_component_ops:rate
     labels:
