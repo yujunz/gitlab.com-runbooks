@@ -2,19 +2,6 @@ groups:
 - name: GitLab Component Errors-per-Second Rates
   interval: 1m
   rules:
-  # pages - haproxy service in front of GitLab pages
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'haproxy_http'
-    expr: >
-      sum (rate(haproxy_backend_http_responses_total{code="5xx", type="pages"}[1m])) by (environment, type, tier, stage)
-
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'haproxy_https'
-    expr: >
-      sum(rate(haproxy_backend_connection_errors_total{backend="pages_https", type="pages"}[1m])) by (environment, type, tier, stage)
-
   # web-pages: GitLab Pages backend service
   - record: gitlab_component_errors:rate
     labels:

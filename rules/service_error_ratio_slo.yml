@@ -1,14 +1,4 @@
 groups:
-## TODO: generate this from definitions in the service catalog
-- name: GitLab Component Errors Rate Max SLOs
-  interval: 5m
-  rules:
-  - record: 'slo:max:gitlab_service_errors:ratio'
-    labels:
-      type: 'pages'
-      tier: 'sv'
-    expr: '0.005'
-
 - name: GitLab Error-Rate SLO observance status
   interval: 1m
   rules:
