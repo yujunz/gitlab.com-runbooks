@@ -132,8 +132,8 @@ local generateApdexWeightScoreQuery(customApdex, aggregationLabels, additionalSe
       local s = self;
       // TODO: don't assume the metric is in seconds!
       if s.toleratedThreshold == null then
-        '%ds' % [s.satisfiedThreshold]
+        '%gs' % [s.satisfiedThreshold]
       else
-        '%ds/%ds' % [s.satisfiedThreshold, s.toleratedThreshold],
+        '%gs/%gs' % [s.satisfiedThreshold, s.toleratedThreshold],
   },
 }
