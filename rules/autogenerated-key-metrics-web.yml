@@ -134,13 +134,11 @@ groups:
     expr: |
       (
         sum by (environment, stage) (
-          rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"
-      , le="1"}[1m])
+          rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$", le="1"}[1m])
         )
         +
         sum by (environment, stage) (
-          rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"
-      , le="10"}[1m])
+          rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$", le="10"}[1m])
         )
       )
       /
@@ -148,8 +146,7 @@ groups:
       /
       (
         sum by (environment, stage) (
-          rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"
-      , le="+Inf"}[1m])
+          rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -159,8 +156,7 @@ groups:
       type: web
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$"
-      , le="+Inf"}[1m])
+        rate(gitlab_workhorse_http_request_duration_seconds_bucket{job="gitlab-workhorse-web", route!="^/([^/]+/){1,}[^/]+/uploads\\z", route!="^/-/health$", route!="^/-/(readiness|liveness)$", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
