@@ -38,9 +38,9 @@ serviceDashboard.overview('redis-sidekiq', 'db')
 .addPanels(redisCommon.replication(serviceType='redis-sidekiq', startRow=4001))
 .addPanel(
   row.new(title='Sentinel Processes', collapse=true)
-    .addPanels(
-      processExporter.namedGroup('sentinel', 'redis-sentinel 0.0.0.0:26379 [sentinel]', 'redis-sidekiq', '$stage', startRow=1)
-    ),
+  .addPanels(
+    processExporter.namedGroup('sentinel', 'redis-sentinel 0.0.0.0:26379 [sentinel]', 'redis-sidekiq', '$stage', startRow=1)
+  ),
   gridPos={
     x: 0,
     y: 5000,
