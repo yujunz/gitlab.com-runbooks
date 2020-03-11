@@ -31,7 +31,7 @@ local getWeightQuery(weights) =
 
   std.join('\n  or\n  ', items);
 
-{
+local rules = {
   groups: [{
     name: 'SLA weight calculations',
     interval: '1m',
@@ -51,4 +51,8 @@ local getWeightQuery(weights) =
       ||| % [getWeightQuery(keyServiceWeights)],
     }],
   }],
+};
+
+{
+  'sla-rules.yml': std.manifestYamlDoc(rules),
 }
