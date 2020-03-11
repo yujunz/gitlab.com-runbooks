@@ -286,6 +286,7 @@ During an incident there are at least 2 roles, and one more optional
 * [Rollback GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/deploying.md#rolling-back-gitlabcom)
 * [Deploy staging.GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/staging.md)
 * [Refresh data on staging.gitlab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/staging.md)
+* [Background Migrations](https://gitlab.com/gitlab-org/release/docs/-/blob/master/runbooks/background-migrations.md)
 
 ### Work with the fleet and the rails app
 
