@@ -6,6 +6,7 @@ ruby '2.5.7'
 gem 'colorize'
 gem 'etc'
 gem 'google-cloud-storage'
+gem 'io-console'
 gem 'json'
 
 group :development, :test do
