@@ -11,7 +11,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_indexing_index_total{job="elasticsearch"}[1h])
+        rate(elasticsearch_indices_indexing_index_total{type="logging"}[1h])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -20,7 +20,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_indexing_index_total{job="elasticsearch"}[1m])
+        rate(elasticsearch_indices_indexing_index_total{type="logging"}[1m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -29,7 +29,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_indexing_index_total{job="elasticsearch"}[30m])
+        rate(elasticsearch_indices_indexing_index_total{type="logging"}[30m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -38,7 +38,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_indexing_index_total{job="elasticsearch"}[5m])
+        rate(elasticsearch_indices_indexing_index_total{type="logging"}[5m])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -47,7 +47,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_indexing_index_total{job="elasticsearch"}[6h])
+        rate(elasticsearch_indices_indexing_index_total{type="logging"}[6h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -56,7 +56,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_search_query_total{job="elasticsearch"}[1h])
+        rate(elasticsearch_indices_search_query_total{type="logging"}[1h])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -65,7 +65,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_search_query_total{job="elasticsearch"}[1m])
+        rate(elasticsearch_indices_search_query_total{type="logging"}[1m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -74,7 +74,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_search_query_total{job="elasticsearch"}[30m])
+        rate(elasticsearch_indices_search_query_total{type="logging"}[30m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -83,7 +83,7 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_search_query_total{job="elasticsearch"}[5m])
+        rate(elasticsearch_indices_search_query_total{type="logging"}[5m])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -92,5 +92,5 @@ groups:
       type: logging
     expr: |
       sum by (environment, stage) (
-        rate(elasticsearch_indices_search_query_total{job="elasticsearch"}[6h])
+        rate(elasticsearch_indices_search_query_total{type="logging"}[6h])
       )
