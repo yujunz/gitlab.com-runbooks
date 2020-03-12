@@ -4,27 +4,28 @@ dashboard: Key Services -  pgbouncer
 panel_groups:
 - group: Key Services - pgbouncer
   panels:
-  - metrics:
+  - title: 'Latency: Apdex'
+    metrics:
     - id: line-chart-latency-apdex-pgbouncer-service
       label: "{{type}} Service"
       query_range: >-
         avg(avg_over_time(gitlab_service_apdex:ratio{environment="gprd", type="pgbouncer", stage="main"}[1m]))
         by (type)
       unit: "%"
-    title: 'Latency: Apdex'
     type: line-chart
     y_label: Apdex %
-  - metrics:
+  - title: Error Ratios
+    metrics:
     - id: line-chart-pgbouncer-service-error-ratios
       label: "{{type}} Service"
       query_range: >-
         avg(avg_over_time(gitlab_service_errors:ratio{environment="gprd", type="pgbouncer", stage="main"}[1m]))
         by (type)
       unit: "%"
-    title: Error Ratios
     type: line-chart
     y_label: "% Requests in Error"
-  - metrics:
+  - title: RPS - Service Requests per Second
+    metrics:
     - id: line_chart_rps_pgbouncer_service_normal
       label: "{{type}} service"
       query_range: >-
@@ -45,16 +46,15 @@ panel_groups:
         -
         3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd", type="pgbouncer", stage="main"}
       unit: "%"
-    title: RPS - Service Requests per Second
     type: anomaly-chart
     y_label: Operations per Second
-  - metrics:
+  - title: Saturation
+    metrics:
     - id: line-chart-pgbouncer-service-cpu-component-saturation
       label: component
       query_range: >-
         max(max_over_time(gitlab_component_saturation:ratio{environment="gprd", type="pgbouncer", stage="main"}[1m]))
         by (component)
       unit: "%"
-    title: Saturation
     type: line-chart
     y_label: Saturation %
