@@ -16,6 +16,7 @@
   import 'redis-sidekiq.jsonnet',
   import 'registry.jsonnet',
   import 'sidekiq.jsonnet',
+  import 'waf.jsonnet',
   import 'web-pages.jsonnet',
   import 'web.jsonnet',
 ]

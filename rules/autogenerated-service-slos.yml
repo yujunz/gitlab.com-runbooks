@@ -145,6 +145,16 @@ groups:
       tier: sv
       type: sidekiq
     expr: '0.050000'
+  - record: slo:max:gitlab_service_errors:ratio
+    labels:
+      tier: lb
+      type: waf
+    expr: '0.001000'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      tier: lb
+      type: waf
+    expr: '0.001000'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv

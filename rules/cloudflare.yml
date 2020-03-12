@@ -1,12 +1,6 @@
 groups:
   - name: cloudflare.rules
     rules:
-      - record: cloudflare_http_responses_total:rate10m
-        expr: >
-          sum without (instance, pod) (
-            rate(cloudflare_zones_http_responses_total[10m])
-          )
-
       - alert: CloudflareExporterScrapeErrors
         expr: sum without (pod, instance) (rate(cloudflare_graphql_scrape_errors_total[10m])) > 0
         for: 1m
@@ -18,17 +12,3 @@ groups:
             The cloudflare exporter has failed to scrape Cloudflare. Note that
             this refers to a background scrape loop in the exporter itself, and
             that prometheus may be successfully scraping the exporter.
-
-      - alert: CloudflareZoneHigh5xxErrorRate
-        expr: |
-          sum by (zone) (cloudflare_http_responses_total:rate10m{edge_response_status=~"5.."}) /
-            sum by (zone) (cloudflare_http_responses_total:rate10m) > 0.1
-        for: 5m
-        labels:
-          pager: pagerduty
-          severity: s1
-        annotations:
-          description: >
-            CloudFlare is reporting 5xx HTTP responses on {{$labels.zone}} zone.
-          runbook: troubleshooting/cloudflare.md
-          title: 5xx Error Rate on {{$labels.zone}} CloudFlare zone
