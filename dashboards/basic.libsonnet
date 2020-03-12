@@ -235,40 +235,20 @@ local panelMethods = {
     linewidth=2,
     max=null,
   )::
-    graphPanel.new(
-      title,
+    self.multiTimeseries(
+      queries=[{ query: query, legendFormat: legendFormat }],
+      title=title,
       description=description,
-      sort=sort,
-      linewidth=linewidth,
-      fill=0,
-      datasource='$PROMETHEUS_DS',
-      decimals=0,
-      legend_rightSide=legend_rightSide,
-      legend_show=legend_show,
-      legend_values=true,
-      legend_min=true,
-      legend_max=true,
-      legend_current=true,
-      legend_total=false,
-      legend_avg=true,
-      legend_alignAsTable=true,
-      legend_hideEmpty=true,
-    )
-    .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
-    .resetYaxes()
-    .addYaxis(
       format=format,
-      min=0,
+      interval=interval,
+      intervalFactor=intervalFactor,
+      yAxisLabel=yAxisLabel,
+      sort=sort,
+      legend_show=legend_show,
+      legend_rightSide=legend_rightSide,
+      linewidth=linewidth,
       max=max,
-      label=yAxisLabel,
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
-    ) +
-    panelMethods,
+    ),
 
   queueLengthTimeseries(
     title='Timeseries',
