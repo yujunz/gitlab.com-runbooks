@@ -17,7 +17,7 @@ local customQuery = metricsCatalog.customQuery;
     elk_searching: {
       requestRate: rateMetric(
         counter='elasticsearch_indices_search_query_total',
-        selector='job="elasticsearch"'
+        selector='type="logging"'
       ),
 
       significantLabels: ['name'],
@@ -26,7 +26,7 @@ local customQuery = metricsCatalog.customQuery;
     elk_indexing: {
       requestRate: rateMetric(
         counter='elasticsearch_indices_indexing_index_total',
-        selector='job="elasticsearch"'
+        selector='type="logging"'
       ),
 
       significantLabels: ['name'],
