@@ -7,8 +7,9 @@ panel_groups:
   - metrics:
     - id: line-chart-latency-apdex-waf-service
       label: "{{type}} Service"
-      query_range: avg(avg_over_time(gitlab_service_apdex:ratio{environment="gprd",
-        type="waf", stage="main"}[1m])) by (type)
+      query_range: >-
+        avg(avg_over_time(gitlab_service_apdex:ratio{environment="gprd", type="waf", stage="main"}[1m]))
+        by (type)
       unit: "%"
     title: 'Latency: Apdex'
     type: line-chart
@@ -16,8 +17,9 @@ panel_groups:
   - metrics:
     - id: line-chart-waf-service-error-ratios
       label: "{{type}} Service"
-      query_range: avg(avg_over_time(gitlab_service_errors:ratio{environment="gprd",
-        type="waf", stage="main"}[1m])) by (type)
+      query_range: >-
+        avg(avg_over_time(gitlab_service_errors:ratio{environment="gprd", type="waf", stage="main"}[1m]))
+        by (type)
       unit: "%"
     title: Error Ratios
     type: line-chart
@@ -25,8 +27,9 @@ panel_groups:
   - metrics:
     - id: line_chart_rps_waf_service_normal
       label: "{{type}} service"
-      query_range: sum(avg_over_time(gitlab_service_ops:rate{environment="gprd", type="waf",
-        stage="main"}[1m])) by (type)
+      query_range: >-
+        sum(avg_over_time(gitlab_service_ops:rate{environment="gprd", type="waf", stage="main"}[1m]))
+        by (type)
       unit: "%"
     - id: line_chart_rps_waf_service_upper_limit
       label: upper limit
@@ -48,8 +51,9 @@ panel_groups:
   - metrics:
     - id: line-chart-waf-service-cpu-component-saturation
       label: component
-      query_range: max(max_over_time(gitlab_component_saturation:ratio{environment="gprd",
-        type="waf", stage="main"}[1m])) by (component)
+      query_range: >-
+        max(max_over_time(gitlab_component_saturation:ratio{environment="gprd", type="waf", stage="main"}[1m]))
+        by (component)
       unit: "%"
     title: Saturation
     type: line-chart
