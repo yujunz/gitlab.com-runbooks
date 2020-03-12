@@ -2805,3 +2805,60 @@ services:
     monitors:
       primary_grafana_dashboard: "USVj3qHmk/logging"
       sentry_slug:
+
+- name: waf
+  tier: lb
+  teams:
+    - infrastructure-coreinfra
+  infra_owner: infrastructure-coreinfra
+  label: Service:WAF
+  business:
+    requirement: |
+      Provide a Web-Application Firewall for the protection of GitLab.com
+    customers:
+      - GitLab.com customers
+    business_value: |
+      Protect GitLab.com from malicious requests
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+      security:
+    dependencies:
+    configurations:
+    chef_roles:
+    scalability:
+      bound:
+      scalable:
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name:
+        permalink:
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning:
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cloudflare.md
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      primary_grafana_dashboard: "waf-main"
+      sentry_slug:
