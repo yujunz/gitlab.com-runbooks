@@ -67,9 +67,9 @@ Local Enterprise phone numbers for each country:
 
 - United States: +1 650-353-5922
 - United Kingdom: +44 808-169-9540
-- India Toll-Free Number: +91 0008000501934 #
-- South Korea Toll-Free Number: +82 (00798) 142030193 #
-- Taiwan Toll-Free Number: +886 (80) 1491362  #
+- India Toll-Free Number: 0008000501934 #
+- South Korea Toll-Free Number:  00798 142030193 #
+- Taiwan Toll-Free Number: +886 (80) 1491362  (To dial from within Taiwan: 00801-491-362)
 - Australia Toll-Free Number: +61 (1800) 491698
 - New Zealand Toll-Free Number: +64 (80) 0758909
 - Japan: +81 503-196-5771
@@ -79,6 +79,8 @@ Local Enterprise phone numbers for each country:
 - Chile +56-2-2666-5928
 - Singapore +65 800-321-1182 #
 - China +86 (10) 85241784
+- Portugal +351 (21) 1230925
+- Germany +49 89 2555 2787
 
 # Other References
 
