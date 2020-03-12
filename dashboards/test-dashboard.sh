@@ -70,6 +70,11 @@ else
   dashboard=$(cat "${dashboard_file}")
 fi
 
+if [[ -n $dry_run ]]; then
+  echo "$dashboard"
+  exit 0
+fi
+
 # Generate the POST body
 body=$(echo "$dashboard" | jq -c '
 {

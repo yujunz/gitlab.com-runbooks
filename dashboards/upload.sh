@@ -95,7 +95,7 @@ find_dashboards "$@" | while read -r line; do
   fi
 
   # Note: create folders with `create-grafana-folder.sh` to configure the UID
-  folderId=$(resolve_folder_id "${folder}")
+  folderId="-1" && [[ -z $dry_run ]] && folderId=$(resolve_folder_id "${folder}")
 
   uploader_identifier="${CI_JOB_URL:-$USER}"
   description="Uploaded by ${uploader_identifier} at $(date -u)"

@@ -36,6 +36,7 @@ Example, the Container Registry is of service type `registry`.  Therefore,
   1. Edit the `dashboards/.env.sh` file and add the following content: `export GRAFANA_API_TOKEN=<1PASSWORD API KEY VALUE>`
   1. In your shell, in the `dashboards` directory, run `. .env.sh`
   1. To upload your dashboard, run `./test-dashboard.sh dashboard-folder-path/file.dashboard.jsonnet`. It will upload the file and return a link to your dashboard.
+  1. `./test-dashboard.sh -D $dashboard_path` will echo the dashboard JSON for pasting into Grafana.
 * **Note that the playground is transient. By default, they will be deleted after 24 hours. Do not include links to playground dashboards in the handbook or other permanent content. **
 
 # Editing Files
