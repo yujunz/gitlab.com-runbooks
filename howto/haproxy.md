@@ -109,7 +109,7 @@ internal projects. For more information see the
 
 The haproxy nodes need to be drained of traffic before restarts of the node or haproxy binary can be applied.
 
-In order to simplify this, the haproxy deployment includes a drain and wait script. By default it waits 10 minutes. It works by blocking the health checks from the uptream GCP load balancer. Note, that not all http connections will be drained in 10 minutes. The http clients can, and do, keep long-lived sessinos opened. So a small number of users will get disconnected when doign a drain. But it will cleanly clear out the majority of traffic.
+In order to simplify this, the haproxy deployment includes a drain and wait script. By default, it waits 10 minutes. It works by blocking the health checks from the upstream GCP load balancer. Note, that not all HTTP connections will be drained in 10 minutes. The HTTP clients can, and do, keep long-lived sessions open. So a small number of users will get disconnected when doing a drain. But it will cleanly clear out the majority of traffic.
 
 This script is automatically called as part of the systemd unit start and stop process. This allows for easy draining and restarting of haproxy.
 
