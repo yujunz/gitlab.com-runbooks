@@ -725,6 +725,63 @@ services:
       grafana_folder:
       primary_grafana_dashboard:
 
+- name: search
+  tier: inf
+  teams:
+    - infrastructure-observability
+  infra_owner: infrastructure-observability
+  label: Service:Elasticsearch
+  business:
+    requirement: Repository index and search with Elasticsearch.
+    customers:
+      - create
+      - manage
+      - plan
+    business_value: Repository index and search with Elasticsearch.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 2
+    slx:
+    documents:
+      design:
+      architecture:
+      service: []
+      security:
+    dependencies:
+      - service:
+    sub_components:
+      - elasticsearch
+    configurations: []
+    chef_roles: []
+    scalability:
+      note:
+      bound:
+      scalable:
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: elastic stack monitoring
+        permalink: https://00a4ef3362214c44a044feaa539b4686.us-central1.gcp.cloud.es.io:9243/app/monitoring#/overview?_g=(cluster_uuid:D31oWYIkTUWCDPHigrPwHg)
+  infrastructure:
+    provider: elastic.io
+    architecture:
+    provisioning:
+    accesses:
+  operations:
+    maintenance:
+    runbooks: []
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      grafana_folder:
+      primary_grafana_dashboard:
+
 - name: web
   tier: sv
   teams:
