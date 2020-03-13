@@ -61,7 +61,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
-      component: unicorn
+      component: puma
       tier: sv
       type: git
     expr: |
@@ -107,7 +107,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
-      component: unicorn
+      component: puma
       tier: sv
       type: git
     expr: |
@@ -130,7 +130,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
-      component: unicorn
+      component: puma
       tier: sv
       type: git
     expr: |
@@ -153,7 +153,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
-      component: unicorn
+      component: puma
       tier: sv
       type: git
     expr: |
@@ -176,7 +176,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
-      component: unicorn
+      component: puma
       tier: sv
       type: git
     expr: |
@@ -194,7 +194,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
-      component: unicorn
+      component: puma
       tier: sv
       type: git
     expr: |
@@ -203,7 +203,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
-      component: unicorn
+      component: puma
       tier: sv
       type: git
     expr: |
@@ -212,7 +212,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
-      component: unicorn
+      component: puma
       tier: sv
       type: git
     expr: |
