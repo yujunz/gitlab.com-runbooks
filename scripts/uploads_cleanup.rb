@@ -35,7 +35,7 @@ module Uploads
         operation: nil,
         remote_command: "ssh %{hostname} '%{command}'",
         find: 'sudo find %{path} -depth -mindepth 1',
-        delete: 'rm -rf %{path}',
+        delete: 'sudo rm -rf %{path}',
         log_level: Logger::INFO
       }.freeze
     end
