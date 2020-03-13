@@ -127,7 +127,7 @@ To drain the node with a custom time, or drain without stopping haproxy:
 $ sudo /usr/local/sbin/drain_haproxy.sh -w 60
 ```
 
-Un-draining is not automatic. It must be done by calling the drain script again in un-drain mode.
+Un-draining is executed as part of the haproxy systemd unit start process. It can also be done manually by calling the drain script again in un-drain mode.
 
 ```console
 $ sudo /usr/local/sbin/drain_haproxy.sh -u
