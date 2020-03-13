@@ -30,7 +30,7 @@ describe ::Uploads::Cleaner do
         expect(subject).to receive(:invoke).with(find_command).and_return(found)
         expect(subject).to receive(:options).at_least(1).times.and_return(options)
         expect(subject.log).to receive(:info)
-          .with("[Dry-run] Would have invoked command: ssh #{host} 'rm -rf #{found}'")
+          .with("[Dry-run] Would have invoked command: ssh #{host} 'sudo rm -rf #{found}'")
         expect(subject.clean).to eq([found])
       end
     end
@@ -49,7 +49,7 @@ describe ::Uploads::Cleaner do
         allow(subject).to receive(:invoke).with(find_command).and_return(found)
         expect(subject).to receive(:options).at_least(1).times.and_return(options)
         expect(subject.log).to receive(:info)
-          .with("Invoking command: ssh #{host} 'rm -rf #{found}'")
+          .with("Invoking command: ssh #{host} 'sudo rm -rf #{found}'")
         expect(subject).to receive(:invoke).with(delete_command).and_return('')
         expect(subject.clean).to eq([found])
       end
