@@ -398,6 +398,25 @@ build_runbooks_image:
   only:
     - tags
 
+publish:
+  image: node:10
+  stage: images
+  before_script:
+    - npm install -g semantic-release @semantic-release/gitlab
+  script:
+    - semantic-release
+  only:
+    refs:
+      - master
+  except:
+    variables:
+      # Publishing only happens on gitlab.com, the tag
+      # will be created on gitlab.com, mirrored to ops,
+      # and the image will be built in both locations
+      - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
+    refs:
+      - tags
+
 verify_alertmanager_parity:
   stage: test
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
