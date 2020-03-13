@@ -6,7 +6,7 @@ groups:
   rules:
   - record: gitlab_component_ops:rate_1h
     labels:
-      component: elk_indexing
+      component: elasticsearch_indexing
       tier: inf
       type: search
     expr: |
@@ -15,7 +15,7 @@ groups:
       )
   - record: gitlab_component_ops:rate
     labels:
-      component: elk_indexing
+      component: elasticsearch_indexing
       tier: inf
       type: search
     expr: |
@@ -24,7 +24,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_30m
     labels:
-      component: elk_indexing
+      component: elasticsearch_indexing
       tier: inf
       type: search
     expr: |
@@ -33,7 +33,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_5m
     labels:
-      component: elk_indexing
+      component: elasticsearch_indexing
       tier: inf
       type: search
     expr: |
@@ -42,7 +42,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_6h
     labels:
-      component: elk_indexing
+      component: elasticsearch_indexing
       tier: inf
       type: search
     expr: |
@@ -51,7 +51,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_1h
     labels:
-      component: elk_searching
+      component: elasticsearch_searching
       tier: inf
       type: search
     expr: |
@@ -60,7 +60,7 @@ groups:
       )
   - record: gitlab_component_ops:rate
     labels:
-      component: elk_searching
+      component: elasticsearch_searching
       tier: inf
       type: search
     expr: |
@@ -69,7 +69,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_30m
     labels:
-      component: elk_searching
+      component: elasticsearch_searching
       tier: inf
       type: search
     expr: |
@@ -78,7 +78,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_5m
     labels:
-      component: elk_searching
+      component: elasticsearch_searching
       tier: inf
       type: search
     expr: |
@@ -87,7 +87,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_6h
     labels:
-      component: elk_searching
+      component: elasticsearch_searching
       tier: inf
       type: search
     expr: |
