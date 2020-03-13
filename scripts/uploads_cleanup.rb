@@ -34,8 +34,8 @@ module Uploads
         valid_operations: [:delete],
         operation: nil,
         remote_command: "ssh %{hostname} '%{command}'",
-        find: 'sudo find %{path} -depth -mindepth 1',
-        delete: 'sudo rm -rf %{path}',
+        find: 'sudo find %{path} -depth -mindepth 1 -mmin +%{minutes}',
+        interval_minutes: 5,
         log_level: Logger::INFO
       }.freeze
     end
@@ -76,10 +76,9 @@ module Uploads
 
     def debug_lines(lines)
       return if lines.empty?
+      return unless log.level == Logger::DEBUG
 
-      log.debug do
-        lines.each { |line| log.debug line unless line.nil? || line.empty? }
-      end
+      lines.each { |line| log.debug line unless line.nil? || line.empty? }
     end
   end
 end
@@ -111,7 +110,9 @@ module Uploads
       def define_dry_run_option
         description = 'Show what would have been done; default: yes'
         @parser.on('-d', '--dry-run=[yes/no]', description) do |dry_run|
-          @options[:dry_run] = !dry_run.match?(/^(no|false)$/i)
+          raise OptionParser::InvalidArgument unless dry_run.match?(/^(yes|no)$/i)
+
+          @options[:dry_run] = false if dry_run.match?(/^no$/i)
         end
       end
 
@@ -129,14 +130,19 @@ module Uploads
         end
       end
 
+      def define_interval_option
+        description = 'Minutes older than which selected files must be'
+        @parser.on('-n', '--older-than=<minutes>', Integer, description) do |interval|
+          @options[:interval_minutes] = interval
+        end
+      end
+
       def define_operation_option
-        description = '--operation=<delete|...>', 'Operation to invoke on each result'
-        @parser.on('-O', description) do |arg|
+        ops = ::Uploads::CleanupScript::Config::DEFAULTS[:valid_operations]
+        description = 'Operation to invoke on each result'
+        @parser.on('-O', "--operation=<#{ops.join('|')}>", description) do |arg|
           op = arg.to_sym
-          unless ::Uploads::CleanupScript::Config::DEFAULTS[:valid_operations].include?(op)
-            message = "Invalid argument given for --operation: Not a valid operation: #{op}"
-            raise OptionParser::InvalidArgument(message)
-          end
+          raise OptionParser::InvalidArgument unless ops.include?(op)
 
           @options[:operation] = op
         end
@@ -162,8 +168,8 @@ module Uploads
       opt.parser.parse!(opt.parser.order!(args) {})
       opt.options
     rescue OptionParser::InvalidArgument, OptionParser::InvalidOption,
-           OptionParser::MissingArgument => e
-      puts e.message
+           OptionParser::MissingArgument, OptionParser::ParseError => e
+      puts e
       puts opt.parser
       exit
     rescue OptionParser::AmbiguousOption => e
@@ -176,15 +182,16 @@ end
 module Uploads
   # SelectorMethods module
   module SelectorMethods
-    def find_non_empty_lone_tmp_dir_files(hostname, path)
+    def get_non_empty_with_only_tmp_dir_files(hostname, path)
       tmp_dir_path = File.join(path, 'tmp')
-      command = format(options[:find], path: path)
-      remote_command = build_remote_command(command)
+      command = format(options[:find], path: path, minutes: options[:interval_minutes])
+      remote_command = build_remote_command(hostname, command)
       results = invoke(remote_command).split
-      return if results.empty?
-      return unless results.all? { |path| path.start_with?(tmp_dir_path) }
-
-      results.each { |path| yield path }
+      if !results.empty? && results.all? { |path| path.start_with?(tmp_dir_path) }
+        results
+      else
+        []
+      end
     end
   end
 end
@@ -193,19 +200,21 @@ end
 module Uploads
   # RemoteSupport module
   module CommandSupport
-    def build_remote_command(command)
-      format(options[:remote_command], hostname: options[:hostname], command: command)
+    def build_remote_command(hostname, command)
+      format(options[:remote_command], hostname: hostname, command: command)
     end
 
     def invoke(command)
+      debug_command(command)
       `#{command}`.strip
     end
 
-    def safely_invoke_operation(path, operation = options[:operation])
-      return if operation.nil? || !options.include?(operation)
+    def safely_invoke_find_with_operation(hostname, path, operation)
+      return if operation.nil? || !options[:valid_operations].include?(operation)
 
-      command = format(options[operation], path: path)
-      remote_command = build_remote_command(command)
+      command = format(options[:find], path: path, minutes: options[:interval_minutes])
+      command << " -#{operation}"
+      remote_command = build_remote_command(hostname, command)
 
       if options[:dry_run]
         log.info "[Dry-run] Would have invoked command: #{remote_command}"
@@ -230,13 +239,15 @@ module Uploads
       @options = opts
       @hostname = opts[:hostname]
       @path = File.join(opts[:uploads_dir_path], opts[:disk_path])
+      @operation = opts[:operation]
       log.level = opts[:log_level]
     end
 
     def clean
-      find_non_empty_lone_tmp_dir_files(@hostname, @path) do |file_path|
-        safely_invoke_operation(file_path, :delete)
-      end
+      paths = get_non_empty_with_only_tmp_dir_files(@hostname, @path)
+      log.debug "Found paths:"
+      debug_lines(paths)
+      safely_invoke_find_with_operation(@hostname, @path, @operation) unless paths.empty?
     end
   end
 end
