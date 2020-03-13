@@ -104,6 +104,25 @@ groups:
         rate(gitlab_workhorse_http_requests_total{code=~"5..", route="^/api/v4/jobs/request\\z"
       }[6h])
       )
+  - record: gitlab_component_apdex:ratio_1h
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      (
+        sum by () (
+          rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="60"}[1h])
+        )
+      )
+      /
+      (
+        sum by () (
+          rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1h])
+        ) > 0
+      )
   - record: gitlab_component_apdex:ratio
     labels:
       component: shared_runner_queues
@@ -123,6 +142,74 @@ groups:
           rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1m])
         ) > 0
       )
+  - record: gitlab_component_apdex:ratio_30m
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      (
+        sum by () (
+          rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="60"}[30m])
+        )
+      )
+      /
+      (
+        sum by () (
+          rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[30m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:ratio_5m
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      (
+        sum by () (
+          rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="60"}[5m])
+        )
+      )
+      /
+      (
+        sum by () (
+          rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[5m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:ratio_6h
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      (
+        sum by () (
+          rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="60"}[6h])
+        )
+      )
+      /
+      (
+        sum by () (
+          rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[6h])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1h])
+      )
   - record: gitlab_component_apdex:weight:score
     labels:
       component: shared_runner_queues
@@ -133,6 +220,39 @@ groups:
     expr: |
       sum by () (
         rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[1m])
+      )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[30m])
+      )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[5m])
+      )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: shared_runner_queues
+      environment: gprd
+      stage: main
+      tier: runners
+      type: ci-runners
+    expr: |
+      sum by () (
+        rate(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
