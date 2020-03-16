@@ -34,7 +34,6 @@
 
 Go to gitlab's admin panel, navigate to Settings -> [Integrations] -> Elasticsearch -> [Expand] (URL: `https://gitlab.com/admin/application_settings/integrations`)
 
-
 # How-to guides
 
 ## Enabling ES integration ##
@@ -165,6 +164,7 @@ Examples of indexer jobs:
 - `ee/app/workers/elastic_commit_indexer_worker.rb`
 - `ee/app/workers/elastic_batch_project_indexer_worker.rb`
 - `ee/app/workers/elastic_namespace_indexer_worker.rb`
+- `ee/app/workers/elastic_index_bulk_cron_worker.rb`
 
 Logs available locally in `sidekiq.log` or in centralised logging
 
@@ -178,3 +178,12 @@ Logs available locally in `sidekiq.log` or in centralised logging
 * Triggered by commits to git repo
 * Processes the git repo data accessed over gitaly
 * Uses external binary
+
+### Elastic_index_bulk_cron_worker.rb ###
+
+* Triggered by sidekiq-cron every minute
+* Processes incremental updates for database records, does not process initial
+  indexing of new groups/projects
+* Consumes a custom Redis queue implemented as a sorted set.
+  The correct way to see the size is from the rails console using
+  `Elastic::ProcessBookkeepingService.queue_size`
