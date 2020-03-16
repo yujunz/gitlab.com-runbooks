@@ -91,7 +91,14 @@ basic.dashboard(
       title='Sidekiq Estimated Median Job Latency for priority',
       description='The median duration, once a job starts executing, that it runs for, by priority. Lower is better.',
       query=|||
-        avg(priority:sidekiq_jobs_completion_seconds:p50{environment="$environment", priority=~"$priority"}) by (priority)
+        histogram_quantile(0.50,
+          sum by (priority, le) (
+            rate(sidekiq_jobs_completion_seconds_bucket{
+              environment="$environment",
+              priority=~"$priority"
+            }[$__interval])
+          )
+        )
       |||,
       legendFormat='{{ priority }}',
       format='s',
@@ -124,13 +131,20 @@ basic.dashboard(
       title='Sidekiq Estimated p95 Job Latency for priority',
       description='The 95th percentile duration, once a job starts executing, that it runs for, by priority. Lower is better.',
       query=|||
-        avg(priority:sidekiq_jobs_completion_seconds:p95{environment="$environment", priority=~"$priority"}) by (priority)
+        histogram_quantile(0.95,
+          sum by (priority, le) (
+            rate(sidekiq_jobs_completion_seconds_bucket{
+              environment="$environment",
+              priority=~"$priority"
+            }[$__interval])
+          )
+        )
       |||,
       legendFormat='{{ priority }}',
       format='s',
       yAxisLabel='Duration',
-      interval='1m',
-      intervalFactor=3,
+      interval='2m',
+      intervalFactor=5,
       legend_show=true,
       logBase=10,
       linewidth=1,
