@@ -45,6 +45,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       title: Redis Switch Master
       description: Redis type {{$labels.type}} has {{$value}} switch-master event in the last hour.
@@ -57,6 +58,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: >
         The redis cluster {{$labels.type}} has no node marked as master.
@@ -68,6 +70,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: >
         The redis cluster {{$labels.type}} has only {{$value}} nodes.
@@ -78,10 +81,11 @@ groups:
     for: 1m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: >
-        Changes have been detected in Redis replica connection. 
-        This can occur when replica nodes lose connection to the master and 
+        Changes have been detected in Redis replica connection.
+        This can occur when replica nodes lose connection to the master and
         reconnect (a.k.a flapping)
         Look at `{{ $labels.instance }}` and its replicas.
       runbook: troubleshooting/redis_replication.md
@@ -92,10 +96,11 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: >
-        Changes ({{$value}}) have been detected in Redis replica connection. 
-        This can occur when replica nodes lose connection to the master and 
+        Changes ({{$value}}) have been detected in Redis replica connection.
+        This can occur when replica nodes lose connection to the master and
         reconnect (a.k.a flapping)
         Look at `{{ $labels.instance }}` and its replicas.
       runbook: troubleshooting/redis_replication.md
@@ -106,6 +111,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: The redis exporter failed to fetch metrics from the local
         redis instance for more than 20 minutes. This could be because the redis
@@ -128,6 +134,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       title: Redis memory usage is too high
       description: Redis node {{$labels.fqdn}} is using over 80% of the host memory for the last 5 minutes.
@@ -143,6 +150,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: The redis master link on {{ $labels.fqdn }} has been down for 30 minutes, review the replication status.
       runbook: troubleshooting/redis_replication.md
@@ -153,6 +161,7 @@ groups:
     labels:
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: Redis not replicating for all slaves for more than 5 minutes! Consider
         reviewing the redis replication status

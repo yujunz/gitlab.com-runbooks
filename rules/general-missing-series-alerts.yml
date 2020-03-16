@@ -11,6 +11,7 @@ groups:
         labels:
           rules_domain: general
           severity: s4
+          alert_type: cause
         annotations:
           title: "Operation rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
           description: >
@@ -32,6 +33,7 @@ groups:
         labels:
           rules_domain: general
           severity: s4
+          alert_type: cause
         annotations:
           title: "Apdex for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
           description: >
@@ -56,6 +58,7 @@ groups:
         labels:
           rules_domain: general
           severity: s4
+          alert_type: cause
         annotations:
           title: "Error rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is missing"
           description: >

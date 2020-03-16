@@ -15,12 +15,14 @@ groups:
         for: 1m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubePersistentVolumeFullInFourDays
         annotations:
           title: Persistent Volume will be full in 4 days
           description: Based on recent sampling, the PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is expected to fill up within four days. Currently {{ printf "%0.2f" $value }}% is available.
           runbook: troubleshooting/kubernetes.md
+          alert_type: cause
         expr: |-
           100 * (
             kubelet_volume_stats_available_bytes{job="kubelet"}
@@ -32,6 +34,7 @@ groups:
         for: 5m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubePersistentVolumeErrors
         annotations:
@@ -42,3 +45,4 @@ groups:
         for: 5m
         labels:
           severity: s3
+          alert_type: cause

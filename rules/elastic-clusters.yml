@@ -6,6 +6,7 @@ groups:
     for: 5m
     labels:
       severity: s4
+      alert_type: cause
       environment: gstg
     annotations:
       description: ILM errors have been detected in the nonproduction logging cluster!
@@ -16,6 +17,7 @@ groups:
     for: 5m
     labels:
       severity: s3
+      alert_type: cause
       environment: gprd
     annotations:
       description: ILM errors have been detected in the logging cluster!
@@ -26,6 +28,7 @@ groups:
     for: 5m
     labels:
       severity: s3
+      alert_type: cause
       environment: gprd
     annotations:
       description: Production logging cluster is unhealthy
@@ -36,6 +39,7 @@ groups:
     for: 5m
     labels:
       severity: s3
+      alert_type: cause
       environment: gprd
     annotations:
       description: ILM errors have been detected in the monitoring cluster!
@@ -46,6 +50,7 @@ groups:
     for: 5m
     labels:
       severity: s3
+      alert_type: cause
       environment: gprd
     annotations:
       description: Monitoring cluster is unhealthy

@@ -23,6 +23,7 @@ groups:
           period: 5m
           bound: lower
           pager: pagerduty
+          alert_type: symptom
         annotations:
           description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is not meeting its latency SLOs
@@ -60,6 +61,7 @@ groups:
           period: 15m
           bound: lower
           pager: pagerduty
+          alert_type: symptom
         annotations:
           description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is not meeting its latency SLOs
@@ -101,6 +103,7 @@ groups:
           slo_alert: 'yes'
           period: 5m
           bound: upper
+          alert_type: symptom
           # pager: pagerduty uncomment after trimming down 4xx errors that we don't control
         annotations:
           description: >
@@ -137,6 +140,7 @@ groups:
           slo_alert: 'yes'
           period: 15m
           bound: upper
+          alert_type: symptom
           # pager: pagerduty uncomment after trimming down 4xx errors that we don't control
         annotations:
           description: >
@@ -182,6 +186,7 @@ groups:
           experimental: 'yes'
           period: 2m
           bound: upper
+          alert_type: symptom
           # pager: pagerduty uncomment after trimming down 4xx errors that we don't control
         annotations:
           title: "The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage, has an error burn-rate exceeding SLO"
@@ -216,6 +221,7 @@ groups:
           # slo_alert: 'yes' Uncomment after trial period
           period: 5m
           bound: upper
+          alert_type: cause
           # pager: pagerduty Uncomment after trial period
         annotations:
           description: >
@@ -243,6 +249,7 @@ groups:
           # slo_alert: 'yes' Uncomment after trial period
           period: 15m
           bound: upper
+          alert_type: cause
           # pager: pagerduty Uncomment after trial period
         annotations:
           description: >
@@ -282,6 +289,7 @@ groups:
           period: 5m
           bound: upper
           threshold_sigma: "3"
+          alert_type: cause
         annotations:
           description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving more requests than normal.
@@ -322,6 +330,7 @@ groups:
           period: 5m
           bound: lower
           threshold_sigma: "3"
+          alert_type: cause
         annotations:
           description: >
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving fewer requests than normal.
@@ -385,6 +394,7 @@ groups:
           period: 5m
           bound: lower
           pager: pagerduty
+          alert_type: symptom
         annotations:
           description: >
             The `cny` stage of  the `{{ $labels.type }}` service has a apdex score
@@ -443,6 +453,7 @@ groups:
           period: 5m
           bound: upper
           pager: pagerduty
+          alert_type: symptom
         annotations:
           description: >
             The `cny` stage of  the `{{ $labels.type }}` service has an error-ratio

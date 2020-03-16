@@ -20,6 +20,7 @@ groups:
           slo_alert: 'yes'
           period: 10m
           bound: lower
+          alert_type: symptom
         annotations:
           title: "The `{{ $labels.queue }}` Sidekiq queue (`{{ $labels.stage }}` stage) is not meeting its latency SLOs"
           description: >

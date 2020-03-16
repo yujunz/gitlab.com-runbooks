@@ -13,6 +13,7 @@ groups:
         labels:
           pager: pagerduty
           severity: s2
+          alert_type: cause
 
       - alert: GKENodeCountHigh
         annotations:
@@ -24,6 +25,7 @@ groups:
         for: 30m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeReplicasSetPodMismatch
         annotations:
@@ -37,6 +39,7 @@ groups:
         for: 5m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubePodNotReady
         annotations:
@@ -47,6 +50,7 @@ groups:
         for: 1h
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubePodCrashLooping
         annotations:
@@ -57,6 +61,7 @@ groups:
         for: 1h
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeDeploymentReplicasMismatch
         annotations:
@@ -71,6 +76,7 @@ groups:
         for: 1h
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeDeploymentGenerationMismatch
         annotations:
@@ -84,6 +90,7 @@ groups:
         for: 15m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeStatefulSetReplicasMismatch
         annotations:
@@ -97,6 +104,7 @@ groups:
         for: 15m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeStatefulSetGenerationMismatch
         annotations:
@@ -110,6 +118,7 @@ groups:
         for: 15m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeStatefulSetUpdateNotRolledOut
         annotations:
@@ -131,6 +140,7 @@ groups:
         for: 15m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeDaemonSetRolloutStuck
         annotations:
@@ -144,6 +154,7 @@ groups:
         for: 15m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: KubeDaemonSetNotScheduled
         annotations:
@@ -157,6 +168,7 @@ groups:
         for: 10m
         labels:
           severity: s4
+          alert_type: cause
 
       - alert: KubeDaemonSetMisScheduled
         annotations:
@@ -167,6 +179,7 @@ groups:
         for: 10m
         labels:
           severity: s4
+          alert_type: cause
 
       - alert: KubeCronJobRunning
         annotations:
@@ -177,6 +190,7 @@ groups:
         for: 1h
         labels:
           severity: s4
+          alert_type: cause
 
       - alert: KubeJobCompletion
         annotations:
@@ -187,6 +201,7 @@ groups:
         for: 1h
         labels:
           severity: s4
+          alert_type: cause
 
       - alert: KubeJobFailed
         annotations:
@@ -197,3 +212,4 @@ groups:
         for: 1h
         labels:
           severity: s4
+          alert_type: cause

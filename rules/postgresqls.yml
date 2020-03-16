@@ -8,6 +8,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: TXID/s is {{ $value | printf "%.1f" }} on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
@@ -20,6 +21,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
@@ -34,6 +36,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: WAL-E replication seems to be stopped on {{$labels.instance}}.
         Check if PostgreSQL isn't stuck on restoring a WAL segment or if it's capabale
@@ -48,6 +51,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: Commits/s on {{$labels.instance}} database {{$labels.datname}}
         is {{$value | printf "%.0f" }} which is implausibly low. Perhaps the application
@@ -61,18 +65,21 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       runbook: troubleshooting/postgres.md#connections
       title: Postgres has {{$value}} connections on {{$labels.fqdn}} which is close
         to the maximum
   - alert: PostgreSQL_RollbackRateTooHigh
-    expr: rate(pg_stat_database_xact_rollback{datname="gitlabhq_production", type="patroni"}[5m])
+    expr: |
+      rate(pg_stat_database_xact_rollback{datname="gitlabhq_production", type="patroni"}[5m])
       / ON(instance, datname) rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type="patroni"}[5m])
       > 0.1
     for: 5m
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       description: Ratio of transactions being aborted compared to committed is {{
         $value | printf "%.2f" }} on {{$labels.instance}}
@@ -85,6 +92,7 @@ groups:
       severity: s1
       pager: pagerduty
       channel: database
+      alert_type: cause
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} statement
         timeouts per second
@@ -95,6 +103,7 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} deadlock
         errors per minute
@@ -107,6 +116,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanizeDuration }}
@@ -119,6 +129,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanizeDuration }}
@@ -131,6 +142,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanizeDuration }}
@@ -145,6 +157,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanize1024}}B
@@ -156,6 +169,7 @@ groups:
     labels:
       severity: s3
       channel: database
+      alert_type: cause
     annotations:
       description: XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s
         on {{$labels.instance}}
@@ -169,6 +183,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: Unused {{$labels.slot_type}} slot "{{$labels.slot_name}}" on {{$labels.fqdn}}
       runbook: "troubleshooting/postgres.md#replication_slots"
@@ -180,6 +195,7 @@ groups:
       severity: s1
       channel: database
       pager: pagerduty
+      alert_type: cause
     annotations:
       title: |
         PostgreSQL replication slot {{$labels.slot_name}} on {{$labels.fqdn}} is
@@ -195,6 +211,7 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       description: >
         "Postgres server {{$labels.fqdn}} has a transaction in currently in
@@ -209,6 +226,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: >
         Really high load in the database for the last minute, there are
@@ -233,6 +251,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: "The dead tuple ratio of {{$labels.relname}} is greater than 5%"
       table: "{{$labels.relname}}"
@@ -246,6 +265,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: 'The following {{$value}} databases are in read-write
       (primary) mode: {{range query
@@ -262,6 +282,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: 'In environment {{$labels.environment}} there are {{$value}} different
         upstream primaries: {{range query "pg_stat_wal_receiver_status{environment=''$labels.environment''}
@@ -276,6 +297,7 @@ groups:
       channel: database
       pager: pagerduty
       severity: s1
+      alert_type: cause
     annotations:
       description: >
         {{$labels.fqdn}} postgres service appears down
@@ -288,6 +310,7 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       description: >
         {{$labels.fqdn}} postgres service appears to be restarted
@@ -299,6 +322,7 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       description: Database on {{$labels.fqdn}} changed role to {{if eq $value 1.0}}
         *replica* {{else}} *primary* {{end}}
@@ -309,6 +333,7 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       description: Database on {{$labels.fqdn}} setting now {{$labels.__name__}}={{$value}}
       title: Postgres Database configuration change has occurred on "{{$labels.fqdn}}"
@@ -319,6 +344,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: '{{$labels.fqdn}} is showing only {{$value}} scrapes per second
         which should be > 0.2'
@@ -330,6 +356,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: This may indicate postgres_exporter is not running or a buggy query
         in query.yaml on {{$labels.fqdn}}
@@ -340,6 +367,7 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       message: "{{$labels.errmsg}}"
       description: PGBouncer is logging errors. This may be due to a a server restart or an admin typing commands at the pgbouncer console
@@ -351,6 +379,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: The number of client connections has reached max_client_conn.
         Consider raising this parameter or investigating the source of the unusually large number of connections
@@ -363,6 +392,7 @@ groups:
       pager: pagerduty
       severity: s1
       channel: database
+      alert_type: cause
     annotations:
       description: >
         Database {{ $labels.fqdn }} has {{ $value | printf "%.1f" }} slow
@@ -376,6 +406,7 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       description: >
         Database {{ $labels.fqdn }} has {{ $value | printf "%.1f" }}
@@ -389,6 +420,7 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       description: >
         Database {{ $labels.fqdn }} has a high rate of temporary files creation,
@@ -400,8 +432,9 @@ groups:
     labels:
       severity: s4
       channel: database
+      alert_type: cause
     annotations:
       description: >
-        Too many locks acquired on the database instance {{ $labels.fqdn }}. 
+        Too many locks acquired on the database instance {{ $labels.fqdn }}.
         If this alert happens frequently, we may need to increase the postgres setting max_locks_per_transaction.
       title: Too many locks acquired

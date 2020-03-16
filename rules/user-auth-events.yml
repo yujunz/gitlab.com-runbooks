@@ -6,6 +6,7 @@ groups:
     for: 15m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: Higher than expected rate of login attempts for blocked users
       runbook: troubleshooting/blocked-user-logins.md
@@ -15,6 +16,7 @@ groups:
     for: 5m
     labels:
       severity: s4
+      alert_type: cause
     annotations:
       description: Zero successul user logins over five minutes
       runbook: troubleshooting/zero-successful-user-logins.md

@@ -33,6 +33,8 @@ def validate_rule(alert_file_path, rule)
     raise StandardError, " #{alert}: s1 and s2 alerts must be configured to send to pagerduty"
   end
 
+  raise StandardError, " #{alert}: alerts must include an alert_type label. This label should either be 'cause' or 'symptom'. For more information on cause and symptom-based alerts, review http://landing.google.com/sre/sre-book/chapters/monitoring-distributed-systems/#symptoms-versus-causes-g0sEi4" unless %w[cause symptom].include?(labels["alert_type"])
+
   if annotations["runbook"]
     runbook_relative_link = annotations["runbook"]
     runbook_file = runbook_relative_link.gsub(/#.*$/, "")

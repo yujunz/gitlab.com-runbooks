@@ -7,6 +7,7 @@ groups:
       tier: inf
       environment: gprd
       lb_type: internal_tcp
+      alert_type: cause
     expr: >
       count by (load_balancer_name) (
         sum by (load_balancer_name, backend_name) (
@@ -29,6 +30,7 @@ groups:
       tier: inf
       environment: gprd
       lb_type: tcp
+      alert_type: cause
     expr: >
       count by (load_balancer_name) (
         sum by (load_balancer_name, backend_name) (
@@ -56,6 +58,7 @@ groups:
       bound: lower
       pager: pagerduty
       severity: s2
+      alert_type: cause
     annotations:
       description: >
         At least half of the backend nodes are accepting less than 50% of the traffic of the most utilized backend.

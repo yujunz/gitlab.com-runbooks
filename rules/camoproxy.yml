@@ -9,6 +9,7 @@ groups:
       pager: pagerduty
       severity: s1
       environment: gstg
+      alert_type: symptom
     annotations:
       description: GitLab Camoproxy is not responding correctly for 2 minutes!
       runbook: troubleshooting/camoproxy.md
@@ -20,6 +21,7 @@ groups:
       pager: pagerduty
       severity: s1
       environment: gstg
+      alert_type: symptom
     annotations:
       description: GitLab Camoproxy is down for 2 minutes!
       runbook: troubleshooting/camoproxy.md
@@ -32,10 +34,12 @@ groups:
       pager: pagerduty
       severity: s1
       environment: gprd
+      alert_type: symptom
     annotations:
       description: GitLab Camoproxy is not responding correctly for 2 minutes!
       runbook: troubleshooting/camoproxy.md
       title: GitLab Camoproxy is not responding correctly for 2 minutes
+      alert_type: symptom
   - alert: Camoproxy down
     expr: probe_success{instance="https://user-content.gitlab-static.net/healthcheck",job="blackbox"} == 0
     for: 2m
@@ -43,6 +47,7 @@ groups:
       pager: pagerduty
       severity: s1
       environment: gprd
+      alert_type: symptom
     annotations:
       description: GitLab Camoproxy is down for 2 minutes!
       runbook: troubleshooting/camoproxy.md

@@ -7,6 +7,7 @@ groups:
         for: 10m
         labels:
           severity: s3
+          alert_type: cause
         annotations:
           description: Mailroom is unable to process some email.
           runbook: troubleshooting/service-mailroom.md
@@ -17,6 +18,7 @@ groups:
         for: 5m
         labels:
           severity: s4
+          alert_type: cause
         annotations:
           description: IMAP Mailbox exporter doesn't seem to be running on the sd-exporter nodes.
             This hides our visibility into mailroom processing emails.

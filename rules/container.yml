@@ -1,7 +1,6 @@
 groups:
   - name: container.rules
     rules:
-
       - alert: HighThrottleRate
         annotations:
           title: Container being throttled
@@ -12,3 +11,4 @@ groups:
         for: 30m
         labels:
           severity: s4
+          alert_type: cause

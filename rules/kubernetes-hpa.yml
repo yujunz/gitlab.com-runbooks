@@ -11,6 +11,7 @@ groups:
         for: 30m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: HPAMetricsAvailability
         annotations:
@@ -21,6 +22,7 @@ groups:
         for: 30m
         labels:
           severity: s3
+          alert_type: cause
 
       - alert: HPAScaleCapability
         annotations:
@@ -32,3 +34,4 @@ groups:
         labels:
           pager: pagerduty
           severity: s2
+          alert_type: cause

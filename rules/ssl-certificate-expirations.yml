@@ -6,6 +6,7 @@ groups:
     for: 30m
     labels:
       severity: s1
+      alert_type: cause
       pager: pagerduty
     annotations:
       description: Check SSL for specified nodes and consider reissuing certificate.
@@ -17,6 +18,7 @@ groups:
     for: 30m
     labels:
       severity: s2
+      alert_type: cause
       pager: issue
       project: gitlab.com/gitlab-com/gl-infra/infrastructure
     annotations:

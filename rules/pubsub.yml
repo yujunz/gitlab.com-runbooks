@@ -10,6 +10,7 @@ groups:
     labels:
       channel: production
       severity: s4
+      alert_type: cause
     annotations:
       description: >
         PubSub messages are queuing up.  Messages in {{ $labels.subscription_id }} have been

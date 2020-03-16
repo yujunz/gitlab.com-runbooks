@@ -2,7 +2,7 @@ JSONNET_FMT_FLAGS := --string-style s -n 2
 JSONNET_FILES = $(shell find . \( -name "*.jsonnet" -o -name "*.libsonnet" \)  -type f -not \( -path "./dashboards/vendor/*" -path "./elastic/*" \) )
 
 SHELL_FMT_FLAGS := -i 2 -ci
-SHELL_FILES = $(shell find . -name "*.sh" -type f -not -path "./dashboards/vendor/*")
+SHELL_FILES = $(shell  find . -name "*.sh" -type f -not \( -path "./dashboards/vendor/*" -o -path "*/.*/*" \) )
 
 JSONET_COMMAND = $(shell which jsonnetfmt || (which jsonnet && echo " fmt"))
 PROMTOOL_COMMAND = $(shell which promtool || echo "/prometheus/promtool")

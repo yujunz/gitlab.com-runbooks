@@ -6,6 +6,7 @@ groups:
         for: 6h
         labels:
           severity: s4
+          alert_type: cause
         annotations:
           description: >
             At least 75% of the fleet have omnibus package updates disabled.

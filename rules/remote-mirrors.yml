@@ -9,6 +9,7 @@ groups:
     for: 10m
     labels:
       severity: s4
+      alert_type: symptom
     annotations:
       title: 'Projects mirrored to github.com/gitlabhq are out of sync'
       description: >

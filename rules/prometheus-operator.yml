@@ -10,6 +10,7 @@ groups:
         for: 10m
         labels:
           severity: s4
+          alert_type: cause
 
       - alert: PrometheusOperatorNodeLookupErrors
         annotations:
@@ -19,3 +20,4 @@ groups:
         for: 10m
         labels:
           severity: s4
+          alert_type: cause

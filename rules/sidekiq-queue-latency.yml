@@ -6,6 +6,7 @@ groups:
     for: 15m
     labels:
       severity: s3
+      alert_type: cause
     annotations:
       description: Sidekiq jobs are taking more than 10 minutes to be picked up. Users may be seeing delays in background processing. Check https://dashboards.gitlab.net/d/sidekiq-main/sidekiq-overview?orgId=1&fullscreen&panelId=5.
       runbook: troubleshooting/large-sidekiq-queue.md
