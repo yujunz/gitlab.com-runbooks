@@ -9,6 +9,7 @@ export indices=(
   consul
   gitaly
   gke
+  mailroom
   monitoring
   nginx
   pages
