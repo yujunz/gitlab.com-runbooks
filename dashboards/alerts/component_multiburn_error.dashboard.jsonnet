@@ -13,19 +13,26 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local seriesOverrides = import 'series_overrides.libsonnet';
+local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 
 local oneHourBurnRate =
   [
     ['1h error burn rate', 'gitlab_component_errors:ratio_1h{environment="$environment", type="$type", stage="$stage", component="$component"}'],
     ['5m error burn rate', 'gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
-    ['1h error burn threshold', '14.4 * avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"})'],
+    [
+      '1h error burn threshold',
+      '%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"})' % multiburnFactors,
+    ],
   ];
 
 local sixHourBurnRate =
   [
     ['6h error burn rate', 'gitlab_component_errors:ratio_6h{environment="$environment", type="$type", stage="$stage", component="$component"}'],
     ['30m error burn rate', 'gitlab_component_errors:ratio_30m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
-    ['6h error burn threshold', '6 * avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"})'],
+    [
+      '6h error burn threshold',
+      '%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"})' % multiburnFactors,
+    ],
   ];
 
 local burnRatePanel(title, combinations) =
