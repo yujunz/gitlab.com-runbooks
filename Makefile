@@ -1,8 +1,13 @@
+# Exclude vendor and dot directories, but do include the `.gitlab` directory
+VERIFY_PATH_SELECTOR := \( -not \( -path "*/vendor/*" -o -path "*/.*/*" \) -o -path "*/.gitlab/*" \)
+
 JSONNET_FMT_FLAGS := --string-style s -n 2
-JSONNET_FILES = $(shell find . \( -name "*.jsonnet" -o -name "*.libsonnet" \)  -type f -not \( -path "./dashboards/vendor/*" -path "./elastic/*" \) )
+JSONNET_FILES = $(shell find . \( -name "*.jsonnet" -o -name "*.libsonnet" \)  -type f $(VERIFY_PATH_SELECTOR) )
 
 SHELL_FMT_FLAGS := -i 2 -ci
-SHELL_FILES = $(shell  find . -name "*.sh" -type f -not \( -path "./dashboards/vendor/*" -o -path "*/.*/*" \) )
+SHELL_FILES = $(shell find . -type f \( -perm -u=x -o -name "*.sh" \) $(VERIFY_PATH_SELECTOR) -print0|xargs -0 file -n |grep 'Bourne-Again'|cut -d: -f1)
+
+YAML_FILES = $(shell find . \( -name "*.yml" -o -name "*.yaml" \) -type f $(VERIFY_PATH_SELECTOR) )
 
 JSONET_COMMAND = $(shell which jsonnetfmt || (which jsonnet && echo " fmt"))
 PROMTOOL_COMMAND = $(shell which promtool || echo "/prometheus/promtool")
@@ -52,5 +57,5 @@ test:
 	./scripts/validate_kibana_urls
 	./scripts/validate-alerts
 	if ! $$(command -v yaml-lint); then echo "Please install yaml-lint with 'gem install -N yaml-lint'"; exit 1; fi
-	find . -name \*.y*ml | xargs yaml-lint
+	yaml-lint $(YAML_FILES)
 
