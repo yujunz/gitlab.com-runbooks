@@ -312,3 +312,132 @@ groups:
       gitlab_background_jobs:execution:error:rate_6h
       /
       gitlab_background_jobs:execution:ops:rate_6h
+  - alert: sidekiq_background_job_error_ratio_burn_rate_slo_out_of_bounds
+    for: 2m
+    annotations:
+      title: The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has an error rate outside of
+        SLO
+      description: |
+        The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has an error rate outside of SLO.
+
+        Currently the metric value is {{ $value | humanizePercentage }}.
+      grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: 12
+      grafana_variables: environment,stage,queue
+      promql_template_1: >-
+        gitlab_background_jobs:execution:error:ratio_1h{environment="$environment", type="$type", stage="$stage",
+        component="$component"}
+      runbook: troubleshooting/service-{{ $labels.type }}.md
+    labels:
+      alert_type: symptom
+      experimental: 'yes'
+      metric: gitlab_background_jobs:execution:error:ratio_1h
+      period: 2m
+      rules_domain: general
+      severity: s4
+      slo_alert: 'yes'
+    expr: |
+      (
+        (
+          gitlab_background_jobs:execution:error:ratio_1h > (14.4 * 0.01)
+        and
+          gitlab_background_jobs:execution:error:ratio_5m > (14.4 * 0.01)
+        )
+        or
+        (
+          gitlab_background_jobs:execution:error:ratio_6h > (6 * 0.01)
+        and
+          gitlab_background_jobs:execution:error:ratio_30m > (6 * 0.01)
+        )
+      )
+      and
+      (
+        gitlab_background_jobs:execution:ops:rate_6h > 0.06667
+      )
+  - alert: sidekiq_background_job_execution_apdex_ratio_burn_rate_slo_out_of_bounds
+    for: 2m
+    annotations:
+      title: The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has a execution latency outside
+        of SLO
+      description: |
+        The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has a execution latency outside of SLO.
+
+        Currently the metric value is {{ $value | humanizePercentage }}.
+      grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: 10
+      grafana_variables: environment,stage,queue
+      promql_template_1: >-
+        gitlab_background_jobs:execution:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
+        component="$component"}
+      runbook: troubleshooting/service-{{ $labels.type }}.md
+    labels:
+      alert_type: symptom
+      experimental: 'yes'
+      metric: gitlab_background_jobs:execution:apdex:ratio_1h
+      period: 2m
+      rules_domain: general
+      severity: s4
+      slo_alert: 'yes'
+    expr: |
+      (
+        (
+          (1 - gitlab_background_jobs:execution:apdex:ratio_1h) > (14.4 * 0.01)
+          and
+          (1 - gitlab_background_jobs:execution:apdex:ratio_5m) > (14.4 * 0.01)
+        )
+        or
+        (
+          (1 - gitlab_background_jobs:execution:apdex:ratio_6h) > (6 * 0.01)
+          and
+          (1 - gitlab_background_jobs:execution:apdex:ratio_30m) > (6 * 0.01)
+        )
+      )
+      and
+      (
+        gitlab_background_jobs:execution:ops:rate_6h > 0.06667
+      )
+  - alert: sidekiq_background_job_queue_apdex_ratio_burn_rate_slo_out_of_bounds
+    for: 2m
+    annotations:
+      title: The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has a queue latency outside
+        of SLO
+      description: |
+        The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has a queue latency outside of SLO.
+
+        Currently the metric value is {{ $value | humanizePercentage }}.
+      grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: 9
+      grafana_variables: environment,stage,queue
+      promql_template_1: >-
+        gitlab_background_jobs:queue:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
+        component="$component"}
+      runbook: troubleshooting/service-{{ $labels.type }}.md
+    labels:
+      alert_type: symptom
+      experimental: 'yes'
+      metric: gitlab_background_jobs:queue:apdex:ratio_1h
+      period: 2m
+      rules_domain: general
+      severity: s4
+      slo_alert: 'yes'
+    expr: |
+      (
+        (
+          (1 - gitlab_background_jobs:queue:apdex:ratio_1h) > (14.4 * 0.01)
+          and
+          (1 - gitlab_background_jobs:queue:apdex:ratio_5m) > (14.4 * 0.01)
+        )
+        or
+        (
+          (1 - gitlab_background_jobs:queue:apdex:ratio_6h) > (6 * 0.01)
+          and
+          (1 - gitlab_background_jobs:queue:apdex:ratio_30m) > (6 * 0.01)
+        )
+      )
+      and
+      (
+        gitlab_background_jobs:execution:ops:rate_6h > 0.06667
+      )
