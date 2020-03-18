@@ -14,4 +14,6 @@ group :development, :test do
   gem 'rspec'
   gem 'rubocop'
   gem 'gitlab-styles', '~> 3.1', require: false
+  gem 'danger-gitlab'
+  gem 'bigdecimal'
 end
