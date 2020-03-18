@@ -105,6 +105,34 @@ internal projects. For more information see the
 [canary release documentation](https://gitlab.com/gitlab-org/release/docs/blob/master/general/deploy/canary.md)
 
 
+## Draining
+
+The haproxy nodes need to be drained of traffic before restarts of the node or haproxy binary can be applied.
+
+In order to simplify this, the haproxy deployment includes a drain and wait script. By default, it waits 10 minutes. It works by blocking the health checks from the upstream GCP load balancer. Note, that not all HTTP connections will be drained in 10 minutes. The HTTP clients can, and do, keep long-lived sessions open. So a small number of users will get disconnected when doing a drain. But it will cleanly clear out the majority of traffic.
+
+This script is automatically called as part of the systemd unit start and stop process. This allows for easy draining and restarting of haproxy.
+
+For example:
+
+```console
+$ sudo systemctl stop haproxy
+```
+
+NOTE: This stop command will wait 10 minutes before it completes.
+
+To drain the node with a custom time, or drain without stopping haproxy:
+
+```console # Drain, but wait 1 minute
+$ sudo /usr/local/sbin/drain_haproxy.sh -w 60
+```
+
+Un-draining is executed as part of the haproxy systemd unit start process. It can also be done manually by calling the drain script again in un-drain mode.
+
+```console
+$ sudo /usr/local/sbin/drain_haproxy.sh -u
+```
+
 ## Tooling
 
 * There are helper scripts in [chef-repo](https://ops.gitlab.net/gitlab-cookbooks/chef-repo) to assist setting server statuses. In general, it is advised to always drain active connections from a server before rebooting.
