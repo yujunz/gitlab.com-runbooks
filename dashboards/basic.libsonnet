@@ -391,6 +391,7 @@ local panelMethods = {
     interval='1m',
     intervalFactor=3,
     linewidth=2,
+    min=null,
     legend_show=true,
   )::
     local formatConfig = {
@@ -427,7 +428,7 @@ local panelMethods = {
     .resetYaxes()
     .addYaxis(
       format='percentunit',
-      min=0,
+      min=min,
       max=1,
       label=yAxisLabel,
     )
