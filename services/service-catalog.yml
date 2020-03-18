@@ -866,6 +866,7 @@ services:
     monitors:
       sentry_slug: "gitlab/gitlabcom/?query=program%3A%22rails%22"
       primary_grafana_dashboard: "web-main/web-overview?"
+      gitlab_dashboard: https://ops.gitlab.net/gitlab-com/metrics-dogfooding/-/environments/266/metrics?dashboard=.gitlab%2Fdashboards%2Fkey_service_web.yml&duration_seconds=10800
 
 - name: frontend
   tier: lb
