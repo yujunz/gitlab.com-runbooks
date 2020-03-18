@@ -146,6 +146,10 @@ The alertmanager specific configuration where the routing are defined can be fou
 
 The alerting templates (which are built using go's text/template engine) can be found in [this folder](https://gitlab.com/gitlab-cookbooks/gitlab-alertmanager/blob/master/files/default/alertmanager/templates/gitlab.tmpl).
 
+Our new GKE alertmanager that alerts for Kubernetes based infrastructure is not
+easily accessible for adding silences or viewing. Until this is resolved,
+[temporary access can be had via a tunnel](./howto/alerts_gke.md).
+
 
 ## Silencing
 
