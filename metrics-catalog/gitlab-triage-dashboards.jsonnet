@@ -1,18 +1,21 @@
 local services = import './services/triage.jsonnet';
-local generateDashboardForService(service) =
-  local type = service.type;
-  local formatConfig = { type: type };
 
+local triageDashboard =
   {
-    dashboard: 'Frontend Services -  %(type)s' % formatConfig,
+    dashboard: 'Frontend Services',
     panel_groups: [
+      local type = group.definition.type;
+      local formatConfig = { type: type };
       {
-        group: 'Frontend Services - %(type)s' % formatConfig,
+        group: '%s' % group.name,
         panels: [
           {
             title: 'Latency: Apdex',
             type: 'line-chart',
-            y_label: 'Apdex %',
+            y_axis: {
+              name: 'Apdex %',
+              format: 'percent',
+            },
             metrics: [
               {
                 id: 'line-chart-latency-apdex-%(type)s-service' % formatConfig,
@@ -22,19 +25,19 @@ local generateDashboardForService(service) =
               },
               {
                 id: 'line-chart-latency-apdex-degradation-%(type)-service' % formatConfig,
-                query_range: 'avg(slo:min:gitlab_service_apdex:ratio{environment="gprd", type="%(type)s", stage="main"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})' % formatConfig, 
+                query_range: 'avg(slo:min:gitlab_service_apdex:ratio{environment="gprd", type="%(type)s", stage="main"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})' % formatConfig,
                 unit: '%',
                 label: 'Degradation SLO',
               },
               {
                 id: 'line-chart-latency-apdex-outage-%(type)-service' % formatConfig,
-                query_range: '2 * (avg(slo:min:gitlab_service_apdex:ratio{environment="gprd", type="%(type)s", stage="main"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})) - 1' % formatConfig, 
+                query_range: '2 * (avg(slo:min:gitlab_service_apdex:ratio{environment="gprd", type="%(type)s", stage="main"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})) - 1' % formatConfig,
                 unit: '%',
                 label: 'Outage SLO',
               },
               {
                 id: 'line-chart-latency-apdex-last-week-%(type)-service' % formatConfig,
-                query_range: 'max(max_over_time(gitlab_service_errors:ratio{environment="gprd", type="%(type)s", stage="main"}[1m] offset 1w)) by (type)' % formatConfig, 
+                query_range: 'max(max_over_time(gitlab_service_errors:ratio{environment="gprd", type="%(type)s", stage="main"}[1m] offset 1w)) by (type)' % formatConfig,
                 unit: '%',
                 label: 'Last Week',
               },
@@ -43,7 +46,10 @@ local generateDashboardForService(service) =
           {
             title: 'Error Ratios',
             type: 'line-chart',
-            y_label: 'Percentile',
+            y_axis: {
+              name: 'Percentile',
+              format: 'percent',
+            },
             metrics: [
               {
                 id: 'line-chart-error-ratios-%(type)s-service' % formatConfig,
@@ -72,15 +78,11 @@ local generateDashboardForService(service) =
             ],
           },
         ],
-      },
+      }
+      for group in services
     ],
   };
 
-local outputDashboardYaml(service) =
-  std.manifestYamlDoc(generateDashboardForService(service));
-
 {
-  ['triage-dashboard-%s.yml' % [service.type]]:
-    outputDashboardYaml(service)
-  for service in services
+  'triage-dashboard.yml': std.manifestYamlDoc(triageDashboard),
 }

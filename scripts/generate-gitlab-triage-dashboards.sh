@@ -6,7 +6,7 @@ IFS=$'\n\t'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 mkdir -p "${SCRIPT_DIR}/../.gitlab/dashboards"
-rm -f "${SCRIPT_DIR}"/../.gitlab/dashboards/triage-dashboard-*.yml
+rm -f "${SCRIPT_DIR}"/../.gitlab/dashboards/triage-dashboard.yml
 
 output_files="$(jsonnet --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-triage-dashboards.jsonnet")"
 
