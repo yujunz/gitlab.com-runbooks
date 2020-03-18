@@ -10,6 +10,8 @@ local annotation = grafana.annotation;
 local serviceCatalog = import 'service_catalog.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local sidekiqHelpers = import 'services/lib/sidekiq-helpers.libsonnet';
+local seriesOverrides = import 'series_overrides.libsonnet';
+local row = grafana.row;
 
 local selector = 'environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue"';
 
@@ -70,7 +72,7 @@ local latencyTimeseries(title, aggregators, legendFormat) =
     legendFormat=legendFormat,
   );
 
-local qpsTimeseries(title, aggregators, legendFormat) =
+local rpsTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
     query=counterRateQuery('sidekiq_jobs_completion_seconds_count', selector, aggregators, '$__interval'),
@@ -238,20 +240,73 @@ basic.dashboard(
     ),
   ], cols=8, rowHeight=4)
   +
+  [row.new(title='🌡 Queue Key Metrics') { gridPos: { x: 0, y: 100, w: 24, h: 1 } }]
+  +
+  layout.grid([
+    basic.apdexTimeseries(
+      title='Queue Apdex',
+      description='Queue apdex monitors the percentage of jobs that are dequeued within their queue threshold. Higher is better. Different jobs have different thresholds.',
+      query=|||
+        gitlab_background_jobs:queue:apdex:ratio_5m{environment="$environment", queue="$queue"}
+      |||,
+      yAxisLabel='% Jobs within Max Queuing Duration SLO',
+      legendFormat='{{ queue }} queue apdex',
+      legend_show=true,
+    )
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* queue apdex$/')),
+
+    basic.apdexTimeseries(
+      title='Execution Apdex',
+      description='Execution apdex monitors the percentage of jobs that run within their execution (run-time) threshold. Higher is better. Different jobs have different thresholds.',
+      query=|||
+        gitlab_background_jobs:execution:apdex:ratio_5m{environment="$environment", queue="$queue"}
+      |||,
+      yAxisLabel='% Jobs within Max Execution Duration SLO',
+      legendFormat='{{ queue }} execution apdex',
+      legend_show=true,
+    )
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* execution apdex$/')),
+    basic.timeseries(
+      title='Execution Rate (RPS)',
+      description='Jobs executed per second',
+      query=|||
+        gitlab_background_jobs:execution:ops:rate_5m{environment="$environment", queue="$queue"}
+      |||,
+      legendFormat='{{ queue }} rps',
+      format='ops',
+      yAxisLabel='Jobs per Second',
+    )
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* rps$/')),
+    basic.percentageTimeseries(
+      'Error Ratio',
+      description='Percentage of jobs that fail with an error. Lower is better.',
+      query=|||
+        gitlab_background_jobs:execution:error:ratio_5m{environment="$environment", queue="$queue"}
+      |||,
+      legendFormat='{{ queue }} error ratio',
+      yAxisLabel='Error Percentage',
+      legend_show=true,
+      decimals=2,
+    )
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* error ratio$/')),
+  ], cols=4, rowHeight=8, startRow=101)
+  +
+  [row.new(title='Queue Details') { gridPos: { x: 0, y: 200, w: 24, h: 1 } }]
+  +
   layout.grid([
     queuelatencyTimeseries('Queue Time', aggregators='queue', legendFormat='p95 {{ queue }}'),
     latencyTimeseries('Execution Time', aggregators='queue', legendFormat='p95 {{ queue }}'),
-    qpsTimeseries('QPS', aggregators='queue', legendFormat='{{ queue }}'),
+    rpsTimeseries('RPS', aggregators='queue', legendFormat='{{ queue }}'),
     errorRateTimeseries('Error Rate', aggregators='queue', legendFormat='{{ queue }}'),
 
     queuelatencyTimeseries('Queue Time per Node', aggregators='fqdn, queue', legendFormat='p95 {{ queue }} - {{ fqdn }}'),
     latencyTimeseries('Execution Time per Node', aggregators='fqdn, queue', legendFormat='p95 {{ queue }} - {{ fqdn }}'),
-    qpsTimeseries('QPS per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
+    rpsTimeseries('RPS per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
     errorRateTimeseries('Error Rate per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
     multiQuantileTimeseries('CPU Time', bucketMetric='sidekiq_jobs_cpu_seconds_bucket', aggregators='queue'),
     multiQuantileTimeseries('Gitaly Time', bucketMetric='sidekiq_jobs_gitaly_seconds_bucket', aggregators='queue'),
     multiQuantileTimeseries('Database Time', bucketMetric='sidekiq_jobs_db_seconds_bucket', aggregators='queue'),
-  ], cols=4, startRow=100)
+  ], cols=4, startRow=201)
 )
 .trailer()
 + {
