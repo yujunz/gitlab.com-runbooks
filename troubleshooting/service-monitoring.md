@@ -15,8 +15,7 @@
 
 * [postgres.md](postgres.md)
 * [prometheus-failed-compactions.md](prometheus-failed-compactions.md)
-* [redis_latency.md](redis_latency.md)
-* [redis_monitoring.md](redis_monitoring.md)
+* [redis.md](redis.md)
 * [sentry-is-down.md](sentry-is-down.md)
 * [version-gitlab-com.md](version-gitlab-com.md)
 <!-- END_MARKER -->

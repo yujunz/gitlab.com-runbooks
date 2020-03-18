@@ -27,6 +27,7 @@
 * [large-pull-mirror-queue.md](large-pull-mirror-queue.md)
 * [large-sidekiq-queue.md](large-sidekiq-queue.md)
 * [pgbouncer.md](pgbouncer.md)
+* [redis.md](redis.md)
 * [sidekiq_error_rate_high.md](sidekiq_error_rate_high.md)
 * [sidekiq_stats_no_longer_showing.md](sidekiq_stats_no_longer_showing.md)
 <!-- END_MARKER -->

@@ -11,4 +11,7 @@
 
 * [system](https://log.gprd.gitlab.net/goto/80a1ff609f91b0fb2b770a3a70784be0)
 
+## Troubleshooting Pointers
+
+* [redis.md](redis.md)
 <!-- END_MARKER -->

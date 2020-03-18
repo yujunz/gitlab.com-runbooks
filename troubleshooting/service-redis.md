@@ -17,10 +17,6 @@
 
 * [large-pull-mirror-queue.md](large-pull-mirror-queue.md)
 * [redis.md](redis.md)
-* [redis_flapping.md](redis_flapping.md)
-* [redis_latency.md](redis_latency.md)
-* [redis_monitoring.md](redis_monitoring.md)
-* [redis_replication.md](redis_replication.md)
 * [sentry-is-down.md](sentry-is-down.md)
 * [sidekiq_stats_no_longer_showing.md](sidekiq_stats_no_longer_showing.md)
 <!-- END_MARKER -->

@@ -29,7 +29,7 @@
 * [pages-letsencrypt.md](pages-letsencrypt.md)
 * [pgbouncer.md](pgbouncer.md)
 * [postgres.md](postgres.md)
-* [redis_flapping.md](redis_flapping.md)
+* [redis.md](redis.md)
 * [sidekiq_error_rate_high.md](sidekiq_error_rate_high.md)
 * [sidekiq_stats_no_longer_showing.md](sidekiq_stats_no_longer_showing.md)
 * [version-gitlab-com.md](version-gitlab-com.md)
