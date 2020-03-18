@@ -13,5 +13,5 @@
 
 ## Troubleshooting Pointers
 
-* [redis_monitoring.md](redis_monitoring.md)
+* [redis.md](redis.md)
 <!-- END_MARKER -->
