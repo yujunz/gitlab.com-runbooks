@@ -557,9 +557,9 @@ groups:
     expr: >
       clamp_max(
         max by(environment, tier, type, stage) (
-          sum by (fqdn, instance, environment, tier, type, stage) (sidekiq_running_jobs{priority!="export"})
+          sum by (fqdn, instance, environment, tier, type, stage) (sidekiq_running_jobs{priority!~"export|pullmirror"})
           /
-          sum by (fqdn, instance, environment, tier, type, stage) (sidekiq_concurrency{priority!="export"})
+          sum by (fqdn, instance, environment, tier, type, stage) (sidekiq_concurrency{priority!~"export|pullmirror"})
         ),
         1
       )
