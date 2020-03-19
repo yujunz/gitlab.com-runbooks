@@ -39,7 +39,7 @@ groups:
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-apdex.md"
           promql_template_1: 'gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
 
@@ -77,7 +77,7 @@ groups:
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-apdex.md"
           promql_template_1: 'gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
 
@@ -118,7 +118,7 @@ groups:
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-error-rate.md"
           promql_template_1: 'gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
 
@@ -155,7 +155,7 @@ groups:
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-error-rate.md"
           promql_template_1: 'gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
 
@@ -201,7 +201,7 @@ groups:
           grafana_variables: "environment,type,stage,component"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-error-rate.md"
           promql_template_1: 'gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'
 
       # ------------------------------------------------------------------------------
@@ -305,7 +305,7 @@ groups:
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "12"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-ops-rate.md"
           promql_template_1: 'gitlab_service_ops:rate{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_ops:rate{environment="$environment", type="$type", stage="$stage"}'
 
@@ -345,7 +345,7 @@ groups:
           grafana_variables: "environment,type,stage"
           grafana_min_zoom_hours: "12"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-ops-rate.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-ops-rate.md"
           promql_template_1: 'gitlab_service_ops:rate{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_ops:rate{environment="$environment", type="$type", stage="$stage"}'
 
@@ -416,7 +416,7 @@ groups:
           grafana_variables: "environment,type"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-apdex.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-apdex.md"
           promql_template_1: 'gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
 
@@ -472,7 +472,7 @@ groups:
           grafana_variables: "environment,type"
           grafana_min_zoom_hours: "6"
           link1_title: "Definition"
-          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/definition-service-error-rate.md"
+          link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-error-rate.md"
           promql_template_1: 'gitlab_service_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_errors:ratio{environment="$environment", type="$type", stage="$stage"}'
 

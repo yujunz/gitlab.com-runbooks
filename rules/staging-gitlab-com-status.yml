@@ -10,7 +10,7 @@ groups:
       alert_type: symptom
     annotations:
       description: GitLab.com is down for more than 30 minutes!
-      runbook: troubleshooting/gitlab-com-is-down.md
+      runbook: docs/frontend/gitlab-com-is-down.md
       title: staging.GitLab.com is down for 30 minutes
   - alert: StagingGitlabComSignInDown
     expr: probe_http_status_code{instance="https://staging.gitlab.com/users/sign_in",job="blackbox"} != 200
@@ -21,5 +21,5 @@ groups:
       alert_type: symptom
     annotations:
       description: GitLab.com is down for more than 30 minutes!
-      runbook: troubleshooting/gitlab-com-is-down.md
+      runbook: docs/frontend/gitlab-com-is-down.md
       title: staging.GitLab.com is down for 30 minutes

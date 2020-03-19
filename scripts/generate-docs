@@ -4,17 +4,20 @@ require 'yaml'
 require 'erb'
 require 'ostruct'
 require 'open3'
+require 'pathname'
 
 START_MARKER = "<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->"
 STOP_MARKER = "<!-- END_MARKER -->"
 
 def find_troubleshooting_docs(service_name)
   docs = []
-  troubleshooting_docs_glob = File.join(__dir__, "..", "troubleshooting", "*.md")
+  troubleshooting_docs_glob = File.join(__dir__, "..", "docs", "*", "*.md")
+  dest_path = Pathname.new(File.join(__dir__, "..", "docs", service_name))
   Open3.popen3("grep -li '\\b#{service_name}\\b' #{troubleshooting_docs_glob}") do |stdin, stdout, stderr, wait_thr|
     while line = stdout.gets
-      file_name = File.basename(line.chomp)
-      docs.push(file_name) unless file_name.include? "service-"
+      file_name = Pathname.new(line.chomp)
+      relative = file_name.relative_path_from(dest_path)
+      docs.push(relative) unless line.include? "service-"
     end
   end
 
@@ -97,7 +100,7 @@ def generate_docs
     teams = service["teams"].map { |team| team_map[team] }
     tier = tier_map[service["tier"]]
 
-    troubleshooting_doc = File.join(__dir__, "..", "troubleshooting", "service-#{service_name}.md")
+    troubleshooting_doc = File.join(__dir__, "..", "docs", service_name.to_s, "service-#{service_name}.md")
     details = generate_header(service, teams, tier)
     if File.exist?(troubleshooting_doc)
       replace_header(troubleshooting_doc, details)
@@ -106,7 +109,7 @@ def generate_docs
     end
   end
 
-  Dir.glob(File.join(__dir__, "..", "troubleshooting", "service-*.md")).each do |file|
+  Dir.glob(File.join(__dir__, "..", "docs", "*", "service-*.md")).each do |file|
     referred_service_name = File.basename(file, ".md").sub("service-", "")
     File.delete(file) unless service_map[referred_service_name]
   end

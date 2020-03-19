@@ -8,5 +8,5 @@ groups:
       severity: s4
       alert_type: cause
     annotations:
-      runbook: troubleshooting/sidekiq_stats_no_longer_showing.md
+      runbook: docs/sidekiq/sidekiq_stats_no_longer_showing.md
       title: Sidekiq stats failed to be scraped for the last minute

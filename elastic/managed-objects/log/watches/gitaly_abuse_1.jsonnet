@@ -115,7 +115,7 @@ local painlessScript(script) = {
           to: [
             '#alerts-test',
           ],
-          text: 'Unusual Gitaly activity for a project has been detected. Review the runbook at https://gitlab.com/gitlab-com/runbooks/tree/master/troubleshooting/gitaly-unusual-activity.md for more details',
+          text: 'Unusual Gitaly activity for a project has been detected. Review the runbook at https://gitlab.com/gitlab-com/runbooks/tree/master/docs/gitaly/gitaly-unusual-activity.md for more details',
           dynamic_attachments: {
             list_path: 'ctx.payload.items',
             attachment_template: {

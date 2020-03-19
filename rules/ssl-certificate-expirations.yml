@@ -10,7 +10,7 @@ groups:
       pager: pagerduty
     annotations:
       description: Check SSL for specified nodes and consider reissuing certificate.
-      runbook: troubleshooting/ssl_cert.md
+      runbook: docs/frontend/ssl_cert.md
       title: SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration
         }}
   - alert: SSLCertExpiresSoon
@@ -23,6 +23,6 @@ groups:
       project: gitlab.com/gitlab-com/gl-infra/infrastructure
     annotations:
       description: Check SSL for specified nodes and consider reissuing certificate.
-      runbook: troubleshooting/ssl_cert.md
+      runbook: docs/frontend/ssl_cert.md
       title: SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration
         }}

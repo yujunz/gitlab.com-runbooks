@@ -11,5 +11,5 @@ groups:
     annotations:
       description: '{{ $labels.fqdn }} is more than {{$value}}%.
         We need to build new file servers or rebalance repos.'
-      runbook: howto/storage-servers.md
+      runbook: docs/gitaly/storage-servers.md
       title: Git data file server disk usage is high - {{$value}}

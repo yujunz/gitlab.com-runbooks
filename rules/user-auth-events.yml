@@ -9,7 +9,7 @@ groups:
       alert_type: cause
     annotations:
       description: Higher than expected rate of login attempts for blocked users
-      runbook: troubleshooting/blocked-user-logins.md
+      runbook: docs/uncategorized/blocked-user-logins.md
       title: High rate of blocked user logins
   - alert: NoSuccessfulLogins
     expr: sum(rate(gitlab_auth_user_authenticated_total{environment="gprd"}[5m])) == 0
@@ -19,5 +19,5 @@ groups:
       alert_type: cause
     annotations:
       description: Zero successul user logins over five minutes
-      runbook: troubleshooting/zero-successful-user-logins.md
+      runbook: docs/uncategorized/zero-successful-user-logins.md
       title: Zero successful user logins

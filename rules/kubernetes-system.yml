@@ -6,7 +6,7 @@ groups:
         annotations:
           title: Node not ready
           description: '{{ $labels.node }} has been unready for more than an hour.'
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: kube_node_status_condition{job="kube-state-metrics",condition="Ready",status="true"} == 0
         for: 1h
         labels:
@@ -17,7 +17,7 @@ groups:
         annotations:
           title: Differing versions of Kubernetes components
           description: There are {{ $value }} different semantic versions of Kubernetes components running.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: count(count by (gitVersion) (label_replace(kubernetes_build_info{job!="kube-dns"},"gitVersion","$1","gitVersion","(v[0-9]*.[0-9]*.[0-9]*).*"))) > 1
         for: 1h
         labels:
@@ -28,7 +28,7 @@ groups:
         annotations:
           title: Kubernetes API error rate is high
           description: Kubernetes API server client '{{ $labels.job }}/{{ $labels.instance }}' is experiencing {{ printf "%0.0f" $value }}% errors.'
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           (sum(rate(rest_client_requests_total{code=~"5.."}[5m])) by (instance, job)
             /
@@ -43,7 +43,7 @@ groups:
         annotations:
           title: Node running too many Pods
           description: Kubelet {{ $labels.instance }} is running {{ $value }} Pods, close to the limit of 110.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: kubelet_running_pod_count{job="kubelet"} > 110 * 0.9
         for: 15m
         labels:
@@ -54,7 +54,7 @@ groups:
         annotations:
           title: Kubernetes API Latency High
           description: The API server has a 99th percentile latency of {{ $value }} seconds for {{ $labels.verb }} {{ $labels.resource }}.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: cluster_quantile:apiserver_request_latencies:histogram_quantile{job="apiserver",quantile="0.99",subresource!="log",verb!~"^(?:LIST|WATCH|WATCHLIST|PROXY|CONNECT)$"} > 1
         for: 10m
         labels:
@@ -65,7 +65,7 @@ groups:
         annotations:
           title: Kubernetes API Latency High
           description: The API server has a 99th percentile latency of {{ $value }} seconds for {{ $labels.verb }} {{ $labels.resource }}.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: cluster_quantile:apiserver_request_latencies:histogram_quantile{job="apiserver",quantile="0.99",subresource!="log",verb!~"^(?:LIST|WATCH|WATCHLIST|PROXY|CONNECT)$"} > 4
         for: 10m
         labels:
@@ -76,7 +76,7 @@ groups:
         annotations:
           title: Kubernetes API Error rate High
           description: API server is returning errors for {{ $value }}% of requests.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           sum(rate(apiserver_request_count{job="apiserver",code=~"^(?:5..)$"}[5m]))
             /
@@ -90,7 +90,7 @@ groups:
         annotations:
           title: Kubernetes API Error rate High
           description: API server is returning errors for {{ $value }}% of requests.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           sum(rate(apiserver_request_count{job="apiserver",code=~"^(?:5..)$"}[5m]))
             /
@@ -104,7 +104,7 @@ groups:
         annotations:
           title: Kubernetes API Resource Error rate High
           description: API server is returning errors for {{ $value }}% of requests for {{ $labels.verb }} {{ $labels.resource }} {{ $labels.subresource }}.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           sum(rate(apiserver_request_count{job="apiserver",code=~"^(?:5..)$"}[5m])) by (resource,subresource,verb)
             /
@@ -118,7 +118,7 @@ groups:
         annotations:
           title: Kubernetes API Resource Error rate High
           description: API server is returning errors for {{ $value }}% of requests for {{ $labels.verb }} {{ $labels.resource }} {{ $labels.subresource }}.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           sum(rate(apiserver_request_count{job="apiserver",code=~"^(?:5..)$"}[5m])) by (resource,subresource,verb)
             /
@@ -132,7 +132,7 @@ groups:
         annotations:
           title: Kubernetes Client Certificate soon to expire
           description: A client certificate used to authenticate to the apiserver is expiring in less than 7.0 days.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0 and histogram_quantile(0.01, sum by (job, le) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 604800
         labels:
           severity: s4
@@ -142,7 +142,7 @@ groups:
         annotations:
           title: Kubernetes Client Certificate soon to expire
           description: A client certificate used to authenticate to the apiserver is expiring in less than 24.0 hours.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0 and histogram_quantile(0.01, sum by (job, le) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 86400
         labels:
           severity: s3

@@ -1,4 +1,4 @@
-# See ../howto/pingdom.md for details of how to use this
+# See ../docs/uncategorized/pingdom.md for details of how to use this
 unique_tag: "pingdom-automated"
 defaults:
   timeout_ms: 2000

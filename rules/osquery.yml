@@ -9,5 +9,5 @@ groups:
       alert_type: cause
     annotations:
       description: The osqueryd process is using more than 10% CPU on {{ $labels.fqdn }}.
-      runbook: howto/uptycs_osquery.md
+      runbook: docs/uncategorized/uptycs_osquery.md
       title: osqueryd process using more than 10% CPU on {{ $labels.fqdn }}

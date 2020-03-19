@@ -12,5 +12,5 @@ groups:
             At least 75% of the fleet have omnibus package updates disabled.
             This prevents automatic package installations for newly provisioned
             VMs
-          runbook: troubleshooting/omnibus-package-updates.md
+          runbook: docs/uncategorized/omnibus-package-updates.md
           title: Omnibus package updates have been disabled for over 6 hours

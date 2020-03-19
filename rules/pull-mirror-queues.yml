@@ -18,4 +18,4 @@ groups:
         There have been over {{ $value }} overdue pull mirror jobs for the
         last 30 minutes.
       grafana_dashboard_id: _MKRXrSmk/pull-mirrors
-      runbook: troubleshooting/large-pull-mirror-queue.md
+      runbook: docs/sidekiq/large-pull-mirror-queue.md

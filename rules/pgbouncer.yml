@@ -12,4 +12,4 @@ groups:
     annotations:
       title: 'Sidekiq is using most of its PgBouncer connections: {{$value}}'
       description: On average, Sidekiq is using over 140 connections for the last 10 minutes. Check https://dashboards.gitlab.net/d/PwlB97Jmk/pgbouncer-overview.
-      runbook: troubleshooting/pgbouncer.md
+      runbook: docs/pgbouncer/pgbouncer.md

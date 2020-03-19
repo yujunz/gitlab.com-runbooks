@@ -69,7 +69,7 @@ groups:
       description: We are having more 5xx returns than any other reply. Web traffic
         is being impacted and the service is probably down. Have you thought about
         turning it off and on again?
-      runbook: troubleshooting/haproxy.md
+      runbook: docs/frontend/haproxy.md
       title: High Error Rate on Front End Web
   - alert: High4xxApiRateLimit
     expr: |
@@ -84,7 +84,7 @@ groups:
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing api
         rate limiting backend, more than 10% of http requests for at least 5 minutes.
-      runbook: troubleshooting/haproxy.md
+      runbook: docs/frontend/haproxy.md
       title: High 4xx Error Rate on Front End Web on backend api_rate_limit
   - alert: High4xxRateLimit
     expr: |
@@ -99,7 +99,7 @@ groups:
     annotations:
       description: We are seeing an increase of 4xx errors on the load balancing across
         all backends, more than 25% of http requests for at least 5 minutes.
-      runbook: troubleshooting/haproxy.md
+      runbook: docs/frontend/haproxy.md
       title: High 4xx Error Rate on Front End Web
   - alert: IncreasedErrorRateHTTPSGit
     expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend="https_git"}) by (environment) > 20
@@ -110,7 +110,7 @@ groups:
       alert_type: cause
     annotations:
       description: We are having a high rate of 5xx on https_git backend. It's likely that customers are impacted.
-      runbook: troubleshooting/high-error-rate.md
+      runbook: docs/frontend/high-error-rate.md
       title: Increased Error Rate Across Fleet
   - alert: IncreasedErrorRateOtherBackends
     expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend!="https_git"}) by (backend, environment) > 20
@@ -121,7 +121,7 @@ groups:
       alert_type: cause
     annotations:
       description: We are having a high rate of 5xx across other backends (web(sockets)?/api/registry/etc, anything except https_git). It's likely that customers are impacted.
-      runbook: troubleshooting/high-error-rate.md
+      runbook: docs/frontend/high-error-rate.md
       title: Increased Error Rate Across Fleet
   - alert: IncreasedBackendConnectionErrors
     expr: rate(haproxy_backend_connection_errors_total[1m]) > .1
@@ -134,7 +134,7 @@ groups:
       description: We are seeing an increase in backend connection errors on {{$labels.fqdn}} for backend {{$labels.backend}}.
         This likely indicates that requests are being sent to servers in a backend that are unable to fulfil them which will
         result in connection errors.
-      runbook: troubleshooting/haproxy.md
+      runbook: docs/frontend/haproxy.md
       title: Increased HAProxy Backend Connection Errors
   - alert: IncreasedServerResponseErrors
     expr: rate(haproxy_server_response_errors_total[1m]) > .5
@@ -146,7 +146,7 @@ groups:
     annotations:
       description: We are seeing an increase in server response errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.
         This likely indicates that requests are being sent to servers and there are errors reported to users.
-      runbook: troubleshooting/haproxy.md
+      runbook: docs/frontend/haproxy.md
       title: Increased Server Response Errors
   - alert: IncreasedServerConnectionErrors
     expr: rate(haproxy_server_connection_errors_total[1m]) > .1
@@ -158,7 +158,7 @@ groups:
     annotations:
       description: We are seeing an increase in server connection errors on {{$labels.fqdn}} for backend/server {{$labels.backend}}/{{$labels.server}}.
         This likely indicates that requests are being sent to servers and there are errors reported to users.
-      runbook: troubleshooting/haproxy.md
+      runbook: docs/frontend/haproxy.md
       title: Increased Server Connection Errors
   - alert: HAProxyHighCPU
     expr: rate(haproxy_process_cpu_seconds_total[30s]) > 0.95
@@ -169,7 +169,7 @@ groups:
       alert_type: cause
     annotations:
       description: HAProxy process high CPU usage on {{ $labels.fqdn }}
-      runbook: troubleshooting/haproxy.md
+      runbook: docs/frontend/haproxy.md
       title: HAProxy process high CPU usage on {{ $labels.fqdn }}
   - alert: SSHMaxStartupsMaybeBreached
     # About the numbers here:
@@ -185,7 +185,7 @@ groups:
       alert_type: cause
     annotations:
       description: We have detected conditions which suggest SSH's MaxStartups limit is being breached for git+ssh connections
-      runbook: troubleshooting/ssh-maxstartups-breach.md
+      runbook: docs/frontend/ssh-maxstartups-breach.md
       title: Possible breach of SSH MaxStartups limit
   - alert: HAProxyExtraneousProcesses
     # DR environment is excluded here due to https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8897
@@ -196,7 +196,7 @@ groups:
       alert_type: cause
     annotations:
       title: Extraneous processes detected on haproxy front-end
-      runbook: troubleshooting/haproxy.md
+      runbook: docs/frontend/haproxy.md
       description: |
         We are seeing extraneous processes on {{$labels.fqdn}}. These processes can interfere with state
         changes and may cause issues with deployments. Normally on reload old HAProxy processes with active

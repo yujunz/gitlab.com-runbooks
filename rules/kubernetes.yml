@@ -6,7 +6,7 @@ groups:
         annotations:
           title: Reached maximum node count
           description: '{{ $labels.environment }} has reached maximum allowed nodes'
-          runbook: troubleshooting/kubernetes.md#gkenodecount
+          runbook: docs/uncategorized/kubernetes.md#gkenodecount
         expr: |-
           count(stackdriver_gce_instance_compute_googleapis_com_instance_uptime{instance_name=~"gke-.*"}) by (environment) >= 28
         for: 5m
@@ -19,7 +19,7 @@ groups:
         annotations:
           title: High node count in GKE
           description: '{{ $labels.environment }} is close to the maximum allowed nodes'
-          runbook: troubleshooting/kubernetes.md#gkenodecout
+          runbook: docs/uncategorized/kubernetes.md#gkenodecout
         expr: |-
           count(stackdriver_gce_instance_compute_googleapis_com_instance_uptime{instance_name=~"gke-.*"}) by (environment) > 25
         for: 30m
@@ -31,7 +31,7 @@ groups:
         annotations:
           title: Deployment Reclicas Mismatch
           description: Deployment {{ $labels.namespace }}/{{ $labels.replicaset }} has not matched the expected number of replicas for longer than an hour.
-          runbook: troubleshooting/kubernetes.md#replica-mismatch
+          runbook: docs/uncategorized/kubernetes.md#replica-mismatch
         expr: |-
           kube_replicaset_spec_replicas{job="kube-state-metrics"}
           !=
@@ -45,7 +45,7 @@ groups:
         annotations:
           title: Pod not healthy
           description: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than an hour.
-          runbook: troubleshooting/kubernetes.md#kubepodnotready
+          runbook: docs/uncategorized/kubernetes.md#kubepodnotready
         expr: sum by (namespace, pod, env, stage) (kube_pod_status_phase{job="kube-state-metrics", phase=~"Pending|Unknown|Failed"}) > 0
         for: 1h
         labels:
@@ -56,7 +56,7 @@ groups:
         annotations:
           title: Pod CrashLooping
           description: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) * 60 * 5 > 0
         for: 1h
         labels:
@@ -82,7 +82,7 @@ groups:
         annotations:
           title: Duplicate Deployments detected
           description: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has not been rolled back.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           kube_deployment_status_observed_generation{job="kube-state-metrics"}
             !=
@@ -96,7 +96,7 @@ groups:
         annotations:
           title: StatefulSet Replicas Mismatch
           description: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} has not matched the expected number of replicas for longer than 15 minutes.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           kube_statefulset_status_replicas_ready{job="kube-state-metrics"}
             !=
@@ -110,7 +110,7 @@ groups:
         annotations:
           title: Duplicate StatefulSets detected
           description: StatefulSet generation for {{ $labels.namespace }}/{{ $labels.statefulset }} does not match, this indicates that the StatefulSet has failed but has not been rolled back.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           kube_statefulset_status_observed_generation{job="kube-state-metrics"}
             !=
@@ -124,7 +124,7 @@ groups:
         annotations:
           title: StatefulSet update incomplete
           description: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} update has not been rolled out.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           max without (revision) (
             kube_statefulset_status_current_revision{job="kube-state-metrics"}
@@ -146,7 +146,7 @@ groups:
         annotations:
           title: Daemonset Rollout incomplete
           description: Only {{ $value }}% of the desired Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are scheduled and ready.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           kube_daemonset_status_number_ready{job="kube-state-metrics"}
             /
@@ -160,7 +160,7 @@ groups:
         annotations:
           title: DaemonSet Pod(s) unable to be scheduled
           description: '{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are not scheduled.'
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: |-
           kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics"}
             -
@@ -174,7 +174,7 @@ groups:
         annotations:
           title: DaemonSet Pod(s) unable to be scheduled
           description: '{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are running where they are not supposed to run.'
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: kube_daemonset_status_number_misscheduled{job="kube-state-metrics"} > 0
         for: 10m
         labels:
@@ -185,7 +185,7 @@ groups:
         annotations:
           title: CronJob Running too long
           description: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is taking more than 1h to complete.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: time() - kube_cronjob_next_schedule_time{job="kube-state-metrics"} > 3600
         for: 1h
         labels:
@@ -196,7 +196,7 @@ groups:
         annotations:
           title: CronJob Running too long
           description: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more than one hour to complete.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: kube_job_spec_completions{job="kube-state-metrics"} - kube_job_status_succeeded{job="kube-state-metrics"}  > 0
         for: 1h
         labels:
@@ -207,7 +207,7 @@ groups:
         annotations:
           title: Job failed
           description: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete.
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: kube_job_status_failed{job="kube-state-metrics"}  > 0
         for: 1h
         labels:
