@@ -14,44 +14,47 @@ describe ::Uploads::Cleaner do
   let(:defaults) { ::Uploads::CleanupScript::Config::DEFAULTS.dup.merge(args) }
   let(:options) { defaults }
 
-  describe '#safely_invoke_operation' do
+  describe '#safely_invoke_find_with_operation' do
     let(:path) { File.join(options[:uploads_dir_path], disk_path) }
     let(:found) { File.join(path, 'tmp/test') }
     let(:find_command) do
+      command = format(options[:find], path: path, minutes: options[:interval_minutes])
       format(
         options[:remote_command],
         hostname: options[:hostname],
-        command: format(options[:find], path: path)
+        command: command
+      )
+    end
+    let(:find_with_delete_command) do
+      command = format(options[:find], path: path, minutes: options[:interval_minutes])
+      command = command << " -#{operation}"
+      format(
+        options[:remote_command],
+        hostname: options[:hostname],
+        command: command
       )
     end
 
     context 'when the dry-run option is true' do
       it 'logs a dry-run informational message' do
-        expect(subject).to receive(:invoke).with(find_command).and_return(found)
+        allow(subject).to receive(:get_non_empty_with_only_tmp_dir_files).with(host, path).and_return([found])
         expect(subject).to receive(:options).at_least(1).times.and_return(options)
         expect(subject.log).to receive(:info)
-          .with("[Dry-run] Would have invoked command: ssh #{host} 'sudo rm -rf #{found}'")
-        expect(subject.clean).to eq([found])
+          .with("[Dry-run] Would have invoked command: #{find_with_delete_command}")
+        expect(subject.clean).to be_nil
       end
     end
 
     context 'when the dry-run option is false' do
       let(:options) { defaults.merge(dry_run: false) }
-      let(:delete_command) do
-        format(
-          options[:remote_command],
-          hostname: options[:hostname],
-          command: format(options[:delete], path: found)
-        )
-      end
 
       it 'logs the operation and executes it' do
-        allow(subject).to receive(:invoke).with(find_command).and_return(found)
+        allow(subject).to receive(:get_non_empty_with_only_tmp_dir_files).with(host, path).and_return([found])
         expect(subject).to receive(:options).at_least(1).times.and_return(options)
         expect(subject.log).to receive(:info)
-          .with("Invoking command: ssh #{host} 'sudo rm -rf #{found}'")
-        expect(subject).to receive(:invoke).with(delete_command).and_return('')
-        expect(subject.clean).to eq([found])
+          .with("Invoking command: #{find_with_delete_command}")
+        expect(subject).to receive(:invoke).with(find_with_delete_command).and_return('')
+        expect(subject.clean).to be_nil
       end
     end
   end
