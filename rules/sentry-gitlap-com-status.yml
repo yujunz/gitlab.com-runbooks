@@ -11,5 +11,5 @@ groups:
       alert_type: symptom
     annotations:
       description: GitLab sentry has been down for 1 minute!
-      runbook: troubleshooting/sentry-is-down.md
+      runbook: docs/monitoring/sentry-is-down.md
       title: sentry.gitlab.net is down

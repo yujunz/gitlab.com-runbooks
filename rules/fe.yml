@@ -12,7 +12,7 @@ groups:
     annotations:
       description: >
         {{ $labels.type }} has lost redundancy. Only {{ $value }}% of servers are online.
-      runbook: troubleshooting/gitlab-com-is-down.md
+      runbook: docs/frontend/gitlab-com-is-down.md
       title: Loss of Redundancy
 
   - alert: FeLoadBalancerMissingNodes
@@ -26,5 +26,5 @@ groups:
     annotations:
       description: >
         {{ $labels.type }} have no instances online to serve traffic.
-      runbook: troubleshooting/gitlab-com-is-down.md
+      runbook: docs/frontend/gitlab-com-is-down.md
       title: No Frontend Available

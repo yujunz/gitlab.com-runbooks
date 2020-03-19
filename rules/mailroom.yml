@@ -10,7 +10,7 @@ groups:
           alert_type: cause
         annotations:
           description: Mailroom is unable to process some email.
-          runbook: troubleshooting/service-mailroom.md
+          runbook: docs/mailroom/service-mailroom.md
           title: Unread incoming emails are piling up
 
       - alert: ImapMailboxExporterIsNotRunning

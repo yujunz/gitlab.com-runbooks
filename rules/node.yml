@@ -60,7 +60,7 @@ groups:
     annotations:
       description: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
         }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
-      runbook: troubleshooting/node_cpu.md
+      runbook: docs/uncategorized/node_cpu.md
       title: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
         }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
 
@@ -146,7 +146,7 @@ groups:
       title: 'Filesystem will be full SOON'
       description: >
         The filesystem is predicted to be full in will be full in the next 24 hours.
-      runbook: troubleshooting/filesystem_alerts.md
+      runbook: docs/monitoring/filesystem_alerts.md
       instance: '{{ $labels.instance }}'
       device: '{{ $labels.device }}'
       mountpoint: '{{ $labels.mountpoint }}'
@@ -161,7 +161,7 @@ groups:
       description: >
         Consider sshing into the instance and removing old logs, clean
         temp files, or remove old apt packages with `apt-get autoremove`
-      runbook: troubleshooting/filesystem_alerts.md
+      runbook: docs/monitoring/filesystem_alerts.md
       value: '{{ $value | humanize }}%'
       device: '{{ $labels.device }}%'
       mount_point: '{{ $labels.mountpoint }}%'
@@ -175,7 +175,7 @@ groups:
     annotations:
       title: '5% disk space left'
       description: "There's only 5% disk space left"
-      runbook: troubleshooting/filesystem_alerts.md
+      runbook: docs/monitoring/filesystem_alerts.md
       value: '{{ $value | humanize }}%'
       device: '{{ $labels.device }}%'
       mount_point: '{{ $labels.mountpoint }}%'
@@ -192,7 +192,7 @@ groups:
       description: >
         "Consider ssh'ing into the instance and removing files or clean
         temp files"
-      runbook: troubleshooting/filesystem_alerts_inodes.md
+      runbook: docs/monitoring/filesystem_alerts_inodes.md
       value: '{{ $value | printf "%.2f" }}%'
       device: '{{ $labels.device }}%'
       mount_point: '{{ $labels.mountpoint }}%'
@@ -222,7 +222,7 @@ groups:
     annotations:
       description: The node is under heavy memory pressure.  The available memory is under 5% and
         there is a high rate of major page faults.
-      runbook: troubleshooting/node_memory_alerts.md
+      runbook: docs/monitoring/node_memory_alerts.md
       value: 'Available memory {{ $value | printf "%.2f" }}%'
       title: Node is under heavy memory pressure
   - alert: KernelVersionDeviations

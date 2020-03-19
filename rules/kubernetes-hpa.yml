@@ -6,7 +6,7 @@ groups:
         annotations:
           title: HPA Unable to scale
           description: '{{ $labels.hpa}} is suffering from a problem preventing scaling from occurring'
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: kube_hpa_status_condition{condition="false", status="AbleToScale"} == 1
         for: 30m
         labels:
@@ -17,7 +17,7 @@ groups:
         annotations:
           title: HPA Unable to scale
           description: '{{ $labels.hpa}} is not able to collect metrics'
-          runbook: troubleshooting/kubernetes.md
+          runbook: docs/uncategorized/kubernetes.md
         expr: kube_hpa_status_condition{condition="false", status="ScalingActive"} == 1
         for: 30m
         labels:
@@ -28,7 +28,7 @@ groups:
         annotations:
           title: HPA unable to scale up
           description: '{{$labels.hpa}} has hit the maximum number of desired Pods'
-          runbook: troubleshooting/kubernetes.md#hpascalecapability
+          runbook: docs/uncategorized/kubernetes.md#hpascalecapability
         expr: kube_hpa_status_desired_replicas >= kube_hpa_spec_max_replicas
         for: 30m
         labels:

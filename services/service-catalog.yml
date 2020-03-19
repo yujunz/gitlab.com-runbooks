@@ -622,7 +622,7 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/discourse-forum.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/forum/discourse-forum.md
     playbooks:
     error_budget:
   observability:
@@ -929,9 +929,9 @@ services:
         access_type:
         reviewed:
   operations:
-    maintenance: https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/haproxy.md
+    maintenance: https://gitlab.com/gitlab-com/runbooks/blob/master/docs/frontend/haproxy.md
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/haproxy.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/frontend/haproxy-1.md
     playbooks:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
@@ -1020,8 +1020,8 @@ services:
     maintenance:
     runbooks:
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/git.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/git-stuck-processes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/git/git.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/git/git-stuck-processes.md
     error_budget:
   observability:
     monitors:
@@ -1097,18 +1097,18 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-down.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-pubsub.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-latency.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-pubsub.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-latency.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-high-cpu.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-error-rate.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-rate-limiting.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-unusual-activity.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-version-mismatch.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-error-rate.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-rate-limiting.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-unusual-activity.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/version/gitaly-version-mismatch.md
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gitaly-profiling.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gracefully-restart-gitaly-ruby.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/gitaly-debugging-tool.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-profiling.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gracefully-restart-gitaly-ruby.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-debugging-tool.md
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
@@ -1176,7 +1176,7 @@ services:
     maintenance:
     runbooks:
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-influxdb.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/influxdb/manage-influxdb.md
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
@@ -1239,8 +1239,8 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/praefect-startup.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/praefect-error-rate.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/praefect/praefect-startup.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/praefect/praefect-error-rate.md
     playbooks:
     error_budget:
   observability:
@@ -1434,7 +1434,7 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-pages.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/pages/gitlab-pages.md
     playbooks:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
@@ -1504,9 +1504,9 @@ services:
   operations:
     maintenance:       # Link to maintenance procedures document
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/pgbouncer.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/pgbouncer/pgbouncer.md
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pgbouncer.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/pgbouncer/pgbouncer-1.md
 
     error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
@@ -1584,16 +1584,16 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/postgres.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-wale-backups.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-walg-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgres.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/gitlab-com-wale-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/gitlab-com-walg-backups.md
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/patroni-management.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pg-ha.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-disk-space.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-rebuild-trigram-indexes.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-replica.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/patroni-management.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/pg-ha.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-disk-space.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-rebuild-trigram-indexes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-replica.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-switchover.md
 
     error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
@@ -1674,16 +1674,16 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/postgres.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-wale-backups.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-walg-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgres.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/gitlab-com-wale-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/gitlab-com-walg-backups.md
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/patroni-management.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pg-ha.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-disk-space.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-rebuild-trigram-indexes.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-replica.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/patroni-management.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/pg-ha.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-disk-space.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-rebuild-trigram-indexes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-replica.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-switchover.md
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
@@ -1757,16 +1757,16 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/postgres.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-wale-backups.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-com-walg-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgres.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/gitlab-com-wale-backups.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/gitlab-com-walg-backups.md
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/patroni-management.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/pg-ha.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-disk-space.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-rebuild-trigram-indexes.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-replica.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/patroni-management.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/pg-ha.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-disk-space.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-rebuild-trigram-indexes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/patroni/postgresql-replica.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/postgresql-switchover.md
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
@@ -1903,29 +1903,29 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-checkpointing-slow.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-empty-sd.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-checkpoints.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-compactions.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failed-wal-truncations.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-failing-rule-evaluations.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-filesd-errors.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-high-memory.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-indexing-backlog.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-invalid-config.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-is-down.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-not-ingesting.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-notifications-backlog.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-out-of-order.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-persist-errors.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-persistence-pressure-high.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-scrape-errors.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-rule-eval.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-scrapes.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-slow-series-maintenance.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/prometheus-storage-inconsistent.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-checkpointing-slow.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-empty-sd.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-failed-checkpoints.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-failed-compactions.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-failed-wal-truncations.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-failing-rule-evaluations.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-filesd-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-high-memory.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-indexing-backlog.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-invalid-config.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-is-down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-not-ingesting.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-notifications-backlog.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-out-of-order.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-persist-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-persistence-pressure-high.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-scrape-errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-slow-rule-eval.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-slow-scrapes.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/prometheus-slow-series-maintenance.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/prometheus-storage-inconsistent.md
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-prometheus-and-exporters.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/monitoring/update-prometheus-and-exporters.md
     error_budget:  https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
@@ -1992,7 +1992,7 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/service-redis.md
     playbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/redis-new-cluster-replication.md
     error_budget:
@@ -2059,7 +2059,7 @@ services:
     maintenance:
     runbooks:
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/service-redis.md
     error_budget:
   observability:
     monitors:
@@ -2123,7 +2123,7 @@ services:
     maintenance:
     runbooks:
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/service-redis.md
     error_budget:
   observability:
     monitors:
@@ -2187,7 +2187,7 @@ services:
     maintenance:
     runbooks:
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-redis.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/service-redis.md
     error_budget:
   observability:
     monitors:
@@ -2254,7 +2254,7 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitlab-registry.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/registry/gitlab-registry.md
     playbooks:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
@@ -2409,8 +2409,8 @@ services:
     maintenance:
     runbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/sidekiq_exception_count.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/sidekiq_stats_no_longer_showing.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/large-sidekiq-queue.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/sidekiq/sidekiq_stats_no_longer_showing.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/sidekiq/large-sidekiq-queue.md
     playbooks:
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
@@ -2478,12 +2478,12 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/runners_manager_is_down.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/runners_manager_is_down.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_errors.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/ci_runner_manager_do_limits.md
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/create-runners-manager-node.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-gitlab-runner-on-managers.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/create-runners-manager-node.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/runner/update-gitlab-runner-on-managers.md
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
@@ -2706,8 +2706,8 @@ services:
     maintenance:
     runbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/pubsub-queing.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/gitaly-pubsub.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/pubsub/pubsub-queing.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/gitaly/gitaly-pubsub.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/elk_mapper_parsing_exception.md
     playbooks:
     issues:
@@ -2782,18 +2782,18 @@ services:
     maintenance:
     runbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/runners_manager_is_down.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_runner_manager_errors.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_runner_manager_do_limits.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_graphs.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_too_many_connections_on_runners_cache_server.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_constantnumberoflongrunningrepeatedjobs.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_pending_builds.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_too_many_archiving_trace_failures.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cicd/ci_workhorse-queuing.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/service-ci-runners.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/runner/cicd/ci_runner_manager_errors.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/runner/cicd/ci_runner_manager_do_limits.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_graphs.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_too_many_connections_on_runners_cache_server.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_constantnumberoflongrunningrepeatedjobs.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_pending_builds.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_too_many_archiving_trace_failures.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_workhorse-queuing.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/service-ci-runners.md
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/create-runners-manager-node.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/update-gitlab-runner-on-managers.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/create-runners-manager-node.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/runner/update-gitlab-runner-on-managers.md
     error_budget: https://docs.google.com/spreadsheets/d/1wkK2n5EAvoVXwQZrVoCDsvkYTb1BftL56EzsFW_IA-w/edit
   observability:
     monitors:
@@ -2913,7 +2913,7 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/troubleshooting/cloudflare.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/waf/cloudflare.md
     playbooks:
     error_budget:
   observability:

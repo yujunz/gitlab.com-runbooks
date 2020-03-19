@@ -11,5 +11,5 @@ groups:
       alert_type: cause
     annotations:
       title: Alertmanager is failing sending notifications
-      runbook: troubleshooting/alertmanager-notification-failures.md
+      runbook: docs/monitoring/alertmanager-notification-failures.md
       description: Alertmanager is seeing errors for integration {{$labels.integration}}

@@ -30,7 +30,7 @@ groups:
     annotations:
       description: Gitaly error rate for the last 5 minutes is over 5 on {{$labels.instance}}.
         Check Gitaly logs and consider disabling it on that host.
-      runbook: troubleshooting/gitaly-error-rate.md
+      runbook: docs/gitaly/gitaly-error-rate.md
       title: 'Gitaly error rate is too high: {{$value | printf "%.2f" }}'
 
 - name: Gitaly grpc server handling buckets
@@ -103,7 +103,7 @@ groups:
     annotations:
       description: Gitaly has been marked as down for the past minute on {{$labels.instance}}.
         Check Gitaly logs and restart the process if necessary
-      runbook: troubleshooting/gitaly-down.md
+      runbook: docs/gitaly/gitaly-down.md
       title: Gitaly is down on {{ $labels.fqdn }}
   - alert: GitalyVersionMismatch
     expr: >
@@ -123,7 +123,7 @@ groups:
         alongside one another, but this should not be the case for more than 30m.
         Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
         for details of versions deployed across the fleet.
-      runbook: troubleshooting/gitaly-version-mismatch.md
+      runbook: docs/version/gitaly-version-mismatch.md
       title: 'Gitaly: two versions of Gitaly have been running alongside one another
         in production for more than 30 minutes'
   - alert: GitalyVersionMismatchSevere
@@ -144,7 +144,7 @@ groups:
         one another in production. This should never occur and indicates serious deployment
         failures. Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
         for details of versions deployed across the fleet.
-      runbook: troubleshooting/gitaly-version-mismatch.md
+      runbook: docs/version/gitaly-version-mismatch.md
       title: 'Gitaly: multiple versions of Gitaly are currently running in production'
   - alert: GitalyPermissionDenied
     expr: sum(gitaly_grpc:grpc_server_handled_total:rate1m{grpc_code="PermissionDenied"}) > 10
@@ -156,7 +156,7 @@ groups:
       alert_type: cause
     annotations:
       description: Gitaly authention failing, authentication tokens might be misconfigured, or severe clockdrift is occurring.
-      runbook: troubleshooting/gitaly-permission-denied.md
+      runbook: docs/gitaly/gitaly-permission-denied.md
       title: 'Gitaly: Auth-tokens are invalid, failing RPCs'
 
 
@@ -173,7 +173,7 @@ groups:
     annotations:
       description: >
         Reach out to the Gitaly team, ensure logging is set properly.
-      runbook: troubleshooting/gitaly-pubsub.md
+      runbook: docs/gitaly/gitaly-pubsub.md
       title: Gitaly PubSub send operation is low
 
   - alert: GitLabComLatencyGitalyCritical
@@ -186,7 +186,7 @@ groups:
     annotations:
       description: Reach out to the Gitaly team and mitigate the problem restarting
         gitaly on the affected node if it's causing a partial outage.
-      runbook: troubleshooting/gitaly-latency.md
+      runbook: docs/gitaly/gitaly-latency.md
       title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last 5m
 
   - alert: GitalyNewVersionDeployed

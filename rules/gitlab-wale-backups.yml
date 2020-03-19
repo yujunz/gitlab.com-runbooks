@@ -20,7 +20,7 @@ groups:
     annotations:
       description: WALE syncs to GCS might be not working. Please follow the runbook
         to review the problem.
-      runbook: troubleshooting/gitlab-com-wale-backups.md
+      runbook: docs/patroni/gitlab-com-wale-backups.md
       title: Last WALE backup was seen {{ .Value | humanizeDuration }} ago.
   - alert: WALEBaseBackupDelayed
     expr: gitlab_com:last_wale_successful_basebackup_age_in_hours >= 48
@@ -32,5 +32,5 @@ groups:
     annotations:
       description: WALE basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.
-      runbook: troubleshooting/gitlab-com-wale-backups.md
+      runbook: docs/patroni/gitlab-com-wale-backups.md
       title: Last successful WALE basebackup was seen {{ .Value }} hours ago.

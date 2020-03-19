@@ -52,7 +52,7 @@ groups:
     annotations:
       description: >
         This may be caused by an upstream load-balancer issue, DNS issue or authentication issues.
-      runbook: "troubleshooting/workhorse-git-session-alerts.md"
+      runbook: "docs/git/workhorse-git-session-alerts.md"
       title: "The number of active Git HTTP sessions is unusually low"
       grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
       grafana_panel_id: "2"
@@ -88,7 +88,7 @@ groups:
       description: >
         The number of Git HTTP sessions is unusually high. This could be because of a surge in traffic,
         a bottleneck in a upstream load-balancer, or a slow backend Gitaly server.
-      runbook: "troubleshooting/workhorse-git-session-alerts.md"
+      runbook: "docs/git/workhorse-git-session-alerts.md"
       title: "The number of active Git HTTP sessions is unusually high"
       grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
       grafana_panel_id: "2"

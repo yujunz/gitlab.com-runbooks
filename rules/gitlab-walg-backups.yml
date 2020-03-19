@@ -19,7 +19,7 @@ groups:
     annotations:
       description: walg syncs to GCS might be not working. Please follow the runbook
         to review the problem.
-      runbook: troubleshooting/gitlab-com-walg-backups.md
+      runbook: docs/patroni/gitlab-com-walg-backups.md
       title: Last walg backup was seen {{ .Value | humanizeDuration }} ago.
   - alert: walgBaseBackupDelayed
     expr: gitlab_com:last_walg_successful_basebackup_age_in_hours >= 48
@@ -31,5 +31,5 @@ groups:
     annotations:
       description: walg basebackup syncs to GCS might be not working. Please follow the runbook
         to review the problem.
-      runbook: troubleshooting/gitlab-com-walg-backups.md
+      runbook: docs/patroni/gitlab-com-walg-backups.md
       title: Last successful walg basebackup was seen {{ .Value | humanizeDuration }} ago.

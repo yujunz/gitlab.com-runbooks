@@ -138,7 +138,7 @@ During an incident there are at least 2 roles, and one more optional
 	* Are we losing data?
 	* Is GitLab.com not working or offline?
 	* Has the incident affected users for greater than 1 hour?
-* [Tweet](howto/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
+* [Tweet](docs/uncategorized/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
 * Join the `#production` channel
 * Define a _point person_ or _incident owner_, this is the person that will gather all the data and coordinate the efforts.
 * For emergency incidents define [Roles](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-production-incidents.md)
@@ -166,13 +166,13 @@ During an incident there are at least 2 roles, and one more optional
 * Update the [Production Oncall Log](https://docs.google.com/document/d/1nWDqjzBwzYecn9Dcl4hy1s4MLng_uMq-8yGRMxtgK6M/edit#heading=h.nmt24c52ggf5)
 * If we lack monitoring or alerting Open an issue and label as `monitoring`, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
 * Keep in mind [GitLab's data breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) and work with the security team to determine if a user data breach has occurred and if notification needs to be provided.
-* Once the incident is resolved, [Tweet](howto/tweeting-guidelines.md)  an update and let users know the issue is resolved.
+* Once the incident is resolved, [Tweet](docs/uncategorized/tweeting-guidelines.md)  an update and let users know the issue is resolved.
 
 # References
 
 ## Communication Guidelines
-* [When the lead is away](howto/lead-away.md)
-* [Tweeting Guidelines](howto/tweeting-guidelines.md)
+* [When the lead is away](docs/uncategorized/lead-away.md)
+* [Tweeting Guidelines](docs/uncategorized/tweeting-guidelines.md)
 * [Production Incident Communication Strategy](howto/manage-production-incidents.md)
 * [Database Incidents](incidents/database.md)
 
@@ -181,60 +181,60 @@ During an incident there are at least 2 roles, and one more optional
 
 ### PostgreSQL
 
-* [Postgresql](troubleshooting/postgres.md)
-* [more postgresql](howto/postgresql.md)
-* [PgBouncer](howto/pgbouncer.md)
-* [PostgreSQL High Availability & Failovers](howto/pg-ha.md)
+* [Postgresql](docs/patroni/postgres.md)
+* [more postgresql](docs/patroni/postgresql.md)
+* [PgBouncer](docs/pgbouncer/pgbouncer-1.md)
+* [PostgreSQL High Availability & Failovers](docs/patroni/pg-ha.md)
 * [PostgreSQL switchover](howto/postgresql-switchover.md)
-* [Read-only Load Balancing](howto/load-balancing.md)
-* [Add a new secondary replica](howto/postgresql-replica.md)
-* [Database backups](howto/using-wale-gpg.md)
+* [Read-only Load Balancing](docs/ci-runners/load-balancing.md)
+* [Add a new secondary replica](docs/patroni/postgresql-replica.md)
+* [Database backups](docs/patroni/using-wale-gpg.md)
 * [Database backups restore testing](https://gitlab.com/gitlab-restore/postgres-01.db.prd.gitlab.com/)
-* [Rebuild a corrupt index](howto/postgresql.md#rebuild-a-corrupt-index)
+* [Rebuild a corrupt index](docs/patroni/postgresql.md#rebuild-a-corrupt-index)
 
 ### Frontend Services
 
-* [GitLab Pages returns 404](troubleshooting/gitlab-pages.md)
-* [HAProxy is missing workers](troubleshooting/chef.md)
-* [Worker's root filesystem is running out of space](troubleshooting/filesystem_alerts.md)
-* [Azure Load Balancers Misbehave](troubleshooting/load-balancer-outage.md)
-* [GitLab registry is down](troubleshooting/gitlab-registry.md)
-* [Sidekiq stats no longer showing](troubleshooting/sidekiq_stats_no_longer_showing.md)
-* [Gemnasium is down](troubleshooting/gemnasium_is_down.md)
-* [Blocking a project causing high load](howto/block-high-load-project.md)
+* [GitLab Pages returns 404](docs/pages/gitlab-pages.md)
+* [HAProxy is missing workers](docs/uncategorized/chef.md)
+* [Worker's root filesystem is running out of space](docs/monitoring/filesystem_alerts.md)
+* [Azure Load Balancers Misbehave](docs/frontend/load-balancer-outage.md)
+* [GitLab registry is down](docs/registry/gitlab-registry.md)
+* [Sidekiq stats no longer showing](docs/sidekiq/sidekiq_stats_no_longer_showing.md)
+* [Gemnasium is down](docs/uncategorized/gemnasium_is_down.md)
+* [Blocking a project causing high load](docs/uncategorized/block-high-load-project.md)
 
 ### Supporting Services
 
 * [Redis replication has stopped](troubleshooting/redis_replication.md)
 * [Redis replication setup](howto/redis-new-cluster-replication.md)
-* [Sentry is down](troubleshooting/sentry-is-down.md)
+* [Sentry is down](docs/monitoring/sentry-is-down.md)
 
 ### Gitaly
 
-* [Gitaly error rate is too high](troubleshooting/gitaly-error-rate.md)
-* [Gitaly latency is too high](troubleshooting/gitaly-latency.md)
-* [Sidekiq Queues are out of control](troubleshooting/large-sidekiq-queue.md)
-* [Workers have huge load because of cat-files](troubleshooting/workers-high-load.md)
-* [Test pushing through all the git nodes](troubleshooting/git.md)
-* [How to gracefully restart gitaly-ruby](howto/gracefully-restart-gitaly-ruby.md)
-* [Debugging gitaly with gitaly-debug](howto/gitaly-debugging-tool.md)
-* [Gitaly token rotation](howto/gitaly-token-rotation.md)
-* [Praefect is down](troubleshooting/praefect-startup.md)
-* [Praefect error rate is too high](troubleshooting/praefect-error-rate.md)
+* [Gitaly error rate is too high](docs/gitaly/gitaly-error-rate.md)
+* [Gitaly latency is too high](docs/gitaly/gitaly-latency.md)
+* [Sidekiq Queues are out of control](docs/sidekiq/large-sidekiq-queue.md)
+* [Workers have huge load because of cat-files](docs/uncategorized/workers-high-load.md)
+* [Test pushing through all the git nodes](docs/git/git.md)
+* [How to gracefully restart gitaly-ruby](docs/gitaly/gracefully-restart-gitaly-ruby.md)
+* [Debugging gitaly with gitaly-debug](docs/gitaly/gitaly-debugging-tool.md)
+* [Gitaly token rotation](docs/gitaly/gitaly-token-rotation.md)
+* [Praefect is down](docs/praefect/praefect-startup.md)
+* [Praefect error rate is too high](docs/praefect/praefect-error-rate.md)
 
 ### CI
 
 * [Large number of CI pending builds](troubleshooting/ci_pending_builds.md)
 * [The CI runner manager report a high DO Token Rate Limit usage](troubleshooting/ci_runner_manager_do_limits.md)
 * [The CI runner manager report a high number of errors](troubleshooting/ci_runner_manager_errors.md)
-* [Runners cache is down](troubleshooting/runners_cache_is_down.md)
-* [Runners registry is down](troubleshooting/runners_registry_is_down.md)
-* [Runners cache free disk space is less than 20%](troubleshooting/runners_cache_disk_space.md)
+* [Runners cache is down](docs/ci-runners/runners_cache_is_down.md)
+* [Runners registry is down](docs/ci-runners/runners_registry_is_down.md)
+* [Runners cache free disk space is less than 20%](docs/ci-runners/runners_cache_disk_space.md)
 * [Too many connections on Runner's cache server](troubleshooting/ci_too_many_connections_on_runners_cache_server.md)
 
 ### Geo
 
-* [Geo database replication](howto/geo-patroni-cluster.md)
+* [Geo database replication](docs/patroni/geo-patroni-cluster.md)
 
 ### ELK
 
@@ -242,17 +242,17 @@ During an incident there are at least 2 roles, and one more optional
 
 ## Non-Critical
 
-* [SSL certificate expires](troubleshooting/ssl_cert.md)
-* [Troubleshoot git stuck processes](troubleshooting/git-stuck-processes.md)
+* [SSL certificate expires](docs/frontend/ssl_cert.md)
+* [Troubleshoot git stuck processes](docs/git/git-stuck-processes.md)
 
 ## Non-Core Applications
 
-* [version.gitlab.com](troubleshooting/version-gitlab-com.md)
+* [version.gitlab.com](docs/version/version-gitlab-com.md)
 
 ### Chef/Knife
 
-* [General Troubleshooting](troubleshooting/chef.md)
-* [Error executing action `create` on resource 'directory[/some/path]'](troubleshooting/stale-file-handles.md)
+* [General Troubleshooting](docs/uncategorized/chef.md)
+* [Error executing action `create` on resource 'directory[/some/path]'](docs/uncategorized/stale-file-handles.md)
 
 ### Certificates
 * [Certificate runbooks](certificates/README.md)
@@ -260,15 +260,15 @@ During an incident there are at least 2 roles, and one more optional
 ## Learning
 
 ### Alerting and monitoring
-* [GitLab monitoring overview](howto/monitoring-overview.md)
-* [How to add alerts: Alerts manual](howto/alerts_manual.md)
-* [How to add/update deadman switches](howto/deadman-switches.md)
+* [GitLab monitoring overview](docs/monitoring/monitoring-overview.md)
+* [How to add alerts: Alerts manual](docs/monitoring/alerts_manual.md)
+* [How to add/update deadman switches](docs/uncategorized/deadman-switches.md)
 * [How to silence alerts](howto/silence-alerts.md)
-* [Alert for SSL certificate expiration](howto/alert-for-ssl-certificate-expiration.md)
+* [Alert for SSL certificate expiration](docs/uncategorized/alert-for-ssl-certificate-expiration.md)
 * [Working with Grafana](monitoring/grafana.md)
 * [Working with Prometheus](monitoring/prometheus.md)
-* [Upgrade Prometheus and exporters](howto/update-prometheus-and-exporters.md)
-* [Use mtail to capture metrics from logs](howto/mtail.md)
+* [Upgrade Prometheus and exporters](docs/monitoring/update-prometheus-and-exporters.md)
+* [Use mtail to capture metrics from logs](docs/uncategorized/mtail.md)
 
 ### CI
 
@@ -277,11 +277,11 @@ During an incident there are at least 2 roles, and one more optional
 
 ### Access Requests
 
-* [Deal with various kinds of access requests](howto/access-requests.md)
+* [Deal with various kinds of access requests](docs/uncategorized/access-requests.md)
 
 ### Deploy
 
-* [Get the diff between dev versions](howto/dev-environment.md#figure-out-the-diff-of-deployed-versions)
+* [Get the diff between dev versions](docs/uncategorized/dev-environment.md#figure-out-the-diff-of-deployed-versions)
 * [Deploy GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/deploying.md)
 * [Rollback GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/deploying.md#rolling-back-gitlabcom)
 * [Deploy staging.GitLab.com](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/staging.md)
@@ -290,73 +290,73 @@ During an incident there are at least 2 roles, and one more optional
 
 ### Work with the fleet and the rails app
 
-* [Reload unicorn with zero downtime](howto/manage-workers.md#reload-unicorn-with-zero-downtime)
-* [How to perform zero downtime frontend host reboot](howto/manage-workers.md#how-to-perform-zero-downtime-frontend-host-reboot)
-* [Gracefully restart sidekiq jobs](howto/manage-workers.md#gracefully-restart-sidekiq-jobs)
-* [Start a rails console in the staging environment](howto/staging-environment.md#run-a-rails-console-in-staging-environment)
-* [Start a redis console in the staging environment](howto/staging-environment.md#run-a-redis-console-in-staging-environment)
-* [Start a psql console in the staging environment](howto/staging-environment.md#run-a-psql-console-in-staging-environment)
-* [Force a failover with postgres](howto/patroni-management.md#failoverswitchover)
-* [Force a failover with redis](howto/manage-pacemaker.md#force-a-failover)
-* [Use aptly](howto/aptly.md)
-* [Disable PackageCloud](howto/stop-or-start-packagecloud.md)
-* [Re-index a package in PackageCloud](howto/reindex-package-in-packagecloud.md)
-* [Access hosts in GCP](howto/access-gcp-hosts.md)
+* [Reload unicorn with zero downtime](docs/uncategorized/manage-workers.md#reload-unicorn-with-zero-downtime)
+* [How to perform zero downtime frontend host reboot](docs/uncategorized/manage-workers.md#how-to-perform-zero-downtime-frontend-host-reboot)
+* [Gracefully restart sidekiq jobs](docs/uncategorized/manage-workers.md#gracefully-restart-sidekiq-jobs)
+* [Start a rails console in the staging environment](docs/uncategorized/staging-environment.md#run-a-rails-console-in-staging-environment)
+* [Start a redis console in the staging environment](docs/uncategorized/staging-environment.md#run-a-redis-console-in-staging-environment)
+* [Start a psql console in the staging environment](docs/uncategorized/staging-environment.md#run-a-psql-console-in-staging-environment)
+* [Force a failover with postgres](docs/patroni/patroni-management.md#failoverswitchover)
+* [Force a failover with redis](docs/uncategorized/manage-pacemaker.md#force-a-failover)
+* [Use aptly](docs/uncategorized/aptly.md)
+* [Disable PackageCloud](docs/uncategorized/stop-or-start-packagecloud.md)
+* [Re-index a package in PackageCloud](docs/uncategorized/reindex-package-in-packagecloud.md)
+* [Access hosts in GCP](docs/uncategorized/access-gcp-hosts.md)
 
 ### Restore Backups
 
-* [Deleted Project Restoration](howto/deleted-project-restore.md)
-* [Database Backups and Recovery using WAL-E / WAL-G](howto/using-wale-gpg.md)
-* [Work with Azure Snapshots](howto/azure-snapshots.md)
-* [Work with GCP Snapshots](howto/gcp-snapshots.md)
-* [PackageCloud Infrastructure And Recovery](howto/packagecloud-infrastructure.md)
+* [Deleted Project Restoration](docs/uncategorized/deleted-project-restore.md)
+* [Database Backups and Recovery using WAL-E / WAL-G](docs/patroni/using-wale-gpg.md)
+* [Work with Azure Snapshots](docs/uncategorized/azure-snapshots.md)
+* [Work with GCP Snapshots](docs/uncategorized/gcp-snapshots.md)
+* [PackageCloud Infrastructure And Recovery](docs/uncategorized/packagecloud-infrastructure.md)
 
 ### Work with storage
 
-* [Understanding GitLab Storage Shards](howto/storage-sharding.md)
-* [How to re-balance GitLab Storage Shards](howto/storage-rebalancing.md)
-* [Build and Deploy New Storage Servers](howto/storage-servers.md)
-* [Manage uploads](howto/uploads.md)
+* [Understanding GitLab Storage Shards](docs/gitaly/storage-sharding.md)
+* [How to re-balance GitLab Storage Shards](docs/gitaly/storage-rebalancing.md)
+* [Build and Deploy New Storage Servers](docs/gitaly/storage-servers.md)
+* [Manage uploads](docs/uncategorized/uploads.md)
 
 ### Mangle front end load balancers
-* [Isolate a worker by disabling the service in the LBs](howto/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
-* [Deny a path in the load balancers](howto/block-things-in-haproxy.md#deny-a-path-with-the-delete-http-method)
-* [Purchasing/Renewing SSL Certificates](howto/ssl_cert.md)
+* [Isolate a worker by disabling the service in the LBs](docs/frontend/block-things-in-haproxy.md#disable-a-whole-service-in-a-load-balancer)
+* [Deny a path in the load balancers](docs/frontend/block-things-in-haproxy.md#deny-a-path-with-the-delete-http-method)
+* [Purchasing/Renewing SSL Certificates](docs/frontend/ssl_cert-1.md)
 
 ### Work with Chef
-* [Create users, rotate or remove keys from chef](howto/manage-chef.md)
-* [Update packages manually for a given role](howto/manage-workers.md#update-packages-fleet-wide)
-* [Rename a node already in Chef](howto/rename-nodes.md)
-* [Reprovisioning nodes](howto/reprovisioning-nodes.md)
-* [Speed up chefspec tests](howto/chefspec.md#tests-are-taking-too-long-to-run)
-* [Manage Chef Cookbooks](howto/chef-documentation.md)
-* [Chef Guidelines](howto/chef-guidelines.md)
-* [Chef Vault](howto/chef-vault.md)
+* [Create users, rotate or remove keys from chef](docs/uncategorized/manage-chef.md)
+* [Update packages manually for a given role](docs/uncategorized/manage-workers.md#update-packages-fleet-wide)
+* [Rename a node already in Chef](docs/uncategorized/rename-nodes.md)
+* [Reprovisioning nodes](docs/uncategorized/reprovisioning-nodes.md)
+* [Speed up chefspec tests](docs/uncategorized/chefspec.md#tests-are-taking-too-long-to-run)
+* [Manage Chef Cookbooks](docs/uncategorized/chef-documentation.md)
+* [Chef Guidelines](docs/uncategorized/chef-guidelines.md)
+* [Chef Vault](docs/uncategorized/chef-vault.md)
 * [Debug failed provisioning](howto/debug-failed-chef-provisioning.md)
 
 ### Work with CI Infrastructure
-* [Update GitLab Runner on runners managers](howto/update-gitlab-runner-on-managers.md)
-* [Investigate Abuse Reports](howto/ci-investigate-abuse.md)
-* [Create runners manager for GitLab.com](howto/create-runners-manager-node.md)
-* [Update docker-machine](howto/upgrade-docker-machine.md)
-* [CI project namespace check](howto/ci-project-namespace-check.md)
+* [Update GitLab Runner on runners managers](docs/runner/update-gitlab-runner-on-managers.md)
+* [Investigate Abuse Reports](docs/ci-runners/ci-investigate-abuse.md)
+* [Create runners manager for GitLab.com](docs/ci-runners/create-runners-manager-node.md)
+* [Update docker-machine](docs/uncategorized/upgrade-docker-machine.md)
+* [CI project namespace check](docs/ci-runners/ci-project-namespace-check.md)
 
 ### Work with Infrastructure Providers (VMs)
 * [Getting Support w/ RackSpace for GCP/GKE](howto/GCP-rackspace-support.md)
-* [Create a DO VM for a Service Engineer](howto/create-do-vm-for-service-engineer.md)
+* [Create a DO VM for a Service Engineer](docs/uncategorized/create-do-vm-for-service-engineer.md)
 * [Create VMs in Azure, add disks, etc](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/azure.md#managing-vms-in-azure)
 * [Bootstrap a new VM](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/blob/master/doc/new-vps.md)
-* [Remove existing node checklist](howto/remove-node.md)
+* [Remove existing node checklist](docs/uncategorized/remove-node.md)
 
 ### Manually ban an IP or netblock
-* [Ban a single IP using Redis and Rack Attack](howto/ban-an-IP-with-redis.md)
-* [Ban a netblock on HAProxy](howto/ban-netblocks-on-haproxy.md)
+* [Ban a single IP using Redis and Rack Attack](docs/redis/ban-an-IP-with-redis.md)
+* [Ban a netblock on HAProxy](docs/frontend/ban-netblocks-on-haproxy.md)
 
 ### Dealing with Spam
 * [General procedures for fighting spam in snippets, issues, projects, and comments](https://docs.google.com/document/d/1V0X2aYiNTZE1npzeqDvq-dhNFZsEPsL__FqKOMXOjE8)
 
 ### Manage Marvin, our infra bot
-* [Manage cog](howto/manage-cog.md)
+* [Manage cog](docs/uncategorized/manage-cog.md)
 
 ### ElasticStack (previously Elasticsearch)
 
@@ -393,39 +393,39 @@ Selected logging documents and resources:
             - [README.md](logging/doc/troubleshooting/README.md)
 
 ### Internal DNS
-* [Managing internal DNS](howto/internal_dns.md)
+* [Managing internal DNS](docs/uncategorized/internal_dns.md)
 
 ### Debug and monitor
-* [Tracing the source of an expensive query](howto/tracing-app-db-queries.md)
+* [Tracing the source of an expensive query](docs/ci-runners/tracing-app-db-queries.md)
 * [Work with Kibana (logs view)](logging/doc/README.md#searching-logs)
 
 ### Secrets
-* [Working with Google Cloud secrets](howto/working-with-gcloud-secrets.md)
+* [Working with Google Cloud secrets](docs/uncategorized/working-with-gcloud-secrets.md)
 
 ### Security
 
 * [Working with the CloudFlare WAF/CDN](howto/externalvendors/cloudflare.md)
-* [Uptycs osquery](howto/uptycs_osquery.md)
-* [Uptycs osquery troubleshooting](troubleshooting/uptycs_osqueryd.md)
+* [Uptycs osquery](docs/uncategorized/uptycs_osquery.md)
+* [Uptycs osquery troubleshooting](docs/uncategorized/uptycs_osqueryd.md)
 
 ### Other
-* [Setup oauth2-proxy protection for web based application](howto/setup-oauth2-proxy-protected-application.md)
-* [Register new domain(s)](howto/domain-registration.md)
-* [Manage DNS entries](howto/manage-dns-entries.md)
-* [Setup and Use my Yubikey](howto/yubikey.md)
-* [Purge Git data](howto/purge-git-data.md)
-* [Getting Started with Kubernetes and GitLab.com](howto/k8s-gitlab.md)
-* [Using Chatops bot to run commands across the fleet](howto/deploycmd.md)
+* [Setup oauth2-proxy protection for web based application](docs/uncategorized/setup-oauth2-proxy-protected-application.md)
+* [Register new domain(s)](docs/uncategorized/domain-registration.md)
+* [Manage DNS entries](docs/uncategorized/manage-dns-entries.md)
+* [Setup and Use my Yubikey](docs/uncategorized/yubikey.md)
+* [Purge Git data](docs/git/purge-git-data.md)
+* [Getting Started with Kubernetes and GitLab.com](docs/uncategorized/k8s-gitlab.md)
+* [Using Chatops bot to run commands across the fleet](docs/uncategorized/deploycmd.md)
 
 ### Gitter
-* [MongoDB operations](howto/gitter/mongodb-operations.md)
-* [Renew the Gitter TLS certificate](howto/gitter/renew-certificates.md)
+* [MongoDB operations](docs/git/gitter/mongodb-operations.md)
+* [Renew the Gitter TLS certificate](docs/git/gitter/renew-certificates.md)
 
 ### Manage Package Signing Keys
-* [Manage Package Signing Keys](howto/manage-package-signing-keys.md)
+* [Manage Package Signing Keys](docs/uncategorized/manage-package-signing-keys.md)
 
 ### Other Servers and Services
-* [GitHost / GitLab Hosted](howto/githost.md)
+* [GitHost / GitLab Hosted](docs/git/githost.md)
 
 ### Adding runbooks rules
 * Make it quick - add links for checks

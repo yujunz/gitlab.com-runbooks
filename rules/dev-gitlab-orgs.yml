@@ -12,5 +12,5 @@ groups:
       description: The development site is returning status codes other than 200,
         this usually means that a nightly deployment went wrong and took the site
         down
-      runbook: howto/dev-environment.md
+      runbook: docs/uncategorized/dev-environment.md
       title: dev.gitlab.org is returning errors for 10m

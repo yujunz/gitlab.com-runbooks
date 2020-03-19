@@ -13,7 +13,7 @@ groups:
     annotations:
       description: GitLab registry is down for 1 minute! Consider !tweet 'GitLab Registry
         is not responding, we are investigating the root cause.' if problem exists.
-      runbook: troubleshooting/gitlab-registry.md
+      runbook: docs/registry/gitlab-registry.md
       title: GitLab Registry is down for 1 minute
 
   - alert: Detecting5xxForRegistry
@@ -31,5 +31,5 @@ groups:
           * The Registry is taking too long to respond
           * The Registry is down
           * The Registry is throwing Errors
-      runbook: troubleshooting/gitlab-registry.md
+      runbook: docs/registry/gitlab-registry.md
       title: 5xx Error Rate on Docker Registry Load Balancers

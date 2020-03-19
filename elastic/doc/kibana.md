@@ -56,4 +56,4 @@ https://www.elastic.co/guide/en/kibana/current/lucene-query.html
 ## Kubernetes ##
 
 Look for assistance with Kubernetes Logs here:
-[../troubleshooting/kubernetes.md](../troubleshooting/kubernetes.md)
+[../docs/uncategorized/kubernetes.md](../../docs/uncategorized/kubernetes.md)

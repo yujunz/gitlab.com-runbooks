@@ -11,7 +11,7 @@ groups:
     annotations:
       description: There have been over 20,000 Sidekiq queued jobs for the last 20 minutes. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
         Note that PagesDomainVerificationWorker is excluded from job count.
-      runbook: troubleshooting/large-sidekiq-queue.md
+      runbook: docs/sidekiq/large-sidekiq-queue.md
       title: 'Large amount of Sidekiq Queued jobs: {{$value}}'
   - alert: SidekiqNewNotesQueueTooLarge
     expr: max(sidekiq_queue_size{name="new_note"}) by (environment) > 100
@@ -23,7 +23,7 @@ groups:
     annotations:
       description: The new_note sidekiq queue is piling up. This may mean that users are not receiving email notifications
         for comments on issues, or that we are being spammed/abused and other ASAP jobs will be affected badly.
-      runbook: troubleshooting/large-sidekiq-queue.md
+      runbook: docs/sidekiq/large-sidekiq-queue.md
       title: 'Large amount of new_note sidekiq queued jobs: {{$value}}'
   - alert: SidekiqQueuesTooLargeHourly
     expr: max(sidekiq_queue_size) by (environment) > 50000
@@ -35,5 +35,5 @@ groups:
     annotations:
       description: There have been over 50,000 Sidekiq jobs queued for the last half hour.
         Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
-      runbook: troubleshooting/large-sidekiq-queue.md
+      runbook: docs/sidekiq/large-sidekiq-queue.md
       title: 'Large amount of Sidekiq Queued jobs: {{$value}}'

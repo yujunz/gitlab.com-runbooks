@@ -14,5 +14,5 @@ groups:
         minutes, this may be under control, but I'm just letting you know that this
         is going on, check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
         Note that it is the alert only for ProcessCommitWorker
-      runbook: troubleshooting/large-sidekiq-queue.md
+      runbook: docs/sidekiq/large-sidekiq-queue.md
       title: 'Large amount of ProcessCommitWorker queued jobs: {{$value}}'

@@ -9,7 +9,7 @@ groups:
         alert_type: cause
       annotations:
         title: High error count on NAT gateway {{$labels.gateway_name}} in env {{$labels.environment}}
-        runbook: troubleshooting/cloud-nat.md
+        runbook: docs/uncategorized/cloud-nat.md
         description: >
           There is a high NAT error count on gateway {{$labels.gateway_name}} in
           env {{$labels.environment}}.

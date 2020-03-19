@@ -14,7 +14,7 @@ groups:
       title: GitLab pages is down for 1 minute
       description: GitLab pages is down for 1 minute! Consider !tweet 'GitLab pages
         are not responding, we are investigating the root cause.' if problem exists.
-      runbook: troubleshooting/gitlab-pages.md
+      runbook: docs/pages/gitlab-pages.md
   - alert: GitLabPagesNotScraped
     expr: (1 - avg(up{job="gitlab-pages"})) * 100 > 20
     for: 5m
@@ -26,7 +26,7 @@ groups:
       title: GitLab pages servers are failing
       description: "{{ $value }}% of pages servers have been down for 5 minutes"
       environment: "{{ $labels.environment }}"
-      runbook: troubleshooting/gitlab-pages.md
+      runbook: docs/pages/gitlab-pages.md
   - alert: GitLabPagesHighErrorRate
     expr: sum(rate(haproxy_server_http_responses_total{backend="pages_http",code="5xx"}[15m])) by (environment) / sum(rate(haproxy_server_http_responses_total{backend="pages_http"}[15m])) by (environment) * 100 > 1
     for: 5m
@@ -38,7 +38,7 @@ groups:
       title: GitLab pages servers are returning errors
       description: "{{ $value }}% of pages responses have been errors for 5 minutes"
       environment: "{{ $labels.environment }}"
-      runbook: troubleshooting/gitlab-pages.md
+      runbook: docs/pages/gitlab-pages.md
   - alert: GitLabPagesLowDomains
     expr: gitlab_pages_domains_served_total / scalar(quantile(0.9, gitlab_pages_domains_served_total)) < 0.9 or gitlab_pages_domains_served_total < 1000
     for: 5m
@@ -51,7 +51,7 @@ groups:
       description: >
         GitLab Pages on {{ $labels.environment }} {{ $labels.fqdn }} have an unusually low number of hosted domains.
       environment: "{{ $labels.environment }}"
-      runbook: troubleshooting/gitlab-pages.md
+      runbook: docs/pages/gitlab-pages.md
   - alert: GitLabPagesProdFeIpPossibleChange
     expr: probe_http_status_code{instance=~"https?://prod.pages-check.gitlab.net",job="blackbox"}
       != 200

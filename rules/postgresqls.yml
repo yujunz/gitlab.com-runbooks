@@ -12,7 +12,7 @@ groups:
     annotations:
       description: TXID/s is {{ $value | printf "%.1f" }} on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
-      runbook: troubleshooting/postgres.md#availability
+      runbook: docs/patroni/postgres.md#availability
       title: Postgres seems to be consuming transaction IDs very slowly
   - alert: PostgreSQL_XLOGConsumptionTooLow
     expr: rate(pg_xlog_position_bytes{type="patroni"}[1m]) < 200000
@@ -25,7 +25,7 @@ groups:
     annotations:
       description: XLOG throughput is {{ $value | humanize1024 }}B/s on {{$labels.instance}}
         which is unusually low. Perhaps the application is unable to connect
-      runbook: troubleshooting/postgres.md#availability
+      runbook: docs/patroni/postgres.md#availability
       title: Postgres seems to be consuming XLOG very slowly
   - alert: PostgreSQL_WALEReplicationStopped
     expr: rate(pg_xlog_position_bytes{type=~"postgres-(archive|delayed)"}[1m]) == 0
@@ -41,7 +41,7 @@ groups:
       description: WAL-E replication seems to be stopped on {{$labels.instance}}.
         Check if PostgreSQL isn't stuck on restoring a WAL segment or if it's capabale
         of downloading WAL segments.
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: WAL-E replication has stopped
   - alert: PostgreSQL_CommitRateTooLow
     expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type =~"postgres|patroni", environment!="gstg"}[1m])
@@ -56,7 +56,7 @@ groups:
       description: Commits/s on {{$labels.instance}} database {{$labels.datname}}
         is {{$value | printf "%.0f" }} which is implausibly low. Perhaps the application
         is unable to connect
-      runbook: troubleshooting/postgres.md#availability
+      runbook: docs/patroni/postgres.md#availability
       title: Postgres seems to be processing very few transactions
   - alert: PostgreSQL_ConnectionsTooHigh
     expr: sum(pg_stat_activity_count) BY (environment, fqdn) > ON(fqdn) pg_settings_max_connections
@@ -67,7 +67,7 @@ groups:
       channel: database
       alert_type: cause
     annotations:
-      runbook: troubleshooting/postgres.md#connections
+      runbook: docs/patroni/postgres.md#connections
       title: Postgres has {{$value}} connections on {{$labels.fqdn}} which is close
         to the maximum
   - alert: PostgreSQL_RollbackRateTooHigh
@@ -83,7 +83,7 @@ groups:
     annotations:
       description: Ratio of transactions being aborted compared to committed is {{
         $value | printf "%.2f" }} on {{$labels.instance}}
-      runbook: troubleshooting/postgres.md#errors
+      runbook: docs/patroni/postgres.md#errors
       title: Postgres transaction rollback rate is high
   - alert: PostgreSQL_StatementTimeout_Errors
     expr: rate(postgresql_errors_total{type="statement_timeout"}[5m]) > 3
@@ -96,7 +96,7 @@ groups:
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} statement
         timeouts per second
-      runbook: troubleshooting/postgres.md#errors
+      runbook: docs/patroni/postgres.md#errors
       title: Postgres transactions showing high rate of statement timeouts
   - alert: PostgreSQL_Deadlock_Errors
     expr: rate(postgresql_errors_total{type="deadlock_detected"}[1m]) * 60 > 5
@@ -107,7 +107,7 @@ groups:
     annotations:
       descrition: Database {{$labels.fqdn}} has {{ $value | printf "%.1f" }} deadlock
         errors per minute
-      runbook: troubleshooting/postgres.md#errors
+      runbook: docs/patroni/postgres.md#errors
       title: Postgres detected deadlocks
   - alert: PostgreSQL_ReplicationLagTooLarge
     expr: (pg_replication_lag > 180) and ON(instance) (pg_replication_is_replica{type =~"postgres|patroni"} == 1)
@@ -120,7 +120,7 @@ groups:
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanizeDuration }}
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag is over 2 minutes
   - alert: PostgreSQL_ReplicationLagTooLarge_ArchiveReplica
     expr: (pg_replication_lag > 10800) and ON(instance) (pg_replication_is_replica{type = "postgres-archive"} == 1)
@@ -133,7 +133,7 @@ groups:
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanizeDuration }}
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag is over 3 hours on archive recovery replica
   - alert: PostgreSQL_ReplicationLagTooLarge_DelayedReplica
     expr: (pg_replication_lag > 32400) and ON(instance) (pg_replication_is_replica{type = "postgres-delayed"} == 1)
@@ -146,7 +146,7 @@ groups:
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanizeDuration }}
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag is over 9 hours on delayed replica (normal is 8 hours)
   - alert: PostgreSQL_ReplicationLagBytesTooLarge
     expr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - ON(environment)
@@ -161,7 +161,7 @@ groups:
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
         $value | humanize1024}}B
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag (in bytes) is high
   - alert: PostgreSQL_XLOGConsumptionTooHigh
     expr: rate(pg_xlog_position_bytes[2m]) > 36700160 and ON(instance) (pg_replication_is_replica == 0)
@@ -173,7 +173,7 @@ groups:
     annotations:
       description: XLOG is being generated at a rate of {{ $value | humanize1024 }}B/s
         on {{$labels.instance}}
-      runbook: troubleshooting/postgres.md#replication-is-lagging-or-has-stopped
+      runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres is generating XLOG too fast, expect this to cause replication
         lag
   - alert: PostgreSQL_UnusedReplicationSlot
@@ -186,7 +186,7 @@ groups:
       alert_type: cause
     annotations:
       description: Unused {{$labels.slot_type}} slot "{{$labels.slot_name}}" on {{$labels.fqdn}}
-      runbook: "troubleshooting/postgres.md#replication_slots"
+      runbook: "docs/patroni/postgres.md#replication_slots"
       title: Unused Replication Slots for {{$labels.fqdn}}
   - alert: PostgreSQL_ReplicaStaleXmin
     expr: pg_replication_slots_xmin_age{slot_name=~"^patroni_[0-9]+.*"} > 20000
@@ -205,7 +205,7 @@ groups:
         a minimum transaction ID that is {{$value | humanize}} transactions old.
         This can cause an increase in dead tuples on the primary. This can be
         caused by long-running transactions on the master or any standby, or unused replication.
-      runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
+      runbook: docs/patroni/postgres.md#tables-with-a-large-amount-of-dead-tuples
   - alert: PostgreSQL_LongLivedTransaction
     expr: pg_stat_activity_max_tx_duration > 3600
     labels:
@@ -217,7 +217,7 @@ groups:
         "Postgres server {{$labels.fqdn}} has a transaction in currently in
         state "{{$labels.state}}" that started {{ $value | humanizeDuration }}
         ago"
-      runbook: troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples
+      runbook: docs/patroni/postgres.md#tables-with-a-large-amount-of-dead-tuples
       title: "There's a long-lived Postgres transaction"
   - alert: PostgreSQL_DBHeavyLoad
     expr: node_load1{type=~"postgres|patroni"} > 200
@@ -236,7 +236,7 @@ groups:
           Check http://dashboards.gitlab.net/dashboard/db/postgres-stats and
           http://dashboards.gitlab.net/dashboard/db/postgres-queries to get
           more data.
-      runbook: "troubleshooting/postgres.md#load"
+      runbook: "docs/patroni/postgres.md#load"
       title: 'High load in database {{ $labels.fqdn }}: {{$value}}'
   - alert: PostgreSQL_TooManyDeadTuples
     expr: >
@@ -256,7 +256,7 @@ groups:
       description: "The dead tuple ratio of {{$labels.relname}} is greater than 5%"
       table: "{{$labels.relname}}"
       dead_tuples: "{{$value}}"
-      runbook: "troubleshooting/postgres.md#tables-with-a-large-amount-of-dead-tuples"
+      runbook: "docs/patroni/postgres.md#tables-with-a-large-amount-of-dead-tuples"
       title: PostgreSQL dead tuples is too large
   - alert: PostgreSQL_SplitBrain
     expr: count(pg_replication_is_replica == 0) BY (environment) != 1
@@ -271,7 +271,7 @@ groups:
       (primary) mode: {{range query
         "pg_replication_is_replica{environment=''$labels.environment''} ==
         0.0"}} {{.labels.fqdn}} {{end}}'
-      runbook: "howto/patroni-management.md"
+      runbook: "docs/patroni/patroni-management.md"
       title: "Split Brain: too many postgres databases in environment {{$labels.environment}}
         in read-write (primary) mode"
   - alert: PostgreSQL_SplitBrain_Replicas
@@ -288,7 +288,7 @@ groups:
         upstream primaries: {{range query "pg_stat_wal_receiver_status{environment=''$labels.environment''}
         >= 0"}}"{{.labels.fqdn}}" thinks "{{.labels.upstream_host}}" is the primary;
         {{end}} '
-      runbook: howto/patroni-management.md
+      runbook: docs/patroni/patroni-management.md
       title: Replicas have different upstream primary databases
   - alert: PostgreSQL_ServiceDown
     expr: pg_up == 0
@@ -301,7 +301,7 @@ groups:
     annotations:
       description: >
         {{$labels.fqdn}} postgres service appears down
-      runbook: "troubleshooting/postgres.md"
+      runbook: "docs/patroni/postgres.md"
       title: |
         {{$labels.fqdn}} postgres service appears down
   - alert: PostgreSQL_ServiceRestarted
@@ -314,7 +314,7 @@ groups:
     annotations:
       description: >
         {{$labels.fqdn}} postgres service appears to be restarted
-      runbook: "troubleshooting/postgres.md"
+      runbook: "docs/patroni/postgres.md"
       title: |
         {{$labels.fqdn}} postgres service appears to be restarted
   - alert: PostgreSQL_RoleChange
@@ -371,7 +371,7 @@ groups:
     annotations:
       message: "{{$labels.errmsg}}"
       description: PGBouncer is logging errors. This may be due to a a server restart or an admin typing commands at the pgbouncer console
-      runbook: troubleshooting/postgres.md#pgbouncer-errors
+      runbook: docs/patroni/postgres.md#pgbouncer-errors
       title: PGBouncer is logging errors
   - alert: PostgreSQL_PGBouncer_maxclient_conn
     expr: rate(pgbouncer_errors_count{errmsg="no more connections allowed (max_client_conn)"}[1m]) > 0
@@ -383,7 +383,7 @@ groups:
     annotations:
       description: The number of client connections has reached max_client_conn.
         Consider raising this parameter or investigating the source of the unusually large number of connections
-      runbook: troubleshooting/postgres.md#pgbouncer-errors
+      runbook: docs/patroni/postgres.md#pgbouncer-errors
       title: PGBouncer is logging "no more connections allowed" errors
   - alert: PostgreSQL_too_many_slow_queries
     expr: rate(pg_slow_queries{environment=~"gprd"}[1m]) * 60 > 300
