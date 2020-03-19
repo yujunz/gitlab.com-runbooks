@@ -1,12 +1,12 @@
 {
    "index_patterns": [
-      "release-tools-*"
+      "release_tools-*"
    ],
    "settings": {
       "index": {
          "lifecycle": {
             "name": "gitlab-release-tools-ilm-policy",
-            "rollover_alias": "release-tools"
+            "rollover_alias": "release_tools"
          }
       },
       "number_of_shards": 2
