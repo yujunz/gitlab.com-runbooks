@@ -1,0 +1,14 @@
+{
+   "index_patterns": [
+      "gprd-static-objects-cache-*"
+   ],
+   "settings": {
+      "index": {
+         "lifecycle": {
+            "name": "gitlab-static-objects-cache-ilm-policy",
+            "rollover_alias": "gprd-static-objects-cache"
+         }
+      },
+      "number_of_shards": 2
+   }
+}
