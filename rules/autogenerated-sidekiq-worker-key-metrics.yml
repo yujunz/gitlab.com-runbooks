@@ -323,7 +323,7 @@ groups:
         Currently the metric value is {{ $value | humanizePercentage }}.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: 12
+      grafana_panel_id: '12'
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         gitlab_background_jobs:execution:error:ratio_1h{environment="$environment", type="$type", stage="$stage",
@@ -366,7 +366,7 @@ groups:
         Currently the metric value is {{ $value | humanizePercentage }}.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: 10
+      grafana_panel_id: '10'
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         gitlab_background_jobs:execution:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
@@ -409,7 +409,7 @@ groups:
         Currently the metric value is {{ $value | humanizePercentage }}.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: 9
+      grafana_panel_id: '9'
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         gitlab_background_jobs:queue:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
