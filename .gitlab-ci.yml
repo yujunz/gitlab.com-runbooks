@@ -58,6 +58,13 @@ test-rules:
     - bundle install --with=test
     - bundle exec ./bin/create_kubernetes_rules.rb --create --validate
 
+danger:
+  stage: test
+  script:
+    - gem install bundler --no-document
+    - bundle install --with=test
+    - bundle exec danger --fail-on-errors=true --verbose
+
 rubocop:
   stage: test
   script:
