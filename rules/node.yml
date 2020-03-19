@@ -113,6 +113,29 @@ groups:
     expr: sum(irate(node_disk_writes_completed_total{device=~"sd.*"}[1m])) WITHOUT (device)
   - record: instance:node_disk_reads_completed:irate1m
     expr: sum(irate(node_disk_reads_completed_total{device=~"sd.*"}[1m])) WITHOUT (device)
+  - expr: |-
+      avg by (node) (
+        irate(node_disk_io_time_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m])
+      * on (namespace, pod) group_left(node)
+        node_namespace_pod:kube_pod_info:
+      )
+    record: node:node_disk_utilisation:avg_irate
+  - expr: avg(irate(node_disk_io_time_weighted_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m]))
+    record: ':node_disk_saturation:avg_irate'
+  - expr: |-
+      avg by (node) (
+        irate(node_disk_io_time_weighted_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m])
+      * on (namespace, pod) group_left(node)
+        node_namespace_pod:kube_pod_info:
+      )
+    record: node:node_disk_saturation:avg_irate
+  - expr: |-
+      max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
+      - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+      / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+    record: 'node:node_filesystem_usage:'
+  - expr: max by (instance, namespace, pod, device) (node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"} / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+    record: 'node:node_filesystem_avail:'
   - alert: FilesystemFullSoon
     expr: predict_linear(node_filesystem_avail_bytes{fstype=~"(ext.|xfs|zfs)"}[6h], 24 * 3600) < 0
     for: 30m
