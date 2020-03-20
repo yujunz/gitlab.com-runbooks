@@ -2,21 +2,23 @@
 
 # Execution example:
 #
-# $ bundle exec scripts/uploads_cleanup.rb --verbose --disk-path='@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca' --dry-run=yes
-# 2020-03-13 09:07:30 INFO  [Dry-run] This is only a dry-run -- write operations will be logged but not executed
-# 2020-03-13 09:07:30 DEBUG Invoking command: ssh sidekiq-besteffort-01-sv-gprd.c.gitlab-production.internal 'sudo find /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca -depth -mindepth 1'
-# 2020-03-13 09:07:32 INFO  [Dry-run] Would have invoked command: ssh  'rm -rf /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca/tmp/cache/1536077216-16440-0022-5930/image001.png'
-# 2020-03-13 09:07:32 INFO  [Dry-run] Would have invoked command: ssh  'rm -rf /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca/tmp/cache/1536077216-16440-0022-5930'
-# 2020-03-13 09:07:32 INFO  [Dry-run] Would have invoked command: ssh  'rm -rf /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca/tmp/cache'
-# 2020-03-13 09:07:32 INFO  [Dry-run] Would have invoked command: ssh  'rm -rf /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca/tmp/work'
-# 2020-03-13 09:07:32 INFO  [Dry-run] Would have invoked command: ssh  'rm -rf /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca/tmp'
-#
+# $ bundle exec scripts/uploads_cleanup.rb --verbose --disk-path='@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a' --operation=delete --dry-run=yes
+# 2020-03-20 09:46:14 INFO  [Dry-run] This is only a dry-run -- write operations will be logged but not executed
+# 2020-03-20 09:46:14 DEBUG Command: ssh sidekiq-besteffort-01-sv-gprd.c.gitlab-production.internal 'sudo find /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a -depth -mindepth 1 -mmin +5'
+# 2020-03-20 09:46:16 DEBUG Found paths:
+# 2020-03-20 09:46:16 DEBUG /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a/tmp/cache/1536083703-26176-0004-3743/image001.png
+# 2020-03-20 09:46:16 DEBUG /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a/tmp/cache/1536083703-26176-0004-3743
+# 2020-03-20 09:46:16 DEBUG /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a/tmp/cache
+# 2020-03-20 09:46:16 DEBUG /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a/tmp/work
+# 2020-03-20 09:46:16 DEBUG /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a/tmp
+# 2020-03-20 09:46:16 INFO  [Dry-run] Would have invoked command: ssh sidekiq-besteffort-01-sv-gprd.c.gitlab-production.internal 'sudo find /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a -depth -mindepth 1 -mmin +5 -delete'
+
 # Directory not found example:
 #
-# $ bundle exec scripts/uploads_cleanup.rb --verbose --host=sidekiq-besteffort-02-sv-gprd.c.gitlab-production.internal --disk-path='@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca' --dry-run=yes
+# $ bundle exec scripts/uploads_cleanup.rb --verbose --host=sidekiq-besteffort-01-sv-gprd.c.gitlab-production.internal --disk-path='@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a' --operation=delete --dry-run=yes
 # 2020-03-13 09:09:56 INFO  [Dry-run] This is only a dry-run -- write operations will be logged but not executed
-# 2020-03-13 09:09:56 DEBUG Invoking command: ssh sidekiq-besteffort-02-sv-gprd.c.gitlab-production.internal 'sudo find /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca -depth -mindepth 1'
-# find: '/opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/07/4e/074e3326b9850801cc2e592812cba397a2ffab519e70f2556d969621bdbb10ca': No such file or directory
+# 2020-03-13 09:09:56 DEBUG Invoking command: ssh sidekiq-besteffort-01-sv-gprd.c.gitlab-production.internal 'sudo find /opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a -depth -mindepth 1 -mmin +5'
+# find: '/opt/gitlab/embedded/service/gitlab-rails/public/uploads/@hashed/e0/35/e0356f7afa09c29984505c985749a45a86ffa54aa64df8478cd6f800f2874c7a': No such file or directory
 
 require 'logger'
 require 'optparse'
