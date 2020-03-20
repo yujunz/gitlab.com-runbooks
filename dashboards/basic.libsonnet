@@ -307,6 +307,7 @@ local panelMethods = {
     min=null,
     max=null,
     decimals=0,
+    thresholds=null,
   )::
     local formatConfig = {
       query: query,
@@ -328,6 +329,7 @@ local panelMethods = {
       legend_avg=true,
       legend_alignAsTable=true,
       legend_hideEmpty=true,
+      thresholds=thresholds,
     )
     .addTarget(
       promQuery.target(
