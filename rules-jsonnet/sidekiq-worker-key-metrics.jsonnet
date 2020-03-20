@@ -84,7 +84,7 @@ local sidekiqSLOAlert(alertname, expr, grafanaPanelId, metricName, alertDescript
       ||| % [alertDescription],
       runbook: 'troubleshooting/service-{{ $labels.type }}.md',
       grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
-      grafana_panel_id: grafanaPanelId,
+      grafana_panel_id: std.toString(grafanaPanelId),
       grafana_variables: 'environment,stage,queue',
       grafana_min_zoom_hours: '6',
       promql_template_1: '%s{environment="$environment", type="$type", stage="$stage", component="$component"}' % [metricName],
