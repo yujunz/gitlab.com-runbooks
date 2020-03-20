@@ -19,6 +19,10 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local sidekiq = import 'sidekiq.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
+local thresholds = import 'thresholds.libsonnet';
+
+local optimalUtilization = 0.33;
+local optimalMargin = 0.10;
 
 local selector = 'type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"';
 
@@ -126,7 +130,6 @@ basic.dashboard(
       linewidth=1,
       min=0.01,
     ),
-
     basic.latencyTimeseries(
       title='Sidekiq Estimated p95 Job Latency for priority',
       description='The 95th percentile duration, once a job starts executing, that it runs for, by priority. Lower is better.',
@@ -151,6 +154,43 @@ basic.dashboard(
       min=0.01,
     ),
   ], cols=2, rowHeight=10, startRow=1001),
+)
+.addPanel(
+  row.new(title='Utilization'),
+  gridPos={
+    x: 0,
+    y: 1500,
+    w: 24,
+    h: 1,
+  }
+)
+.addPanel(
+  basic.percentageTimeseries(
+    'Priority Utilization',
+    description='How heavily utilized is this priority? Ideally this should be around 33% plus minus 10%. If outside this range for long periods, consider scaling fleet appropriately.',
+    query=|||
+      sum by (environment, stage, priority)  (rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", priority=~"$priority"}[1h]))
+      /
+      sum by (environment, stage, priority)  (avg_over_time(sidekiq_concurrency{environment="$environment", priority=~"$priority"}[1h]))
+    |||,
+    legendFormat='{{ priority }} priority utilization',
+    yAxisLabel='Percent',
+    interval='5m',
+    intervalFactor=1,
+    linewidth=2,
+    max=1,
+    thresholds=[
+      thresholds.optimalLevel('gt', optimalUtilization - optimalMargin),
+      thresholds.optimalLevel('lt', optimalUtilization + optimalMargin),
+      thresholds.warningLevel('gt', optimalUtilization + optimalMargin),
+    ]
+  ),
+  gridPos={
+    x: 0,
+    y: 1501,
+    w: 24,
+    h: 8,
+  }
 )
 .addPanel(
   row.new(title='Priority Workloads'),
