@@ -21,7 +21,7 @@ local layout = import 'layout.libsonnet';
     };
 
     local elasticRailsVisDataLink = {
-      url: elasticsearchLinks.buildElasticLineVizURL('rails', elasticFilters),
+      url: elasticsearchLinks.buildElasticLineCountVizURL('rails', elasticFilters),
       title: 'ElasticSearch: workhorse visualization',
       targetBlank: true,
     };

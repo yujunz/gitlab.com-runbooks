@@ -12,6 +12,7 @@ local promQuery = import 'prom_query.libsonnet';
 local sidekiqHelpers = import 'services/lib/sidekiq-helpers.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local row = grafana.row;
+local elasticsearchLinks = import 'elasticsearch_links.libsonnet';
 
 local selector = 'environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue"';
 
@@ -140,6 +141,16 @@ local statPanel(
     type: 'stat',
   };
 
+local elasticFilters = [
+  elasticsearchLinks.matchFilter('json.queue.keyword', '$queue'),
+  elasticsearchLinks.matchFilter('json.stage.keyword', '$stage'),
+];
+
+local elasticsearchLogSearchDataLink = {
+  url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL('sidekiq', elasticFilters),
+  title: 'ElasticSearch: Sidekiq logs',
+  targetBlank: true,
+};
 
 basic.dashboard(
   'Queue Detail',
@@ -253,7 +264,13 @@ basic.dashboard(
       legendFormat='{{ queue }} queue apdex',
       legend_show=true,
     )
-    .addSeriesOverride(seriesOverrides.goldenMetric('/.* queue apdex$/')),
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* queue apdex$/'))
+    .addDataLink(elasticsearchLogSearchDataLink)
+    .addDataLink({
+      url: elasticsearchLinks.buildElasticLinePercentileVizURL('sidekiq', elasticFilters, 'json.scheduling_latency_s'),
+      title: 'ElasticSearch: queue latency visualization',
+      targetBlank: true,
+    }),
 
     basic.apdexTimeseries(
       title='Execution Apdex',
@@ -265,7 +282,14 @@ basic.dashboard(
       legendFormat='{{ queue }} execution apdex',
       legend_show=true,
     )
-    .addSeriesOverride(seriesOverrides.goldenMetric('/.* execution apdex$/')),
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* execution apdex$/'))
+    .addDataLink(elasticsearchLogSearchDataLink)
+    .addDataLink({
+      url: elasticsearchLinks.buildElasticLinePercentileVizURL('sidekiq', elasticFilters, 'json.duration'),
+      title: 'ElasticSearch: execution latency visualization',
+      targetBlank: true,
+    }),
+
     basic.timeseries(
       title='Execution Rate (RPS)',
       description='Jobs executed per second',
@@ -276,7 +300,14 @@ basic.dashboard(
       format='ops',
       yAxisLabel='Jobs per Second',
     )
-    .addSeriesOverride(seriesOverrides.goldenMetric('/.* rps$/')),
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* rps$/'))
+    .addDataLink(elasticsearchLogSearchDataLink)
+    .addDataLink({
+      url: elasticsearchLinks.buildElasticLineCountVizURL('sidekiq', elasticFilters),
+      title: 'ElasticSearch: RPS visualization',
+      targetBlank: true,
+    }),
+
     basic.percentageTimeseries(
       'Error Ratio',
       description='Percentage of jobs that fail with an error. Lower is better.',
@@ -288,7 +319,13 @@ basic.dashboard(
       legend_show=true,
       decimals=2,
     )
-    .addSeriesOverride(seriesOverrides.goldenMetric('/.* error ratio$/')),
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* error ratio$/'))
+    .addDataLink(elasticsearchLogSearchDataLink)
+    .addDataLink({
+      url: elasticsearchLinks.buildElasticLineCountVizURL('sidekiq', elasticFilters + [elasticsearchLinks.matchFilter('json.job_status', 'fail')]),
+      title: 'ElasticSearch: errors visualization',
+      targetBlank: true,
+    }),
   ], cols=4, rowHeight=8, startRow=101)
   +
   [row.new(title='Queue Details') { gridPos: { x: 0, y: 200, w: 24, h: 1 } }]

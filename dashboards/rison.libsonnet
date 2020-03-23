@@ -12,7 +12,7 @@ local encodeBoolean(boolean) =
   if boolean then '!t' else '!f';
 
 local encodeNumber(number) =
-  number;
+  '' + number;
 
 local encodeObject(object, encodeUnknown) =
   local keypairs = [

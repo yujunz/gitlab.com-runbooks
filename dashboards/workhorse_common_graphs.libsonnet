@@ -24,7 +24,7 @@ local row = grafana.row;
     };
 
     local elasticWorkhorseVisDataLink = {
-      url: elasticsearchLinks.buildElasticLineVizURL('workhorse', elasticFilters),
+      url: elasticsearchLinks.buildElasticLineCountVizURL('workhorse', elasticFilters),
       title: 'ElasticSearch: workhorse visualization',
       targetBlank: true,
     };
