@@ -73,6 +73,14 @@ local latencyTimeseries(title, aggregators, legendFormat) =
     legendFormat=legendFormat,
   );
 
+local enqueueRateTimeseries(title, aggregators, legendFormat) =
+  basic.timeseries(
+    title=title,
+    query=counterRateQuery('sidekiq_enqueued_jobs_total', 'environment="$environment", queue=~"$queue"', aggregators, '$__interval'),
+    legendFormat=legendFormat,
+  );
+
+
 local rpsTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
@@ -151,6 +159,12 @@ local elasticsearchLogSearchDataLink = {
   title: 'ElasticSearch: Sidekiq logs',
   targetBlank: true,
 };
+
+local rowGrid(rowTitle, panels, startRow) =
+  [
+    row.new(title=rowTitle) { gridPos: { x: 0, y: startRow, w: 24, h: 1 } },
+  ] +
+  layout.grid(panels, cols=std.length(panels), startRow=startRow + 1);
 
 basic.dashboard(
   'Queue Detail',
@@ -328,22 +342,36 @@ basic.dashboard(
     }),
   ], cols=4, rowHeight=8, startRow=101)
   +
-  [row.new(title='Queue Details') { gridPos: { x: 0, y: 200, w: 24, h: 1 } }]
+  rowGrid('Enqueuing (the rate at which jobs are enqueued)', [
+    enqueueRateTimeseries('Enqueues/Second', aggregators='queue', legendFormat='{{ queue }}'),
+    enqueueRateTimeseries('Enqueues/Second per Service', aggregators='type, queue', legendFormat='{{ queue }} - {{ type }}'),
+  ], startRow=201)
   +
-  layout.grid([
+  rowGrid('Queue Latency (the amount of time spent queueing)', [
     queuelatencyTimeseries('Queue Time', aggregators='queue', legendFormat='p95 {{ queue }}'),
-    latencyTimeseries('Execution Time', aggregators='queue', legendFormat='p95 {{ queue }}'),
-    rpsTimeseries('RPS', aggregators='queue', legendFormat='{{ queue }}'),
-    errorRateTimeseries('Error Rate', aggregators='queue', legendFormat='{{ queue }}'),
-
     queuelatencyTimeseries('Queue Time per Node', aggregators='fqdn, queue', legendFormat='p95 {{ queue }} - {{ fqdn }}'),
+  ], startRow=301)
+  +
+  rowGrid('Execution Latency (the amount of time the job takes to execution after dequeue)', [
+    latencyTimeseries('Execution Time', aggregators='queue', legendFormat='p95 {{ queue }}'),
     latencyTimeseries('Execution Time per Node', aggregators='fqdn, queue', legendFormat='p95 {{ queue }} - {{ fqdn }}'),
+  ], startRow=401)
+  +
+  rowGrid('Execution RPS (the rate at which jobs are completed after dequeue)', [
+    rpsTimeseries('RPS', aggregators='queue', legendFormat='{{ queue }}'),
     rpsTimeseries('RPS per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
+  ], startRow=501)
+  +
+  rowGrid('Error Rate (the rate at which jobs fail)', [
+    errorRateTimeseries('Error Rate', aggregators='queue', legendFormat='{{ queue }}'),
     errorRateTimeseries('Error Rate per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
+  ], startRow=601)
+  +
+  rowGrid('Resource Usage', [
     multiQuantileTimeseries('CPU Time', bucketMetric='sidekiq_jobs_cpu_seconds_bucket', aggregators='queue'),
     multiQuantileTimeseries('Gitaly Time', bucketMetric='sidekiq_jobs_gitaly_seconds_bucket', aggregators='queue'),
     multiQuantileTimeseries('Database Time', bucketMetric='sidekiq_jobs_db_seconds_bucket', aggregators='queue'),
-  ], cols=4, startRow=201)
+  ], startRow=701)
 )
 .trailer()
 + {

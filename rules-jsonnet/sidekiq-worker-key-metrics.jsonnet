@@ -124,7 +124,7 @@ local generateAlerts() =
           gitlab_background_jobs:execution:ops:rate_6h > %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
-      grafanaPanelId=12,
+      grafanaPanelId=13,
       metricName='gitlab_background_jobs:execution:error:ratio_1h',
       alertDescription='an error rate outside of SLO'
     ),
@@ -149,7 +149,7 @@ local generateAlerts() =
           gitlab_background_jobs:execution:ops:rate_6h > %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
-      grafanaPanelId=10,
+      grafanaPanelId=11,
       metricName='gitlab_background_jobs:execution:apdex:ratio_1h',
       alertDescription='a execution latency outside of SLO'
     ),
@@ -174,7 +174,7 @@ local generateAlerts() =
           gitlab_background_jobs:execution:ops:rate_6h > %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
-      grafanaPanelId=9,
+      grafanaPanelId=10,
       metricName='gitlab_background_jobs:queue:apdex:ratio_1h',
       alertDescription='a queue latency outside of SLO'
     ),
