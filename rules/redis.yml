@@ -169,3 +169,19 @@ groups:
       title: |
         Redis replication not working for {{ range query "gitlab:redis_disconnected_slaves > 1" }}{{ .Labels.fqdn }}{{ end }}
         Possible masters are {{ range query "gitlab:redis_master" }}{{ .Labels.fqdn }}{{ end }}.
+  - alert: SentryLossOfRedundancy
+    expr: |
+      (
+              sum by (environment, tier, type, stage, shard) (namedprocess_namegroup_num_procs{groupname=~"redis-sentinel.*"})
+              /
+             count by (environment, tier, type, stage, shard)       (max_over_time(namedprocess_namegroup_num_procs{groupname=~"redis-sentinel.*"}[1h]))
+      ) < 1
+    labels:
+      pager: pagerduty
+      severity: s2
+      alert_type: cause
+    annotations:
+      title: Less than 100% of sentinel processes running in the {{ $labels.type }} cluster
+      description: |
+        There should be a single sentinel process per VM in the {{ $labels.type }} cluster.
+        This likely means that sentinel has stopped on one of the {{ .Labels.type }} sentinel nodes.
