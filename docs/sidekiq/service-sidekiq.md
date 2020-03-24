@@ -23,6 +23,7 @@
 
 ## Troubleshooting Pointers
 
+* [../bastions/rm-bastion-access.md](../bastions/rm-bastion-access.md)
 * [../ci-runners/load-balancing.md](../ci-runners/load-balancing.md)
 * [../ci-runners/tracing-app-db-queries.md](../ci-runners/tracing-app-db-queries.md)
 * [../git/deploy-gitlab-rb-change.md](../git/deploy-gitlab-rb-change.md)
@@ -40,6 +41,5 @@
 * [../uncategorized/debug-failed-chef-provisioning.md](../uncategorized/debug-failed-chef-provisioning.md)
 * [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
-* [../uncategorized/rm-bastion-access.md](../uncategorized/rm-bastion-access.md)
 * [../uncategorized/tweeting-guidelines.md](../uncategorized/tweeting-guidelines.md)
 <!-- END_MARKER -->

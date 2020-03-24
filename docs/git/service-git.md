@@ -24,6 +24,9 @@
 
 ## Troubleshooting Pointers
 
+* [../bastions/dr-bastions.md](../bastions/dr-bastions.md)
+* [../bastions/gprd-bastions.md](../bastions/gprd-bastions.md)
+* [../bastions/gstg-bastions.md](../bastions/gstg-bastions.md)
 * [../blackbox/blackbox-git-exporter.md](../blackbox/blackbox-git-exporter.md)
 * [../ci-runners/ci-investigate-abuse.md](../ci-runners/ci-investigate-abuse.md)
 * [../ci-runners/load-balancing.md](../ci-runners/load-balancing.md)
@@ -58,11 +61,8 @@
 * [../uncategorized/chef-vault.md](../uncategorized/chef-vault.md)
 * [../uncategorized/deleted-project-restore.md](../uncategorized/deleted-project-restore.md)
 * [../uncategorized/dev-environment.md](../uncategorized/dev-environment.md)
-* [../uncategorized/dr-bastions.md](../uncategorized/dr-bastions.md)
 * [../uncategorized/geo-recover-repo-from-azure.md](../uncategorized/geo-recover-repo-from-azure.md)
-* [../uncategorized/gprd-bastions.md](../uncategorized/gprd-bastions.md)
 * [../uncategorized/granting-rails-or-db-access.md](../uncategorized/granting-rails-or-db-access.md)
-* [../uncategorized/gstg-bastions.md](../uncategorized/gstg-bastions.md)
 * [../uncategorized/k8s-operations.md](../uncategorized/k8s-operations.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
 * [../uncategorized/missing_repos.md](../uncategorized/missing_repos.md)

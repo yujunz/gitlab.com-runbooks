@@ -25,10 +25,10 @@ never serves production traffic and is the safest to use for analytics.
 The access level (staging or production or both) for the groups is also configured
 in the same data bags. Access types we have:
 
-| Access Type | Description                                             | Data bag group    | Bastion setup                                                             |
-|-------------|---------------------------------------------------------|-------------------|---------------------------------------------------------------------------|
-| Staging     | Access to staging environment via staging bastion       | gstg-bastion-only | https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/gstg-bastions.md |
-| Production  | Access to production environment via production bastion | gprd-bastion-only | https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/gprd-bastions.md |
+| Access Type | Description                                             | Data bag group    | Bastion setup                                                                          |
+|-------------|---------------------------------------------------------|-------------------|----------------------------------------------------------------------------------------|
+| Staging     | Access to staging environment via staging bastion       | gstg-bastion-only | https://gitlab.com/gitlab-com/runbooks/blob/master/docs/bastions/gstg-bastions.md  |
+| Production  | Access to production environment via production bastion | gprd-bastion-only | https://gitlab.com/gitlab-com/runbooks/blob/master/docs/bastions/gprd-bastions.md |
 
 ## Process
 Team member, needing access, should:
@@ -67,8 +67,8 @@ will be on `/var/log/{db,rails}_sessions_{geo,primary}`. These logs are not curr
 forwarded for security reasons.
 
 ## Testing Access
-User should already have setup the bastion config: [gprd-bastions](gprd-bastions.md) and/or
-[gstg-bastions](gstg-bastions.md). Each has an instruction on how to access console.
+User should already have setup the bastion config: [gprd-bastions](../bastions/gprd-bastions.md) and/or
+[gstg-bastions](../bastions/gstg-bastions.md). Each has an instruction on how to access console.
 
 Example:
 For DB: `ssh <user>-db@<dedicated-console-server>`
