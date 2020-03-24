@@ -328,7 +328,7 @@ groups:
       promql_template_1: >-
         gitlab_background_jobs:execution:error:ratio_1h{environment="$environment", type="$type", stage="$stage",
         component="$component"}
-      runbook: troubleshooting/service-{{ $labels.type }}.md
+      runbook: docs/sidekiq/service-sidekiq.md
     labels:
       alert_type: symptom
       experimental: 'yes'
@@ -371,7 +371,7 @@ groups:
       promql_template_1: >-
         gitlab_background_jobs:execution:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
         component="$component"}
-      runbook: troubleshooting/service-{{ $labels.type }}.md
+      runbook: docs/sidekiq/service-sidekiq.md
     labels:
       alert_type: symptom
       experimental: 'yes'
@@ -414,7 +414,7 @@ groups:
       promql_template_1: >-
         gitlab_background_jobs:queue:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
         component="$component"}
-      runbook: troubleshooting/service-{{ $labels.type }}.md
+      runbook: docs/sidekiq/service-sidekiq.md
     labels:
       alert_type: symptom
       experimental: 'yes'
@@ -440,4 +440,44 @@ groups:
       and
       (
         gitlab_background_jobs:execution:ops:rate_6h > 0.06667
+      )
+  - alert: sidekiq_throttled_jobs_enqueued_without_dequeuing
+    for: 2m
+    annotations:
+      title: Sidekiq jobs are being enqueued without being dequeued
+      description: |
+        The `{{ $labels.queue }}` queue appears to have jobs being enqueued without
+        those jobs being executed.
+
+        This could be the result of a Sidekiq server configuration issue, where
+        no Sidekiq servers are configured to dequeue the specific queue.
+      grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '15'
+      grafana_variables: environment,stage,queue
+      promql_template_1: >-
+        sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}
+      runbook: docs/sidekiq/service-sidekiq.md
+    labels:
+      alert_type: cause
+      metric: sidekiq_enqueued_jobs_total
+      period: 2m
+      rules_domain: general
+      severity: s4
+      stage: main
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, queue, feature_category) (rate(sidekiq_enqueued_jobs_total{urgency="throttled"}[10m] offset 10m)) > 0
+      )
+      unless
+      (
+        sum by (environment, queue, feature_category) (rate(sidekiq_jobs_completion_seconds_count{urgency="throttled"}[20m])) > 0
+        or
+        sum by (environment, queue, feature_category) (rate(sidekiq_jobs_failed_total{urgency="throttled"}[20m])) > 0
+        or
+        sum by (environment, queue, feature_category) (rate(sidekiq_jobs_retried_total{urgency="throttled"}[20m])) > 0
+        or
+        sum by (environment, queue, feature_category) (avg_over_time(sidekiq_running_jobs{urgency="throttled"}[20m])) > 0
       )
