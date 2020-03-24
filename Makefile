@@ -47,7 +47,6 @@ generate:
 	./scripts/generate-jsonnet-rules.sh
 	./scripts/generate-docs
 	./scripts/generate-gitlab-dashboards.sh
-	./scripts/generate-gitlab-triage-dashboards.sh
 
 .PHONY: test
 test:
