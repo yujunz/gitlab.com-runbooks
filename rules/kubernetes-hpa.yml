@@ -27,9 +27,15 @@ groups:
       - alert: HPAScaleCapability
         annotations:
           title: HPA unable to scale up
-          description: '{{$labels.hpa}} has hit the maximum number of desired Pods'
+          description: '{{$labels.hpa}} in {{$labels.env}} has hit the maximum number of desired Pods'
           runbook: docs/uncategorized/kubernetes.md#hpascalecapability
-        expr: kube_hpa_status_desired_replicas >= kube_hpa_spec_max_replicas
+        # We don't care that the sidekiq-export Deployment reaches it's max
+        # See: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/733
+        expr: |
+          sum(kube_hpa_status_desired_replicas{hpa!="gitlab-sidekiq-export-v1"})
+            by (hpa, env)
+            >=
+          sum(kube_hpa_spec_max_replicas) by (hpa, env)
         for: 30m
         labels:
           pager: pagerduty
