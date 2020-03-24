@@ -38,7 +38,7 @@ function render_multi_jsonnet() {
 
 if [[ $# == 0 ]]; then
   cd "${REPO_DIR}"
-  for file in ./rules-jsonnet/*; do
+  for file in ./rules-jsonnet/*.jsonnet; do
     render_multi_jsonnet "${file}"
   done
 else
