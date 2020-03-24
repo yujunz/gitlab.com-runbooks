@@ -84,7 +84,7 @@ def generate_header(service, teams, tier)
     troubeshooting_docs: troubeshooting_docs
   )
 
-  ERB.new(template, 0, "-").result(data.instance_eval { binding })
+  ERB.new(template, trim_mode: "-").result(data.instance_eval { binding })
 end
 
 def generate_docs
