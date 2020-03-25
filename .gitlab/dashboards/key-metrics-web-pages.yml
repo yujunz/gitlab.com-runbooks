@@ -34,17 +34,15 @@ panel_groups:
       unit: "%"
     - id: line_chart_rps_web-pages_service_upper_limit
       label: upper limit
-      query_range: |
-        gitlab_service_ops:rate:prediction{environment="gprd", type="web-pages", stage="main"}
-        +
-        3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd", type="web-pages", stage="main"}
+      query_range: >-
+        gitlab_service_ops:rate:prediction{environment="gprd", type="web-pages", stage="main"} + 3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd",
+        type="web-pages", stage="main"}
       unit: "%"
     - id: line_chart_rps_web-pages_service_lower_limit
       label: lower limit
-      query_range: |
-        gitlab_service_ops:rate:prediction{environment="gprd", type="web-pages", stage="main"}
-        -
-        3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd", type="web-pages", stage="main"}
+      query_range: >-
+        gitlab_service_ops:rate:prediction{environment="gprd", type="web-pages", stage="main"} - 3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd",
+        type="web-pages", stage="main"}
       unit: "%"
     type: anomaly-chart
     y_label: Operations per Second
