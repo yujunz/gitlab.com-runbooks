@@ -49,21 +49,14 @@ local generateDashboardForService(service) =
               },
               {
                 id: 'line_chart_rps_%(type)s_service_upper_limit' % formatConfig,
-                query_range: |||
-                  gitlab_service_ops:rate:prediction{environment="gprd", type="%(type)s", stage="main"}
-                  +
-                  3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd", type="%(type)s", stage="main"}
-                ||| % formatConfig,
+                query_range: 'gitlab_service_ops:rate:prediction{environment="gprd", type="%(type)s", stage="main"} + 3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd", type="%(type)s", stage="main"}' % formatConfig,
                 unit: '%',
                 label: 'upper limit',
               },
+              // TODO: Change this back to multiline YAML strings once: https://gitlab.com/gitlab-org/gitlab/issues/208218 has been resolved
               {
                 id: 'line_chart_rps_%(type)s_service_lower_limit' % formatConfig,
-                query_range: |||
-                  gitlab_service_ops:rate:prediction{environment="gprd", type="%(type)s", stage="main"}
-                  -
-                  3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd", type="%(type)s", stage="main"}
-                ||| % formatConfig,
+                query_range: 'gitlab_service_ops:rate:prediction{environment="gprd", type="%(type)s", stage="main"} - 3 * gitlab_service_ops:rate:stddev_over_time_1w{environment="gprd", type="%(type)s", stage="main"}' % formatConfig,
                 unit: '%',
                 label: 'lower limit',
               },
