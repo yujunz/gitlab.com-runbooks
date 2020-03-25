@@ -8,7 +8,6 @@ This runbook describes procedure of upgrading GitLab Runner on our runner manage
 graph LR
     classDef default fill:#e0e0e0,stroke:#000
     r::base(gitlab-runner-base)
-    r::builder(gitlab-runner-builder)
 
     r::gsrm(gitlab-runner-gsrm)
     r::gsrm-gce(gitlab-runner-gsrm-gce)
@@ -40,7 +39,6 @@ graph LR
     r::stg-srm-gce-us-east1-c(gitlab-runner-stg-srm-gce-us-east1-c)
     r::stg-srm-gce-us-east1-d(gitlab-runner-stg-srm-gce-us-east1-d)
 
-    n::grb[gitlab-runner-builder.gitlap.com]
 
     n::gsrm3[gitlab-shared-runners-manager-3.gitlab.com]
     n::gsrm4[gitlab-shared-runners-manager-4.gitlab.com]
@@ -57,9 +55,6 @@ graph LR
 
     n::srm3::stg[shared-runners-manager-3.staging.gitlab.com]
     n::srm4::stg[shared-runners-manager-4.staging.gitlab.com]
-
-    r::base --> r::builder
-    r::builder ==> n::grb
 
     r::base --> r::gsrm
     r::gsrm --> r::gsrm-gce
@@ -253,7 +248,6 @@ You can continue **after the changes are uploaded to Chef Server**.
 
 ```bash
 # Upgrade Runner's version and configuration on nodes
-knife ssh -C1 -afqdn 'roles:gitlab-runner-builder' -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -afqdn 'roles:gitlab-runner-gsrm' -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -afqdn 'roles:gitlab-runner-prm' -- sudo /root/runner_upgrade.sh &
 knife ssh -C1 -afqdn 'roles:gitlab-runner-srm' -- sudo /root/runner_upgrade.sh &
