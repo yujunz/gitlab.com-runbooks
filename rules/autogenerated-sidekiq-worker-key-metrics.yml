@@ -481,3 +481,47 @@ groups:
         or
         sum by (environment, queue, feature_category) (avg_over_time(sidekiq_running_jobs{urgency="throttled"}[20m])) > 0
       )
+  - alert: ignored_sidekiq_queues_receiving_work
+    for: 2m
+    annotations:
+      title: Sidekiq jobs are being enqueued to an ignored queue that will never be dequeued
+      description: |
+        The `{{ $labels.queue }}` queue is receiving work, but this queue has been
+        explicitly ignored in the `gprd` environment, to help reduce load on
+        our redis-sidekiq cluster.
+
+        This is a temporary measure.
+
+        It appears that the `{{ $labels.queue }}` queue is receiving work.
+        Since no sidekiq workers are listening to the queue, this work will be
+        ignored.
+
+        Recommended course of action: Communicate with the team responsible for
+        the {{ $labels.feature_category }} feature category, and find out whether
+        the work to the queue is intentional. If it is, update the ignore list on
+        https://ops.gitlab.net/gitlab-cookbooks/chef-repo/-/blob/master/tools/sidekiq-config/sidekiq-queue-configurations.libsonnet
+        and the corresponding list used for this alert, in
+        https://gitlab.com/gitlab-com/runbooks/blob/master/rules-jsonnet/temp-ignored-gprd-queue-list.libsonnet
+        removing the ignored queue from both.
+
+        Also, review https://ops.gitlab.net/gitlab-cookbooks/chef-repo/-/merge_requests/2948
+      grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '15'
+      grafana_variables: environment,stage,queue
+      promql_template_1: sidekiq_enqueued_jobs_total{environment="$environment", queue="$queue"}
+      runbook: docs/sidekiq/service-sidekiq.md
+    labels:
+      alert_type: cause
+      metric: sidekiq_enqueued_jobs_total
+      pager: pagerduty
+      period: 2m
+      rules_domain: general
+      severity: s1
+      stage: main
+      tier: sv
+      type: sidekiq
+    expr: >
+      sum by (environment, queue, feature_category) (rate(sidekiq_enqueued_jobs_total{environment="gprd",
+      queue=~"chaos:chaos_cpu_spin|chaos:chaos_db_spin|chaos:chaos_kill|chaos:chaos_leak_mem|chaos:chaos_sleep|cronjob:geo_container_repository_sync_dispatch|cronjob:geo_file_download_dispatch|cronjob:geo_metrics_update|cronjob:geo_migrated_local_files_clean_up|cronjob:geo_prune_event_log|cronjob:geo_repository_sync|cronjob:geo_repository_verification_primary_batch|cronjob:geo_repository_verification_secondary_scheduler|cronjob:geo_repository_verification_secondary_shard|cronjob:geo_scheduler_per_shard_scheduler|cronjob:geo_scheduler_primary_per_shard_scheduler|cronjob:geo_scheduler_secondary_per_shard_scheduler|cronjob:geo_secondary_registry_consistency|default|geo:geo_batch_project_registry|geo:geo_batch_project_registry_scheduler|geo:geo_container_repository_sync|geo:geo_design_repository_shard_sync|geo:geo_design_repository_sync|geo:geo_event|geo:geo_file_download|geo:geo_file_registry_removal|geo:geo_file_removal|geo:geo_hashed_storage_attachments_migration|geo:geo_hashed_storage_migration|geo:geo_project_sync|geo:geo_rename_repository|geo:geo_repositories_clean_up|geo:geo_repository_cleanup|geo:geo_repository_destroy|geo:geo_repository_shard_sync|geo:geo_repository_verification_primary_shard|geo:geo_repository_verification_primary_single|geo:geo_repository_verification_secondary_single|geo:geo_scheduler_primary_scheduler|geo:geo_scheduler_scheduler|geo:geo_scheduler_secondary_scheduler|geo:geo_secondary_repository_backfill|hashed_storage:hashed_storage_migrator|hashed_storage:hashed_storage_project_migrate|hashed_storage:hashed_storage_project_rollback|hashed_storage:hashed_storage_rollbacker|ldap_group_sync"}[5m]))
+      > 0
