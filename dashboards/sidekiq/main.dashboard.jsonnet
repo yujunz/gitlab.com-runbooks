@@ -60,6 +60,19 @@ serviceDashboard.overview('sidekiq', 'sv')
       linewidth=1,
       min=0,
     ),
+    basic.queueLengthTimeseries(
+      title='Global search incremental indexing queue depth',
+      description='The number of records waiting to be synced to Elasticsearch for Global Search. These are picked up in batches every minute. Lower is better but the batching every minute means it will not usually stay at 0. Steady growth over a sustained period of time indicates that ElasticIndexBulkCronWorker is not keeping up.',
+      query=|||
+        max_over_time(global_search_bulk_cron_queue_size{environment="$environment"}[$__interval])
+      |||,
+      legendFormat='Depth',
+      format='short',
+      interval='1m',
+      linewidth=1,
+      intervalFactor=3,
+      yAxisLabel='Queue Depth',
+    ),
   ], cols=2, rowHeight=10, startRow=1001),
 )
 .addPanel(
