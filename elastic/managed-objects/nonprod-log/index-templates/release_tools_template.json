@@ -5,8 +5,7 @@
    "settings": {
       "index": {
          "lifecycle": {
-            "name": "gitlab-release-tools-ilm-policy",
-            "rollover_alias": "release_tools"
+            "name": "gitlab-release-tools-ilm-policy"
          }
       },
       "number_of_shards": 2
