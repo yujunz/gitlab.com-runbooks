@@ -9,9 +9,9 @@ have enabled your public ssh key on these hosts please submit an issue to the
 Direct access to the public internet is turned off in both gstg and gprd, to
 access VMs you will need to configure you ssh client to use the bastion hosts.
 
-* [Bastion instructions for gprd](gprd-bastions.md)
-* [Bastion instructions for gstg](gstg-bastions.md)
-* [Bastion instructions for dr](dr-bastions.md)
+* [Bastion instructions for gprd](../bastions/gprd-bastions.md)
+* [Bastion instructions for gstg](../bastions/gstg-bastions.md)
+* [Bastion instructions for dr](../bastions/dr-bastions.md)
 
 ### Hosts
 
