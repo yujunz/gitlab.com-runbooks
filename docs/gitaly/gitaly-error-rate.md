@@ -23,3 +23,31 @@ identify the instance with a high error rate.
 sudo less /var/log/gitlab/gitaly/current
 ```
 
+## 3. Drill down
+
+The Prometheus alert should be specific to one Gitaly shard.
+
+The following sections contain some common causes, and steps to diagnose, of
+elevated Gitaly shard error rates.
+
+### Errors originating from one project
+
+Are the errors associated with only a few projects? Check [this pie
+chart](https://log.gprd.gitlab.net/app/kibana#/visualize/edit/c46c1460-7030-11ea-8617-2347010d3aab)
+and filter down to the relevant instance.
+
+What is the origin of the Gitaly requests? Check [this pie
+chart](https://log.gprd.gitlab.net/app/kibana#/visualize/edit/211743f0-7032-11ea-8617-2347010d3aab)
+and filter down to the relevant paths (`/namespace/project`).
+
+If there are a lot of requests to RawController:
+
+- Using your admin account, take a look at the requested paths.
+- While the RawController is of course a legitimate endpoint that we offer, it
+  can be quite expensive to serve, and we don't expect a high request rate to it
+  under common use.
+- Consider taking the relevant project private and/or blocking the owner and
+  engaging support to contact them. Engage support to contact the user after
+  this.
+- If abuse is suspected (e.g. if the repository contains copyrighted media
+  files) then engage the abuse team.
