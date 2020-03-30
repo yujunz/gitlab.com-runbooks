@@ -27,7 +27,6 @@
 * [../ci-runners/create-runners-manager-node.md](../ci-runners/create-runners-manager-node.md)
 * [../ci-runners/pipeline-deletion.md](../ci-runners/pipeline-deletion.md)
 * [../ci-runners/tracing-app-db-queries.md](../ci-runners/tracing-app-db-queries.md)
-* [../frontend/haproxy-1.md](../frontend/haproxy-1.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../frontend/ssh-maxstartups-breach.md](../frontend/ssh-maxstartups-breach.md)
 * [../git/deploy-gitlab-rb-change.md](../git/deploy-gitlab-rb-change.md)

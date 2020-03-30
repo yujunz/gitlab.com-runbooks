@@ -16,7 +16,6 @@
 
 ## Troubleshooting Pointers
 
-* [../frontend/haproxy-1.md](../frontend/haproxy-1.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../uncategorized/deploycmd.md](../uncategorized/deploycmd.md)
 <!-- END_MARKER -->

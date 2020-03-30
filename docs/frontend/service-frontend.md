@@ -15,7 +15,6 @@
 
 ## Troubleshooting Pointers
 
-* [haproxy-1.md](haproxy-1.md)
 * [haproxy.md](haproxy.md)
 * [../git/deploy-gitlab-rb-change.md](../git/deploy-gitlab-rb-change.md)
 * [../git/gitlab-hosted-codesandbox.md](../git/gitlab-hosted-codesandbox.md)

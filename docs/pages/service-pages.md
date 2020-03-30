@@ -13,7 +13,6 @@
 
 ## Troubleshooting Pointers
 
-* [../frontend/haproxy-1.md](../frontend/haproxy-1.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../gitaly/gitaly-unusual-activity.md](../gitaly/gitaly-unusual-activity.md)
 * [../monitoring/node_memory_alerts.md](../monitoring/node_memory_alerts.md)
