@@ -129,24 +129,34 @@ local generateServiceSLORules(serviceDefinition) =
   local labels = {
     type: serviceDefinition.type,
     tier: serviceDefinition.tier,
-  } + triggerDurationLabels;
+  };
+
+  local labelsWithTriggerDurations = labels + triggerDurationLabels;
 
   std.prune([
     if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'apdexRatio') then
       recordingRules.minApdexSLO(
-        labels=labels,
+        labels=labelsWithTriggerDurations,
         expr='%f' % [serviceDefinition.monitoringThresholds.apdexRatio]
       )
     else null,
 
     if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'errorRatio') then
       recordingRules.maxErrorsSLO(
-        labels=labels,
+        labels=labelsWithTriggerDurations,
         expr='%f' % [serviceDefinition.monitoringThresholds.errorRatio],
       )
     else null,
 
-    // Note: the max error rate is `1 - sla`
+    // Min apdex SLO (multiburn)
+    if hasEventBasedSLOTargets && std.objectHas(serviceDefinition.eventBasedSLOTargets, 'apdexScore') then
+      recordingRules.minApdexTargetSLO(
+        labels=labels,
+        expr='%f' % [serviceDefinition.eventBasedSLOTargets.apdexScore],
+      )
+    else null,
+
+    // Note: the max error rate is `1 - sla` (multiburn)
     if hasEventBasedSLOTargets && std.objectHas(serviceDefinition.eventBasedSLOTargets, 'errorRatio') then
       recordingRules.maxErrorsEventRateSLO(
         labels=labels,

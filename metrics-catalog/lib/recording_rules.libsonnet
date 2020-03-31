@@ -46,4 +46,11 @@
       labels: labels,
       expr: expr,
     },
+
+  minApdexTargetSLO(labels, expr)::
+    {
+      record: 'slo:min:events:gitlab_service_apdex:ratio',
+      labels: labels,
+      expr: expr,
+    },
 }

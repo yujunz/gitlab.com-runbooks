@@ -10,6 +10,7 @@ local rateMetric = metricsCatalog.rateMetric;
     errorRatio: 0.005,
   },
   eventBasedSLOTargets: {
+    apdexScore: 0.999,  // 99.9% of Web requests should complete with satisfactory threshold
     errorRatio: 0.9999,  // 99.99% of Web requests should succeed, over multiple window periods
   },
   serviceDependencies: {

@@ -33,7 +33,6 @@ groups:
     expr: '0.200000'
   - record: slo:max:events:gitlab_service_errors:ratio
     labels:
-      alert_trigger_duration: long
       tier: runners
       type: ci-runners
     expr: '0.005000'
@@ -76,7 +75,6 @@ groups:
     expr: '0.001000'
   - record: slo:max:events:gitlab_service_errors:ratio
     labels:
-      alert_trigger_duration: long
       tier: stor
       type: gitaly
     expr: '0.001000'
@@ -175,6 +173,11 @@ groups:
       tier: sv
       type: web
     expr: '0.005000'
+  - record: slo:min:events:gitlab_service_apdex:ratio
+    labels:
+      tier: sv
+      type: web
+    expr: '0.999000'
   - record: slo:max:events:gitlab_service_errors:ratio
     labels:
       tier: sv
