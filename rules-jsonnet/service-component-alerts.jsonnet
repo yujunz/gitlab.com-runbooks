@@ -27,7 +27,7 @@ local rules = {
               and
               (
                 gitlab_component_apdex:ratio_5m
-                > on(tier, type) group_left()
+                < on(tier, type) group_left()
                 (1 - (%(burnrate_1h)g * (1 - slo:min:events:gitlab_service_apdex:ratio)))
               )
             )
@@ -35,13 +35,13 @@ local rules = {
             (
               (
                 gitlab_component_apdex:ratio_6h
-                > on(tier, type) group_left()
+                < on(tier, type) group_left()
                 (1 - (%(burnrate_6h)g * (1 - slo:min:events:gitlab_service_apdex:ratio)))
               )
               and
               (
                 gitlab_component_apdex:ratio_30m
-                > on(tier, type) group_left()
+                < on(tier, type) group_left()
                 (1 - (%(burnrate_6h)g * (1 - slo:min:events:gitlab_service_apdex:ratio)))
               )
             )
@@ -65,7 +65,7 @@ local rules = {
             Currently the apdex value is {{ $value | humanizePercentage }}.
           |||,
           runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
-          grafana_dashboard_id: 'salerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo',
+          grafana_dashboard_id: 'alerts-component_multiburn_apdex/alerts-component-multi-window-multi-burn-rate-apdex-out-of-slo',
           grafana_panel_id: '4',
           grafana_variables: 'environment,type,stage,component',
           grafana_min_zoom_hours: '6',
