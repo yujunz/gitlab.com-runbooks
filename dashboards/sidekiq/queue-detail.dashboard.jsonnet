@@ -5,6 +5,7 @@ local layout = import 'layout.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
+local link = grafana.link;
 local template = grafana.template;
 local annotation = grafana.annotation;
 local serviceCatalog = import 'service_catalog.libsonnet';
@@ -13,6 +14,7 @@ local sidekiqHelpers = import 'services/lib/sidekiq-helpers.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local row = grafana.row;
 local elasticsearchLinks = import 'elasticsearch_links.libsonnet';
+local issueSearch = import 'issue_search.libsonnet';
 
 local selector = 'environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue"';
 
@@ -379,5 +381,14 @@ basic.dashboard(
     platformLinks.triage +
     serviceCatalog.getServiceLinks('sidekiq') +
     platformLinks.services +
-    [platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq')],
+    [
+      platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq'),
+      link.dashboards(
+        'Find issues for $queue',
+        '',
+        type='link',
+        targetBlank=true,
+        url=issueSearch.buildInfraIssueSearch(labels=['Service::Sidekiq'], search='$queue')
+      ),
+    ],
 }
