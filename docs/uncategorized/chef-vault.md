@@ -1,4 +1,11 @@
 # Chef Vault Basics
+
+:warning: This is relatively deprecated, we are attempting to transition all
+secrets into GKMS. See our [gkms-chef-secrets](./gkms-chef-secrest.md) for
+details on using GKMS in favor of Chef Vault. :warning:
+
+---
+
 [Chef vault](https://github.com/chef-cookbooks/chef-vault) has alot of information
 but sometimes, not everything is as it seems. 
 

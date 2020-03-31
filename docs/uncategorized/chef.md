@@ -3,7 +3,9 @@
 ## Symptoms
 
 1. HAProxy is missing workers:
-    ```lb7.cluster.gitlab.com HAProxy_gitlab_443/worker4.cluster.gitlab.com is UNKNOWN - Check output not found in local checks```
+    ```
+    lb7.cluster.gitlab.com HAProxy_gitlab_443/worker4.cluster.gitlab.com is UNKNOWN - Check output not found in local checks
+    ```
     
 2. Nodes are missing chef roles:
     ```

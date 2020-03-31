@@ -246,22 +246,6 @@ $ docker run --rm -ti --net=container:pause --pid=container:pause -v /:/media/ro
 
 Share process namespace between containers in a pod: https://kubernetes.io/docs/tasks/configure-pod-container/share-process-namespace/
 
-## Credential rotation
-
-:warning: **Be careful with secrets as an invalid configuration may cause a service outage** :warning:
-
-There are three secrets for the registry service, the way they are configured in
-the cluster is described in the [HELM_README](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/dd201383641d01c5b5471012563a3079fdcdbdf1/HELM_README.md#secret-for-gcs-configuration).
-
-* **registry-storage** - for accessing object storage, local to the registry service
-  and contains the json credential for the service account. To rotate this
-  credential export a new json key from the console.
-* **registry-httpsecret** - random data used to sign state, local to the registry service. To create a new secret follow the generation
-  [instructions in the GitLab chart](https://docs.gitlab.com/charts/installation/secrets.html#registry-http-secret)
-* **registry-certificate** - this secret must match the key configured in rails. To create a new secret follow the
-  [generation instructions in the GitLab chart](https://docs.gitlab.com/charts/installation/secrets.html#registry-authentication-certificates)
-
-
 ## Auto-scaling, Eviction and Quota
 
 ### Nodes
@@ -319,41 +303,3 @@ requests will help as it will ask Kubernetes to provision new nodes if capacity
 is limited.
 
 Kubernetes Resource Management: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-
-### Updating secrets
-
-The GitLab namespace has the following secrets:
-* registry-storage
-* registry-httpsecret
-* registry-certificate
-
-For more information about creating secrets see  [HELM_README](https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/master/HELM_README.md#secret-for-gcs-configuration)
-
-#### Updating the registry configuration via secrets
-
-The registry configuration is a base64 string that is encoded in the
-`registry-storage` secret.
-
-**Updating this secret in production should be done with care and requires a ~change issue (see https://gitlab.com/gitlab-com/gl-infra/production/issues/1101 as an example)**
-
-- Export the secrets
-
-```
-kubectl get secret registry-storage --export -o yaml -n gitlab > secret-export.yaml
-```
-
-- Back up the exported secret and create a new base64 encoded config string
-
-```
-cp secret-export.yaml secret-export.yaml.bak
-echo <config base64> | base64 -D > config.out
-# modify the configuration
-cat config.out | base64
-# add the base64 string back to `secret-export.yml`
-```
-
-- Apply the new secret
-
-```
-kubectl apply -f ./secret-export.yaml -n gitlab
-```
