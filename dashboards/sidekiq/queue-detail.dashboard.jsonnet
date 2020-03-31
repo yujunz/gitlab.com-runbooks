@@ -285,7 +285,6 @@ basic.dashboard(
       title: 'ElasticSearch: queue latency visualization',
       targetBlank: true,
     }),
-
     basic.apdexTimeseries(
       title='Execution Apdex',
       description='Execution apdex monitors the percentage of jobs that run within their execution (run-time) threshold. Higher is better. Different jobs have different thresholds.',

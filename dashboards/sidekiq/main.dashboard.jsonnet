@@ -8,6 +8,11 @@ local row = grafana.row;
 local sidekiq = import 'sidekiq.libsonnet';
 local serviceDashboard = import 'service_dashboard.libsonnet';
 
+local priorityDetailDataLink = {
+  url: '/d/sidekiq-priority-detail?${__url_time_range}&${__all_variables}&var-priority=${__field.labels.priority}&var-shard=${__field.labels.shard}',
+  title: 'Priority Detail: ${__field.labels.priority}',
+};
+
 serviceDashboard.overview('sidekiq', 'sv')
 .addPanel(
   row.new(title='Sidekiq Queues'),
@@ -112,7 +117,8 @@ serviceDashboard.overview('sidekiq', 'sv')
       intervalFactor=1,
       legend_show=true,
       yAxisLabel='Job time completed per second',
-    ),
+    )
+    .addDataLink(priorityDetailDataLink),
     basic.timeseries(
       title='Sidekiq Aggregated Throughput',
       description='The total number of jobs being completed',
@@ -137,7 +143,8 @@ serviceDashboard.overview('sidekiq', 'sv')
       intervalFactor=1,
       legend_show=true,
       yAxisLabel='Jobs Completed per Second',
-    ),
+    )
+    .addDataLink(priorityDetailDataLink),
     basic.timeseries(
       title='Sidekiq Throughput per Job',
       description='The total number of jobs being completed per priority',
@@ -151,12 +158,11 @@ serviceDashboard.overview('sidekiq', 'sv')
       legend_show=true,
       yAxisLabel='Jobs Completed per Second',
     ),
-
     basic.timeseries(
       title='Sidekiq Aggregated Inflight Operations',
       description='The total number of jobs being executed at a single moment',
       query=|||
-        sum(sidekiq_running_jobs_count{environment="$environment"} and on(fqdn) (redis_connected_slaves != 0))
+        sum(sidekiq_running_jobs{environment="$environment"})
       |||,
       legendFormat='Total',
       interval='1m',
@@ -164,17 +170,18 @@ serviceDashboard.overview('sidekiq', 'sv')
       legend_show=true,
     ),
     basic.timeseries(
-      title='Sidekiq Inflight Operations by Queue',
+      title='Sidekiq Inflight Operations by Priority/Shard',
       description='The total number of jobs being executed at a single moment, for each queue',
       query=|||
-        sum(sidekiq_running_jobs_count{environment="$environment"} and on(fqdn) (redis_connected_slaves != 0)) by (name)
+        sum(sidekiq_running_jobs{environment="$environment"}) by (priority, shard)
       |||,
-      legendFormat='{{ name }}',
+      legendFormat='{{ priority }} / {{ shard }}',
       interval='1m',
       intervalFactor=1,
       legend_show=true,
       linewidth=1,
-    ),
+    )
+    .addDataLink(priorityDetailDataLink),
     basic.latencyTimeseries(
       title='Sidekiq Estimated Median Job Latency per priority',
       description='The median duration, once a job starts executing, that it runs for, by priority. Lower is better.',
@@ -196,7 +203,8 @@ serviceDashboard.overview('sidekiq', 'sv')
       logBase=10,
       linewidth=1,
       min=0.01,
-    ),
+    )
+    .addDataLink(priorityDetailDataLink),
     basic.latencyTimeseries(
       title='Sidekiq Estimated p95 Job Latency per priority',
       description='The 95th percentile duration, once a job starts executing, that it runs for, by priority. Lower is better.',
@@ -218,7 +226,8 @@ serviceDashboard.overview('sidekiq', 'sv')
       logBase=10,
       linewidth=1,
       min=0.01,
-    ),
+    )
+    .addDataLink(priorityDetailDataLink),
   ], cols=2, rowHeight=10, startRow=2001),
 )
 .addPanel(
@@ -230,7 +239,7 @@ serviceDashboard.overview('sidekiq', 'sv')
     h: 1,
   }
 )
-.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=3001))
+.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=3001, datalink=priorityDetailDataLink))
 .addPanel(
   row.new(title='Rails Metrics', collapse=true)
   .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))

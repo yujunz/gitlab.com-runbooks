@@ -5,12 +5,12 @@ local nodeMetrics = import 'node_metrics.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 
 {
-  priorityWorkloads(querySelector, startRow)::
+  priorityWorkloads(querySelector, startRow, datalink=null)::
     local formatConfig = {
       querySelector: querySelector,
     };
 
-    layout.grid([
+    local panels = [
       basic.saturationTimeseries(
         title='Sidekiq Worker Saturation by Priority',
         description='Shows sidekiq worker saturation. Once saturated, all sidekiq workers will be busy processing jobs, and any new jobs that arrive will queue. Lower is better.',
@@ -59,6 +59,13 @@ local platformLinks = import 'platform_links.libsonnet';
         legend_show=true,
         linewidth=2
       ),
+    ];
 
-    ], cols=2, rowHeight=10, startRow=startRow),
+    local panelsWithDataLink =
+      if datalink != null then
+        [p.addDataLink(datalink) for p in panels]
+      else
+        panels;
+
+    layout.grid(panelsWithDataLink, cols=2, rowHeight=10, startRow=startRow),
 }
