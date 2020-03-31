@@ -65,6 +65,7 @@
 * [../uncategorized/manage-cog.md](../uncategorized/manage-cog.md)
 * [../uncategorized/missing_repos.md](../uncategorized/missing_repos.md)
 * [../uncategorized/reindex-package-in-packagecloud.md](../uncategorized/reindex-package-in-packagecloud.md)
+* [../uncategorized/shared-configurations.md](../uncategorized/shared-configurations.md)
 * [../uncategorized/staging-environment.md](../uncategorized/staging-environment.md)
 * [../uncategorized/uploads.md](../uncategorized/uploads.md)
 * [../uncategorized/workers-high-load.md](../uncategorized/workers-high-load.md)

@@ -37,6 +37,10 @@ default['<cookbook>']['secrets']['key'] = {
 }
 ```
 
+## Using GKMS secrets in Kubernetes
+
+Refer to our runbook about [shared configurations](./shared-configurations.md).
+
 ## Conventions
 
 These are pretty important for the sane management of secrets across many
