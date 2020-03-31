@@ -42,15 +42,17 @@ The Chatops bot can list the ansible playbooks available to run in the
 An example on how to run the `hostname` command on the `base-fe-we-pages` chef
 role systems in staging:
 ```
-/chatops run deploycmd hostname base-fe-web-pages --skip-haproxy
+/chatops run deploycmd hostname base_fe_web_pages --skip-haproxy
 ```
 This will run the `hostname` command on the staging nodes with the role
 `base-fe-web-pages` and skip any haproxy steps. This specific command will be
 a dry-run with no changes made.
 
+Take note that you will need to convert role dashes into underscores.
+
 Another example:
 ```
-/chatops run deploycmd hostname base-fe-web-pages --no-check --production
+/chatops run deploycmd hostname base_fe_web_pages --no-check --production
 ```
 This command will run hostname on the `base-fe-web-pages` nodes in production
 and not skip the graceful haproxy removal and re-addition steps. The
