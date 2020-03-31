@@ -116,7 +116,7 @@ local burnRatePanelWithHelp(title, combinations, content) =
   ];
 
 basic.dashboard(
-  'Component Multi-window Multi-burn-rate Out of SLO',
+  'Component Multi-window Multi-burn-rate Apdex Out of SLO',
   tags=['alert-target', 'general'],
 )
 .addTemplate(templates.type)
