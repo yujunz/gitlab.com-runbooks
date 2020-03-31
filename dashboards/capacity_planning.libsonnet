@@ -2,6 +2,7 @@ local basic = import 'basic.libsonnet';
 local colors = import 'colors.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
+local issueSearch = import 'issue_search.libsonnet';
 local layout = import 'layout.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
@@ -14,7 +15,10 @@ local graphPanel = grafana.graphPanel;
 local row = grafana.row;
 local tablePanel = grafana.tablePanel;
 
-local findIssuesLink = 'https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&utf8=%E2%9C%93&state=all&label_name[]=GitLab.com%20Resource%20Saturation&search=${__cell_1}+${__cell_3}';
+local findIssuesLink = issueSearch.buildInfraIssueSearch(
+  labels=['GitLab.com Resource Saturation'],
+  search='${__cell_1}+${__cell_3}'
+);
 
 local saturationTable(title, description, query, saturationDays, valueColumnName) =
   tablePanel.new(

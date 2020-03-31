@@ -14,6 +14,7 @@ local annotation = grafana.annotation;
 local layout = import 'layout.libsonnet';
 local magicNumbers = import 'magic_numbers.libsonnet';
 local text = grafana.text;
+local issueSearch = import 'issue_search.libsonnet';
 
 local DETAILS = {
   active_db_connections: {
@@ -658,7 +659,9 @@ local DETAILS = {
       title='Help',
       mode='markdown',
       content=componentDetails.description + |||
-        * [Find related issues on GitLab.com](https://gitlab.com/groups/gitlab-com/gl-infra/-/issues?scope=all&&state=all&label_name[]=GitLab.com%%20Resource%%20Saturation&search=%s)
-      ||| % [component]
+        * [Find related issues on GitLab.com](%s)
+      ||| % [
+        issueSearch.buildInfraIssueSearch(labels=['GitLab.com Resource Saturation'], search=component),
+      ]
     ),
 }
