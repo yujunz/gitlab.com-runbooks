@@ -9,25 +9,6 @@ local USES_GENERIC_DASHBOARD = {
   pages: true,
 };
 
-local LINKED_SERVICES = std.sort([
-  'api',
-  'ci-runners',
-  'frontend',
-  'git',
-  'gitaly',
-  'monitoring',
-  'pages',
-  'patroni',
-  'pgbouncer',
-  'redis',
-  'redis-cache',
-  'redis-sidekiq',
-  'registry',
-  'sidekiq',
-  'web',
-  'web-pages',
-]);
-
 local getServiceLink(serviceType) =
   if std.objectHas(USES_GENERIC_DASHBOARD, serviceType) then
     'https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=' + serviceType
@@ -42,9 +23,19 @@ local getServiceLink(serviceType) =
     link.dashboards('Capacity Planning', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-capacity-planning/general-capacity-planning?orgId=1'),
   ],
   services:: [
-    link.dashboards(type + ' service', '', icon='dashboard', type='link', keepTime=true, url=getServiceLink(type))
-    for type in LINKED_SERVICES
+    link.dashboards(
+      title='Service Overview Dashboards',
+      tags=[
+        'managed',
+        'service overview',
+      ],
+      asDropdown=true,
+      includeVars=true,
+      keepTime=true,
+      type='dashboards',
+    ),
   ],
+
   parameterizedServiceLink: [
     link.dashboards('$type service', '', type='link', keepTime=true, url='https://dashboards.gitlab.net/d/general-service/service-platform-metrics?orgId=1&var-type=$type'),
   ],
