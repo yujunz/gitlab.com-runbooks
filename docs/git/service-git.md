@@ -32,7 +32,6 @@
 * [../ci-runners/load-balancing.md](../ci-runners/load-balancing.md)
 * [../forum/discourse-forum.md](../forum/discourse-forum.md)
 * [../frontend/block-things-in-haproxy.md](../frontend/block-things-in-haproxy.md)
-* [../frontend/haproxy-1.md](../frontend/haproxy-1.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../frontend/ssh-maxstartups-breach.md](../frontend/ssh-maxstartups-breach.md)
 * [deploy-gitlab-rb-change.md](deploy-gitlab-rb-change.md)

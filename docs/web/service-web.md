@@ -25,7 +25,6 @@
 ## Troubleshooting Pointers
 
 * [../forum/discourse-forum.md](../forum/discourse-forum.md)
-* [../frontend/haproxy-1.md](../frontend/haproxy-1.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../git/deploy-gitlab-rb-change.md](../git/deploy-gitlab-rb-change.md)
 * [../git/gitlab-hosted-codesandbox.md](../git/gitlab-hosted-codesandbox.md)

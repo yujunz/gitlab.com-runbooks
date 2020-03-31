@@ -21,7 +21,6 @@
 * [../bastions/gstg-bastions.md](../bastions/gstg-bastions.md)
 * [../bastions/pre-bastions.md](../bastions/pre-bastions.md)
 * [../bastions/testbed-bastion.md](../bastions/testbed-bastion.md)
-* [../frontend/haproxy-1.md](../frontend/haproxy-1.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../git/purge-git-data.md](../git/purge-git-data.md)
 * [../gitaly/find-project-from-hashed-storage.md](../gitaly/find-project-from-hashed-storage.md)
