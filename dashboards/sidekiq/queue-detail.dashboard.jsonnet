@@ -36,28 +36,17 @@ local latencyHistogramQuery(percentile, bucketMetric, selector, aggregator, rang
     rangeInterval: rangeInterval,
   };
 
-local counterRateQuery(bucketMetric, selector, aggregator, rangeInterval) =
+local counterRateQuery(bucketMetric, selector, aggregator, rangeInterval, deltaFunction='rate') =
   |||
     sum by (%(aggregator)s) (
-      rate(%(bucketMetric)s{%(selector)s}[%(rangeInterval)s])
+      %(deltaFunction)s(%(bucketMetric)s{%(selector)s}[%(rangeInterval)s])
     )
   ||| % {
     aggregator: aggregator,
     selector: selector,
     bucketMetric: bucketMetric,
     rangeInterval: rangeInterval,
-  };
-
-local counterChangesQuery(bucketMetric, selector, aggregator, rangeInterval) =
-  |||
-    sum by (%(aggregator)s) (
-      changes(%(bucketMetric)s{%(selector)s}[%(rangeInterval)s])
-    )
-  ||| % {
-    aggregator: aggregator,
-    selector: selector,
-    bucketMetric: bucketMetric,
-    rangeInterval: rangeInterval,
+    deltaFunction: deltaFunction,
   };
 
 local queuelatencyTimeseries(title, aggregators, legendFormat) =
@@ -78,7 +67,7 @@ local latencyTimeseries(title, aggregators, legendFormat) =
 local enqueueRateTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
-    query=counterRateQuery('sidekiq_enqueued_jobs_total', 'environment="$environment", queue=~"$queue"', aggregators, '$__interval'),
+    query=counterRateQuery('sidekiq_enqueued_jobs_total', 'environment="$environment", queue=~"$queue"', aggregators, '$__interval', deltaFunction='increase'),
     legendFormat=legendFormat,
   );
 
@@ -92,7 +81,7 @@ local rpsTimeseries(title, aggregators, legendFormat) =
 local errorRateTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
-    query=counterChangesQuery('sidekiq_jobs_failed_total', selector, aggregators, '$__interval'),
+    query=counterRateQuery('sidekiq_jobs_failed_total', selector, aggregators, '$__interval', deltaFunction='increase'),
     legendFormat=legendFormat,
   );
 
@@ -354,8 +343,8 @@ basic.dashboard(
   ], cols=4, rowHeight=8, startRow=101)
   +
   rowGrid('Enqueuing (the rate at which jobs are enqueued)', [
-    enqueueRateTimeseries('Enqueues/Second', aggregators='queue', legendFormat='{{ queue }}'),
-    enqueueRateTimeseries('Enqueues/Second per Service', aggregators='type, queue', legendFormat='{{ queue }} - {{ type }}'),
+    enqueueRateTimeseries('Jobs Enqueued', aggregators='queue', legendFormat='{{ queue }}'),
+    enqueueRateTimeseries('Jobs Enqueued per Service', aggregators='type, queue', legendFormat='{{ queue }} - {{ type }}'),
     basic.queueLengthTimeseries(
       title='Queue depth',
       description='The number of unstarted jobs in a queue',
@@ -386,8 +375,8 @@ basic.dashboard(
   ], startRow=501)
   +
   rowGrid('Error Rate (the rate at which jobs fail)', [
-    errorRateTimeseries('Error Rate', aggregators='queue', legendFormat='{{ queue }}'),
-    errorRateTimeseries('Error Rate per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
+    errorRateTimeseries('Errors', aggregators='queue', legendFormat='{{ queue }}'),
+    errorRateTimeseries('Errors per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
   ], startRow=601)
   +
   rowGrid('Resource Usage', [
