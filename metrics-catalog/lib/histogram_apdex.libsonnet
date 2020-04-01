@@ -73,38 +73,78 @@ local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelec
   else
     generateDoubleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration);
 
-local generatePercentileLatencyQuery(histogramApdex, percentile, aggregationLabels, additionalSelectors, duration) =
-  local selector = selectors.join([histogramApdex.selector, additionalSelectors]);
+local generatePercentileLatencyQuery(percentile, aggregationLabels, rateQuery) =
   local aggregationLabelsWithLe = selectors.join([aggregationLabels, 'le']);
 
   |||
     histogram_quantile(
       %(percentile)f,
       sum by (%(aggregationLabelsWithLe)s) (
-        rate(%(histogram)s{%(selector)s}[%(duration)s])
+        %(rateQuery)s
       )
     )
   ||| % {
     percentile: percentile,
     aggregationLabelsWithLe: aggregationLabelsWithLe,
-    histogram: histogramApdex.histogram,
-    selector: selector,
-    duration: duration,
+    rateQuery: indent(rateQuery, 4),
   };
 
-local generateApdexComponentQuery(histogramApdex, aggregationLabels, additionalSelectors, duration, leSelector) =
-  local selector = selectors.join([histogramApdex.selector, additionalSelectors]);
-
+local generateApdexComponentAggregationQuery(aggregationLabels, rateQuery) =
   |||
     sum by (%(aggregationLabels)s) (
-      rate(%(histogram)s{%(selector)s}[%(duration)s])
+      %(rateQuery)s
     )
   ||| % {
     aggregationLabels: aggregationLabels,
+    rateQuery: rateQuery,
+  };
+
+local generateApdexComponentRateQuery(histogramApdex, additionalSelectors, duration, leSelector='') =
+  local selector = selectors.join([histogramApdex.selector, additionalSelectors]);
+
+  'rate(%(histogram)s{%(selector)s}[%(duration)s])' % {
     histogram: histogramApdex.histogram,
     selector: std.strReplace(selectors.join([selector, leSelector]), '\n', ''),
     duration: duration,
   };
+
+local generateApdexComponentQuery(histogramApdex, aggregationLabels, additionalSelectors, duration, leSelector) =
+  generateApdexComponentAggregationQuery(
+    aggregationLabels,
+    generateApdexComponentRateQuery(histogramApdex, additionalSelectors, duration, leSelector)
+  );
+
+local generateCombinedApdexQuery(histograms, aggregationLabels, additionalSelectors, duration) =
+  local satisfactionRateQueries = std.map(
+    function(h) generateApdexComponentRateQuery(h, additionalSelectors, duration, 'le="%g"' % [h.satisfiedThreshold]),
+    histograms,
+  );
+  local weightScoreQueries = std.map(
+    function(h) generateApdexComponentRateQuery(h, additionalSelectors, duration, 'le="+Inf"'),
+    histograms,
+  );
+  local satisfactionQuery = generateApdexComponentAggregationQuery(
+    aggregationLabels,
+    indent(std.join('\nor\n', satisfactionRateQueries), 2),
+  );
+  local weightScoreQuery = generateApdexComponentAggregationQuery(
+    aggregationLabels,
+    indent(std.join('\nor\n', weightScoreQueries), 2),
+  );
+
+  generateApdexQuery(satisfactionQuery, weightScoreQuery);
+
+local generateCombinedPercentileLatencyQuery(histograms, percentile, aggregationLabels, additionalSelectors, duration) =
+  local rateQueries = std.map(
+    function(h) generateApdexComponentRateQuery(h, additionalSelectors, duration),
+    histograms
+  );
+
+  generatePercentileLatencyQuery(
+    percentile,
+    aggregationLabels,
+    std.join('\nor\n', rateQueries)
+  );
 
 {
   histogramApdex(
@@ -131,7 +171,13 @@ local generateApdexComponentQuery(histogramApdex, aggregationLabels, additionalS
 
     percentileLatencyQuery(percentile, aggregationLabels, selector, rangeInterval)::
       local s = self;
-      generatePercentileLatencyQuery(s, percentile, aggregationLabels, selector, rangeInterval),
+      generateCombinedPercentileLatencyQuery([s], percentile, aggregationLabels, selector, rangeInterval),
+
+    combinedApdexQuery(histograms, aggregationLabels, selector, rangeInterval)::
+      generateCombinedApdexQuery(histograms, aggregationLabels, selector, rangeInterval),
+
+    combinedPercentileLatencyQuery(histograms, percentile, aggregationLabels, selector, rangeInterval)::
+      generateCombinedPercentileLatencyQuery(histograms, percentile, aggregationLabels, selector, rangeInterval),
 
     describe()::
       local s = self;
