@@ -1,6 +1,3 @@
----
-image: "${CI_REGISTRY_IMAGE}:latest"
-
 stages:
   - images
   - test
@@ -8,6 +5,20 @@ stages:
   - alertmanager
   - deploy-rules
   - deploy-rules-production
+
+default:
+  image: "${CI_REGISTRY_IMAGE}:latest"
+  tags:
+    - gitlab-org
+
+workflow:
+  rules:
+    # For merge requests, create a pipeline.
+    - if: '$CI_MERGE_REQUEST_IID'
+    # For `master` branch, create a pipeline (this includes on schedules, pushes, merges, etc.).
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    # For tags, create a pipeline.
+    - if: '$CI_COMMIT_TAG'
 
 .deploy-rules:
   extends: .rules-artifacts
@@ -441,10 +452,3 @@ verify_alertmanager_parity:
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
     - alertmanager/verify-alertmanager-parity.sh
-
-# Only build MRs, master, and tags. This enables merge trains.
-workflow:
-  rules:
-    - if: $CI_MERGE_REQUEST_ID
-    - if: $CI_COMMIT_REF_NAME == 'master'
-    - if: $CI_COMMIT_TAG
