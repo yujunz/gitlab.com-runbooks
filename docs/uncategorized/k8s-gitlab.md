@@ -7,6 +7,7 @@ Our current application configuration components:
 * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common
 * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/monitoring
 * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com
+* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles
 
 1. Create the cluster configuration in terraform, we'll need the following
    items:
@@ -36,6 +37,7 @@ repos
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-com/-/settings/ci_cd
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/monitoring/-/settings/ci_cd
       * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/common/-/settings/ci_cd
+      * https://ops.gitlab.net/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles/-/settings/ci_cd
     * ENV Vars:
       * `SERVICE_KEY`
       * This key is gathered from following the documentation in the previous
@@ -43,6 +45,13 @@ repos
       * This must be added to each repo since environment scoped group level
         variables are not a feature of GitLab
 1. Create the application configurations
+    * Start by defining a new `environment` in the `gitlab-helmfiles` repo. In particular you will need to add
+      the environment to
+      * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles/-/blob/master/bases/environments.yaml to define
+        the new environment and any extra configuration settings for it (such as disabling specific installations)
+      * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles/-/blob/master/.gitlab-ci.yml to define both a
+        job to set some common settings, and the `check`, `diff`, and `apply` jobs for the environment itself
+      Note the CI jobs will fail unless the CI settings for the environment have been added to the `gitlab-helmfiles` repo
     * Adjust any necessary configurations or additions by following the README's
       in each of our application configuration repos.
     * Example Merge Requests:
@@ -53,11 +62,14 @@ repos
     * Note that when merged to master, CI/CD will fail, so it would be advised
       to hold off until after the next few steps
 1. Take care of any manual actions from our new configuration:
-    * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com/blob/d8daab846f440d1f0aff63c47c4d1aec62632ce7/HELM_README.md
     * https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/monitoring#manual-actions
 1. Perform the installation of each of our components
-    * Start off with the common repo first, it contains components required by
-      other repos
+    * To install the base components first from `gitlab-helmfiles` cd into the `gitlab-helmfiles` local checkout
+      and run the following
+      ```shell
+      kubectl config set-context <CONTEXT FOR ENVIRONMENT>
+      helmfile -e <ENVIRONMENT> apply
+      ```
     * Locally we'll perform the install, `cd` into each of the components' repo
       and then run: `./bin/k-ctl -e <ENVIRONMENT> install`
     * Troubleshoot where necessary
