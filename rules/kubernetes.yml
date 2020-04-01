@@ -29,7 +29,7 @@ groups:
 
       - alert: KubeReplicasSetPodMismatch
         annotations:
-          title: Deployment Reclicas Mismatch
+          title: Deployment Replicas Mismatch
           description: Deployment {{ $labels.namespace }}/{{ $labels.replicaset }} has not matched the expected number of replicas for longer than an hour.
           runbook: docs/uncategorized/kubernetes.md#replica-mismatch
         expr: |-
