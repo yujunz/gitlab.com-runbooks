@@ -17,7 +17,6 @@
 
 * [../frontend/ssh-maxstartups-breach.md](../frontend/ssh-maxstartups-breach.md)
 * [../git/purge-git-data.md](../git/purge-git-data.md)
-* [../gitaly/gitaly-pubsub.md](../gitaly/gitaly-pubsub.md)
 * [../pages/gitlab-pages.md](../pages/gitlab-pages.md)
 * [../pages/pages-letsencrypt.md](../pages/pages-letsencrypt.md)
 * [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)

@@ -25,7 +25,6 @@
 * [gitaly-latency.md](gitaly-latency.md)
 * [gitaly-permission-denied.md](gitaly-permission-denied.md)
 * [gitaly-profiling.md](gitaly-profiling.md)
-* [gitaly-pubsub.md](gitaly-pubsub.md)
 * [gitaly-rate-limiting.md](gitaly-rate-limiting.md)
 * [gitaly-token-rotation.md](gitaly-token-rotation.md)
 * [gitaly-unusual-activity.md](gitaly-unusual-activity.md)
