@@ -169,7 +169,7 @@ groups:
       title: |
         Redis replication not working for {{ range query "gitlab:redis_disconnected_slaves > 1" }}{{ .Labels.fqdn }}{{ end }}
         Possible masters are {{ range query "gitlab:redis_master" }}{{ .Labels.fqdn }}{{ end }}.
-  - alert: SentryLossOfRedundancy
+  - alert: SentinelLossOfRedundancy
     expr: |
       (
               sum by (environment, tier, type, stage, shard) (namedprocess_namegroup_num_procs{groupname=~"redis-sentinel.*"})
