@@ -39,21 +39,36 @@ ansible script will make changes.
 The Chatops bot can list the ansible playbooks available to run in the
 [deploy-tooling project](https://ops.gitlab.net/gitlab-com/gl-infra/deploy-tooling).
 
-An example on how to run the `hostname` command on the `base-fe-we-pages` chef
-role systems in staging:
+The general form of the command is:
+```
+/chatops run deploycmd CMD_NAME BASE_ROLE_NAME [--ENVIRONMENT] [--skip-haproxy] [--no-check]
+```
+
+where 
+* CMD_NAME is a file from https://ops.gitlab.net/gitlab-com/gl-infra/deploy-tooling/-/tree/master/cmds
+    (without the .yml extension)
+* BASE_ROLE_NAME is the name of the chef role to operate on *without* the 
+    environment prefix, and with underscores replacing hyphens, e.g. base_fe_git
+* ENVIRONMENT is optional, defaulting to staging.  You can choose from
+    production, dr, canary, or pre, e.g. `--production`
+* If --skip-haproxy is included, do *not* drain/add nodes from haproxy around
+    running the command.  Otherwise the drain/add will occur
+* --no-check is required to actually run commands; without this, ansible will
+     operate in `dry-run` mode and take no active/destructive actions
+
+### Examples:
+To run the `hostname` command on the `base-fe-we-pages` chef role systems in staging:
 ```
 /chatops run deploycmd hostname base_fe_web_pages --skip-haproxy
 ```
 This will run the `hostname` command on the staging nodes with the role
-`base-fe-web-pages` and skip any haproxy steps. This specific command will be
+`base-fe-web-pages` and skip the haproxy drain/add. This specific command will be
 a dry-run with no changes made.
 
-Take note that you will need to convert role dashes into underscores.
-
-Another example:
+This command will run hostname on the `base-fe-web-pages` nodes in production
+and will do the graceful haproxy removal and re-addition. The
+`--no-check` flag will allow this command to actually make changes.
 ```
 /chatops run deploycmd hostname base_fe_web_pages --no-check --production
 ```
-This command will run hostname on the `base-fe-web-pages` nodes in production
-and not skip the graceful haproxy removal and re-addition steps. The
-`--no-check` flag will allow this command to actually make changes.
+
