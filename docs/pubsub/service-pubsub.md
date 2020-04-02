@@ -15,7 +15,6 @@
 ## Troubleshooting Pointers
 
 * [../gitaly/find-project-from-hashed-storage.md](../gitaly/find-project-from-hashed-storage.md)
-* [../gitaly/gitaly-pubsub.md](../gitaly/gitaly-pubsub.md)
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
 * [../patroni/gitlab-com-wale-backups.md](../patroni/gitlab-com-wale-backups.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)

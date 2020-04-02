@@ -1,5 +1,5 @@
 groups:
-- name: pubsubbeats.rules
+- name: logging.rules
   rules:
     - alert: TooManyPubsubbeatWarnings
       expr: rate(pubsubbeat_warnings_total[5m]) > 0.5
@@ -42,3 +42,38 @@ groups:
           pubsubbeat internal metric is reporting logs being dropped by the cluster.
           Consider checking /var/log/pubsubbeat/current on the affected
           host and see what's the cause of the errors. One potential source of the problem are conflicting mappings in the index.
+
+    - alert: PubSubSendRateFalling
+      expr: |
+        deriv(
+          sum without (fqdn,instance,plugin_id,stage) (
+            rate(fluentd_output_status_emit_count{type="cloud_pubsub"}[15m])
+          )[15m:]
+        ) < -2
+      for: 5m
+      labels:
+        severity: s3
+        alert_type: cause
+      annotations:
+        description: >
+          Logs send rate is lower than usual.
+        runbook: logging/doc/troubleshooting/README.md
+        title: Logs send rate is unusually low
+
+    - alert: LoggingVisibilityDiminished
+      expr: |
+        sum by (subscription_id) (
+          avg_over_time(stackdriver_pubsub_subscription_pubsub_googleapis_com_subscription_oldest_unacked_message_age[30m])
+        ) > 60
+      for: 5m
+      labels:
+        channel: production
+        severity: s4
+        alert_type: cause
+      annotations:
+        description: >
+          PubSub messages are queuing up.  Messages in {{ $labels.subscription_id }} have been
+          un-acked for {{ $value | humanizeDuration }} in the queue for the last 5 minutes.
+          This will lead to Elastic lagging behind with the log data.
+        runbook: logging/doc/troubleshooting/README.md
+        title: PubSub queuing high
