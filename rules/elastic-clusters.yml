@@ -56,3 +56,43 @@ groups:
       description: Monitoring cluster is unhealthy
       runbook: elastic/doc/troubleshooting/README.md
       title: Monitoring cluster is unhealthy
+  - alert: Elasticsearch thread pool queue growing
+    expr: deriv(elasticsearch_thread_pool_queue_count{exported_type!="write"}[5m]) > 0
+    for: 10m
+    labels:
+      severity: s3
+      alert_type: cause
+    annotations:
+      description: Elasticsearch thread pool queue growing
+      runbook: elastic/doc/troubleshooting/README.md
+      title: Elasticsearch thread pool queue growing
+  - alert: Elasticsearch write thread pool queue growing
+    expr: deriv(elasticsearch_thread_pool_queue_count{exported_type="write"}[5m]) > 0
+    for: 5m
+    labels:
+      severity: s3
+      alert_type: cause
+    annotations:
+      description: Elasticsearch thread pool queue growing
+      runbook: elastic/doc/troubleshooting/README.md
+      title: Elasticsearch thread pool queue growing
+  - alert: Elasticsearch thread pool rejections growing
+    expr: deriv(elasticsearch_thread_pool_rejected_count{exported_type!="write"}[5m]) > 0
+    for: 5m
+    labels:
+      severity: s3
+      alert_type: cause
+    annotations:
+      description: Elasticsearch thread pool rejections growing
+      runbook: elastic/doc/troubleshooting/README.md
+      title: Elasticsearch thread pool rejections growing
+  - alert: Elasticsearch write thread pool rejections growing
+    expr: deriv(elasticsearch_thread_pool_rejected_count{exported_type="write"}[5m]) > 0
+    for: 3m
+    labels:
+      severity: s3
+      alert_type: cause
+    annotations:
+      description: Elasticsearch thread pool rejections growing
+      runbook: elastic/doc/troubleshooting/README.md
+      title: Elasticsearch thread pool rejections growing
