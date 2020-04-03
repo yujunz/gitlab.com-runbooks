@@ -146,6 +146,15 @@ groups:
     labels:
       component: 'elastic_disk_space'
     expr: >
+      avg by (type, tier, stage, environment) (
+        (elasticsearch_filesystem_data_size_bytes - elasticsearch_filesystem_data_free_bytes) / elasticsearch_filesystem_data_size_bytes
+      )
+
+  # type: elasticsearch, component: elastic_single_node_disk_space
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'elastic_single_node_disk_space'
+    expr: >
       max by (type, tier, stage, environment) (
         (elasticsearch_filesystem_data_size_bytes - elasticsearch_filesystem_data_free_bytes) / elasticsearch_filesystem_data_size_bytes
       )
