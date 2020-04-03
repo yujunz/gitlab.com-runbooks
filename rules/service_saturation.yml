@@ -168,6 +168,15 @@ groups:
         elasticsearch_jvm_memory_used_bytes{area="heap"} / elasticsearch_jvm_memory_max_bytes{area="heap"}
       )
 
+  # type: elasticsearch, component: elastic_thread_pools
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: 'elastic_thread_pools'
+    expr: >
+      max by (type, tier, stage, environment) (
+        (elasticsearch_thread_pool_active_count / elasticsearch_thread_pool_threads_count) and elasticsearch_thread_pool_threads_count != 0
+      )
+
   # type: redis/redis cache, component: single_threaded_cpu
   - record: gitlab_component_saturation:ratio
     labels:

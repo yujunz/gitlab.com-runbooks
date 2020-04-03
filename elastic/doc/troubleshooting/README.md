@@ -25,6 +25,7 @@
       - [shards too big](#shards-too-big)
   - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm)
     - [Failure to move an index from a hot node to a warm node](#failure-to-move-an-index-from-a-hot-node-to-a-warm-node)
+  - [Saturation response](#saturation-response)
 - [Failover and Recovery procedures](#failover-and-recovery-procedures)
   - [Elastic](#elastic-1)
     - [delete an index](#delete-an-index)
@@ -208,6 +209,10 @@ In order to fix:
 - Retry ILM steps
 - Once the cluster is back in a healthy state, adjust ILM policy or resize the cluster
 
+## Saturation response
+
+Usually, our response to the following alerts is to consider scaling the cluster
+out.
 
 # Failover and Recovery procedures #
 

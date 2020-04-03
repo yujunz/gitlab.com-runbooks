@@ -289,12 +289,25 @@ local DETAILS = {
   elastic_jvm_heap_memory: {
     title: 'JVM Heap Utilization per Node',
     description: |||
-      JVM heap memory utilizationper node.
+      JVM heap memory utilization per node.
     |||,
     query: |||
       elasticsearch_jvm_memory_used_bytes{area="heap", %(selector)s} / elasticsearch_jvm_memory_max_bytes{area="heap", %(selector)s}
     |||,
     legendFormat: '{{ name }}',
+  },
+
+  elastic_thread_pools: {
+    title: 'Thread pool utilization',
+    description: |||
+      Saturation of each thread pool on each node.
+    |||,
+    query: |||
+      max by (type, tier, stage, environment, name, exported_type) (
+        (elasticsearch_thread_pool_active_count / elasticsearch_thread_pool_threads_count) and elasticsearch_thread_pool_threads_count != 0
+      )
+    |||,
+    legendFormat: '{{ name }} / {{ exported_type }}',
   },
 
   open_fds: {

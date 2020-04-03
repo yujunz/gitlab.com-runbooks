@@ -42,5 +42,6 @@ local customQuery = metricsCatalog.customQuery;
     'elastic_disk_space',
     'elastic_single_node_disk_space',
     'elastic_jvm_heap_memory',
+    'elastic_thread_pools',
   ],
 }
