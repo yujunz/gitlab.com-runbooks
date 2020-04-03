@@ -2,21 +2,13 @@
 
 ## Procedure
 
-Each step below is a checkpoint for which an Merge Request should exist and is a stopping
-point to allow one to breath before proceeding to the next step.
-
-There is no rollback procedure for the API.  Only node pools can be reversed,
-but this would require a lot of mangling in terraform and is therefore not
-documented.  All cluster operations should be tested using ephemeral
-environments prior to performing on production.
-
-The upgrade procedure should otherwise be considered safe and should not result
-in any downtime on any running services.  One can view available GKE versions by
-viewing the latest updates from the [GKE Release Notes]:
+Each step below is a checkpoint for which an Merge Request should exist and is a
+stopping point to allow one to breath before proceeding to the next step.
 
 ### Step 0
 
-* Copy and paste the below procedure into a Change Request
+* Copy and paste the below procedure into a Change Request (summary through
+  rollback procedure)
   * https://gitlab.com/gitlab-com/gl-infra/production/issues/new?issuable_template=change_c4
 * Fill out the necessary details of the Change Request following our [Change
   Management Guidelines]
@@ -24,6 +16,10 @@ viewing the latest updates from the [GKE Release Notes]:
   that step
 * Modify `<VERSION>` with the desired version we will be upgrading the GKE
   cluster to
+
+### Summary
+
+To upgrade our GKE Cluster to `<VERSION>`
 
 ### Step 1
 
@@ -39,7 +35,7 @@ viewing the latest updates from the [GKE Release Notes]:
 * [ ] change `kubernetes_version` to `<VERSION>` `<Merge Request>`
   * tf plan will indicate only _one_ change for the cluster configuration option
     `min_master_version`
-* [ ] execute a terraform apply - This is roughly a 15 minute operation, so
+* [ ] execute a terraform apply - This is roughly a 20 minute operation, so
   monitor the following:
 * [ ] watch the following from
   `console-01-sv-gprd.c.gitlab-production.internal`:
@@ -65,12 +61,14 @@ viewing the latest updates from the [GKE Release Notes]:
   * tf plan will indicate _two_ changes for that node pool
     * setting `auto_upgrade` to `false`
     * setting `version` to that of the above
-  * [ ] tf apply will perform an upgrade of the node pool
-    * the upgrade will be performed 1 node at a time
-    * :warning: terraform has a hard coded timeout for 10 minutes for this
-      operation, though the operation will progress forward.
-  * [ ] watch the following from
-    `console-01-sv-gprd.c.gitlab-production.internal`:
+* [ ] tf apply will perform an upgrade of the node pool
+  * the upgrade will be performed 1 node at a time, and 1 node pool at a time
+  * :warning: terraform has a hard coded timeout for 10 minutes for this
+    operation, though the operation will progress forward.  Note that if a tf
+    apply timesout, and we've not reached all node pools, another `apply` must
+    be run.
+  * [ ] This is a lengthy operation (5 minutes per node) , so watch the
+    following from `console-01-sv-gprd.c.gitlab-production.internal`:
     * `watch gcloud container clusters list`
     * `watch -n 5 kubectl get nodes`
     * `watch -n 5 kubectl get pods -o wide`
@@ -85,6 +83,18 @@ viewing the latest updates from the [GKE Release Notes]:
     matches above
   * [ ] `kubectl get nodes` - all nodes should be running the same version as
     noted above
+
+### Rollback Procedure
+
+There is no rollback procedure for the API.  Only node pools can be reversed,
+but this would require a lot of mangling in terraform and is therefore not
+documented.  All cluster operations should be tested using ephemeral
+environments prior to performing on production.
+
+The upgrade procedure should otherwise be considered safe and should not result
+in any downtime on any running services.  One can view available GKE versions by
+viewing the latest updates from the [GKE Release Notes]:
+
 
 ## Reasons Behind Certain Changes
 
