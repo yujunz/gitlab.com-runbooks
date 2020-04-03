@@ -215,6 +215,22 @@ local DETAILS = {
     legendFormat: '{{ name }}',
   },
 
+  elastic_single_node_disk_space: {
+    title: 'Disk Utilization per Device per Node',
+    description: |||
+      Disk utilization per device per node.
+    |||,
+    query: |||
+      max(
+        (
+          (elasticsearch_filesystem_data_size_bytes{%(selector)s} - elasticsearch_filesystem_data_free_bytes{%(selector)s})
+          / elasticsearch_filesystem_data_size_bytes{%(selector)s}
+        )
+      ) by (name)
+    |||,
+    legendFormat: '{{ name }}',
+  },
+
   disk_sustained_write_iops: {
     title: 'Disk Sustained Write IOPS Saturation per Node',
     description: |||
