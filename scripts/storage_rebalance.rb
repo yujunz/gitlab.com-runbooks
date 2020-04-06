@@ -5,33 +5,23 @@
 
 # -*- mode: ruby -*-
 
-# Execution:
+# A little local setup:
 #
-#    sudo su - root
-#    mkdir -p /var/opt/gitlab/scripts
-#    cd /var/opt/gitlab/scripts
-#    curl --silent --remote-name https://gitlab.com/gitlab-com/runbooks/raw/master/scripts/storage_rebalance.rb
-#    chmod +x storage_rebalance.rb
-#    export PRIVATE_TOKEN=CHANGEME
+#    export GITLAB_ADMIN_API_PRIVATE_TOKEN=CHANGEME
+#    mkdir -p scripts/logs
 #
 # Staging example:
 #
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file01 --target-file-server=nfs-file09 --staging --count
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file01 --target-file-server=nfs-file09 --staging --largest
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file01 --target-file-server=nfs-file09 --staging --wait=10800 --max-failures=1 --validate-size --validate-checksum --refresh-stats
+#    bundle exec scripts/storage_rebalance.rb nfs-file01 nfs-file09 --staging --limit=1 --max-failures=1 --verbose --dry-run=yes
 #
 # Production examples:
 #
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file36 --target-file-server=nfs-file46 --wait=10800 --max-failures=1 --validate-size --validate-checksum --refresh-stats
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file36 --target-file-server=nfs-file46 --count
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file25 --target-file-server=nfs-file36
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file34 --target-file-server=nfs-file42 --project=13007013 | tee /var/opt/gitlab/scripts/logs/nfs-file42.migration.$(date +%Y-%m-%d_%H%M).log
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=yes --current-file-server=nfs-file34 --target-file-server=nfs-file42 | tee /var/opt/gitlab/scripts/logs/nfs-file42.migration.$(date +%Y-%m-%d_%H%M).log
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verbose --dry-run=no --move-amount=10 --current-file-server=nfs-file27 --target-file-server=nfs-file38 --skip=9271929 | tee /var/opt/gitlab/scripts/logs/nfs-file38.migration.$(date +%Y-%m-%d_%H%M).log
-#
-# Verify the migration status of previously logged project migrations:
-#
-#    gitlab-rails runner /var/opt/gitlab/scripts/storage_rebalance.rb --verify-only
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes --wait=10800 --max-failures=1
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes --count
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes --projects=13007013 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=no --move-amount=10 --skip=9271929 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
 #
 # Logs may be reviewed:
 #
@@ -46,13 +36,8 @@ require 'io/console'
 require 'logger'
 require 'net/http'
 require 'optparse'
+require 'ostruct'
 require 'uri'
-
-begin
-  require '/opt/gitlab/embedded/service/gitlab-rails/config/environment.rb'
-rescue LoadError => e
-  warn "WARNING: #{e.message}"
-end
 
 # Storage module
 module Storage
@@ -61,23 +46,63 @@ module Storage
     LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
     MIGRATION_TIMESTAMP_FORMAT = '%Y-%m-%d_%H%M%S'
     DEFAULT_NODE_CONFIG = {}.freeze
+    PROJECT_FIELDS = %i[
+      id name full_path disk_path repository_storage destination_repository_storage
+      size repository_size_bytes
+    ].freeze
+    INTEGER_PATTERN = /\A\d+\Z/.freeze
+    SEPARATOR = ('=' * 72).freeze
+    PROGRESS_BRAILLES = [
+      "\u28F7", "\u28EF", "\u28DF", "\u287F", "\u28BF", "\u28FB", "\u28FD", "\u28FE"
+    ].freeze
+    PROGRESS_FULL_BRAILLE = "\u28FF"
+    SECONDS_PER_SPIN = 5
+    DEFAULT_TIMEOUT = 60 * 5
+
+    # Config module
+    module Config
+      DEFAULTS = {
+        dry_run: true,
+        log_level: Logger::INFO,
+        env: :production,
+        token_env_variable_name: 'GITLAB_ADMIN_API_PRIVATE_TOKEN',
+        password_prompt: 'Enter Gitlab admin API private token: ',
+        console_nodes: {
+          staging: 'console-01-sv-gstg.c.gitlab-staging-1.internal',
+          production: 'console-01-sv-gprd.c.gitlab-production.internal'
+        },
+        api_endpoints: {
+          staging: 'https://staging.gitlab.com/api/v4',
+          production: 'https://gitlab.com/api/v4'
+        },
+        projects_repository_commits_api_uri: 'projects/%<project_id>s/repository/commits',
+        projects_repository_api_uri: 'projects/%<project_id>s/repository',
+        projects_api_uri: 'projects/%<project_id>s',
+        projects_statistics_api_uri: 'projects/%<project_id>s/statistics',
+        project_selector_script_path: '/var/opt/gitlab/scripts/storage_project_selector.rb',
+        project_selector_command: 'sudo gitlab-rails runner ' \
+          '%<project_selector_script_path>s ' \
+          '%<source_shard>s %<destination_shard>s',
+        ssh_command: 'ssh %<hostname>s -- %<command>s',
+        move_amount: 0,
+        repository_storage_update_timeout: 10800,
+        validate_commits: false,
+        max_failures: 3,
+        limit: -1,
+        projects: [],
+        excluded_projects: [],
+        logdir_path: File.expand_path(File.join(__dir__, 'storage_migrations')),
+        migration_logfile_name: 'migrated_projects_%{date}.log'
+      }.freeze
+    end
   end
 
-  def self.get_node_configuration
-    return ::Gitlab.config.repositories.storages.dup if defined? ::Gitlab
-
-    ::RebalanceScript::DEFAULT_NODE_CONFIG
-  end
-
-  def self.node_configuration
-    @node_configuration ||= get_node_configuration
-  end
-
+  class UserError < StandardError; end
+  class Timeout < StandardError; end
   class NoCommits < StandardError; end
   class MigrationTimeout < StandardError; end
   class CommitsMismatch < StandardError; end
-  class ChecksumsMismatch < StandardError; end
-  class RepositorySizesMismatch < StandardError; end
+  class ShardMismatch < StandardError; end
 end
 
 # Re-open the Storage module to add the Logging module
@@ -100,6 +125,18 @@ module Storage
       @log ||= initialize_log
     end
 
+    def with_log_level(log_level = Logger::INFO, &block)
+      sv_log_level = log.level
+      log.level = log_level
+      block.call
+    ensure
+      log.level = sv_log_level
+    end
+
+    def log_separator
+      log.info(::Storage::RebalanceScript::SEPARATOR)
+    end
+
     def dry_run_notice
       log.info '[Dry-run] This is only a dry-run -- write operations will be logged but not ' \
         'executed'
@@ -110,6 +147,37 @@ module Storage
       cmd
     end
 
+    PRIVATE_TOKEN_HEADER_PATTERN = /Private-Token/i.freeze
+
+    def get_request_headers(request)
+      request.instance_variable_get('@header'.to_sym) || []
+    end
+
+    def debug_request(request)
+      headers = get_request_headers(request)
+      log.debug "[The following curl command is for external diagnostic purposes only:]"
+      curl_command = "curl --verbose --silent --compressed ".dup
+      curl_command = curl_command.concat("--request #{request.method.to_s.upcase} ") if request.method != :get
+      curl_command = curl_command.concat("'#{request.uri}'")
+      header_arguments = headers.collect do |field, values|
+        if PRIVATE_TOKEN_HEADER_PATTERN.match?(field)
+          "--header \"#{field}: ${#{options[:token_env_variable_name]}}\""
+        else
+          "--header \"#{field}: #{values.join(',')}\""
+        end
+      end
+      unless header_arguments.empty?
+        curl_command = curl_command.concat(" ")
+        curl_command = curl_command.concat(header_arguments.join(' '))
+      end
+      unless request.body.nil?
+        body = request.body
+        body = body.to_json if body.respond_to?(:to_json)
+        curl_command = curl_command.concat(" --data '#{body}'")
+      end
+      log.debug curl_command
+    end
+
     def debug_lines(lines)
       return if lines.empty?
 
@@ -117,48 +185,25 @@ module Storage
         lines.each { |line| log.debug line unless line.nil? || line.empty? }
       end
     end
-  end
-end
 
-# Re-open the Storage module to add the Config module
-module Storage
-  # RebalanceScript module
-  module RebalanceScript
-    # Config module
-    module Config
-      DEFAULTS = {
-        dry_run: true,
-        log_level: Logger::INFO,
-        api_endpoints: {
-          staging: 'https://staging.gitlab.com/api/v4/projects/%{project_id}/repository/commits',
-          production: 'https://gitlab.com/api/v4/projects/%{project_id}/repository/commits'
-        },
-        move_amount: 0,
-        repository_storage_update_timeout: 10800,
-        long_query_timeout: 600000,
-        max_failures: 3,
-        clauses: {
-          delete_error: nil,
-          pending_delete: false,
-          project_statistics: { commit_count: 1..Float::INFINITY },
-          mirror: false
-        },
-        count: false,
-        print_largest: false,
-        verify_only: false,
-        validate_checksum: false,
-        validate_size: false,
-        list_nodes: false,
-        projects: [],
-        excluded_projects: [],
-        refresh_statistics: false,
-        include_mirrors: false,
-        stats: [:commit_count, :storage_size, :repository_size],
-        group: nil,
-        env: :production,
-        logdir_path: '/var/log/gitlab/storage_migrations',
-        migration_logfile_name: 'migrated_projects_%{date}.log'
-      }.freeze
+    def init_project_migration_logging
+      fields = { date: Time.now.strftime(::Storage::RebalanceScript::MIGRATION_TIMESTAMP_FORMAT) }
+      logfile_name = format(options[:migration_logfile_name], **fields)
+      logdir_path = options[:logdir_path]
+      FileUtils.mkdir_p logdir_path
+      logfile_path = File.join(logdir_path, logfile_name)
+      FileUtils.touch logfile_path
+      logger = Logger.new(logfile_path, level: Logger::INFO)
+      logger.formatter = proc { |level, t, name, msg| "#{msg}\n" }
+      log.debug "Migration log file path: #{logfile_path}"
+      logger
+    rescue StandardError => e
+      log.error "Failed to configure logging: #{e.message}"
+      exit
+    end
+
+    def migration_log
+      @migration_log ||= init_project_migration_logging
     end
   end
 end
@@ -168,23 +213,113 @@ module Storage
   # Helper methods
   module Helpers
     ISO8601_FRACTIONAL_SECONDS_LENGTH = 3
+    BYTES_CONVERSIONS = {
+      'B': 1024,
+      'KB': 1024 * 1024,
+      'MB': 1024 * 1024 * 1024,
+      'GB': 1024 * 1024 * 1024 * 1024,
+      'TB': 1024 * 1024 * 1024 * 1024 * 1024
+    }.freeze
 
-    def gitaly_address(storage_node_name)
-      ::Storage.node_configuration.fetch(storage_node_name, {}).fetch('gitaly_address') do
-        raise "Missing gitlab-rails configuration or entry: #{storage_node_name}"
+    def execute_remote_command(hostname, command)
+      execute_command(format(options[:ssh_command], hostname: hostname, command: command))
+    end
+
+    def execute_command(command)
+      log.debug "Executing command: #{command}"
+      `#{command}`.strip
+    end
+
+    def to_filesize(bytes)
+      BYTES_CONVERSIONS.each_pair do |denomination, threshold|
+        return "#{(bytes.to_f / (threshold / 1024)).round(2)} #{denomination}" if bytes < threshold
       end
     end
 
-    def largest_denomination(bytes)
-      if bytes.to_gb.positive?
-        "#{bytes.to_gb} GB"
-      elsif bytes.to_mb.positive?
-        "#{bytes.to_mb} MB"
-      elsif bytes.to_kb.positive?
-        "#{bytes.to_kb} KB"
-      else
-        "#{bytes} Bytes"
+    def password_prompt(prompt = 'Enter password: ')
+      $stdout.write(prompt)
+      $stdout.flush
+      $stdin.noecho(&:gets).chomp
+    ensure
+      $stdin.echo = true
+      # $stdout.flush
+      $stdout.ioflush
+      $stdout.write "\r" + (' ' * prompt.length) + "\n"
+      $stdout.flush
+    end
+
+    def set_api_token_or_else(&on_failure)
+      prompt = options[:password_prompt]
+      env_variable_name = options[:token_env_variable_name]
+      token = ENV.fetch(env_variable_name, nil)
+      if token.nil? || token.empty?
+        log.warn "No #{env_variable_name} variable set in environment"
+        token = password_prompt(prompt)
+        if token.nil? || token.empty?
+          raise 'Failed to get token' unless block_given?
+
+          on_failure.call
+        end
       end
+      gitlab_api_client.required_headers['Private-Token'] = token
+    end
+
+    def console_node_hostname
+      console_nodes = options[:console_nodes]
+      environment = options[:env]
+      fqdn = console_nodes.include?(environment) ? console_nodes[environment] : console_nodes[:production]
+      abort 'No console node is configured' if fqdn.nil? || fqdn.empty?
+
+      fqdn
+    end
+
+    def get_api_url(resource_path)
+      raise 'No such resource path is configured' unless options.include?(resource_path)
+
+      endpoints = options[:api_endpoints]
+      environment = options[:env]
+      endpoint = endpoints.include?(environment) ? endpoints[environment] : endpoints[:production]
+      abort 'No api endpoint url is configured' if endpoint.nil? || endpoint.empty?
+
+      [endpoint, options[resource_path]].join('/')
+    end
+
+    def all_projects_specify_destination?(projects)
+      return false if projects.empty? || !projects.respond_to?(:all?)
+
+      projects.all? { |project| project.include?(:destination_repository_storage) }
+    end
+
+    def loop_with_progress_until(timeout = ::Storage::RebalanceScript::DEFAULT_TIMEOUT, &block)
+      progress_character = ::Storage::RebalanceScript::PROGRESS_FULL_BRAILLE
+      spinner_characters = ::Storage::RebalanceScript::PROGRESS_BRAILLES
+      seconds_per_spin = ::Storage::RebalanceScript::SECONDS_PER_SPIN
+      spinner_pause_interval_seconds = 1 / spinner_characters.length.to_f
+      bar_characters = ''
+      iteration = 0
+      start = Time.now.to_i
+      loop do
+        break if block_given? && block.call == true
+
+        elapsed = Time.now.to_i - start
+        raise Timeout, "Timed out after #{elapsed} seconds" if elapsed >= timeout
+
+        seconds_per_spin.times do
+          spinner_characters.each do |character|
+            $stdout.write("\r#{bar_characters}#{character}")
+            $stdout.flush
+            sleep(spinner_pause_interval_seconds)
+          end
+        end
+        iteration += 1
+        bar_characters = progress_character * iteration
+        $stdout.write("\r#{bar_characters}")
+        $stdout.write("\n") if (iteration % 80).zero?
+        $stdout.flush
+      end
+    ensure
+      $stdout.write("\n")
+      $stdout.flush
     end
   end
 end
@@ -205,39 +340,33 @@ module Storage
       end
 
       def define_options
-        @parser.banner = "Usage: #{$PROGRAM_NAME} [options] --current-file-server <servername> " \
-          "--target-file-server <servername>"
+        @parser.banner = "Usage: #{$PROGRAM_NAME} [options] <source_shard> <destination_shard>"
         @parser.separator ''
         @parser.separator 'Options:'
         define_head
         define_dry_run_option
         define_projects_option
+        define_json_option
         define_csv_option
         define_skip_option
-        define_refresh_stats_option
-        define_count_option
-        define_print_largest_option
         define_move_amount_option
         define_wait_option
-        define_verify_only_option
-        define_validate_checksum_option
-        define_validate_size_option
+        define_validate_commits_option
         define_max_failures_option
-        define_group_option
-        define_include_mirrors_option
+        define_limit_option
         define_env_option
         define_verbose_option
         define_tail
       end
 
       def define_head
-        description = 'Source storage node server'
-        @parser.on_head('--current-file-server=<SERVERNAME>', description) do |server|
-          @options[:current_file_server] = server
+        description = 'Name of the source gitaly storage shard server'
+        @parser.on_head('<source_shard>', description) do |server|
+          @options[:source_shard] = server
         end
-        description = 'Destination storage node server'
-        @parser.on_head('--target-file-server=<SERVERNAME>', description) do |server|
-          @options[:target_file_server] = server
+        description = 'Name of the destination gitaly storage shard server'
+        @parser.on_head('<destination_shard>', description) do |server|
+          @options[:destination_shard] = server
         end
       end
 
@@ -250,15 +379,35 @@ module Storage
 
       def define_projects_option
         description = 'Select specific projects to migrate'
-        @parser.on('--projects=<project_id,...>', Array, description) do |project_identifiers|
+        @parser.on('--projects=<project_id,...>', Array, description) do |projects|
           @options[:projects] ||= []
-          unless project_identifiers.respond_to?(:all?) &&
-              project_identifiers.all? { |s| resembles_integer? s }
-            message = "Argument given for --projects must be a list of one or more integers"
+          unless projects.respond_to?(:all?) && projects.all? { |s| resembles_integer? s }
+            message = 'Argument given for --projects must be a list of one or more integers'
             raise OptionParser::InvalidArgument, message
           end
 
-          @options[:projects].concat project_identifiers.map(&:to_i).delete_if { |i| i <= 0 }
+          projects.each do |project|
+            if (project_id = project.to_i).positive?
+              @options[:projects].push({ id: project_id })
+            end
+          end
+        end
+      end
+
+      def define_json_option
+        description = 'Absolute path to JSON file enumerating projects ids'
+        @parser.on('--json=<file_path>', description) do |file_path|
+          unless File.exist? file_path
+            message = 'Argument given for --json must be a path to an existing file'
+            raise OptionParser::InvalidArgument, message
+          end
+
+          # TODO: Refactor to a helper method
+          @options[:projects] ||= []
+          projects = JSON.parse(IO.read(file_path))['projects']
+          projects.each do |project|
+            @options[:projects].push(project.transform_keys!(&:to_sym))
+          end
         end
       end
 
@@ -266,24 +415,21 @@ module Storage
         description = 'Absolute path to CSV file enumerating projects ids'
         @parser.on('--csv=<file_path>', description) do |file_path|
           unless File.exist? file_path
-            message = "Argument given for --csv must be an absolute path to an existing file"
+            message = 'Argument given for --csv must be an absolute path to an existing file'
             raise OptionParser::InvalidArgument, message
           end
 
+          # TODO: Refactor to a helper method
           @options[:projects] ||= []
-          begin
-            project_identifiers = IO.readlines(file_path, chomp: true)
-            if project_identifiers.respond_to?(:all?) &&
-                project_identifiers.all? { |s| resembles_integer? s }
-              @options[:projects].concat project_identifiers.map(&:to_i).delete_if { |i| i <= 0 }
-            else
-              message = "Argument given for --csv must be an absolute path to a file containing " \
-                "a list of one or more integers"
-              raise OptionParser::InvalidArgument, message
+          projects = CSV.new(file_path).to_a
+          projects.collect do |project_values|
+            project = {}
+            project_values.each_with_index do |value, i|
+              project[::Storage::RebalanceScript::PROJECT_FIELDS[i]] = value
             end
-          rescue StandardError => e
-            abort e.message
+            project
           end
+          @options[:projects].concat(projects)
         end
       end
 
@@ -293,19 +439,12 @@ module Storage
           @options[:excluded_projects] ||= []
           if project_identifiers.respond_to?(:all?) &&
               project_identifiers.all? { |s| resembles_integer? s }
-            positive_numbers = project_identifiers.map(&:to_i).delete_if { |i| i <= 0 }
+            positive_numbers = project_identifiers.map(&:to_i).delete_if { |i| !i.positive? }
             @options[:excluded_projects].concat(positive_numbers)
           else
             message = 'Argument given for --skip must be a list of one or more integers'
             raise OptionParser::InvalidArgument, message
           end
-        end
-      end
-
-      def define_refresh_stats_option
-        description = 'Refresh all project statistics; WARNING: ignores --dry-run'
-        @parser.on('-r', '--refresh-stats', description) do |refresh_statistics|
-          @options[:refresh_statistics] = true
         end
       end
 
@@ -315,17 +454,10 @@ module Storage
         end
       end
 
-      def define_print_largest_option
-        description = 'Find the largest project repository on current file server'
-        @parser.on('-L', '--print-largest', description) do |print_largest|
-          @options[:print_largest] = true
-        end
-      end
-
       def define_move_amount_option
         description = "Gigabytes of repo data to move; default: #{@options[:move_amount]}, or " \
           'largest single repo if 0'
-        @parser.on('-m', '--move-amount=<N>', Integer, description) do |move_amount|
+        @parser.on('-m', '--move-amount=<n>', Integer, description) do |move_amount|
           abort 'Size too large' if move_amount > 16_000
           # Convert given gigabytes to bytes
           @options[:move_amount] = (move_amount * 1024 * 1024 * 1024)
@@ -335,42 +467,29 @@ module Storage
       def define_wait_option
         description = "Timeout in seconds for migration completion; default: " \
           "#{@options[:repository_storage_update_timeout]}"
-        @parser.on('-w', '--wait=<N>', Integer, description) do |wait|
+        @parser.on('-w', '--wait=<n>', Integer, description) do |wait|
           @options[:repository_storage_update_timeout] = wait
-        end
-      end
-
-      def define_verify_only_option
-        description = 'Verify that projects have successfully migrated'
-        @parser.on('-V', '--verify-only', description) do |verify_only|
-          @options[:verify_only] = true
-        end
-      end
-
-      def define_validate_checksum_option
-        description = 'Validate project checksum is constant post-migration'
-        @parser.on('-C', '--validate-checksum', description) do |checksum|
-          @options[:validate_checksum] = true
-        end
-      end
-
-      def define_validate_size_option
-        description = 'Validate project repository size is constant post-migration'
-        @parser.on('-S', '--validate-size', description) do |checksum|
-          @options[:validate_size] = true
         end
       end
 
       def define_max_failures_option
         description = "Maximum failed migrations; default: #{@options[:max_failures]}"
-        @parser.on('-f', '--max-failures=<N>', Integer, description) do |failures|
+        @parser.on('-f', '--max-failures=<n>', Integer, description) do |failures|
           @options[:max_failures] = failures
         end
       end
 
-      def define_group_option
-        @parser.on('--group=<GROUPNAME>', String, 'Filter projects by group') do |group|
-          @options[:group] = group
+      def define_validate_commits_option
+        description = 'Validate project commits are equal post-migration'
+        @parser.on('-c', '--validate-commits', description) do |checksum|
+          @options[:validate_commits] = true
+        end
+      end
+
+      def define_limit_option
+        description = "Maximum migrations; default: #{@options[:limit]}"
+        @parser.on('-l', '--limit=<n>', Integer, description) do |limit|
+          @options[:limit] = limit
         end
       end
 
@@ -399,35 +518,30 @@ module Storage
         end
       end
 
-      def demand(arg)
-        return unless @options[arg].nil?
-
-        raise OptionParser::MissingArgument, 'Required arg: --' + arg.to_s.sub('_', '-')
-      end
-
       def resembles_integer?(obj)
-        obj.to_s.match?(/\A\d+\Z/)
+        ::Storage::RebalanceScript::INTEGER_PATTERN.match?(obj.to_s)
       end
     end
     # class OptionsParser
 
-    def password_prompt(prompt = 'Enter private API token: ')
-      $stdout.write(prompt)
-      $stdout.flush
-      $stdin.noecho(&:gets).chomp
-    ensure
-      $stdin.echo = true
-      $stdout.write "\r" + (' ' * prompt.length)
-      $stdout.ioflush
+    def demand(options, arg, positional = false)
+      return options[arg] unless options[arg].nil?
+
+      required_arg = positional ? "<#{arg}>" : "--#{arg.to_s.gsub(/_/, '-')}"
+      raise UserError, "Required argument: #{required_arg}"
     end
 
     def parse(args = ARGV, file_path = ARGF)
       opt = OptionsParser.new
       args.push('-?') if args.empty?
-      opt.parser.parse!(opt.parser.order!(args) {})
-      opt.demand(:current_file_server)
-      opt.demand(:target_file_server)
-      opt.options[:projects].concat CSV.new(file_path).to_a unless STDIN.tty? || STDIN.closed?
+      opt.parser.parse!(args)
+      opt.options[:source_shard] = args.shift
+      opt.options[:destination_shard] = args.shift
+      # TODO: Handle with a helper method
+      unless STDIN.tty? || STDIN.closed?
+        projects = CSV.new(file_path).to_a
+        projects.each { |project| opt.options[:projects].push(Project.new(*project)) }
+      end
       opt.options
     rescue OptionParser::InvalidArgument, OptionParser::InvalidOption,
            OptionParser::MissingArgument, OptionParser::NeedlessArgument => e
@@ -442,435 +556,429 @@ module Storage
 end
 # module Storage
 
+# Re-open the Storage module to define the GitLabClient class
+module Storage
+  # Define the GitLabClient class
+  class GitLabClient
+    DEFAULT_RESPONSE = OpenStruct.new(code: 400, body: '{}') unless defined? ::Storage::GitLabClient::DEFAULT_RESPONSE
+    include ::Storage::Logging
+    attr_reader :options
+    attr_accessor :required_headers
+    def initialize(options)
+      @options = options
+      log.level = @options[:log_level]
+      @required_headers = {}
+    end
+
+    def get(url, opts = {})
+      request(Net::HTTP::Get, url, opts)
+    end
+
+    def post(url, opts = {})
+      request(Net::HTTP::Post, url, opts)
+    end
+
+    def put(url, opts = {})
+      request(Net::HTTP::Put, url, opts)
+    end
+
+    private
+
+    def request(klass, url, opts = {})
+      uri = URI(url)
+      parameters = opts.fetch(:parameters, {}).transform_keys(&:to_s).transform_values(&:to_s)
+      uri.query = URI.encode_www_form(parameters) unless parameters.empty?
+      client = Net::HTTP.new(uri.host, uri.port)
+      client.use_ssl = (uri.scheme == 'https')
+      headers = opts.fetch(:headers, {}).merge(required_headers)
+      request = klass.new(uri, headers)
+      invoke(client, request, opts)
+    end
+
+    # rubocop: disable Metrics/AbcSize
+    def invoke(client, request, opts = {})
+      body = opts[:body]
+      request.body = body unless body.nil?
+      debug_request(request)
+
+      response = DEFAULT_RESPONSE
+      result = {}
+      error = nil
+      status = response.code
+      begin
+        response, status = execute(client, request)
+      rescue Errno::ECONNREFUSED => e
+        log.error e.to_s
+        error = e
+      rescue EOFError => e
+        log.error "Encountered EOF reading from network socket"
+        error = e
+      rescue OpenSSL::SSL::SSLError => e
+        log.error "Socket error: #{e} (#{e.class})"
+        error = e
+      rescue Net::ReadTimeout => e
+        log.error "Timed out reading"
+        error = e
+      rescue Net::OpenTimeout => e
+        log.error "Timed out opening connection"
+        error = e
+      rescue Net::HTTPBadResponse => e
+        log.error e.message
+        error = e
+        status = e.response.code.to_i if e.respond_to?(:response)
+      rescue Net::HTTPUnauthorized => e
+        log.error e.message
+        error = e
+        status = e.response.code.to_i if e.respond_to?(:response)
+      rescue Net::HTTPClientException => e
+        log.error e.message
+        error = e
+        status = e.response.code.to_i if e.respond_to?(:response)
+      rescue Net::HTTPClientError => e
+        log.error "Unexpected HTTP client error: #{e.message} (#{e.class})"
+        error = e
+        status = e.response.code.to_i if e.respond_to?(:response)
+      rescue Net::ProtocolError => e
+        log.error "Unexpected HTTP protocol error: #{e.message} (#{e.class})"
+        error = e
+        status = e.response.code.to_i if e.respond_to?(:response)
+      rescue Net::HTTPFatalError => e
+        log.error "Unexpected HTTP fatal error: #{e.message} (#{e.class})"
+        error = e
+      rescue IOError => e
+        log.error "Unexpected IO error: #{e} (#{e.class})"
+        error = e
+      rescue StandardError => e
+        log.error "Unexpected error: #{e} (#{e.class})"
+        log.error e.exception_type if e.respond_to? :exception_type
+        error = e
+      end
+
+      result, error = deserialize(response) if error.nil?
+
+      [result, error, status]
+    end
+    # rubocop: enable Metrics/AbcSize
+
+    def execute(client, request)
+      response = client.request(request)
+      log.debug "Response status code: #{response.code}"
+      response.value
+      [response, response.code.to_i]
+    end
+
+    def deserialize(response)
+      result = nil
+      error = nil
+      begin
+        response_data = response.body
+        result = JSON.parse(response_data)
+      rescue JSON::ParserError => e
+        n = response.body.length
+        message = "Could not parse #{n} bytes of json serialized data from #{uri.path}"
+        if n > 65536
+          log.warn message
+        else
+          log.error message
+          error = e
+        end
+      rescue IOError => e
+        log.error "Unexpected IO error: #{e} (#{e.class})"
+        error = e
+      rescue StandardError => e
+        log.error "Unexpected error: #{e} (#{e.class})"
+        log.error e.exception_type if e.respond_to? :exception_type
+        error = e
+      end
+      [result, error]
+    end
+  end
+end
+
 # Re-open the Storage module to define the Rebalancer class
 module Storage
   # The Rebalancer class
   class Rebalancer
     include ::Storage::Logging
     include ::Storage::Helpers
-    attr_reader :options
+    attr_reader :options, :gitlab_api_client, :migration_errors
     def initialize(options)
       @options = options
+      @gitlab_api_client = Storage::GitLabClient.new(@options)
+      @migration_errors = []
       log.level = @options[:log_level]
     end
 
-    def init_project_migration_logging
-      fields = { date: Time.now.strftime(::Storage::RebalanceScript::MIGRATION_TIMESTAMP_FORMAT) }
-      logfile_name = format(options[:migration_logfile_name], **fields)
-      logdir_path = options[:logdir_path]
-      FileUtils.mkdir_p logdir_path
-      logfile_path = File.join(logdir_path, logfile_name)
-      FileUtils.touch logfile_path
-      logger = Logger.new(logfile_path, level: Logger::INFO)
-      logger.formatter = proc { |level, t, name, msg| "#{msg}\n" }
-      log.debug "Migration log file path: #{logfile_path}"
-      logger
-    rescue StandardError => e
-      log.error "Failed to configure logging: #{e.message}"
-      exit
+    def log_migration(project, destination)
+      log_artifact = {
+        id: project[:id],
+        path: project[:disk_path],
+        source: project[:repository_storage],
+        destination: destination,
+        date: DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
+      }
+      migration_log.info log_artifact.to_json
     end
 
-    def migration_log
-      @migration_log ||= init_project_migration_logging
-    end
+    def get_first_commit(commits)
+      return nil if commits.empty?
 
-    def migration_errors
-      @errors ||= []
+      first_commit = commits.first
+      return nil if first_commit.nil?
+
+      first_commit.transform_keys!(&:to_sym)
+      log.debug "Commits 1 of #{commits.length}:"
+      log.debug { JSON.pretty_generate(first_commit) }
+      first_commit[:id]
     end
 
     def get_commit_id(project_id)
-      endpoints = options[:api_endpoints]
-      environment = options[:env]
-      url = endpoints.include?(environment) ? endpoints[environment] : endpoints[:production]
-      abort "No api endpoint url is configured" if url.nil? || url.empty?
-      url = format(url, project_id: project_id)
-      uri = URI(url)
+      url = format(get_api_url(:projects_repository_commits_api_uri), project_id: project_id)
+      commits, error, status = gitlab_api_client.get(url)
+      raise error unless error.nil?
 
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request['Private-Token'] = options.fetch(:private_token) do
-        abort "A private API token is required."
-      end
+      raise "Invalid response status code: #{status}" unless status == 200
 
-      log.debug "[The following curl command is for external diagnostic purposes only:]"
-      log.debug "curl --verbose --silent '#{url}' --header \"Private-Token: ${PRIVATE_TOKEN}\""
-      response = http.request(request)
+      raise NoCommits, "Failed to get commits for project id #{project_id}" if commits.empty?
 
-      payload = JSON.parse(response.body)
-      log.debug "Response code: #{response.code}"
-      log.debug "Response payload sample: #{JSON.pretty_generate(payload.first)}"
-      log.debug "Total commits: #{payload.length}"
-
-      commit_id = nil
-      if response.code.to_i == 200 && !payload.empty?
-        first_commit = payload.first
-        commit_id = first_commit['id']
-      elsif payload.include? 'message'
-        log.error "Error: #{payload['message']}"
-      end
+      commit_id = get_first_commit(commits)
+      raise NoCommits, "Failed to get a commit id for project id #{project_id}" if commit_id.nil?
 
       commit_id
     end
 
-    def wait_for_repository_storage_update(project)
-      start = Time.now.to_i
-      i = 0
-      timeout = options[:repository_storage_update_timeout]
-      while project.repository_read_only?
-        sleep 1
-        project.reload
-        print '.'
-        i += 1
-        print "\n" if (i % 80).zero?
-        elapsed = Time.now.to_i - start
-        next unless elapsed >= timeout
+    def get_project(project_id)
+      return {} if project_id.nil? || project_id.to_s.empty?
 
-        print "\n"
-        log.warn ""
-        log.warn "Timed out up waiting for project id: #{project.id} to move: #{elapsed} seconds"
-        break
+      url = format(get_api_url(:projects_api_uri), project_id: project_id)
+      project, error, status = gitlab_api_client.get(url, parameters: { statistics: true })
+      raise error unless error.nil?
+
+      raise "Invalid response status code: #{status}" if status != 200
+
+      raise "Failed to get project id: #{project_id}" if project.nil? || project.empty?
+
+      project.transform_keys(&:to_sym)
+    end
+
+    def update_repository_storage(project, destination)
+      url = format(get_api_url(:projects_api_uri), project_id: project[:id])
+      result, error, status = gitlab_api_client.put(url, body: 'repository_storage=' + destination)
+      raise error unless error.nil?
+
+      raise "Invalid response status code: #{status}" unless [200, 204].include?(status)
+
+      raise "Unexpected response: #{result}" unless result['id'] == project[:id]
+
+      result.transform_keys(&:to_sym)
+    end
+
+    def wait_for_repository_storage_update(project)
+      project_id = project[:id]
+      destination = options[:destination_shard] || project[:destination_repository_storage]
+      timeout = options[:repository_storage_update_timeout]
+
+      begin
+        loop_with_progress_until(timeout) do
+          with_log_level(Logger::INFO) do
+            get_project(project_id).fetch(:repository_storage, nil) == destination
+          end
+        end
+      rescue Timeout => e
+        log.warn "Gave up waiting for repository_storage update of project id: #{project_id}: #{e.message}"
       end
-      print "\n"
-      if project.repository_storage == options[:target_file_server]
-        log.info "Success moving project id:#{project.id}"
+    end
+
+    def verify_source(project)
+      return if project[:repository_storage] == options[:source_shard]
+
+      raise ShardMismatch, "Repository for project id: #{project[:id]} is on shard: " \
+        "#{project[:repository_storage]} not #{options[:source_shard]}"
+    end
+
+    def validate_commits(project, commit_id)
+      log.info "Validating project integrity by comparing latest commit " \
+        "identifiers before and after"
+      current_commit_id = get_commit_id(project[:id])
+      log.debug "Original commit id: #{commit_id}, current commit id: " \
+        "#{current_commit_id}"
+      return if commit_id == current_commit_id
+
+      raise CommitsMismatch, "Current commit id #{current_commit_id} " \
+        "does not match original commit id #{commit_id}"
+    end
+
+    def summarize(total)
+      log_separator
+      log.info "Done"
+      if total.positive?
+        if options[:dry_run]
+          log.info "[Dry-run] Would have processed #{to_filesize(total)} of data"
+        else
+          log.info "Processed #{to_filesize(total)} of data"
+        end
+      end
+      return if options[:dry_run]
+
+      log.info "Finished migrating projects from #{options[:source_shard]} to " \
+        "#{options[:destination_shard]}"
+      if migration_errors.empty?
+        log.info "No errors encountered during migration"
       else
-        log.warn "Project id: #{project.id} still reporting incorrect file server"
+        log.error "Encountered #{migration_errors.length} errors:"
+        log.error JSON.pretty_generate(migration_errors)
       end
     end
 
     # rubocop: disable Metrics/AbcSize
     def migrate(project)
-      log.info('=' * 72)
-      log.info "Migrating project id: #{project.id}"
-      log.info "  Size: ~#{largest_denomination(project.statistics.repository_size)}"
-      log.debug "  Name: #{project.name}"
-      log.debug "  Group: #{project.group.name}" unless project.group.nil?
-      log.debug "  Storage: #{project.repository_storage}"
-      log.debug "  Path: #{project.disk_path}"
-      if options[:refresh_statistics]
-        log.debug "Pre-refresh statistics:"
-        options[:stats].each do |stat|
-          log.debug "  #{stat.capitalize}: #{project.statistics[stat]}"
-        end
-        project.statistics.refresh!(only: options[:stats])
-        log.debug "Post-refresh statistics:"
-      else
-        log.debug "Project statistics:"
-      end
-      options[:stats].each do |stat|
-        log.debug "  #{stat}: #{project.statistics[stat]}"
-      end
+      verify_source(project)
 
-      original_commit_id = get_commit_id(project.id)
-      if original_commit_id.nil?
-        raise NoCommits, "Could not obtain any commits for project id " \
-          "#{project.id}"
-      end
+      destination = options[:destination_shard] || project[:destination_repository_storage]
+      log_separator
+      log.info "Migrating project id: #{project[:id]}"
+      log.debug "  Name: #{project[:name]}"
+      log.debug "  Storage: #{project[:repository_storage]}"
+      log.debug "  Path: #{project[:disk_path]}"
+      log.debug "  Size: #{project[:size]}"
 
-      project.repository.expire_exists_cache
-      original_checksum = project.repository.checksum if options[:validate_checksum]
-      original_repository_size = project.statistics[:repository_size] if options[:validate_size]
-
-      log_artifact = {
-        id: project.id,
-        path: project.disk_path,
-        source: URI.parse(gitaly_address(project.repository_storage)).host,
-        destination: URI.parse(gitaly_address(options[:target_file_server])).host
-      }
+      original_commit_id = get_commit_id(project[:id]) if options[:validate_commits]
 
       if options[:dry_run]
-        log.info "[Dry-run] Would have moved project id: #{project.id}"
-        migration_log.info log_artifact.merge({ dry_run: true }).to_json
+        log.info "[Dry-run] Would have moved project id: #{project[:id]}"
         return
       end
 
-      log.info "Scheduling migration for project id: #{project.id} to " \
-        "#{options[:target_file_server]}"
-      project.change_repository_storage(options[:target_file_server])
-      project.save
-
+      log.info "Scheduling migration for project id: #{project[:id]} to #{destination}"
+      update_repository_storage(project, destination)
       wait_for_repository_storage_update(project)
-      post_migration_project = Project.find_by(id: project.id)
-
-      if post_migration_project.repository_storage != options[:target_file_server]
+      post_migration_project = project.merge(get_project(project[:id]))
+      if post_migration_project[:repository_storage] == destination
+        log.info "Success moving project id: #{project[:id]}"
+      else
         raise MigrationTimeout, "Timed out waiting for migration of " \
-          "project id: #{post_migration_project.id}"
+          "project id: #{post_migration_project[:id]}"
       end
 
-      log.debug "Refreshing all statistics for project id: #{post_migration_project.id}"
-      post_migration_project.statistics.refresh!
+      validate_commits(post_migration_project, original_commit_id) if options[:validate_commits]
 
-      log.info "Validating project integrity by comparing latest commit " \
-        "identifiers before and after"
-      current_commit_id = get_commit_id(post_migration_project.id)
-      log.debug "Original commit id: #{original_commit_id}, current commit id: " \
-        "#{current_commit_id}"
-      if original_commit_id != current_commit_id
-        raise CommitsMismatch, "Current commit id #{current_commit_id} " \
-          "does not match original commit id #{original_commit_id}"
-      end
-
-      if options[:validate_checksum]
-        log.info "Validating project integrity by comparing checksums " \
-          "before and after"
-        post_migration_project.repository.expire_exists_cache
-        current_checksum = post_migration_project.repository.checksum
-        log.debug "Original checksum: #{original_checksum}, current checksum: " \
-          "#{current_checksum}"
-        if original_checksum != current_checksum
-          raise ChecksumsMismatch, "Current checksum #{current_checksum} " \
-            "does not match original checksum #{original_checksum}"
-        end
-      end
-
-      if options[:validate_size]
-        log.info "Validating project integrity by comparing repository size " \
-          "before and after"
-        current_repository_size = post_migration_project.statistics[:repository_size]
-        log.debug "Original repository size: #{original_repository_size}, current size: " \
-          "#{current_repository_size}"
-        if original_repository_size != current_repository_size
-          raise RepositorySizesMismatch, "Current repository size #{current_repository_size} " \
-            "does not match original repository size #{original_repository_size}"
-        end
-      end
-
-      log.info "Migrated project id: #{post_migration_project.id}"
-      log.debug "  Name: #{post_migration_project.name}"
-      log.debug "  Storage: #{post_migration_project.repository_storage}"
-      log.debug "  Path: #{post_migration_project.disk_path}"
-      log_artifact[:date] = DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
-      migration_log.info log_artifact.to_json
+      log.info "Migrated project id: #{post_migration_project[:id]}"
+      log.debug "  Name: #{post_migration_project[:name]}"
+      log.debug "  Storage: #{post_migration_project[:repository_storage]}"
+      log.debug "  Path: #{post_migration_project[:disk_path]}"
+      log_migration(project, destination)
     end
     # rubocop: enable Metrics/AbcSize
 
-    def get_namespace(group)
-      namespace_id = Namespace.find_by(path: group)
-      raise "No such namespace" if namespace_id.nil?
+    def move_project(project)
+      project_id = project[:id]
+      project_info = get_project(project_id)
+      project.update(project_info)
 
-      namespace_id
+      migrate(project)
+    rescue NoCommits => e
+      migration_errors << { project_id: project_id, message: e.message }
+      log.error "Error: #{e}"
+      log.warn "Skipping migration"
+    rescue CommitsMismatch => e
+      migration_errors << { project_id: project_id, message: e.message }
+      log.error "Failed to validate integrity of project id: #{project_id}"
+      log.error "Error: #{e}"
+      log.warn "Skipping migration"
+    rescue ShardMismatch => e
+      migration_errors << { project_id: project_id, message: e.message }
+      log.error "Wrong shard given for project id: #{project_id}"
+      log.error "Error: #{e}"
+      log.warn "Skipping migration"
+    rescue MigrationTimeout => e
+      migration_errors << { project_id: project_id, message: e.message }
+      log.error "Timed out migrating project id: #{project_id}"
+      log.error "Error: #{e}"
+      log.warn "Skipping migration"
     rescue StandardError => e
-      log.fatal "Error finding given group name '#{group}': #{e.message}"
-      abort
+      migration_errors << { project_id: project_id, message: e.message }
+      log.error "Unexpected error migrating project id #{project_id}: #{e}"
+      e.backtrace.each { |t| log.error t }
+      log.warn "Skipping migration"
     end
 
-    def namespace_filter(clauses, group)
-      return clauses if group.nil? || group.empty?
+    # Execute remote script to select projects
+    def select_projects(hostname = console_node_hostname)
+      log.info "Selecting projects from #{hostname}"
+      fields = options.slice(:project_selector_script_path, :source_shard, :destination_shard)
+      command = format(options[:project_selector_command], **fields)
+      command = command.concat(" --staging") if options[:env] == :staging
+      command = command.concat(" --limit=#{options[:limit]}") if options[:limit].positive?
+      result = execute_remote_command(hostname, command)
+      return [] if result.nil? || result.empty?
 
-      log.info "Filtering projects by group: #{group}"
-      clauses.merge(namespace_id: get_namespace(group))
+      data = JSON.parse(result).transform_keys(&:to_sym)
+      data.fetch(:projects, []).map { |project| project.transform_keys(&:to_sym) }
     end
 
-    def with_timeout(interval_in_seconds)
-      ActiveRecord::Base.connection.execute "SET statement_timeout = #{interval_in_seconds}"
-      yield
+    def get_projects(given_projects = options[:projects])
+      given_projects = given_projects[0...options[:limit]] if options[:limit].positive?
+      return select_projects if given_projects.empty?
+
+      given_projects.map { |project| get_project(project[:id]) }
     end
 
-    def print_count
-      source_storage_node = options[:current_file_server]
-      clauses = namespace_filter(options[:clauses].dup, options[:group])
-      clauses.merge!(repository_storage: source_storage_node)
-      clauses.delete(:mirror) if options[:include_mirrors]
-      query = Project.joins(:statistics).where(**clauses)
-      count = Project.transaction do
-        with_timeout(options[:long_query_timeout]) { query.size }
-      end
-      log.info "Movable projects stored on #{source_storage_node}: #{count}"
-    rescue StandardError => e
-      log.fatal "Failed to count movable projects: #{e.message}"
-      abort
-    end
+    def paginate_projects(projects, &block)
+      return projects unless block_given?
 
-    def print_node_list
-      ::Storage.node_configuration.sort.each do |repository_storage_node, node_config|
-        gitaly_address = node_config['gitaly_address']
-        log.info "#{repository_storage_node}: #{gitaly_address}"
-      end
-    end
+      loop do
+        break if projects.nil? || projects.empty?
 
-    def print_largest_project
-      project_id = get_project_ids(limit: 1).first
-      project = Project.find_by(id: project_id)
-      log.info "Largest project on #{options[:current_file_server]}: #{project_id}"
-      log.info "  Name: #{project.name}"
-      log.info "  Size: ~#{largest_denomination(project.statistics.repository_size)}"
-    rescue StandardError => e
-      log.fatal "Failed to get largest project: #{e.message}"
-      abort
-    end
+        project = projects.shift
+        break if project.nil?
 
-    def get_project_ids(opts = {})
-      default_opts = { projects: [], limit: -1 }
-      opts = default_opts.merge(opts)
-      given_project_identifiers = opts[:projects]
-      excluded_projects = options[:excluded_projects]
-      clauses = namespace_filter(options[:clauses].dup, options[:group])
-      clauses.merge!(repository_storage: options[:current_file_server])
-      unless given_project_identifiers.empty?
-        # The user specified one or more project identifiers;
-        # So don't filter out mirrors
-        clauses.delete(:mirror)
-        clauses.merge!(id: given_project_identifiers)
-      end
-      clauses.delete(:mirror) if options[:include_mirrors]
-      # Query all projects on the current file server that have not failed
-      # any previous delete operations, sort by size descending,
-      # then sort by last activity date ascending in order to select the
-      # most idle and largest projects first.
-      query = Project.joins(:statistics)
-      query = query.where(**clauses)
-      unless excluded_projects.empty?
-        log.debug "Excluding projects: #{excluded_projects}"
-        query = query.where.not(id: excluded_projects)
-      end
-      query = query.order('project_statistics.repository_size DESC')
-      query = query.order('last_activity_at ASC')
-      query = query.limit(opts[:limit]) if opts[:limit].positive?
-      Project.transaction do
-        with_timeout(options[:long_query_timeout]) { query.pluck(:id) }
+        next if project.empty?
+
+        yield project
+        projects = select_projects if projects.empty? && given_projects.empty?
       end
     end
 
-    # rubocop: disable Metrics/AbcSize
-    def move_projects(project_ids, min_amount = options[:move_amount])
-      log.info "Moving #{project_ids.length} projects"
-      log.info "From: #{options[:current_file_server]}"
-      log.info "To:   #{options[:target_file_server]}"
+    def move_projects(min_amount = options[:move_amount], limit = options[:limit])
       log.debug "Project migration validation timeout: " \
         "#{options[:repository_storage_update_timeout]} seconds"
 
-      total = 0
-      project_ids.each do |project_id|
-        begin
-          project = Project.find_by(id: project_id)
-          migrate(project)
-          total += project.statistics.repository_size
-        rescue NoCommits => e
-          migration_errors << { project_id: project_id, message: e.message }
-          log.error "Error: #{e}"
-          log.warn "Skipping migration"
-        rescue CommitsMismatch => e
-          migration_errors << { project_id: project_id, message: e.message }
-          log.error "Failed to validate integrity of project id: #{project_id}"
-          log.error "Error: #{e}"
-          log.warn "Skipping migration"
-        rescue ChecksumsMismatch => e
-          migration_errors << { project_id: project_id, message: e.message }
-          log.error "Failed to validate integrity of project id: #{project_id}"
-          log.error "Error: #{e}"
-          log.warn "Skipping migration"
-        rescue RepositorySizesMismatch => e
-          migration_errors << { project_id: project_id, message: e.message }
-          log.error "Failed to validate integrity of project id: #{project_id}"
-          log.error "Error: #{e}"
-          log.warn "Skipping migration"
-        rescue MigrationTimeout => e
-          migration_errors << { project_id: project_id, message: e.message }
-          log.error "Timed out migrating project id: #{project_id}"
-          log.error "Error: #{e}"
-          log.warn "Skipping migration"
-        rescue StandardError => e
-          migration_errors << { project_id: project_id, message: e.message }
-          log.error "Unexpected error migrating project id #{project_id}: #{e}"
-          e.backtrace.each { |t| log.error t }
-          log.warn "Skipping migration"
-        end
+      moved_projects_count = 0
+      total_bytes_moved = 0
+      projects = get_projects
+      paginate_projects(projects) do |project|
+        move_project(project)
         if migration_errors.length >= options[:max_failures]
           log.error "Failed too many times"
           break
         end
-        break if min_amount.positive? && total > min_amount
+        moved_projects_count += 1
+        total_bytes_moved += project.fetch(:repository_size_bytes, 0)
+        break if limit.positive? && moved_projects_count >= limit
+        break if min_amount.positive? && total_bytes_moved > min_amount
       end
-      total = largest_denomination(total)
-      if options[:dry_run]
-        log.info "[Dry-run] Would have processed #{total} of data"
-      else
-        log.info "Processed #{total} of data"
-      end
+      total_bytes_moved
     end
-    # rubocop: enable Metrics/AbcSize
 
     def rebalance
-      project_identifiers = options[:projects]
+      migration_log
+      limit = options[:limit]
       move_amount_bytes = options[:move_amount]
-      if !project_identifiers.empty?
-        project_identifiers = get_project_ids(projects: project_identifiers)
-        abort 'No valid project identifiers were given' if project_identifiers.empty?
+      if limit.positive?
+        log.info "Will move #{limit} projects"
       elsif move_amount_bytes.zero?
+        options[:limit] = 1
         log.info 'Option --move-amount not specified, will only move 1 project...'
-        project_identifiers = get_project_ids(limit: 1)
       else
-        log.info "Will move at least #{move_amount_bytes.to_gb} GB worth of data"
-        project_identifiers = get_project_ids
+        log.info "Will move at least #{move_amount_bytes.to_filesize} worth of data"
       end
 
-      move_projects(project_identifiers)
-
-      log.info('=' * 72)
-      log.info "Finished migrating projects from #{options[:current_file_server]} to " \
-        "#{options[:target_file_server]}"
-      unless migration_errors.empty?
-        log.error "Encountered #{migration_errors.length} errors:"
-        log.error JSON.pretty_generate(migration_errors)
-        return 1
-      end
-
-      log.info "No errors encountered during migration"
+      total_bytes_moved = move_projects
+      summarize(total_bytes_moved)
+      nil # Signifies no error
     end
   end
   # class Rebalancer
-end
-# module Storage
-
-# Re-open the Storage module to define the Verifier class
-module Storage
-  # The Verifier class
-  class Verifier
-    include ::Storage::Logging
-    include ::Storage::Helpers
-    def initialize(options)
-      @options = options
-      log.level = @options[:log_level]
-    end
-
-    def get_migrated_project_logs(log_file_paths)
-      moved_projects_log_entries = []
-
-      log_file_paths.each do |path|
-        log.debug "Extracting project migration logs from: #{path}"
-        File.readlines(path).each do |line|
-          line.chomp!
-          log.debug "Migration log entry: #{line}"
-          moved_project = JSON.parse(line, symbolize_names: true)
-          moved_projects_log_entries << moved_project unless moved_project[:dry_run]
-        end
-      end
-
-      moved_projects_log_entries
-    end
-
-    def verify
-      logdir_path = options[:logdir_path]
-      logfile_name = format(options[:migration_logfile_name], date: '*')
-      log_file_paths = Dir[File.join(logdir_path, logfile_name)].sort
-
-      moved_projects = get_migrated_project_logs(log_file_paths)
-
-      project_identifiers = moved_projects.map { |project| project[:id] }
-      Project.find(project_identifiers).each do |project|
-        if project.repository_read_only?
-          log.info "The repository for project id #{project.id} is still marked read-only on " \
-            "storage node #{project.repository_storage}"
-        else
-          log.info "The repository for project id #{project.id} appears to have successfully " \
-            "migrated to #{project.repository_storage}"
-        end
-      end
-      log.info "All logged project repository migrations are accounted for"
-    end
-  end
-  # class Verifier
 end
 # module Storage
 
@@ -885,43 +993,19 @@ module Storage
     def main(args = parse(ARGV, ARGF))
       dry_run_notice if args[:dry_run]
 
-      source_storage_node = args[:current_file_server]
-      destination_storage_node = args[:target_file_server]
-      gitaly_source_address = gitaly_address(source_storage_node)
-      gitaly_destination_address = gitaly_address(destination_storage_node)
-      if gitaly_source_address == gitaly_destination_address
-        raise 'Given destination git storage node must not have the same gitaly address as ' \
-          'the source'
-      end
-
-      if args[:verify_only]
-        ::Storage::Verifier.new(args).verify
-        exit
+      unless all_projects_specify_destination?(args[:projects])
+        source_shard = demand(args, :source_shard, true)
+        destination_shard = demand(args, :destination_shard, true)
+        raise UserError, 'Destination and source gitaly shard may not be the same' if source_shard == destination_shard
       end
 
       rebalancer = ::Storage::Rebalancer.new(args)
-      if args[:list_nodes]
-        rebalancer.print_node_list
-        exit
+      rebalancer.set_api_token_or_else do
+        raise UserError, 'Cannot proceed without a GitLab admin API private token'
       end
-      if args[:count]
-        rebalancer.print_count
-        exit
-      end
-      if args[:print_largest]
-        rebalancer.print_largest_project
-        exit
-      end
-
-      private_token = ENV.fetch('PRIVATE_TOKEN', nil)
-      if private_token.nil? || private_token.empty?
-        log.warn "No PRIVATE_TOKEN variable set in environment"
-        private_token = password_prompt
-        abort "Cannot proceed without a private API token." if private_token.empty?
-      end
-
-      rebalancer.options.store(:private_token, private_token)
       rebalancer.rebalance
+    rescue UserError => e
+      abort e.message
     rescue StandardError => e
       log.fatal e.message
       e.backtrace.each { |trace| log.error trace }
