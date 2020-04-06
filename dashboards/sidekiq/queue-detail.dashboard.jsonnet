@@ -82,7 +82,6 @@ local enqueueRateTimeseries(title, aggregators, legendFormat) =
     legendFormat=legendFormat,
   );
 
-
 local rpsTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
@@ -346,6 +345,18 @@ basic.dashboard(
   rowGrid('Enqueuing (the rate at which jobs are enqueued)', [
     enqueueRateTimeseries('Enqueues/Second', aggregators='queue', legendFormat='{{ queue }}'),
     enqueueRateTimeseries('Enqueues/Second per Service', aggregators='type, queue', legendFormat='{{ queue }} - {{ type }}'),
+    basic.queueLengthTimeseries(
+      title='Queue depth',
+      description='The number of unstarted jobs in a queue',
+      query=|||
+        max by (name) (max_over_time(sidekiq_queue_size{environment="$environment", name=~"$queue"}[$__interval]) and on(fqdn) (redis_connected_slaves != 0))
+      |||,
+      legendFormat='{{ name }}',
+      format='short',
+      interval='1m',
+      intervalFactor=3,
+      yAxisLabel='',
+    ),
   ], startRow=201)
   +
   rowGrid('Queue Latency (the amount of time spent queueing)', [
