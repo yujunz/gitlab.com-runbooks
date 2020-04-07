@@ -10,8 +10,9 @@ rm -f "${SCRIPT_DIR}"/../.gitlab/dashboards/*.yml
 
 output_dashboard_files="$(jsonnet --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-dashboards.jsonnet")"
 output_triage_files="$(jsonnet --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-triage-dashboards.jsonnet")"
+output_sla_file="$(jsonnet --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-slas-dashboard.jsonnet")"
 
-if [[ -z "${output_dashboard_files}" ]] && [[ -z "${output_triage_files}" ]]; then
+if [[ -z "${output_dashboard_files}" ]] && [[ -z "${output_triage_files}" ]] && [[ -z "${output_sla_file}" ]]; then
   echo "No output files"
   exit 1
 fi
@@ -32,6 +33,18 @@ for i in ${output_dashboard_files}; do
 done
 
 for i in ${output_triage_files}; do
+  mv "${i}" "${i}.tmp"
+
+  (
+    echo "$warning"
+    "${SCRIPT_DIR}"/fix-prom-rules.rb "${i}.tmp"
+  ) >"${i}"
+
+  rm "${i}.tmp"
+  echo "${i}"
+done
+
+for i in ${output_sla_file}; do
   mv "${i}" "${i}.tmp"
 
   (
