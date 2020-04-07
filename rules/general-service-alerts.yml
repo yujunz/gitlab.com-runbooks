@@ -32,7 +32,7 @@ groups:
             user abuse, application changes in upstream services that lead to higher request rates or slower
             requested, or slowdown in downstream services. Check operation rates in upstream and downstream
             services, error rates and check ELK for abuse.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has a apdex score (latency) below SLO"
           grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "7"
@@ -70,7 +70,7 @@ groups:
             user abuse, application changes in upstream services that lead to higher request rates or slower
             requested, or slowdown in downstream services. Check operation rates in upstream and downstream
             services, error rates and check ELK for abuse.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has a apdex score (latency) below SLO"
           grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "7"
@@ -111,7 +111,7 @@ groups:
 
             A high proportion of requests to the `{{ $labels.type }}` service are resulting in errors.
             This ratio is higher than the defined SLO for the service.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio exceeding SLO"
           grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "8"
@@ -148,7 +148,7 @@ groups:
 
             A high proportion of requests to the `{{ $labels.type }}` service are resulting in errors.
             This ratio is higher than the defined SLO for the service.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio exceeding SLO"
           grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "8"
@@ -195,7 +195,7 @@ groups:
 
             The error-burn rate for this service is outside of SLO over multiple windows.
             Currently the error-rate is {{ $value | humanizePercentage }}%.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           grafana_dashboard_id: "alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo"
           grafana_panel_id: "4"
           grafana_variables: "environment,type,stage,component"
@@ -228,7 +228,7 @@ groups:
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
 
             This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit."
           grafana_dashboard_id: "alerts-saturation_component/saturation-component-alert"
           grafana_panel_id: "2"
@@ -256,7 +256,7 @@ groups:
             The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
 
             This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit."
           grafana_dashboard_id: "alerts-saturation_component/saturation-component-alert"
           grafana_panel_id: "2"
@@ -298,7 +298,7 @@ groups:
             application changes that lead to higher operations rates or from retries in the event of
             errors. Check the abuse reporting watches in Elastic, ELK for possible abuse,
             error rates (possibly on upstream services) for root cause.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "Anomaly detection: The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving more requests than normal"
           grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "10"
@@ -338,7 +338,7 @@ groups:
             This is often caused by a failure in an upstream service - for example, an upstream load balancer rejected
             all incoming traffic. In many cases, this is as serious or more serious than a traffic spike. Check
             upstream services for errors that may be leading to traffic flow issues in downstream services.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "Anomaly detection: The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving fewer requests than normal"
           grafana_dashboard_id: "general-service/service-platform-metrics"
           grafana_panel_id: "10"
@@ -409,7 +409,7 @@ groups:
 
             This could indicate that the canary deployment is not functioning correctly. Please consider
             stopping the deployment process while the problem is investigated.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "Bad canary? The `cny` stage of  the `{{ $labels.type }}` service has a apdex score (latency) below SLO, but the main stage does not."
           grafana_dashboard_id: "general-service-stages/general-service-platform-metrics-stages"
           grafana_panel_id: "2"
@@ -465,7 +465,7 @@ groups:
 
             Consider investigating further. If there is no evidence of another cause, please
             consider stopping the deployment process while the problem is investigated.
-          runbook: "troubleshooting/service-{{ $labels.type }}.md"
+          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
           title: "Bad canary? The `cny` stage of  the `{{ $labels.type }}` service has an error-ratio exceeding SLO, but the main stage does not."
           grafana_dashboard_id: "general-service-stages/general-service-platform-metrics-stages"
           grafana_panel_id: "3"
