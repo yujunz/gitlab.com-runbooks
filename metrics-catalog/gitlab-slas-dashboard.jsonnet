@@ -12,7 +12,7 @@ local slaDashboard =
             metrics: [
               {
                 id: 'single-stat-weighted-availability',
-                query: 'avg_over_time(sla:gitlab:ratio{environment="gprd", stage="main"}[3m])',
+                query: 'avg_over_time(sla:gitlab:ratio{environment="gprd", stage="main"}[7d])',
                 unit: '%',
                 label: 'Weighted Availability Score - GitLab.com',
               },
@@ -21,10 +21,14 @@ local slaDashboard =
           {
             title: 'Overall SLA over time period - gitlab.com',
             type: 'line-chart',
+            y_axis: {
+              name: 'SLA',
+              format: 'percent',
+            },
             metrics: [
               {
                 id: 'line-chart-overall-sla-time-period',
-                query_range: 'clamp_min(clamp_max(avg_over_time(sla:gitlab:ratio{environment="gprd", stage="main"}[1d]),1),0)',
+                query_range: 'clamp_min(clamp_max(avg_over_time(sla:gitlab:ratio{environment="gprd", stage="main"}[7d]),1),0)',
                 unit: '%',
                 label: 'gitlab.com SLA',
               },
@@ -116,10 +120,14 @@ local slaDashboard =
           {
             title: 'SLA Trends - Primary Services',
             type: 'line-chart',
+            y_axis: {
+              name: 'SLA',
+              format: 'percent',
+            },
             metrics: [
               {
                 id: 'line-chart-sla-trends-primary-services',
-                query_range: 'clamp_min(clamp_max(avg(avg_over_time(slo_observation_status{environment="gprd", stage="main", type=~"api|web|git|registry|sidekiq|ci-runners"}[1d])) by (type),1),0)',
+                query_range: 'clamp_min(clamp_max(avg(avg_over_time(slo_observation_status{environment="gprd", stage="main", type=~"api|web|git|registry|sidekiq|ci-runners"}[7d])) by (type),1),0)',
                 unit: '%',
                 label: '{{type}}',
               },

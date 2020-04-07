@@ -9,16 +9,19 @@ panel_groups:
     metrics:
     - id: single-stat-weighted-availability
       label: Weighted Availability Score - GitLab.com
-      query: avg_over_time(sla:gitlab:ratio{environment="gprd", stage="main"}[3m])
+      query: avg_over_time(sla:gitlab:ratio{environment="gprd", stage="main"}[7d])
       unit: "%"
     type: single-stat
   - title: Overall SLA over time period - gitlab.com
     metrics:
     - id: line-chart-overall-sla-time-period
       label: gitlab.com SLA
-      query_range: clamp_min(clamp_max(avg_over_time(sla:gitlab:ratio{environment="gprd", stage="main"}[1d]),1),0)
+      query_range: clamp_min(clamp_max(avg_over_time(sla:gitlab:ratio{environment="gprd", stage="main"}[7d]),1),0)
       unit: "%"
     type: line-chart
+    y_axis:
+      name: SLA
+      format: percent
 - group: SLA Trends - Per primary service
   panels:
   - title: Primary Services Average Availability for Period - Registry
@@ -75,6 +78,9 @@ panel_groups:
       label: "{{type}}"
       query_range: >-
         clamp_min(clamp_max(avg(avg_over_time(slo_observation_status{environment="gprd", stage="main",
-        type=~"api|web|git|registry|sidekiq|ci-runners"}[1d])) by (type),1),0)
+        type=~"api|web|git|registry|sidekiq|ci-runners"}[7d])) by (type),1),0)
       unit: "%"
     type: line-chart
+    y_axis:
+      name: SLA
+      format: percent
