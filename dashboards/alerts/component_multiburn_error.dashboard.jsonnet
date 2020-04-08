@@ -23,6 +23,10 @@ local oneHourBurnRate =
       '1h error burn threshold',
       '%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"})' % multiburnFactors,
     ],
+    [
+      'Proposed SLO @ 1h burn',
+      '(%(burnrate_1h)g * (1 - $proposed_slo))' % multiburnFactors,
+    ],
   ];
 
 local sixHourBurnRate =
@@ -32,6 +36,10 @@ local sixHourBurnRate =
     [
       '6h error burn threshold',
       '%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"})' % multiburnFactors,
+    ],
+    [
+      'Proposed SLO @ 6h burn',
+      '(%(burnrate_6h)g * (1 - $proposed_slo))' % multiburnFactors,
     ],
   ];
 
@@ -114,6 +122,13 @@ basic.dashboard(
 .addTemplate(templates.type)
 .addTemplate(templates.stage)
 .addTemplate(templates.component)
+.addTemplate(
+  template.custom(
+    'proposed_slo',
+    'NaN,0.9,0.95,0.99,0.995,0.999,0.9995,0.9999',
+    'NaN',
+  )
+)
 .addPanels(
   layout.columnGrid([
     [
