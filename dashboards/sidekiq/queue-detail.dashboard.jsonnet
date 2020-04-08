@@ -241,7 +241,7 @@ basic.dashboard(
       'Max Queuing Duration SLO',
       'light-red',
       |||
-        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency!="high"}
+        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="low"}
         or
         vector(%(urgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="high"}
       ||| % {
@@ -255,7 +255,7 @@ basic.dashboard(
       'Max Execution Duration SLO',
       'red',
       |||
-        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency!="high"}
+        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="low"}
         or
         vector(%(urgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="high"}
       ||| % {
@@ -263,6 +263,17 @@ basic.dashboard(
         urgentSLO: sidekiqHelpers.slos.urgent.executionDurationSeconds,
       },
       '{{ queue }}',
+    ),
+    statPanel(
+      'Time until backlog is cleared',
+      'Backlog',
+      'blue',
+      |||
+        ((sidekiq_queue_size{environment="$environment", name=~"$queue"} and on(fqdn) (redis_connected_slaves != 0)) > 10)
+        /
+        (-deriv(sidekiq_queue_size{environment="$environment", name=~"$queue"}[5m]) and on(fqdn) (redis_connected_slaves != 0) > 0)
+      |||,
+      '{{ name }}',
     ),
   ], cols=8, rowHeight=4)
   +
