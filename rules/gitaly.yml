@@ -108,7 +108,7 @@ groups:
   - alert: GitalyVersionMismatch
     expr: >
       count(
-        sum by (environment, version) (
+        sum by (environment, stage, version) (
           gitlab_build_info{tier="stor",type="gitaly"}
         ) > 0
       ) == 2
@@ -119,7 +119,8 @@ groups:
       severity: s1
       alert_type: cause
     annotations:
-      description: During a deployment, two distinct versions of Gitaly may be running
+      description: Two different version of Gitaly are running in stage {{ $labels.stage }}
+        During a deployment, two distinct versions of Gitaly may be running
         alongside one another, but this should not be the case for more than 30m.
         Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
         for details of versions deployed across the fleet.
@@ -129,7 +130,7 @@ groups:
   - alert: GitalyVersionMismatchSevere
     expr: >
       count(
-        sum by (environment, version) (
+        sum by (environment, stage, version) (
          gitlab_build_info{tier="stor",type="gitaly"}
         ) > 0
       ) > 2
@@ -140,7 +141,7 @@ groups:
       severity: s1
       alert_type: cause
     annotations:
-      description: Three of more versions of Gitaly are currently running alongside
+      description: Three of more versions of Gitaly in stage {{ $labels.stage }} are currently running alongside
         one another in production. This should never occur and indicates serious deployment
         failures. Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
         for details of versions deployed across the fleet.
