@@ -14,6 +14,7 @@ checks:
     - web
     - gitaly
     - patroni
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -27,6 +28,7 @@ checks:
     - web
     - gitaly
     - patroni
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -39,6 +41,7 @@ checks:
     tags:
     - web
     - gitaly
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -51,6 +54,7 @@ checks:
     tags:
     - web
     - patroni
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -63,6 +67,7 @@ checks:
     tags:
     - api
     - patroni
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -74,6 +79,7 @@ checks:
     notify_when_restored: true
     tags:
     - web
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -86,6 +92,7 @@ checks:
     tags:
     - web
     - patroni
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -98,6 +105,7 @@ checks:
     tags:
     - web
     - gitaly
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -110,6 +118,7 @@ checks:
     tags:
     - web
     - patroni
+    - sla
     teams:
     - Infrastructure
     integrations:
@@ -223,6 +232,7 @@ checks:
     notify_when_restored: true
     tags:
     - pages
+    - sla
     teams:
     - Infrastructure
     integrations:
