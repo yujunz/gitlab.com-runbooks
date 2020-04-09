@@ -23,11 +23,11 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: symptom
-      experimental: 'yes'
       metric: gitlab_component_apdex:ratio_1h
+      pager: pagerduty
       period: 2m
       rules_domain: general
-      severity: s4
+      severity: s2
       slo_alert: 'yes'
     expr: |
       (
