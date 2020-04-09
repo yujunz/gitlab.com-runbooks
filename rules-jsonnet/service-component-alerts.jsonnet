@@ -52,9 +52,9 @@ local rules = {
           alert_type: 'symptom',
           rules_domain: 'general',
           metric: 'gitlab_component_apdex:ratio_1h',
-          severity: 's4',
+          severity: 's2',
+          pager: 'pagerduty',
           slo_alert: 'yes',
-          experimental: 'yes',
           period: '2m',
         },
         annotations: {
