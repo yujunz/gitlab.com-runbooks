@@ -559,3 +559,24 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-git", type="git", code=~"^5.*"}[6h])
       )
+- name: 'Component mapping: git'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: gitlab_shell
+      tier: sv
+      type: git
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: puma
+      tier: sv
+      type: git
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: workhorse
+      tier: sv
+      type: git
+    expr: '1'

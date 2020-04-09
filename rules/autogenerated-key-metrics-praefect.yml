@@ -254,3 +254,12 @@ groups:
       sum by (environment, stage) (
         rate(grpc_server_handled_total{job="praefect", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"}[6h])
       )
+- name: 'Component mapping: praefect'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: proxy
+      tier: stor
+      type: praefect
+    expr: '1'

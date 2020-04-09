@@ -94,3 +94,18 @@ groups:
       sum by (environment, stage) (
         rate(redis_commands_processed_total{type="redis"}[6h]) and on (instance) redis_instance_info{role="slave"}
       )
+- name: 'Component mapping: redis'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: primary_server
+      tier: db
+      type: redis
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: secondary_servers
+      tier: db
+      type: redis
+    expr: '1'

@@ -114,3 +114,12 @@ groups:
         or
         rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[6h])
       )
+- name: 'Component mapping: pages'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: loadbalancer
+      tier: lb
+      type: pages
+    expr: '1'

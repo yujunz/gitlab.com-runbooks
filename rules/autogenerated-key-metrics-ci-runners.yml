@@ -364,3 +364,18 @@ groups:
       sum by () (
         rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[6h])
       )
+- name: 'Component mapping: ci-runners'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: polling
+      tier: runners
+      type: ci-runners
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: shared_runner_queues
+      tier: runners
+      type: ci-runners
+    expr: '1'

@@ -504,3 +504,18 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-web", type="web", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[6h])
       )
+- name: 'Component mapping: web'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: puma
+      tier: sv
+      type: web
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: workhorse
+      tier: sv
+      type: web
+    expr: '1'

@@ -734,3 +734,24 @@ groups:
       sum by (environment, stage) (
         rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[6h])
       )
+- name: 'Component mapping: frontend'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: cnyHttpServices
+      tier: lb
+      type: frontend
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: mainHttpServices
+      tier: lb
+      type: frontend
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: sshServices
+      tier: lb
+      type: frontend
+    expr: '1'

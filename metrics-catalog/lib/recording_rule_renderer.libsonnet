@@ -251,6 +251,20 @@ local generateMultiWindowErrorRatios(prefixes) =
     )
   );
 
+local serviceComponentMapping(service) =
+  [
+    {
+      record: 'gitlab_component_service:mapping',
+      labels: {
+        type: service.type,
+        tier: service.tier,
+        component: component,
+      },
+      expr: '1',
+    }
+    for component in std.objectFields(service.components)
+  ];
+
 {
   keyMetrics(services)::
     std.flattenArrays(std.map(generateComponentRecordingRules, services)),
@@ -261,6 +275,7 @@ local generateMultiWindowErrorRatios(prefixes) =
   nodeMetrics(services)::
     std.flattenArrays(std.map(generateNodeRecordingRules, services)),
 
+  serviceComponentMapping(service):: serviceComponentMapping(service),
 
   multiwindowErrorRatios()::
     generateMultiWindowErrorRatios([

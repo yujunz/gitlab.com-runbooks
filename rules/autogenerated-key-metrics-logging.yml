@@ -94,3 +94,18 @@ groups:
       sum by (environment, stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[6h]), 0)
       )
+- name: 'Component mapping: logging'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: elasticsearch_indexing
+      tier: inf
+      type: logging
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: elasticsearch_searching
+      tier: inf
+      type: logging
+    expr: '1'
