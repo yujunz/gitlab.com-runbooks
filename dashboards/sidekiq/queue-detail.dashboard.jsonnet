@@ -241,11 +241,13 @@ basic.dashboard(
       'Max Queuing Duration SLO',
       'light-red',
       |||
-        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="low"}
+        vector(NaN) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="throttled"}
+        or
+        vector(%(lowUrgencySLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="low"}
         or
         vector(%(urgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="high"}
       ||| % {
-        nonUrgentSLO: sidekiqHelpers.slos.nonUrgent.queueingDurationSeconds,
+        lowUrgencySLO: sidekiqHelpers.slos.lowUrgency.queueingDurationSeconds,
         urgentSLO: sidekiqHelpers.slos.urgent.queueingDurationSeconds,
       },
       '{{ queue }}',
@@ -255,11 +257,14 @@ basic.dashboard(
       'Max Execution Duration SLO',
       'red',
       |||
-        vector(%(nonUrgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="low"}
+        vector(%(throttledSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="throttled"}
+        or
+        vector(%(lowUrgencySLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="low"}
         or
         vector(%(urgentSLO)f) and on () sidekiq_running_jobs{environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue", urgency="high"}
       ||| % {
-        nonUrgentSLO: sidekiqHelpers.slos.nonUrgent.executionDurationSeconds,
+        throttledSLO: sidekiqHelpers.slos.throttled.executionDurationSeconds,
+        lowUrgencySLO: sidekiqHelpers.slos.lowUrgency.executionDurationSeconds,
         urgentSLO: sidekiqHelpers.slos.urgent.executionDurationSeconds,
       },
       '{{ queue }}',

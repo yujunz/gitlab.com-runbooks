@@ -5,8 +5,13 @@
       queueingDurationSeconds: 10,
       executionDurationSeconds: 10,
     },
-    nonUrgent: {
+    lowUrgency: {
       queueingDurationSeconds: 60,
+      executionDurationSeconds: 300,
+    },
+    throttled: {
+      // Throttled jobs don't have a queuing duration,
+      // so don't add one here!
       executionDurationSeconds: 300,
     },
   },
