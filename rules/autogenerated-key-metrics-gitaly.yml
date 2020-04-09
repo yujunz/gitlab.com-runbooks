@@ -615,3 +615,18 @@ groups:
         or
         rate(gitaly_service_client_requests_total{job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"}[6h])
       )
+- name: 'Component mapping: gitaly'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: gitalyruby
+      tier: stor
+      type: gitaly
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: goserver
+      tier: stor
+      type: gitaly
+    expr: '1'
