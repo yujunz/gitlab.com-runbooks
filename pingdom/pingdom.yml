@@ -136,6 +136,26 @@ checks:
     - pagerduty
 
 #######################################
+# registry.gitlab.com
+#######################################
+# Registry root URL will always return 200
+# if health check succeeds
+# https://github.com/docker/distribution/pull/874
+#######################################
+
+  - url: https://registry.gitlab.com/
+    timeout_ms: 5000
+    resolution_minutes: 5
+    notify_when_restored: true
+    tags:
+    - registry
+    - sla
+    teams:
+    - Infrastructure
+    integrations:
+    - pagerduty
+
+#######################################
 # about.gitlab.com
 #######################################
 
