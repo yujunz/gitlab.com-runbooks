@@ -89,6 +89,61 @@ basic.dashboard(
   allValues='.*',
 ))
 .addPanels(
+  rowGrid('Queue Lengths - number of jobs queued', [
+    basic.queueLengthTimeseries(
+      title='Queue Lengths',
+      description='The number of unstarted jobs in queues serviced by this priority',
+      query=|||
+        sum by (queue) (
+          (
+            label_replace(
+              sidekiq_queue_size{environment="gprd"} and on(fqdn) (redis_connected_slaves != 0),
+              "queue", "$0", "name", ".*"
+            )
+          )
+          and on (queue)
+          (
+            max by (queue) (
+              rate(sidekiq_jobs_queue_duration_seconds_sum{priority=~"$priority"}[$__range]) > 0
+            )
+          )
+        )
+      |||,
+      legendFormat='{{ queue }}',
+      format='short',
+      interval='1m',
+      intervalFactor=3,
+      yAxisLabel='Jobs',
+    )
+    .addDataLink(queueDetailDataLink),
+    basic.queueLengthTimeseries(
+      title='Aggregate queue length',
+      description='The sum total number of unstarted jobs in all queues serviced by this priority',
+      query=|||
+        sum(
+          (
+            label_replace(
+              sidekiq_queue_size{environment="gprd"} and on(fqdn) (redis_connected_slaves != 0),
+              "queue", "$0", "name", ".*"
+            )
+          )
+          and on (queue)
+          (
+            max by (queue) (
+              rate(sidekiq_jobs_queue_duration_seconds_sum{priority=~"$priority"}[$__range]) > 0
+            )
+          )
+        )
+      |||,
+      legendFormat='Aggregated queue length',
+      format='short',
+      interval='1m',
+      intervalFactor=3,
+      yAxisLabel='Jobs',
+    ),
+  ], startRow=101)
+  +
+
   rowGrid('Queue Time - time spend queueing', [
     queueTimeLatencyTimeseries(
       title='Sidekiq Estimated p95 Job Queue Time for $priority priority',
@@ -99,7 +154,7 @@ basic.dashboard(
       aggregator='queue'
     )
     .addDataLink(queueDetailDataLink),
-  ], startRow=101)
+  ], startRow=201)
   +
   rowGrid('Inflight Jobs - jobs currently running', [
     inflightJobsTimeseries(
@@ -111,7 +166,7 @@ basic.dashboard(
       aggregator='queue'
     )
     .addDataLink(queueDetailDataLink),
-  ], startRow=201)
+  ], startRow=301)
   +
   rowGrid('Individual Execution Time - time taken for individual jobs to complete', [
     basic.multiTimeseries(
@@ -174,7 +229,7 @@ basic.dashboard(
       logBase=10,
       linewidth=1,
     ),
-  ], startRow=301)
+  ], startRow=401)
   +
   rowGrid('Total Execution Time - total time consumed processing jobs', [
     basic.timeseries(
@@ -190,7 +245,7 @@ basic.dashboard(
       legend_show=true,
       yAxisLabel='Job time completed per second',
     ),
-  ], startRow=401)
+  ], startRow=501)
   +
   rowGrid('Throughput - rate at which jobs complete', [
     basic.timeseries(
@@ -219,7 +274,7 @@ basic.dashboard(
       yAxisLabel='Jobs Completed per Second',
     )
     .addDataLink(queueDetailDataLink),
-  ], startRow=501)
+  ], startRow=601)
   +
   rowGrid('Utilization - saturation of workers in this fleet', [
     basic.percentageTimeseries(
@@ -263,7 +318,7 @@ basic.dashboard(
       )
     ),
 
-  ], startRow=601)
+  ], startRow=701)
 )
 .addPanel(
   row.new(title='Rails Metrics', collapse=true)
