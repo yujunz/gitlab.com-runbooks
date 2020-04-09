@@ -466,7 +466,7 @@ groups:
       type: api
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[1h])
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[1h])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -475,7 +475,7 @@ groups:
       type: api
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[1m])
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[1m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -484,7 +484,7 @@ groups:
       type: api
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[30m])
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[30m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -493,7 +493,7 @@ groups:
       type: api
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[5m])
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[5m])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -502,7 +502,7 @@ groups:
       type: api
     expr: |
       sum by (environment, stage) (
-        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*"}[6h])
+        rate(gitlab_workhorse_http_requests_total{job="gitlab-workhorse-api", type="api", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"}[6h])
       )
 - name: 'Component mapping: api'
   interval: 1m
