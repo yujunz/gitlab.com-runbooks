@@ -40,7 +40,7 @@ local rateMetric = metricsCatalog.rateMetric;
 
       errorRate: rateMetric(
         counter='gitlab_workhorse_http_requests_total',
-        selector='job="gitlab-workhorse-api", type="api", code=~"^5.*"'
+        selector='job="gitlab-workhorse-api", type="api", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"'
       ),
 
       significantLabels: ['fqdn'],

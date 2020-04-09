@@ -38,7 +38,7 @@ local customRateQuery = metricsCatalog.customRateQuery;
 
       errorRate: rateMetric(
         counter='gitlab_workhorse_http_requests_total',
-        selector='job="gitlab-workhorse-git", type="git", code=~"^5.*"'
+        selector='job="gitlab-workhorse-git", type="git", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"'
       ),
 
       significantLabels: ['fqdn', 'route'],
