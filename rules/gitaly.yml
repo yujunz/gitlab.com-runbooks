@@ -112,7 +112,7 @@ groups:
           gitlab_build_info{tier="stor",type="gitaly"}
         )
       ) > 1
-    for: 30m
+    for: 60m
     labels:
       channel: g_create_gitaly
       pager: pagerduty
@@ -121,7 +121,7 @@ groups:
     annotations:
       description: Two or more different version of Gitaly are running in stage {{ $labels.stage }}
         During a deployment, two distinct versions of Gitaly may be running
-        alongside one another, but this should not be the case for more than 30m.
+        alongside one another, but this should not be the case for more than 60m.
         Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
         for details of versions deployed across the fleet.
       runbook: docs/version/gitaly-version-mismatch.md
