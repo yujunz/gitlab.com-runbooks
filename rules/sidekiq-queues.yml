@@ -1,39 +1,51 @@
 groups:
-- name: sidekiq-queues.rules
+- name: Sidekiq Queues
   rules:
-  - alert: SidekiqQueuesTooLargeWarning
-    expr: max(sidekiq_queue_size{name!~"pages_domain_verification"}) by (environment) > 20000
+  - alert: SidekiqQueueTooLarge
+    expr: >
+      max by (environment, name) (
+        sidekiq_queue_size{name!~"pages_domain_verification"}
+      ) > 20000
     for: 20m
     labels:
       severity: s4
       channel: backend
       alert_type: cause
     annotations:
-      description: There have been over 20,000 Sidekiq queued jobs for the last 20 minutes. Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
+      description: There have been over 20k {{ $labels.name }} Sidekiq queued jobs for the last 20 minutes.
         Note that PagesDomainVerificationWorker is excluded from job count.
       runbook: docs/sidekiq/large-sidekiq-queue.md
-      title: 'Large amount of Sidekiq Queued jobs: {{$value}}'
-  - alert: SidekiqNewNotesQueueTooLarge
-    expr: max(sidekiq_queue_size{name="new_note"}) by (environment) > 100
+      grafana_dashboard_id: sidekiq-main/sidekiq-overview
+      title: Large amount of Sidekiq Queued jobs
+  - alert: SidekiqQueueTooLarge
+    expr: >
+      max by (environment, name) (
+        sidekiq_queue_size{name="new_note"}
+      ) > 100
     for: 20m
     labels:
       severity: s1
       pager: pagerduty
       alert_type: cause
     annotations:
-      description: The new_note sidekiq queue is piling up. This may mean that users are not receiving email notifications
+      description: There have been over 100 {{ $labels.name }} Sidekiq jobs queued for the last 20 minutes.
+        The new_note sidekiq queue is piling up. This may mean that users are not receiving email notifications
         for comments on issues, or that we are being spammed/abused and other ASAP jobs will be affected badly.
       runbook: docs/sidekiq/large-sidekiq-queue.md
-      title: 'Large amount of new_note sidekiq queued jobs: {{$value}}'
-  - alert: SidekiqQueuesTooLargeHourly
-    expr: max(sidekiq_queue_size) by (environment) > 50000
+      grafana_dashboard_id: sidekiq-main/sidekiq-overview
+      title: Large amount of Sidekiq Queued jobs
+  - alert: SidekiqQueueTooLarge
+    expr: >
+      max by (environment, name) (
+        sidekiq_queue_size
+      ) > 50000
     for: 30m
     labels:
       severity: s1
       pager: pagerduty
       alert_type: cause
     annotations:
-      description: There have been over 50,000 Sidekiq jobs queued for the last half hour.
-        Check http://dashboards.gitlab.net/dashboard/db/sidekiq-stats.
+      description: There have been over 50k {{ $labels.name }} Sidekiq jobs queued for the last 30 minutes.
       runbook: docs/sidekiq/large-sidekiq-queue.md
-      title: 'Large amount of Sidekiq Queued jobs: {{$value}}'
+      grafana_dashboard_id: sidekiq-main/sidekiq-overview
+      title: Large amount of Sidekiq Queued jobs
