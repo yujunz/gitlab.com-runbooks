@@ -107,11 +107,11 @@ groups:
       title: Gitaly is down on {{ $labels.fqdn }}
   - alert: GitalyVersionMismatch
     expr: >
-      count(
-        sum by (environment, stage, version) (
+      count by (environment, stage) (
+        count by (environment, stage, version) (
           gitlab_build_info{tier="stor",type="gitaly"}
-        ) > 0
-      ) == 2
+        )
+      ) > 1
     for: 30m
     labels:
       channel: g_create_gitaly
@@ -119,34 +119,13 @@ groups:
       severity: s1
       alert_type: cause
     annotations:
-      description: Two different version of Gitaly are running in stage {{ $labels.stage }}
+      description: Two or more different version of Gitaly are running in stage {{ $labels.stage }}
         During a deployment, two distinct versions of Gitaly may be running
         alongside one another, but this should not be the case for more than 30m.
         Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
         for details of versions deployed across the fleet.
       runbook: docs/version/gitaly-version-mismatch.md
-      title: 'Gitaly: two versions of Gitaly have been running alongside one another
-        in production for more than 30 minutes'
-  - alert: GitalyVersionMismatchSevere
-    expr: >
-      count(
-        sum by (environment, stage, version) (
-         gitlab_build_info{tier="stor",type="gitaly"}
-        ) > 0
-      ) > 2
-    for: 1m
-    labels:
-      channel: g_create_gitaly
-      pager: pagerduty
-      severity: s1
-      alert_type: cause
-    annotations:
-      description: Three of more versions of Gitaly in stage {{ $labels.stage }} are currently running alongside
-        one another in production. This should never occur and indicates serious deployment
-        failures. Visit https://dashboards.gitlab.net/dashboard/db/gitaly-version-tracker?orgId=1
-        for details of versions deployed across the fleet.
-      runbook: docs/version/gitaly-version-mismatch.md
-      title: 'Gitaly: multiple versions of Gitaly are currently running in production'
+      title: 'Multiple versions of Gitaly have been running alongside one another'
   - alert: GitalyPermissionDenied
     expr: sum(gitaly_grpc:grpc_server_handled_total:rate1m{grpc_code="PermissionDenied"}) > 10
     for: 10s
