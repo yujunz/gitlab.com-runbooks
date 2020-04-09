@@ -345,20 +345,34 @@ impact on a Redis host. It consists of the following:
 On the *master* Redis server, capture TCP packets and compress them with the following commands:
 
 ```shell
-$ df -Th  # confirm there's enough disk space
+$ df -Th /var/log # confirm there's enough disk space
+
+$ sudo mkdir -p /var/log/pcap-$USER
+$ cd /var/log/pcap-$USER
+$ sudo chown $USER:$USER .
+
 $ sudo timeout 30 tcpdump -s 65535 tcp port 6379 -w redis.pcap -i ens4
 tcpdump: listening on ens4, link-type EN10MB (Ethernet), capture size 65535 bytes
 676 packets captured
 718 packets received by filter
 0 packets dropped by kernel
+```
 
+It may be cheaper to capture only incoming traffic:
+
+```
+$ sudo timeout 30 tcpdump -s 65535 tcp dst port 6379 -w redis.pcap -i ens4
+```
+
+Compression:
+
+```
 $ gzip redis.pcap
 ```
 
-now download and decompress the capture with:
+now download the capture with:
 ```shell
 $ scp redis-cache-01-db-gstg.c.gitlab-staging-1.internal:redis.pcap.gz .
-$ gunzip redis.pcap.gz
 ```
 
 remember to remove the pcap file once you're done!
@@ -368,8 +382,8 @@ remember to remove the pcap file once you're done!
 1. install tcpflow (on MacOS: `brew install tcpflow`)
 1. split the packet capture into separate tcpflows:
 ```shell
-$ tcpflow -o redis-analysis -r redis.pcap
-$ cd ./redis-analysis/
+$ tcpflow -i -s -o redis-analysis -r redis.pcap.gz
+$ cd ./redis-analysis
 ```
 
 #### Analyze Redis traffic ####
@@ -387,7 +401,49 @@ $ less ./script_report
 (...)
 ```
 
+##### keyspace analysis #####
+
+The redis trace script parses out flows into a timeline of commands, one line per key. The fields are: timestamp, second offset, command, src host, key pattern, key.
+
+The script can be tweaked or its output further processed with `awk` and friends.
+
+```
+$ find tcpflow -name '*.06379.findx' | parallel -j0 -n100 ruby runbooks/scripts/redis-trace-cmd.rb | sed '/^$/d' > trace.txt
+$ gsort --parallel=8 trace.txt -o trace.txt
+```
+
+For example, count per key pattern:
+
+```
+$ cat trace.txt | awk '{ print $5 } | sort -n | uniq -c | sort -nr'
+```
+
 #### Please remember to delete the `pcap` file immediately after performing the analysis ####
+
+### CPU profiling ###
+
+CPU profiles are useful for diagnosing CPU saturation. Especially since redis is (mostly) single-threaded, CPU can become a bottleneck.
+
+A profile can be captured via perf:
+
+```
+$ sudo mkdir -p /var/log/perf-$USER
+$ cd /var/log/perf-$USER
+s$ udo chown $USER:$USER .
+
+$ sudo perf record -p $(pidof redis-server) -F 497 --call-graph dwarf --no-inherit -- sleep 300
+$ sudo perf script --header | gzip > stacks.$(hostname).$(date --iso-8601=seconds).gz
+$ sudo rm perf.data
+```
+
+This will sample stacks at ~500hz.
+
+Those stack traces can then be downloaded and analyzed with [flamescope](https://github.com/Netflix/flamescope) or [flamegraph](https://github.com/brendangregg/FlameGraph).
+
+```
+$ scp $host:/var/log/perf-\*/stacks.\*.gz .
+$ cat stacks.$host.$time.gz | gunzip - | ~/code/FlameGraph/stackcollapse-perf.pl | ~/code/FlameGraph/flamegraph.pl > flamegraph.svg
+```
 
 ### packetbeat
 
