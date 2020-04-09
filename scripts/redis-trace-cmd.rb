@@ -1,12 +1,12 @@
 require 'time'
 
-raise 'no input file provided' unless ARGV.size > 0
+raise 'no input file provided' if ARGV.empty?
 
 def self.filter_key(key)
   key
-    .gsub(/^(application_rate_limiter:|branch_names:|highlighted-diff-files:merge_request_diffs\/|merged_branch_names:|peek:requests:|tag_names:)(.+)/, '\1$PATTERN')
+    .gsub(%r{^(application_rate_limiter:|branch_names:|highlighted-diff-files:merge_request_diffs/|merged_branch_names:|peek:requests:|tag_names:)(.+)}, '\1$PATTERN')
     .gsub(/^cache:gitlab:(diverging_commit_counts_|github-import)(.+)/, 'cache:gitlab:\1$PATTERN')
-    .gsub(/^cache:gitlab:(show_raw_controller:project|ancestor|branch_count|can_be_resolved_in_ui\?|changelog|commit_count|commit_count_refs\/heads\/master|commit_count_master|contribution_guide|exists\?|gitignore|gitlab_ci_yml|has_visible_content\?|last_commit_id_for_path|license_blob|license_key|merge_request_template_names|readme_path|root_ref|size|tag_count|xcode_project\?|issue_template_names|rendered_readme|views\/shared\/projects\/_project):(.+)/, 'cache:gitlab:\1:$PATTERN')
+    .gsub(%r{^cache:gitlab:(show_raw_controller:project|ancestor|branch_count|can_be_resolved_in_ui\?|changelog|commit_count|commit_count_refs/heads/master|commit_count_master|contribution_guide|exists\?|gitignore|gitlab_ci_yml|has_visible_content\?|last_commit_id_for_path|license_blob|license_key|merge_request_template_names|readme_path|root_ref|size|tag_count|xcode_project\?|issue_template_names|rendered_readme|views/shared/projects/_project):(.+)}, 'cache:gitlab:\1:$PATTERN')
     .gsub(/^cache:gitlab:(avatar):([^:]+)/, 'cache:gitlab:\1:$PATTERN')
     .gsub(/([0-9a-f]{40})/, '$LONGHASH')
     .gsub(/([0-9a-f]{32})/, '$HASH')
@@ -16,21 +16,19 @@ end
 ARGV.each do |idx_filename|
   filename = idx_filename.gsub(/\.findx$/, "")
 
-  STDERR.puts filename
+  warn filename
 
   index_keys = []
   index_vals = []
 
   File.readlines(idx_filename).each do |line|
-    offset, timestamp, length = line.strip.split("|")
+    offset, timestamp, _length = line.strip.split("|")
 
     index_keys << offset.to_i
     index_vals << timestamp.to_f
   end
 
   File.open(filename, 'r:ASCII-8BIT') do |f|
-    prev_lines = []
-
     until f.eof?
       begin
         offset = f.tell
@@ -40,33 +38,34 @@ ARGV.each do |idx_filename|
 
         args = []
 
-        argc = $1.to_i
+        argc = Regexp.last_match(1).to_i
         argc.times do
           line = f.readline.strip
-          fail unless line.match(/^\$([0-9]+)$/)
+          raise unless line.match(/^\$([0-9]+)$/)
 
-          len = $1.to_i
+          len = Regexp.last_match(1).to_i
           args << f.read(len)
           f.read(2) # \r\n
         end
 
         i = index_keys.bsearch_index { |v| v >= offset }
         if i.nil?
-          i = index_keys.size-1
-        elsif i > 0 && index_keys[i] != offset
+          i = index_keys.size - 1
+        elsif i.positive? && index_keys[i] != offset
           # bsearch rounds up, we want to round down
-          i = i-1
+          i -= 1
         end
 
         cmd = args[0].downcase
         ts = Time.at(index_vals[i]).to_datetime.new_offset(0)
-        kbytes = args.reject(&:nil?).map(&:size).reduce(&:+)/1024
+        # kbytes = args.reject(&:nil?).map(&:size).reduce(&:+) / 1024
 
-        fail unless File.basename(filename).match(/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)$/)
-        src_host = $1.split('.').map(&:to_i).join('.')
-        src_port = $2.to_i
-        dst_host = $3.split('.').map(&:to_i).join('.')
-        dst_port = $4.to_i
+        raise unless File.basename(filename).match(/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)$/)
+
+        src_host = Regexp.last_match(1).split('.').map(&:to_i).join('.')
+        # src_port = Regexp.last_match(2).to_i
+        # dst_host = Regexp.last_match(3).split('.').map(&:to_i).join('.')
+        # dst_port = Regexp.last_match(4).to_i
 
         case cmd
         when "get"
@@ -129,7 +128,7 @@ ARGV.each do |idx_filename|
 
         keys.each do |key|
           key_pattern = filter_key(key).gsub(' ', '_').gsub('/', ';').gsub(':', ';')
-          puts "#{ts.iso8601(9)} #{ts.to_time.to_i%60} #{cmd} #{src_host} #{key_pattern.inspect} #{key.gsub(' ', '_').inspect}"
+          puts "#{ts.iso8601(9)} #{ts.to_time.to_i % 60} #{cmd} #{src_host} #{key_pattern.inspect} #{key.gsub(' ', '_').inspect}"
         end
       rescue EOFError
       end
