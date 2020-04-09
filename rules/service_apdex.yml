@@ -11,11 +11,21 @@ groups:
   # if a component suddenly stops working, its RPS will drop to zero and
   # therefore its weight will also drop to zero, meaning that it won't affect
   # the apdex. Using a 10m average is an attempt at resolving this.
+  # Note: we only include current components. This prevents apdex from dropping
+  # when a component is removed from the metrics-catalog
   - record: gitlab_service_apdex:ratio
     expr: >
-      sum by (environment, tier, type, stage) ((gitlab_component_apdex:ratio >= 0) * (avg_over_time(gitlab_component_apdex:weight:score[10m]) >= 0))
+      sum by (environment, tier, type, stage) (
+        ((gitlab_component_apdex:ratio >= 0) * (avg_over_time(gitlab_component_apdex:weight:score[10m]) >= 0))
+        and on (tier, type, component)
+        gitlab_component_service:mapping
+      )
       /
-      sum by (environment, tier, type, stage) (avg_over_time(gitlab_component_apdex:weight:score[10m]) >= 0)
+      sum by (environment, tier, type, stage) (
+        (avg_over_time(gitlab_component_apdex:weight:score[10m]) >= 0)
+        and on (tier, type, component)
+        gitlab_component_service:mapping
+      )
 
   # Node-level aggregation
   - record: gitlab_service_node_apdex:ratio
