@@ -408,7 +408,7 @@ The redis trace script parses out flows into a timeline of commands, one line pe
 The script can be tweaked or its output further processed with `awk` and friends.
 
 ```
-$ find tcpflow -name '*.06379.findx' | parallel -j0 -n100 ruby runbooks/scripts/redis-trace-cmd.rb | sed '/^$/d' > trace.txt
+$ find tcpflow -name '*.06379.findx' | parallel -j0 -n100 ruby runbooks/scripts/redis_trace_cmd.rb | sed '/^$/d' > trace.txt
 $ gsort --parallel=8 trace.txt -o trace.txt
 ```
 
