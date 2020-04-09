@@ -34,3 +34,153 @@ groups:
         or
         max without(slo) (clamp_max(clamp_min(slo_observation_status{type="web"}, 1), 1)) * 5
       )
+- name: External monitoring, short interval
+  interval: 1m
+  rules:
+  - record: gitlab_service_external_availability:ratio_5m
+    labels:
+      tier: sv
+      type: api
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bapi\\b.*"}[5m])
+      )
+  - record: gitlab_service_external_availability:ratio_5m
+    labels:
+      tier: sv
+      type: web
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bweb\\b.*"}[5m])
+      )
+  - record: gitlab_service_external_availability:ratio_5m
+    labels:
+      tier: sv
+      type: git
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bgit\\b.*"}[5m])
+      )
+  - record: gitlab_service_external_availability:ratio_5m
+    labels:
+      tier: sv
+      type: registry
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bregistry\\b.*"}[5m])
+      )
+  - record: gitlab_service_external_availability:ratio_5m
+    labels:
+      tier: sv
+      type: sidekiq
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bsidekiq\\b.*"}[5m])
+      )
+  - record: gitlab_service_external_availability:ratio_5m
+    labels:
+      tier: sv
+      type: ci-runners
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bci-runners\\b.*"}[5m])
+      )
+  - record: gitlab_service_external_availability:ratio_1h
+    labels:
+      tier: sv
+      type: api
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bapi\\b.*"}[1h])
+      )
+  - record: gitlab_service_external_availability:ratio_1h
+    labels:
+      tier: sv
+      type: web
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bweb\\b.*"}[1h])
+      )
+  - record: gitlab_service_external_availability:ratio_1h
+    labels:
+      tier: sv
+      type: git
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bgit\\b.*"}[1h])
+      )
+  - record: gitlab_service_external_availability:ratio_1h
+    labels:
+      tier: sv
+      type: registry
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bregistry\\b.*"}[1h])
+      )
+  - record: gitlab_service_external_availability:ratio_1h
+    labels:
+      tier: sv
+      type: sidekiq
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bsidekiq\\b.*"}[1h])
+      )
+  - record: gitlab_service_external_availability:ratio_1h
+    labels:
+      tier: sv
+      type: ci-runners
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bci-runners\\b.*"}[1h])
+      )
+- name: External monitoring, long interval
+  interval: 5m
+  rules:
+  - record: gitlab_service_external_availability:ratio_1d
+    labels:
+      tier: sv
+      type: api
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bapi\\b.*"}[1d])
+      )
+  - record: gitlab_service_external_availability:ratio_1d
+    labels:
+      tier: sv
+      type: web
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bweb\\b.*"}[1d])
+      )
+  - record: gitlab_service_external_availability:ratio_1d
+    labels:
+      tier: sv
+      type: git
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bgit\\b.*"}[1d])
+      )
+  - record: gitlab_service_external_availability:ratio_1d
+    labels:
+      tier: sv
+      type: registry
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bregistry\\b.*"}[1d])
+      )
+  - record: gitlab_service_external_availability:ratio_1d
+    labels:
+      tier: sv
+      type: sidekiq
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bsidekiq\\b.*"}[1d])
+      )
+  - record: gitlab_service_external_availability:ratio_1d
+    labels:
+      tier: sv
+      type: ci-runners
+    expr: |
+      avg by (environment) (
+        avg_over_time(pingdom_check_status{tags=~".*\\bci-runners\\b.*"}[1d])
+      )
