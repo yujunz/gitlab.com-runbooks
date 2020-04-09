@@ -794,3 +794,30 @@ groups:
       sum by (environment, stage) (
         rate(sidekiq_enqueued_jobs_total{urgency="low"}[6h])
       )
+- name: 'Component mapping: sidekiq'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: high_urgency_job_execution
+      tier: sv
+      type: sidekiq
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: high_urgency_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: non_high_urgency_job_execution
+      tier: sv
+      type: sidekiq
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: non_urgency_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: '1'

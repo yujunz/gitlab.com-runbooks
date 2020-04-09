@@ -26,6 +26,12 @@ local selectedServices = std.filter(function(service) ({ autogenerateRecordingRu
         }]
       else
         []
+        +
+        [{
+          name: 'Component mapping: %s' % [service.type],
+          interval: '1m',
+          rules: recordingRuleRenderer.serviceComponentMapping(service),
+        }]
     )
   for service in services
 } {

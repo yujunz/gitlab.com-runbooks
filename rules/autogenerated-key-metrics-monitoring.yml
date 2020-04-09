@@ -844,3 +844,30 @@ groups:
       sum by (environment, stage) (
         rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[6h])
       )
+- name: 'Component mapping: monitoring'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: grafana
+      tier: inf
+      type: monitoring
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: prometheus
+      tier: inf
+      type: monitoring
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: thanos_query
+      tier: inf
+      type: monitoring
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: '1'

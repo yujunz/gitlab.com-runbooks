@@ -659,3 +659,30 @@ groups:
       sum by (environment, stage) (
         rate(registry_storage_action_seconds_count{}[6h])
       )
+- name: 'Component mapping: registry'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: loadbalancer
+      tier: sv
+      type: registry
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: loadbalancer_cny
+      tier: sv
+      type: registry
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: '1'

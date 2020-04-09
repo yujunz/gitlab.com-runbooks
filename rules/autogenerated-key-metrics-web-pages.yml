@@ -364,3 +364,18 @@ groups:
       sum by (environment, stage) (
         rate(gitlab_pages_http_requests_total{code=~"5.."}[6h])
       )
+- name: 'Component mapping: web-pages'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: loadbalancer
+      tier: sv
+      type: web-pages
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: server
+      tier: sv
+      type: web-pages
+    expr: '1'

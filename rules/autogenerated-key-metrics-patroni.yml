@@ -329,3 +329,24 @@ groups:
       sum by (environment, stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[6h])
       )
+- name: 'Component mapping: patroni'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: pgbouncer
+      tier: db
+      type: patroni
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: rails_sql
+      tier: db
+      type: patroni
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: service
+      tier: db
+      type: patroni
+    expr: '1'

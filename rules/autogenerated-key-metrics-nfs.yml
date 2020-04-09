@@ -94,3 +94,12 @@ groups:
       sum by (environment, stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[6h])
       )
+- name: 'Component mapping: nfs'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: nfs_service
+      tier: stor
+      type: nfs
+    expr: '1'

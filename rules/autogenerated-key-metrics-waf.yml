@@ -304,3 +304,24 @@ groups:
       sum by (stage) (
         rate(cloudflare_zones_http_responses_total{zone="staging.gitlab.com", edge_response_status=~"5.."}[6h])
       )
+- name: 'Component mapping: waf'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: zone_gitlab_com
+      tier: lb
+      type: waf
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: zone_gitlab_net
+      tier: lb
+      type: waf
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: zone_staging_gitlab_com
+      tier: lb
+      type: waf
+    expr: '1'

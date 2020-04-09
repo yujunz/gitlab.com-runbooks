@@ -59,3 +59,12 @@ groups:
         or
         rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[6h])
       )
+- name: 'Component mapping: pgbouncer'
+  interval: 1m
+  rules:
+  - record: gitlab_component_service:mapping
+    labels:
+      component: service
+      tier: db
+      type: pgbouncer
+    expr: '1'
