@@ -431,7 +431,7 @@ groups:
           bound: lower
           pager: pagerduty
           alert_type: symptom
-          deprecated: true
+          deprecated: 'yes'
         annotations:
           description: >
             The `cny` stage of  the `{{ $labels.type }}` service has a apdex score
