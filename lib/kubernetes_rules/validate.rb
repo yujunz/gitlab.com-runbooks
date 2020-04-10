@@ -43,6 +43,14 @@ module KubernetesRules
       render['spec']['groups'].each do |group|
         group['rules'].each do |rule|
           rule.each do |k, v|
+            if k == 'labels'
+              v.each do |j, w|
+                unless w.is_a?(String)
+                  puts "`#{j}: #{w}` is the incorrect type, must be string".red
+                  error_count += 1
+                end
+              end
+            end
             next if k == 'labels'
             next if k == 'annotations'
 
