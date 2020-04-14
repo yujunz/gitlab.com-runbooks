@@ -6,7 +6,7 @@ def self.filter_key(key)
   key
     .gsub(%r{^(highlighted-diff-files:merge_request_diffs/)(.+)}, '\1$PATTERN')
     .gsub(%r{^(show_raw_controller:project|ancestor|can_be_resolved_in_ui\?|commit_count_refs/heads/master|commit_count_master|exists\?|last_commit_id_for_path|merge_request_template_names|root_ref|xcode_project\?|issue_template_names|views/shared/projects/_project|application_rate_limiter|branch_names|merged_branch_names|peek:requests|tag_names|branch_count|tag_count|commit_count|size|gitignore|rendered_readme|readme_path|license_key|contribution_guide|gitlab_ci_yml|changelog|license_blob|avatar|metrics_dashboard_paths|has_visible_content\?):(.+)}, '\1:$PATTERN')
-    .gsub(/^cache:gitlab:(diverging_commit_counts_|github-import\/)(.+)/, 'cache:gitlab:\1$PATTERN')
+    .gsub(%r{^cache:gitlab:(diverging_commit_counts_|github-import/)(.+)}, 'cache:gitlab:\1$PATTERN')
     .gsub(/([0-9a-f]{40})/, '$LONGHASH')
     .gsub(/([0-9a-f]{32})/, '$HASH')
     .gsub(/([0-9]+)/, '$NUMBER')

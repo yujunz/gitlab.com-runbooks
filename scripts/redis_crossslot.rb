@@ -7,7 +7,7 @@ def self.filter_key(key)
   key
     .gsub(%r{^(highlighted-diff-files:merge_request_diffs/)(.+)}, '\1$PATTERN')
     .gsub(%r{^(show_raw_controller:project|ancestor|can_be_resolved_in_ui\?|commit_count_refs/heads/master|commit_count_master|exists\?|last_commit_id_for_path|merge_request_template_names|root_ref|xcode_project\?|issue_template_names|views/shared/projects/_project|application_rate_limiter|branch_names|merged_branch_names|peek:requests|tag_names|branch_count|tag_count|commit_count|size|gitignore|rendered_readme|readme_path|license_key|contribution_guide|gitlab_ci_yml|changelog|license_blob|avatar|metrics_dashboard_paths|has_visible_content\?):(.+)}, '\1:$PATTERN')
-    .gsub(/^cache:gitlab:(diverging_commit_counts_|github-import\/)(.+)/, 'cache:gitlab:\1$PATTERN')
+    .gsub(%r{^cache:gitlab:(diverging_commit_counts_|github-import/)(.+)}, 'cache:gitlab:\1$PATTERN')
     .gsub(/([0-9a-f]{40})/, '$LONGHASH')
     .gsub(/([0-9a-f]{32})/, '$HASH')
     .gsub(/([0-9]+)/, '$NUMBER')
@@ -18,10 +18,8 @@ end
 def self.hash_slot(key)
   s = key.index "{"
   if s
-    e = key.index "}",s+1
-    if e && e != s+1
-      key = key[s+1..e-1]
-    end
+    e = key.index "}", s + 1
+    key = key[s + 1..e - 1] if e && e != s + 1
   end
   Digest::CRC16.checksum(key) % 16384
 end
@@ -38,7 +36,6 @@ ARGV.each do |idx_filename|
   File.open(filename, 'r:ASCII-8BIT') do |f|
     until f.eof?
       begin
-        offset = f.tell
         line = f.readline.strip
 
         next unless line.match(/^\*([0-9]+)$/)
@@ -118,9 +115,7 @@ ARGV.each do |idx_filename|
           raise "unknown command #{cmd}"
         end
 
-        if cmd == "multi"
-          in_tx = true
-        end
+        in_tx = true if cmd == "multi"
 
         if cmd == "exec"
           keys += tx_keys
@@ -131,7 +126,7 @@ ARGV.each do |idx_filename|
           tx_cmds = []
         end
 
-        if in_tx && !%w(multi exec).include?(cmd)
+        if in_tx && !%w[multi exec].include?(cmd)
           tx_keys += keys
           tx_cmds << args
         end
