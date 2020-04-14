@@ -34,4 +34,5 @@
 * [../uncategorized/manage-chef.md](../uncategorized/manage-chef.md)
 * [../uncategorized/node-reboots.md](../uncategorized/node-reboots.md)
 * [../uncategorized/uploads.md](../uncategorized/uploads.md)
+* [../waf/cloudflare.md](../waf/cloudflare.md)
 <!-- END_MARKER -->

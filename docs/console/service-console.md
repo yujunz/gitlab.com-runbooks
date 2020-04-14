@@ -69,4 +69,5 @@
 * [../uncategorized/uploads.md](../uncategorized/uploads.md)
 * [../uncategorized/workers-high-load.md](../uncategorized/workers-high-load.md)
 * [../version/version-gitlab-com.md](../version/version-gitlab-com.md)
+* [../waf/cloudflare.md](../waf/cloudflare.md)
 <!-- END_MARKER -->
