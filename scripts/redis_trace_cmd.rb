@@ -4,10 +4,9 @@ raise 'no input file provided' if ARGV.empty?
 
 def self.filter_key(key)
   key
-    .gsub(%r{^(application_rate_limiter:|branch_names:|highlighted-diff-files:merge_request_diffs/|merged_branch_names:|peek:requests:|tag_names:)(.+)}, '\1$PATTERN')
-    .gsub(/^cache:gitlab:(diverging_commit_counts_|github-import)(.+)/, 'cache:gitlab:\1$PATTERN')
-    .gsub(%r{^cache:gitlab:(show_raw_controller:project|ancestor|branch_count|can_be_resolved_in_ui\?|changelog|commit_count|commit_count_refs/heads/master|commit_count_master|contribution_guide|exists\?|gitignore|gitlab_ci_yml|has_visible_content\?|last_commit_id_for_path|license_blob|license_key|merge_request_template_names|readme_path|root_ref|size|tag_count|xcode_project\?|issue_template_names|rendered_readme|views/shared/projects/_project):(.+)}, 'cache:gitlab:\1:$PATTERN')
-    .gsub(/^cache:gitlab:(avatar):([^:]+)/, 'cache:gitlab:\1:$PATTERN')
+    .gsub(%r{^(highlighted-diff-files:merge_request_diffs/)(.+)}, '\1$PATTERN')
+    .gsub(%r{^(show_raw_controller:project|ancestor|can_be_resolved_in_ui\?|commit_count_refs/heads/master|commit_count_master|exists\?|last_commit_id_for_path|merge_request_template_names|root_ref|xcode_project\?|issue_template_names|views/shared/projects/_project|application_rate_limiter|branch_names|merged_branch_names|peek:requests|tag_names|branch_count|tag_count|commit_count|size|gitignore|rendered_readme|readme_path|license_key|contribution_guide|gitlab_ci_yml|changelog|license_blob|avatar|metrics_dashboard_paths|has_visible_content\?):(.+)}, '\1:$PATTERN')
+    .gsub(/^cache:gitlab:(diverging_commit_counts_|github-import\/)(.+)/, 'cache:gitlab:\1$PATTERN')
     .gsub(/([0-9a-f]{40})/, '$LONGHASH')
     .gsub(/([0-9a-f]{32})/, '$HASH')
     .gsub(/([0-9]+)/, '$NUMBER')
