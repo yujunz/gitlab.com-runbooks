@@ -351,7 +351,7 @@ $ sudo mkdir -p /var/log/pcap-$USER
 $ cd /var/log/pcap-$USER
 $ sudo chown $USER:$USER .
 
-$ sudo timeout 30 tcpdump -s 65535 tcp port 6379 -w redis.pcap -i ens4
+$ sudo tcpdump -G 30 -W 1 -s 65535 tcp port 6379 -w redis.pcap -i ens4
 tcpdump: listening on ens4, link-type EN10MB (Ethernet), capture size 65535 bytes
 676 packets captured
 718 packets received by filter
@@ -361,7 +361,7 @@ tcpdump: listening on ens4, link-type EN10MB (Ethernet), capture size 65535 byte
 It may be cheaper to capture only incoming traffic:
 
 ```
-$ sudo timeout 30 tcpdump -s 65535 tcp dst port 6379 -w redis.pcap -i ens4
+$ sudo tcpdump -G 30 -W 1 -s 65535 tcp dst port 6379 -w redis.pcap -i ens4
 ```
 
 Compression:
@@ -382,8 +382,8 @@ remember to remove the pcap file once you're done!
 1. install tcpflow (on MacOS: `brew install tcpflow`)
 1. split the packet capture into separate tcpflows:
 ```shell
-$ tcpflow -i -s -o redis-analysis -r redis.pcap.gz
-$ cd ./redis-analysis
+$ tcpflow -I -s -o redis-analysis -r redis.pcap.gz
+$ cd redis-analysis
 ```
 
 #### Analyze Redis traffic ####
@@ -407,14 +407,14 @@ The redis trace script parses out flows into a timeline of commands, one line pe
 
 The script can be tweaked or its output further processed with `awk` and friends.
 
-```
-$ find tcpflow -name '*.06379.findx' | parallel -j0 -n100 ruby runbooks/scripts/redis_trace_cmd.rb | sed '/^$/d' > trace.txt
+```shell
+$ find redis-analysis -name '*.06379.findx' | parallel -j0 -n100 ruby runbooks/scripts/redis_trace_cmd.rb | sed '/^$/d' > trace.txt
 $ gsort --parallel=8 trace.txt -o trace.txt
 ```
 
 For example, count per key pattern:
 
-```
+```shell
 $ cat trace.txt | awk '{ print $5 } | sort -n | uniq -c | sort -nr'
 ```
 
@@ -426,7 +426,7 @@ CPU profiles are useful for diagnosing CPU saturation. Especially since redis is
 
 A profile can be captured via perf:
 
-```
+```shell
 $ sudo mkdir -p /var/log/perf-$USER
 $ cd /var/log/perf-$USER
 $ sudo chown $USER:$USER .
@@ -440,7 +440,7 @@ This will sample stacks at ~500hz.
 
 Those stack traces can then be downloaded and analyzed with [flamescope](https://github.com/Netflix/flamescope) or [flamegraph](https://github.com/brendangregg/FlameGraph).
 
-```
+```shell
 $ scp $host:/var/log/perf-\*/stacks.\*.gz .
 $ cat stacks.$host.$time.gz | gunzip - | ~/code/FlameGraph/stackcollapse-perf.pl | ~/code/FlameGraph/flamegraph.pl > flamegraph.svg
 ```
