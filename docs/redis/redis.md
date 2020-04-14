@@ -429,7 +429,7 @@ A profile can be captured via perf:
 ```
 $ sudo mkdir -p /var/log/perf-$USER
 $ cd /var/log/perf-$USER
-s$ udo chown $USER:$USER .
+$ sudo chown $USER:$USER .
 
 $ sudo perf record -p $(pidof redis-server) -F 497 --call-graph dwarf --no-inherit -- sleep 300
 $ sudo perf script --header | gzip > stacks.$(hostname).$(date --iso-8601=seconds).gz
