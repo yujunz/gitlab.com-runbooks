@@ -36,7 +36,7 @@ local latencyHistogramQuery(percentile, bucketMetric, selector, aggregator, rang
     rangeInterval: rangeInterval,
   };
 
-local counterRateQuery(bucketMetric, selector, aggregator, rangeInterval, deltaFunction='rate') =
+local counterQuery(bucketMetric, selector, aggregator, rangeInterval, deltaFunction='rate') =
   |||
     sum by (%(aggregator)s) (
       %(deltaFunction)s(%(bucketMetric)s{%(selector)s}[%(rangeInterval)s])
@@ -64,24 +64,24 @@ local latencyTimeseries(title, aggregators, legendFormat) =
     legendFormat=legendFormat,
   );
 
-local enqueueRateTimeseries(title, aggregators, legendFormat) =
+local enqueueCountTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
-    query=counterRateQuery('sidekiq_enqueued_jobs_total', 'environment="$environment", queue=~"$queue"', aggregators, '$__interval', deltaFunction='increase'),
+    query=counterQuery('sidekiq_enqueued_jobs_total', 'environment="$environment", queue=~"$queue"', aggregators, '$__interval', deltaFunction='increase'),
     legendFormat=legendFormat,
   );
 
 local rpsTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
-    query=counterRateQuery('sidekiq_jobs_completion_seconds_count', selector, aggregators, '$__interval'),
+    query=counterQuery('sidekiq_jobs_completion_seconds_count', selector, aggregators, '$__interval'),
     legendFormat=legendFormat,
   );
 
 local errorRateTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
-    query=counterRateQuery('sidekiq_jobs_failed_total', selector, aggregators, '$__interval', deltaFunction='increase'),
+    query=counterQuery('sidekiq_jobs_failed_total', selector, aggregators, '$__interval', deltaFunction='increase'),
     legendFormat=legendFormat,
   );
 
@@ -347,11 +347,11 @@ basic.dashboard(
     }),
   ], cols=4, rowHeight=8, startRow=101)
   +
-  rowGrid('Enqueuing (the rate at which jobs are enqueued)', [
-    enqueueRateTimeseries('Jobs Enqueued', aggregators='queue', legendFormat='{{ queue }}'),
-    enqueueRateTimeseries('Jobs Enqueued per Service', aggregators='type, queue', legendFormat='{{ queue }} - {{ type }}'),
+  rowGrid('Enqueuing (number of jobs enqueued)', [
+    enqueueCountTimeseries('Jobs Enqueued', aggregators='queue', legendFormat='{{ queue }}'),
+    enqueueCountTimeseries('Jobs Enqueued per Service', aggregators='type, queue', legendFormat='{{ queue }} - {{ type }}'),
     basic.queueLengthTimeseries(
-      title='Queue depth',
+      title='Queue length',
       description='The number of unstarted jobs in a queue',
       query=|||
         max by (name) (max_over_time(sidekiq_queue_size{environment="$environment", name=~"$queue"}[$__interval]) and on(fqdn) (redis_connected_slaves != 0))
