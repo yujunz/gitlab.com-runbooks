@@ -26,6 +26,7 @@
 * [../gitaly/gracefully-restart-gitaly-ruby.md](../gitaly/gracefully-restart-gitaly-ruby.md)
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
 * [recovering-from-nfs-disaster.md](recovering-from-nfs-disaster.md)
+* [../praefect/praefect-bypass.md](../praefect/praefect-bypass.md)
 * [../uncategorized/chef-guidelines.md](../uncategorized/chef-guidelines.md)
 * [../uncategorized/deleted-project-restore.md](../uncategorized/deleted-project-restore.md)
 * [../uncategorized/missing_repos.md](../uncategorized/missing_repos.md)

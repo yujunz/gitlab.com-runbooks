@@ -13,11 +13,12 @@
 
 ## Troubleshooting Pointers
 
-* [../gitaly/praefect-file-storages.md](../gitaly/praefect-file-storages.md)
+* [praefect-bypass.md](praefect-bypass.md)
 * [praefect-error-rate.md](praefect-error-rate.md)
+* [praefect-file-storages.md](praefect-file-storages.md)
 * [praefect-startup.md](praefect-startup.md)
 <!-- END_MARKER -->
 
 ## How To...
 
-* [Add and remove file storages to praefect](../gitaly/praefect-file-storages.md)
+* [Add and remove file storages to praefect](praefect-file-storages.md)
