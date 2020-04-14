@@ -401,7 +401,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -418,7 +418,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -435,7 +435,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -452,7 +452,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -469,7 +469,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -486,7 +486,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -495,7 +495,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -504,7 +504,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -513,7 +513,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -522,7 +522,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -531,7 +531,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_1h
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -540,7 +540,7 @@ groups:
       )
   - record: gitlab_component_ops:rate
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -549,7 +549,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_30m
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -558,7 +558,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_5m
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -567,7 +567,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_6h
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -576,7 +576,7 @@ groups:
       )
   - record: gitlab_component_errors:rate_1h
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -585,7 +585,7 @@ groups:
       )
   - record: gitlab_component_errors:rate
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -594,7 +594,7 @@ groups:
       )
   - record: gitlab_component_errors:rate_30m
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -603,7 +603,7 @@ groups:
       )
   - record: gitlab_component_errors:rate_5m
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -612,7 +612,7 @@ groups:
       )
   - record: gitlab_component_errors:rate_6h
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: |
@@ -621,7 +621,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -638,7 +638,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -655,7 +655,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -672,7 +672,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -689,7 +689,7 @@ groups:
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -706,7 +706,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -715,7 +715,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -724,7 +724,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -733,7 +733,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -742,7 +742,7 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -751,7 +751,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_1h
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -760,7 +760,7 @@ groups:
       )
   - record: gitlab_component_ops:rate
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -769,7 +769,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_30m
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -778,7 +778,7 @@ groups:
       )
   - record: gitlab_component_ops:rate_5m
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
@@ -787,12 +787,277 @@ groups:
       )
   - record: gitlab_component_ops:rate_6h
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
       tier: sv
       type: sidekiq
     expr: |
       sum by (environment, stage) (
         rate(sidekiq_enqueued_jobs_total{urgency="low"}[6h])
+      )
+  - record: gitlab_component_apdex:ratio_1h
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="300"}[1h])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[1h])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="300"}[1m])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:ratio_30m
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="300"}[30m])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[30m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:ratio_5m
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="300"}[5m])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[5m])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:ratio_6h
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="300"}[6h])
+        )
+      )
+      /
+      (
+        sum by (environment, stage) (
+          rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[6h])
+        ) > 0
+      )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[1h])
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[1m])
+      )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[30m])
+      )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[5m])
+      )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled", le="+Inf"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled",le="+Inf"}[1h])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled",le="+Inf"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled",le="+Inf"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled",le="+Inf"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_completion_seconds_bucket{urgency="throttled",le="+Inf"}[6h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{urgency="throttled"}[1h])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{urgency="throttled"}[1m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{urgency="throttled"}[30m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{urgency="throttled"}[5m])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_jobs_failed_total{urgency="throttled"}[6h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: throttled_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{urgency="throttled"}[1h])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: throttled_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{urgency="throttled"}[1m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: throttled_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{urgency="throttled"}[30m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: throttled_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{urgency="throttled"}[5m])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: throttled_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment, stage) (
+        rate(sidekiq_enqueued_jobs_total{urgency="throttled"}[6h])
       )
 - name: 'Component mapping: sidekiq'
   interval: 1m
@@ -811,13 +1076,25 @@ groups:
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
-      component: non_high_urgency_job_execution
+      component: low_urgency_job_execution
       tier: sv
       type: sidekiq
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
-      component: non_urgency_job_queueing
+      component: low_urgency_job_queueing
+      tier: sv
+      type: sidekiq
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: throttled_job_execution
+      tier: sv
+      type: sidekiq
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: throttled_job_queueing
       tier: sv
       type: sidekiq
     expr: '1'
