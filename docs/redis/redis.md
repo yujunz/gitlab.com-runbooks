@@ -351,7 +351,7 @@ $ sudo mkdir -p /var/log/pcap-$USER
 $ cd /var/log/pcap-$USER
 $ sudo chown $USER:$USER .
 
-$ sudo timeout 30 tcpdump -s 65535 tcp port 6379 -w redis.pcap -i ens4
+$ sudo tcpdump -G 30 -W 1 -s 65535 tcp port 6379 -w redis.pcap -i ens4
 tcpdump: listening on ens4, link-type EN10MB (Ethernet), capture size 65535 bytes
 676 packets captured
 718 packets received by filter
@@ -361,7 +361,7 @@ tcpdump: listening on ens4, link-type EN10MB (Ethernet), capture size 65535 byte
 It may be cheaper to capture only incoming traffic:
 
 ```
-$ sudo timeout 30 tcpdump -s 65535 tcp dst port 6379 -w redis.pcap -i ens4
+$ sudo tcpdump -G 30 -W 1 -s 65535 tcp dst port 6379 -w redis.pcap -i ens4
 ```
 
 Compression:
