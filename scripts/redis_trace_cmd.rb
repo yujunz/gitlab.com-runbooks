@@ -126,8 +126,7 @@ ARGV.each do |idx_filename|
         end
 
         keys.each do |key|
-          key_pattern = filter_key(key).gsub(' ', '_').gsub('/', ';').gsub(':', ';')
-          puts "#{ts.iso8601(9)} #{ts.to_time.to_i % 60} #{cmd} #{src_host} #{key_pattern.inspect} #{key.gsub(' ', '_').inspect}"
+          puts "#{ts.iso8601(9)} #{ts.to_time.to_i % 60} #{cmd} #{src_host} #{filter_key(key).gsub(' ', '_').inspect} #{key.gsub(' ', '_').inspect}"
         end
       rescue EOFError
       end
