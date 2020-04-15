@@ -16,24 +16,26 @@ local minimumOperationRateForMonitoring = 4 / 60;
 // Uses the component definitions from the metrics catalog to compose new
 // recording rules with alternative aggregations
 local generateRulesForComponentForBurnRate(queueComponent, executionComponent, rangeInterval) =
-  if queueComponent != null then
-    [{  // Key metric: Queueing apdex
-      record: 'gitlab_background_jobs:queue:apdex:ratio_%s' % [rangeInterval],
-      expr: queueComponent.apdex.apdexQuery(aggregationLabels, '', rangeInterval),
-    }]
-  else
-    []
-    +
-    [{  // Key metric: Execution apdex
-      record: 'gitlab_background_jobs:execution:apdex:ratio_%s' % [rangeInterval],
-      expr: executionComponent.apdex.apdexQuery(aggregationLabels, '', rangeInterval),
-    }, {  // Key metric: QPS
-      record: 'gitlab_background_jobs:execution:ops:rate_%s' % [rangeInterval],
-      expr: executionComponent.requestRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
-    }, {  // Key metric: Errors per Second
-      record: 'gitlab_background_jobs:execution:error:rate_%s' % [rangeInterval],
-      expr: executionComponent.errorRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
-    }];
+  (
+    if queueComponent != null then
+      [{  // Key metric: Queueing apdex
+        record: 'gitlab_background_jobs:queue:apdex:ratio_%s' % [rangeInterval],
+        expr: queueComponent.apdex.apdexQuery(aggregationLabels, '', rangeInterval),
+      }]
+    else
+      []
+  )
+  +
+  [{  // Key metric: Execution apdex
+    record: 'gitlab_background_jobs:execution:apdex:ratio_%s' % [rangeInterval],
+    expr: executionComponent.apdex.apdexQuery(aggregationLabels, '', rangeInterval),
+  }, {  // Key metric: QPS
+    record: 'gitlab_background_jobs:execution:ops:rate_%s' % [rangeInterval],
+    expr: executionComponent.requestRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
+  }, {  // Key metric: Errors per Second
+    record: 'gitlab_background_jobs:execution:error:rate_%s' % [rangeInterval],
+    expr: executionComponent.errorRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
+  }];
 
 // Generates four key metrics for each urgency, for a single burn rate
 local generateRulesForBurnRate(rangeInterval) =
