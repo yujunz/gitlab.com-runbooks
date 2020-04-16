@@ -66,6 +66,22 @@ local rateMetric = metricsCatalog.rateMetric;
         selector='job="shared-runners", failure_reason="runner_system_failure"'
       ),
     },
+
+    // Trace archive jobs do not mark themselves as failed
+    // when a job fails, instead they increment the job_trace_archive_failed_total counter
+    // For this reason, our normal Sidekiq job monitoring doesn't alert us to these failures.
+    // Instead, track this as a component of the CI service
+    // https://gitlab.com/gitlab-org/gitlab/blob/master/app/services/ci/archive_trace_service.rb
+    trace_archiving_ci_jobs: {
+      requestRate: rateMetric(
+        counter='sidekiq_jobs_completion_seconds_count',
+        selector='worker="ArchiveTraceWorker"'
+      ),
+
+      errorRate: rateMetric(
+        counter='job_trace_archive_failed_total',
+      ),
+    },
   },
 
   saturationTypes: [
