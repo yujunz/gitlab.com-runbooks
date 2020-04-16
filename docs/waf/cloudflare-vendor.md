@@ -28,21 +28,9 @@ Instructions for Access Provisioners (requires Super Administrator privileges):
 
 TODO: link to terraform module
 
-### Temporarily Blocking Traffic
+### Managing Traffic (blocks and whitelists)
 
-TODO: establish processes for doing temporary changes
-
-### Temporarily Allowing Traffic
-
-TODO:
-
-### Permanently Blocking Traffic
-
-TODO:
-
-### Permanently Allowing Traffic
-
-TODO:
+[Cloudflare: Managing Traffic](./cloudflare-managing-traffic.md)
 
 ## Anti-Abuse Investigations
 
