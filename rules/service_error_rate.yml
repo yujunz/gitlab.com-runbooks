@@ -1,14 +1,4 @@
 groups:
-- name: GitLab Component Errors-per-Second Rates
-  interval: 1m
-  rules:
-  # web-pages: GitLab Pages backend service
-  - record: gitlab_component_errors:rate
-    labels:
-      component: 'http'
-    expr: >
-      sum(rate(gitlab_pages_http_requests_total{code=~"5.*"}[1m])) by (environment, tier, type, stage)
-
 ######################
 # Aggregation Stage
 ######################
