@@ -34,6 +34,20 @@ local customQuery = metricsCatalog.customQuery;
 
       significantLabels: ['name'],
     },
+
+    // Stackdriver component represents log messages
+    // ingested in Google Stackdrive Logging in GCP
+    stackdriver: {
+      staticLabels: {
+        stage: 'main',
+      },
+
+      requestRate: rateMetric(
+        counter='stackdriver_gce_instance_logging_googleapis_com_log_entry_count',
+      ),
+
+      significantLabels: ['log', 'severity'],
+    },
   },
 
   saturationTypes: [
