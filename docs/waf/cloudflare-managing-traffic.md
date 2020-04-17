@@ -116,6 +116,11 @@ Because there are multiple ways to create a rule, please also apply one of the f
   - `rule-origin::chatops`: The rule was created via ChatOps.
   - `rule-origin::manual`: The rule was added manually.
 
+The longevity of a rule is to be indicated by either of these labels:
+
+  - `rule-duration::long-term`: The rule is intended to stay active for a long time. Examples include allowlisting Customers or blocking repeated offenders.
+  - `rule-duration::temporary`: The rule is intended to be short-lived. Its lifetime will in most cases be determined by automation.
+
 ### Description format of Cloudflare rules
 
 In order for automation to do its job, it is required to have a standardized format it can parse. This format is a compromise between machine readability and human readability.
