@@ -29,4 +29,5 @@
 * [../uncategorized/k8s-operations.md](../uncategorized/k8s-operations.md)
 * [../uncategorized/kubernetes.md](../uncategorized/kubernetes.md)
 * [../uncategorized/tweeting-guidelines.md](../uncategorized/tweeting-guidelines.md)
+* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 <!-- END_MARKER -->

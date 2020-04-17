@@ -21,4 +21,5 @@
 * [../uncategorized/chef-vault.md](../uncategorized/chef-vault.md)
 * [../uncategorized/chef.md](../uncategorized/chef.md)
 * [../uncategorized/deploycmd.md](../uncategorized/deploycmd.md)
+* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 <!-- END_MARKER -->

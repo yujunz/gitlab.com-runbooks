@@ -39,4 +39,5 @@
 * [../uncategorized/pingdom.md](../uncategorized/pingdom.md)
 * [../uncategorized/upload-file-to-gcs-using-signed-url.md](../uncategorized/upload-file-to-gcs-using-signed-url.md)
 * [../version/gitaly-version-mismatch.md](../version/gitaly-version-mismatch.md)
+* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 <!-- END_MARKER -->
