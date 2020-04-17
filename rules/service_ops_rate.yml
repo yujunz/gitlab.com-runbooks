@@ -16,18 +16,6 @@ groups:
     expr: >
       sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate >= 0)
 
-- name: GitLab Component Operations-per-Second Rate Stats
-  interval: 5m
-  rules:
-  # Average values for each component, over a week
-  - record: gitlab_component_ops:rate:avg_over_time_1w
-    expr: >
-      avg_over_time(gitlab_component_ops:rate[1w])
-  # Stddev for each component, over a week
-  - record: gitlab_component_ops:rate:stddev_over_time_1w
-    expr: >
-      stddev_over_time(gitlab_component_ops:rate[1w])
-
 - name: GitLab Service Operations-per-Second Rate Stats
   interval: 5m
   rules:

@@ -1,0 +1,12 @@
+groups:
+- name: GitLab Component Apdex Score Stats
+  interval: 5m
+  rules:
+  # Average values for each component, over a week
+  - record: gitlab_component_apdex:ratio:avg_over_time_1w
+    expr: >
+      avg_over_time(gitlab_component_apdex:ratio[1w])
+  # Stddev for each component, over a week
+  - record: gitlab_component_apdex:ratio:stddev_over_time_1w
+    expr: >
+      stddev_over_time(gitlab_component_apdex:ratio[1w])
