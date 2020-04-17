@@ -84,10 +84,18 @@ Each issue should be labeled with with either of these labels:
       - Might also be applied by an engineer to manually created issues
     - This label must only be used while the block is active.
     - While this label is applied the issue should not be closed, but may be for long-term rules.
-  - `firewall-action::allow`: The rule associated to the issue is allowing traffic
+  - `firewall-action::bypass`: The rule associated to the issue is bypassing traffic
     - Applied by an engineer documenting a allowlist.
     - This label must only be used while the allowlist is in place.
     - While this label is applied the issue should not be closed, but may be for long-term rules.
+    - The following applicable labels have to be applied to indicate the type(s) of bypass.
+      - `bypass-action:hot`: The rule associated to the issue bypasses [Hotlinking Protection](https://support.cloudflare.com/hc/en-us/articles/200170026-What-does-enabling-Cloudflare-Hotlink-Protection-do-)
+      - `bypass-action:bic`: The rule associated to the issue bypasses the [Browser Integrity Check](https://support.cloudflare.com/hc/en-us/articles/200170086-Understanding-the-Cloudflare-Browser-Integrity-Check)
+      - `bypass-action:waf`: The rule associated to the issue bypasses managed WAF rules
+      - `bypass-action:rateLimit`: The rule associated to the issue bypasses Cloudflare Rate Limiting
+      - `bypass-action:uaBlock`: The rule associated to the issue bypasses User-agent blocking
+      - `bypass-action:zoneLockdown`: The rule associated to the issue bypasses a Zone Lockdown
+      - `bypass-action:securityLevel`: The rule associated to the issue bypasses Security Level (IP Reputation)
   - `firewall-action::expired`: The rule associated to the issue has expired
     - Applied by automation once all of these conditions are met
       - The minimum block time of 48h has passed
@@ -103,12 +111,13 @@ Each issue should be labeled with with either of these labels:
 
 In addition to the state, the type of block/allowlist should be documented by applying all appropriate type labels. In case of a rule created via automation, these will be applied automatically.
 
-  - `firewall-type:ip`: The rule filters based on IPs or CIDRs
-  - `firewall-type:uri`: The rule filters based on the URI
-  - `firewall-type:user-agent`: The rule filters based on the user-agent
-  - `firewall-type:other-identifier`: The rule filters based on another identifier
-  - `firewall-type:external`: There is an (additional) component, not managed in Cloudflare rules
+  - `rule-filter:ip`: The rule filters based on IPs or CIDRs
+  - `rule-filter:uri`: The rule filters based on the URI
+  - `rule-filter:user-agent`: The rule filters based on the user-agent
+  - `rule-filter:other-identifier`: The rule filters based on another identifier
+  - `rule-filter:external`: There is an (additional) component, not managed in Cloudflare rules
     - A good example would be an additional block on the registry HAProxy to block traffic on the registry.
+
 
 Because there are multiple ways to create a rule, please also apply one of the following labels to specify the rule origin.
 
@@ -162,9 +171,10 @@ Context on what the rule does should be added via labels as discussed above. For
 
 Depending on the lifetime of the rule the process is different:
 
-`temporary`: Create the rule using the Cloudflare UI at https://dash.cloudflare.com/852e9d53d0f8adbd9205389356f2303d/gitlab.com/firewall/firewall-rules keeping in mind the layout of the rule description.
+`temporary`: Create the rule using the Cloudflare UI at https://dash.cloudflare.com/852e9d53d0f8adbd9205389356f2303d/gitlab.com/firewall/firewall-rules keeping in mind the layout of the rule description. For further detail refer to the [Cloudflare documentation on managing rules.](https://developers.cloudflare.com/firewall/cf-dashboard/create-edit-delete-rules/)
 
-`long-term`: Create the rule in Terraform. For customer allowlists, follow the [instructions of the terraform module](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_whitelists#whitelist-configuration).
+`long-term`: Create the rule in Terraform. For customer allowlists, follow the [instructions of the terraform module](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_whitelists#whitelist-configuration). In other cases, refer to the [documentation of the Terraform provider.](https://www.terraform.io/docs/providers/cloudflare/r/firewall_rule.html)
+  - When using the terraform module, please apply the labels `bypass-action:waf` and `bypass-action:rateLimit` for customers and all `bypass-action` labels for internal bypasses.
 
 After the rule creation, comment the rule ID on the issue, as well as tagging the issue with the appropriate `rule-origin` label, as described above.
 
