@@ -9,8 +9,8 @@
 
 ## The goal of the [Firewall issue tracker](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall)
 
- - Provide a searchable database of current and previous blocks and whitelists.
- - Provide a quick overview of what is currently whitelisted or blocked and why.
+ - Provide a searchable database of current and previous blocks and allowlists.
+ - Provide a quick overview of what is currently allowlisted or blocklisted and why.
  - Reduce noise in the infrastructure and production trackers by separating it out.
 
 ## When to block and how to block
@@ -70,8 +70,8 @@ What to consider repeated abuse?
 
 ## Rule management
 
-Each block/whitelist in the Cloudflare firewall is to be accompanied by an issue in the [Firewall issue tracker](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall).
-This includes rules added in Terraform for internal an customer whitelists.
+Each block/allowlist in the Cloudflare firewall is to be accompanied by an issue in the [Firewall issue tracker](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall).
+This includes rules added in Terraform for internal an customer allowlists.
 
 ### Labels
 
@@ -84,9 +84,9 @@ Each issue should be labeled with with either of these labels:
       - Might also be applied by an engineer to manually created issues
     - This label must only be used while the block is active.
     - While this label is applied the issue should not be closed, but may be for long-term rules.
-  - `firewall-action::whitelist`: The rule associated to the issue is whitelisting traffic
-    - Applied by an engineer documenting a whitelist.
-    - This label must only be used while the whitelist is in place.
+  - `firewall-action::allow`: The rule associated to the issue is allowing traffic
+    - Applied by an engineer documenting a allowlist.
+    - This label must only be used while the allowlist is in place.
     - While this label is applied the issue should not be closed, but may be for long-term rules.
   - `firewall-action::expired`: The rule associated to the issue has expired
     - Applied by automation once all of these conditions are met
@@ -101,7 +101,7 @@ Each issue should be labeled with with either of these labels:
     - The exact state and purpose of the rule has to be described in the issue.
     - This will also disable automatic closing of the issue by automation. A rule might still get removed.
 
-In addition to the state, the type of block/whitelist should be documented by applying all appropriate type labels. In case of a rule created via automation, these will be applied automatically.
+In addition to the state, the type of block/allowlist should be documented by applying all appropriate type labels. In case of a rule created via automation, these will be applied automatically.
 
   - `firewall-type:ip`: The rule filters based on IPs or CIDRs
   - `firewall-type:uri`: The rule filters based on the URI
@@ -151,7 +151,7 @@ TBD.
 
 The engineer should first create an issue in the firewall tracker, documenting the subject and reason for the rule. If possible link to other issues to add more context.
 
-The issue title should contain searchable information about the rule, such as `whitelist IP 1.2.3.4 for customer ACME Corp.` or `block uri /foo/bar/baz`.
+The issue title should contain searchable information about the rule, such as `allowlist IP 1.2.3.4 for customer ACME Corp.` or `block uri /foo/bar/baz`.
 
 Context on what the rule does should be added via labels as discussed above. For `firewall-type` labels make sure to add info on the resource that is filtered. For example for an issue with `firewall-type:ip` include the IP in the description, for `firewall-type:external` another issue documenting that, etc.
 
@@ -159,7 +159,7 @@ Depending on the lifetime of the rule the process is different:
 
 `temporary`: Create the rule using the Cloudflare UI at https://dash.cloudflare.com/852e9d53d0f8adbd9205389356f2303d/gitlab.com/firewall/firewall-rules keeping in mind the layout of the rule description.
 
-`permanent`: Create the rule in Terraform. For customer whitelists, follow the [instructions of the terraform module](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_whitelists#whitelist-configuration).
+`permanent`: Create the rule in Terraform. For customer allowlists, follow the [instructions of the terraform module](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_whitelists#whitelist-configuration).
 
 After the rule creation, comment the rule ID on the issue, as well as tagging the issue with the appropriate `rule-origin` label, as described above.
 

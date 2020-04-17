@@ -28,7 +28,7 @@ Instructions for Access Provisioners (requires Super Administrator privileges):
 
 TODO: link to terraform module
 
-### Managing Traffic (blocks and whitelists)
+### Managing Traffic (blocks and allowlists)
 
 [Cloudflare: Managing Traffic](./cloudflare-managing-traffic.md)
 
