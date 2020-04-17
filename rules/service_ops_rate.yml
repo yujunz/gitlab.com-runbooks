@@ -1,20 +1,4 @@
 groups:
-- name: GitLab Component Operations-per-Second Rates
-  interval: 1m
-  rules:
-  # Stackdriver
-  - record: gitlab_component_ops:rate
-    labels:
-      type: stackdriver
-      tier: inf
-      stage: main
-    expr: >
-      sum(
-        label_replace(
-          stackdriver_gce_instance_logging_googleapis_com_log_entry_count, "component", "$1", "log", "(.*)"
-        )
-      ) by (environment, component)
-
 ######################
 # Aggregation Stage
 ######################
