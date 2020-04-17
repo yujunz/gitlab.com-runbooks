@@ -11,4 +11,7 @@
 
 * []()
 
+## Troubleshooting Pointers
+
+* [cloudflare-managing-traffic.md](cloudflare-managing-traffic.md)
 <!-- END_MARKER -->

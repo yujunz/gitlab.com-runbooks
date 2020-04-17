@@ -48,5 +48,6 @@
 * [../uncategorized/gemnasium_is_down.md](../uncategorized/gemnasium_is_down.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
 * [../uncategorized/setup-oauth2-proxy-protected-application.md](../uncategorized/setup-oauth2-proxy-protected-application.md)
+* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 * [../waf/cloudflare.md](../waf/cloudflare.md)
 <!-- END_MARKER -->

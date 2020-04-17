@@ -47,5 +47,6 @@
 * [../uncategorized/yubikey.md](../uncategorized/yubikey.md)
 * [gitaly-version-mismatch.md](gitaly-version-mismatch.md)
 * [version-gitlab-com.md](version-gitlab-com.md)
+* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 * [../web/static-repository-objects-caching.md](../web/static-repository-objects-caching.md)
 <!-- END_MARKER -->

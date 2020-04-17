@@ -52,6 +52,7 @@
 * [../uncategorized/pingdom.md](../uncategorized/pingdom.md)
 * [../uncategorized/shared-configurations.md](../uncategorized/shared-configurations.md)
 * [../uncategorized/upgrade-docker-machine.md](../uncategorized/upgrade-docker-machine.md)
+* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 * [../waf/cloudflare.md](../waf/cloudflare.md)
 * [../web/static-repository-objects-caching.md](../web/static-repository-objects-caching.md)
 <!-- END_MARKER -->
