@@ -134,7 +134,7 @@ You can either perform the below actions using the **VeraCrypt** UI or by using 
   Re-enter password:
   Enter PIM:  [Enter]
   Please type at least 320 randomly chosen characters and then press Enter:
-  Done: 100.000%  Speed:   31 MB/s  Left: 0 s         
+  Done: 100.000%  Speed:   31 MB/s  Left: 0 s
   The VeraCrypt volume has been successfully created.
   ```
 **Note:** The default (just hit Enter) for the PIM is probably fine, but if you want some extra security, put in a custom value.  Higher values will take longer to open the vault, lower ones will take less time but be less secure. See https://www.veracrypt.fr/en/Personal%20Iterations%20Multiplier%20%28PIM%29.html for further discussion including the default values.
@@ -314,7 +314,7 @@ Please specify how long the key should be valid.
 Key is valid for? (0) 1y
 Key expires at Sat Aug  25 01:08:14 2018 CST
 Is this correct? (y/N) y
-Really create? (y/N) y  
+Really create? (y/N) y
 
 pub  3072R/FAEFD83E  created: 2017-08-25  expires: 2018-08-25  usage: C
                      trust: ultimate      validity: ultimate
@@ -343,7 +343,7 @@ Please specify how long the key should be valid.
 Key is valid for? (0) 1y
 Key expires at Sat Aug  25 01:10:41 2018 CST
 Is this correct? (y/N) y
-Really create? (y/N) y  
+Really create? (y/N) y
 
 pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2018-08-25  usage: C
                      trust: ultimate      validity: ultimate
@@ -398,6 +398,27 @@ If your gpg version does not output the key id you should use the full fingerpri
 ```bash
 > gpg --keyserver hkps://hkps.pool.sks-keyservers.net --send-key FAEFD83E
 ```
+
+### Troubleshooting publishing
+
+#### `gpg: keyserver send failed: No route to host`
+
+This problem is particular to the macOS version of GPG, and occurs on systems
+that do not have IPv6 access.
+
+This can be resolved by disabling IPv6 in dirmngr:
+
+```
+$ cat ~/.gnupg/dirmngr.conf
+
+keyserver hkps://hkps.pool.sks-keyservers.net
+disable-ipv6
+```
+
+Then kill all dirnmgr and gpg-agent processes.
+
+You can now also use `gpg --send-keys` without specifying `--keyserver`, as a
+bonus.
 
 ## Import Public Key to Regular Keychain
 
@@ -589,10 +610,10 @@ cp -r $MOUNTPOINT/gpg_config $MOUNTPOINT/gpg_config.$(date +%Y-%m-%d).bak
 Edit the key:
 ```bash
 $ gpg --edit-key <youremail>
-# Ensure that after the boilerplate license it reports "Secret key is available", 
+# Ensure that after the boilerplate license it reports "Secret key is available",
 # and not "Secret subkeys are available".  The former means you correctly have access
-# to the master key/secret, the latter means you're using your exported sub-keys 
-# (you probably still have your gpg pointing at $HOME/.gnupg; check $GNUPGHOME is set 
+# to the master key/secret, the latter means you're using your exported sub-keys
+# (you probably still have your gpg pointing at $HOME/.gnupg; check $GNUPGHOME is set
 # per above).
 # Select the 3 sub keys (signature, authentication, encryption):
 
@@ -619,7 +640,7 @@ pub  4096R/FAEFD83E  created: 2017-08-25  expires: 2023-08-25  usage: C
 sub* 4096R/AE86E89B  created: 2017-08-25  expires: 2018-08-25  usage: E
 sub* 4096R/79BF274F  created: 2017-08-25  expires: 2018-08-25  usage: S
 sub* 4096R/DE86E396  created: 2017-08-25  expires: 2018-08-25  usage: A
-# You should see an asterisk appear next to a sub key  after each `key` command, 
+# You should see an asterisk appear next to a sub key  after each `key` command,
 # and have 3 of them starred at the end.
 # Update the expiry key with the (distressingly named) `expire` command:
 
@@ -633,7 +654,7 @@ Please specify how long the key should be valid.
       <n>y = key expires in n years
 Key is valid for? (0) 13m
 # Enter how long the keys should be valid for *from now*; typically use 12-13 months (12m or 13m),
-# aiming for ~1 year past the previous expiry but taking care to avoid creeping forward or 
+# aiming for ~1 year past the previous expiry but taking care to avoid creeping forward or
 # backward into common annual holiday periods in your country.
 Key expires at Sun Aug  25 01:21:41 2019 CST
 Is this correct? (y/N) y
