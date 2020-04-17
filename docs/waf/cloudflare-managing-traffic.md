@@ -164,7 +164,7 @@ Depending on the lifetime of the rule the process is different:
 
 `temporary`: Create the rule using the Cloudflare UI at https://dash.cloudflare.com/852e9d53d0f8adbd9205389356f2303d/gitlab.com/firewall/firewall-rules keeping in mind the layout of the rule description.
 
-`permanent`: Create the rule in Terraform. For customer allowlists, follow the [instructions of the terraform module](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_whitelists#whitelist-configuration).
+`long-term`: Create the rule in Terraform. For customer allowlists, follow the [instructions of the terraform module](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_whitelists#whitelist-configuration).
 
 After the rule creation, comment the rule ID on the issue, as well as tagging the issue with the appropriate `rule-origin` label, as described above.
 
