@@ -130,7 +130,7 @@ In order for automation to do its job, it is required to have a standardized for
 ```
 
  - The firewall issue ID should be used to link any relevant production incidents or other issues to it.
- - The RFC3339 date can be retrieved via the GNU date util `date --rfc-3339=seconds --utc`. The time does not have to be specified as UTC, but is preferred for human readability.
+ - The RFC3339 date can be retrieved via the GNU date util `date --rfc-3339=seconds --utc`. It should be UTC.
  - The longevity of a rule is to be indicated by either `temporary` or `long-term`.
    - `temporary` rules are subject for processing by automation.
    - If required a different minimum validity can be set and a maximum time can be specified.
