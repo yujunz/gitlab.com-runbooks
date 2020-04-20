@@ -6,6 +6,6 @@ groups:
     labels:
       slo: 'apdex_ratio'
     expr: >
-      clamp_min(avg_over_time(gitlab_service_apdex:ratio[1m]) >= ignoring(env, environment, stage) group_left slo:min:gitlab_service_apdex:ratio, 1)
+      clamp_min(avg_over_time(gitlab_service_apdex:ratio[1m]) >= ignoring(environment, stage) group_left slo:min:gitlab_service_apdex:ratio, 1)
       or
-      clamp_max(avg_over_time(gitlab_service_apdex:ratio[1m]) < ignoring(env, environment, stage) group_left slo:min:gitlab_service_apdex:ratio, 0)
+      clamp_max(avg_over_time(gitlab_service_apdex:ratio[1m]) < ignoring(environment, stage) group_left slo:min:gitlab_service_apdex:ratio, 0)
