@@ -7,6 +7,7 @@ gem 'etc'
 gem 'google-cloud-storage'
 gem 'io-console'
 gem 'json'
+gem 'digest-crc'
 
 group :development, :test do
   gem 'pry'

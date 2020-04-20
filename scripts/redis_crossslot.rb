@@ -1,4 +1,5 @@
-require 'time'
+require 'digest/crc16'
+require 'json'
 
 raise 'no input file provided' if ARGV.empty?
 
@@ -12,25 +13,29 @@ def self.filter_key(key)
     .gsub(/([0-9]+)/, '$NUMBER')
 end
 
+# https://github.com/zachhale/ruby-crc16
+
+def self.hash_slot(key)
+  s = key.index "{"
+  if s
+    e = key.index "}", s + 1
+    key = key[s + 1..e - 1] if e && e != s + 1
+  end
+  Digest::CRC16.checksum(key) % 16384
+end
+
 ARGV.each do |idx_filename|
   filename = idx_filename.gsub(/\.findx$/, "")
 
   warn filename
 
-  index_keys = []
-  index_vals = []
-
-  File.readlines(idx_filename).each do |line|
-    offset, timestamp, _length = line.strip.split("|")
-
-    index_keys << offset.to_i
-    index_vals << timestamp.to_f
-  end
+  in_tx = false
+  tx_keys = []
+  tx_cmds = []
 
   File.open(filename, 'r:ASCII-8BIT') do |f|
     until f.eof?
       begin
-        offset = f.tell
         line = f.readline.strip
 
         next unless line.match(/^\*([0-9]+)$/)
@@ -47,24 +52,9 @@ ARGV.each do |idx_filename|
           f.read(2) # \r\n
         end
 
-        i = index_keys.bsearch_index { |v| v >= offset }
-        if i.nil?
-          i = index_keys.size - 1
-        elsif i.positive? && index_keys[i] != offset
-          # bsearch rounds up, we want to round down
-          i -= 1
-        end
+        extra = nil
 
         cmd = args[0].downcase
-        ts = Time.at(index_vals[i]).to_datetime.new_offset(0)
-        # kbytes = args.reject(&:nil?).map(&:size).reduce(&:+) / 1024
-
-        raise unless File.basename(filename).match(/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)$/)
-
-        src_host = Regexp.last_match(1).split('.').map(&:to_i).join('.')
-        # src_port = Regexp.last_match(2).to_i
-        # dst_host = Regexp.last_match(3).split('.').map(&:to_i).join('.')
-        # dst_port = Regexp.last_match(4).to_i
 
         case cmd
         when "get"
@@ -125,8 +115,26 @@ ARGV.each do |idx_filename|
           raise "unknown command #{cmd}"
         end
 
-        keys.each do |key|
-          puts "#{ts.iso8601(9)} #{ts.to_time.to_i % 60} #{cmd} #{src_host} #{filter_key(key).gsub(' ', '_').inspect} #{key.gsub(' ', '_').inspect}"
+        in_tx = true if cmd == "multi"
+
+        if cmd == "exec"
+          keys += tx_keys
+          extra = tx_cmds
+
+          in_tx = false
+          tx_keys = []
+          tx_cmds = []
+        end
+
+        if in_tx && !%w[multi exec].include?(cmd)
+          tx_keys += keys
+          tx_cmds << args
+        end
+
+        if keys.size > 1 && keys.map { |k| hash_slot(k) }.uniq.size != 1
+          # data = { args: args, extra: extra }
+          data = { cmd: cmd, keys: keys, patterns: keys.map { |k| filter_key(k) }.uniq, tx_ops: extra&.map { |a| a[0] } }
+          puts data.to_json
         end
       rescue EOFError
       end

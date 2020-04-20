@@ -171,6 +171,7 @@ DEPENDENCIES
   bigdecimal
   colorize
   danger-gitlab
+  digest-crc
   etc
   gitlab-styles (~> 3.1)
   google-cloud-storage
