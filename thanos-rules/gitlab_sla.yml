@@ -1,5 +1,6 @@
 groups:
 - name: gitlab_sla
+  partial_response_strategy: "warn"
   interval: 1m
   rules:
   # This calculates the GitLab SLA rating for the past minute.

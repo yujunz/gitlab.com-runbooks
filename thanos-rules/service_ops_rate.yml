@@ -4,6 +4,7 @@ groups:
 ######################
 
 - name: GitLab Service Operations-per-Second Aggregated Rates
+  partial_response_strategy: "warn"
   interval: 1m
   rules:
   # Aggregate over all components within a service
@@ -17,6 +18,7 @@ groups:
       sum by (env, environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate >= 0)
 
 - name: GitLab Service Operations-per-Second Rate Stats
+  partial_response_strategy: "warn"
   interval: 5m
   rules:
   # Average values for each service, over a week
@@ -29,6 +31,7 @@ groups:
       stddev_over_time(gitlab_service_ops:rate[1w])
 
 - name: GitLab Service Ops Rate Weekly Periodic Values
+  partial_response_strategy: "warn"
   interval: 5m
   rules:
   # Predict what the value should be using the median value for a
