@@ -214,6 +214,24 @@ Fetching server state...
    3 websockets/git-01-sv-gstg : DRAIN
 ```
 
+## bin/haproxy-server-roles
+
+When servers or haproxy VMs are added to the fleet, the corresponding chef role must be
+updated so that:
+
+1. HAProxy VMs have the peer list
+2. Servers are added to the proper backend
+
+This is semi-automated by running a helper script which will automatically
+generate role files:
+
+```
+bin/haproxy-server-roles -u <chef user> -k <path/to/chef/key>
+```
+
+This script is also run in CI and will fail the job if there is a missing server
+that needs to be added.
+
 ### Admin console for haproxy (single node)
 haproxy has a built-in web admin console; this is not terribly useful for managing a fleet of haproxy nodes, but if just one is misbehaving then it might be handy.  To access it, ssh port forward to port 7331, e.g.:
 
