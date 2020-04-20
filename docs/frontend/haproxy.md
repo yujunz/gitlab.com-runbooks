@@ -216,7 +216,7 @@ Fetching server state...
 
 ## bin/haproxy-server-roles
 
-When servers or haproxy VMs are added to the corresponding chef role must be
+When servers or haproxy VMs are added to the fleet, the corresponding chef role must be
 updated so that:
 
 1. HAProxy VMs have the peer list
