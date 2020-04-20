@@ -15,24 +15,24 @@ groups:
   # when a component is removed from the metrics-catalog
   - record: gitlab_service_apdex:ratio
     expr: >
-      sum by (environment, tier, type, stage) (
+      sum by (env, environment, tier, type, stage) (
         ((gitlab_component_apdex:ratio >= 0) * (avg_over_time(gitlab_component_apdex:weight:score[10m]) >= 0))
-        and on (tier, type, component)
+        and on (env, tier, type, component)
         gitlab_component_service:mapping
       )
       /
-      sum by (environment, tier, type, stage) (
+      sum by (env, environment, tier, type, stage) (
         (avg_over_time(gitlab_component_apdex:weight:score[10m]) >= 0)
-        and on (tier, type, component)
+        and on (env, tier, type, component)
         gitlab_component_service:mapping
       )
 
   # Node-level aggregation
   - record: gitlab_service_node_apdex:ratio
     expr: >
-      sum by (environment, tier, type, stage, shard, fqdn) ((gitlab_component_node_apdex:ratio >= 0) * (avg_over_time(gitlab_component_node_apdex:weight:score[10m]) >= 0))
+      sum by (env, environment, tier, type, stage, shard, fqdn) ((gitlab_component_node_apdex:ratio >= 0) * (avg_over_time(gitlab_component_node_apdex:weight:score[10m]) >= 0))
       /
-      sum by (environment, tier, type, stage, shard, fqdn) (avg_over_time(gitlab_component_node_apdex:weight:score[10m]) >= 0)
+      sum by (env, environment, tier, type, stage, shard, fqdn) (avg_over_time(gitlab_component_node_apdex:weight:score[10m]) >= 0)
 
 # These should be deprecated but are currently used by the general triage dashboard
 - name: GitLab Service Apdex Score Stats
