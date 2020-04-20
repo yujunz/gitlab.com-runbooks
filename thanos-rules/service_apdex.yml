@@ -1,5 +1,5 @@
 groups:
-- name: GitLab Component Apdex Scores
+- name: GitLab Service Apdex Scores
   interval: 1m
   rules:
   ######################
@@ -34,6 +34,7 @@ groups:
       /
       sum by (environment, tier, type, stage, shard, fqdn) (avg_over_time(gitlab_component_node_apdex:weight:score[10m]) >= 0)
 
+# These should be deprecated but are currently used by the general triage dashboard
 - name: GitLab Service Apdex Score Stats
   interval: 5m
   rules:
