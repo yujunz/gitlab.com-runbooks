@@ -12,6 +12,17 @@ groups:
       description: ILM errors have been detected in the nonproduction logging cluster!
       runbook: elastic/doc/troubleshooting/README.md
       title: ILM errors have been detected in the nonproduction logging cluster!
+  - alert: Elasticsearch ILM stopped in nonproduction
+    expr: probe_success{instance="https://e8fabf53b73247e98df7c355d6a782fc.us-central1.gcp.cloud.es.io:9243/_ilm/status",type="blackbox"} == 0
+    for: 15m
+    labels:
+      severity: s4
+      alert_type: cause
+      environment: gstg
+    annotations:
+      description: ILM is no longer running in the nonproduction logging cluster!
+      runbook: elastic/doc/troubleshooting/README.md
+      title: ILM is no longer running in the nonproduction logging cluster!
   - alert: Elasticsearch ILM errors in production
     expr: probe_success{instance="https://92c87c26b16049b0a30af16b94105528.us-central1.gcp.cloud.es.io:9243/*/_ilm/explain",type="blackbox"} == 0
     for: 5m
@@ -23,6 +34,17 @@ groups:
       description: ILM errors have been detected in the logging cluster!
       runbook: elastic/doc/troubleshooting/README.md
       title: ILM errors have been detected in the logging cluster!
+  - alert: Elasticsearch ILM stopped in production
+    expr: probe_success{instance="https://92c87c26b16049b0a30af16b94105528.us-central1.gcp.cloud.es.io:9243/_ilm/status",type="blackbox"} == 0
+    for: 15m
+    labels:
+      severity: s3
+      alert_type: cause
+      environment: gprd
+    annotations:
+      description: ILM is no longer running in the logging cluster!
+      runbook: elastic/doc/troubleshooting/README.md
+      title: ILM is no longer running in the logging cluster!
   - alert: Elasticsearch production logging cluster unhealthy
     expr: probe_success{instance="https://92c87c26b16049b0a30af16b94105528.us-central1.gcp.cloud.es.io:9243/_cluster/health",type="blackbox"} == 0
     for: 5m
@@ -45,6 +67,17 @@ groups:
       description: ILM errors have been detected in the monitoring cluster!
       runbook: elastic/doc/troubleshooting/README.md
       title: ILM errors have been detected in the monitoring cluster!
+  - alert: Elasticsearch ILM stopped in monitoring cluster
+    expr: probe_success{instance="https://0ea4e34a81444a95a1adeb1f90ed9dfa.us-central1.gcp.cloud.es.io:9243/_ilm/status",type="blackbox"} == 0
+    for: 15m
+    labels:
+      severity: s3
+      alert_type: cause
+      environment: gprd
+    annotations:
+      description: ILM is no longer running in the monitoring cluster!
+      runbook: elastic/doc/troubleshooting/README.md
+      title: ILM is no longer running in the monitoring cluster!
   - alert: Elasticsearch monitoring cluster unhealthy
     expr: probe_success{instance="https://0ea4e34a81444a95a1adeb1f90ed9dfa.us-central1.gcp.cloud.es.io:9243/_cluster/health",type="blackbox"} == 0
     for: 5m
