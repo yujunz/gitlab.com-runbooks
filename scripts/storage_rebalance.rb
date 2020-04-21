@@ -971,7 +971,7 @@ module Storage
         options[:limit] = 1
         log.info 'Option --move-amount not specified, will only move 1 project...'
       else
-        log.info "Will move at least #{move_amount_bytes.to_filesize} worth of data"
+        log.info "Will move at least #{to_filesize(move_amount_bytes)} worth of data"
       end
 
       total_bytes_moved = move_projects
