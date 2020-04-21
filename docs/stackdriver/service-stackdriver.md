@@ -13,8 +13,11 @@
 
 ## Troubleshooting Pointers
 
+* [../elastic/README.md](../elastic/README.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../gitaly/gitaly-down.md](../gitaly/gitaly-down.md)
+* [../logging/README.md](../logging/README.md)
+* [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
 * [../pgbouncer/pgbouncer.md](../pgbouncer/pgbouncer.md)
 * [../pubsub/pubsub-queing.md](../pubsub/pubsub-queing.md)
 * [../uncategorized/k8s-gitlab.md](../uncategorized/k8s-gitlab.md)

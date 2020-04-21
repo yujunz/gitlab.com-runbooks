@@ -16,6 +16,7 @@
 
 ## Troubleshooting Pointers
 
+* [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
 * [../git/deploy-gitlab-rb-change.md](../git/deploy-gitlab-rb-change.md)
 * [../git/workhorse-git-session-alerts.md](../git/workhorse-git-session-alerts.md)
 * [find-project-from-hashed-storage.md](find-project-from-hashed-storage.md)
@@ -32,6 +33,7 @@
 * [storage-rebalancing.md](storage-rebalancing.md)
 * [storage-servers.md](storage-servers.md)
 * [storage-sharding.md](storage-sharding.md)
+* [../logging/README.md](../logging/README.md)
 * [../praefect/praefect-bypass.md](../praefect/praefect-bypass.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [../praefect/praefect-file-storages.md](../praefect/praefect-file-storages.md)

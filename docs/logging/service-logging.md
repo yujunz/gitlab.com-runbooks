@@ -15,8 +15,14 @@
 
 ## Troubleshooting Pointers
 
+* [../elastic/README.md](../elastic/README.md)
+* [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)
+* [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
+* [../elastic/kibana.md](../elastic/kibana.md)
 * [../frontend/ssh-maxstartups-breach.md](../frontend/ssh-maxstartups-breach.md)
 * [../git/purge-git-data.md](../git/purge-git-data.md)
+* [README.md](README.md)
+* [logging_gcs_archive_bigquery.md](logging_gcs_archive_bigquery.md)
 * [../pages/gitlab-pages.md](../pages/gitlab-pages.md)
 * [../pages/pages-letsencrypt.md](../pages/pages-letsencrypt.md)
 * [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)

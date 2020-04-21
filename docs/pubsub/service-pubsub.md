@@ -14,8 +14,10 @@
 
 ## Troubleshooting Pointers
 
+* [../elastic/README.md](../elastic/README.md)
 * [../gitaly/find-project-from-hashed-storage.md](../gitaly/find-project-from-hashed-storage.md)
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
+* [../logging/README.md](../logging/README.md)
 * [../patroni/gitlab-com-wale-backups.md](../patroni/gitlab-com-wale-backups.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [pubsub-queing.md](pubsub-queing.md)

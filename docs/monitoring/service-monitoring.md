@@ -13,6 +13,9 @@
 
 ## Troubleshooting Pointers
 
+* [../elastic/README.md](../elastic/README.md)
+* [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
+* [../logging/README.md](../logging/README.md)
 * [alerts_manual.md](alerts_manual.md)
 * [monitoring-overview.md](monitoring-overview.md)
 * [prometheus-failed-compactions.md](prometheus-failed-compactions.md)

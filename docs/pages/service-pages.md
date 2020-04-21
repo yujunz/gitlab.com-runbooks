@@ -15,6 +15,7 @@
 
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../gitaly/gitaly-unusual-activity.md](../gitaly/gitaly-unusual-activity.md)
+* [../logging/README.md](../logging/README.md)
 * [../monitoring/node_memory_alerts.md](../monitoring/node_memory_alerts.md)
 * [gitlab-pages.md](gitlab-pages.md)
 * [pages-letsencrypt.md](pages-letsencrypt.md)

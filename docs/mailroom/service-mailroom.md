@@ -19,6 +19,7 @@
 
 ## Troubleshooting Pointers
 
+* [../logging/README.md](../logging/README.md)
 * [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)
 <!-- END_MARKER -->
 
