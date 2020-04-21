@@ -14,6 +14,7 @@
 
 ## Troubleshooting Pointers
 
+* [../logging/README.md](../logging/README.md)
 * [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
 * [../patroni/pg-ha.md](../patroni/pg-ha.md)

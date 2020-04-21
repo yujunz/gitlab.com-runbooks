@@ -15,6 +15,7 @@
 
 ## Troubleshooting Pointers
 
+* [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
 * [../monitoring/sentry-is-down.md](../monitoring/sentry-is-down.md)
 * [ban-an-IP-with-redis.md](ban-an-IP-with-redis.md)
 * [clear_anonymous_sessions.md](clear_anonymous_sessions.md)

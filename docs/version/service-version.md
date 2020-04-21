@@ -13,8 +13,11 @@
 
 ## Troubleshooting Pointers
 
+* [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)
 * [../gitaly/gitaly-error-rate.md](../gitaly/gitaly-error-rate.md)
 * [../gitaly/storage-sharding.md](../gitaly/storage-sharding.md)
+* [../logging/README.md](../logging/README.md)
+* [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
 * [../monitoring/filesystem_alerts_inodes.md](../monitoring/filesystem_alerts_inodes.md)
 * [../monitoring/update-prometheus-and-exporters.md](../monitoring/update-prometheus-and-exporters.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)

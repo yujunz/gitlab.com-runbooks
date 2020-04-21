@@ -22,6 +22,7 @@
 * [../ci-runners/runners_cache_is_down.md](../ci-runners/runners_cache_is_down.md)
 * [../ci-runners/runners_registry_is_down.md](../ci-runners/runners_registry_is_down.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
+* [../logging/README.md](../logging/README.md)
 * [gitlab-registry.md](gitlab-registry.md)
 * [../uncategorized/delete-projects-manually.md](../uncategorized/delete-projects-manually.md)
 * [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)

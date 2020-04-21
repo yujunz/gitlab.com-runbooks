@@ -57,7 +57,7 @@ groups:
       annotations:
         description: >
           Logs send rate is lower than usual.
-        runbook: logging/doc/troubleshooting/README.md
+        runbook: docs/logging/troubleshooting/README.md
         title: Logs send rate is unusually low
 
     - alert: LoggingVisibilityDiminished
@@ -75,5 +75,5 @@ groups:
           PubSub messages are queuing up.  Messages in {{ $labels.subscription_id }} have been
           un-acked for {{ $value | humanizeDuration }} in the queue for the last 5 minutes.
           This will lead to Elastic lagging behind with the log data.
-        runbook: logging/doc/troubleshooting/README.md
+        runbook: docs/logging/troubleshooting/README.md
         title: PubSub queuing high

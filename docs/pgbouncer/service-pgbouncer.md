@@ -16,6 +16,7 @@
 ## Troubleshooting Pointers
 
 * [../frontend/gitlab-com-is-down.md](../frontend/gitlab-com-is-down.md)
+* [../logging/README.md](../logging/README.md)
 * [../patroni/pg-ha.md](../patroni/pg-ha.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
 * [patroni-consul-postgres-pgbouncer-interactions.md](patroni-consul-postgres-pgbouncer-interactions.md)

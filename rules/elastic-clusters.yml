@@ -10,7 +10,7 @@ groups:
       environment: gstg
     annotations:
       description: ILM errors have been detected in the nonproduction logging cluster!
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: ILM errors have been detected in the nonproduction logging cluster!
   - alert: Elasticsearch ILM stopped in nonproduction
     expr: probe_success{instance="https://e8fabf53b73247e98df7c355d6a782fc.us-central1.gcp.cloud.es.io:9243/_ilm/status",type="blackbox"} == 0
@@ -21,7 +21,7 @@ groups:
       environment: gstg
     annotations:
       description: ILM is no longer running in the nonproduction logging cluster!
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: ILM is no longer running in the nonproduction logging cluster!
   - alert: Elasticsearch ILM errors in production
     expr: probe_success{instance="https://92c87c26b16049b0a30af16b94105528.us-central1.gcp.cloud.es.io:9243/*/_ilm/explain",type="blackbox"} == 0
@@ -32,7 +32,7 @@ groups:
       environment: gprd
     annotations:
       description: ILM errors have been detected in the logging cluster!
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: ILM errors have been detected in the logging cluster!
   - alert: Elasticsearch ILM stopped in production
     expr: probe_success{instance="https://92c87c26b16049b0a30af16b94105528.us-central1.gcp.cloud.es.io:9243/_ilm/status",type="blackbox"} == 0
@@ -43,7 +43,7 @@ groups:
       environment: gprd
     annotations:
       description: ILM is no longer running in the logging cluster!
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: ILM is no longer running in the logging cluster!
   - alert: Elasticsearch production logging cluster unhealthy
     expr: probe_success{instance="https://92c87c26b16049b0a30af16b94105528.us-central1.gcp.cloud.es.io:9243/_cluster/health",type="blackbox"} == 0
@@ -54,7 +54,7 @@ groups:
       environment: gprd
     annotations:
       description: Production logging cluster is unhealthy
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: Production logging cluster is unhealthy
   - alert: Elasticsearch ILM errors in monitoring cluster
     expr: probe_success{instance="https://0ea4e34a81444a95a1adeb1f90ed9dfa.us-central1.gcp.cloud.es.io:9243/*/_ilm/explain",type="blackbox"} == 0
@@ -65,7 +65,7 @@ groups:
       environment: gprd
     annotations:
       description: ILM errors have been detected in the monitoring cluster!
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: ILM errors have been detected in the monitoring cluster!
   - alert: Elasticsearch ILM stopped in monitoring cluster
     expr: probe_success{instance="https://0ea4e34a81444a95a1adeb1f90ed9dfa.us-central1.gcp.cloud.es.io:9243/_ilm/status",type="blackbox"} == 0
@@ -76,7 +76,7 @@ groups:
       environment: gprd
     annotations:
       description: ILM is no longer running in the monitoring cluster!
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: ILM is no longer running in the monitoring cluster!
   - alert: Elasticsearch monitoring cluster unhealthy
     expr: probe_success{instance="https://0ea4e34a81444a95a1adeb1f90ed9dfa.us-central1.gcp.cloud.es.io:9243/_cluster/health",type="blackbox"} == 0
@@ -87,7 +87,7 @@ groups:
       environment: gprd
     annotations:
       description: Monitoring cluster is unhealthy
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: Monitoring cluster is unhealthy
   - alert: Elasticsearch thread pool queue growing
     expr: deriv(elasticsearch_thread_pool_queue_count{exported_type!="write"}[5m]) > 0
@@ -97,7 +97,7 @@ groups:
       alert_type: cause
     annotations:
       description: Elasticsearch thread pool queue growing
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool queue growing
   - alert: Elasticsearch write thread pool queue growing
     expr: deriv(elasticsearch_thread_pool_queue_count{exported_type="write"}[5m]) > 0
@@ -107,7 +107,7 @@ groups:
       alert_type: cause
     annotations:
       description: Elasticsearch thread pool queue growing
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool queue growing
   - alert: Elasticsearch thread pool rejections growing
     expr: deriv(elasticsearch_thread_pool_rejected_count{exported_type!="write"}[5m]) > 0
@@ -117,7 +117,7 @@ groups:
       alert_type: cause
     annotations:
       description: Elasticsearch thread pool rejections growing
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool rejections growing
   - alert: Elasticsearch write thread pool rejections growing
     expr: deriv(elasticsearch_thread_pool_rejected_count{exported_type="write"}[5m]) > 0
@@ -127,5 +127,5 @@ groups:
       alert_type: cause
     annotations:
       description: Elasticsearch thread pool rejections growing
-      runbook: elastic/doc/troubleshooting/README.md
+      runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool rejections growing

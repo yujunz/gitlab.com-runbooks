@@ -21,6 +21,7 @@
 * [../ci-runners/runners_manager_is_down.md](../ci-runners/runners_manager_is_down.md)
 * [../ci-runners/runners_registry_is_down.md](../ci-runners/runners_registry_is_down.md)
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
+* [../logging/README.md](../logging/README.md)
 * [../pgbouncer/pgbouncer.md](../pgbouncer/pgbouncer.md)
 * [ci-runner-timeouts.md](ci-runner-timeouts.md)
 * [update-gitlab-runner-on-managers.md](update-gitlab-runner-on-managers.md)
