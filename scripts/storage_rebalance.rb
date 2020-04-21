@@ -909,6 +909,7 @@ module Storage
       command = format(options[:project_selector_command], **fields)
       command = command.concat(" --staging") if options[:env] == :staging
       command = command.concat(" --limit=#{options[:limit]}") if options[:limit].positive?
+      command = command.concat(" --skip=#{options[:excluded_projects].join(',')}") unless options[:excluded_projects].empty?
       result = execute_remote_command(hostname, command)
       return [] if result.nil? || result.empty?
 

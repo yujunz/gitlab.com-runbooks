@@ -40,6 +40,7 @@ module Storage
   module ProjectSelectorScript
     LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
     DEFAULT_NODE_CONFIG = {}.freeze
+    INTEGER_PATTERN = /\A\d+\Z/.freeze
   end
 
   def self.get_node_configuration
@@ -69,6 +70,7 @@ module Storage
         },
         long_query_timeout: 600000,
         limit: 30,
+        excluded_projects: [],
         format: :json,
         clauses: {
           delete_error: nil,
@@ -186,6 +188,7 @@ module Storage
         define_shards_list_option
         define_largest_option
         define_limit_option
+        define_skip_option
         define_group_option
         define_include_mirrors_option
         define_env_option
@@ -244,6 +247,21 @@ module Storage
         end
       end
 
+      def define_skip_option
+        description = 'Skip specific project(s)'
+        @parser.on('--skip=<project_id,...>', Array, description) do |project_identifiers|
+          @options[:excluded_projects] ||= []
+          if project_identifiers.respond_to?(:all?) &&
+              project_identifiers.all? { |s| resembles_integer? s }
+            positive_numbers = project_identifiers.map(&:to_i).delete_if { |i| !i.positive? }
+            @options[:excluded_projects].concat(positive_numbers)
+          else
+            message = 'Argument given for --skip must be a list of one or more integers'
+            raise OptionParser::InvalidArgument, message
+          end
+        end
+      end
+
       def define_group_option
         @parser.on('-g', '--group=<group_name>', String, 'Filter projects by group') do |group|
           @options[:group] = group
@@ -273,6 +291,10 @@ module Storage
           puts @parser
           exit
         end
+      end
+
+      def resembles_integer?(obj)
+        ::Storage::ProjectSelectorScript::INTEGER_PATTERN.match?(obj.to_s)
       end
     end
     # class OptionsParser
@@ -339,10 +361,15 @@ module Storage
 
     def print_count
       repository_storage = options[:source_shard]
+      excluded_projects = options[:excluded_projects]
       clauses = namespace_filter(options[:clauses].dup, options[:group])
       clauses.merge!(repository_storage: repository_storage)
       clauses.delete(:mirror) if options[:include_mirrors]
       query = Project.joins(:statistics).where(**clauses)
+      unless excluded_projects.empty?
+        log.debug "Excluding projects: #{excluded_projects}"
+        query = query.where.not(id: excluded_projects)
+      end
       count = Project.transaction do
         with_timeout(options[:long_query_timeout]) { query.size }
       end
@@ -385,6 +412,7 @@ module Storage
 
     def get_projects(parameters = {})
       opts = options.merge(parameters)
+      excluded_projects = options[:excluded_projects]
       clauses = namespace_filter(opts[:clauses].dup, opts[:group])
       clauses.merge!(repository_storage: opts[:source_shard])
       clauses.delete(:mirror) if opts[:include_mirrors]
@@ -393,6 +421,10 @@ module Storage
       # to select the most idle and largest projects first.
       query = Project.joins(:statistics)
       query = query.where(**clauses)
+      unless excluded_projects.empty?
+        log.debug "Excluding projects: #{excluded_projects}"
+        query = query.where.not(id: excluded_projects)
+      end
       query = query.order('project_statistics.repository_size DESC')
       query = query.order('last_activity_at ASC')
       query = query.limit(opts[:limit]) if opts[:limit].positive?
