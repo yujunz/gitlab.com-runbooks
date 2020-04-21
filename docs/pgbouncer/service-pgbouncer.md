@@ -19,6 +19,7 @@
 * [../logging/README.md](../logging/README.md)
 * [../patroni/pg-ha.md](../patroni/pg-ha.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
+* [../patroni/rotating-rails-postgresql-password.md](../patroni/rotating-rails-postgresql-password.md)
 * [patroni-consul-postgres-pgbouncer-interactions.md](patroni-consul-postgres-pgbouncer-interactions.md)
 * [pgbouncer-1.md](pgbouncer-1.md)
 * [pgbouncer.md](pgbouncer.md)

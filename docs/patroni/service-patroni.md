@@ -25,5 +25,6 @@
 * [postgresql-disk-space.md](postgresql-disk-space.md)
 * [postgresql-replica.md](postgresql-replica.md)
 * [postgresql.md](postgresql.md)
+* [rotating-rails-postgresql-password.md](rotating-rails-postgresql-password.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 <!-- END_MARKER -->
