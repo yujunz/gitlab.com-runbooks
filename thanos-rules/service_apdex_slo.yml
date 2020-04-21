@@ -1,5 +1,6 @@
 groups:
 - name: GitLab Apdex SLO observance status
+  partial_response_strategy: "warn"
   interval: 1m
   rules:
   - record: 'slo_observation_status'

@@ -1,5 +1,6 @@
 groups:
 - name: GitLab Service Apdex Scores
+  partial_response_strategy: "warn"
   interval: 1m
   rules:
   ######################
@@ -36,6 +37,7 @@ groups:
 
 # These should be deprecated but are currently used by the general triage dashboard
 - name: GitLab Service Apdex Score Stats
+  partial_response_strategy: "warn"
   interval: 5m
   rules:
   # Average values for each service, over a week

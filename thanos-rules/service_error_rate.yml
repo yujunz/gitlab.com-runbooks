@@ -4,6 +4,7 @@ groups:
 ######################
 
 - name: GitLab Service Errors-per-Second Rates
+  partial_response_strategy: "warn"
   interval: 1m
   rules:
   # Aggregate over all components within a service
@@ -17,6 +18,7 @@ groups:
       sum by (env, environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate >= 0)
 
 - name: GitLab Service Errors-per-Second Rate Stats
+  partial_response_strategy: "warn"
   interval: 5m
   rules:
   # Average values for each service, over a week
