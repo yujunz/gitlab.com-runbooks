@@ -12,6 +12,7 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local basic = import 'basic.libsonnet';
+local sliPromQL = import 'sli_promql.libsonnet';
 
 local rowHeight = 8;
 local colWidth = 12;
@@ -148,11 +149,13 @@ local activeAlertsPanel =
       |||
         sort(
           sum(
-            ALERTS{environment="$environment", type!="", severity="critical", alertstate="firing"} * 10000
+            ALERTS{environment="$environment", type!="", severity="s1", alertstate="firing"} * 1000000
             or
-            ALERTS{environment="$environment", type!="", severity="error", alertstate="firing"} * 100
+            ALERTS{environment="$environment", type!="", severity="s2", alertstate="firing"} * 10000
             or
-            ALERTS{environment="$environment", type!="", severity="warn", alertstate="firing"}
+            ALERTS{environment="$environment", type!="", severity="s3", alertstate="firing"} * 100
+            or
+            ALERTS{environment="$environment", type!="", severity="s4", alertstate="firing"}
           ) by (type)
         )
       |||,
@@ -175,31 +178,8 @@ basic.dashboard(
   )
   .addTarget(  // Primary metric
     promQuery.target(
-      |||
-        clamp_min(
-          avg(
-            gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
-          ) by (type),
-          0.85
-        )
-      |||,
+      sliPromQL.apdex.serviceApdexQuery({ environment: '$environment', stage: '$stage' }, range='$__interval'),
       legendFormat='{{ type }} service',
-      intervalFactor=3,
-    )
-  )
-  .addTarget(  // SLO Violations
-    promQuery.target(
-      |||
-        clamp_min(
-          avg(
-              gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
-          ) by (type)
-          <= on(type) group_left
-          avg(slo:min:gitlab_service_apdex:ratio) by (type),
-          0.85
-        )
-      |||,
-      legendFormat='{{ type }} SLO violation',
       intervalFactor=3,
     )
   )
@@ -218,6 +198,7 @@ basic.dashboard(
   , gridPos=genGridPos(0, 0.5)
 )
 .addPanel(
+  // This is deprecated: replace with a % of SLO value instead
   generateAnomalyPanel(
     'Anomaly detection: Latency: Apdex Score',
     |||
@@ -231,8 +212,7 @@ basic.dashboard(
     maxY=0.5,
     minY=-12,
     sort='increasing',
-  )
-  ,
+  ),
   gridPos=genGridPos(1, 0.5)
 )
 .addPanel(
@@ -243,33 +223,8 @@ basic.dashboard(
   )
   .addTarget(  // Primary metric
     promQuery.target(
-      |||
-        clamp_max(
-          avg(
-            max_over_time(
-              gitlab_service_errors:ratio{environment="$environment", stage="$stage"}[$__interval]
-            )
-          ) by (type),
-          0.15
-        )
-      |||,
+      sliPromQL.errorRate.serviceErrorRateQuery({ environment: '$environment', stage: '$stage' }, range='$__interval', clampMax=0.15),
       legendFormat='{{ type }} service',
-      intervalFactor=3,
-    )
-  )
-  .addTarget(  // SLO Violations
-    promQuery.target(
-      |||
-        clamp_max(
-          avg(
-            gitlab_service_errors:ratio{environment="$environment", stage="$stage"}
-          ) by (type)
-          >= on(type) group_left
-          avg(slo:max:gitlab_service_errors:ratio) by (type),
-          0.15
-        )
-      |||,
-      legendFormat='{{ type }} SLO violation',
       intervalFactor=3,
     )
   )
@@ -288,6 +243,7 @@ basic.dashboard(
   , gridPos=genGridPos(0, 1.5)
 )
 .addPanel(
+  // This is deprecated: replace with a % of SLO value instead
   generateAnomalyPanel(
     'Anomaly detection: Error Ratio',
     |||
@@ -312,11 +268,7 @@ basic.dashboard(
   )
   .addTarget(  // Primary metric
     promQuery.target(
-      |||
-        sum(
-          gitlab_service_ops:rate{environment="$environment", stage="$stage"}
-        ) by (type)
-      |||,
+      sliPromQL.opsRate.serviceOpsRateQuery({ environment: '$environment', stage: '$stage' }, range='$__interval'),
       legendFormat='{{ type }} service',
       intervalFactor=3,
     )
