@@ -47,9 +47,9 @@ groups:
   # Average values for each service, over a week
   - record: gitlab_service_apdex:ratio:avg_over_time_1w
     expr: >
-      avg_over_time(gitlab_service_apdex:ratio{monitor!="global"}[1w])
+      avg_over_time(gitlab_service_apdex:ratio{monitor="global"}[1w])
   # Stddev for each service, over a week
   - record: gitlab_service_apdex:ratio:stddev_over_time_1w
     expr: >
-      stddev_over_time(gitlab_service_apdex:ratio{monitor!="global"}[1w])
+      stddev_over_time(gitlab_service_apdex:ratio{monitor="global"}[1w])
 

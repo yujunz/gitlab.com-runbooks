@@ -217,19 +217,24 @@ local componentErrorRatioTemplate = |||
 |||;
 
 local serviceErrorRatioTemplate = |||
-  sum by (environment, tier, type, stage) (gitlab_component_errors:rate%(prefix)s >= 0)
+  sum by (environment, tier, type, stage) (gitlab_component_errors:rate%(prefix)s%(monitorSelector)s >= 0)
   /
-  sum by (environment, tier, type, stage) (gitlab_component_ops:rate%(prefix)s > 0)
+  sum by (environment, tier, type, stage) (gitlab_component_ops:rate%(prefix)s%(monitorSelector)s > 0)
 |||;
 
 local serviceNodeErrorRatioTemplate = |||
-  sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate%(prefix)s >= 0)
+  sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate%(prefix)s%(monitorSelector)s >= 0)
   /
-  sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate%(prefix)s > 0)
+  sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate%(prefix)s%(monitorSelector)s > 0)
 |||;
 
-local generateServiceErrorRatiosForPrefix(prefix) =
-  local format = { prefix: prefix };
+local generateServiceErrorRatiosForPrefix(prefix, includeMonitorSelector) =
+  local monitorSelector = if includeMonitorSelector then
+    '{monitor!="global"}'
+  else
+    '';
+
+  local format = { prefix: prefix, monitorSelector: monitorSelector };
   [
     {
       record: 'gitlab_service_errors:ratio%(prefix)s' % format,
@@ -241,8 +246,13 @@ local generateServiceErrorRatiosForPrefix(prefix) =
     },
   ];
 
-local generateComponentErrorRatiosForPrefix(prefix) =
-  local format = { prefix: prefix };
+local generateComponentErrorRatiosForPrefix(prefix, includeMonitorSelector) =
+  local monitorSelector = if includeMonitorSelector then
+    '{monitor!="global"}'
+  else
+    '';
+
+  local format = { prefix: prefix, monitorSelector: monitorSelector };
 
   [
     {
@@ -250,14 +260,14 @@ local generateComponentErrorRatiosForPrefix(prefix) =
       expr: componentErrorRatioTemplate % format,
     },
   ]
-  + generateServiceErrorRatiosForPrefix(prefix);  // TODO: remove service level aggregations once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689 is complete
+  + generateServiceErrorRatiosForPrefix(prefix, includeMonitorSelector);  // TODO: remove service level aggregations once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689 is complete
 
 // generateMultiWindowErrorRatios generates a set of multiwindow error ratio
 // recording rules for the given set of prefixes
-local generateMultiWindowErrorRatios(prefixes, generator) =
+local generateMultiWindowErrorRatios(prefixes, generator, includeMonitorSelector) =
   std.flattenArrays(
     std.map(
-      generator,
+      function(prefix) generator(prefix, includeMonitorSelector),
       prefixes
     )
   );
@@ -289,8 +299,8 @@ local serviceComponentMapping(service) =
   serviceComponentMapping(service):: serviceComponentMapping(service),
 
   multiwindowComponentErrorRatios()::
-    generateMultiWindowErrorRatios(multiburnrateSuffixes, generateComponentErrorRatiosForPrefix),
+    generateMultiWindowErrorRatios(multiburnrateSuffixes, generateComponentErrorRatiosForPrefix, includeMonitorSelector=false),
 
-  multiwindowServiceErrorRatios()::
-    generateMultiWindowErrorRatios(multiburnrateSuffixes, generateServiceErrorRatiosForPrefix),
+  multiwindowServiceErrorRatios(includeMonitorSelector=false)::
+    generateMultiWindowErrorRatios(multiburnrateSuffixes, generateServiceErrorRatiosForPrefix, includeMonitorSelector=includeMonitorSelector),
 }
