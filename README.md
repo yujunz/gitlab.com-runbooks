@@ -437,19 +437,21 @@ Selected logging documents and resources:
   * Post-checks - how can I be 100% sure that it is solved
   * Rollback - optional, how can I undo my fix
 
-# Generating a new runbooks image
+# Developing in this repo
+
+## Generating a new runbooks image
 
 To generate a new image you must follow the git commit guidelines below, this
 will trigger a semantic version bump which will then cause a new pipeline
 that will build and tag the new image
 
-## Git Commit Guidelines
+### Git Commit Guidelines
 
 This project uses [Semantic Versioning](https://semver.org). We use commit
 messages to automatically determine the version bumps, so they should adhere to
 the conventions of [Conventional Commits (v1.0.0-beta.2)](https://www.conventionalcommits.org/en/v1.0.0-beta.2/).
 
-### TL;DR
+#### TL;DR
 
 - Commit messages starting with `fix: ` trigger a patch version bump
 - Commit messages starting with `feat: ` trigger a minor version bump
@@ -457,7 +459,7 @@ the conventions of [Conventional Commits (v1.0.0-beta.2)](https://www.convention
 - If you don't want to publish a new image, do not use the above starting
   strings.
 
-## Automatic versioning
+### Automatic versioning
 
 Each push to `master` triggers a [`semantic-release`](https://semantic-release.gitbook.io/semantic-release/)
 CI job that determines and pushes a new version tag (if any) based on the
@@ -470,6 +472,28 @@ an empty commit summarizing your changes like so:
 ```
 git commit --allow-empty -m '[BREAKING CHANGE|feat|fix]: <changelog summary message>'
 ```
+
+## Tool Versioning
+
+This project has adopted [`adsf version-manager`](https://github.com/asdf-vm/asdf) for tool versioning.
+
+For compatibility, please configure the following line in `~/.asdfrc`
+
+```
+legacy_version_file = yes
+```
+
+
+### Go, Jsonnet
+
+The single-source-of-truth for tool versions for Go and Jsonnet versions is in the `.tool-versions` file.
+Please keep this file up-to-date, whether or not you choose to use `adsf` locally.
+
+### Ruby
+
+Additional to `adsf`, many developers use `rbenv`, `rvm` or other tooling, so, for convenience, we maintain
+the standard `.ruby-version` file for the Ruby version. ASDF needs to be configured using
+the `legacy_version_file = yes` setting described in the [parent section](#tool-versioning).
 
 ## Contributing
 
