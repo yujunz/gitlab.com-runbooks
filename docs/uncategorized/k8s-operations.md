@@ -49,6 +49,8 @@ work and display the nodes running on the cluster:
 
 - [ ] `kubectl get nodes`
 
+Running `gcloud auth revoke` (among other things) removes the kubernetes credentials (it wipes them from the `~/.kube/config` file).
+
 **:warning: It is not the intention of the console servers to utilize the `k-ctl`
 script or any of the components necessary.  These servers provide the sole means
 of troubleshooting a misbehaving cluster or application.  Any changes that
