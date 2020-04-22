@@ -50,7 +50,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     compact=false,
     description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.'
   )::
-    local formatConfig = { serviceType: serviceType, serviceStage: serviceStage };
+    local selectorHash = { environment: '$environment', type: serviceType, stage: serviceStage };
+
     generalGraphPanel(
       'Latency: Apdex',
       description=description,
@@ -60,7 +61,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        sliPromQL.apdex.serviceApdexQuery('$environment', serviceType, serviceStage, '$__interval'),
+        sliPromQL.apdex.serviceApdexQuery(selectorHash, '$__interval'),
         legendFormat='{{ type }} service',
       )
     )
@@ -80,7 +81,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Last week
       promQuery.target(
-        sliPromQL.apdex.serviceApdexQueryWithOffset('$environment', serviceType, serviceStage, '1w'),
+        sliPromQL.apdex.serviceApdexQueryWithOffset(selectorHash, '1w'),
         legendFormat='last week',
       )
     )
@@ -121,10 +122,10 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       )
     )
     .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
+      // TODO: Replace with component-level MWMBR-error rate thresholds once
+      // we're fully migrated to those
       promQuery.target(
-        |||
-          avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(serviceType)s"})
-        ||| % formatConfig,
+        sliPromQL.apdex.serviceApdexDegradationSLOQuery('$environment', serviceType, serviceStage),
         interval='5m',
         legendFormat='SLO',
       ),
@@ -167,9 +168,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
       promQuery.target(
-        |||
-          avg(slo:min:gitlab_service_apdex:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(serviceType)s"})
-        ||| % formatConfig,
+        sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery('$environment', serviceType, serviceStage),
         interval='5m',
         legendFormat='SLO',
       ),
@@ -188,10 +187,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     ),
 
   errorRatesPanel(serviceType, serviceStage, compact=false, includeLastWeek=true)::
-    local formatConfig = {
-      serviceType: serviceType,
-      serviceStage: serviceStage,
-    };
+    local selectorHash = { environment: '$environment', type: serviceType, stage: serviceStage };
+
     generalGraphPanel(
       'Error Ratios',
       description='Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better',
@@ -201,7 +198,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateQuery('$environment', serviceType, serviceStage, '$__interval'),
+        sliPromQL.errorRate.serviceErrorRateQuery(selectorHash, '$__interval'),
         legendFormat='{{ type }} service',
       )
     )
@@ -221,7 +218,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Last week
       promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateQueryWithOffset('$environment', serviceType, serviceStage, '1w'),
+        sliPromQL.errorRate.serviceErrorRateQueryWithOffset(selectorHash, '1w'),
         legendFormat='last week',
       ) + {
         [if !includeLastWeek then 'hide']: true,
@@ -266,18 +263,14 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
       promQuery.target(
-        |||
-          avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(serviceType)s"})
-        ||| % formatConfig,
+        sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery('$environment', serviceType, serviceStage),
         interval='5m',
         legendFormat='Degradation SLO',
       ),
     )
     .addTarget(  // Outage level SLO
       promQuery.target(
-        |||
-          2 * (avg(slo:max:gitlab_service_errors:ratio{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(serviceType)s"}))
-        ||| % formatConfig,
+        sliPromQL.errorRate.serviceErrorRateOutageSLOQuery('$environment', serviceType, serviceStage),
         interval='5m',
         legendFormat='Outage SLO',
       ),
@@ -336,10 +329,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     ),
 
   qpsPanel(serviceType, serviceStage, compact=false)::
-    local formatConfig = {
-      serviceType: serviceType,
-      serviceStage: serviceStage,
-    };
+    local selectorHash = { environment: '$environment', type: serviceType, stage: serviceStage };
+
     generalGraphPanel(
       'RPS - Service Requests per Second',
       description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
@@ -349,25 +340,25 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        sliPromQL.opsRate.serviceOpsRateQuery('$environment', serviceType, serviceStage, '$__interval'),
+        sliPromQL.opsRate.serviceOpsRateQuery(selectorHash, '$__interval'),
         legendFormat='{{ type }} service',
       )
     )
     .addTarget(  // Last week
       promQuery.target(
-        sliPromQL.opsRate.serviceOpsRateQueryWithOffset('$environment', serviceType, serviceStage, '1w'),
+        sliPromQL.opsRate.serviceOpsRateQueryWithOffset(selectorHash, '1w'),
         legendFormat='last week',
       )
     )
     .addTarget(
       promQuery.target(
-        sliPromQL.opsRate.serviceOpsRatePrediction('$environment', serviceType, serviceStage, 2),
+        sliPromQL.opsRate.serviceOpsRatePrediction(selectorHash, 2),
         legendFormat='upper normal',
       ),
     )
     .addTarget(
       promQuery.target(
-        sliPromQL.opsRate.serviceOpsRatePrediction('$environment', serviceType, serviceStage, -2),
+        sliPromQL.opsRate.serviceOpsRatePrediction(selectorHash, -2),
         legendFormat='lower normal',
       ),
     )

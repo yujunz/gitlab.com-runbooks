@@ -4,6 +4,7 @@ local metricsCatalog = import 'metrics-catalog.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local row = grafana.row;
 local layout = import 'layout.libsonnet';
+local sliPromQL = import 'sli_promql.libsonnet';
 
 local MERMAID_DIAGRAM_TEMPLATE =
   |||
@@ -145,13 +146,7 @@ local errorDiagram(services) =
     graphId='diagram_errors',
     thresholds='0,0.001',
     target=promQuery.target(
-      |||
-        avg by (type) (
-          avg_over_time(
-            gitlab_service_errors:ratio{environment="$environment", stage="$stage"}[$__range]
-          )
-        )
-      |||,
+      sliPromQL.errorRate.serviceErrorRateQuery({ environment: '$environment', stage: '$stage' }, range='$__range'),
       legendFormat='{{ type }}',
       instant=true
     )
@@ -169,13 +164,7 @@ local apdexDiagram(services) =
     graphId='diagram_apdex',
     thresholds='0.99,0.995,0.999',
     target=promQuery.target(
-      |||
-        avg by (type) (
-          avg_over_time(
-            gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}[$__range]
-          )
-        )
-      |||,
+      sliPromQL.apdex.serviceApdexQuery({ environment: '$environment', stage: '$stage' }, range='$__range'),
       legendFormat='{{ type }}',
       instant=true
     )

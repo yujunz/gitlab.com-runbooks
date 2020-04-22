@@ -1,16 +1,22 @@
+local selectors = import 'lib/selectors.libsonnet';
+
+local globalSelector = { monitor: 'global' };
+local nonGlobalSelector = { monitor: { nre: 'global|' } };
+
+local formatConfigForSelectorHash(selectorHash) =
+  {
+    globalSelector: selectors.serializeHash(selectorHash + globalSelector + { env: selectorHash.environment }),
+    selector: selectors.serializeHash(selectorHash + nonGlobalSelector),
+  };
+
 {
   apdex:: {
-    serviceApdexQuery(environment, type, stage, range)::
+    serviceApdexQuery(selectorHash, range)::
       |||
-        min by (type) (min_over_time(gitlab_service_apdex:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor="", env="%(environment)s"}[$__interval]))
+        min by (type) (min_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
         or
-        min by (type) (gitlab_service_apdex:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor!=""})
-      ||| % {
-        environment: environment,
-        type: type,
-        stage: stage,
-        range: range,
-      },
+        min by (type) (gitlab_service_apdex:ratio{%(selector)s})
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
     serviceApdexDegradationSLOQuery(environment, type, stage)::
       |||
@@ -30,80 +36,58 @@
         stage: stage,
       },
 
-    serviceApdexQueryWithOffset(environment, type, stage, offset)::
+    serviceApdexQueryWithOffset(selectorHash, offset)::
       |||
-        min by (type) (gitlab_service_apdex:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor="", env="%(environment)s"} offset %(offset)s)
+        min by (type) (gitlab_service_apdex:ratio{%(globalSelector)s} offset %(offset)s)
         or
-        min by (type) (gitlab_service_apdex:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor!=""} offset %(offset)s)
-      ||| % {
-        environment: environment,
-        type: type,
-        stage: stage,
-        offset: offset,
-      },
+        min by (type) (gitlab_service_apdex:ratio{%(selector)s} offset %(offset)s)
+      ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
   },
 
   opsRate:: {
-    serviceOpsRateQuery(environment, type, stage, range)::
+    serviceOpsRateQuery(selectorHash, range)::
       |||
-        avg by (type) (avg_over_time(gitlab_service_ops:rate{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor="", env="%(environment)s"}[%(range)s]))
+        avg by (type) (avg_over_time(gitlab_service_ops:rate{%(globalSelector)s}[%(range)s]))
         or
-        sum by (type) (gitlab_service_ops:rate{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor!=""})
-      ||| % {
-        environment: environment,
-        type: type,
-        stage: stage,
-        range: range,
-      },
+        sum by (type) (gitlab_service_ops:rate{%(selector)s})
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
-    serviceOpsRateQueryWithOffset(environment, type, stage, offset)::
+    serviceOpsRateQueryWithOffset(selectorHash, offset)::
       |||
-        avg by (type) (gitlab_service_ops:rate{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor="", env="%(environment)s"} offset %(offset)s)
+        avg by (type) (gitlab_service_ops:rate{%(globalSelector)s} offset %(offset)s)
         or
-        sum by (type) (gitlab_service_ops:rate{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor!=""} offset %(offset)s)
-      ||| % {
-        environment: environment,
-        type: type,
-        stage: stage,
-        offset: offset,
-      },
+        sum by (type) (gitlab_service_ops:rate{%(selector)s} offset %(offset)s)
+      ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
-    serviceOpsRatePrediction(environment, type, stage, sigma)::
+    serviceOpsRatePrediction(selectorHash, sigma)::
       |||
         clamp_min(
           avg by (type) (
-            gitlab_service_ops:rate:prediction{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor=""}
+            gitlab_service_ops:rate:prediction{%(globalSelector)s}
             + (%(sigma)g) *
-            gitlab_service_ops:rate:stddev_over_time_1w{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor=""}
+            gitlab_service_ops:rate:stddev_over_time_1w{%(globalSelector)s}
           )
           or
           (
-              sum by (type) (gitlab_service_ops:rate:prediction{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor!=""})
+              sum by (type) (gitlab_service_ops:rate:prediction{%(selector)s})
               + (%(sigma)g) *
-              sum by (type) (gitlab_service_ops:rate:stddev_over_time_1w{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor!=""})
+              sum by (type) (gitlab_service_ops:rate:stddev_over_time_1w{%(selector)s})
           ),
           0
         )
-      ||| % {
-        environment: environment,
-        type: type,
-        stage: stage,
-        sigma: sigma,
-      },
+      ||| % formatConfigForSelectorHash(selectorHash) { sigma: sigma },
   },
 
   errorRate:: {
-    serviceErrorRateQuery(environment, type, stage, range)::
+    serviceErrorRateQuery(selectorHash, range, clampMax=1.0)::
       |||
-        max by (type) (max_over_time(gitlab_service_errors:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor="", env="%(environment)s"}[$__interval]))
-        or
-        sum by (type) (gitlab_service_errors:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor!=""})
-      ||| % {
-        environment: environment,
-        type: type,
-        stage: stage,
-        range: range,
-      },
+        clamp_max(
+          max by (type) (max_over_time(gitlab_service_errors:ratio{%(globalSelector)s}[$__interval]))
+          or
+          sum by (type) (gitlab_service_errors:ratio{%(selector)s}),
+          %(clampMax)g
+        )
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax },
 
     serviceErrorRateDegradationSLOQuery(environment, type, stage)::
       |||
@@ -123,19 +107,12 @@
         stage: stage,
       },
 
-    serviceErrorRateQueryWithOffset(environment, type, stage, offset)::
+    serviceErrorRateQueryWithOffset(selectorHash, offset)::
       |||
-        max by (type) (gitlab_service_errors:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor="", env="%(environment)s"} offset %(offset)s)
+        max by (type) (gitlab_service_errors:ratio{%(globalSelector)s} offset %(offset)s)
         or
-        sum by (type) (gitlab_service_errors:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s", monitor!=""} offset %(offset)s)
-      ||| % {
-        environment: environment,
-        type: type,
-        stage: stage,
-        offset: offset,
-      },
-
-
+        sum by (type) (gitlab_service_errors:ratio{%(selector)s} offset %(offset)s)
+      ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
   },
 
 
