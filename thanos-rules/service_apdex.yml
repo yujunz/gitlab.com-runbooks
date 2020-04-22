@@ -17,23 +17,27 @@ groups:
   - record: gitlab_service_apdex:ratio
     expr: >
       sum by (env, environment, tier, type, stage) (
-        ((gitlab_component_apdex:ratio >= 0) * (avg_over_time(gitlab_component_apdex:weight:score[10m]) >= 0))
+        ((gitlab_component_apdex:ratio{monitor!="global"} >= 0) * (avg_over_time(gitlab_component_apdex:weight:score{monitor!="global"}[10m]) >= 0))
         and on (env, tier, type, component)
-        gitlab_component_service:mapping
+        gitlab_component_service:mapping{monitor!="global"}
       )
       /
       sum by (env, environment, tier, type, stage) (
-        (avg_over_time(gitlab_component_apdex:weight:score[10m]) >= 0)
+        (avg_over_time(gitlab_component_apdex:weight:score{monitor!="global"}[10m]) >= 0)
         and on (env, tier, type, component)
-        gitlab_component_service:mapping
+        gitlab_component_service:mapping{monitor!="global"}
       )
 
   # Node-level aggregation
   - record: gitlab_service_node_apdex:ratio
     expr: >
-      sum by (env, environment, tier, type, stage, shard, fqdn) ((gitlab_component_node_apdex:ratio >= 0) * (avg_over_time(gitlab_component_node_apdex:weight:score[10m]) >= 0))
+      sum by (env, environment, tier, type, stage, shard, fqdn) (
+        (gitlab_component_node_apdex:ratio{monitor!="global"} >= 0) * (avg_over_time(gitlab_component_node_apdex:weight:score{monitor!="global"}[10m]) >= 0)
+      )
       /
-      sum by (env, environment, tier, type, stage, shard, fqdn) (avg_over_time(gitlab_component_node_apdex:weight:score[10m]) >= 0)
+      sum by (env, environment, tier, type, stage, shard, fqdn) (
+        avg_over_time(gitlab_component_node_apdex:weight:score{monitor!="global"}[10m]) >= 0
+      )
 
 # These should be deprecated but are currently used by the general triage dashboard
 - name: GitLab Service Apdex Score Stats
@@ -43,9 +47,9 @@ groups:
   # Average values for each service, over a week
   - record: gitlab_service_apdex:ratio:avg_over_time_1w
     expr: >
-      avg_over_time(gitlab_service_apdex:ratio[1w])
+      avg_over_time(gitlab_service_apdex:ratio{monitor!="global"}[1w])
   # Stddev for each service, over a week
   - record: gitlab_service_apdex:ratio:stddev_over_time_1w
     expr: >
-      stddev_over_time(gitlab_service_apdex:ratio[1w])
+      stddev_over_time(gitlab_service_apdex:ratio{monitor!="global"}[1w])
 
