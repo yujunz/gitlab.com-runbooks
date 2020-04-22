@@ -20,16 +20,3 @@ groups:
       sum by (env, environment, tier, type, stage, shard, fqdn) (
         gitlab_component_node_errors:rate{monitor!="global"} >= 0
       )
-
-- name: GitLab Service Errors-per-Second Rate Stats
-  partial_response_strategy: "warn"
-  interval: 5m
-  rules:
-  # Average values for each service, over a week
-  - record: gitlab_service_errors:rate:avg_over_time_1w
-    expr: >
-      avg_over_time(gitlab_service_errors:rate{monitor!="global"}[1w])
-  # Stddev for each service, over a week
-  - record: gitlab_service_errors:rate:stddev_over_time_1w
-    expr: >
-      stddev_over_time(gitlab_service_errors:rate{monitor!="global"}[1w])
