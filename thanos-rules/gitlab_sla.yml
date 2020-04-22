@@ -8,6 +8,6 @@ groups:
   # metric data each individual Prometheus instances into a single metric
   - record: sla:gitlab:ratio
     expr: >
-      sum by (env, environment, stage) (sla:gitlab:score)
+      sum by (env, environment, stage) (sla:gitlab:score{monitor!="global"})
       /
-      sum by (env, environment, stage) (sla:gitlab:weights)
+      sum by (env, environment, stage) (sla:gitlab:weights{monitor!="global"})

@@ -10,12 +10,16 @@ groups:
   # Aggregate over all components within a service
   - record: gitlab_service_errors:rate
     expr: >
-      sum by (env, environment, tier, type, stage) (gitlab_component_errors:rate >= 0)
+      sum by (env, environment, tier, type, stage) (
+        gitlab_component_errors:rate{monitor!="global"} >= 0
+      )
 
   # Aggregate over all components within a service, for a node
   - record: gitlab_service_node_errors:rate
     expr: >
-      sum by (env, environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate >= 0)
+      sum by (env, environment, tier, type, stage, shard, fqdn) (
+        gitlab_component_node_errors:rate{monitor!="global"} >= 0
+      )
 
 - name: GitLab Service Errors-per-Second Rate Stats
   partial_response_strategy: "warn"
@@ -24,8 +28,8 @@ groups:
   # Average values for each service, over a week
   - record: gitlab_service_errors:rate:avg_over_time_1w
     expr: >
-      avg_over_time(gitlab_service_errors:rate[1w])
+      avg_over_time(gitlab_service_errors:rate{monitor!="global"}[1w])
   # Stddev for each service, over a week
   - record: gitlab_service_errors:rate:stddev_over_time_1w
     expr: >
-      stddev_over_time(gitlab_service_errors:rate[1w])
+      stddev_over_time(gitlab_service_errors:rate{monitor!="global"}[1w])
