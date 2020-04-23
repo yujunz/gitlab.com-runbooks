@@ -154,7 +154,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        sliPromQL.componentApdexQuery(selectorHash, '$__interval'),
+        sliPromQL.apdex.componentApdexQuery(selectorHash, '$__interval'),
         legendFormat='{{ component }} component',
       )
     )
