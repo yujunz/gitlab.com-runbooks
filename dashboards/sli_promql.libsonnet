@@ -92,7 +92,6 @@ local formatConfigForSelectorHash(selectorHash) =
 
     componentOpsRateQuery(selectorHash, range)::
       |||
-        1 +
         sum(
           avg_over_time(
             gitlab_component_ops:rate{%(selector)s}[%(range)s]
