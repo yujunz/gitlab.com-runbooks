@@ -245,7 +245,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        sliPromQL.errorRate.componentErrorRateQuery(selectorHash, '$__interval'),
+        sliPromQL.errorRate.componentErrorRateQuery(selectorHash),
         legendFormat='{{ component }} error rate',
       )
     )

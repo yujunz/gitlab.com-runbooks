@@ -137,16 +137,16 @@ local formatConfigForSelectorHash(selectorHash) =
         sum by (type) (gitlab_service_errors:ratio{%(selector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
-    componentErrorRateQuery(selectorHash, range)::
+    componentErrorRateQuery(selectorHash)::
       |||
         sum(
-          gitlab_component_errors:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", component="%(component)s"}
+          gitlab_component_errors:rate{%(selector)s}
         ) by (component)
         /
         sum(
-          gitlab_component_ops:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", component="%(component)s"}
+          gitlab_component_ops:rate{%(selector)s}
         ) by (component)
-      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
+      ||| % formatConfigForSelectorHash(selectorHash) {},
   },
 
 
