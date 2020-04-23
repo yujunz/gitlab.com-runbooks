@@ -378,7 +378,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        sliPromQL.ops.componentOpsRateQuery(selectorHash, '$__interval'),
+        sliPromQL.opsRate.componentOpsRateQuery(selectorHash, '$__interval'),
         legendFormat='{{ component }} RPS',
       )
     )
@@ -411,7 +411,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        sliPromQL.ops.componentOpsRateQuery(selectorHash, '$__interval'),
+        sliPromQL.opsRate.componentOpsRateQuery(selectorHash, '$__interval'),
         legendFormat='{{ component }} component',
       )
     )
