@@ -42,6 +42,19 @@ local formatConfigForSelectorHash(selectorHash) =
         or
         min by (type) (gitlab_service_apdex:ratio{%(selector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
+
+    componentApdexQuery(selectorHash, range)::
+      |||
+        sum by (component, type) (
+          (avg_over_time(gitlab_component_apdex:ratio{%(selector)s}[%(range)s]) >= 0)
+          *
+          (avg_over_time(gitlab_component_apdex:weight:score{%(selector)s}[10m]) >= 0)
+        )
+        /
+        sum by (component, type) (
+          (avg_over_time(gitlab_component_apdex:weight:score{%(selector)s}[10m]) >= 0)
+        )
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
 
   opsRate:: {
