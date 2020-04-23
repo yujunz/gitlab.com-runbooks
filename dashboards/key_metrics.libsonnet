@@ -235,6 +235,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       serviceStage: serviceStage,
       component: componentName,
     };
+    local selectorHash = { environment: '$environment', type: serviceType, stage: serviceStage, component: componentName };
+
     generalGraphPanel(
       '%(component)s Component Error Rates' % formatConfig,
       description='Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better',
@@ -243,13 +245,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        |||
-          max(
-            gitlab_component_errors:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", component="%(component)s"}
-            /
-            gitlab_component_ops:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", component="%(component)s"}
-          ) by (component)
-        ||| % formatConfig,
+        sliPromQL.errorRate.componentErrorRateQuery(selectorHash, '$__interval'),
         legendFormat='{{ component }} error rate',
       )
     )
