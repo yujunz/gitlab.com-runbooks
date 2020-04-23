@@ -42,6 +42,19 @@ local formatConfigForSelectorHash(selectorHash) =
         or
         min by (type) (gitlab_service_apdex:ratio{%(selector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
+
+    componentApdexQuery(selectorHash, range)::
+      |||
+        sum by (component, type) (
+          (avg_over_time(gitlab_component_apdex:ratio{%(selector)s}[%(range)s]) >= 0)
+          *
+          (avg_over_time(gitlab_component_apdex:weight:score{%(selector)s}[10m]) >= 0)
+        )
+        /
+        sum by (component, type) (
+          (avg_over_time(gitlab_component_apdex:weight:score{%(selector)s}[10m]) >= 0)
+        )
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
 
   opsRate:: {
@@ -76,6 +89,15 @@ local formatConfigForSelectorHash(selectorHash) =
           0
         )
       ||| % formatConfigForSelectorHash(selectorHash) { sigma: sigma },
+
+    componentOpsRateQuery(selectorHash, range)::
+      |||
+        sum(
+          avg_over_time(
+            gitlab_component_ops:rate{%(selector)s}[%(range)s]
+          )
+        ) by (component)
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
 
   errorRate:: {
@@ -113,6 +135,17 @@ local formatConfigForSelectorHash(selectorHash) =
         or
         sum by (type) (gitlab_service_errors:ratio{%(selector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
+
+    componentErrorRateQuery(selectorHash)::
+      |||
+        sum(
+          gitlab_component_errors:rate{%(selector)s}
+        ) by (component)
+        /
+        sum(
+          gitlab_component_ops:rate{%(selector)s}
+        ) by (component)
+      ||| % formatConfigForSelectorHash(selectorHash) {},
   },
 
 
