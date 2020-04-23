@@ -303,6 +303,60 @@ update_elastic_nonprod-log_cluster_settings:
     variables:
       - $ES_NONPROD_URL
 
+# security-dev-20200423
+################################################################################
+update_elastic_security_dev_ilm:
+  stage: deploy
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
+  script:
+  - ./elastic/managed-objects/security_dev/ILM/update-ilm.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/security_dev/ILM/*
+    variables:
+      - $ES_SECURITY_DEV_URL
+
+update_elastic_security_dev_watches:
+  stage: deploy
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
+  script:
+  - ./elastic/managed-objects/security_dev/watches/update-watches.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/security_dev/watches/*
+    variables:
+      - $ES_SECURITY_DEV_URL
+
+update_elastic_security_dev_index_templates:
+  stage: deploy
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
+  script:
+  - ./elastic/managed-objects/security_dev/index-templates/update-index-templates.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/security_dev/index-templates/*
+    variables:
+      - $ES_SECURITY_DEV_URL
+
+update_elastic_security_dev_cluster_settings:
+  stage: deploy
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
+  script:
+  - ./elastic/managed-objects/security_dev/cluster-settings/update-cluster-settings.sh
+  only:
+    refs:
+      - master
+    changes:
+      - elastic/managed-objects/security_dev/cluster-settings/*
+    variables:
+      - $ES_SECURITY_DEV_URL
+
 # monitoring-es7
 ################################################################################
 
