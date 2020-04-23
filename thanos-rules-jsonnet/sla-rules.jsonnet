@@ -11,7 +11,7 @@ local keyServiceWeights = std.foldl(
 
 local getScoreQuery(weights) =
   local items = [
-    'min without(slo) (avg_over_time(slo_observation_status{type="%(type)s"}[5m])) * %(weight)d' % {
+    'min without(slo) (avg_over_time(slo_observation_status{type="%(type)s", monitor="global"}[5m])) * %(weight)d' % {
       type: type,
       weight: keyServiceWeights[type],
     }
@@ -22,7 +22,7 @@ local getScoreQuery(weights) =
 
 local getWeightQuery(weights) =
   local items = [
-    'max without(slo) (clamp_max(clamp_min(slo_observation_status{type="%(type)s"}, 1), 1)) * %(weight)d' % {
+    'max without(slo) (clamp_max(clamp_min(slo_observation_status{type="%(type)s", monitor="global"}, 1), 1)) * %(weight)d' % {
       type: type,
       weight: keyServiceWeights[type],
     }
@@ -31,25 +31,12 @@ local getWeightQuery(weights) =
 
   std.join('\n  or\n  ', items);
 
-local externalAvailabilityRatioRule(service, range) =
-  {
-    record: 'gitlab_service_external_availability:ratio_%s' % [range],
-    labels: {
-      type: service.name,
-      tier: service.tier,
-    },
-    expr: |||
-      avg by (environment) (
-        avg_over_time(pingdom_check_status{tags=~".*\\b%(type)s\\b.*"}[%(range)s])
-      )
-    ||| % { type: service.name, range: range },
-  };
-
 local rules = {
   groups: [{
     name: 'SLA weight calculations',
     interval: '1m',
     rules: [{
+      // TODO: these are kept for backwards compatability for now
       record: 'sla:gitlab:score',
       expr: |||
         sum by (environment, stage) (
@@ -57,25 +44,18 @@ local rules = {
         )
       ||| % [getScoreQuery(keyServiceWeights)],
     }, {
+      // TODO: these are kept for backwards compatibility for now
+      // See https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/309
       record: 'sla:gitlab:weights',
       expr: |||
         sum by (environment, stage) (
           %s
         )
       ||| % [getWeightQuery(keyServiceWeights)],
+    }, {
+      record: 'sla:gitlab:ratio',
+      expr: 'sla:gitlab:score / sla:gitlab:weights',
     }],
-  }, {
-    // External monitoring
-    name: 'External monitoring, short interval',
-    interval: '1m',
-    rules:
-      [externalAvailabilityRatioRule(service, '5m') for service in keyServices]
-      +
-      [externalAvailabilityRatioRule(service, '1h') for service in keyServices],
-  }, {
-    name: 'External monitoring, long interval',
-    interval: '5m',
-    rules: [externalAvailabilityRatioRule(service, '1d') for service in keyServices],
   }],
 };
 
