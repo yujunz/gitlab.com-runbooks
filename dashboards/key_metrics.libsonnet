@@ -382,14 +382,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        |||
-          1 +
-          max(
-            avg_over_time(
-              gitlab_component_ops:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s", component="%(component)s"}[$__interval]
-            )
-          ) by (component)
-        ||| % formatConfig,
+        sliPromQL.ops.componentOpsRateQuery(selectorHash, '$__interval'),
         legendFormat='{{ component }} RPS',
       )
     )
@@ -412,6 +405,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       serviceType: serviceType,
       serviceStage: serviceStage,
     };
+    local selectorHash = { environment: '$environment', type: serviceType, stage: serviceStage };
+
     generalGraphPanel(
       'Component RPS - Requests per Second',
       description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
@@ -420,14 +415,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     )
     .addTarget(  // Primary metric
       promQuery.target(
-        |||
-          1 +
-          max(
-            avg_over_time(
-              gitlab_component_ops:rate{environment="$environment", type="%(serviceType)s", stage="%(serviceStage)s"}[$__interval]
-            )
-          ) by (component)
-        ||| % formatConfig,
+        sliPromQL.ops.componentOpsRateQuery(selectorHash, '$__interval'),
         legendFormat='{{ component }} component',
       )
     )

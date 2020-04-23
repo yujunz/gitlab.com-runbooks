@@ -89,6 +89,16 @@ local formatConfigForSelectorHash(selectorHash) =
           0
         )
       ||| % formatConfigForSelectorHash(selectorHash) { sigma: sigma },
+
+      componentOpsRateQuery(selectorHash, range)::
+        |||
+          1 +
+          sum(
+            avg_over_time(
+              gitlab_component_ops:rate{%(selector)s}[%(range)s]
+            )
+          ) by (component)
+        ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
 
   errorRate:: {
