@@ -217,15 +217,15 @@ local componentErrorRatioTemplate = |||
 |||;
 
 local serviceErrorRatioTemplate = |||
-  sum by (environment, tier, type, stage) (gitlab_component_errors:rate%(prefix)s%(monitorSelector)s >= 0)
+  sum by (environment, env, tier, type, stage) (gitlab_component_errors:rate%(prefix)s%(monitorSelector)s >= 0)
   /
-  sum by (environment, tier, type, stage) (gitlab_component_ops:rate%(prefix)s%(monitorSelector)s > 0)
+  sum by (environment, env, tier, type, stage) (gitlab_component_ops:rate%(prefix)s%(monitorSelector)s > 0)
 |||;
 
 local serviceNodeErrorRatioTemplate = |||
-  sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate%(prefix)s%(monitorSelector)s >= 0)
+  sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate%(prefix)s%(monitorSelector)s >= 0)
   /
-  sum by (environment, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate%(prefix)s%(monitorSelector)s > 0)
+  sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate%(prefix)s%(monitorSelector)s > 0)
 |||;
 
 local generateServiceErrorRatiosForPrefix(prefix, includeMonitorSelector) =
