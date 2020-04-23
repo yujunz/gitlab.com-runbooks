@@ -39,7 +39,7 @@ local rules = {
       // TODO: these are kept for backwards compatability for now
       record: 'sla:gitlab:score',
       expr: |||
-        sum by (environment, stage) (
+        sum by (environment, env, stage) (
           %s
         )
       ||| % [getScoreQuery(keyServiceWeights)],
@@ -48,13 +48,13 @@ local rules = {
       // See https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/309
       record: 'sla:gitlab:weights',
       expr: |||
-        sum by (environment, stage) (
+        sum by (environment, env, stage) (
           %s
         )
       ||| % [getWeightQuery(keyServiceWeights)],
     }, {
       record: 'sla:gitlab:ratio',
-      expr: 'sla:gitlab:score / sla:gitlab:weights',
+      expr: 'sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"}',
     }],
   }],
 };
