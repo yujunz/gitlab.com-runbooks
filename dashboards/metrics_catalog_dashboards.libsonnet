@@ -114,7 +114,7 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
 
     basic.timeseries(
       title=if title == null then 'Errors for ' + componentName else title,
-      query=component.errorRate.aggregatedChangesQuery(
+      query=component.errorRate.aggregatedIncreaseQuery(
         aggregationLabels=aggregationLabels,
         selector=selector,
         rangeInterval='$__interval',

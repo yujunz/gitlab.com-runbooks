@@ -84,7 +84,7 @@ local row = grafana.row;
         description='The number of unicorn processes terminated after 60s timeout. Lower is better.',
         query=|||
           sum(
-            changes(
+            increase(
               unicorn_killer_terminations_total{
                 environment="$environment",
                 type="%(serviceType)s",
@@ -103,7 +103,7 @@ local row = grafana.row;
         description='The number of unicorn processes terminated after 60s timeout. Lower is better. Outliers may indicate a faulty node.',
         query=|||
           sum(
-            changes(
+            increase(
               unicorn_killer_terminations_total{
                 environment="$environment",
                 type="%(serviceType)s",
