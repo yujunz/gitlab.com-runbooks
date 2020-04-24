@@ -211,9 +211,9 @@ local generateNodeRecordingRules(serviceDefinition) =
   generateComponentRecordingRulesForAggregations(serviceDefinition, NODE_LEVEL_RECORDING_RULE_NAMES, NODE_LEVEL_AGGREGATION_LABELS);
 
 local componentErrorRatioTemplate = |||
-  gitlab_component_errors:rate%(prefix)s
+  gitlab_component_errors:rate%(prefix)s%(monitorSelector)s
   /
-  gitlab_component_ops:rate%(prefix)s
+  gitlab_component_ops:rate%(prefix)s%(monitorSelector)s
 |||;
 
 local serviceErrorRatioTemplate = |||
@@ -298,8 +298,8 @@ local serviceComponentMapping(service) =
 
   serviceComponentMapping(service):: serviceComponentMapping(service),
 
-  multiwindowComponentErrorRatios()::
-    generateMultiWindowErrorRatios(multiburnrateSuffixes, generateComponentErrorRatiosForPrefix, includeMonitorSelector=false),
+  multiwindowComponentErrorRatios(includeMonitorSelector=false)::
+    generateMultiWindowErrorRatios(multiburnrateSuffixes, generateComponentErrorRatiosForPrefix, includeMonitorSelector=includeMonitorSelector),
 
   multiwindowServiceErrorRatios(includeMonitorSelector=false)::
     generateMultiWindowErrorRatios(multiburnrateSuffixes, generateServiceErrorRatiosForPrefix, includeMonitorSelector=includeMonitorSelector),
