@@ -154,6 +154,10 @@ local panelMethods = {
     min_span=null,
     styles=[],
     columns=[],
+    query='',
+    instant=true,
+    interval='1m',
+    intervalFactor=3,
   )::
     tablePanel.new(
       title,
@@ -161,9 +165,10 @@ local panelMethods = {
       span=span,
       min_span=min_span,
       datasource='$PROMETHEUS_DS',
-      styles=[],
-      columns=[],
-    ) +
+      styles=styles,
+      columns=columns,
+    )
+    .addTarget(promQuery.target(query, instant=instant, format='table')) +
     panelMethods,
 
   multiTimeseries(
