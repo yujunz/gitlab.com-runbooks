@@ -8,9 +8,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 mkdir -p "${SCRIPT_DIR}/../.gitlab/dashboards"
 rm -f "${SCRIPT_DIR}"/../.gitlab/dashboards/*.yml
 
-output_dashboard_files="$(jsonnet --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-dashboards.jsonnet")"
-output_triage_files="$(jsonnet --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-triage-dashboards.jsonnet")"
-output_sla_file="$(jsonnet --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-slas-dashboard.jsonnet")"
+ruby -rjson -ryaml -e "puts YAML.load(ARGF.read).to_json" "${SCRIPT_DIR}/../services/service-catalog.yml" >"${SCRIPT_DIR}/../services/service_catalog.json"
+
+output_dashboard_files="$(jsonnet -J "${SCRIPT_DIR}/../services" --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-dashboards.jsonnet")"
+output_triage_files="$(jsonnet -J "${SCRIPT_DIR}/../services" --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-triage-dashboards.jsonnet")"
+output_sla_file="$(jsonnet -J "${SCRIPT_DIR}/../services" --string --multi "${SCRIPT_DIR}/../.gitlab/dashboards" "${SCRIPT_DIR}/../metrics-catalog/gitlab-slas-dashboard.jsonnet")"
 
 if [[ -z "${output_dashboard_files}" ]] && [[ -z "${output_triage_files}" ]] && [[ -z "${output_sla_file}" ]]; then
   echo "No output files"
