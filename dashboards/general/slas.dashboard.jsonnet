@@ -1,21 +1,10 @@
 local basic = import 'basic.libsonnet';
-local capacityPlanning = import 'capacity_planning.libsonnet';
-local colors = import 'colors.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
-local keyMetrics = import 'key_metrics.libsonnet';
 local layout = import 'layout.libsonnet';
-local nodeMetrics = import 'node_metrics.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';
-local templates = import 'templates.libsonnet';
-local dashboard = grafana.dashboard;
 local row = grafana.row;
-local template = grafana.template;
-local graphPanel = grafana.graphPanel;
-local annotation = grafana.annotation;
 local thresholds = import 'thresholds.libsonnet';
 
 // These charts have a very high interval factor, to create a wide trend line
@@ -84,8 +73,18 @@ basic.dashboard(
 .addPanel(
   basic.slaStats(
     title='Weighted Availability Score - GitLab.com',
+    // NB: this query takes into account values recorded in Prometheus prior to
+    // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
+    // Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
     query=|||
-      avg_over_time(sla:gitlab:ratio{environment="$environment", stage="main"}[$__range])
+      avg(
+        clamp_max(
+          avg_over_time(
+            sla:gitlab:ratio{env=~"ops|$environment", environment="$environment", stage="main", monitor=~"global|"}[$__range]
+          ),
+          1
+        )
+      )
     |||,
   ),
   gridPos={ x: 0, y: 0, w: 8, h: 8 },
@@ -115,8 +114,19 @@ basic.dashboard(
       title='Overall SLA over time period - gitlab.com',
       description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
+
+      // NB: this query takes into account values recorded in Prometheus prior to
+      // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
+      // Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
       query=|||
-        avg_over_time(sla:gitlab:ratio{environment="$environment", stage="main"}[$__interval])
+        avg(
+          clamp_max(
+            avg_over_time(
+              sla:gitlab:ratio{env=~"ops|$environment", environment="$environment", stage="main", monitor=~"global|"}[$__interval]
+            ),
+            1
+          )
+        )
       |||,
       legendFormat='gitlab.com SLA',
       interval=INTERVAL,
@@ -140,8 +150,16 @@ basic.dashboard(
   layout.grid([
     basic.slaStats(
       title='Primary Services Average Availability for Period',
+      // NB: this query takes into account values recorded in Prometheus prior to
+      // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
+      // Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
       query=|||
-        avg(avg_over_time(slo_observation_status{environment="$environment", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__range])) by (type)
+        avg(
+          clamp_max(
+            avg_over_time(slo_observation_status{env=~"ops|$environment", environment="$environment", stage="main", type=~"%(keyServiceRegExp)s"}[$__range]),
+            1
+          )
+        ) by (type)
       ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='{{ type }}',
       links=overviewDashboardLinks,
@@ -154,8 +172,13 @@ basic.dashboard(
       title='SLA Trends - Primary Services',
       description='Rolling average SLO adherence for primary services. Higher is better.',
       yAxisLabel='SLA',
+      // NB: this query takes into account values recorded in Prometheus prior to
+      // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
+      // Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
       query=|||
-        avg(avg_over_time(slo_observation_status{environment="gprd", stage=~"main|", type=~"%(keyServiceRegExp)s"}[$__interval])) by (type)
+        avg(
+          avg_over_time(slo_observation_status{env=~"ops|$environment", environment="$environment", stage="main", type=~"%(keyServiceRegExp)s"}[$__interval])
+        ) by (type)
       ||| % { keyServiceRegExp: keyServiceRegExp },
       legendFormat='{{ type }}',
       interval=INTERVAL,
