@@ -34,6 +34,7 @@ local getWeightQuery(weights) =
 local rules = {
   groups: [{
     name: 'SLA weight calculations',
+    partial_response_strategy: 'warn',
     interval: '1m',
     rules: [{
       // TODO: these are kept for backwards compatability for now

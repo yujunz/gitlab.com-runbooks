@@ -2,87 +2,159 @@
 # frozen_string_literal: true
 
 require 'yaml'
-require 'logger'
 
-LOGGER = Logger.new(STDERR)
-LOGGER.level = Logger::DEBUG
+ValidationError = Class.new(StandardError)
 
-# rubocop:disable Metrics/PerceivedComplexity
-# rubocop:disable Metrics/CyclomaticComplexity
-def validate_rule(alert_file_path, rule)
-  return if rule["record"] # Don't validate recordings
-
-  annotations = rule["annotations"]
-  labels = rule["labels"]
-  alert = rule["alert"]
-
-  raise StandardError, "Rules must contain an `alert` attribute" unless alert
-
-  raise StandardError, "#{alert}: rules must contain a `title` annotation" unless annotations["title"]
-
-  LOGGER.warn "#{alert_file_path}: #{alert}: Rules should contain a `description` annotation" unless annotations["description"]
-
-  raise StandardError, " #{alert}: rules must contain a `severity` label" unless labels["severity"]
-  raise StandardError, " #{alert}: rules contains an invalid `severity` label: #{labels['severity']}" unless %w[s1 s2 s3 s4].include?(labels["severity"])
-
-  if labels["pager"]
-    raise StandardError, " #{alert}: rules contains an invalid `pager` label: #{labels['pager']}" unless %w[pagerduty issue].include?(labels["pager"])
-    raise StandardError, " #{alert}: only severity s1 and s2 errors should page" unless (labels["severity"] == "s1") || (labels["severity"] == "s2")
-    raise StandardError, " #{alert}: 'pager: issue' alerts need a project label" if (labels["pager"] == "issue") && labels["project"].nil?
-  elsif (labels["severity"] == "s1") || (labels["severity"] == "s2")
-    raise StandardError, " #{alert}: s1 and s2 alerts must be configured to send to pagerduty"
+class Validator
+  def initialize
+    @context = []
+    @failures = []
   end
 
-  raise StandardError, " #{alert}: alerts must include an alert_type label. This label should either be 'cause' or 'symptom'. For more information on cause and symptom-based alerts, review http://landing.google.com/sre/sre-book/chapters/monitoring-distributed-systems/#symptoms-versus-causes-g0sEi4" unless %w[cause symptom].include?(labels["alert_type"])
+  private
 
-  if annotations["runbook"]
-    runbook_relative_link = annotations["runbook"]
-    runbook_file = runbook_relative_link.gsub(/#.*$/, "")
-    # We can't validate files that include template values eg: "{{ $labels.type }}"
-    # but for other files, ensure that they exist
-    raise StandardError, " #{alert}: rule references a non-existent runbook #{runbook_file}" if !runbook_file.include?("{{") && !File.file?(File.join(__dir__, "..", runbook_file))
-  else
-    LOGGER.warn "#{alert_file_path}: #{alert}: alerts should reference a runbook"
+  # Add a validation warning
+  def validation_warning(message)
+    @failures << { context: @context.dup, level: :warn, message: message }
   end
-end
-# rubocop:enable Metrics/PerceivedComplexity
-# rubocop:enable Metrics/CyclomaticComplexity
 
-def validate_group(alert_file_path, group)
-  name = group["name"]
+  # Add a validation error
+  def validation_error(message)
+    @failures << { context: @context.dup, level: :error, message: message }
+  end
 
-  begin
-    rules = group["rules"]
+  # Add a validation failure and abort the current validation
+  def validation_fatal(message)
+    @failures << { context: @context.dup, level: :error, message: message }
+    raise ValidationError
+  end
 
-    rules.each do |rule|
-      validate_rule alert_file_path, rule
+  # Ensures that the rule has valid annotations
+  def validate_alert_rule_annotations(rule, thanos_evaluation)
+    annotations = rule["annotations"]
+    validation_fatal("rules must contain a `title` annotation") unless annotations["title"]
+
+    validation_warning("rules should contain a `description` annotation") unless annotations["description"]
+
+    if annotations["runbook"]
+      runbook_relative_link = annotations["runbook"]
+      runbook_file = runbook_relative_link.gsub(/#.*$/, "")
+      # We can't validate files that include template values eg: "{{ $labels.type }}"
+      # but for other files, ensure that they exist
+      validation_error("rule references a non-existent runbook #{runbook_file}") if !runbook_file.include?("{{") && !File.file?(File.join(__dir__, "..", runbook_file))
+    else
+      validation_warning("alerts should reference a runbook")
     end
-  rescue StandardError => e
-    raise StandardError, "group `#{name}`: #{e.message}"
   end
-end
 
-def validate(alert_file_path)
-  alert_yaml = YAML.load_file(alert_file_path)
-  raise StandardError, "Invalid configuration" unless alert_yaml
+  # Ensures that the rule conforms to our labeling rules
+  def validate_alert_rule_labels(rule, thanos_evaluation)
+    labels = rule["labels"]
 
-  groups = alert_yaml["groups"]
-  groups.each do |group|
-    validate_group alert_file_path, group
+    validation_error("rules must contain a `severity` label") unless labels["severity"]
+    validation_error("rules contains an invalid `severity` label: #{labels['severity']}") unless %w[s1 s2 s3 s4].include?(labels["severity"])
+    validation_error("alerts must include an alert_type label. This label should either be 'cause' or 'symptom'. For more information on cause and symptom-based alerts, review http://landing.google.com/sre/sre-book/chapters/monitoring-distributed-systems/#symptoms-versus-causes-g0sEi4") unless %w[cause symptom].include?(labels["alert_type"])
+
+    if labels["pager"]
+      validation_error("rules contains an invalid `pager` label: #{labels['pager']}") unless %w[pagerduty issue].include?(labels["pager"])
+      validation_error("only severity s1 and s2 errors should page") unless (labels["severity"] == "s1") || (labels["severity"] == "s2")
+      validation_error("'pager: issue' alerts need a project label") if (labels["pager"] == "issue") && labels["project"].nil?
+    elsif (labels["severity"] == "s1") || (labels["severity"] == "s2")
+      validation_error("s1 and s2 alerts must be configured to send to pagerduty")
+    end
   end
-rescue StandardError => e
-  raise StandardError, "Unable to validate file #{alert_file_path}: #{e.message}"
+
+  def validate_rule(rule, thanos_evaluation)
+    return if rule["record"] # Don't validate recordings
+
+    alert = rule["alert"]
+    validation_fatal("Rules must contain an `alert` attribute") unless alert
+
+    @context << "alert: #{alert}"
+    begin
+      validate_alert_rule_annotations(rule, thanos_evaluation)
+      validate_alert_rule_labels(rule, thanos_evaluation)
+    ensure
+      @context.pop
+    end
+  end
+
+  def validate_group(group, thanos_evaluation)
+    name = group["name"]
+    @context << "group: #{name}"
+
+    begin
+      begin
+        if thanos_evaluation
+          # Partial Response Strategy:
+          # See https://github.com/thanos-io/thanos/blob/master/docs/components/rule.md#partial-response
+          partial_response_strategy = group["partial_response_strategy"]
+
+          validation_error("group should include an explicit partial_response_strategy value. The default is 'abort' but because of the way we use Thanos Ruler, many of our rules will use 'warn' and therefore we prefer this to be explicitly set.") unless partial_response_strategy
+          validation_error("group should have an partial_response_strategy value of 'warn' or 'abort'.") unless %w[warn abort].include?(partial_response_strategy)
+        end
+
+        rules = group["rules"]
+        rules.each do |rule|
+          validate_rule rule, thanos_evaluation
+        rescue ValidationError
+          # Continue onto next rule after validation failure
+        end
+      end
+    ensure
+      @context.pop
+    end
+  end
+
+  def validate_file(alert_file_path, thanos_evaluation)
+    @context << "file: #{alert_file_path}"
+    begin
+      alert_yaml = YAML.load_file(alert_file_path)
+      raise "Invalid configuration" unless alert_yaml
+
+      groups = alert_yaml["groups"]
+      groups.each do |group|
+        validate_group group, thanos_evaluation
+      rescue ValidationError
+        # Continue onto next group after validation failure
+      end
+    ensure
+      @context.pop
+    end
+  end
+
+  public
+
+  # Validates Prometheus and Thanos rules
+  # Returns true if validation succeeded
+  def validate
+    # Check Prometheus rules
+    alert_files = File.join(__dir__, "..", "rules", "*.yml")
+    Dir[alert_files].each do |file|
+      validate_file File.expand_path(file), false
+    end
+
+    # Check Thanos rules
+    thanos_alert_files = File.join(__dir__, "..", "thanos-rules", "*.yml")
+    Dir[thanos_alert_files].each do |file|
+      validate_file File.expand_path(file), true
+    end
+
+    has_errors = false
+    @failures.each do |failure|
+      has_errors = true if failure[:level] == :error
+
+      warn "#{failure[:level]}: #{failure[:context].join(', ')}: #{failure[:message]}"
+    end
+
+    !has_errors
+  end
 end
 
 begin
-  alert_files = File.join(__dir__, "..", "rules", "*.yml")
-  Dir[alert_files].each do |file|
-    validate File.expand_path(file)
-  end
-
+  exit 1 unless Validator.new.validate
 rescue StandardError => e
   warn "error: #{e.message}"
+  warn e.backtrace.join("\n")
   exit 1
-ensure
-  LOGGER.close
 end

@@ -1,6 +1,7 @@
 groups:
 - name: targets
   interval: 60s
+  partial_response_strategy: abort
   rules:
   - record: job:up:count
     expr: count by (env,job,shard,stage,tier,type) (up{monitor!="global"})
