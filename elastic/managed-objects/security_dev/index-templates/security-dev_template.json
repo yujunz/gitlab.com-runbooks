@@ -1,0 +1,13 @@
+{
+   "index_patterns": [
+      "security-dev-*"
+   ],
+   "settings": {
+      "index": {
+         "lifecycle": {
+            "name": "gitlab-infra-ilm-policy"
+         }
+      },
+      "number_of_shards": 2
+   }
+}
