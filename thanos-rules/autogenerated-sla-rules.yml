@@ -3,6 +3,7 @@
 groups:
 - name: SLA weight calculations
   interval: 1m
+  partial_response_strategy: warn
   rules:
   - record: sla:gitlab:score
     expr: |

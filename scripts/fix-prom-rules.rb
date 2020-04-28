@@ -5,6 +5,7 @@ require 'yaml'
 KEY_ORDER = %w[
   name
   interval
+  partial_response_strategy
   rules
   alert
   for
