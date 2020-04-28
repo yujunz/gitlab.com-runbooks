@@ -35,10 +35,10 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
     rateQuery(selector, rangeInterval)::
       generateRangeFunctionQuery(self, 'rate', selector, rangeInterval),
 
-    // This creates a changes query of the form
-    // changes(....{<selector>}[<rangeInterval>])
-    changesQuery(selector, rangeInterval)::
-      generateRangeFunctionQuery(self, 'changes', selector, rangeInterval),
+    // This creates a increase query of the form
+    // increase(....{<selector>}[<rangeInterval>])
+    increaseQuery(selector, rangeInterval)::
+      generateRangeFunctionQuery(self, 'increase', selector, rangeInterval),
 
     // This creates an aggregated rate query of the form
     // sum by(<aggregationLabels>) (rate(....{<selector>}[<rangeInterval>]))
@@ -46,10 +46,10 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
       local query = generateRangeFunctionQuery(self, 'rate', selector, rangeInterval);
       aggregations.aggregateOverQuery('sum', aggregationLabels, query),
 
-    // This creates an aggregated changes query of the form
-    // sum by(<aggregationLabels>) (changes(....{<selector>}[<rangeInterval>]))
-    aggregatedChangesQuery(aggregationLabels, selector, rangeInterval)::
-      local query = generateRangeFunctionQuery(self, 'changes', selector, rangeInterval);
+    // This creates an aggregated increase query of the form
+    // sum by(<aggregationLabels>) (increase(....{<selector>}[<rangeInterval>]))
+    aggregatedIncreaseQuery(aggregationLabels, selector, rangeInterval)::
+      local query = generateRangeFunctionQuery(self, 'increase', selector, rangeInterval);
       aggregations.aggregateOverQuery('sum', aggregationLabels, query),
   },
 
@@ -80,10 +80,10 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
       else
         query,
 
-    // This creates a changes query of the form
-    // changes(....{<selector>}[<rangeInterval>])
-    changesQuery(selector, rangeInterval)::
-      generateRangeFunctionQuery(self, 'changes', selector, rangeInterval),
+    // This creates a increase query of the form
+    // increase(....{<selector>}[<rangeInterval>])
+    increaseQuery(selector, rangeInterval)::
+      generateRangeFunctionQuery(self, 'increase', selector, rangeInterval),
 
     // This creates an aggregated rate query of the form
     // sum by(<aggregationLabels>) (deriv(....{<selector>}[<rangeInterval>]))
@@ -95,10 +95,10 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
         query;
       aggregations.aggregateOverQuery('sum', aggregationLabels, clampedQuery),
 
-    // This creates an aggregated changes query of the form
-    // sum by(<aggregationLabels>) (changes(....{<selector>}[<rangeInterval>]))
-    aggregatedChangesQuery(aggregationLabels, selector, rangeInterval)::
-      local query = generateRangeFunctionQuery(self, 'changes', selector, rangeInterval);
+    // This creates an aggregated increase query of the form
+    // sum by(<aggregationLabels>) (increase(....{<selector>}[<rangeInterval>]))
+    aggregatedIncreaseQuery(aggregationLabels, selector, rangeInterval)::
+      local query = generateRangeFunctionQuery(self, 'increase', selector, rangeInterval);
       aggregations.aggregateOverQuery('sum', aggregationLabels, query),
   },
 }

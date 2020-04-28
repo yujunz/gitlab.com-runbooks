@@ -161,7 +161,7 @@ local gitalySpawnTimeoutsPerNode(selector) =
     title='Gitaly Spawn Timeouts per Node',
     description='Golang uses a global lock on process spawning. In order to control contention on this lock Gitaly uses a safety valve. If a request is unable to obtain the lock within a period, a timeout occurs. These timeouts are serious and should be addressed. Non-zero is bad.',
     query=|||
-      changes(gitaly_spawn_timeouts_total{%(selector)s}[$__interval])
+      increase(gitaly_spawn_timeouts_total{%(selector)s}[$__interval])
     ||| % (gitalyConfig { selector: selector }),
     legendFormat='{{ fqdn }}',
     interval='1m',

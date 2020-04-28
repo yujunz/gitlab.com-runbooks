@@ -257,7 +257,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         title='Resync Events',
         yAxisLabel='Events',
         query=|||
-          sum(changes(redis_slave_resync_total{environment="$environment", type="%(serviceType)s", fqdn=~"%(serviceType)s-\\\\d\\\\d.*"}[$__interval])) by (fqdn)
+          sum(increase(redis_slave_resync_total{environment="$environment", type="%(serviceType)s", fqdn=~"%(serviceType)s-\\\\d\\\\d.*"}[$__interval])) by (fqdn)
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',
         intervalFactor=2,

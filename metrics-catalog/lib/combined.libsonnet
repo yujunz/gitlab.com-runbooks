@@ -5,9 +5,9 @@ local generateRateQuery(c, selector, rangeInterval) =
   local rateQueries = std.map(function(i) i.rateQuery(selector, rangeInterval), c.metrics);
   std.join('\n  or\n  ', rateQueries);
 
-local generateChangesQuery(c, selector, rangeInterval) =
-  local changesQueries = std.map(function(i) i.changesQuery(selector, rangeInterval), c.metrics);
-  std.join('\n  or\n  ', changesQueries);
+local generateIncreaseQuery(c, selector, rangeInterval) =
+  local increaseQueries = std.map(function(i) i.increaseQuery(selector, rangeInterval), c.metrics);
+  std.join('\n  or\n  ', increaseQueries);
 
 // Call `combinedApdexQuery` on the first of the queries to combine.
 // This is arbitrary; we'll get the same result by calling this method
@@ -35,10 +35,10 @@ local generateApdexPercentileLatencyQuery(c, percentile, aggregationLabels, sele
     rateQuery(selector, rangeInterval)::
       generateRateQuery(self, selector, rangeInterval),
 
-    // This creates a changes query of the form
+    // This creates a increase query of the form
     // rate(....{<selector>}[<rangeInterval>])
-    changesQuery(selector, rangeInterval)::
-      generateChangesQuery(self, selector, rangeInterval),
+    increaseQuery(selector, rangeInterval)::
+      generateIncreaseQuery(self, selector, rangeInterval),
 
     // This creates an aggregated rate query of the form
     // sum by(<aggregationLabels>) (...)
@@ -46,10 +46,10 @@ local generateApdexPercentileLatencyQuery(c, percentile, aggregationLabels, sele
       local query = generateRateQuery(self, selector, rangeInterval);
       aggregations.aggregateOverQuery('sum', aggregationLabels, query),
 
-    // This creates an aggregated changes query of the form
+    // This creates an aggregated increase query of the form
     // sum by(<aggregationLabels>) (...)
-    aggregatedChangesQuery(aggregationLabels, selector, rangeInterval)::
-      local query = generateChangesQuery(self, selector, rangeInterval);
+    aggregatedIncreaseQuery(aggregationLabels, selector, rangeInterval)::
+      local query = generateIncreaseQuery(self, selector, rangeInterval);
       aggregations.aggregateOverQuery('sum', aggregationLabels, query),
 
     apdexQuery(aggregationLabels, selector, rangeInterval)::
