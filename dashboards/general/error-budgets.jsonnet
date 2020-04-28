@@ -52,7 +52,7 @@ dashboard.new(
     basic.table(
       title='Apdex by Feature Category',
       query=|||
-        sort(
+        sort_desc(
           clamp_max(
             sum by (feature_category) (
               avg_over_time(gitlab_background_jobs:execution:apdex:ratio_6h{environment="$environment", env="$environment"}[$__range])
@@ -74,7 +74,7 @@ dashboard.new(
     basic.table(
       title='Error Rate by Feature Category',
       query=|||
-        sort_desc(
+        sort(
           clamp_max(
             sum by (feature_category) (
               avg_over_time(gitlab_background_jobs:execution:error:rate_6h{environment="$environment", env="$environment"}[$__range])
@@ -94,7 +94,7 @@ dashboard.new(
     basic.table(
       title='Apdex by Queue',
       query=|||
-        sort(
+        sort_desc(
           clamp_max(
             sum by (queue, feature_category) (
               avg_over_time(gitlab_background_jobs:execution:apdex:ratio_6h{environment="$environment", env="$environment"}[$__range])
@@ -116,7 +116,7 @@ dashboard.new(
     basic.table(
       title='Error Rate by Queue',
       query=|||
-        sort_desc(
+        sort(
           clamp_max(
             sum by (queue, feature_category) (
               avg_over_time(gitlab_background_jobs:execution:error:rate_6h{environment="$environment", env="$environment"}[$__range])
