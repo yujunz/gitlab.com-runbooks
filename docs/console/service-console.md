@@ -32,6 +32,7 @@
 * [../logging/README.md](../logging/README.md)
 * [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
 * [../monitoring/filesystem_alerts.md](../monitoring/filesystem_alerts.md)
+* [../monitoring/sentry-is-down.md](../monitoring/sentry-is-down.md)
 * [../pages/pages-letsencrypt.md](../pages/pages-letsencrypt.md)
 * [../patroni/gitlab-com-wale-backups.md](../patroni/gitlab-com-wale-backups.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
