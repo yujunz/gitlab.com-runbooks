@@ -110,7 +110,7 @@ groups:
       runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool queue growing
   - alert: Elasticsearch thread pool rejections growing
-    expr: deriv(elasticsearch_thread_pool_rejected_count{exported_type!="write"}[5m]) > 0
+    expr: deriv(elasticsearch_thread_pool_rejected_count{exported_type!="write"}[5m]) > 0.001
     for: 5m
     labels:
       severity: s3
@@ -120,7 +120,7 @@ groups:
       runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool rejections growing
   - alert: Elasticsearch write thread pool rejections growing
-    expr: deriv(elasticsearch_thread_pool_rejected_count{exported_type="write"}[5m]) > 0
+    expr: deriv(elasticsearch_thread_pool_rejected_count{exported_type="write"}[5m]) > 0.001
     for: 3m
     labels:
       severity: s3
