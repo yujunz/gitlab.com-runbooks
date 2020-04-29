@@ -138,7 +138,7 @@ local saturationQuery(aggregationLabels, nodeSelector, poolSelector) =
 
     ], cols=2, rowHeight=10, startRow=startRow),
   connectionPoolingPanels(serviceType, startRow)::
-    local nodeSelector = 'type="%(serviceType)s", environment="$environment"' % { serviceType: serviceType};
+    local nodeSelector = 'type="%(serviceType)s", environment="$environment"' % { serviceType: serviceType };
     local poolSelector = '%(nodeSelector)s, user="gitlab", database!="pgbouncer"' % { nodeSelector: nodeSelector };
 
     local formatConfig = {
