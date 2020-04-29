@@ -111,9 +111,9 @@ local WAIT_TIME_CORRECTION_FACTOR = 1000000;
   connectionPoolingPanels(serviceType, startRow)::
     local formatConfig = {
       serviceType: serviceType,
-      poolSelector: 'type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"' % { serviceType: serviceType},
-      nodeSelector: 'type="%(serviceType)s", environment="$environment"' % { serviceType: serviceType},
-      WAIT_TIME_CORRECTION_FACTOR: WAIT_TIME_CORRECTION_FACTOR
+      poolSelector: 'type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"' % { serviceType: serviceType },
+      nodeSelector: 'type="%(serviceType)s", environment="$environment"' % { serviceType: serviceType },
+      WAIT_TIME_CORRECTION_FACTOR: WAIT_TIME_CORRECTION_FACTOR,
     };
 
     layout.grid([
