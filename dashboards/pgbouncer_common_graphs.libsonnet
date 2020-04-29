@@ -12,6 +12,13 @@ local saturationQuery(aggregationLabels, nodeSelector, poolSelector) =
     poolSelector: poolSelector,
     aggregationLabels: std.join(', ', aggregationLabels),
   };
+
+  // Hack alert/PromQL explainer: we need to join from the top onto the
+  // bottom joining on the `database` label.
+  // In order to do this, we need to do a bit of manipulation of
+  // label values to match the `database` column in the case of
+  // pgbouncer_databases_pool_size{name="gitlabhq_production_sidekiq"}
+  // Hence the label_replace
   |||
     sum by (%(aggregationLabels)s) (
       pgbouncer_pools_server_active_connections{%(poolSelector)s} +
