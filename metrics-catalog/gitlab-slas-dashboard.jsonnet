@@ -26,7 +26,7 @@ local slaDashboard =
                 // NB: this query takes into account values recorded in Prometheus prior to
                 // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
                 // Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
-                query: 'avg(clamp_max(avg_over_time(sla:gitlab:ratio{env=~"ops|gprd", environment="$environment", stage="main", monitor=~"global|"}[$(range)s]),1))' % {
+                query: 'avg(clamp_max(avg_over_time(sla:gitlab:ratio{env=~"ops|gprd", environment="gprd", stage="main", monitor=~"global|"}[%(range)s]),1))' % {
                   range: range,
                 },
                 unit: '%',
@@ -47,7 +47,7 @@ local slaDashboard =
                 // NB: this query takes into account values recorded in Prometheus prior to
                 // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
                 // Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
-                query_range: 'avg(clamp_max(avg_over_time(sla:gitlab:ratio{env=~"ops|gprd", environment="$environment", stage="main", monitor=~"global|"}[1d]),1))',
+                query_range: 'avg(clamp_max(avg_over_time(sla:gitlab:ratio{env=~"ops|gprd", environment="gprd", stage="main", monitor=~"global|"}[1d]),1))',
                 unit: '%',
                 label: 'gitlab.com SLA',
                 step: 86400,
