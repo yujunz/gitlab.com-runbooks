@@ -1,7 +1,10 @@
 local basic = import 'basic.libsonnet';
 local layout = import 'layout.libsonnet';
 
-local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com/gitlab-com/gl-infra/production/issues/1078';
+// TECHNICAL DEBT:
+// Remove this once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9981
+// is fixed
+local WAIT_TIME_CORRECTION_FACTOR = 1000000;
 
 {
   workloadStats(serviceType, startRow)::
@@ -11,7 +14,7 @@ local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com
 
     layout.grid([
       basic.timeseries(
-        title='Queries Pooled per Node' + PGBOUNCER_WARNING,
+        title='Queries Pooled per Node',
         description='Total number of SQL queries pooled - stats_total_query_count',
         query=|||
           sum(rate(pgbouncer_stats_queries_pooled_total{type="%(serviceType)s", environment="$environment"}[$__interval])) by (fqdn)
@@ -25,7 +28,7 @@ local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com
         linewidth=2
       ),
       basic.timeseries(
-        title='Total Time in Queries per Node' + PGBOUNCER_WARNING,
+        title='Total Time in Queries per Node',
         description='Total number of seconds spent by pgbouncer when actively connected to PostgreSQL, executing queries - stats.total_query_time',
         query=|||
           sum(rate(pgbouncer_stats_queries_duration_seconds{type="%(serviceType)s", environment="$environment"}[$__interval])) by (fqdn)
@@ -39,7 +42,7 @@ local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com
         linewidth=2
       ),
       basic.timeseries(
-        title='SQL Transactions Pooled per Node' + PGBOUNCER_WARNING,
+        title='SQL Transactions Pooled per Node',
         description='Total number of SQL transactions pooled - stats.total_xact_count',
         query=|||
           sum(rate(pgbouncer_stats_sql_transactions_pooled_total{type="%(serviceType)s", environment="$environment"}[$__interval])) by (fqdn)
@@ -53,7 +56,7 @@ local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com
         linewidth=2
       ),
       basic.timeseries(
-        title='Time in Transaction per Server' + PGBOUNCER_WARNING,
+        title='Time in Transaction per Server',
         description='Total number of seconds spent by pgbouncer when connected to PostgreSQL in a transaction, either idle in transaction or executing queries - stats.total_xact_time',
         query=|||
           sum(rate(pgbouncer_stats_server_in_transaction_seconds{type="%(serviceType)s", environment="$environment"}[$__interval])) by (fqdn)
@@ -74,7 +77,7 @@ local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com
 
     layout.grid([
       basic.timeseries(
-        title='Sent Bytes' + PGBOUNCER_WARNING,
+        title='Sent Bytes',
         description='Total volume in bytes of network traffic sent by pgbouncer, shown as bytes - stats.total_sent',
         query=
         |||
@@ -89,7 +92,7 @@ local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com
         linewidth=2
       ),
       basic.timeseries(
-        title='Received Bytes' + PGBOUNCER_WARNING,
+        title='Received Bytes',
         description='Total volume in bytes of network traffic received by pgbouncer, shown as bytes - stats.total_received',
         query=
         |||
@@ -108,15 +111,18 @@ local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com
   connectionPoolingPanels(serviceType, startRow)::
     local formatConfig = {
       serviceType: serviceType,
+      poolSelector: 'type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"' % { serviceType: serviceType},
+      nodeSelector: 'type="%(serviceType)s", environment="$environment"' % { serviceType: serviceType},
+      WAIT_TIME_CORRECTION_FACTOR: WAIT_TIME_CORRECTION_FACTOR
     };
 
     layout.grid([
       basic.timeseries(
-        title='Server Connection Pool Active Connections per Node' + PGBOUNCER_WARNING,
+        title='Server Connection Pool Active Connections per Node',
         description='Number of active connections per node',
         query=
         |||
-          sum(max_over_time(pgbouncer_pools_server_active_connections{type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"}[$__interval])) by (fqdn)
+          sum(max_over_time(pgbouncer_pools_server_active_connections{%(poolSelector)s}[$__interval])) by (fqdn)
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',
         interval='1m',
@@ -126,72 +132,127 @@ local PGBOUNCER_WARNING = ' - THESE GRAPHS ARE INCORRECT. SEE https://gitlab.com
         linewidth=1
       ),
       basic.saturationTimeseries(
-        title='Server Connection Pool Saturation per Pool' + PGBOUNCER_WARNING,
+        title='Saturation per Pool',
+        description='Shows resource saturation per pgbouncer pool. Lower is better.',
         yAxisLabel='Server Pool Utilization',
         query=
         |||
-          max(
-            max_over_time(pgbouncer_pools_server_active_connections{type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"}[$__interval]) /
+          sum by (database, env, environment, shard, stage, tier, type) (
             (
-              (
-                pgbouncer_pools_server_idle_connections{type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"} +
-                pgbouncer_pools_server_active_connections{type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"} +
-                pgbouncer_pools_server_testing_connections{type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"} +
-                pgbouncer_pools_server_used_connections{type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"} +
-                pgbouncer_pools_server_login_connections{type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"}
-              )
-              > 0
+              pgbouncer_pools_server_active_connections{%(poolSelector)s} +
+              pgbouncer_pools_server_testing_connections{%(poolSelector)s} +
+              pgbouncer_pools_server_used_connections{%(poolSelector)s} +
+              pgbouncer_pools_server_login_connections{%(poolSelector)s}
             )
-          ) by (database)
+          )
+          /
+          sum by (database, env, environment, shard, stage, tier, type) (
+          label_replace(
+            pgbouncer_databases_pool_size{%(nodeSelector)s},
+            "database", "gitlabhq_production_sidekiq", "name", "gitlabhq_production_sidekiq"
+          ))
         ||| % formatConfig,
         legendFormat='{{ database }} pool',
         interval='30s',
-        intervalFactor=5,
+        intervalFactor=3,
       ),
-      basic.queueLengthTimeseries(
-        title='Waiting Client Connections per Pool' + PGBOUNCER_WARNING,
+      basic.saturationTimeseries(
+        title='Saturation per Pool per Node',
+        description='Shows resource saturation per pgbouncer pool, per pgbouncer node. Lower is better.',
+        yAxisLabel='Server Pool Utilization',
         query=
         |||
-          sum(avg_over_time(pgbouncer_pools_client_waiting_connections{type="%(serviceType)s", environment="$environment", database!="pgbouncer"}[$__interval])) by (database)
+          sum by (database, env, environment, fqdn, job, shard, stage, tier, type) (
+            (
+              pgbouncer_pools_server_active_connections{%(poolSelector)s} +
+              pgbouncer_pools_server_testing_connections{%(poolSelector)s} +
+              pgbouncer_pools_server_used_connections{%(poolSelector)s} +
+              pgbouncer_pools_server_login_connections{%(poolSelector)s}
+            )
+          )
+          /
+          sum by (database, env, environment, fqdn, job, shard, stage, tier, type) (
+          label_replace(
+            pgbouncer_databases_pool_size{%(nodeSelector)s},
+            "database", "gitlabhq_production_sidekiq", "name", "gitlabhq_production_sidekiq"
+          ))
+        ||| % formatConfig,
+        legendFormat='{{ fqdn }} {{ database }} pool',
+        interval='30s',
+        intervalFactor=3,
+        linewidth=1,
+      ),
+      basic.latencyTimeseries(
+        title='Total Connection Wait Time',
+        description='Total aggregated time spend waiting for a backend connection. Lower is better',
+        query=|||
+          sum by (database, environment, type) (rate(pgbouncer_stats_client_wait_seconds{%(nodeSelector)s, database!="pgbouncer"}[$__interval]) / %(WAIT_TIME_CORRECTION_FACTOR)g)
+        ||| % formatConfig,
+        legendFormat='{{ database }}',
+        format='s',
+        yAxisLabel='Latency',
+        interval='1m',
+        intervalFactor=1
+      ),
+      basic.latencyTimeseries(
+        title='Average Wait Time per SQL Transaction',
+        description='Average time spent waiting for a backend connection from the pool. Lower is better',
+        query=|||
+          sum by (database, environment, type) (rate(pgbouncer_stats_client_wait_seconds{%(nodeSelector)s, database!="pgbouncer"}[$__interval]) / %(WAIT_TIME_CORRECTION_FACTOR)g)
+          /
+          sum by (database, environment, type) (pgbouncer_stats_sql_transactions_pooled_total{%(nodeSelector)s, database!="pgbouncer"})
+        ||| % formatConfig,
+        legendFormat='{{ database }}',
+        format='s',
+        yAxisLabel='Latency',
+        interval='1m',
+        intervalFactor=1
+      ),
+      basic.queueLengthTimeseries(
+        title='Waiting Client Connections per Pool (⚠️ possibly inaccurate, occassionally polled value, do not make assumptions based on this)',
+        query=
+        |||
+          sum(avg_over_time(pgbouncer_pools_client_waiting_connections{%(poolSelector)s}[$__interval])) by (database)
         ||| % formatConfig,
         legendFormat='{{ database }} pool',
         intervalFactor=5,
       ),
       basic.queueLengthTimeseries(
-        title='Active Backend Server Connections per Database' + PGBOUNCER_WARNING,
+        title='Active Backend Server Connections per Database',
         yAxisLabel='Active Connections',
         query=
         |||
-          sum(avg_over_time(pgbouncer_pools_server_active_connections{type="%(serviceType)s", environment="$environment", database!="pgbouncer"}[$__interval])) by (database)
+          sum(avg_over_time(pgbouncer_pools_server_active_connections{%(poolSelector)s}[$__interval])) by (database)
         ||| % formatConfig,
         legendFormat='{{ database }} database',
         intervalFactor=5,
       ),
       basic.queueLengthTimeseries(
-        title='Active Backend Server Connections per User' + PGBOUNCER_WARNING,
+        title='Active Backend Server Connections per User',
         yAxisLabel='Active Connections',
         query=|||
-          sum(avg_over_time(pgbouncer_pools_server_active_connections{type="%(serviceType)s", environment="$environment", database!="pgbouncer"}[$__interval])) by (user)
+          sum(avg_over_time(pgbouncer_pools_server_active_connections{%(poolSelector)s}[$__interval])) by (user)
         ||| % formatConfig,
         legendFormat='{{ user }}',
         intervalFactor=5,
       ),
+      // This requires https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9980
+      // for pgbouncer nodes
       basic.saturationTimeseries(
-        title='Max Single Core Saturation per Node' + PGBOUNCER_WARNING,
-        description='pgbouncer is single-threaded. This graph shows maximum utilization across all cores on each host. Lower is better.',
+        title='pgbouncer Single Threaded CPU Saturation per Node',
+        description=|||
+          pgbouncer is single-threaded. This graph shows maximum utilization across all cores on each host. Lower is better.
+
+          Missing data? [https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9980](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9980)
+        |||,
         query=|||
-          max(1 - rate(node_cpu_seconds_total{type="%(serviceType)s", environment="$environment", mode="idle"}[$__interval])) by (fqdn)
+          sum(
+            rate(
+              namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", %(nodeSelector)s}[1m]
+            )
+          ) by (groupname, fqdn, type, tier, stage, environment)
         ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
-        interval='30s',
-        intervalFactor=1,
-      ),
-      basic.latencyTimeseries(
-        title='Maximum Connection Waiting Time per Pool' + PGBOUNCER_WARNING,
-        query=|||
-          max(max_over_time(pgbouncer_pools_client_maxwait_seconds{type="%(serviceType)s", environment="$environment", database!="pgbouncer"}[$__interval])) by (database)
-        ||| % formatConfig,
-        legendFormat='{{ database }} pool',
+        legendFormat='{{ groupname }} {{ fqdn }}',
         interval='30s',
         intervalFactor=1,
       ),
