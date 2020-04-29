@@ -89,3 +89,92 @@ Sentry is comprised of three different processes managed by supervisor:
     ```
 
 * The Sentry supervisord configuration is in `/etc/supervisord/conf.d/sentry.conf`.
+
+### Debugging Sentry internals
+
+Sentry is a Django application, and it has a built-in Python shell,
+similar to the Rails console, that allows you to access the application
+environment. As root:
+
+```shell
+SENTRY_CONF="/etc/sentry" /usr/share/nginx/sentry/bin/sentry shell
+```
+
+The database can also be accessed via the `postgres` user:
+
+```shell
+sudo -u postgres psql -d sentry
+```
+
+#### Sessions
+
+This is the authentication flow for Sentry to authenticate GitLab users:
+
+1. Client browser sends a `sentrysid` cookie.
+1. Sentry middleware authenticates user from the `sentrysid` payload [via a middleware](https://github.com/getsentry/sentry/blob/0fffc30f1455a23f98e76240fb1bf9de7ef81e71/src/sentry/middleware/auth.py#L22-L40).
+1. Django checks the authentication record in the database
+(`sentry_authidentity` table) to ensure the user is a member of the
+GitLab organization. This record must have two bits in the `flags`
+column set properly: `sso:linked` must be `True` and `sso:invalid` must
+be `False`. This corresponds to a value of 1 in `flags`.
+1. If the record is not valid, then Sentry will ask the user to login to the SSO provider.
+1. Periodically, Sentry runs a Celery background job to refresh OAuth2
+tokens for all identities in the database. If the refresh step fails,
+Sentry will [invalidate bad records by flipping bits in
+`flags`](https://github.com/getsentry/sentry/blob/37eb11f6b050fd019375002aed4cf1d8dff2b117/src/sentry/tasks/check_auth.py#L80-L102).
+
+Session cookies are stored in the `sentrysid` cookie on the client
+browser. This cookie is a signed payload serialized with the [Django
+`PickleSerializer`](https://docs.djangoproject.com/en/3.0/topics/http/sessions/#technical-details).
+You can decode the JSON paylod on the host by retrieving the value of
+the cookie from the browser, and entering it in the shell. For example,
+suppose `sentryid` is `.eJz123456:abcdefg`. You can decode the cookie
+via:
+
+```python
+from django.core import signing
+from django.contrib.sessions.backends.signed_cookies import SessionStore
+from django.conf import settings
+key = ".eJz123456:abcdefg"
+s = SessionStore(key)
+s.load()
+```
+
+This will return something like:
+
+```python
+{   '_auth_user_backend': 'sentry.utils.auth.EmailAuthBackend',
+    '_auth_user_id': 13,
+    '_nonce': u'1234567',
+    'activeorg': u'gitlab',
+    'django_language': u'en',
+    'sso': u'1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1',
+    'sudo': u'ABCDEFG',
+    'sudo_redirect_to': u'/account/settings/notifications/',
+    u'testcookie': u'worked'}
+}
+```
+
+### Sentry SSO provider
+
+We currently use this [GitLab SSO
+provider](https://github.com/SkyLothar/sentry-auth-gitlab). [This pull
+request](https://github.com/SkyLothar/sentry-auth-gitlab/pull/16) is
+required to make OAuth2 token refreshes work properly.
+
+### Django ORM lookup examples
+
+To debug using the Django ORM, the following is a quickstart:
+
+```python
+from sentry.models import AuthProvider, AuthIdentity, User
+user = User.objects.get(id=13)
+auth_provider = AuthProvider.objects.get(id=1)
+auth_identity = AuthIdentity.objects.get(id=18)
+auth_identity.flags
+
+# Manually refreshes an OAuth2 token for a given identity.
+# This issues a POST request to /oauth/token with the `refresh_token` grant.
+provider = auth_provider.get_provider()
+provider.refresh_identity(auth_identity)
+```
