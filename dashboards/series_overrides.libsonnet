@@ -85,10 +85,10 @@ local capacityComponentColors = {
     color: 'lightorange',
     zindex: -4,
   },
-  goldenMetric(alias):: self {
+  goldenMetric(alias, overrides={}):: self {
     alias: alias,
     color: '#E7D551',  // "Brilliant gold"
-  },
+  } + overrides,
   slo:: {
     alias: 'SLO',
     color: '#FF4500',  // "Orange red"

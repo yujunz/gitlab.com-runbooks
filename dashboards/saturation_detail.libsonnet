@@ -591,12 +591,13 @@ local DETAILS = {
 };
 
 {
-  saturationPanel(title, description, component, linewidth=1, query, legendFormat)::
+  saturationPanel(title, description, component, linewidth=1, query, legendFormat, selector)::
     local formatConfig = {
       component: component,
       query: query,
+      selector: selector,
     } + magicNumbers.magicNumbers;
-    graphPanel.new(
+    local panel = graphPanel.new(
       title,
       description,
       sort='decreasing',
@@ -613,17 +614,38 @@ local DETAILS = {
       legend_avg=true,
       legend_alignAsTable=true,
       legend_hideEmpty=true,
-    )
-    .addTarget(  // Primary metric
+    );
+
+    local p2 = if query != null then
+      panel.addTarget(  // Primary metric
+        promQuery.target(
+          |||
+            clamp_min(
+              clamp_max(
+                %(query)s
+              ,1)
+            ,0)
+          ||| % formatConfig,
+          legendFormat=legendFormat,
+        )
+      )
+    else
+      panel;
+
+    p2.addTarget(  // Primary metric
       promQuery.target(
         |||
           clamp_min(
             clamp_max(
-              %(query)s
+              max(
+                max_over_time(
+                  gitlab_component_saturation:ratio{%(selector)s, component="%(component)s"}[$__interval]
+                )
+              ) by (component)
             ,1)
           ,0)
         ||| % formatConfig,
-        legendFormat=legendFormat,
+        legendFormat='aggregated {{ component }}',
       )
     )
     .addTarget(  // Soft SLO
@@ -655,7 +677,8 @@ local DETAILS = {
       show=false,
     )
     .addSeriesOverride(seriesOverrides.softSlo)
-    .addSeriesOverride(seriesOverrides.hardSlo),
+    .addSeriesOverride(seriesOverrides.hardSlo)
+    .addSeriesOverride(seriesOverrides.goldenMetric('/aggregated /', { linewidth: 2 },)),
 
   componentSaturationPanel(component, selector)::
     local formatConfig = {
@@ -671,7 +694,8 @@ local DETAILS = {
       component=component,
       linewidth=1,
       query=query,
-      legendFormat=componentDetails.legendFormat
+      legendFormat=componentDetails.legendFormat,
+      selector=selector,
     ),
 
   saturationDetailPanels(selector, components)::

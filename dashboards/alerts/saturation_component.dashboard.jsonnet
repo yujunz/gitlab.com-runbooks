@@ -22,14 +22,9 @@ saturationAlerts.saturationDashboard(
     description='Saturation is a measure of what ratio of a finite resource is currently being utilized. Lower is better.',
     component='$component',
     linewidth=2,
-    query=|||
-      max(
-        max_over_time(
-          gitlab_component_saturation:ratio{environment="$environment", type="$type", stage="$stage", component="$component"}[$__interval]
-        )
-      ) by (component)
-    |||,
-    legendFormat='{{ component }} component'
+    query=null,
+    legendFormat=null,
+    selector='environment="$environment", type="$type", stage="$stage", component="$component"'
   )
         .addSeriesOverride(seriesOverrides.goldenMetric('/ component/')),
   helpPanel=helpPanel
