@@ -6,6 +6,28 @@ local layout = import 'layout.libsonnet';
 // is fixed
 local WAIT_TIME_CORRECTION_FACTOR = 1000000;
 
+local saturationQuery(aggregationLabels, nodeSelector, poolSelector) =
+  local formatConfig = {
+    nodeSelector: nodeSelector,
+    poolSelector: poolSelector,
+    aggregationLabels: std.join(', ', aggregationLabels),
+  };
+  |||
+    sum by (%(aggregationLabels)s) (
+      pgbouncer_pools_server_active_connections{%(poolSelector)s} +
+      pgbouncer_pools_server_testing_connections{%(poolSelector)s} +
+      pgbouncer_pools_server_used_connections{%(poolSelector)s} +
+      pgbouncer_pools_server_login_connections{%(poolSelector)s}
+    )
+    /
+    sum by (%(aggregationLabels)s) (
+      label_replace(
+        pgbouncer_databases_pool_size{%(nodeSelector)s},
+        "database", "gitlabhq_production_sidekiq", "name", "gitlabhq_production_sidekiq"
+      )
+    )
+  ||| % formatConfig;
+
 {
   workloadStats(serviceType, startRow)::
     local formatConfig = {
@@ -109,10 +131,13 @@ local WAIT_TIME_CORRECTION_FACTOR = 1000000;
 
     ], cols=2, rowHeight=10, startRow=startRow),
   connectionPoolingPanels(serviceType, startRow)::
+    local nodeSelector = 'type="%(serviceType)s", environment="$environment"' % { serviceType: serviceType};
+    local poolSelector = '%(nodeSelector)s, user="gitlab", database!="pgbouncer"' % { nodeSelector: nodeSelector };
+
     local formatConfig = {
       serviceType: serviceType,
-      poolSelector: 'type="%(serviceType)s", environment="$environment", user="gitlab", database!="pgbouncer"' % { serviceType: serviceType },
-      nodeSelector: 'type="%(serviceType)s", environment="$environment"' % { serviceType: serviceType },
+      nodeSelector: nodeSelector,
+      poolSelector: poolSelector,
       WAIT_TIME_CORRECTION_FACTOR: WAIT_TIME_CORRECTION_FACTOR,
     };
 
@@ -132,51 +157,27 @@ local WAIT_TIME_CORRECTION_FACTOR = 1000000;
         linewidth=1
       ),
       basic.saturationTimeseries(
-        title='Saturation per Pool',
-        description='Shows resource saturation per pgbouncer pool. Lower is better.',
+        title='Connection Saturation per Pool',
+        description='Shows connection saturation per pgbouncer pool. Lower is better.',
         yAxisLabel='Server Pool Utilization',
-        query=
-        |||
-          sum by (database, env, environment, shard, stage, tier, type) (
-            (
-              pgbouncer_pools_server_active_connections{%(poolSelector)s} +
-              pgbouncer_pools_server_testing_connections{%(poolSelector)s} +
-              pgbouncer_pools_server_used_connections{%(poolSelector)s} +
-              pgbouncer_pools_server_login_connections{%(poolSelector)s}
-            )
-          )
-          /
-          sum by (database, env, environment, shard, stage, tier, type) (
-          label_replace(
-            pgbouncer_databases_pool_size{%(nodeSelector)s},
-            "database", "gitlabhq_production_sidekiq", "name", "gitlabhq_production_sidekiq"
-          ))
-        ||| % formatConfig,
+        query=saturationQuery(
+          aggregationLabels=['database', 'env', 'environment', 'shard', 'stage', 'tier', 'type'],
+          nodeSelector=nodeSelector,
+          poolSelector=poolSelector,
+        ),
         legendFormat='{{ database }} pool',
         interval='30s',
         intervalFactor=3,
       ),
       basic.saturationTimeseries(
-        title='Saturation per Pool per Node',
-        description='Shows resource saturation per pgbouncer pool, per pgbouncer node. Lower is better.',
+        title='Connection Saturation per Pool per Node',
+        description='Shows connection saturation per pgbouncer pool, per pgbouncer node. Lower is better.',
         yAxisLabel='Server Pool Utilization',
-        query=
-        |||
-          sum by (database, env, environment, fqdn, job, shard, stage, tier, type) (
-            (
-              pgbouncer_pools_server_active_connections{%(poolSelector)s} +
-              pgbouncer_pools_server_testing_connections{%(poolSelector)s} +
-              pgbouncer_pools_server_used_connections{%(poolSelector)s} +
-              pgbouncer_pools_server_login_connections{%(poolSelector)s}
-            )
-          )
-          /
-          sum by (database, env, environment, fqdn, job, shard, stage, tier, type) (
-          label_replace(
-            pgbouncer_databases_pool_size{%(nodeSelector)s},
-            "database", "gitlabhq_production_sidekiq", "name", "gitlabhq_production_sidekiq"
-          ))
-        ||| % formatConfig,
+        query=saturationQuery(
+          aggregationLabels=['database', 'env', 'environment', 'fqdn', 'job', 'shard', 'stage', 'tier', 'type'],
+          nodeSelector=nodeSelector,
+          poolSelector=poolSelector,
+        ),
         legendFormat='{{ fqdn }} {{ database }} pool',
         interval='30s',
         intervalFactor=3,
