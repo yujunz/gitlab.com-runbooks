@@ -166,6 +166,14 @@ teams:
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
 
+- name: release-management
+  url: https://about.gitlab.com/handbook/engineering/development/ci-cd/release/release-management/
+  manager_slug: sean_carrol
+  slack_channel: g_release_management
+  engagement_policy: # Link to doc that talks about engagement
+                     # and escalation policy
+  oncall_schedule:   # Link to pagerduty oncall schedule
+
 - name: support
   url: https://about.gitlab.com/handbook/support/
   manager_slug: tcooney
@@ -1318,6 +1326,7 @@ services:
   tier: lb
   teams:
     - infrastructure-webapp
+    - release-management
   infra_owner: infrastructure-webapp
   label: Service:Pages
   business:
