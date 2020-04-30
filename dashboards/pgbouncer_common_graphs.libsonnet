@@ -2,9 +2,13 @@ local basic = import 'basic.libsonnet';
 local layout = import 'layout.libsonnet';
 
 // TECHNICAL DEBT:
-// Remove this once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9981
-// is fixed
-local WAIT_TIME_CORRECTION_FACTOR = 1000000;
+// Before https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9981 was rolled out
+// our metrics were off by a factor of 1 million.
+// This was fixed on 30 April 2020 at 08h00 (1588233600 in unix time)
+//
+// If you are reading this in the year 2021 or beyond, when a change in metrics back in
+// April 2020 no longer matters, please feel free to remove this.
+local WAIT_TIME_CORRECTION_FACTOR = '(vector((time() < bool 1588233600) * 1000000) == 1000000 or vector(1))';
 
 local saturationQuery(aggregationLabels, nodeSelector, poolSelector) =
   local formatConfig = {
@@ -194,7 +198,7 @@ local saturationQuery(aggregationLabels, nodeSelector, poolSelector) =
         title='Total Connection Wait Time',
         description='Total aggregated time spend waiting for a backend connection. Lower is better',
         query=|||
-          sum by (database, environment, type) (rate(pgbouncer_stats_client_wait_seconds{%(nodeSelector)s, database!="pgbouncer"}[$__interval]) / %(WAIT_TIME_CORRECTION_FACTOR)g)
+          sum by (database, environment, type) (rate(pgbouncer_stats_client_wait_seconds{%(nodeSelector)s, database!="pgbouncer"}[$__interval]) / on() group_left() %(WAIT_TIME_CORRECTION_FACTOR)s)
         ||| % formatConfig,
         legendFormat='{{ database }}',
         format='s',
@@ -206,7 +210,7 @@ local saturationQuery(aggregationLabels, nodeSelector, poolSelector) =
         title='Average Wait Time per SQL Transaction',
         description='Average time spent waiting for a backend connection from the pool. Lower is better',
         query=|||
-          sum by (database, environment, type) (rate(pgbouncer_stats_client_wait_seconds{%(nodeSelector)s, database!="pgbouncer"}[$__interval]) / %(WAIT_TIME_CORRECTION_FACTOR)g)
+          sum by (database, environment, type) (rate(pgbouncer_stats_client_wait_seconds{%(nodeSelector)s, database!="pgbouncer"}[$__interval]) / on() group_left() %(WAIT_TIME_CORRECTION_FACTOR)s)
           /
           sum by (database, environment, type) (pgbouncer_stats_sql_transactions_pooled_total{%(nodeSelector)s, database!="pgbouncer"})
         ||| % formatConfig,
