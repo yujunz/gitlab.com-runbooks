@@ -210,14 +210,15 @@ local saturationQuery(aggregationLabels, nodeSelector, poolSelector) =
         title='Average Wait Time per SQL Transaction',
         description='Average time spent waiting for a backend connection from the pool. Lower is better',
         query=|||
-          sum by (database, environment, type) (rate(pgbouncer_stats_client_wait_seconds{%(nodeSelector)s, database!="pgbouncer"}[$__interval]) / on() group_left() %(WAIT_TIME_CORRECTION_FACTOR)s)
+          sum by (database, environment, type, fqdn, job) (rate(pgbouncer_stats_client_wait_seconds{%(nodeSelector)s, database!="pgbouncer"}[$__interval]) / on() group_left() %(WAIT_TIME_CORRECTION_FACTOR)s)
           /
-          sum by (database, environment, type) (pgbouncer_stats_sql_transactions_pooled_total{%(nodeSelector)s, database!="pgbouncer"})
+          sum by (database, environment, type, fqdn, job) (rate(pgbouncer_stats_sql_transactions_pooled_total{%(nodeSelector)s, database!="pgbouncer"}[$__interval]))
         ||| % formatConfig,
-        legendFormat='{{ database }}',
+        legendFormat='{{ fqdn }} {{ job }} {{ database }}',
         format='s',
         yAxisLabel='Latency',
         interval='1m',
+        linewidth=1,
         intervalFactor=1
       ),
       basic.queueLengthTimeseries(
