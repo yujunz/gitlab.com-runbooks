@@ -315,7 +315,7 @@ groups:
       description: Thanos compact {{ $labels.instance }} has failing storage bucket operations.
       runbook: docs/monitoring/thanos-compact.md
   - alert: ThanosCompactNotRunIn24Hours
-    expr: (time() - thanos_objstore_bucket_last_successful_upload_time) > 86400
+    expr: (time() - (thanos_objstore_bucket_last_successful_upload_time > 0)) > 86400
     labels:
       service: prometheus
       severity: s4
