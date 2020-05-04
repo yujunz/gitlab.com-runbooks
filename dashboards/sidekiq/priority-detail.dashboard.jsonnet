@@ -81,7 +81,7 @@ basic.dashboard(
   'priority',
   '$PROMETHEUS_DS',
   'label_values(up{environment="$environment", type="sidekiq", job="gitlab-sidekiq"}, priority)',
-  current='besteffort',
+  current='catchall',
   refresh='load',
   sort=1,
   multi=true,
