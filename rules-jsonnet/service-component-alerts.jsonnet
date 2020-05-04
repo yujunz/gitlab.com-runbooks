@@ -1,5 +1,4 @@
 local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
-local aggregationLabels = 'environment, tier, type, stage, shard, priority, queue, feature_category, urgency';
 
 // For now, only include jobs that run 0.6 times per second, or 4 times a minute
 // in the monitoring. This is to avoid low-volume, noisy alerts

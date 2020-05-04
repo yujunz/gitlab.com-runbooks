@@ -12,15 +12,15 @@ groups:
       WITHOUT (fqdn, instance, queue))
   - record: queue:sidekiq_jobs_completion_seconds:p50
     expr: histogram_quantile(0.5, sum(rate(sidekiq_jobs_completion_seconds_bucket[1m]))
-      WITHOUT (fqdn, instance, priority))
+      WITHOUT (fqdn, instance, shard))
   - record: queue:sidekiq_jobs_completion_seconds:p95
     expr: histogram_quantile(0.95, sum(rate(sidekiq_jobs_completion_seconds_bucket[1m]))
-      WITHOUT (fqdn, instance, priority))
+      WITHOUT (fqdn, instance, shard))
   - record: queue:sidekiq_jobs_completion_seconds:p99
     expr: histogram_quantile(0.99, sum(rate(sidekiq_jobs_completion_seconds_bucket[1m]))
-      WITHOUT (fqdn, instance, priority))
+      WITHOUT (fqdn, instance, shard))
   - record: queue:sidekiq_jobs_completion:rate1m
     expr: sum(rate(sidekiq_jobs_completion_seconds_count[1m]))
       WITHOUT (fqdn, instance)
   - record: queue:sidekiq_jobs_failed:rate1m
-    expr: sum(rate(sidekiq_jobs_failed_total[1m])) WITHOUT (fqdn, instance, priority)
+    expr: sum(rate(sidekiq_jobs_failed_total[1m])) WITHOUT (fqdn, instance, shard)

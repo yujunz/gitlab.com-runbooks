@@ -38,7 +38,7 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
         selector='urgency="high"'
       ),
 
-      significantLabels: ['priority'],
+      significantLabels: ['shard'],
     },
 
     high_urgency_job_queueing: {
@@ -53,7 +53,7 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
         selector='urgency="high"'
       ),
 
-      significantLabels: ['priority'],
+      significantLabels: ['shard'],
     },
 
     low_urgency_job_execution: {
@@ -73,7 +73,7 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
         selector='urgency="low"'
       ),
 
-      significantLabels: ['priority'],
+      significantLabels: ['shard'],
     },
 
     low_urgency_job_queueing: {
@@ -88,7 +88,7 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
         selector='urgency="low"'
       ),
 
-      significantLabels: ['priority'],
+      significantLabels: ['shard'],
     },
 
     throttled_job_execution: {
@@ -108,7 +108,7 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
         selector='urgency="throttled"'
       ),
 
-      significantLabels: ['priority'],
+      significantLabels: ['shard'],
     },
 
     throttled_job_queueing: {
@@ -117,7 +117,7 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
         selector='urgency="throttled"'
       ),
 
-      significantLabels: ['priority'],
+      significantLabels: ['shard'],
     },
   },
 
