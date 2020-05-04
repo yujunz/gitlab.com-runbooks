@@ -19,7 +19,7 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
     component,
     panel,
     helpPanel,
-    defaultType = "web"
+    defaultType='web'
   )::
     basic.dashboard(
       dashboardTitle,
@@ -54,7 +54,7 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
 
   saturationDashboardForComponent(
     component,
-    defaultType = 'web'
+    defaultType='web'
   )::
     self.saturationDashboard(
       dashboardTitle=component + ': Saturation Detail',
