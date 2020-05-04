@@ -1,3 +1,3 @@
 local saturationAlerts = import 'alerts/saturation_alerts.libsonnet';
 
-saturationAlerts.saturationDashboardForComponent('pgbouncer_sync_pool')
+saturationAlerts.saturationDashboardForComponent('pgbouncer_sync_pool', 'pgbouncer')

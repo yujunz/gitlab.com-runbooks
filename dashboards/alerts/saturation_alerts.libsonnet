@@ -18,7 +18,8 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
     dashboardTitle,
     component,
     panel,
-    helpPanel
+    helpPanel,
+    defaultType = "web"
   )::
     basic.dashboard(
       dashboardTitle,
@@ -28,7 +29,16 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
         if component != '$component' then 'saturationdetail:' + component else 'saturationdetail:general',
       ],
     )
-    .addTemplate(templates.type)
+    .addTemplate(
+      template.new(
+        'type',
+        '$PROMETHEUS_DS',
+        'label_values(gitlab_service_ops:rate{environment="$environment"}, type)',
+        current=defaultType,
+        refresh='load',
+        sort=1,
+      )
+    )
     .addTemplate(templates.stage)
     .addPanel(panel, gridPos={ x: 0, y: 0, h: 20, w: 24 })
     .addPanel(helpPanel, gridPos={ x: 0, y: 1000, h: 6, w: 24 })
@@ -44,11 +54,13 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
 
   saturationDashboardForComponent(
     component,
+    defaultType = 'web'
   )::
     self.saturationDashboard(
       dashboardTitle=component + ': Saturation Detail',
       component=component,
       panel=saturationDetail.componentSaturationPanel(component, selector),
       helpPanel=saturationDetail.componentSaturationHelpPanel(component),
+      defaultType=defaultType,
     ),
 }

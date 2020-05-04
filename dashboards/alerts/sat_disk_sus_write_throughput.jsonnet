@@ -1,3 +1,3 @@
 local saturationAlerts = import 'alerts/saturation_alerts.libsonnet';
 
-saturationAlerts.saturationDashboardForComponent('disk_sustained_write_throughput')
+saturationAlerts.saturationDashboardForComponent('disk_sustained_write_throughput', 'patroni')
