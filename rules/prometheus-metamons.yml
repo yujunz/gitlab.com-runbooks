@@ -18,7 +18,6 @@ groups:
     for: 10m
     labels:
       pager: pagerduty
-      service: prometheus
       severity: s1
       alert_type: cause
     annotations:
@@ -35,7 +34,6 @@ groups:
     for: 10m
     labels:
       pager: pagerduty
-      service: prometheus
       severity: s1
       alert_type: cause
     annotations:
@@ -49,7 +47,6 @@ groups:
     for: 30m
     labels:
       pager: pagerduty
-      service: prometheus
       severity: s1
       alert_type: cause
     annotations:
@@ -65,7 +62,6 @@ groups:
       * 100 > 5
     for: 10m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -77,7 +73,6 @@ groups:
     expr: prometheus_rule_evaluation_duration_seconds{quantile="0.9"} > 60
     for: 10m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -90,7 +85,6 @@ groups:
     for: 10m
     labels:
       pager: pagerduty
-      service: prometheus
       severity: s1
       alert_type: cause
     annotations:
@@ -104,7 +98,6 @@ groups:
     expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m]) > 0.01
     for: 10m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -117,7 +110,6 @@ groups:
       > 2 * 60
     for: 10m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -131,7 +123,6 @@ groups:
     for: 30m
     labels:
       pager: pagerduty
-      service: prometheus
       severity: s1
       alert_type: cause
     annotations:
@@ -145,7 +136,6 @@ groups:
       prometheus_rule_group_interval_seconds) * 100 > 70
     for: 30m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -156,7 +146,6 @@ groups:
   - alert: PrometheusFailedCompactions
     expr: increase(prometheus_tsdb_compactions_failed_total[6h]) > 0
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -168,7 +157,6 @@ groups:
     expr: increase(prometheus_tsdb_reloads_failures_total[2h]) > 0
     for: 12h
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -179,7 +167,6 @@ groups:
     expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) <= 0
     for: 10m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -190,7 +177,6 @@ groups:
     expr: increase(prometheus_target_scrapes_sample_duplicate_timestamp_total[5m]) > 0
     for: 10m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -200,7 +186,6 @@ groups:
   - alert: PrometheusLargeScrapes
     expr: increase(prometheus_target_scrapes_exceeded_sample_limit_total[30m]) > 60
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -210,7 +195,6 @@ groups:
   - alert: PrometheusFailedCheckpoints
     expr: increase(prometheus_tsdb_checkpoint_creations_failed_total[5m]) > 0
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -220,7 +204,6 @@ groups:
   - alert: PrometheusFailedDeletingCheckpoints
     expr: increase(prometheus_tsdb_checkpoint_deletions_failed_total[5m]) > 0
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -230,7 +213,6 @@ groups:
   - alert: PrometheusWALTruncationsFailed
     expr: increase(prometheus_tsdb_wal_truncations_failed_total[5m]) > 0
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -240,7 +222,6 @@ groups:
   - alert: PrometheusRuleEvalFailures
     expr: increase(prometheus_rule_evaluation_failures_total[5m]) > 0
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -251,7 +232,6 @@ groups:
     expr: prometheus_sd_discovered_targets == 0
     for: 5m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -262,7 +242,6 @@ groups:
     expr: go_memstats_alloc_bytes{job="prometheus"} / on (fqdn) node_memory_MemTotal_bytes * 100 > 90
     for: 30m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -272,7 +251,6 @@ groups:
   - alert: PrometheusWALCorruption
     expr: increase(prometheus_tsdb_wal_corruptions_total[5m]) > 0
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -280,13 +258,12 @@ groups:
       runbook: docs/monitoring/prometheus-wal-corruption.md
       title: 'Prometheus WAL Corruption'
 
-- name: Thanos Metamon
+- name: Thanos Compact Metamon
   rules:
   - alert: ThanosCompactHalted
     expr: thanos_compactor_halted == 1
     for: 5m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -296,7 +273,6 @@ groups:
   - alert: ThanosCompactCompactionsFailed
     expr: rate(prometheus_tsdb_compactions_failed_total[5m]) > 0
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -307,7 +283,6 @@ groups:
     expr: rate(thanos_objstore_bucket_operation_failures_total[1m]) > 0
     for: 10m
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
@@ -317,10 +292,148 @@ groups:
   - alert: ThanosCompactNotRunIn24Hours
     expr: (time() - (thanos_objstore_bucket_last_successful_upload_time > 0)) > 86400
     labels:
-      service: prometheus
       severity: s4
       alert_type: cause
     annotations:
       title: Thanos compaction has not run in 24 hours.
       description: Thanos compact {{ $labels.instance }} has not uploaded any blocks in 24 hours.
       runbook: docs/monitoring/thanos-compact.md
+
+- name: Thanos Rule Metamon
+  rules:
+  - alert: ThanosRuleQueueIsDroppingAlerts
+    expr: rate(thanos_alert_queue_alerts_dropped_total[5m]) > 0
+    for: 5m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule is failing to queue alerts
+      description: Thanos Rule {{$labels.instance}} is failing to queue alerts.
+      runbook: docs/monitoring/thanos-rule.md
+  - alert: ThanosRuleSenderIsFailingAlerts
+    expr: rate(thanos_alert_sender_alerts_dropped_total[5m]) > 0
+    for: 5m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule is failing to send alerts
+      description: Thanos Rule {{$labels.instance}} is failing to send alerts
+        to alertmanager.
+      runbook: docs/monitoring/thanos-rule.md
+  - alert: ThanosRuleHighRuleEvaluationFailures
+    expr: |
+      (
+        rate(prometheus_rule_evaluation_failures_total{job="thanos"}[5m])
+      /
+        rate(prometheus_rule_evaluations_total{job="thanos"}[5m])
+      * 100 > 0
+      )
+    for: 5m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule is failing to evaluate rules
+      description: Thanos Rule {{$labels.instance}} is failing to evaluate {{ $value }}% rules.
+      runbook: docs/monitoring/thanos-rule.md
+  - alert: ThanosRuleHighRuleEvaluationWarnings
+    expr: rate(thanos_rule_evaluation_with_warnings_total[5m]) > 0
+    for: 15m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule has high number of evaluation warnings
+      description: Thanos Rule {{$labels.instance}} has high number of evaluation
+        warnings.
+      runbook: docs/monitoring/thanos-rule.md
+  - alert: ThanosRuleRuleEvaluationLatencyHigh
+    expr: |
+      (
+        sum by (instance, rule_group) (prometheus_rule_group_last_duration_seconds{job="thanos"})
+      >
+        sum by (instance, rule_group) (prometheus_rule_group_interval_seconds{job="thanos"})
+      )
+    for: 5m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule has high evaluation latency
+      description: Thanos Rule {{$labels.instance}} has higher evaluation latency
+        than eval interval for {{$labels.rule_group}}.
+      runbook: docs/monitoring/thanos-rule.md
+  - alert: ThanosRuleConfigReloadFailure
+    expr: thanos_rule_config_last_reload_successful != 1
+    for: 5m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule has not been able to reload its configuration
+      description: Thanos Rule {{$labels.instance}} has not been able to reload its configuration.
+      runbook: docs/monitoring/thanos-rule.md
+  - alert: ThanosRuleQueryHighDNSFailures
+    expr: |
+      (
+        rate(thanos_ruler_query_apis_dns_failures_total[5m])
+      /
+        rate(thanos_ruler_query_apis_dns_lookups_total[5m]) > 0
+      * 100 > 1
+      )
+    for: 15m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule has failing DNS queries
+      description: Thanos Rule {{$labels.instance}} has {{ $value | humanize }}% of failing DNS
+        queries for query endpoints.
+      runbook: docs/monitoring/thanos-rule.md
+  - alert: ThanosRuleAlertmanagerHighDNSFailures
+    expr: |
+      (
+        rate(thanos_ruler_alertmanagers_dns_failures_total[5m])
+      /
+        rate(thanos_ruler_alertmanagers_dns_lookups_total[5m]) > 0
+      * 100 > 1
+      )
+    for: 15m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule has failing DNS queries
+      description: Thanos Rule {{$labels.instance}} has {{ $value | humanize }}% of failing DNS
+        queries for Alertmanager endpoints.
+      runbook: docs/monitoring/thanos-rule.md
+  # TODO: Needs investigation to see why this is failing/noisy before we enable it.
+  # - alert: ThanosRuleNoEvaluationFor10Intervals
+  #   expr: |
+  #     time() - prometheus_rule_group_last_evaluation_timestamp_seconds{job="thanos"}
+  #     >
+  # #     10 * prometheus_rule_group_interval_seconds{job="thanos"}
+  #   for: 5m
+  #   labels:
+  #     severity: s4
+  #     alert_type: cause
+  #   annotations:
+  #     title: Thanos Rule is not evalutiang rules.
+  #     description: Thanos Rule {{$labels.instance}} has {{ $value | humanize }}% rule groups
+  #       that did not evaluate for at least 10x of their expected interval.
+  #     runbook: docs/monitoring/thanos-rule.md
+  - alert: ThanosNoRuleEvaluations
+    expr: |
+      sum by (instance) (rate(prometheus_rule_evaluations_total[2m])) <= 0
+        and
+      sum by (instance) (thanos_rule_loaded_rules) > 0
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Rule is not evaluating rules
+      description: Thanos Rule {{$labels.instance}} did not perform any rule evaluations in the
+        past 2 minutes.
+      runbook: docs/monitoring/thanos-rule.md
