@@ -28,11 +28,11 @@ groups:
   # Average values for each service, over a week
   - record: gitlab_service_ops:rate:avg_over_time_1w
     expr: >
-      avg_over_time(gitlab_service_ops:rate{monitor!="global"}[1w])
+      avg_over_time(gitlab_service_ops:rate{monitor="global"}[1w])
   # Stddev for each service, over a week
   - record: gitlab_service_ops:rate:stddev_over_time_1w
     expr: >
-      stddev_over_time(gitlab_service_ops:rate{monitor!="global"}[1w])
+      stddev_over_time(gitlab_service_ops:rate{monitor="global"}[1w])
 
 - name: GitLab Service Ops Rate Weekly Periodic Values
   partial_response_strategy: "warn"
