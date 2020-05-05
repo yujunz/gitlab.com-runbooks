@@ -352,6 +352,7 @@ basic.dashboard(
     serviceCatalog.getServiceLinks('sidekiq') +
     platformLinks.services +
     [
+      platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq'),
       link.dashboards(
         'ELK $priority priority logs',
         '',
