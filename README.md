@@ -76,13 +76,12 @@ Check how many targets are not scraped at the moment. alerts are in flight right
 
 First: don't panic.
 
-If you are feeling overwhelmed, escalate to the [IMOC or CMOC](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#roles).
+If you are feeling overwhelmed, escalate to the [IMOC](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#incident-manager-on-call-imoc-responsibilities).
 Whoever is in that role can help you get other people to help with whatever is needed.  Our goal is to resolve the incident in a timely manner, but sometimes that means slowing down and making sure we get the right people involved.  Accuracy is as important or more than speed.
 
 Roles for an incident can be found in the [incident management section of the handbook](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/)
 
-If you need to start an incident, you can post in the #incident channel(https://gitlab.slack.com/messages/CB7P5CJS1)
-If you use /start-incident - a bot will make and issue/google doc and zoom link for you.
+If you need to start an incident, you can post in the #incident-management channel(https://gitlab.slack.com/archives/CB7P5CJS1) using the `/incident report` command - a bot will make and issue/google doc and zoom link for you.
 
 ## Communication Tools
 
