@@ -32,7 +32,7 @@ groups:
         # We don't care that the sidekiq-export Deployment reaches it's max
         # See: https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/733
         expr: |
-          sum(kube_hpa_status_desired_replicas{hpa!="gitlab-sidekiq-export-v1"})
+          sum(kube_hpa_status_desired_replicas{hpa!="gitlab-sidekiq-memory-bound-v1"})
             by (hpa, env)
             >=
           sum(kube_hpa_spec_max_replicas) by (hpa, env)
