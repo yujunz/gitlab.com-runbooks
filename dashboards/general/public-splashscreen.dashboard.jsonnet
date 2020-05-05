@@ -22,16 +22,10 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local text = grafana.text;
 
-dashboard.new(
+basic.dashboard(
   'GitLab Dashboards',
-  schemaVersion=16,
-  tags=[],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
+  tags=['general']
 )
-.addAnnotation(commonAnnotations.deploymentsForEnvironment)
-.addTemplate(templates.ds)
-.addTemplate(templates.defaultEnvironment)
 .addPanel(
   row.new(title='FRONTEND SERVICES'),
   gridPos={

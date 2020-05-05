@@ -33,20 +33,12 @@ local styles = [
   },
 ];
 
-dashboard.new(
-  'Feature Category Error Budgets',
-  schemaVersion=16,
+basic.dashboard(
+  'Feature Category Detail - Error Budgets',
   tags=['feature_category'],
-  timezone='utc',
-  graphTooltip='shared_crosshair',
   time_from='now-7d',
-  time_to='now',
-  timepicker={
-    refresh_intervals: [],
-  },
+  time_to='now/m',
 )
-.addTemplate(templates.ds)
-.addTemplate(templates.environment)
 .addPanels(
   layout.grid([
     basic.table(
