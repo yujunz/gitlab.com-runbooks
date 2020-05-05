@@ -80,7 +80,7 @@ basic.dashboard(
 .addTemplate(template.new(
   'priority',
   '$PROMETHEUS_DS',
-  'label_values(up{environment="$environment", type="sidekiq", job="gitlab-sidekiq"}, priority)',
+  'label_values(up{environment="$environment", type="sidekiq"}, priority)',
   current='catchall',
   refresh='load',
   sort=1,
