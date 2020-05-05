@@ -127,10 +127,10 @@ To scale a deployment, run the following example command:
 kubectl scale <DEPLOYMENT_NAME> --replicas=<X>
 ```
 
-Example, scale Deployment `gitlab-sidekiq-export` to 0 Pods:
+Example, scale Deployment `gitlab-sidekiq-memory-bound-v1` to 0 Pods:
 
 ```
-kubectl scale deployments/gitlab-sidekiq-export --replicas=0
+kubectl scale deployments/gitlab-sidekiq-memory-bound-v1 --replicas=0
 ```
 
 The `DEPLOYMENT_NAME` represents the Deployment associated and managing the Pods
@@ -141,7 +141,7 @@ perform its task of autoscaling the Deployment.  For this, we can rerun a
 similar command above, using the below as an example:
 
 ```
-kubectl scale deployments/gitlab-sidekiq-export --replicas=1
+kubectl scale deployments/gitlab-sidekiq-memory-bound-v1 --replicas=1
 ```
 
 Refer to existing Kubernetes documentation for reference and further details:

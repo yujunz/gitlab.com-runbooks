@@ -19,8 +19,8 @@ basic.dashboard(
 .addTemplate(
   template.custom(
     'Deployment',
-    'gitlab-sidekiq-export,',
-    'gitlab-sidekiq-export',
+    'gitlab-sidekiq,',
+    'gitlab-sidekiq',
     hide='variable',
   )
 )
