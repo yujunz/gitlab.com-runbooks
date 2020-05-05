@@ -80,7 +80,7 @@ basic.dashboard(
 .addTemplate(template.new(
   'priority',
   '$PROMETHEUS_DS',
-  'label_values(up{environment="$environment", type="sidekiq", job="gitlab-sidekiq"}, priority)',
+  'label_values(up{environment="$environment", type="sidekiq"}, priority)',
   current='catchall',
   refresh='load',
   sort=1,
@@ -352,6 +352,7 @@ basic.dashboard(
     serviceCatalog.getServiceLinks('sidekiq') +
     platformLinks.services +
     [
+      platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq'),
       link.dashboards(
         'ELK $priority priority logs',
         '',
