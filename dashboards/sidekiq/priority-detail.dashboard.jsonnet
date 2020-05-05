@@ -97,14 +97,14 @@ basic.dashboard(
         sum by (queue) (
           (
             label_replace(
-              sidekiq_queue_size{environment="gprd"} and on(fqdn) (redis_connected_slaves != 0),
+              sidekiq_queue_size{environment="$environment"} and on(fqdn) (redis_connected_slaves != 0),
               "queue", "$0", "name", ".*"
             )
           )
           and on (queue)
           (
             max by (queue) (
-              rate(sidekiq_jobs_queue_duration_seconds_sum{priority=~"$priority"}[$__range]) > 0
+              rate(sidekiq_jobs_queue_duration_seconds_sum{environment="$environment", priority=~"$priority"}[$__range]) > 0
             )
           )
         )
@@ -123,14 +123,14 @@ basic.dashboard(
         sum(
           (
             label_replace(
-              sidekiq_queue_size{environment="gprd"} and on(fqdn) (redis_connected_slaves != 0),
+              sidekiq_queue_size{environment="$environment"} and on(fqdn) (redis_connected_slaves != 0),
               "queue", "$0", "name", ".*"
             )
           )
           and on (queue)
           (
             max by (queue) (
-              rate(sidekiq_jobs_queue_duration_seconds_sum{priority=~"$priority"}[$__range]) > 0
+              rate(sidekiq_jobs_queue_duration_seconds_sum{environment="$environment", priority=~"$priority"}[$__range]) > 0
             )
           )
         )
