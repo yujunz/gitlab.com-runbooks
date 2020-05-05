@@ -10,8 +10,8 @@ panel_groups:
     - id: single-stat-weighted-availability
       label: Weighted Availability Score - GitLab.com
       query: >-
-        avg(clamp_max(avg_over_time(sla:gitlab:ratio{env=~"ops|gprd", environment="$environment", stage="main",
-        monitor=~"global|"}[$(range)s]),1))
+        avg(clamp_max(avg_over_time(sla:gitlab:ratio{env=~"ops|gprd", environment="gprd", stage="main",
+        monitor=~"global|"}[7d]),1))
       unit: "%"
     type: single-stat
   - title: Overall SLA over time period - gitlab.com
@@ -19,7 +19,7 @@ panel_groups:
     - id: line-chart-overall-sla-time-period
       label: gitlab.com SLA
       query_range: >-
-        avg(clamp_max(avg_over_time(sla:gitlab:ratio{env=~"ops|gprd", environment="$environment", stage="main",
+        avg(clamp_max(avg_over_time(sla:gitlab:ratio{env=~"ops|gprd", environment="gprd", stage="main",
         monitor=~"global|"}[1d]),1))
       step: 86400
       unit: "%"
