@@ -22,7 +22,7 @@ local mappings = import 'mappings.libsonnet';
         },
         routing: {
           allocation: {
-            total_shards_per_node: 3,
+            total_shards_per_node: 2,
           },
         },
       },
