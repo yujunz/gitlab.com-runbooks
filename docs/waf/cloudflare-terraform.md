@@ -33,7 +33,7 @@ API call for every rule whenever a refresh is done. This can add ~2800 API
 calls and 3-5 minutes of run time to `plan` and `refresh` operations. To avoid
 this, the following assumption is being made:
 
-**Any rule not present in the terraform configuration is in it's default configuration***
+**Any rule not present in the terraform configuration is in its default configuration**
 
 ### Resetting All Rules to `default` mode
 
