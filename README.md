@@ -81,7 +81,7 @@ Whoever is in that role can help you get other people to help with whatever is n
 
 Roles for an incident can be found in the [incident management section of the handbook](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/)
 
-If you need to start an incident, you can post in the #incident-management channel(https://gitlab.slack.com/archives/CB7P5CJS1) using the `/incident report` command - a bot will make and issue/google doc and zoom link for you.
+If you need to start an incident, you can post in the [`#incident-management` channel](https://gitlab.slack.com/archives/CB7P5CJS1) using the `/incident report` command - a bot will make and issue/google doc and zoom link for you.
 
 ## Communication Tools
 
