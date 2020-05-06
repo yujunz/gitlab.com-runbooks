@@ -1,5 +1,9 @@
 # CloudFlare
 
+## Configuration
+
+* [Cloudflare terraform configuration](cloudflare-terraform.md)
+
 ## Logs
 
 Each CloudFlare zone pushes logs to a Google Cloud Storage (GCS) bucket with the name of

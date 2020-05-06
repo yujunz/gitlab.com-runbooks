@@ -1,3 +1,4 @@
+**/.DS_Store
 toolbelt/.env/*
 .env
 /dashboards/.env.sh
