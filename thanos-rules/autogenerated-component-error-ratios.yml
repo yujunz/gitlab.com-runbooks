@@ -10,73 +10,23 @@ groups:
       gitlab_component_errors:rate{monitor!="global"}
       /
       gitlab_component_ops:rate{monitor!="global"}
-  - record: gitlab_service_errors:ratio
-    expr: |
-      sum by (environment, env, tier, type, stage) (gitlab_component_errors:rate{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage) (gitlab_component_ops:rate{monitor!="global"} > 0)
-  - record: gitlab_service_node_errors:ratio
-    expr: |
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate{monitor!="global"} > 0)
   - record: gitlab_component_errors:ratio_5m
     expr: |
       gitlab_component_errors:rate_5m{monitor!="global"}
       /
       gitlab_component_ops:rate_5m{monitor!="global"}
-  - record: gitlab_service_errors:ratio_5m
-    expr: |
-      sum by (environment, env, tier, type, stage) (gitlab_component_errors:rate_5m{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage) (gitlab_component_ops:rate_5m{monitor!="global"} > 0)
-  - record: gitlab_service_node_errors:ratio_5m
-    expr: |
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate_5m{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate_5m{monitor!="global"} > 0)
   - record: gitlab_component_errors:ratio_30m
     expr: |
       gitlab_component_errors:rate_30m{monitor!="global"}
       /
       gitlab_component_ops:rate_30m{monitor!="global"}
-  - record: gitlab_service_errors:ratio_30m
-    expr: |
-      sum by (environment, env, tier, type, stage) (gitlab_component_errors:rate_30m{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage) (gitlab_component_ops:rate_30m{monitor!="global"} > 0)
-  - record: gitlab_service_node_errors:ratio_30m
-    expr: |
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate_30m{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate_30m{monitor!="global"} > 0)
   - record: gitlab_component_errors:ratio_1h
     expr: |
       gitlab_component_errors:rate_1h{monitor!="global"}
       /
       gitlab_component_ops:rate_1h{monitor!="global"}
-  - record: gitlab_service_errors:ratio_1h
-    expr: |
-      sum by (environment, env, tier, type, stage) (gitlab_component_errors:rate_1h{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage) (gitlab_component_ops:rate_1h{monitor!="global"} > 0)
-  - record: gitlab_service_node_errors:ratio_1h
-    expr: |
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate_1h{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate_1h{monitor!="global"} > 0)
   - record: gitlab_component_errors:ratio_6h
     expr: |
       gitlab_component_errors:rate_6h{monitor!="global"}
       /
       gitlab_component_ops:rate_6h{monitor!="global"}
-  - record: gitlab_service_errors:ratio_6h
-    expr: |
-      sum by (environment, env, tier, type, stage) (gitlab_component_errors:rate_6h{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage) (gitlab_component_ops:rate_6h{monitor!="global"} > 0)
-  - record: gitlab_service_node_errors:ratio_6h
-    expr: |
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate_6h{monitor!="global"} >= 0)
-      /
-      sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate_6h{monitor!="global"} > 0)
