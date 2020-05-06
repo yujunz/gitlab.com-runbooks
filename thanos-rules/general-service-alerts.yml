@@ -1,14 +1,6 @@
-##
-## DEPRECRATED: these rules are being migrated to Thanos, as part of
-## https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
-## 
-## At present, we are unable to trust the alerts in Thanos as we don't yet
-## have monitoring or alerting around this component.
-## Until we do, we will run replica alerts in Thanos and Prometheus
-## after which we will remove this file.
-##
 groups:
   - name: slo_alerts.rules
+    partial_response_strategy: warn
     rules:
       # ------------------------------------------------------------------------------
       # Latency alerts
@@ -22,13 +14,13 @@ groups:
       - alert: service_apdex_slo_out_of_bounds_lower_5m
         expr: |
           (
-            avg(gitlab_service_apdex:ratio{stage!="cny"}) by (environment, tier, type, stage)
+            avg(gitlab_service_apdex:ratio{stage!="cny", monitor="global"}) by (environment, tier, type, stage)
             < ignoring(environment, stage) group_left
-            avg(slo:min:gitlab_service_apdex:ratio{alert_trigger_duration!="long"}) by (tier, type)
+            avg(slo:min:gitlab_service_apdex:ratio{alert_trigger_duration!="long", monitor="global"}) by (tier, type)
           )
           unless on(tier, type)
           (
-            slo:min:events:gitlab_service_apdex:ratio
+            slo:min:events:gitlab_service_apdex:ratio{monitor="global"}
           )
         for: 5m
         labels:
@@ -68,13 +60,13 @@ groups:
       - alert: service_apdex_slo_out_of_bounds_lower_15m
         expr: |
           (
-            avg(gitlab_service_apdex:ratio{stage!="cny"}) by (environment, tier, type, stage)
+            avg(gitlab_service_apdex:ratio{stage!="cny", monitor="global"}) by (environment, tier, type, stage)
             < ignoring(environment, stage) group_left
-            avg(slo:min:gitlab_service_apdex:ratio{alert_trigger_duration="long"}) by (tier, type)
+            avg(slo:min:gitlab_service_apdex:ratio{alert_trigger_duration="long", monitor="global"}) by (tier, type)
           )
           unless on(tier, type)
           (
-            slo:min:events:gitlab_service_apdex:ratio
+            slo:min:events:gitlab_service_apdex:ratio{monitor="global"}
           )
         for: 15m
         labels:
@@ -118,13 +110,13 @@ groups:
       - alert: service_error_ratio_slo_out_of_bounds_upper_5m
         expr: |
           (
-            avg(gitlab_service_errors:ratio{stage!="cny"}) by (environment, tier, type, stage)
+            avg(gitlab_service_errors:ratio{stage!="cny", monitor="global"}) by (environment, tier, type, stage)
             > ignoring(environment, stage) group_left
-            avg(slo:max:gitlab_service_errors:ratio{alert_trigger_duration!="long"}) by (tier, type)
+            avg(slo:max:gitlab_service_errors:ratio{alert_trigger_duration!="long", monitor="global"}) by (tier, type)
           )
           unless on(tier, type)
           (
-            slo:max:events:gitlab_service_errors:ratio
+            slo:max:events:gitlab_service_errors:ratio{monitor="global"}
           )
         for: 5m
         labels:
@@ -162,13 +154,13 @@ groups:
       - alert: service_error_ratio_slo_out_of_bounds_upper_15m
         expr: |
           (
-            avg(gitlab_service_errors:ratio{stage!="cny"}) by (environment, tier, type, stage)
+            avg(gitlab_service_errors:ratio{stage!="cny", monitor="global"}) by (environment, tier, type, stage)
             > ignoring(environment, stage) group_left
-            avg(slo:max:gitlab_service_errors:ratio{alert_trigger_duration="long"}) by (tier, type)
+            avg(slo:max:gitlab_service_errors:ratio{alert_trigger_duration="long", monitor="global"}) by (tier, type)
           )
           unless on(tier, type)
           (
-            slo:max:events:gitlab_service_errors:ratio
+            slo:max:events:gitlab_service_errors:ratio{monitor="global"}
           )
         for: 15m
         labels:
@@ -206,15 +198,15 @@ groups:
       - alert: component_error_ratio_burn_rate_slo_out_of_bounds_upper
         expr: |
           (
-            gitlab_component_errors:ratio_1h > on(tier, type) group_left() (14.4*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
+            gitlab_component_errors:ratio_1h{monitor="global"} > on(tier, type) group_left() (14.4*(avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)))
           and
-            gitlab_component_errors:ratio_5m > on(tier, type) group_left()  (14.4*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
+            gitlab_component_errors:ratio_5m{monitor="global"} > on(tier, type) group_left()  (14.4*(avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)))
           )
           or
           (
-            gitlab_component_errors:ratio_6h > on(tier, type) group_left() (6*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
+            gitlab_component_errors:ratio_6h{monitor="global"} > on(tier, type) group_left() (6*(avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)))
           and
-            gitlab_component_errors:ratio_30m > on(tier, type) group_left() (6*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
+            gitlab_component_errors:ratio_30m{monitor="global"} > on(tier, type) group_left() (6*(avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)))
           )
         for: 2m
         labels:
@@ -242,66 +234,6 @@ groups:
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-error-rate.md"
           promql_template_1: 'gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'
 
-      # ------------------------------------------------------------------------------
-      # Saturation alerts
-      # ------------------------------------------------------------------------------
-
-      # Saturation: Hard SLO exceeded, default alert_trigger_duration (short, 5m)
-      - alert: component_saturation_slo_out_of_bounds_upper_5m
-        expr: |
-          gitlab_component_saturation:ratio > on(component) group_left
-          slo:max:hard:gitlab_component_saturation:ratio{alert_trigger_duration!="long"}
-        for: 5m
-        labels:
-          rules_domain: general
-          metric: gitlab_component_saturation:ratio
-          severity: s3
-          # slo_alert: 'yes' Uncomment after trial period
-          period: 5m
-          bound: upper
-          alert_type: cause
-          # pager: pagerduty Uncomment after trial period
-        annotations:
-          description: >
-            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
-
-            This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
-          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
-          title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit."
-          grafana_dashboard_id: "alerts-saturation_component/saturation-component-alert"
-          grafana_panel_id: "2"
-          grafana_variables: "environment,type,stage,component"
-          grafana_min_zoom_hours: "6"
-          promql_template_1: 'gitlab_component_saturation:ratio{component="$component",environment="$environment",stage="$stage",type="$type"}'
-
-      # Saturation: Hard SLO exceeded, long alert_trigger_duration (15m)
-      - alert: component_saturation_slo_out_of_bounds_upper_15m
-        expr: |
-          gitlab_component_saturation:ratio > on(component) group_left
-          slo:max:hard:gitlab_component_saturation:ratio{alert_trigger_duration="long"}
-        for: 15m
-        labels:
-          rules_domain: general
-          metric: gitlab_component_saturation:ratio
-          severity: s3
-          # slo_alert: 'yes' Uncomment after trial period
-          period: 15m
-          bound: upper
-          alert_type: cause
-          # pager: pagerduty Uncomment after trial period
-        annotations:
-          description: >
-            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
-
-            This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
-          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
-          title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit."
-          grafana_dashboard_id: "alerts-saturation_component/saturation-component-alert"
-          grafana_panel_id: "2"
-          grafana_variables: "environment,type,stage,component"
-          grafana_min_zoom_hours: "6"
-          promql_template_1: 'gitlab_component_saturation:ratio{component="$component",environment="$environment",stage="$stage",type="$type"}'
-
       ################################################
       # Operation Rate: how many operations is this service handling per second?
       ################################################
@@ -314,8 +246,8 @@ groups:
       - alert: service_ops_out_of_bounds_upper_5m
         expr: |
           (
-            (gitlab_service_ops:rate -  gitlab_service_ops:rate:prediction) /
-            gitlab_service_ops:rate:stddev_over_time_1w
+            (gitlab_service_ops:rate{monitor="global"} -  gitlab_service_ops:rate:prediction{monitor="global"}) /
+            gitlab_service_ops:rate:stddev_over_time_1w{monitor="global"}
           )
           >
           3
@@ -355,8 +287,8 @@ groups:
       - alert: service_ops_out_of_bounds_lower_5m
         expr: |
           (
-            (gitlab_service_ops:rate -  gitlab_service_ops:rate:prediction) /
-            gitlab_service_ops:rate:stddev_over_time_1w
+            (gitlab_service_ops:rate{monitor="global"} -  gitlab_service_ops:rate:prediction{monitor="global"}) /
+            gitlab_service_ops:rate:stddev_over_time_1w{monitor="global"}
           )
           <
           -3
@@ -405,29 +337,29 @@ groups:
           (
             (
               (
-                avg(gitlab_service_apdex:ratio{stage="cny"}) by (environment, tier, type)
+                avg(gitlab_service_apdex:ratio{stage="cny", monitor="global"}) by (environment, tier, type)
                 < ignoring(environment, stage) group_left
-                  avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+                  avg(slo:min:gitlab_service_apdex:ratio{monitor="global"}) by (tier, type)
               )
               unless ignoring(stage)
               (
-                avg(gitlab_service_apdex:ratio{stage="main"}) by (environment, tier, type)
+                avg(gitlab_service_apdex:ratio{stage="main", monitor="global"}) by (environment, tier, type)
                 < ignoring(environment, stage) group_left
-                  avg(slo:min:gitlab_service_apdex:ratio) by (tier, type)
+                  avg(slo:min:gitlab_service_apdex:ratio{monitor="global"}) by (tier, type)
               )
             )
             and on(environment, tier, type)
             (
               (
-                gitlab_service_ops:rate{stage="cny"}
+                gitlab_service_ops:rate{stage="cny", monitor="global"}
                 / ignoring(stage)
-                gitlab_service_ops:rate{stage="main"}
+                gitlab_service_ops:rate{stage="main", monitor="global"}
               ) >= 0.01
             )
           )
           unless on(tier, type)
           (
-            slo:min:events:gitlab_service_apdex:ratio
+            slo:min:events:gitlab_service_apdex:ratio{monitor="global"}
           )
         for: 5m
         labels:
@@ -471,29 +403,29 @@ groups:
           (
             (
               (
-                avg(gitlab_service_errors:ratio{stage="cny"}) by (environment, tier, type, stage)
+                avg(gitlab_service_errors:ratio{stage="cny", monitor="global"}) by (environment, tier, type, stage)
                 > ignoring(environment, stage) group_left
-                avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+                avg(slo:max:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)
               )
               unless ignoring(stage)
               (
-                avg(gitlab_service_errors:ratio{stage="main"}) by (environment, tier, type, stage)
+                avg(gitlab_service_errors:ratio{stage="main", monitor="global"}) by (environment, tier, type, stage)
                 > ignoring(environment, stage) group_left
-                avg(slo:max:gitlab_service_errors:ratio) by (tier, type)
+                avg(slo:max:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)
               )
             )
             and on(environment, tier, type)
             (
               (
-                gitlab_service_ops:rate{stage="cny"}
+                gitlab_service_ops:rate{stage="cny", monitor="global"}
                 / ignoring(stage)
-                gitlab_service_ops:rate{stage="main"}
+                gitlab_service_ops:rate{stage="main", monitor="global"}
               ) >= 0.01
             )
           )
           unless on(tier, type)
           (
-            slo:max:events:gitlab_service_errors:ratio
+            slo:max:events:gitlab_service_errors:ratio{monitor="global"}
           )
         for: 5m
         labels:
