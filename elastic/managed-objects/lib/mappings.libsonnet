@@ -46,6 +46,12 @@ local mapping(index) =
             },
           },
         },
+        retry: {
+          type: 'long',
+        },
+        retry_count: {
+          type: 'long',
+        },
         target_id: {
           type: 'text',
           fields: {
