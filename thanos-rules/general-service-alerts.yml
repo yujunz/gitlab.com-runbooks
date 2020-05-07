@@ -246,11 +246,15 @@ groups:
       - alert: service_ops_out_of_bounds_upper_5m
         expr: |
           (
-            (gitlab_service_ops:rate{monitor="global"} -  gitlab_service_ops:rate:prediction{monitor="global"}) /
-            gitlab_service_ops:rate:stddev_over_time_1w{monitor="global"}
+            (
+              (gitlab_service_ops:rate{monitor="global"} -  gitlab_service_ops:rate:prediction{monitor="global"}) /
+              gitlab_service_ops:rate:stddev_over_time_1w{monitor="global"}
+            )
+            >
+            3
           )
-          >
-          3
+          unless on(tier, type)
+          gitlab_service:mapping:disable_ops_rate_prediction
         for: 5m
         labels:
           rules_domain: general
@@ -287,11 +291,15 @@ groups:
       - alert: service_ops_out_of_bounds_lower_5m
         expr: |
           (
-            (gitlab_service_ops:rate{monitor="global"} -  gitlab_service_ops:rate:prediction{monitor="global"}) /
-            gitlab_service_ops:rate:stddev_over_time_1w{monitor="global"}
+            (
+              (gitlab_service_ops:rate{monitor="global"} -  gitlab_service_ops:rate:prediction{monitor="global"}) /
+              gitlab_service_ops:rate:stddev_over_time_1w{monitor="global"}
+            )
+            <
+            -3
           )
-          <
-          -3
+          unless on(tier, type)
+          gitlab_service:mapping:disable_ops_rate_prediction
         for: 5m
         labels:
           rules_domain: general

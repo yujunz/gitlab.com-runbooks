@@ -12,6 +12,12 @@ local rateMetric = metricsCatalog.rateMetric;
     errorRatio: 0.005,
     */
   },
+  /*
+   * Our anomaly detection uses normal distributions and the monitoring service
+   * is prone to spikes that lead to a non-normal distribution. For that reason,
+   * disable ops-rate anomaly detection on this service.
+   */
+  disableOpsRatePrediction: true,
   components: {
     thanos_query: {
       apdex: histogramApdex(

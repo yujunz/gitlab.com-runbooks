@@ -1,5 +1,6 @@
 local componentMetricsRuleSet = (import 'component-metrics-rule-set.libsonnet').componentMetricsRuleSet;
 local componentMappingRuleSet = (import 'component-mapping-rule-set.libsonnet').componentMappingRuleSet;
+local serviceMappingRuleSet = (import 'service-mapping-rule-set.libsonnet').serviceMappingRuleSet;
 local serviceSLORuleSet = (import 'service-slo-rule-set.libsonnet').serviceSLORuleSet;
 local componentErrorRatioRuleSet = (import 'component-error-ratio-rule-set.libsonnet').componentErrorRatioRuleSet;
 local serviceErrorRatioRuleSet = (import 'service-error-ratio-rule-set.libsonnet').serviceErrorRatioRuleSet;
@@ -170,5 +171,13 @@ local ruleSetIterator(ruleSets) = {
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),
+
+    // Component mappings are static recording rules which help
+    // determine whether a component is being monitored. This helps
+    // prevent spurious alerts when a component is decommissioned.
+    serviceMapping: ruleSetIterator([
+      serviceMappingRuleSet(),
+    ]),
+
   },
 }

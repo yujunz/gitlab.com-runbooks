@@ -21,6 +21,9 @@ groups:
         gitlab_component_node_ops:rate{monitor!="global"} >= 0
       )
 
+#
+# Anomaly Detection recording rules for operation-rate
+#
 - name: GitLab Service Operations-per-Second Rate Stats
   partial_response_strategy: "warn"
   interval: 5m
@@ -29,10 +32,15 @@ groups:
   - record: gitlab_service_ops:rate:avg_over_time_1w
     expr: >
       avg_over_time(gitlab_service_ops:rate{monitor="global"}[1w])
+      unless on(tier, type)
+      gitlab_service:mapping:disable_ops_rate_prediction
+
   # Stddev for each service, over a week
   - record: gitlab_service_ops:rate:stddev_over_time_1w
     expr: >
       stddev_over_time(gitlab_service_ops:rate{monitor="global"}[1w])
+      unless on(tier, type)
+      gitlab_service:mapping:disable_ops_rate_prediction
 
 - name: GitLab Service Ops Rate Weekly Periodic Values
   partial_response_strategy: "warn"
