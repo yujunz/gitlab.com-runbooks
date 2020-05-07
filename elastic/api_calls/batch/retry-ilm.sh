@@ -2,8 +2,8 @@
 
 set -eufo pipefail
 
-if ! curl -s "${ELASTICSEARCH_URL}" > /dev/null; then
-  >&2 echo "could not reach ELASTICSEARCH_URL"
+if ! curl -s "${ELASTICSEARCH_URL}" >/dev/null; then
+  echo >&2 "could not reach ELASTICSEARCH_URL"
   exit 1
 fi
 
