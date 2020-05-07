@@ -18,17 +18,23 @@ local minimumOperationRateForMonitoring = 4 / 60;
 local generateRulesForComponentForBurnRate(queueComponent, executionComponent, rangeInterval) =
   (
     if queueComponent != null then
-      [{  // Key metric: Queueing apdex
+      [{  // Key metric: Queueing apdex (ratio)
         record: 'gitlab_background_jobs:queue:apdex:ratio_%s' % [rangeInterval],
         expr: queueComponent.apdex.apdexQuery(aggregationLabels, '', rangeInterval),
+      }, {  // Key metric: Queueing apdex (weight score)
+        record: 'gitlab_background_jobs:queue:apdex:weight:score_%s' % [rangeInterval],
+        expr: queueComponent.apdex.apdexWeightQuery(aggregationLabels, '', rangeInterval),
       }]
     else
       []
   )
   +
-  [{  // Key metric: Execution apdex
+  [{  // Key metric: Execution apdex (ratio)
     record: 'gitlab_background_jobs:execution:apdex:ratio_%s' % [rangeInterval],
     expr: executionComponent.apdex.apdexQuery(aggregationLabels, '', rangeInterval),
+  }, {  // Key metric: Execution apdex (weight score)
+    record: 'gitlab_background_jobs:execution:apdex:weight:score_%s' % [rangeInterval],
+    expr: executionComponent.apdex.apdexWeightQuery(aggregationLabels, '', rangeInterval),
   }, {  // Key metric: QPS
     record: 'gitlab_background_jobs:execution:ops:rate_%s' % [rangeInterval],
     expr: executionComponent.requestRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
