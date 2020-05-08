@@ -1,12 +1,22 @@
 groups:
   - name: general-missing-series-alerts.yml
+    partial_response_strategy: warn
+    interval: 5m
     rules:
       # Ops Rate
       - alert: gitlab_component_opsrate_missing_series
         expr: |
-          (gitlab_component_ops:rate offset 1d)
-          unless
-          gitlab_component_ops:rate
+          (
+            sum by (env, environment, tier, type, stage, component) (
+              gitlab_component_ops:rate{monitor!="global"} offset 1d >= 0
+            )
+            unless
+            sum by (env, environment, tier, type, stage, component) (
+              gitlab_component_ops:rate{monitor!="global"} >= 0
+            )
+          )
+          and on (env, environment, tier, type, component)
+          gitlab_component_service:mapping{monitor!="global"}
         for: 1h
         labels:
           rules_domain: general
@@ -26,9 +36,17 @@ groups:
       # Apdex
       - alert: gitlab_component_apdex_missing_series
         expr: |
-          (gitlab_component_apdex:ratio offset 1d)
-          unless
-          gitlab_component_apdex:ratio
+          (
+            sum by (env, environment, tier, type, stage, component) (
+              gitlab_component_apdex:ratio{monitor!="global"} offset 1d >= 0
+            )
+            unless
+            sum by (env, environment, tier, type, stage, component) (
+              gitlab_component_apdex:ratio{monitor!="global"}
+            )
+          )
+          and on (env, environment, tier, type, component)
+          gitlab_component_service:mapping{monitor!="global"}
         for: 1h
         labels:
           rules_domain: general
@@ -51,10 +69,18 @@ groups:
       # `gitlab_component_error_missing_series` alerts
       - alert: gitlab_component_error_missing_series
         expr: |
-          (gitlab_component_errors:rate{stage!="cny"} offset 1d)
-          unless
-          gitlab_component_errors:rate{stage!="cny"}
-        for: 1h
+          (
+            sum by (env, environment, tier, type, stage, component) (
+              (gitlab_component_errors:rate{monitor!="global", stage!="cny"} offset 1d)
+            )
+            unless
+            sum by (env, environment, tier, type, stage, component) (
+              gitlab_component_errors:rate{monitor!="global", stage!="cny"}
+            )
+          )
+          and on (env, environment, tier, type, component)
+          gitlab_component_service:mapping{monitor!="global"}
+        for: 2h
         labels:
           rules_domain: general
           severity: s4
