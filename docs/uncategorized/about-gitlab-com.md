@@ -33,7 +33,7 @@ If an issue such as: https://gitlab.com/gitlab-com/gl-infra/production/-/issues/
 
 # Escalation #
 
-about.gitlab.com has a dedicated Handbook for oncall and it is located in: https://about.gitlab.com/handbook/about/on-call
+about.gitlab.com has a section dedicated to on-call support for the handbook. It is located at: https://about.gitlab.com/handbook/about/on-call.
 
 # Fastly #
 
