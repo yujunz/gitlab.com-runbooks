@@ -733,7 +733,7 @@ local panelMethods = {
             ],
             unit: 'none',
             nullValueMode: 'connected',
-            title: '${__field.name}',
+            title: '${__series.name}',
             links: links,
           },
           overrides: [],
