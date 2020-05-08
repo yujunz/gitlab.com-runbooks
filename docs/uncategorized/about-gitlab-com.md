@@ -1,6 +1,11 @@
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
+- [About](#about)
+- [Repository](#repository)
+- [How it is setup](#how-it-is-setup)
+- [Availability Issues](#availability-issues)
+- [Escalation](#escalation)
 - [Fastly](#fastly)
 - [Azure](#azure)
 - [Chef](#chef)
@@ -8,6 +13,27 @@
 - [gitlab-ci.yml config in www-gitlab-com](#gitlab-ciyml-config-in-www-gitlab-com)
 
 <!-- markdown-toc end -->
+
+# About #
+The [about.gitlab.com](https://gitlab.com/gitlab-com/www-gitlab-com) website is the go-to place to learn pretty much everything about GitLab: the product, pricing, various resources, blogs, support and most importantly our handbook 
+
+# Repository #
+Here is the project repository behind about.gitlab.com: https://gitlab.com/gitlab-com/www-gitlab-com
+
+# How it is setup #
+- The about.gitlab.com project is hosted on [about.gitlab.com](https://console.cloud.google.com/storage/browser/about.gitlab.com?forceOnBucketsSortingFiltering=false&authuser=1&folder=&organizationId=&project=gitlab-production) GCS bucket. The website configuration has it that it points to an `index.html` file at the root level. 
+- The DNS is setup on Fastly. (You can get the Fastly login credentials from 1Password)
+
+# Availability Issues #
+If an issue such as: https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2087 occurs:
+
+1. Check the pipeline to see if there has been a recent deployment to which you can co-relate the issue you are seeing
+2. Check Fastly to see if there has been a recent change
+3. Check the GCS bucket to see if there is anything abnormal
+
+# Escalation #
+
+about.gitlab.com has a section dedicated to on-call support for the handbook. It is located at: https://about.gitlab.com/handbook/about/on-call.
 
 # Fastly #
 
