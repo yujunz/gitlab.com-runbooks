@@ -168,7 +168,7 @@ local generateAlerts() =
           gitlab_background_jobs:execution:ops:rate_6h > %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
-      grafanaPanelId=11,
+      grafanaPanelId=12,
       metricName='gitlab_background_jobs:execution:apdex:ratio_1h',
       alertDescription='a execution latency outside of SLO'
     ),
