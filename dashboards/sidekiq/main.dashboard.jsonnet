@@ -8,9 +8,9 @@ local row = grafana.row;
 local sidekiq = import 'sidekiq.libsonnet';
 local serviceDashboard = import 'service_dashboard.libsonnet';
 
-local priorityDetailDataLink = {
-  url: '/d/sidekiq-priority-detail?${__url_time_range}&${__all_variables}&var-priority=${__field.labels.priority}&var-shard=${__field.labels.shard}',
-  title: 'Priority Detail: ${__field.labels.priority}',
+local shardDetailDataLink = {
+  url: '/d/sidekiq-shard-detail?${__url_time_range}&${__all_variables}&var-shard=${__field.labels.shard}&var-shard=${__field.labels.shard}',
+  title: 'Shard Detail: ${__field.labels.shard}',
 };
 
 serviceDashboard.overview('sidekiq', 'sv')
@@ -105,12 +105,12 @@ serviceDashboard.overview('sidekiq', 'sv')
       yAxisLabel='Job time completed per second',
     ),
     basic.timeseries(
-      title='Sidekiq Total Execution Time Per Priority',
+      title='Sidekiq Total Execution Time Per Shard',
       description='The sum of job execution times',
       query=|||
-        sum(rate(sidekiq_jobs_completion_seconds_sum{environment="$environment"}[$__interval])) by (priority)
+        sum(rate(sidekiq_jobs_completion_seconds_sum{environment="$environment"}[$__interval])) by (shard)
       |||,
-      legendFormat='{{ priority }}',
+      legendFormat='{{ shard }}',
       interval='1m',
       format='s',
       linewidth=1,
@@ -118,7 +118,7 @@ serviceDashboard.overview('sidekiq', 'sv')
       legend_show=true,
       yAxisLabel='Job time completed per second',
     )
-    .addDataLink(priorityDetailDataLink),
+    .addDataLink(shardDetailDataLink),
     basic.timeseries(
       title='Sidekiq Aggregated Throughput',
       description='The total number of jobs being completed',
@@ -132,22 +132,22 @@ serviceDashboard.overview('sidekiq', 'sv')
       yAxisLabel='Jobs Completed per Second',
     ),
     basic.timeseries(
-      title='Sidekiq Throughput per Priority',
-      description='The total number of jobs being completed per priority',
+      title='Sidekiq Throughput per Shard',
+      description='The total number of jobs being completed per shard',
       query=|||
-        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (priority)
+        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (shard)
       |||,
-      legendFormat='{{ priority }}',
+      legendFormat='{{ shard }}',
       interval='1m',
       linewidth=1,
       intervalFactor=1,
       legend_show=true,
       yAxisLabel='Jobs Completed per Second',
     )
-    .addDataLink(priorityDetailDataLink),
+    .addDataLink(shardDetailDataLink),
     basic.timeseries(
       title='Sidekiq Throughput per Job',
-      description='The total number of jobs being completed per priority',
+      description='The total number of jobs being completed per shard',
       query=|||
         sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment"}) by (queue)
       |||,
@@ -170,31 +170,31 @@ serviceDashboard.overview('sidekiq', 'sv')
       legend_show=true,
     ),
     basic.timeseries(
-      title='Sidekiq Inflight Operations by Priority/Shard',
+      title='Sidekiq Inflight Operations by Shard',
       description='The total number of jobs being executed at a single moment, for each queue',
       query=|||
-        sum(sidekiq_running_jobs{environment="$environment"}) by (priority, shard)
+        sum(sidekiq_running_jobs{environment="$environment"}) by (shard)
       |||,
-      legendFormat='{{ priority }} / {{ shard }}',
+      legendFormat='{{ shard }}',
       interval='1m',
       intervalFactor=1,
       legend_show=true,
       linewidth=1,
     )
-    .addDataLink(priorityDetailDataLink),
+    .addDataLink(shardDetailDataLink),
     basic.latencyTimeseries(
-      title='Sidekiq Estimated Median Job Latency per priority',
-      description='The median duration, once a job starts executing, that it runs for, by priority. Lower is better.',
+      title='Sidekiq Estimated Median Job Latency per shard',
+      description='The median duration, once a job starts executing, that it runs for, by shard. Lower is better.',
       query=|||
         histogram_quantile(0.50,
-          sum by (priority, le) (
+          sum by (shard, le) (
             rate(sidekiq_jobs_completion_seconds_bucket{
               environment="$environment",
             }[$__interval])
           )
         )
       |||,
-      legendFormat='{{ priority }}',
+      legendFormat='{{ shard }}',
       format='s',
       yAxisLabel='Duration',
       interval='1m',
@@ -204,20 +204,20 @@ serviceDashboard.overview('sidekiq', 'sv')
       linewidth=1,
       min=0.01,
     )
-    .addDataLink(priorityDetailDataLink),
+    .addDataLink(shardDetailDataLink),
     basic.latencyTimeseries(
-      title='Sidekiq Estimated p95 Job Latency per priority',
-      description='The 95th percentile duration, once a job starts executing, that it runs for, by priority. Lower is better.',
+      title='Sidekiq Estimated p95 Job Latency per shard',
+      description='The 95th percentile duration, once a job starts executing, that it runs for, by shard. Lower is better.',
       query=|||
         histogram_quantile(0.95,
-          sum by (priority, le) (
+          sum by (shard, le) (
             rate(sidekiq_jobs_completion_seconds_bucket{
               environment="$environment",
             }[$__interval])
           )
         )
       |||,
-      legendFormat='{{ priority }}',
+      legendFormat='{{ shard }}',
       format='s',
       yAxisLabel='Duration',
       interval='2m',
@@ -227,11 +227,11 @@ serviceDashboard.overview('sidekiq', 'sv')
       linewidth=1,
       min=0.01,
     )
-    .addDataLink(priorityDetailDataLink),
+    .addDataLink(shardDetailDataLink),
   ], cols=2, rowHeight=10, startRow=2001),
 )
 .addPanel(
-  row.new(title='Priority Workloads'),
+  row.new(title='Shard Workloads'),
   gridPos={
     x: 0,
     y: 3000,
@@ -239,7 +239,7 @@ serviceDashboard.overview('sidekiq', 'sv')
     h: 1,
   }
 )
-.addPanels(sidekiq.priorityWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=3001, datalink=priorityDetailDataLink))
+.addPanels(sidekiq.shardWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=3001, datalink=shardDetailDataLink))
 .addPanel(
   row.new(title='Rails Metrics', collapse=true)
   .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))

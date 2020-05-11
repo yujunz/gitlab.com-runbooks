@@ -2,7 +2,7 @@ local metricsCatalog = import './lib/metrics.libsonnet';
 local sidekiqMetricsCatalog = import './services/sidekiq.jsonnet';
 local IGNORED_GPRD_QUEUES = import './temp-ignored-gprd-queue-list.libsonnet';
 local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
-local aggregationLabels = 'environment, tier, type, stage, shard, priority, queue, feature_category, urgency';
+local aggregationLabels = 'environment, tier, type, stage, shard, queue, feature_category, urgency';
 
 // For the first iteration, all sidekiq workers will have the samne
 // error budget. In future, we may introduce a criticality attribute to

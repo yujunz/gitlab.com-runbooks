@@ -27,7 +27,7 @@ local elasticsearchLinks = import 'elasticsearch_links.libsonnet';
 local optimalUtilization = 0.33;
 local optimalMargin = 0.10;
 
-local selector = 'type="sidekiq", environment="$environment", stage="$stage", priority=~"$priority"';
+local selector = 'type="sidekiq", environment="$environment", stage="$stage", shard=~"$shard"';
 
 local queueDetailDataLink = {
   url: '/d/sidekiq-queue-detail?${__url_time_range}&${__all_variables}&var-queue=${__field.labels.queue}',
@@ -45,7 +45,7 @@ local queueTimeLatencyTimeseries(title, aggregator) =
     title=title,
     description='Estimated queue time, between when the job is enqueued and executed. Lower is better.',
     query=|||
-      histogram_quantile(0.95, sum(rate(sidekiq_jobs_queue_duration_seconds_bucket{environment="$environment", priority=~"$priority"}[$__interval])) by (le, %s))
+      histogram_quantile(0.95, sum(rate(sidekiq_jobs_queue_duration_seconds_bucket{environment="$environment", shard=~"$shard"}[$__interval])) by (le, %s))
     ||| % [aggregator],
     legendFormat='{{ %s }}' % [aggregator],
     format='s',
@@ -61,9 +61,9 @@ local queueTimeLatencyTimeseries(title, aggregator) =
 local inflightJobsTimeseries(title, aggregator) =
   basic.timeseries(
     title=title,
-    description='The total number of jobs being executed at a single moment for the priority',
+    description='The total number of jobs being executed at a single moment for the shard',
     query=|||
-      sum(sidekiq_running_jobs{environment="$environment", priority=~"$priority"}) by (%s)
+      sum(sidekiq_running_jobs{environment="$environment", shard=~"$shard"}) by (%s)
     ||| % [aggregator],
     legendFormat='{{ %s }}' % [aggregator],
     interval='1m',
@@ -73,14 +73,14 @@ local inflightJobsTimeseries(title, aggregator) =
   );
 
 basic.dashboard(
-  'Priority Detail',
+  'Shard Detail',
   tags=['type:sidekiq', 'detail'],
 )
 .addTemplate(templates.stage)
 .addTemplate(template.new(
-  'priority',
+  'shard',
   '$PROMETHEUS_DS',
-  'label_values(up{environment="$environment", type="sidekiq"}, priority)',
+  'label_values(up{environment="$environment", type="sidekiq"}, shard)',
   current='catchall',
   refresh='load',
   sort=1,
@@ -92,7 +92,7 @@ basic.dashboard(
   rowGrid('Queue Lengths - number of jobs queued', [
     basic.queueLengthTimeseries(
       title='Queue Lengths',
-      description='The number of unstarted jobs in queues serviced by this priority',
+      description='The number of unstarted jobs in queues serviced by this shard',
       query=|||
         sum by (queue) (
           (
@@ -104,7 +104,7 @@ basic.dashboard(
           and on (queue)
           (
             max by (queue) (
-              rate(sidekiq_jobs_queue_duration_seconds_sum{environment="$environment", priority=~"$priority"}[$__range]) > 0
+              rate(sidekiq_jobs_queue_duration_seconds_sum{environment="$environment", shard=~"$shard"}[$__range]) > 0
             )
           )
         )
@@ -118,7 +118,7 @@ basic.dashboard(
     .addDataLink(queueDetailDataLink),
     basic.queueLengthTimeseries(
       title='Aggregate queue length',
-      description='The sum total number of unstarted jobs in all queues serviced by this priority',
+      description='The sum total number of unstarted jobs in all queues serviced by this shard',
       query=|||
         sum(
           (
@@ -130,7 +130,7 @@ basic.dashboard(
           and on (queue)
           (
             max by (queue) (
-              rate(sidekiq_jobs_queue_duration_seconds_sum{environment="$environment", priority=~"$priority"}[$__range]) > 0
+              rate(sidekiq_jobs_queue_duration_seconds_sum{environment="$environment", shard=~"$shard"}[$__range]) > 0
             )
           )
         )
@@ -146,11 +146,11 @@ basic.dashboard(
 
   rowGrid('Queue Time - time spend queueing', [
     queueTimeLatencyTimeseries(
-      title='Sidekiq Estimated p95 Job Queue Time for $priority priority',
-      aggregator='priority'
+      title='Sidekiq Estimated p95 Job Queue Time for $shard shard',
+      aggregator='shard'
     ),
     queueTimeLatencyTimeseries(
-      title='Sidekiq Estimated p95 Job Queue Time per Queue, $priority priority',
+      title='Sidekiq Estimated p95 Job Queue Time per Queue, $shard shard',
       aggregator='queue'
     )
     .addDataLink(queueDetailDataLink),
@@ -158,11 +158,11 @@ basic.dashboard(
   +
   rowGrid('Inflight Jobs - jobs currently running', [
     inflightJobsTimeseries(
-      title='Sidekiq Inflight Jobs for $priority priority',
-      aggregator='priority'
+      title='Sidekiq Inflight Jobs for $shard shard',
+      aggregator='shard'
     ),
     inflightJobsTimeseries(
-      title='Sidekiq Inflight Jobs per Queue, $priority priority',
+      title='Sidekiq Inflight Jobs per Queue, $shard shard',
       aggregator='queue'
     )
     .addDataLink(queueDetailDataLink),
@@ -170,34 +170,34 @@ basic.dashboard(
   +
   rowGrid('Individual Execution Time - time taken for individual jobs to complete', [
     basic.multiTimeseries(
-      title='Sidekiq Estimated Median Job Latency for $priority priority',
-      description='The median duration, once a job starts executing, that it runs for, by priority. Lower is better.',
+      title='Sidekiq Estimated Median Job Latency for $shard shard',
+      description='The median duration, once a job starts executing, that it runs for, by shard. Lower is better.',
       queries=[
         {
           query: |||
             histogram_quantile(0.50,
-              sum by (priority, le) (
+              sum by (shard, le) (
                 rate(sidekiq_jobs_completion_seconds_bucket{
                   environment="$environment",
-                  priority=~"$priority"
+                  shard=~"$shard"
                 }[$__interval])
               )
             )
           |||,
-          legendFormat: '{{ priority }} p50',
+          legendFormat: '{{ shard }} p50',
         },
         {
           query: |||
             histogram_quantile(0.95,
-              sum by (priority, le) (
+              sum by (shard, le) (
                 rate(sidekiq_jobs_completion_seconds_bucket{
                   environment="$environment",
-                  priority=~"$priority"
+                  shard=~"$shard"
                 }[$__interval])
               )
             )
           |||,
-          legendFormat: '{{ priority }} p95',
+          legendFormat: '{{ shard }} p95',
         },
       ],
       format='s',
@@ -208,14 +208,14 @@ basic.dashboard(
       linewidth=1,
     ),
     basic.latencyTimeseries(
-      title='Sidekiq Estimated p95 Job Latency per Queue, for $priority priority',
-      description='The 95th percentile duration, once a job starts executing, that it runs for, by priority. Lower is better.',
+      title='Sidekiq Estimated p95 Job Latency per Queue, for $shard shard',
+      description='The 95th percentile duration, once a job starts executing, that it runs for, by shard. Lower is better.',
       query=|||
         histogram_quantile(0.95,
           sum by (queue, le) (
             rate(sidekiq_jobs_completion_seconds_bucket{
               environment="$environment",
-              priority=~"$priority"
+              shard=~"$shard"
             }[$__interval])
           )
         )
@@ -233,12 +233,12 @@ basic.dashboard(
   +
   rowGrid('Total Execution Time - total time consumed processing jobs', [
     basic.timeseries(
-      title='Sidekiq Total Execution Time for $priority Priority',
+      title='Sidekiq Total Execution Time for $shard Shard',
       description='The sum of job execution times',
       query=|||
-        sum(rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", priority=~"$priority"}[$__interval])) by (priority)
+        sum(rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", shard=~"$shard"}[$__interval])) by (shard)
       |||,
-      legendFormat='{{ priority }}',
+      legendFormat='{{ shard }}',
       interval='1m',
       format='s',
       intervalFactor=1,
@@ -249,22 +249,22 @@ basic.dashboard(
   +
   rowGrid('Throughput - rate at which jobs complete', [
     basic.timeseries(
-      title='Sidekiq Aggregated Throughput for $priority Priority',
+      title='Sidekiq Aggregated Throughput for $shard Shard',
       description='The total number of jobs being completed',
       query=|||
-        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment", priority=~"$priority"}) by (priority)
+        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment", shard=~"$shard"}) by (shard)
       |||,
-      legendFormat='{{ priority }}',
+      legendFormat='{{ shard }}',
       interval='1m',
       intervalFactor=1,
       legend_show=true,
       yAxisLabel='Jobs Completed per Second',
     ),
     basic.timeseries(
-      title='Sidekiq Throughput per Queue for $priority Priority',
-      description='The total number of jobs being completed per queue for priority',
+      title='Sidekiq Throughput per Queue for $shard Shard',
+      description='The total number of jobs being completed per queue for shard',
       query=|||
-        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment", priority=~"$priority"}) by (queue)
+        sum(queue:sidekiq_jobs_completion:rate1m{environment="$environment", shard=~"$shard"}) by (queue)
       |||,
       legendFormat='{{ queue }}',
       interval='1m',
@@ -278,14 +278,14 @@ basic.dashboard(
   +
   rowGrid('Utilization - saturation of workers in this fleet', [
     basic.percentageTimeseries(
-      'Priority Utilization',
-      description='How heavily utilized is this priority? Ideally this should be around 33% plus minus 10%. If outside this range for long periods, consider scaling fleet appropriately.',
+      'Shard Utilization',
+      description='How heavily utilized is this shard? Ideally this should be around 33% plus minus 10%. If outside this range for long periods, consider scaling fleet appropriately.',
       query=|||
-        sum by (environment, stage, priority)  (rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", priority=~"$priority"}[1h]))
+        sum by (environment, stage, shard)  (rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", shard=~"$shard"}[1h]))
         /
-        sum by (environment, stage, priority)  (avg_over_time(sidekiq_concurrency{environment="$environment", priority=~"$priority"}[1h]))
+        sum by (environment, stage, shard)  (avg_over_time(sidekiq_concurrency{environment="$environment", shard=~"$shard"}[1h]))
       |||,
-      legendFormat='{{ priority }} utilization (per hour)',
+      legendFormat='{{ shard }} utilization (per hour)',
       yAxisLabel='Percent',
       interval='5m',
       intervalFactor=1,
@@ -300,21 +300,21 @@ basic.dashboard(
     .addTarget(
       promQuery.target(
         expr=|||
-          sum by (environment, stage, priority)  (rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", priority=~"$priority"}[10m]))
+          sum by (environment, stage, shard)  (rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", shard=~"$shard"}[10m]))
           /
-          sum by (environment, stage, priority)  (avg_over_time(sidekiq_concurrency{environment="$environment", priority=~"$priority"}[10m]))
+          sum by (environment, stage, shard)  (avg_over_time(sidekiq_concurrency{environment="$environment", shard=~"$shard"}[10m]))
         |||,
-        legendFormat='{{ priority }} utilization (per 10m)'
+        legendFormat='{{ shard }} utilization (per 10m)'
       )
     )
     .addTarget(
       promQuery.target(
         expr=|||
-          sum by (environment, stage, priority)  (rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", priority=~"$priority"}[$__interval]))
+          sum by (environment, stage, shard)  (rate(sidekiq_jobs_completion_seconds_sum{environment="$environment", shard=~"$shard"}[$__interval]))
           /
-          sum by (environment, stage, priority)  (avg_over_time(sidekiq_concurrency{environment="$environment", priority=~"$priority"}[$__interval]))
+          sum by (environment, stage, shard)  (avg_over_time(sidekiq_concurrency{environment="$environment", shard=~"$shard"}[$__interval]))
         |||,
-        legendFormat='{{ priority }} utilization (instant)'
+        legendFormat='{{ shard }} utilization (instant)'
       )
     ),
 
@@ -354,38 +354,38 @@ basic.dashboard(
     [
       platformLinks.dynamicLinks('Sidekiq Detail', 'type:sidekiq'),
       link.dashboards(
-        'ELK $priority priority logs',
+        'ELK $shard shard logs',
         '',
         type='link',
         targetBlank=true,
         url=elasticsearchLinks.buildElasticDiscoverSearchQueryURL(
           'sidekiq', [
-            elasticsearchLinks.matchFilter('json.hostname', '$priority'),  // No priority label yet
+            elasticsearchLinks.matchFilter('json.shard', '$shard'),
             elasticsearchLinks.matchFilter('json.stage.keyword', '$stage'),
           ]
         ),
       ),
       link.dashboards(
-        'ELK $priority priority ops/sec visualization',
+        'ELK $shard shard ops/sec visualization',
         '',
         type='link',
         targetBlank=true,
         url=elasticsearchLinks.buildElasticLineCountVizURL(
           'sidekiq', [
-            elasticsearchLinks.matchFilter('json.hostname', '$priority'),  // No priority label yet
+            elasticsearchLinks.matchFilter('json.shard', '$shard'),
             elasticsearchLinks.matchFilter('json.stage.keyword', '$stage'),
           ]
         ),
       ),
       link.dashboards(
-        'ELK $priority priority latency visualization',
+        'ELK $shard shard latency visualization',
         '',
         type='link',
         targetBlank=true,
         url=elasticsearchLinks.buildElasticLinePercentileVizURL(
           'sidekiq',
           [
-            elasticsearchLinks.matchFilter('json.hostname', '$priority'),  // No priority label yet
+            elasticsearchLinks.matchFilter('json.shard', '$shard'),
             elasticsearchLinks.matchFilter('json.stage.keyword', '$stage'),
           ],
           field='json.duration'

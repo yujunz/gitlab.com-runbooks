@@ -203,13 +203,13 @@ basic.dashboard(
       default: 'unknown',
       links: [],
     }, {
-      label: 'priority',
-      title: 'Priority',
+      label: 'shard',
+      title: 'Shard',
       color: 'orange',
       default: 'unknown',
       links: [{
-        title: 'Sidekiq Priority Detail: ${__field.labels.priority}',
-        url: '/d/sidekiq-priority-detail/sidekiq-priority-detail?orgId=1&var-priority=${__field.labels.priority}&var-environment=${environment}&var-stage=${stage}&${__url_time_range}',
+        title: 'Sidekiq Shard Detail: ${__field.labels.shard}',
+        url: '/d/sidekiq-shard-detail/sidekiq-shard-detail?orgId=1&var-shard=${__field.labels.shard}&var-environment=${environment}&var-stage=${stage}&${__url_time_range}',
       }],
     }, {
       label: 'external_dependencies',
