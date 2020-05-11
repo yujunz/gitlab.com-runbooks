@@ -49,6 +49,21 @@ Because we limit wallclock minutes, not CPU minutes, miners are motivated to spa
 
 Miners often create numerous accounts on GitLab.com, each having its own namespace, project, and CI pipeline.  Typically these projects have nearly identical `.gitlab-ci.yml` files, with only superficial differences.  Often these files will maximize parallelism, by defining many jobs that can run concurrently and possibly also specifying that each of those jobs should individually be run in parallel.
 
+### Surge of Scheduled Pipelines
+
+When creating a scheduled pipeline in the GitLab UI there are some handy defaults. Unfortunately, they result in a lot of users scheduling pipelines to trigger at the same time on the same day, week, or month.
+
+The biggest spike is caused at 04:00 UTC. This spike is increased on Sundays (for jobs scheduled to be weekly) and on the first of the month (for jobs scheduled monthly). If the first of the month is also a Sunday this is additive and the spike will be even larger.
+
+In the case of a scheduled pipeline surge triggering the alert, it should resolve within ~15 minutes. If it doesn't it likely indicates there's more than just the one cause of the alert (e.g. there is a scheduled pipeline surge **and** abusive behavior in the system)
+
+### GitLab.com usage has outgrown it's surge capacity
+
+Each runner manager tries to maintain a [pool of idle virtual machines](https://ops.gitlab.net/gitlab-cookbooks/chef-repo/-/blob/master/roles/gitlab-runner-srm-gce.json#L19) 
+to assign to new jobs. This allows jobs to start as soon as they're assigned without waiting for the VM spin-up time. However, if the idle pool is exhausted and new jobs keep coming in, the new jobs will have to wait for availble VMs.
+
+This scenario actually describes the above two scenarios as well, however because the idle count is a hard coded value per runner manager, over time it will need to be updated as usage on GitLab.com grows.
+
 #### How to identify active abusive accounts?
 
 To find miners running numerous concurrent jobs from one or more accounts (a.k.a. namespaces), use the following dashboard panels to find any namespaces with numerous (say, 800-1000) jobs in either the `Pending` or `Running` state.  Adjust the dashboard's timespan to include at least a few hours prior to your alert about the SLO violation for jobs being promptly started.
