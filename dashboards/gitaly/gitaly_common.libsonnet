@@ -52,7 +52,7 @@ local readThroughput(selector) = basic.saturationTimeseries(
   query=|||
     avg_over_time(
       max_over_time(
-        rate(node_disk_read_bytes_total{%(selector)s, device="%(GITALY_DISK)s"}[30s]) / (%(GITALY_PEAK_READ_THROUGHPUT_BYTES_PER_SECOND)s)[5m:30s]
+        (rate(node_disk_read_bytes_total{%(selector)s, device="%(GITALY_DISK)s"}[30s]) / (%(GITALY_PEAK_READ_THROUGHPUT_BYTES_PER_SECOND)s))[5m:30s]
       )[$__interval:1m]
     )
   ||| % (gitalyConfig { selector: selector }),
@@ -70,7 +70,7 @@ local writeThroughput(selector) =
     query=|||
       avg_over_time(
         max_over_time(
-          rate(node_disk_written_bytes_total{%(selector)s, device="%(GITALY_DISK)s"}[30s]) / (%(GITALY_PEAK_WRITE_THROUGHPUT_BYTES_PER_SECOND)s)[5m:30s]
+          (rate(node_disk_written_bytes_total{%(selector)s, device="%(GITALY_DISK)s"}[30s]) / (%(GITALY_PEAK_WRITE_THROUGHPUT_BYTES_PER_SECOND)s))[5m:30s]
        )[$__interval:1m]
       )
     ||| % (gitalyConfig { selector: selector }),
