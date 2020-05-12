@@ -10,8 +10,8 @@ local kibanaEndpoint = 'https://log.gprd.gitlab.net/app/kibana';
 
 local defaultColumns = {
   workhorse: ['json.method', 'json.remote_ip', 'json.status', 'json.uri', 'json.duration_ms'],
-  rails: ['json.method', 'json.status', 'json.controller', 'json.action', 'json.path', 'json.duration'],
-  sidekiq: ['json.class', 'json.queue', 'json.job_status', 'json.scheduling_latency_s', 'json.duration'],
+  rails: ['json.method', 'json.status', 'json.controller', 'json.action', 'json.path', 'json.duration_s'],
+  sidekiq: ['json.class', 'json.queue', 'json.job_status', 'json.scheduling_latency_s', 'json.duration_s'],
 };
 
 local buildElasticDiscoverSearchQueryURL(index, filters) =

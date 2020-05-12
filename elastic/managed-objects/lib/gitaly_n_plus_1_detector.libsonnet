@@ -60,7 +60,7 @@ local painlessScript(script) = {
 };
 
 local searchLinkTemplate(keyField) =
-  "https://log.gprd.gitlab.net/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&_a=(columns:!(json.controller,json.action,json.route,json.duration,json.path,json.remote_ip,json.username,json.gitaly_calls),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AWOSvARQwig0Nc2UGcr2,key:" + keyField + ".keyword,negate:!f,type:phrase,value:'{{ key }}'),query:(match:(" + keyField + ".keyword:(query:'{{ key }}',type:phrase))))),index:AWOSvARQwig0Nc2UGcr2,interval:auto,query:(match_all:()),sort:!(json.gitaly_calls,desc))";
+  "https://log.gprd.gitlab.net/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&_a=(columns:!(json.controller,json.action,json.route,json.duration_s,json.path,json.remote_ip,json.username,json.gitaly_calls),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:AWOSvARQwig0Nc2UGcr2,key:" + keyField + ".keyword,negate:!f,type:phrase,value:'{{ key }}'),query:(match:(" + keyField + ".keyword:(query:'{{ key }}',type:phrase))))),index:AWOSvARQwig0Nc2UGcr2,interval:auto,query:(match_all:()),sort:!(json.gitaly_calls,desc))";
 
 {
   alert(
