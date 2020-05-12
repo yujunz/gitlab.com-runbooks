@@ -25,6 +25,7 @@
         - [Sidekiq jobs](#sidekiq-jobs)
         - [Elastic_indexer_worker.rb](#elastic_indexer_workerrb)
         - [Elastic_commit_indexer_worker.rb](#elastic_commit_indexer_workerrb)
+        - [Elastic_index_bulk_cron_worker.rb](#elastic_index_bulk_cron_workerrb)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
