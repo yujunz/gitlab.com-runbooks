@@ -4,8 +4,8 @@
       hot: {
         actions: {
           rollover: {
-            max_age: '12h',
-            max_size: '30gb',
+            max_age: '24h',
+            max_size: '50gb',
           },
           set_priority: {
             priority: 100,
