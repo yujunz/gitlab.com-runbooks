@@ -388,7 +388,7 @@ basic.dashboard(
             elasticsearchLinks.matchFilter('json.shard', '$shard'),
             elasticsearchLinks.matchFilter('json.stage.keyword', '$stage'),
           ],
-          field='json.duration'
+          field='json.duration_s'
         ),
       ),
     ],

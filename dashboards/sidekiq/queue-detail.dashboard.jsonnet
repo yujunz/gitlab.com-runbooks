@@ -304,7 +304,7 @@ basic.dashboard(
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* execution apdex$/'))
     .addDataLink(elasticsearchLogSearchDataLink)
     .addDataLink({
-      url: elasticsearchLinks.buildElasticLinePercentileVizURL('sidekiq', elasticFilters, 'json.duration'),
+      url: elasticsearchLinks.buildElasticLinePercentileVizURL('sidekiq', elasticFilters, 'json.duration_s'),
       title: 'ElasticSearch: execution latency visualization',
       targetBlank: true,
     }),
