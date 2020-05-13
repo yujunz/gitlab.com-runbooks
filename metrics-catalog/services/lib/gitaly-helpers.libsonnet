@@ -18,6 +18,13 @@ local gitalyApdexIgnoredMethods = std.set([
   'UserRevert',
   'UserSquash',
   'UserUpdateBranch',
+
+  // Excluding Hook RPCs, as these are dependent on the internal Rails API.
+  // Almost all time is spend there, once it's slow of failing it's usually not
+  // a Gitaly alert that should fire.
+  'PreReceiveHook',
+  'PostReceiveHook',
+  'UpdateHook',
 ]);
 
 {
