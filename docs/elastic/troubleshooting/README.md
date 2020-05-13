@@ -3,44 +3,44 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Troubleshooting](#troubleshooting)
-  - [Elastic](#elastic)
-    - [How to check cluster health](#how-to-check-cluster-health)
-    - [How to check cluster logs](#how-to-check-cluster-logs)
-    - [Running commands directly against the API](#running-commands-directly-against-the-api)
-    - [esc-tools scripts](#esc-tools-scripts)
-      - [get shards allocation errors](#get-shards-allocation-errors)
-      - [get shards allocation](#get-shards-allocation)
-      - [get number of threads](#get-number-of-threads)
-      - [get current node allocation](#get-current-node-allocation)
-    - [past incidents](#past-incidents)
-      - [Ideas of things to check (based on previous incidents)](#ideas-of-things-to-check-based-on-previous-incidents)
-      - [high CPU load on a single node](#high-cpu-load-on-a-single-node)
-      - [cluster lags behind with logs after a node was added](#cluster-lags-behind-with-logs-after-a-node-was-added)
-      - [too many active shards on a single node](#too-many-active-shards-on-a-single-node)
-      - [running out of disk space](#running-out-of-disk-space)
-    - [Cluster unhealthy](#cluster-unhealthy)
-    - [Shard Allocation Failure](#shard-allocation-failure)
-      - [shards unassigned](#shards-unassigned)
-      - [shards unavailable (cluster unhealthy)](#shards-unavailable-cluster-unhealthy)
-      - [shards too big](#shards-too-big)
-  - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm)
-    - [Failure to move an index from a hot node to a warm node](#failure-to-move-an-index-from-a-hot-node-to-a-warm-node)
-  - [Saturation response](#saturation-response)
+    - [Elastic](#elastic)
+        - [How to check cluster health](#how-to-check-cluster-health)
+        - [How to check cluster logs](#how-to-check-cluster-logs)
+        - [Running commands directly against the API](#running-commands-directly-against-the-api)
+        - [esc-tools scripts](#esc-tools-scripts)
+            - [get shards allocation errors](#get-shards-allocation-errors)
+            - [get shards allocation](#get-shards-allocation)
+            - [get number of threads](#get-number-of-threads)
+            - [get current node allocation](#get-current-node-allocation)
+        - [past incidents](#past-incidents)
+            - [Ideas of things to check (based on previous incidents)](#ideas-of-things-to-check-based-on-previous-incidents)
+            - [high CPU load on a single node](#high-cpu-load-on-a-single-node)
+            - [cluster lags behind with logs after a node was added](#cluster-lags-behind-with-logs-after-a-node-was-added)
+            - [too many active shards on a single node](#too-many-active-shards-on-a-single-node)
+            - [running out of disk space](#running-out-of-disk-space)
+        - [Cluster unhealthy](#cluster-unhealthy)
+        - [Shard Allocation Failure](#shard-allocation-failure)
+            - [shards unassigned](#shards-unassigned)
+            - [shards unavailable (cluster unhealthy)](#shards-unavailable-cluster-unhealthy)
+            - [shards too big](#shards-too-big)
+    - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm)
+        - [Failure to move an index from a hot node to a warm node](#failure-to-move-an-index-from-a-hot-node-to-a-warm-node)
+    - [Saturation response](#saturation-response)
 - [Failover and Recovery procedures](#failover-and-recovery-procedures)
-  - [Elastic](#elastic-1)
-    - [delete an index](#delete-an-index)
-    - [retry shard allocation](#retry-shard-allocation)
-    - [moving shards between nodes](#moving-shards-between-nodes)
-    - [restarting an ES deployment](#restarting-an-es-deployment)
-    - [remove oldest indices](#remove-oldest-indices)
-    - [Fixing conflicts in index mappings](#fixing-conflicts-in-index-mappings)
-  - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm-1)
-      - [Index Roll-over Failure](#index-roll-over-failure)
-    - [esc-tools](#esc-tools)
-      - [mark index as complete](#mark-index-as-complete)
-      - [force index rollover](#force-index-rollover)
-  - [Kibana](#kibana)
-    - [refreshing index mappings cache](#refreshing-index-mappings-cache)
+    - [Elastic](#elastic-1)
+        - [delete an index](#delete-an-index)
+        - [retry shard allocation](#retry-shard-allocation)
+        - [moving shards between nodes](#moving-shards-between-nodes)
+        - [restarting an ES deployment](#restarting-an-es-deployment)
+        - [remove oldest indices](#remove-oldest-indices)
+        - [Fixing conflicts in index mappings](#fixing-conflicts-in-index-mappings)
+    - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm-1)
+        - [Index Roll-over Failure](#index-roll-over-failure)
+        - [mark index as complete](#mark-index-as-complete)
+        - [force index rollover](#force-index-rollover)
+        - [start ILM](#start-ilm)
+    - [Kibana](#kibana)
+        - [refreshing index mappings cache](#refreshing-index-mappings-cache)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -276,7 +276,7 @@ Once the index templates are updated (the above MR is merged and CI job successf
 
 ## Index Lifecycle Management (ILM)
 
-#### Index Roll-over Failure
+### Index Roll-over Failure
 
 Can be caused by:
 
@@ -297,11 +297,22 @@ https://gitlab.com/gitlab-com/runbooks/blob/master/rules/elastic-clusters.yml#L4
 We also intend to monitor for ILM being in a stopped state:
 https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8972
 
-### esc-tools
+### mark index as complete ###
 
-#### mark index as complete ####
+### force index rollover ###
 
-#### force index rollover ####
+### start ILM
+
+In certain scenarios ILM can end up in a stopped state. In order to start it again:
+1. issue an http request to the Elastic API (e.g. using Kibana console): `POST /_ilm/start`
+1. Make sure no indices have `read_only` blocks:
+  - Kibana -> Management pane (on the left hand side) -> Index Management -> if there are any lifecycle errors click on the "Show errors"
+  - click on each index on the list (of indices with errors) and read the error message
+  - if any of the error message are about indices having a `read_only` block, remove the block using an api call described in `runbooks/elastic/api_calls/single/remove-read_only_allow_delete-block-from-an-index.sh`
+  - trigger ILM retry on the index using Kibana
+1. Confirm ILM is operational again
+  - make sure indices are rolled over and moved from hot nodes to warm nodes, an indication of ILM not working is uncontrollable increase in the size of the indices and the suffix not changing
+1. In critical situations, you might need to remove indices forcefully
 
 ## Kibana ##
 
