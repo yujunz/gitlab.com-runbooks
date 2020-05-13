@@ -42,11 +42,11 @@ Let that run for around 30 seconds and then check the report `sudo perf report`
 ### Mail queue
 
 If the queue is all in `mailers` and is in the many tens to hundreds of thousands it is
-possible we have a spam/junk issue problem.  If so, refer to the abuse team for assistance, 
+possible we have a spam/junk issue problem.  If so, refer to the abuse team for assistance,
 and also https://gitlab.com/gitlab-com/runbooks/snippets/1923045 for some spam-fighting
-techniques we have used in the past to clean up.  This is in a private snippet so as not 
+techniques we have used in the past to clean up.  This is in a private snippet so as not
 to tip our hand to the miscreants.  Often shows up in our gitlab public projects but could
-plausibly be in any other project as well. 
+plausibly be in any other project as well.
 
 ### Other situations
 
@@ -102,30 +102,51 @@ repository:
 bundle exec knife ssh -aipaddress 'role:gitlab-cluster-worker' 'sudo chef-client'
 ```
 
-## Viewing and killing jobs from the queue
+## Managing (getting and removing) sidekiq queues and queued jobs
+
+### Get queues using admin interface
+
+https://gitlab.com/admin/sidekiq/queues
+
+### Get queue size using rails console
+
+```
+$ gitlab-rails console
+> # Sidekiq::Queue.new("<sidekiq_queue_name>").size
+> Sidekiq::Queue.new("pipeline_processing:build_queue").size
+```
+
+src: https://docs.gitlab.com/ee/administration/troubleshooting/sidekiq.html#view-the-queue-size
+
+### Get enqueued jobs using rails console
+
+```
+# queue = Sidekiq::Queue.new("<queue_name>")
+queue = Sidekiq::Queue.new("chaos:chaos_sleep")
+queue.each do |job|
+  puts job
+end
+```
+
+src: https://docs.gitlab.com/ee/administration/troubleshooting/sidekiq.html#enumerate-all-enqueued-jobs
+
+### Get queues using sq.rb script
 
 [sq](https://gitlab.com/gitlab-com/runbooks/raw/master/docs/uncategorized/db_scripts/sq.rb) is a command-line tool that you can run to
 assist you in viewing the state of Sidekiq and killing certain workers. To use it,
 first download a copy:
 
-```
-curl -o sq.rb https://gitlab.com/gitlab-com/runbooks/raw/master/docs/uncategorized/db_scripts/sq.rb
+```bash
+$ curl -o /tmp/sq.rb https://gitlab.com/gitlab-com/runbooks/raw/master/docs/uncategorized/db_scripts/sq.rb
 ```
 
 To display a breakdown of all the workers, run:
 
+```bash
+$ sudo gitlab-rails runner /tmp/sq.rb
 ```
-sudo gitlab-rails runner $PWD/sq.rb
-```
 
-### Killing jobs
-
-There are two ways of killing jobs:
-
-1. Via the Sidekiq admin page: https://gitlab.com/admin/sidekiq/queues
-2. Via the command-line
-
-## Dropping an entire queue
+### Remove all jobs from a queue
 
 If you need to drop an entire queue (e.g. `expire_build_instance_artifacts`):
 
@@ -134,7 +155,7 @@ If you need to drop an entire queue (e.g. `expire_build_instance_artifacts`):
 
 Dropped queues will be automatically recreated as needed.
 
-## Dropping specific workers in the queue
+### Remove a specific worker that's pulling jobs from a shared queue
 
 In GitLab, it's possible that there are multiple workers that share the same
 Sidekiq queue. If you do not want to drop the entire queue and only specific
@@ -144,22 +165,24 @@ Suppose you see a lot of `RepositoryMirrorUpdateWorker` instances that you want 
 BE CAREFUL WITH THIS COMMAND! You can see how many jobs would be killed using the `--dry-run`
 parameter:
 
-```
-sudo gitlab-rails runner /tmp/sq.rb kill <WORKER NAME> --dry-run
+```bash
+$ curl -o /tmp/sq.rb https://gitlab.com/gitlab-com/runbooks/raw/master/docs/uncategorized/db_scripts/sq.rb
+$ sudo gitlab-rails runner /tmp/sq.rb
+$ sudo gitlab-rails runner /tmp/sq.rb kill <WORKER NAME> --dry-run
 ```
 
 For example:
 
-```
-sudo gitlab-rails runner /tmp/sq.rb kill RepositoryMirrorUpdateWorker --dry-run
+```bash
+$ sudo gitlab-rails runner /tmp/sq.rb kill RepositoryMirrorUpdateWorker --dry-run
 ```
 
-You can omit the `--dry-run` option if you want to kill the jobs.
-Putting script in `/tmp` is one way of making sure its readable by `git` user
+You can omit the `--dry-run` option if you want to remove the jobs.
+Putting the script in `/tmp` is one way of making sure its readable by `git` user
 with default umask setting. Otherwise rails console will treat the path as
 Ruby string and [most likely err](https://github.com/rails/rails/blob/v4.2.8/railties/lib/rails/commands/runner.rb#L58-L63).
 
-## Dropping jobs with certain metadata from a queue
+### Remove jobs with certain metadata from a queue (e.g. all jobs from a certain user)
 
 We currently track metadata in sidekiq jobs, this allows us to remove
 sidekiq jobs based on that metadata.
@@ -183,18 +206,24 @@ delete as many jobs as it can before terminating. If the `completed` key
 in the response is `false`, then the whole queue was not processed, so
 we can try again with the same command to remove further jobs.
 
-### Kill running jobs (as opposed to removing jobs from a queue) ###
+## Killing running sidekiq jobs (specific type, specific user)
 
-To get a list of jobs that you want to kill you'll need to use the rails console. Here's an example of getting a list of jobs of specific, elastic search indexer types:
+THIS PROCEDURE WAS NOT TESTED IN PRODUCTION!!!!!!!!!!
+
+This is a highly risky operation and use it as a last resort. Doing this might result in data corruption, as the job is interrupted mid-execution and it is not guaranteed that proper rollback of transactions is implemented.
+
+Here's an example of how to get all jobs of one type, from one user and how to kill them:
 ```ruby
-types_of_jobs_to_kill = ["elastic_indexer", "elastic_commit_indexer", "elastic_namespace_indexer"]
-workers = Sidekiq::Workers.new  # get an object holding references to all running jobs, see sidekiq docs for more info
-running_elastic_jobs = workers.to_enum(:each).select { |pid, tid, work| types_of_jobs_to_kill.include?(work["queue"]) }
+queue_types = ["project_export"]
+username = ["blahblahputusernamehere"]
+# get an object holding references to all running jobs, see sidekiq docs for more info
+workers = Sidekiq::Workers.new
+all_jobs_of_type = workers.to_enum(:each).select { |pid, tid, work| queue_types.include?(work["queue"]) }
+users_jobs = all_jobs_of_type.to_enum(:each).select { |pid, tid, work| username.include?(work["payload"]["meta.user"]) }
+users_jobs.each { |pid, tid, work| puts "Killing job with jid: #{work["payload"]["jid"]}"; Gitlab::SidekiqDaemon::Monitor.cancel_job(work["payload"]["jid"])  }
 ```
 
-At the moment of writing, we do not handle killing of running jobs.
-
-You can do it by killing the sidekiq worker. Elastic jobs, can be stopped by recreating the ES index (using a rake task, see [ES integration docs](https://docs.gitlab.com/ee/integration/elasticsearch.html)).
+src: https://docs.gitlab.com/ee/administration/troubleshooting/sidekiq.html#canceling-running-jobs-destructive
 
 ## References
 
