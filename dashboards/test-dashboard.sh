@@ -52,45 +52,25 @@ fi
 
 dry_run=${dry_run:-}
 
-if [[ -z $dry_run && -z ${GRAFANA_API_TOKEN:-} ]]; then
-  echo "You must set GRAFANA_API_TOKEN to use this script. Review the instructions in dashboards/README.md to details of how to obtain this token."
-  exit 1
-fi
-
 prepare
 
 dashboard_file=$1
 
-relative=${dashboard_file#"./"}
-extension="${relative##*.}"
-
-if [[ "$extension" == "jsonnet" ]]; then
-  dashboard=$(jsonnet_compile "${dashboard_file}")
-else
-  dashboard=$(cat "${dashboard_file}")
-fi
-
 if [[ -n $dry_run ]]; then
-  echo "$dashboard"
+  generate_dashboards_for_file "${dashboard_file}"
   exit 0
+else
+  if [[ -z ${GRAFANA_API_TOKEN:-} ]]; then
+    echo "You must set GRAFANA_API_TOKEN to use this script. Review the instructions in dashboards/README.md to details of how to obtain this token."
+    exit 1
+  fi
+
+  generate_dashboards_for_file "${dashboard_file}" | prepare_snapshot_requests | while IFS= read -r snapshot; do
+    # Use http1.1 and gzip compression to workaround unexplainable random errors that
+    # occur when uploading some dashboards
+    response=$(call_grafana_api https://dashboards.gitlab.net/api/snapshots --data-binary "${snapshot}")
+
+    url=$(echo "${response}" | jq -r '.url')
+    echo "Installed ${url}"
+  done
 fi
-
-# Generate the POST body
-body=$(echo "$dashboard" | jq -c '
-{
-  dashboard: .,
-  expires: 86400
-} * {
-  dashboard: {
-    editable: true,
-    tags: ["playground"]
-  }
-}
-')
-
-# Use http1.1 and gzip compression to workaround unexplainable random errors that
-# occur when uploading some dashboards
-response=$(echo "$body" | call_grafana_api https://dashboards.gitlab.net/api/snapshots --data-binary @-)
-
-url=$(echo "${response}" | jq -r '.url')
-echo "Installed ${url}"
