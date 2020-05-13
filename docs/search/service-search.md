@@ -31,6 +31,7 @@
 * [../uncategorized/chef-guidelines.md](../uncategorized/chef-guidelines.md)
 * [../uncategorized/chef.md](../uncategorized/chef.md)
 * [../uncategorized/domain-registration.md](../uncategorized/domain-registration.md)
+* [../uncategorized/gcp-project.md](../uncategorized/gcp-project.md)
 * [../uncategorized/gcp-snapshots.md](../uncategorized/gcp-snapshots.md)
 * [../uncategorized/kubernetes.md](../uncategorized/kubernetes.md)
 * [../uncategorized/manage-chef.md](../uncategorized/manage-chef.md)
