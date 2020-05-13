@@ -218,7 +218,7 @@ basic.dashboard(
       promQuery.target(
         |||
           topk(8,
-            sum without(attribution) (
+            sum without(attribution, priority) (
               label_replace(
                 (1 - avg_over_time(gitlab_background_jobs:execution:apdex:ratio_6h{environment="$environment", env="$environment"}[$__range]))
                 *
