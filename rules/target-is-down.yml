@@ -4,9 +4,9 @@ groups:
     - alert: TargetsDown
       expr: >
         count by (job) (
-          avg_over_time(up[1h]) < 0.9
+          avg_over_time(up[5m]) * 100 < 50
         )
-      for: 5m
+      for: 10m
       labels:
         severity: s3
         alert_type: cause

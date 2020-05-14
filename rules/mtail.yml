@@ -7,14 +7,3 @@ groups:
       sum by (nfs_server) (
         rate(syslog_nfs_timeouts_total[1m])
       )
-- name: mtail target is not being scraped
-  rules:
-  - alert: MtailNotScraped
-    expr: up{job="mtail"}==0
-    for: 5m
-    labels:
-      severity: s4
-      alert_type: cause
-    annotations:
-      runbook: monitoring/README.md
-      title: Prometheus is failing to scrape mtail

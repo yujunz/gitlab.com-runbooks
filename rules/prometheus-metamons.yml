@@ -14,7 +14,7 @@ groups:
 - name: Prometheus Metamon
   rules:
   - alert: PrometheusUnreachable
-    expr: up{job=~"prometheus.*"} == 0
+    expr: avg_over_time(up{job=~"prometheus.*"}[5m]) * 100 < 50
     for: 10m
     labels:
       pager: pagerduty
