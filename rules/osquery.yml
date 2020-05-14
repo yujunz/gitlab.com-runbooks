@@ -2,7 +2,7 @@ groups:
 - name: osquery resource usage
   rules:
   - alert: OSQueryHighCPU
-    expr: sum(rate(namedprocess_namegroup_cpu_seconds_total{groupname="osqueryd"}[5m])) by (fqdn) > 0.1
+    expr: sum(rate(namedprocess_namegroup_cpu_seconds_total{groupname="osqueryd"}[5m])) by (fqdn) > 0.15
     for: 15m
     labels:
       severity: s4
