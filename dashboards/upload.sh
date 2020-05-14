@@ -81,62 +81,31 @@ find_dashboards() {
   fi
 }
 
-# Install jsonnet dashboards
-find_dashboards "$@" | while read -r line; do
-  relative=${line#"./"}
-  folder=${GRAFANA_FOLDER:-$(dirname "$relative")}
-  uid="${folder}-$(basename "$line" | sed -e 's/\..*//')"
-  extension="${relative##*.}"
+function generate_dashboard_requests() {
+  find_dashboards "$@" | while read -r line; do
+    relative=${line#"./"}
+    folder=${GRAFANA_FOLDER:-$(dirname "$relative")}
+    folderId=$(resolve_folder_id "${folder}")
 
-  if [[ "$extension" == "jsonnet" ]]; then
-    dashboard=$(jsonnet_compile "${line}")
-  else
-    dashboard=$(cat "${line}")
-  fi
+    generate_dashboards_for_file "${line}" | prepare_dashboard_requests "${folderId}" | (
+      if [[ -n $dry_run ]]; then
+        jq -r --arg file "$line" --arg folder "$folder" '"Running in dry run mode, would create \($file) in folder \($folder) with uid \(.dashboard.uid)"'
+      else
+        cat
+      fi
+    )
+  done
+}
 
-  # Note: create folders with `create-grafana-folder.sh` to configure the UID
-  folderId="-1" && [[ -z $dry_run ]] && folderId=$(resolve_folder_id "${folder}")
+if [[ -n $dry_run ]]; then
+  generate_dashboard_requests "$@"
+else
+  generate_dashboard_requests "$@" | while IFS= read -r request; do
+    # Use http1.1 and gzip compression to workaround unexplainable random errors that
+    # occur when uploading some dashboards
+    response=$(call_grafana_api https://dashboards.gitlab.net/api/dashboards/db --data-binary "${request}")
 
-  uploader_identifier="${CI_JOB_URL:-$USER}"
-  description="Uploaded by ${uploader_identifier} at $(date -u)"
-
-  # Generate the POST body
-  body=$(echo "$dashboard" | jq -c --arg uid "$uid" --arg folder "$folder" --arg folderId "$folderId" --arg description "$description" '
- {
-    dashboard: .,
-    folderId: $folderId | tonumber,
-    overwrite: true
-  } * {
-    dashboard: {
-      uid: $uid,
-      title: "\($folder): \(.title)",
-      tags: (["managed", $folder] + .tags),
-      description: "\($description)"
-    }
-  }
-')
-
-  if (echo "${body}" | grep -E '%\(\w+\)' >/dev/null); then
-    echo "$line output contains format markers. Did you forget to use %?"
-    echo "${body}" | jq '.' | grep -E -B3 -A3 --color=always '%\(\w+\)'
-    exit 1
-  fi
-
-  if (echo "${body}" | grep -E "' *\\+" >/dev/null); then
-    echo "$line output contains format markers. Did you forget to use %?"
-    echo "${body}" | jq '.' | grep -E -B3 -A3 --color=always "' *\\+"
-    exit 1
-  fi
-
-  if [[ -n $dry_run ]]; then
-    echo "Running in dry run mode, would create $line in folder $folder with uid $uid"
-    continue
-  fi
-
-  # Use http1.1 and gzip compression to workaround unexplainable random errors that
-  # occur when uploading some dashboards
-  response=$(echo "$body" | call_grafana_api https://dashboards.gitlab.net/api/dashboards/db --data-binary @-)
-
-  url=$(echo "${response}" | jq -r '.url')
-  echo "Installed https://dashboards.gitlab.net${url}"
-done
+    url=$(echo "${response}" | jq -r '.url')
+    echo "Installed https://dashboards.gitlab.net${url}"
+  done
+fi

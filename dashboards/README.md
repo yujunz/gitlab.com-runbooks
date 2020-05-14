@@ -51,6 +51,19 @@ Example, the Container Registry is of service type `registry`.  Therefore,
   * `export GRAFANA_API_TOKEN=123`
 * To upload the files, run `./dashboards/upload.sh`
 
+## Shared Dashboard Definition Files
+
+Its possible to generate multiple dashboards from a single, shared, jsonnet file.
+
+The file should end with `.shared.jsonnet` and the format of the file should be as follows:
+
+```json
+{
+  "dashboard_uid_1": { /* Dashboard */ },
+  "dashboard_uid_2": { /* Dashboard */ },
+}
+```
+
 # The `jsonnet` docker image
 
 * Google does not maintain official docker images for jsonnet.
