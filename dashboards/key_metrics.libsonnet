@@ -32,16 +32,12 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     legend_alignAsTable=true,
     legend_hideEmpty=true,
   )
-  .addSeriesOverride(seriesOverrides.goldenMetric('/ service/'))
   .addSeriesOverride(seriesOverrides.upper)
   .addSeriesOverride(seriesOverrides.lower)
   .addSeriesOverride(seriesOverrides.lastWeek)
-  .addSeriesOverride(seriesOverrides.alertFiring)
-  .addSeriesOverride(seriesOverrides.alertPending)
   .addSeriesOverride(seriesOverrides.degradationSlo)
   .addSeriesOverride(seriesOverrides.outageSlo)
   .addSeriesOverride(seriesOverrides.slo);
-
 
 {
   apdexPanel(
@@ -59,10 +55,16 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       legend_show=!compact,
       linewidth=if compact then 1 else 2,
     )
-    .addTarget(  // Primary metric
+    .addTarget(  // Primary metric (worst case)
       promQuery.target(
-        sliPromQL.apdex.serviceApdexQuery(selectorHash, '$__interval'),
+        sliPromQL.apdex.serviceApdexQuery(selectorHash, '$__interval', worstCase=true),
         legendFormat='{{ type }} service',
+      )
+    )
+    .addTarget(  // Primary metric (avg case)
+      promQuery.target(
+        sliPromQL.apdex.serviceApdexQuery(selectorHash, '$__interval', worstCase=false),
+        legendFormat='{{ type }} service (avg)',
       )
     )
     .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
@@ -96,7 +98,9 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       max=1,
       min=0,
       show=false,
-    ),
+    )
+    .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/'))
+    .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillBelowTo: serviceType + ' service' })),
 
   singleComponentApdexPanel(serviceType, serviceStage, component)::
     local formatConfig = {
@@ -188,10 +192,16 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       legend_show=!compact,
       linewidth=if compact then 1 else 2,
     )
-    .addTarget(  // Primary metric
+    .addTarget(  // Primary metric (max)
       promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateQuery(selectorHash, '$__interval'),
+        sliPromQL.errorRate.serviceErrorRateQuery(selectorHash, '$__interval', worstCase=true),
         legendFormat='{{ type }} service',
+      )
+    )
+    .addTarget(  // Primary metric (avg)
+      promQuery.target(
+        sliPromQL.errorRate.serviceErrorRateQuery(selectorHash, '$__interval', worstCase=false),
+        legendFormat='{{ type }} service (avg)',
       )
     )
     .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
@@ -227,7 +237,9 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       max=1,
       min=0,
       show=false,
-    ),
+    )
+    .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/', { fillBelowTo: serviceType + ' service (avg)' }))
+    .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillGradient: 10 })),
 
   singleComponentErrorRates(serviceType, serviceStage, componentName)::
     local formatConfig = {
@@ -361,7 +373,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       max=1,
       min=0,
       show=false,
-    ),
+    )
+    .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/')),
 
   singleComponentQPSPanel(serviceType, serviceStage, componentName)::
     local formatConfig = {
@@ -394,7 +407,6 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       min=0,
       show=false,
     ),
-
 
   componentQpsPanel(serviceType, serviceStage)::
     local formatConfig = {
@@ -466,6 +478,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       min=0,
       show=false,
     ),
+
   headlineMetricsRow(
     serviceType,
     serviceStage,
@@ -491,6 +504,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       self.qpsPanel(serviceType, serviceStage),
       self.saturationPanel(serviceType, serviceStage),
     ])),
+
   keyComponentMetricsRow(serviceType, serviceStage)::
     row.new(title='🔩 Service Component Metrics', collapse=true)
     .addPanels(layout.grid([
