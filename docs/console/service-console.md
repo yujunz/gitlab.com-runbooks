@@ -16,7 +16,6 @@
 
 ## Troubleshooting Pointers
 
-* [../bastions/dr-bastions.md](../bastions/dr-bastions.md)
 * [../bastions/gprd-bastions.md](../bastions/gprd-bastions.md)
 * [../bastions/gstg-bastions.md](../bastions/gstg-bastions.md)
 * [../bastions/pre-bastions.md](../bastions/pre-bastions.md)

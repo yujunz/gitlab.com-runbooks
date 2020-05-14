@@ -11,7 +11,6 @@ access VMs you will need to configure you ssh client to use the bastion hosts.
 
 * [Bastion instructions for gprd](../bastions/gprd-bastions.md)
 * [Bastion instructions for gstg](../bastions/gstg-bastions.md)
-* [Bastion instructions for dr](../bastions/dr-bastions.md)
 
 ### Hosts
 
@@ -35,7 +34,7 @@ fi
 
 Logs for gprd & gstg:
 
-- https://log.gprd.gitlab.net ([read](logging.md) on how to filter logs per environment)
+- https://log.gprd.gitlab.net ([read](../logging#searching-logs) on how to filter logs per environment)
 
 Grafana:
 

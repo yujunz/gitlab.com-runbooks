@@ -1,7 +1,7 @@
 # Chef Vault Basics
 
 :warning: This is relatively deprecated, we are attempting to transition all
-secrets into GKMS. See our [gkms-chef-secrets](./gkms-chef-secrest.md) for
+secrets into GKMS. See our [gkms-chef-secrets](./gkms-chef-secrets.md) for
 details on using GKMS in favor of Chef Vault. :warning:
 
 ---

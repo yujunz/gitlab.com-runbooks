@@ -6,7 +6,7 @@ This document tries to explain what you see and what each of the values does ind
 
 ## GitLab-view of Jobs
 
-![](img/ci/jobs_graph.png)
+![](../img/jobs_graph.png)
 
 * **pending jobs for project with shared runners enabled**:
 this is a list of "potential" builds that are in queue and could be picked by shared runners.
@@ -33,7 +33,7 @@ someone closing runner, runner crashing, etc.
 
 ## Runner-view of Jobs
 
-![](img/ci/runner_details.png)
+![](../img/runner_details.png)
 
 These graphs represent data that are exported out of Runner Manager with Prometheus Exporter.
 
@@ -51,7 +51,7 @@ This name indicates that job is currently on preparation phase: download docker 
 
 ## Runners Manager: Auto-scaling
 
-![](img/ci/auto_scaling_details.png)
+![](../img/auto_scaling_details.png)
 
 This is a very important graph as it represents the health of auto-scaling.
 You can read more about auto-scaling of Docker in this document:  https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/blob/master/docs/configuration/autoscale.md#autoscaling-algorithm-and-parameters.
@@ -85,7 +85,7 @@ as it is possible that system will become unstable once we hit it.
 
 ## Runners Manager: rate of machine creation (Machines operations rates)
 
-![](img/ci/machine_creation.png)
+![](../img/machine_creation.png)
 
 This is another interesting graph that gives insight into what is happening with auto-scaling.
 This graph represents **counter** metric.
@@ -121,7 +121,7 @@ currently available.
 
 If the request cannot be handled it is proxied to GitLab.
 
-![](img/ci/long_polling_states.png)
+![](../img/long_polling_states.png)
 
 This graph represents a number of hits for given state when handling job request in Workhorse:
 * **body-parse-error**, **body-read-error**, **missing-values**: we received invalid body that is too large, is of invalid content or does not have all required arguments, in this case, request is proxied to GitLab,
@@ -133,7 +133,7 @@ This graph represents a number of hits for given state when handling job request
 
 Here we aim to minimize the number of errors, as they indicate that request cannot be long polled, due to missing data (old runners), invalid body, etc.
 
-![](img/ci/long_polling_state.png)
+![](../img/long_polling_state.png)
 
 This graph represents a current number of requests in given state:
 * **reading**: Workhorse is reading request body, if client is slow to send body we can see some number here,
@@ -163,7 +163,7 @@ but we can still process them in a reasonable time (lower than a timeout). So we
 Seeing large number of 503 means that most of the requests that do end up in the queue do timeout,
 which also indicates that someone is blocking the queue, but also means that maybe our queue is too long.
 
-![](img/ci/requests_handled.png)
+![](../img/requests_handled.png)
 
 This graph represents the current state of a number of requests that are being processed.
 Seeing that value to hit the limit means that we have to queue and delay the job request processing.
@@ -171,13 +171,13 @@ This means that API endpoint with given capacity (width/length/timeout) is under
 
 We aim to have **handled** to be as low as possible.
 
-![](img/ci/requests_queued.png)
+![](../img/requests_queued.png)
 
 This graph represents a current number of requests that are enqueued.
 Enqueued requests are delayed in order to slow down all runners to the point where we can process what they ask for.
 High value indicates the same as previously, API endpoint with given capacity is underperforming.
 
-![](img/ci/queued_histogram.png)
+![](../img/queued_histogram.png)
 
 This graph represents the delay introduced to requests.
 The high delay means that we have to significantly slow down job requests to handle the demand.

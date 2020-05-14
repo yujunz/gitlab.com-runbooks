@@ -5,15 +5,14 @@ The most comment problem is that we get a report that we have a large number of 
 
 1. Check `CI dashboard` and verify that we have a large number of CI builds,
 2. Verify graphs and potential outcomes out of the graphs as described in (CI graphs)[ci_graphs.md],
-3. Verify if we have [the high DO Token Rate Limit usage](ci_runner_manager_do_limits.md),
-4. Verify the number of errors [the high number of errors](ci_runner_manager_errors.md),
-5. Verify that machines are created on `shared-runners-manager-X.gitlab.com`,
-6. Verify that docker machine valid operation,
+3. Verify the number of errors [the high number of errors](ci_runner_manager_errors.md),
+4. Verify that machines are created on `shared-runners-manager-X.gitlab.com`,
+5. Verify that docker machine valid operation,
 
 ## 1. Check `CI dashboard` and verify that we have a large number of CI builds
 
 Look at the graph with number of CI builds:
-![](../img/ci/jobs_graph.png)
+![](../img/jobs_graph.png)
 
 ## 2. Verify graphs and potential outcomes out of the graphs as described in (CI graphs)[ci_graphs.md],
 
@@ -29,11 +28,7 @@ To understand what can be wrong, you need to find a cause.
    Verify the performance of `builds/register` endpoint: https://dashboards.gitlab.net/dashboard/db/grape-endpoints?var-action=Grape%23POST%20%2Fbuilds%2Fregister&var-database=Production,
 5. Verify runners uptime. If you see that runners uptime is varying it does indicate that most likely Runners Manager does die, because of the crash. It will be shown in runners manager logs: `grep panic /var/log/messages`.
 
-## 3. Verify if we have [the high DO Token Rate Limit usage](ci_runner_manager_do_limits.md)
-
-You will see alerts on `#alerts` channel. It will indicate that since we are hitting API limits we will no longer be able to provision new machines.
-
-## 4. Verify the number of errors [the high number of errors](ci_runner_manager_errors.md)
+## 3. Verify the number of errors [the high number of errors](ci_runner_manager_errors.md)
 
 Generally, it is not a big problem, but it generates a lot of noise in logs. It is safe to run that runbook.
 
