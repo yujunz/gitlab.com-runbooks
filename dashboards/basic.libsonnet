@@ -184,7 +184,8 @@ local panelMethods = {
     legend_rightSide=false,
     linewidth=2,
     max=null,
-    decimals=0
+    decimals=0,
+    thresholds=[],
   )::
     local panel = graphPanel.new(
       title,
@@ -204,6 +205,7 @@ local panelMethods = {
       legend_avg=true,
       legend_alignAsTable=true,
       legend_hideEmpty=true,
+      thresholds=thresholds,
     );
 
     local addPanelTarget(panel, query) =
@@ -238,7 +240,9 @@ local panelMethods = {
     legend_show=true,
     legend_rightSide=false,
     linewidth=2,
+    decimals=0,
     max=null,
+    thresholds=[],
   )::
     self.multiTimeseries(
       queries=[{ query: query, legendFormat: legendFormat }],
@@ -253,6 +257,8 @@ local panelMethods = {
       legend_rightSide=legend_rightSide,
       linewidth=linewidth,
       max=max,
+      decimals=decimals,
+      thresholds=thresholds,
     ),
 
   queueLengthTimeseries(
