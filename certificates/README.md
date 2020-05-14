@@ -165,10 +165,10 @@ By editing list inside `prometheus.jobs.blackbox-ssl.target` attribute in the ro
 | version.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | | [Chef Vault][cv] | data bag: `version-gitlab-com`, item: `_default`, fields: `ssl_certificate`, `ssl_key` |
 | *.gitlab.io | C=BE, O=GlobalSign nv-sa, CN=AlphaSSL CA - SHA256 - G2 | GitLab pages | [GKMS][gkms] | item: `gitlab-omnibus-secrets gprd`, fields: `omnibus-gitlab.ssl.pages_certificate`,  `omnibus-gitlab.ssl.pages_private_key` |
 | *.gitter.im | COMODO RSA Domain Validation Secure Server CA | gitter.im | [Gitter.im][gitter] ||
-| *.gprd.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] | project: `gitlab-production` |
+| *.gprd.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] & [GKMS][gkms] | GKMS item: `frontend-loadbalancer gprd`, fields: `gitlab-haproxy.ssl.internal_crt`,  `gitlab-haproxy.ssl.internal_key`;  project: `gitlab-production` |
 | *.gstg.gitlab.com | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] | project: `gitlab-staging` |
 | *.gstg.gitlab.io | Sectigo RSA Domain Validation Secure Server CA | GitLab pages on gstg | [GKMS][gkms] | item: `gitlab-omnibus-secrets gstg`, fields: `omnibus-gitlab.ssl.pages_certificate`,  `omnibus-gitlab.ssl.pages_private_key` |
-| *.gstg.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp]  | project: `gitlab-staging` |
+| *.gstg.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] | GCP project: `gitlab-staging` |
 | *.ops.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] | project: `gitlab-ops` |
 | *.ops.gitlab.net | CloudFlare Inc ECC CA-2 | | automated Cloudflare | |
 | *.pre.gitlab.net | Sectigo RSA Domain Validation Secure Server CA | | [GCP Load Balancer][gcp] | project: `gitlab-pre` |
