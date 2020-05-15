@@ -3,16 +3,16 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Loading StackDriver(SD) Archives from Google Cloud Storage (GCS) into BiqQuery](#loading-stackdriversd-archives-from-google-cloud-storage-gcs-into-biqquery)
-    - [Summary](#summary)
-        - [Why](#why)
-        - [What](#what)
+  - [Summary](#summary)
+    - [Why](#why)
+    - [What](#what)
 - [How](#how)
-    - [Using the UI](#using-the-ui)
-    - [Alternative: Starting from an existing schema](#alternative-starting-from-an-existing-schema)
-    - [Example Queries](#example-queries)
-        - [Find the most used Source-IP-Addresses for a User](#find-the-most-used-source-ip-addresses-for-a-user)
-        - [Find Actions by User and respective Paths Performed from a given IP-Address](#find-actions-by-user-and-respective-paths-performed-from-a-given-ip-address)
-        - [Count the Number of Repositories a User has Archived and Downloaded](#count-the-number-of-repositories-a-user-has-archived-and-downloaded)
+  - [Using the UI](#using-the-ui)
+  - [Alternative: Starting from an existing schema](#alternative-starting-from-an-existing-schema)
+  - [Example Queries](#example-queries)
+    - [Find the most used Source-IP-Addresses for a User](#find-the-most-used-source-ip-addresses-for-a-user)
+    - [Find Actions by User and respective Paths Performed from a given IP-Address](#find-actions-by-user-and-respective-paths-performed-from-a-given-ip-address)
+    - [Count the Number of Repositories a User has Archived and Downloaded](#count-the-number-of-repositories-a-user-has-archived-and-downloaded)
 - [TODO](#todo)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -33,7 +33,7 @@ In order to load a BQ table from a SD produced log archive stored in GCS a datas
 
 ### What
 
-Logs that come in to SD (see [logging.md](logging.md)) are also sent
+Logs that come in to SD (see [logging.md](README.md)) are also sent
 to GCS in batches using an export sink. After 30 days, the
 log messages are expired in SD, but remain in GCS.
 

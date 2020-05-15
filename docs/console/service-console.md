@@ -16,7 +16,6 @@
 
 ## Troubleshooting Pointers
 
-* [../bastions/dr-bastions.md](../bastions/dr-bastions.md)
 * [../bastions/gprd-bastions.md](../bastions/gprd-bastions.md)
 * [../bastions/gstg-bastions.md](../bastions/gstg-bastions.md)
 * [../bastions/pre-bastions.md](../bastions/pre-bastions.md)
@@ -31,6 +30,7 @@
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
 * [../logging/README.md](../logging/README.md)
 * [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
+* [../monitoring/alerts_gke.md](../monitoring/alerts_gke.md)
 * [../monitoring/filesystem_alerts.md](../monitoring/filesystem_alerts.md)
 * [../monitoring/sentry-is-down.md](../monitoring/sentry-is-down.md)
 * [../pages/pages-letsencrypt.md](../pages/pages-letsencrypt.md)

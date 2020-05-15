@@ -23,6 +23,7 @@
 * [../monitoring/sentry-is-down.md](../monitoring/sentry-is-down.md)
 * [../pgbouncer/pgbouncer-1.md](../pgbouncer/pgbouncer-1.md)
 * [../registry/gitlab-registry.md](../registry/gitlab-registry.md)
+* [../uncategorized/alert-for-ssl-certificate-expiration.md](../uncategorized/alert-for-ssl-certificate-expiration.md)
 * [../uncategorized/chef-guidelines.md](../uncategorized/chef-guidelines.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
 <!-- END_MARKER -->

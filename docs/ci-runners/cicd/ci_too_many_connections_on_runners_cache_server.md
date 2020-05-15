@@ -12,7 +12,7 @@ Jobs are being executed longer than usual. In most cases they seem to hang on re
     even bigger spikes that are going down quickly - these are expected. But if number of connections is going over
     500 and it exists like that for more than 10 minutes then most probably it will be not able to self-heal.
 
-    ![Too many connections to cache server](img/ci/cache_server_too_many_connections.png)
+    ![Too many connections to cache server](../img/cache_server_too_many_connections.png)
 
 1. Check the [`Jobs running on runners owned by GitLab Inc. (by Runner's stage)` graph][jobs by runner's stage graph].
 
@@ -21,7 +21,7 @@ Jobs are being executed longer than usual. In most cases they seem to hang on re
     that proportions between number of stages present on Runners are proportional to the average time that is taken by
     each stage. Cache server problems may make `archive_cache` and/or `restore_cache` to take longer than usual.
 
-    ![Runners by stage - cache server problem](img/ci/runners_by_stage_problem_with_cache.png)
+    ![Runners by stage - cache server problem](../img/runners_by_stage_problem_with_cache.png)
 
 1. Login to chosen cache server and check `netstat` output, e.g.:
 

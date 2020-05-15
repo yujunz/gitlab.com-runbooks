@@ -148,7 +148,7 @@ The alerting templates (which are built using go's text/template engine) can be 
 
 Our new GKE alertmanager that alerts for Kubernetes based infrastructure is not
 easily accessible for adding silences or viewing. Until this is resolved,
-[temporary access can be had via a tunnel](./howto/alerts_gke.md).
+[temporary access can be had via a tunnel](alerts_gke.md).
 
 
 ## Silencing
@@ -183,7 +183,7 @@ mountpoint              /var/opt/gitlab
 
 ## References
 
-* [Alertmanager configuration](../../alertmanager/README.md)
+* [Alertmanager configuration](../../rules/README.md)
 * [Prometheus template source code](https://github.com/prometheus/prometheus/blob/master/template/template.go#L115)
 * [Prometheus default alert manager expansion template](https://github.com/prometheus/alertmanager/blob/master/template/default.tmpl)
 * [Go text/template documentation](https://golang.org/pkg/text/template/)

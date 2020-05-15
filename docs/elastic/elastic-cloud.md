@@ -3,16 +3,16 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Quick start](#quick-start)
-    - [Elastic Cloud Web UI](#elastic-cloud-web-ui)
-    - [Elastic Vendor Tracker](#elastic-vendor-tracker)
+  - [Elastic Cloud Web UI](#elastic-cloud-web-ui)
+  - [Elastic Vendor Tracker](#elastic-vendor-tracker)
 - [How-to guides](#how-to-guides)
-    - [Creating a logging cluster](#creating-a-logging-cluster)
-    - [Creating a cluster (general notes)](#creating-a-cluster-general-notes)
-        - [Unallocated system shards](#unallocated-system-shards)
-    - [Resizing a cluster](#resizing-a-cluster)
-        - [Adding new availability zones](#adding-new-availability-zones)
-        - [Resizing instances](#resizing-instances)
-        - [Failures caused by snapshoting](#failures-caused-by-snapshoting)
+  - [Creating a logging cluster](#creating-a-logging-cluster)
+  - [Creating a cluster (general notes)](#creating-a-cluster-general-notes)
+    - [Unallocated system shards](#unallocated-system-shards)
+  - [Resizing a cluster](#resizing-a-cluster)
+    - [Adding new availability zones](#adding-new-availability-zones)
+    - [Resizing instances](#resizing-instances)
+    - [Failures caused by snapshoting](#failures-caused-by-snapshoting)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -48,7 +48,7 @@ https://gitlab.com/gitlab-com/gl-infra/elastic/issues
     1. in the deployment page you'll see links to Elasticsearch, Kibana and APM
     1. click on the Kibana link and login using admin credentials (user: elastic, password: it should have been added to 1password during deployment creation)
     1. Create users: pubsubuser, log-proxy
-1. Create [Index Lifecycle Management](../logging/doc/logging.md#index-lifecycle-management-ilm) policy using a script in [esc-tools](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/esc-tools)
+1. Create [Index Lifecycle Management](../logging/README.md#index-lifecycle-management-ilm) policy using a script in [esc-tools](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/esc-tools)
 1. Create index templates, alias and first index using a script in esc-tools
 1. Start sending logs to the cluster
 1. Configure index patterns in Kibana (logs have to be present in the cluster):

@@ -32,7 +32,7 @@ Host gprd-console
         ProxyCommand            ssh lb-bastion.gprd.gitlab.com -W %h:%p
 ```
 
-See [granting rails or db access](granting-rails-or-db-access.md) for more
+See [granting rails or db access](../uncategorized/granting-rails-or-db-access.md) for more
 information on how to request console access.
 
 ##### Host keys

@@ -5,7 +5,7 @@ infrastructure.
 [Original reference](https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/733#note_306622484).
 
 You should have already configured console `kubectl` access for these steps
-to work. [K8s For Operations](.//howto/k8s-operations.md)
+to work. [K8s For Operations](../uncategorized/k8s-operations.md)
 
 1. Log into the console server, get the service to access, and initiate a
    port-forward command:

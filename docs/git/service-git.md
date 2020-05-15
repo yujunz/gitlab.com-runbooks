@@ -24,7 +24,6 @@
 
 ## Troubleshooting Pointers
 
-* [../bastions/dr-bastions.md](../bastions/dr-bastions.md)
 * [../bastions/gprd-bastions.md](../bastions/gprd-bastions.md)
 * [../bastions/gstg-bastions.md](../bastions/gstg-bastions.md)
 * [../blackbox/blackbox-git-exporter.md](../blackbox/blackbox-git-exporter.md)
