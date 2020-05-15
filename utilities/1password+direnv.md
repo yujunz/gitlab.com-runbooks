@@ -1,4 +1,4 @@
-# Environment Variable on Local Shells
+# Environment Variables on Local Shells
 
 Whenever we need to use enviornment variables in a local shell, it is good practice to avoid writing them anywhere on disk, whether on shell initialization files, configuration files or even ephemeral files. Cutting and pasting is also cumbersome and prone to error.
 
