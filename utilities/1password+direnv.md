@@ -28,7 +28,7 @@ Install the utilities via your favorite method:
 
 ## Initializing 1Password-CLI: `op`
 
-Much like the 1Password app, it's CLI counterpart needs to be [initialized](https://support.1password.com/command-line-getting-started/#get-started-with-the-command-line-tool), which requires your **Secrey Key** (you can find it in your 1Password Emergency Kit or in the 1Password App > Preferences > Accounts tab).
+Much like the 1Password app, its CLI counterpart needs to be [initialized](https://support.1password.com/command-line-getting-started/#get-started-with-the-command-line-tool), which requires your **Secrey Key** (you can find it in your 1Password Emergency Kit or in the 1Password App, under Preferences > Accounts tab).
 
 ```
 you@your_laptop:~:op signin gitlab.1password.com <YOUR_EMAIL_ADDRESS>
@@ -42,6 +42,10 @@ export OP_SESSION_gitlab="<YOUR_SESSION_TOKEN>"
 ```
 
 This is a one-time step to register your device. From this point on, `eval` the `op siging` command to get your session token in your environment, maybe in your shell's rc files or some other convenient spot. Note that once your device has been initialized, you only need to use the account *alias* (it defaults to the account's subdomain, `gitlab` above) and that the token will time out after 30 minutes of inactivity.
+
+```
+you@your_laptop:~:op signin gitlab
+```
 
 
 
@@ -172,17 +176,17 @@ gerir@beirut:~:op get item 5r4j2rlgdbbsrbxifm5gcebai4 | jq ' .[]'
 }
 ```
 
-Next, what we're really after are the APi token we've stored in the vault;
+Next, what we're really after are the API tokens we've stored in the vault. The following command obtain the value of the token for the `CIREPOM_CRI_GITLAB_PRIVATE_TOKEN`:
 
 ```
 gerir@beirut:~: op get item 5r4j2rlgdbbsrbxifm5gcebai4  | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v'
 "<PRIVATE_TOKEN_SCRUBBED>"
 ```
 
-This, if we wanted to setup these variables, we could use eval:
+This, if we wanted to setup these variables, we could:
 
 ```
-gerir@beirut:~:export CIREPOM_CRI_GITLAB_PRIVATE_TOKEN=$(eval op get item 5r4j2rlgdbbsrbxifm5gcebai4  | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v')
+gerir@beirut:~:export CIREPOM_CRI_GITLAB_PRIVATE_TOKEN=$(op get item 5r4j2rlgdbbsrbxifm5gcebai4  | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v')
 
 gerir@beirut:~:env | grep CIREPOM_CRI_GITLAB_PRIVATE_TOKEN
 CIREPOM_CRI_GITLAB_PRIVATE_TOKEN="<PRIVATE_TOKEN_SCRUBBED>"
@@ -190,7 +194,7 @@ CIREPOM_CRI_GITLAB_PRIVATE_TOKEN="<PRIVATE_TOKEN_SCRUBBED>"
 
 
 
-## Adding `direnv` (and avoiding `eval`)
+## Adding `direnv`
 
 We could use the above commands to setup these variables, but since they're used depending on which GitLab instance I am migrating repositories on, we want to be more selective and let the system do the work for us. Enter `direnv`.
 
@@ -237,6 +241,9 @@ else
   then
     cirepom_bot_gpt=$(op get item ${GITLAB_BOT_FQDN_1PUUID} | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_BOT_GITLAB_PRIVATE_TOKEN") | .v')
     cirepom_cri_gpt=$(op get item ${GITLAB_BOT_FQDN_1PUUID} | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v')
+
+    # TODO: add checks for empty/non-sensical variable values
+
     export CIREPOM_BOT_GITLAB_PRIVATE_TOKEN=${cirepom_bot_gpt}
     export CIREPOM_CRI_GITLAB_PRIVATE_TOKEN=${cirepom_cri_gpt}
   else
