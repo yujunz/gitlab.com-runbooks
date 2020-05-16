@@ -77,8 +77,8 @@ The are many ways in which we can hook into this record through the CLI. For my 
 First, let's find this item's UUID:
 
 ```
-gerir@beirut:~:op list items --vault Private | jq ' .[] | select(.overview.title == "ops.gitlab.net") | .uuid'
-"5r4j2rlgdbbsrbxifm5gcebai4"
+gerir@beirut:~:op list items --vault Private | jq -r ' .[] | select(.overview.title == "ops.gitlab.net") | .uuid'
+5r4j2rlgdbbsrbxifm5gcebai4
 ```
 
 Let's now look at this entity in detail (sensitive values have been scrubbed):
@@ -179,17 +179,17 @@ gerir@beirut:~:op get item 5r4j2rlgdbbsrbxifm5gcebai4 | jq ' .[]'
 Next, what we're really after are the API tokens we've stored in the vault. The following command obtain the value of the token for the `CIREPOM_CRI_GITLAB_PRIVATE_TOKEN`:
 
 ```
-gerir@beirut:~: op get item 5r4j2rlgdbbsrbxifm5gcebai4  | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v'
-"<PRIVATE_TOKEN_SCRUBBED>"
+gerir@beirut:~: op get item 5r4j2rlgdbbsrbxifm5gcebai4  | jq -r '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v'
+<PRIVATE_TOKEN_SCRUBBED>
 ```
 
 This, if we wanted to setup these variables, we could:
 
 ```
-gerir@beirut:~:export CIREPOM_CRI_GITLAB_PRIVATE_TOKEN=$(op get item 5r4j2rlgdbbsrbxifm5gcebai4  | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v')
+gerir@beirut:~:export CIREPOM_CRI_GITLAB_PRIVATE_TOKEN=$(op get item 5r4j2rlgdbbsrbxifm5gcebai4  | jq -r '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v')
 
 gerir@beirut:~:env | grep CIREPOM_CRI_GITLAB_PRIVATE_TOKEN
-CIREPOM_CRI_GITLAB_PRIVATE_TOKEN="<PRIVATE_TOKEN_SCRUBBED>"
+CIREPOM_CRI_GITLAB_PRIVATE_TOKEN=<PRIVATE_TOKEN_SCRUBBED>
 ```
 
 
@@ -239,8 +239,8 @@ then
 else
   if op list users --vault Private > /dev/null 2>&1     # validate 1Password session token is not expired
   then
-    cirepom_bot_gpt=$(op get item ${GITLAB_BOT_FQDN_1PUUID} | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_BOT_GITLAB_PRIVATE_TOKEN") | .v')
-    cirepom_cri_gpt=$(op get item ${GITLAB_BOT_FQDN_1PUUID} | jq '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v')
+    cirepom_bot_gpt=$(op get item ${GITLAB_BOT_FQDN_1PUUID} | jq -r '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_BOT_GITLAB_PRIVATE_TOKEN") | .v')
+    cirepom_cri_gpt=$(op get item ${GITLAB_BOT_FQDN_1PUUID} | jq -r '.details.sections[] | select(.title == "ENV_VAR::CIREPOM://STAGING.GITLAB.COM") | .fields[] | select(.t == "CIREPOM_CRI_GITLAB_PRIVATE_TOKEN") | .v')
 
     # TODO: add checks for empty/non-sensical variable values
 
@@ -266,8 +266,8 @@ direnv: loading ~/Work/Infra/Bots/cirepom-bot/staging.gitlab.com/.envrc
 direnv: export +CIREPOM_BOT_GITLAB_PRIVATE_TOKEN +CIREPOM_CRI_GITLAB_PRIVATE_TOKEN
 
 gerir@beirut:~/Work/Infra/Bots/cirepom-bot/staging.gitlab.com:env | grep CIREPOM
-CIREPOM_CRI_GITLAB_PRIVATE_TOKEN="<PRIVATE_TOKEN_SCRUBBED>"
-CIREPOM_BOT_GITLAB_PRIVATE_TOKEN="<PRIVATE_TOKEN_SCRUBBED>"
+CIREPOM_CRI_GITLAB_PRIVATE_TOKEN=<PRIVATE_TOKEN_SCRUBBED>
+CIREPOM_BOT_GITLAB_PRIVATE_TOKEN=<PRIVATE_TOKEN_SCRUBBED>
 
 gerir@beirut:~/Work/Infra/Bots/cirepom-bot/staging.gitlab.com:cirepom botload staging.gitlab.com ${csv}
 2020-05-14 06:21:10 W [128:145877] main -- cirepom 0.10.1 takeoff 
