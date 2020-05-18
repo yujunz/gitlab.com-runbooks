@@ -103,7 +103,7 @@ else
   generate_dashboard_requests "$@" | while IFS= read -r request; do
     # Use http1.1 and gzip compression to workaround unexplainable random errors that
     # occur when uploading some dashboards
-    response=$(call_grafana_api https://dashboards.gitlab.net/api/dashboards/db --data-binary "${request}")
+    response=$(echo "${request}" | call_grafana_api https://dashboards.gitlab.net/api/dashboards/db -d @-)
 
     url=$(echo "${response}" | jq -r '.url')
     echo "Installed https://dashboards.gitlab.net${url}"
