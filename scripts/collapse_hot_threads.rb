@@ -45,7 +45,7 @@ nodes = []
 # ::: {instance-0000000069}{e-qNvKuUSQqvQOB-5-lZjA}{9CsD0cc_QcKWMJw3BEcRYg}{10.42.0.198}{10.42.0.198:19665}{m}{logical_availability_zone=zone-2, server_name=instance-0000000069.92c87c26b16049b0a30af16b94105528, availability_zone=us-central1-a, xpack.installed=true, region=unknown-region, instance_configuration=gcp.master.1}
 
 loop do
-  break if lines.size == 0
+  break if lines.empty?
 
   l = lines.shift
   raise 'start with :::' unless l.start_with?(':::')
@@ -57,13 +57,13 @@ loop do
   # ["instance-0000000069", "e-qNvKuUSQqvQOB-5-lZjA", "9CsD0cc_QcKWMJw3BEcRYg", "10.42.0.198", "10.42.0.198:19665", "m", "logical_availability_zone=zone-2, server_name=instance-0000000069.92c87c26b16049b0a30af16b94105528, availability_zone=us-central1-a, xpack.installed=true, region=unknown-region, instance_configuration=gcp.master.1"]
 
   matches = m.map(&:first)
-  node_name, node_id, _, node_ip, node_hostport, node_role, attrs = matches
+  node_name, _node_id, _, _node_ip, _node_hostport, _node_role, attrs = matches
   attrs = attrs.split(', ').map { |attr| attr.split('=', 2) }.to_h
 
   node = {
     name: node_name,
     attrs: attrs,
-    threads: [],
+    threads: []
   }
 
   # Hot threads at 2020-05-14T14:33:30.334Z, interval=500ms, busiestThreads=3, ignoreIdleThreads=true:
@@ -77,7 +77,7 @@ loop do
     timestamp: timestamp,
     interval: interval,
     busiest: busiest,
-    ignore_idle: ignore_idle,
+    ignore_idle: ignore_idle
   }
 
   # 94.8% (473.8ms out of 500ms) cpu usage by thread 'elasticsearch[instance-0000000069][generic][T#21]'
@@ -86,7 +86,7 @@ loop do
     l = lines.shift
     raise 'expected blank' unless l == ''
 
-    break 2 if lines.size == 0
+    break 2 if lines.empty?
 
     break if lines.first.start_with?(':::')
 
@@ -108,9 +108,7 @@ loop do
       thread_name = m[2]
     end
 
-    if /^Lucene Merge Thread #\d+$/.match(thread_name)
-      thread_name = 'Lucene Merge Thread'
-    end
+    thread_name = 'Lucene Merge Thread' if /^Lucene Merge Thread #\d+$/.match(thread_name)
 
     thread = {
       percent: percent,
@@ -118,7 +116,7 @@ loop do
       time_total: time_total,
       name: thread_name,
       index_name: index_name,
-      samples: [],
+      samples: []
     }
 
     #     3/100 snapshots sharing following 34 elements
@@ -131,14 +129,15 @@ loop do
         count_seen = 1
         count_total = 1
       else
-        raise 'snapshots' unless m = /^     (\S+)\/(\S+) snapshots sharing following (\S+) elements$/.match(l)
+        raise 'snapshots' unless m = %r{^     (\S+)/(\S+) snapshots sharing following (\S+) elements$}.match(l)
+
         count_seen, count_total, _ = m.to_a[1..]
       end
 
       sample = {
         count_seen: count_seen,
         count_total: count_total,
-        stack: [],
+        stack: []
       }
 
       #        app//org.elasticsearch.action.admin.indices.stats.CommonStats.add(CommonStats.java:373)
@@ -160,7 +159,7 @@ loop do
   nodes << node
 end
 
-raise 'non-consumed lines' unless lines.size == 0
+raise 'non-consumed lines' unless lines.empty?
 
 # pp nodes
 # exit 1
