@@ -36,6 +36,7 @@
         - [Fixing conflicts in index mappings](#fixing-conflicts-in-index-mappings)
     - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm-1)
         - [Index Roll-over Failure](#index-roll-over-failure)
+        - [retry ILM for indices with errors](#retry-ilm-for-indices-with-errors)
         - [mark index as complete](#mark-index-as-complete)
         - [force index rollover](#force-index-rollover)
         - [start ILM](#start-ilm)
@@ -292,10 +293,14 @@ Can be caused by:
     stopping it from reaching 100% disk usage at which point indices **have to
     be dropped**)
 
-We already monitor for ILM errors:
-https://gitlab.com/gitlab-com/runbooks/blob/master/rules/elastic-clusters.yml#L4-23
-We also intend to monitor for ILM being in a stopped state:
-https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8972
+### retry ILM for indices with errors
+
+Our response to "ILM errors" alerts is to investigate the cause for the errors and retry ILM on indices that failed. In order to retry ILM on failed indices:
+- Kibana -> Management pane (on the left hand side) -> Index Management -> if there are any lifecycle errors click on the "Show errors"
+- Select all indices with ILM errors
+- Manage index -> Retry ILM steps
+
+You can also do it in a loop using a bash script available at `elastic/api_calls/batch/retry-ilm.sh`.
 
 ### mark index as complete ###
 
