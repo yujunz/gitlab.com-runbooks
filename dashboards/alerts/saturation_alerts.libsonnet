@@ -10,6 +10,7 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local basic = import 'basic.libsonnet';
+local saturationResources = import './saturation-resources.libsonnet';
 
 local selector = 'environment="$environment", type="$type", stage="$stage"';
 
@@ -19,8 +20,9 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
     component,
     panel,
     helpPanel,
-    defaultType='web'
+    defaultType
   )::
+
     basic.dashboard(
       dashboardTitle,
       tags=[
@@ -53,14 +55,15 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
     },
 
   saturationDashboardForComponent(
-    component,
-    defaultType='web'
+    component
   )::
+    local defaultType = ({ default_grafana_type_value: 'web' } + saturationResources[component]).default_grafana_type_value;
+
     self.saturationDashboard(
       dashboardTitle=component + ': Saturation Detail',
       component=component,
       panel=saturationDetail.componentSaturationPanel(component, selector),
       helpPanel=saturationDetail.componentSaturationHelpPanel(component),
-      defaultType=defaultType,
+      defaultType=defaultType
     ),
 }

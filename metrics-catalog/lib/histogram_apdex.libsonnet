@@ -1,10 +1,5 @@
 local selectors = import './selectors.libsonnet';
-
-local chomp(str) = std.rstripChars(str, '\n');
-local removeBlankLines(str) = std.strReplace(str, '\n\n', '\n');
-
-local indent(str, spaces) =
-  std.strReplace(removeBlankLines(chomp(str)), '\n', '\n' + std.repeat(' ', spaces));
+local strings = import 'strings.libsonnet';
 
 // A general apdex query is:
 //
@@ -36,12 +31,12 @@ local generateApdexQuery(satisfactionQuery, weightScoreQuery, denominator=null) 
       %(weightScoreQuery)s > 0
     )
   ||| % {
-    satisfactionQuery: indent(satisfactionQuery, 2),
+    satisfactionQuery: strings.indent(satisfactionQuery, 2),
     denominatorString: denominatorString,
-    weightScoreQuery: indent(weightScoreQuery, 2),
+    weightScoreQuery: strings.indent(weightScoreQuery, 2),
   };
 
-  removeBlankLines(query);
+  strings.removeBlankLines(query);
 
 // A single threshold apdex score only has a SATISFACTORY threshold, no TOLERABLE threshold
 local generateSingleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration) =
@@ -86,7 +81,7 @@ local generatePercentileLatencyQuery(percentile, aggregationLabels, rateQuery) =
   ||| % {
     percentile: percentile,
     aggregationLabelsWithLe: aggregationLabelsWithLe,
-    rateQuery: indent(rateQuery, 4),
+    rateQuery: strings.indent(rateQuery, 4),
   };
 
 local generateApdexComponentAggregationQuery(aggregationLabels, rateQuery) =
@@ -125,11 +120,11 @@ local generateCombinedApdexQuery(histograms, aggregationLabels, additionalSelect
   );
   local satisfactionQuery = generateApdexComponentAggregationQuery(
     aggregationLabels,
-    indent(std.join('\nor\n', satisfactionRateQueries), 2),
+    strings.indent(std.join('\nor\n', satisfactionRateQueries), 2),
   );
   local weightScoreQuery = generateApdexComponentAggregationQuery(
     aggregationLabels,
-    indent(std.join('\nor\n', weightScoreQueries), 2),
+    strings.indent(std.join('\nor\n', weightScoreQueries), 2),
   );
 
   generateApdexQuery(satisfactionQuery, weightScoreQuery);

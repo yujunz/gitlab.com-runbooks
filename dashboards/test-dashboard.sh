@@ -68,9 +68,10 @@ else
   generate_dashboards_for_file "${dashboard_file}" | prepare_snapshot_requests | while IFS= read -r snapshot; do
     # Use http1.1 and gzip compression to workaround unexplainable random errors that
     # occur when uploading some dashboards
-    response=$(call_grafana_api https://dashboards.gitlab.net/api/snapshots --data-binary "${snapshot}")
+    response=$(echo "${snapshot}" | call_grafana_api https://dashboards.gitlab.net/api/snapshots -d @-)
 
     url=$(echo "${response}" | jq -r '.url')
-    echo "Installed ${url}"
+    title=$(echo "${snapshot}" | jq -r '.dashboard.title')
+    echo "Installed ${url} - ${title}"
   done
 fi

@@ -38,8 +38,6 @@ serviceDashboard.overview('gitaly', 'stor')
   layout.grid([
     gitalyCommon.perNodeApdex(selector),
     gitalyCommon.inflightGitalyCommandsPerNode(selector),
-    gitalyCommon.readThroughput(selector),
-    gitalyCommon.writeThroughput(selector),
   ], startRow=2001)
 )
 .addPanel(

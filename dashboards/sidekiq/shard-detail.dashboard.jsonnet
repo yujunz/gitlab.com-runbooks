@@ -340,8 +340,6 @@ basic.dashboard(
     'sidekiq_workers',
     'single_node_cpu',
     'single_node_puma_workers',
-    'single_node_unicorn_workers',
-    'workers',
   ]),
   gridPos={ x: 0, y: 5000, w: 24, h: 1 }
 )
