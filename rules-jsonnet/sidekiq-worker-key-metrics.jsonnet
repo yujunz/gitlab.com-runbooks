@@ -193,7 +193,7 @@ local generateAlerts() =
           gitlab_background_jobs:execution:ops:rate_6h > %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
-      grafanaPanelId=10,
+      grafanaPanelId=11,
       metricName='gitlab_background_jobs:queue:apdex:ratio_1h',
       alertDescription='a queue latency outside of SLO'
     ),
