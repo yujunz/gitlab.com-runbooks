@@ -6,6 +6,6 @@
     'cluster.routing.allocation.disk.watermark.low': '200gb',
     'cluster.routing.allocation.disk.watermark.high': '150gb',
     'cluster.routing.allocation.disk.watermark.flood_stage': '90gb',
-    'cluster.max_shards_per_node': '1100',
+    'cluster.max_shards_per_node': '1000',
   },
 }
