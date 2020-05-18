@@ -1,3 +1,33 @@
+#! /usr/bin/env ruby
+# frozen_string_literal: true
+
+# script for parsing output from elasticsearch's _nodes/hot_threads endpoint
+# and collapsing the stacks to a format that can be piped into flamegraph.pl.
+#
+# example usage:
+#  curl -s "$ELASTICSEARCH_URL/_nodes/hot_threads" > hot_threads
+#  cat hot_threads | scripts/collapse_hot_threads.rb | scripts/flamegraph.pl > hot_threads.svg
+#
+# some notes on hot_threads behaviour and parameters:
+#
+#   the way the hot_threads endpoint captures stacks is not on-cpu stacks across
+#   all threads as one might expect.
+#
+#   it takes two snapshots of "time on cpu" counters of all threads, 500ms apart
+#   (this is the interval). then it picks the top k of those threads (interval
+#   and k are configurable).
+#
+#   for those top k threads it collects n stack samples at 100hz (n is configurable).
+#
+#   you can configure type as "block", "cpu", or "wait". the default is "cpu".
+#   this will only affect the scoring of which threads to sample.
+#
+#   the sampling of stacks is done via `ThreadMXBean.getThreadInfo()`. this
+#   will sample regardless of whether that thread is on CPU or not.
+#
+# see also:
+#   https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-hot-threads.html
+
 require 'optparse'
 
 options = {}
