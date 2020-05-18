@@ -129,3 +129,13 @@ groups:
       description: Elasticsearch thread pool rejections growing
       runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool rejections growing
+  - alert: Elasticsearch is saturated and unable to process tasks real-time
+    expr: elasticsearch_cluster_health_number_of_pending_tasks > 0
+    for: 15m
+    labels:
+      severity: s3
+      alert_type: symptom
+    annotations:
+      description: Elasticsearch is saturated and unable to process tasks real-time
+      runbook: docs/elastic/troubleshooting/README.md
+      title: Elasticsearch has a lot of pending tasks
