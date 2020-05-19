@@ -369,6 +369,25 @@ groups:
       )
   - record: gitlab_component_saturation:ratio
     labels:
+      component: rails_db_connection_pool
+    expr: |
+      max by(environment, tier, type, stage) (
+        clamp_min(
+          clamp_max(
+            (
+              avg_over_time(gitlab_database_connection_pool_busy{class="ActiveRecord::Base", environment!="", type=~"web|api|git|sidekiq"}[5m])
+              +
+              avg_over_time(gitlab_database_connection_pool_dead{class="ActiveRecord::Base", environment!="", type=~"web|api|git|sidekiq"}[5m])
+            )
+            /
+            gitlab_database_connection_pool_size{class="ActiveRecord::Base", environment!="", type=~"web|api|git|sidekiq"}
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
       component: redis_clients
     expr: |
       max by(environment, tier, type, stage) (
@@ -692,6 +711,16 @@ groups:
     labels:
       component: private_runners
     expr: '0.95'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      alert_trigger_duration: long
+      component: rails_db_connection_pool
+    expr: '0.9'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      alert_trigger_duration: long
+      component: rails_db_connection_pool
+    expr: '0.99'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
       component: redis_clients
@@ -1716,6 +1745,56 @@ groups:
     expr: |
       gitlab_component_saturation:ratio{component="private_runners"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="private_runners"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 15m
+    annotations:
+      title: >-
+        The Rails DB Connection Pool Saturation resource of the {{ $labels.type }} service ({{ $labels.stage
+        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the Rails DB Connection Pool Saturation resource:
+        -------------------------------------------
+        Rails uses connection pools for its database connections. As each
+        node may have multiple connection pools, this is by node and by
+        database host.
+
+        If this resource is saturated, it may indicate that our connection
+        pools are not correctly sized, perhaps because an unexpected
+        application thread is using a database connection.
+      grafana_dashboard_id: alerts-sat_rails_db_connection_pool
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '2'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, tier, type, stage, fqdn, host, port) (
+          clamp_min(
+            clamp_max(
+              (
+                avg_over_time(gitlab_database_connection_pool_busy{class="ActiveRecord::Base", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
+                +
+                avg_over_time(gitlab_database_connection_pool_dead{class="ActiveRecord::Base", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
+              )
+              /
+              gitlab_database_connection_pool_size{class="ActiveRecord::Base", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_type: cause
+      bound: upper
+      burn_rate_period: 5m
+      metric: gitlab_component_saturation:ratio
+      period: 15m
+      rules_domain: general
+      severity: s3
+    expr: |
+      gitlab_component_saturation:ratio{component="rails_db_connection_pool"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="rails_db_connection_pool"}
   - alert: component_saturation_slo_out_of_bounds
     for: 5m
     annotations:
