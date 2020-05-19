@@ -31,6 +31,14 @@ local mapping(index) =
         user_id: {
           type: 'long',
         },
+        response: {
+          // this is being migrated to a string jira_response field.
+          // it was creating a lot of dynamic fields, producing mapping updates
+          // which put load on the ES master for metadata updates.
+          //
+          // see also: https://gitlab.com/gitlab-org/gitlab/-/merge_requests/31910
+          enabled: false,
+        },
       },
     },
   }
