@@ -27,10 +27,12 @@ You can create the following entry in your ssh config for easier access
 
 ```
 Host gprd-console
+        User                    YOUR_SSH_USERNAME-SERVICE_NAME
         StrictHostKeyChecking   no
         HostName                console-01-sv-gprd.c.gitlab-production.internal
         ProxyCommand            ssh lb-bastion.gprd.gitlab.com -W %h:%p
 ```
+where `SERVICE_NAME` is either `rails` or `db`.
 
 See [granting rails or db access](../uncategorized/granting-rails-or-db-access.md) for more
 information on how to request console access.
