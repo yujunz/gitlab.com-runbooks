@@ -488,6 +488,19 @@ legacy_version_file = yes
 The single-source-of-truth for tool versions for Go and Jsonnet versions is in the `.tool-versions` file.
 Please keep this file up-to-date, whether or not you choose to use `adsf` locally.
 
+To install [go-jsonnet](https://github.com/google/go-jsonnet):
+
+```
+go get github.com/google/go-jsonnet/cmd/jsonnet
+go get github.com/google/go-jsonnet/cmd/jsonnetfmt
+```
+
+Or via homebrew:
+
+```
+brew install go-jsonnet
+```
+
 ### Ruby
 
 Additional to `adsf`, many developers use `rbenv`, `rvm` or other tooling, so, for convenience, we maintain

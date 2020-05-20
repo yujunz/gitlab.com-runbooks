@@ -591,7 +591,7 @@ local DETAILS = {
 };
 
 {
-  saturationPanel(title, description, component, linewidth=1, query, legendFormat, selector)::
+  saturationPanel(title, description, component, linewidth=1, query=null, legendFormat=null, selector=null)::
     local formatConfig = {
       component: component,
       query: query,

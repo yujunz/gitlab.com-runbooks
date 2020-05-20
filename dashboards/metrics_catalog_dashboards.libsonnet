@@ -42,9 +42,9 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
 {
   componentLatencyPanel(
     title=null,
-    serviceType,
-    componentName,
-    selector,
+    serviceType=null,
+    componentName=null,
+    selector=null,
     aggregationLabels='',
     logBase=10,
     legendFormat='%(percentile_humanized)s %(componentName)s',
@@ -77,9 +77,9 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
 
   componentRPSPanel(
     title=null,
-    serviceType,
-    componentName,
-    selector,
+    serviceType=null,
+    componentName=null,
+    selector=null,
     aggregationLabels='',
     legendFormat='%(componentName)s errors',
     intervalFactor=2,
@@ -102,9 +102,9 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
 
   componentErrorsPanel(
     title=null,
-    serviceType,
-    componentName,
-    selector,
+    serviceType=null,
+    componentName=null,
+    selector=null,
     aggregationLabels='',
     legendFormat='%(componentName)s errors',
     intervalFactor=2,
