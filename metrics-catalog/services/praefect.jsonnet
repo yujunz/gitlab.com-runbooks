@@ -8,10 +8,10 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
   tier: 'stor',
   monitoringThresholds: {
     apdexRatio: 0.995,
-    errorRatio: 0.001,
+    errorRatio: 0.0005,
   },
   eventBasedSLOTargets: {
-    errorRatio: 0.999,  // 99.9% of Praefect requests should succeed, over multiple window periods
+    errorRatio: 0.9995,  // 99.95% of Praefect requests should succeed, over multiple window periods
   },
   serviceDependencies: {
     gitaly: true,
