@@ -41,6 +41,7 @@ curl -f -H "${CONT_HEADER}" -H "${AUTH_HEADER}" "${CLUSTER_URL}_nodes/hot_thread
 "${SCRIPT_DIR}/collapse_hot_threads.rb" --node <"${DIR_NAME}/nodes_hot_threads" | "${SCRIPT_DIR}/flamegraph.pl" >"${DIR_NAME}/hot_threads_node.svg"
 "${SCRIPT_DIR}/collapse_hot_threads.rb" --index <"${DIR_NAME}/nodes_hot_threads" | "${SCRIPT_DIR}/flamegraph.pl" >"${DIR_NAME}/hot_threads_index.svg"
 
+gcloud auth activate-service-account --key-file="${GOOGLE_APPLICATION_CREDENTIALS}"
 gsutil -m cp -R "${DIR_NAME}" "gs://${BUCKET_NAME}/"
 
 rm -rf "${DIR_NAME}"
