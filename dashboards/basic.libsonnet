@@ -562,9 +562,9 @@ local panelMethods = {
   networkTrafficGraph(
     title='Node Network Utilization',
     description='Network utilization',
-    sendQuery,
+    sendQuery=null,
     legendFormat='{{ fqdn }}',
-    receiveQuery,
+    receiveQuery=null,
     intervalFactor=3,
     legend_show=true
   )::
@@ -612,7 +612,7 @@ local panelMethods = {
   slaStats(
     title,
     description='Availability',
-    query,
+    query=null,
     fieldTitle='',
     legendFormat='',
     links=[],

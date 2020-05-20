@@ -150,7 +150,7 @@ local generateCombinedPercentileLatencyQuery(histograms, percentile, aggregation
   histogramApdex(
     histogram,
     selector='',
-    satisfiedThreshold,
+    satisfiedThreshold=null,
     toleratedThreshold=null
   ):: {
     histogram: histogram,
