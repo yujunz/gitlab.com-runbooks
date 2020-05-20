@@ -113,12 +113,12 @@ groups:
     labels:
       tier: stor
       type: praefect
-    expr: '0.001000'
+    expr: '0.000500'
   - record: slo:max:events:gitlab_service_errors:ratio
     labels:
       tier: stor
       type: praefect
-    expr: '0.001000'
+    expr: '0.000500'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: db
