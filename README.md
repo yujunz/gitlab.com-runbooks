@@ -498,7 +498,9 @@ go get github.com/google/go-jsonnet/cmd/jsonnetfmt
 Or via homebrew:
 
 ```
-brew install go-jsonnet
+# pending https://github.com/Homebrew/homebrew-core/pull/55023 and https://github.com/google/go-jsonnet/issues/401
+curl -s https://raw.githubusercontent.com/igorwwwwwwwwwwwwwwwwwwww/homebrew-core/patch-1/Formula/go-jsonnet.rb > /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/go-jsonnet.rb
+brew install --HEAD go-jsonnet
 ```
 
 ### Ruby
