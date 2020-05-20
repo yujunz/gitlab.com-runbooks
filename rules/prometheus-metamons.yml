@@ -258,6 +258,25 @@ groups:
       runbook: docs/monitoring/prometheus-wal-corruption.md
       title: 'Prometheus WAL Corruption'
 
+- name: Thanos Metamon
+  rules:
+  - alert: ThanosBucketHighOperationFailures
+    expr: |
+      (
+        sum by (instance) (rate(thanos_objstore_bucket_operation_failures_total[5m]))
+      /
+        sum by (instance) (rate(thanos_objstore_bucket_operations_total[5m]))
+      * 100 > 5
+      )
+    for: 15m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos has failing storage operations
+      description: Thanos {{ $labels.instance }} has failing storage bucket operations.
+      runbook: docs/monitoring/thanos.md
+
 - name: Thanos Compact Metamon
   rules:
   - alert: ThanosCompactHalted
@@ -270,6 +289,24 @@ groups:
       title: Thanos compaction halted
       description: Thanos compact {{ $labels.instance }} has failed to run and is now halted.
       runbook: docs/monitoring/thanos-compact.md
+  - alert: ThanosCompactHighCompactionFailures
+    expr: |
+      (
+        sum by (instance) (rate(thanos_compact_group_compactions_failures_total[5m]))
+      /
+        sum by (instance) (rate(thanos_compact_group_compactions_total[5m]))
+      * 100 > 5
+      )
+    for: 15m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Compact is failing to execute compactions
+      description: Thanos Compact {{$labels.instance}} is failing to execute {{ $value | humanize
+        }}% of compactions.
+      runbook: docs/monitoring/thanos-compact.md
+  labels:
   - alert: ThanosCompactCompactionsFailed
     expr: rate(prometheus_tsdb_compactions_failed_total[5m]) > 0
     labels:
@@ -278,16 +315,6 @@ groups:
     annotations:
       title: Thanos compaction is failing
       description: Thanos compact {{ $labels.instance }} has failed compactions.
-      runbook: docs/monitoring/thanos-compact.md
-  - alert: ThanosCompactBucketOperationsFailed
-    expr: rate(thanos_objstore_bucket_operation_failures_total[1m]) > 0
-    for: 10m
-    labels:
-      severity: s4
-      alert_type: cause
-    annotations:
-      title: Thanos compaction has failing storage operations
-      description: Thanos compact {{ $labels.instance }} has failing storage bucket operations.
       runbook: docs/monitoring/thanos-compact.md
   - alert: ThanosCompactNotRunIn24Hours
     expr: (time() - (thanos_objstore_bucket_last_successful_upload_time > 0)) > 86400
@@ -437,3 +464,38 @@ groups:
       description: Thanos Rule {{$labels.instance}} did not perform any rule evaluations in the
         past 2 minutes.
       runbook: docs/monitoring/thanos-rule.md
+
+- name: Thanos Store Metamon
+  rules:
+  - alert: ThanosStoreSeriesGateLatencyHigh
+    expr: |
+      (
+        histogram_quantile(0.9, sum by (instance, le) (rate(thanos_bucket_store_series_gate_duration_seconds_bucket[5m]))) > 2
+      and
+        sum by (instance) (rate(thanos_bucket_store_series_gate_duration_seconds_count[5m])) > 0
+      )
+    for: 10m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Store has high latency
+      description: Thanos Store {{$labels.instance}} has a 99th percentile latency of {{ $value
+        }} seconds for store series gate requests.
+      runbook: docs/monitoring/thanos-store.md
+  - alert: ThanosStoreObjstoreOperationLatencyHigh
+    expr: |
+      (
+        histogram_quantile(0.9, sum by (instance, le) (rate(thanos_objstore_bucket_operation_duration_seconds_bucket[5m]))) > 2
+      and
+        sum by (instance) (rate(thanos_objstore_bucket_operation_duration_seconds_count[5m])) > 0
+      )
+    for: 10m
+    labels:
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Thanos Store Bucket has high latency
+      description: Thanos Store {{$labels.instance}} Bucket has a 99th percentile latency of
+        {{ $value }} seconds for the bucket operations.
+      runbook: docs/monitoring/thanos-store.md
