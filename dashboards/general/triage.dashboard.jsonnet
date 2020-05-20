@@ -194,8 +194,8 @@ basic.dashboard(
     max=1,
     min=0,
     show=false,
-  )
-  , gridPos=genGridPos(0, 0.5)
+  ),
+  gridPos=genGridPos(0, 0.5)
 )
 .addPanel(
   // This is deprecated: replace with a % of SLO value instead
@@ -239,8 +239,8 @@ basic.dashboard(
     max=1,
     min=0,
     show=false,
-  )
-  , gridPos=genGridPos(0, 1.5)
+  ),
+  gridPos=genGridPos(0, 1.5)
 )
 .addPanel(
   // This is deprecated: replace with a % of SLO value instead
@@ -257,8 +257,8 @@ basic.dashboard(
     maxY=12,
     minY=-0.5,
     sort='decreasing',
-  )
-  , gridPos=genGridPos(1, 1.5)
+  ),
+  gridPos=genGridPos(1, 1.5)
 )
 .addPanel(
   generalGraphPanel(
@@ -284,8 +284,8 @@ basic.dashboard(
     max=1,
     min=0,
     show=false,
-  )
-  , gridPos=genGridPos(0, 2.5)
+  ),
+  gridPos=genGridPos(0, 2.5)
 )
 .addPanel(
   generateAnomalyPanel(
@@ -304,8 +304,8 @@ basic.dashboard(
     errorThreshold=4,
     warningThreshold=3,
     sort='decreasing',
-  )
-  , gridPos=genGridPos(1, 2.5)
+  ),
+  gridPos=genGridPos(1, 2.5)
 )
 .addPanel(
   generalGraphPanel(
@@ -337,8 +337,8 @@ basic.dashboard(
     max=1,
     min=0,
     show=false,
-  )
-  , gridPos=genGridPos(0, 4.5, w=2)
+  ),
+  gridPos=genGridPos(0, 4.5, w=2)
 )
 .addPanel(capacityPlanning.environmentCapacityPlanningRow(), gridPos=genGridPos(0, 6.5))
 + {

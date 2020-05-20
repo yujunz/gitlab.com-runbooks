@@ -242,8 +242,7 @@ serviceDashboard.overview('sidekiq', 'sv')
 .addPanels(sidekiq.shardWorkloads('type="sidekiq", environment="$environment", stage="$stage"', startRow=3001, datalink=shardDetailDataLink))
 .addPanel(
   row.new(title='Rails Metrics', collapse=true)
-  .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))
-  ,
+  .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1)),
   gridPos={
     x: 0,
     y: 5000,
