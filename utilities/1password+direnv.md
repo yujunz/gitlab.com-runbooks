@@ -1,6 +1,6 @@
 # Environment Variables on Local Shells
 
-Whenever we need to use enviornment variables in a local shell, it is good practice to avoid writing them anywhere on disk, whether on shell initialization files, configuration files or even ephemeral files. Cutting and pasting is also cumbersome and prone to error.
+Whenever we need to use enviornment variables in a local shell, it is good practice to avoid writing them anywhere on disk, be it on shell initialization files, configuration files or even ephemeral files. Cutting and pasting is also cumbersome and prone to error.
 
 The following method allows you to set environment variables safely (where *safe* in this context means "*as much as you trust 1Password*") on local shells (i.e., your laptop), possibly on demand, through the use of 3 utilities: 
 
