@@ -322,8 +322,7 @@ basic.dashboard(
 )
 .addPanel(
   row.new(title='Rails Metrics', collapse=true)
-  .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1))
-  ,
+  .addPanels(railsCommon.railsPanels(serviceType='sidekiq', serviceStage='$stage', startRow=1)),
   gridPos={
     x: 0,
     y: 3000,
