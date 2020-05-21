@@ -20,6 +20,7 @@
 * [../bastions/gstg-bastions.md](../bastions/gstg-bastions.md)
 * [../bastions/pre-bastions.md](../bastions/pre-bastions.md)
 * [../bastions/testbed-bastion.md](../bastions/testbed-bastion.md)
+* [../customers.gitlab.com/api-key-rotation.md](../customers.gitlab.com/api-key-rotation.md)
 * [../elastic/README.md](../elastic/README.md)
 * [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
