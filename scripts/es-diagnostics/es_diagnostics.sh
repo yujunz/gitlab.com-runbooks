@@ -15,7 +15,6 @@ THREADS_THREADS="${THREADS_THREADS:-3}"
 THREADS_TYPE="${THREADS_TYPE:-cpu}"
 
 CONT_HEADER="Content-Type: application/json"
-AUTH_HEADER="Authorization: Basic ${CLUSTER_CREDS}"
 DIR_NAME="es_threads_tasks_dump_$(date +%Y-%m-%d_%H:%M:%S -u)"
 SCRIPT_DIR="$(dirname "$0")"
 
@@ -30,12 +29,12 @@ if [[ ! -e ${GOOGLE_APPLICATION_CREDENTIALS} ]]; then
 fi
 
 mkdir "${DIR_NAME}"
-curl -f -H "${CONT_HEADER}" -H "${AUTH_HEADER}" "${CLUSTER_URL}_cat/indices?v&pri&s=index&h=index,pri,rep,docs.count,docs.deleted,pri.store.size&bytes=gb" >"${DIR_NAME}/cat_indices"
-curl -f -H "${CONT_HEADER}" -H "${AUTH_HEADER}" "${CLUSTER_URL}_cat/thread_pool?v" >"${DIR_NAME}/cat_thread_pool"
-curl -f -H "${CONT_HEADER}" -H "${AUTH_HEADER}" "${CLUSTER_URL}_cluster/health" >"${DIR_NAME}/cluster_health.json"
-curl -f -H "${CONT_HEADER}" -H "${AUTH_HEADER}" "${CLUSTER_URL}_cluster/pending_tasks" >"${DIR_NAME}/cluster_pending_tasks.json"
-curl -f -H "${CONT_HEADER}" -H "${AUTH_HEADER}" "${CLUSTER_URL}_tasks?detailed=true" >"${DIR_NAME}/tasks.json"
-curl -f -H "${CONT_HEADER}" -H "${AUTH_HEADER}" "${CLUSTER_URL}_nodes/hot_threads?interval=${THREADS_INTERVAL}&snapshots=${THREADS_SNAPSHOTS}&threads=${THREADS_THREADS}&type=${THREADS_TYPE}" >"${DIR_NAME}/nodes_hot_threads"
+curl -f -H "${CONT_HEADER}" -u "${CLUSTER_CREDS}" "${CLUSTER_URL}_cat/indices?v&pri&s=index&h=index,pri,rep,docs.count,docs.deleted,pri.store.size&bytes=gb" >"${DIR_NAME}/cat_indices"
+curl -f -H "${CONT_HEADER}" -u "${CLUSTER_CREDS}" "${CLUSTER_URL}_cat/thread_pool?v" >"${DIR_NAME}/cat_thread_pool"
+curl -f -H "${CONT_HEADER}" -u "${CLUSTER_CREDS}" "${CLUSTER_URL}_cluster/health" >"${DIR_NAME}/cluster_health.json"
+curl -f -H "${CONT_HEADER}" -u "${CLUSTER_CREDS}" "${CLUSTER_URL}_cluster/pending_tasks" >"${DIR_NAME}/cluster_pending_tasks.json"
+curl -f -H "${CONT_HEADER}" -u "${CLUSTER_CREDS}" "${CLUSTER_URL}_tasks?detailed=true" >"${DIR_NAME}/tasks.json"
+curl -f -H "${CONT_HEADER}" -u "${CLUSTER_CREDS}" "${CLUSTER_URL}_nodes/hot_threads?interval=${THREADS_INTERVAL}&snapshots=${THREADS_SNAPSHOTS}&threads=${THREADS_THREADS}&type=${THREADS_TYPE}" >"${DIR_NAME}/nodes_hot_threads"
 
 "${SCRIPT_DIR}/collapse_hot_threads.rb" <"${DIR_NAME}/nodes_hot_threads" | "${SCRIPT_DIR}/flamegraph.pl" >"${DIR_NAME}/hot_threads.svg"
 "${SCRIPT_DIR}/collapse_hot_threads.rb" --node <"${DIR_NAME}/nodes_hot_threads" | "${SCRIPT_DIR}/flamegraph.pl" >"${DIR_NAME}/hot_threads_node.svg"
