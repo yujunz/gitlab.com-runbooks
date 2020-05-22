@@ -242,66 +242,6 @@ groups:
           link1_url: "https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-error-rate.md"
           promql_template_1: 'gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'
 
-      # ------------------------------------------------------------------------------
-      # Saturation alerts
-      # ------------------------------------------------------------------------------
-
-      # Saturation: Hard SLO exceeded, default alert_trigger_duration (short, 5m)
-      - alert: component_saturation_slo_out_of_bounds_upper_5m
-        expr: |
-          gitlab_component_saturation:ratio > on(component) group_left
-          slo:max:hard:gitlab_component_saturation:ratio{alert_trigger_duration!="long"}
-        for: 5m
-        labels:
-          rules_domain: general
-          metric: gitlab_component_saturation:ratio
-          severity: s3
-          # slo_alert: 'yes' Uncomment after trial period
-          period: 5m
-          bound: upper
-          alert_type: cause
-          # pager: pagerduty Uncomment after trial period
-        annotations:
-          description: >
-            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
-
-            This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
-          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
-          title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit."
-          grafana_dashboard_id: "alerts-saturation_component/saturation-component-alert"
-          grafana_panel_id: "2"
-          grafana_variables: "environment,type,stage,component"
-          grafana_min_zoom_hours: "6"
-          promql_template_1: 'gitlab_component_saturation:ratio{component="$component",environment="$environment",stage="$stage",type="$type"}'
-
-      # Saturation: Hard SLO exceeded, long alert_trigger_duration (15m)
-      - alert: component_saturation_slo_out_of_bounds_upper_15m
-        expr: |
-          gitlab_component_saturation:ratio > on(component) group_left
-          slo:max:hard:gitlab_component_saturation:ratio{alert_trigger_duration="long"}
-        for: 15m
-        labels:
-          rules_domain: general
-          metric: gitlab_component_saturation:ratio
-          severity: s3
-          # slo_alert: 'yes' Uncomment after trial period
-          period: 15m
-          bound: upper
-          alert_type: cause
-          # pager: pagerduty Uncomment after trial period
-        annotations:
-          description: >
-            The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit.
-
-            This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
-          runbook: "docs/{{ $labels.type }}/service-{{ $labels.type }}.md"
-          title: "The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage), `{{ $labels.component }}` component has a saturation exceeding SLO and is close to its capacity limit."
-          grafana_dashboard_id: "alerts-saturation_component/saturation-component-alert"
-          grafana_panel_id: "2"
-          grafana_variables: "environment,type,stage,component"
-          grafana_min_zoom_hours: "6"
-          promql_template_1: 'gitlab_component_saturation:ratio{component="$component",environment="$environment",stage="$stage",type="$type"}'
-
       ################################################
       # Bad canary: we are experiencing errors or latency issues in
       # canary, but not in production. This probably indicates that

@@ -1,7 +1,10 @@
 local saturationResources = import './saturation-resources.libsonnet';
 
-local rules = std.map(function(key) saturationResources[key].getRecordingRuleDefinition(key), std.objectFields(saturationResources));
-local sloRules = std.flatMap(function(key) saturationResources[key].getSLORecordingRuleDefinition(key), std.objectFields(saturationResources));
+local saturationResourceNames = std.objectFields(saturationResources);
+
+local rules = std.map(function(key) saturationResources[key].getRecordingRuleDefinition(key), saturationResourceNames);
+local sloRules = std.flatMap(function(key) saturationResources[key].getSLORecordingRuleDefinition(key), saturationResourceNames);
+local saturationAlerts = std.flatMap(function(key) saturationResources[key].getSaturationAlerts(key), saturationResourceNames);
 
 {
   'saturation.yml':
@@ -14,6 +17,10 @@ local sloRules = std.flatMap(function(key) saturationResources[key].getSLORecord
         name: 'GitLab Component Saturation Max SLOs',
         interval: '5m',
         rules: sloRules,
+      }, {
+        name: 'GitLab Saturation Alerts',
+        interval: '1m',
+        rules: saturationAlerts,
       }],
     }),
 }
