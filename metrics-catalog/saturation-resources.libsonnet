@@ -666,9 +666,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     grafana_dashboard_uid: 'sat_single_node_cpu',
     resourceLabels: ['fqdn'],
     query: |||
-      max without(cpu) (
-        avg without(mode) (1 - rate(node_cpu_seconds_total{mode="idle", %(selector)s}[%(rangeInterval)s]))
-      )
+      avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", %(selector)s}[%(rangeInterval)s]))
     |||,
     slos: {
       soft: 0.90,
