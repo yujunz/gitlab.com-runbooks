@@ -57,7 +57,7 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
   saturationDashboardForComponent(
     component
   )::
-    local defaultType = ({ default_grafana_type_value: 'web' } + saturationResources[component]).default_grafana_type_value;
+    local defaultType = saturationResources[component].getDefaultGrafanaType();
 
     self.saturationDashboard(
       dashboardTitle=component + ': Saturation Detail',

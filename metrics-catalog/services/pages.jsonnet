@@ -34,12 +34,4 @@ local combined = metricsCatalog.combined;
       significantLabels: [],
     },
   },
-
-  saturationTypes: [
-    'cpu',
-    'disk_space',
-    'memory',
-    'open_fds',
-    'single_node_cpu',
-  ],
 }

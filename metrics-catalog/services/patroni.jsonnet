@@ -65,20 +65,4 @@ local combined = metricsCatalog.combined;
       significantLabels: ['fqdn'],
     },
   },
-
-  saturationTypes: [
-    'active_db_connections',
-    'cpu',
-    'disk_space',
-    'memory',
-    'open_fds',
-    'disk_sustained_read_iops',
-    'disk_sustained_write_iops',
-    'disk_sustained_write_throughput',
-    'disk_sustained_read_throughput',
-    'pgbouncer_async_pool',
-    'pgbouncer_single_core',
-    'pgbouncer_sync_pool',
-    'single_node_cpu',
-  ],
 }

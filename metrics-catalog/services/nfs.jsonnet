@@ -26,14 +26,4 @@ local rateMetric = metricsCatalog.rateMetric;
       significantLabels: ['fqdn'],
     },
   },
-  saturationTypes: [
-    'cpu',
-    'disk_space',
-    'disk_sustained_read_iops',
-    'disk_sustained_read_throughput',
-    'disk_sustained_write_iops',
-    'disk_sustained_write_throughput',
-    'memory',
-    'open_fds',
-  ],
 }

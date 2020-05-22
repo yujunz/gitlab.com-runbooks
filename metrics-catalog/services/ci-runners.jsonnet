@@ -83,10 +83,4 @@ local rateMetric = metricsCatalog.rateMetric;
       ),
     },
   },
-
-  saturationTypes: [
-    'private_runners',
-    'shared_runners',
-    'shared_runners_gitlab',
-  ],
 }
