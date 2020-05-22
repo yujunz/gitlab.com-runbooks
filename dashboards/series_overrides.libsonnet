@@ -86,6 +86,7 @@ local capacityComponentColors = {
   },
   goldenMetric(alias, overrides={}):: self {
     alias: alias,
+    zindex: 3,
     color: '#E7D551',  // "Brilliant gold"
   } + overrides,
   slo:: {
@@ -196,4 +197,12 @@ local capacityComponentColors = {
     nullPointMode: 'connected',
     zindex: -2,
   },
+  averageCaseSeries(alias, overrides={}):: {
+    alias: alias,
+    linewidth: 1,
+    dashLength: 1,
+    spaceLength: 1,
+    zindex: -3,
+    color: '#5794F2',
+  } + overrides,
 }

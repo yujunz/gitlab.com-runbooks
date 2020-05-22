@@ -11,12 +11,19 @@ local formatConfigForSelectorHash(selectorHash) =
 
 {
   apdex:: {
-    serviceApdexQuery(selectorHash, range)::
-      |||
-        min by (type) (min_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
-        or
-        min by (type) (gitlab_service_apdex:ratio{%(selector)s})
-      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
+    serviceApdexQuery(selectorHash, range, worstCase=true)::
+      if worstCase then
+        /* Min apdex case */
+        |||
+          min by (type) (min_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
+          or
+          min by (type) (gitlab_service_apdex:ratio{%(selector)s})
+        ||| % formatConfigForSelectorHash(selectorHash) { range: range }
+      else
+        /* Avg apdex case */
+        |||
+          avg by (type) (avg_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
+        ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
     serviceApdexDegradationSLOQuery(environment, type, stage)::
       |||
@@ -101,15 +108,25 @@ local formatConfigForSelectorHash(selectorHash) =
   },
 
   errorRate:: {
-    serviceErrorRateQuery(selectorHash, range, clampMax=1.0)::
-      |||
-        clamp_max(
-          max by (type) (max_over_time(gitlab_service_errors:ratio{%(globalSelector)s}[$__interval]))
-          or
-          sum by (type) (gitlab_service_errors:ratio{%(selector)s}),
-          %(clampMax)g
-        )
-      ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax },
+    serviceErrorRateQuery(selectorHash, range, clampMax=1.0, worstCase=true)::
+      if worstCase then
+        /* Max case */
+        |||
+          clamp_max(
+            max by (type) (max_over_time(gitlab_service_errors:ratio{%(globalSelector)s}[$__interval]))
+            or
+            sum by (type) (gitlab_service_errors:ratio{%(selector)s}),
+            %(clampMax)g
+          )
+        ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax }
+      else
+        /* Avg case */
+        |||
+          clamp_max(
+            avg by (type) (avg_over_time(gitlab_service_errors:ratio{%(globalSelector)s}[$__interval])),
+            %(clampMax)g
+          )
+        ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax },
 
     serviceErrorRateDegradationSLOQuery(environment, type, stage)::
       |||
