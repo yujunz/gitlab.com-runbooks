@@ -108,6 +108,56 @@ local resourceSaturationPoint = function(definition)
         expr: '%g' % [definition.slos.hard],
       }],
 
+    getSaturationAlerts(componentName)::
+      local definition = self;
+
+      local triggerDuration = if ({ alert_trigger_duration: '' } + definition.slos).alert_trigger_duration == 'long' then
+        '15m'
+      else
+        '5m';
+
+      local formatConfig = {
+        triggerDuration: triggerDuration,
+        componentName: componentName,
+        description: definition.description,
+        title: definition.title,
+      };
+
+      [{
+        alert: 'component_saturation_slo_out_of_bounds',
+        expr: |||
+          gitlab_component_saturation:ratio{component="%(componentName)s"} > on(component) group_left
+          slo:max:hard:gitlab_component_saturation:ratio{component="%(componentName)s"}
+        ||| % formatConfig,
+        'for': triggerDuration,
+        labels: {
+          rules_domain: 'general',
+          metric: 'gitlab_component_saturation:ratio',
+          severity: 's3',  // TODO: add a criticality indicator
+          period: triggerDuration,
+          bound: 'upper',
+          alert_type: 'cause',
+          // slo_alert: 'yes' Uncomment after trial period
+          // pager: pagerduty Uncomment after trial period
+        },
+        annotations: {
+          title: 'The %(title)s resource of the {{ $labels.type }} service ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity limit.' % formatConfig,
+          description: |||
+            This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+            Details of the %(title)s resource:
+            ----------------------------------------------
+
+            %(description)s
+          ||| % formatConfig,
+          runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+          grafana_dashboard_id: 'alerts-' + definition.grafana_dashboard_uid,
+          grafana_panel_id: '2',
+          grafana_variables: 'environment,type,stage',
+          grafana_min_zoom_hours: '6',
+          promql_query: definition.getQuery('environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"', '1m', definition.resourceLabels),
+        },
+      }],
 
     // Returns a boolean to indicate whether this saturation point applies to
     // a given service
