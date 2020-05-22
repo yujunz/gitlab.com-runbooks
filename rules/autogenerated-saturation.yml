@@ -221,9 +221,9 @@ groups:
         clamp_min(
           clamp_max(
             (
-              elasticsearch_thread_pool_active_count{environment!="", type=~"logging|search"}
+              elasticsearch_thread_pool_active_count{exported_type!="snapshot", environment!="", type=~"logging|search"}
               /
-              (elasticsearch_thread_pool_threads_count{environment!="", type=~"logging|search"} > 0)
+              (elasticsearch_thread_pool_threads_count{exported_type!="snapshot", environment!="", type=~"logging|search"} > 0)
             )
             ,
             1)
@@ -1309,6 +1309,9 @@ groups:
         Details of the Thread pool utilization resource:
         -------------------------------------------
         Saturation of each thread pool on each node.
+
+        Descriptions of the threadpool types can be found at
+        https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-threadpool.html.
       grafana_dashboard_id: alerts-sat_elastic_thread_pools
       grafana_min_zoom_hours: '6'
       grafana_panel_id: '2'
@@ -1318,9 +1321,9 @@ groups:
           clamp_min(
             clamp_max(
               (
-                elasticsearch_thread_pool_active_count{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+                elasticsearch_thread_pool_active_count{exported_type!="snapshot", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
                 /
-                (elasticsearch_thread_pool_threads_count{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"} > 0)
+                (elasticsearch_thread_pool_threads_count{exported_type!="snapshot", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"} > 0)
               )
               ,
               1)

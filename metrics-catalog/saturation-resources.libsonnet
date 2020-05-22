@@ -299,14 +299,17 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     appliesTo: ['logging', 'search'],
     description: |||
       Saturation of each thread pool on each node.
+
+      Descriptions of the threadpool types can be found at
+      https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-threadpool.html.
     |||,
     grafana_dashboard_uid: 'sat_elastic_thread_pools',
     resourceLabels: ['name', 'exported_type'],
     query: |||
       (
-        elasticsearch_thread_pool_active_count{%(selector)s}
+        elasticsearch_thread_pool_active_count{exported_type!="snapshot", %(selector)s}
         /
-        (elasticsearch_thread_pool_threads_count{%(selector)s} > 0)
+        (elasticsearch_thread_pool_threads_count{exported_type!="snapshot", %(selector)s} > 0)
       )
     |||,
     slos: {
