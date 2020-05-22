@@ -26,14 +26,4 @@ local combined = metricsCatalog.combined;
       significantLabels: ['fqdn'],
     },
   },
-
-  saturationTypes: [
-    'cpu',
-    'memory',
-    'open_fds',
-    'pgbouncer_async_pool',
-    'pgbouncer_single_core',
-    'pgbouncer_sync_pool',
-    'single_node_cpu',
-  ],
 }

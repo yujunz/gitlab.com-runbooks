@@ -85,13 +85,4 @@ local rateMetric = metricsCatalog.rateMetric;
       significantLabels: ['action'],
     },
   },
-
-  saturationTypes: [
-    'cpu',
-    'disk_space',
-    'memory',
-    'open_fds',
-    'single_node_cpu',
-    'go_memory',
-  ],
 }

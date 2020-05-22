@@ -105,12 +105,4 @@ local rateMetric = metricsCatalog.rateMetric;
       significantLabels: ['fqdn'],
     },
   },
-
-  saturationTypes: [
-    'cpu',
-    'disk_space',
-    'memory',
-    'open_fds',
-    'single_node_cpu',
-  ],
 }

@@ -94,7 +94,7 @@ local overviewDashboard(type, tier, stage) =
       }
     )
     .addPanel(
-      saturationDetail.saturationDetailPanels(selector, components=metricsCatalogServiceInfo.saturationTypes),
+      saturationDetail.saturationDetailPanels(selector, components=metricsCatalogServiceInfo.applicableSaturationTypes()),
       gridPos={ x: 0, y: 400, w: 24, h: 1 }
     );
 

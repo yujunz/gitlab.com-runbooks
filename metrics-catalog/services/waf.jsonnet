@@ -80,6 +80,4 @@ local rateMetric = metricsCatalog.rateMetric;
       significantLabels: [],
     },
   },
-
-  saturationTypes: [],
 }

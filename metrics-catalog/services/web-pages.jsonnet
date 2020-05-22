@@ -59,13 +59,4 @@ local combined = metricsCatalog.combined;
       significantLabels: ['fqdn'],
     },
   },
-
-  saturationTypes: [
-    'cpu',
-    'disk_space',
-    'go_memory',
-    'memory',
-    'open_fds',
-    'single_node_cpu',
-  ],
 }

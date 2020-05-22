@@ -49,13 +49,4 @@ local customQuery = metricsCatalog.customQuery;
       significantLabels: ['log', 'severity'],
     },
   },
-
-  saturationTypes: [
-    'elastic_cpu',
-    'elastic_single_node_cpu',
-    'elastic_disk_space',
-    'elastic_single_node_disk_space',
-    'elastic_jvm_heap_memory',
-    'elastic_thread_pools',
-  ],
 }

@@ -38,18 +38,4 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
       significantLabels: ['fqdn'],
     },
   },
-
-  saturationTypes: [
-    'cgroup_memory',
-    'cpu',
-    'disk_space',
-    'disk_sustained_read_iops',
-    'disk_sustained_read_throughput',
-    'disk_sustained_write_iops',
-    'disk_sustained_write_throughput',
-    'memory',
-    'open_fds',
-    'single_node_cpu',
-    'go_memory',
-  ],
 }
