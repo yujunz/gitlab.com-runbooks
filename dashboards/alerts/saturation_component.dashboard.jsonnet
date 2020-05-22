@@ -27,6 +27,7 @@ saturationAlerts.saturationDashboard(
     selector='environment="$environment", type="$type", stage="$stage", component="$component"'
   )
         .addSeriesOverride(seriesOverrides.goldenMetric('/ component/')),
-  helpPanel=helpPanel
+  helpPanel=helpPanel,
+  defaultType='web'
 )
 .addTemplate(templates.saturationComponent)

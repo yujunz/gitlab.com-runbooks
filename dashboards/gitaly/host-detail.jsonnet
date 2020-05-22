@@ -19,7 +19,6 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
-local magicNumbers = (import 'magic_numbers.libsonnet').magicNumbers;
 local gitalyCommon = import 'gitaly/gitaly_common.libsonnet';
 local selectors = import 'lib/selectors.libsonnet';
 
@@ -48,8 +47,6 @@ basic.dashboard(
   layout.grid([
     gitalyCommon.perNodeApdex(selector),
     gitalyCommon.inflightGitalyCommandsPerNode(selector),
-    gitalyCommon.readThroughput(selector),
-    gitalyCommon.writeThroughput(selector),
   ], startRow=2001)
 )
 .addPanel(

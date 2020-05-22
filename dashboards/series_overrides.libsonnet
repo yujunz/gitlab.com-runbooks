@@ -4,7 +4,6 @@ local capacityComponentColors = {
   redis_clients: '#73BF69',
   single_node_cpu: '#FADE2A',
   single_threaded_cpu: '#F2495C',
-  workers: '#5794F2',
   pgbouncer_async_pool: '#FA9830',
   cpu: '#B877D9',
   disk_space: '#37852E',
