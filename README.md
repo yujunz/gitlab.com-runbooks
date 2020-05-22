@@ -485,15 +485,16 @@ legacy_version_file = yes
 
 ### Go, Jsonnet
 
-The single-source-of-truth for tool versions for Go and Jsonnet versions is in the `.tool-versions` file.
-Please keep this file up-to-date, whether or not you choose to use `adsf` locally.
+The single-source-of-truth for tool versions for Go and Jsonnet versions is in
+the `.tool-versions` file. Please keep this file up-to-date, whether or not you
+choose to use `adsf` locally. This is technically not strictly true at the time
+of writing - we build the latest master version in the CI docker image, because
+the `jsonnetfmt` binary is not available in release tags of go-jsonnet yet.
 
-To install [go-jsonnet](https://github.com/google/go-jsonnet):
+To install [go-jsonnet](https://github.com/google/go-jsonnet), you have a few
+options.
 
-```
-go get github.com/google/go-jsonnet/cmd/jsonnet
-go get github.com/google/go-jsonnet/cmd/jsonnetfmt
-```
+You could follow that project's README to install manually;
 
 Or via homebrew:
 
@@ -502,6 +503,8 @@ Or via homebrew:
 curl -s https://raw.githubusercontent.com/igorwwwwwwwwwwwwwwwwwwww/homebrew-core/patch-1/Formula/go-jsonnet.rb > /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/go-jsonnet.rb
 brew install --HEAD go-jsonnet
 ```
+Or use [an asdf
+plugin](https://gitlab.com/craigfurman/asdf-go-jsonnet).
 
 ### Ruby
 
