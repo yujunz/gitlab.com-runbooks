@@ -464,9 +464,7 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            max without(cpu) (
-              avg without(mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[1m]))
-            )
+            avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[1m]))
             ,
             1)
         ,
@@ -1923,9 +1921,7 @@ groups:
         max by(environment, tier, type, stage, fqdn) (
           clamp_min(
             clamp_max(
-              max without(cpu) (
-                avg without(mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m]))
-              )
+              avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m]))
               ,
               1)
           ,
