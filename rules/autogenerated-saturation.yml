@@ -47,7 +47,7 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            1 - avg without(mode, cpu) (
+            1 - avg by (environment, tier, type, stage) (
               rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[1m])
             )
             ,
@@ -405,6 +405,21 @@ groups:
       )
   - record: gitlab_component_saturation:ratio
     labels:
+      component: shard_cpu
+    expr: |
+      max by(environment, tier, type, stage) (
+        clamp_min(
+          clamp_max(
+            1 - avg by (environment, tier, type, stage, shard) (
+              rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[1m])
+            )
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
       component: shared_runners
       stage: main
       tier: runners
@@ -687,6 +702,14 @@ groups:
     expr: '0.75'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
+      component: shard_cpu
+    expr: '0.85'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: shard_cpu
+    expr: '0.95'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
       component: shared_runners
     expr: '0.9'
   - record: slo:max:hard:gitlab_component_saturation:ratio
@@ -835,26 +858,25 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Average CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
-        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
+        The Average Service CPU resource of the {{ $labels.type }} service ({{ $labels.stage }} stage),
+        component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Average CPU Saturation per Node resource:
+        Details of the Average Service CPU resource:
         -------------------------------------------
-        Average CPU per Node.
-
-        This resource measures all CPU across a fleet. If it is becoming saturated, it may indicate that the fleet needs horizontal or
-        vertical scaling.
+        This resource measures average CPU across an all cores in a service fleet.
+        If it is becoming saturated, it may indicate that the fleet needs
+        horizontal or vertical scaling.
       grafana_dashboard_id: alerts-sat_cpu
       grafana_min_zoom_hours: '6'
       grafana_panel_id: '2'
       grafana_variables: environment,type,stage
       promql_query: |
-        max by(environment, tier, type, stage, fqdn) (
+        max by(environment, tier, type, stage) (
           clamp_min(
             clamp_max(
-              1 - avg without(mode, cpu) (
+              1 - avg by (environment, tier, type, stage) (
                 rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
               )
               ,
@@ -1760,6 +1782,47 @@ groups:
     expr: |
       gitlab_component_saturation:ratio{component="redis_memory"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="redis_memory"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 5m
+    annotations:
+      title: >-
+        The Average CPU per Shard resource of the {{ $labels.type }} service ({{ $labels.stage }} stage),
+        component has a saturation exceeding SLO and is close to its capacity limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the Average CPU per Shard resource:
+        -------------------------------------------
+        This resource measures average CPU across an all cores in a shard of a
+        service fleet. If it is becoming saturated, it may indicate that the
+        shard needs horizontal or vertical scaling.
+      grafana_dashboard_id: alerts-sat_shard_cpu
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '2'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, tier, type, stage, shard) (
+          clamp_min(
+            clamp_max(
+              1 - avg by (environment, tier, type, stage, shard) (
+                rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
+              )
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_type: cause
+      bound: upper
+      metric: gitlab_component_saturation:ratio
+      period: 5m
+      rules_domain: general
+      severity: s3
+    expr: |
+      gitlab_component_saturation:ratio{component="shard_cpu"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="shard_cpu"}
   - alert: component_saturation_slo_out_of_bounds
     for: 5m
     annotations:

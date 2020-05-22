@@ -55,24 +55,44 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
   }),
 
   cpu: resourceSaturationPoint({
-    title: 'Average CPU Saturation per Node',
+    title: 'Average Service CPU',
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
     description: |||
-      Average CPU per Node.
-
-      This resource measures all CPU across a fleet. If it is becoming saturated, it may indicate that the fleet needs horizontal or
-      vertical scaling.
+      This resource measures average CPU across an all cores in a service fleet.
+      If it is becoming saturated, it may indicate that the fleet needs
+      horizontal or vertical scaling.
     |||,
     grafana_dashboard_uid: 'sat_cpu',
-    resourceLabels: ['fqdn'],
+    resourceLabels: [],
     query: |||
-      1 - avg without(mode, cpu) (
+      1 - avg by (%(aggregationLabels)s) (
         rate(node_cpu_seconds_total{mode="idle", %(selector)s}[%(rangeInterval)s])
       )
     |||,
     slos: {
       soft: 0.80,
       hard: 0.90,
+    },
+  }),
+
+  shard_cpu: resourceSaturationPoint({
+    title: 'Average CPU per Shard',
+    appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'], default: 'sidekiq' },
+    description: |||
+      This resource measures average CPU across an all cores in a shard of a
+      service fleet. If it is becoming saturated, it may indicate that the
+      shard needs horizontal or vertical scaling.
+    |||,
+    grafana_dashboard_uid: 'sat_shard_cpu',
+    resourceLabels: ['shard'],
+    query: |||
+      1 - avg by (%(aggregationLabels)s) (
+        rate(node_cpu_seconds_total{mode="idle", %(selector)s}[%(rangeInterval)s])
+      )
+    |||,
+    slos: {
+      soft: 0.85,
+      hard: 0.95,
     },
   }),
 
