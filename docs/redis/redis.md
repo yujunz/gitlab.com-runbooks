@@ -102,8 +102,8 @@ https://thanos-query.ops.gitlab.net/graph?g0.range_input=1w&g0.expr=redis_up%20%
 * can we talk to redis via `redis-cli`?
 
 ```
-REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
-/opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH info
+REDISCLI_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
+/opt/gitlab/embedded/bin/redis-cli info
 ```
 
 ## How to get redis stats? ##
@@ -463,12 +463,12 @@ Redis admin password is stored in the omnibus cookbook secrets in GKMS, and it's
 
 interactive:
 ```
-export REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2); /opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH
+REDISCLI_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2) /opt/gitlab/embedded/bin/redis-cli
 ```
 
 or oneliners:
 ```
-export REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2); /opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH slowlog get 10
+REDISCLI_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2) /opt/gitlab/embedded/bin/redis-cli slowlog get 10
 ```
 
 ## Building a new Redis server and starting replication
@@ -484,8 +484,8 @@ So, after building the nodes, there are some manual steps to take:
 1. On all nodes, `sudo gitlab-ctl start sentinel`
    * Not sure why, but it's minor
 1. On the replicas, start replicating from the master:
-   1. REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\\" -f2)
-   1. /opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH
+   1. REDISCLI_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\\" -f2)
+   1. /opt/gitlab/embedded/bin/redis-cli
    1. 127.0.0.1:6379> slaveof MASTER_IP 6379
    1. 127.0.0.1:6379> info replication
 
@@ -770,15 +770,15 @@ CLUSTER_NAME is one of `gprd-redis` (main persistent cluster), `gprd-redis-cache
     * Host network connectivity
     * Redis is being killed by the OOMKiller
     * A very high latency command (for example `keys *` or `debug sleep 60`) is preventing Redis from processing commands
-    * Redis is unable to write the RDB snapshot, leading to the instance becoming read-only (check `/opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH config get dir`,  `df -h /var/opt/gitlab/redis` for space)
+    * Redis is unable to write the RDB snapshot, leading to the instance becoming read-only (check `/opt/gitlab/embedded/bin/redis-cli config get dir`,  `df -h /var/opt/gitlab/redis` for space)
 
 ### Possible fixes ###
 
 Temporarily disable the `client-output-buffer-limit` on the new master.
 
 ```
-REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
-/opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH config set client-output-buffer-limit "slave 0 0 0"
+REDISCLI_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
+/opt/gitlab/embedded/bin/redis-cli config set client-output-buffer-limit "slave 0 0 0"
 ```
 
 Once the cluster is stable again, revert the change by setting the value, to the value from the configuration file. (`/var/opt/gitlab/redis/redis.conf`)
@@ -790,8 +790,8 @@ client-output-buffer-limit slave 4gb 4gb 0
 ```
 You need to execute this:
 ```
-REDIS_MASTER_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
-/opt/gitlab/embedded/bin/redis-cli -a $REDIS_MASTER_AUTH config set client-output-buffer-limit "slave 4294967296 4294967296 0"
+REDISCLI_AUTH=$(sudo grep ^masterauth /var/opt/gitlab/redis/redis.conf|cut -d\" -f2)
+/opt/gitlab/embedded/bin/redis-cli config set client-output-buffer-limit "slave 4294967296 4294967296 0"
 ```
 
 ## Redis is down
