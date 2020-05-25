@@ -499,8 +499,7 @@ You could follow that project's README to install manually;
 Or via homebrew:
 
 ```
-# pending https://github.com/google/go-jsonnet/issues/401
-brew install --HEAD go-jsonnet
+brew install go-jsonnet
 ```
 Or use [an asdf
 plugin](https://gitlab.com/craigfurman/asdf-go-jsonnet).
