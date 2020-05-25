@@ -42,23 +42,48 @@ local seriesOverrides = import 'series_overrides.libsonnet';
   workload(serviceType, startRow)::
     local formatConfig = {
       serviceType: serviceType,
+      primarySelectorSnippet: 'and on (instance) redis_instance_info{role="master"}',
+      replicaSelectorSnippet: 'and on (instance) redis_instance_info{role="slave"}',
     };
     layout.grid([
       basic.timeseries(
-        title='Operation Rate',
+        title='Operation Rate - Primary',
         yAxisLabel='Operations/sec',
         query=|||
-          sum(rate(redis_commands_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
+          sum(rate(redis_commands_total{environment="$environment", type="%(serviceType)s"}[$__interval]) %(primarySelectorSnippet)s ) by (fqdn)
+        ||| % formatConfig,
+        legendFormat='{{ fqdn }}',
+        intervalFactor=1,
+      ),
+      basic.timeseries(
+        title='Operation Rate - Replicas',
+        yAxisLabel='Operations/sec',
+        query=|||
+          sum(rate(redis_commands_total{environment="$environment", type="%(serviceType)s"}[$__interval]) %(replicaSelectorSnippet)s ) by (fqdn)
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',
         intervalFactor=1,
       ),
       basic.saturationTimeseries(
-        title='Redis CPU per Node',
+        title='Redis CPU per Node - Primary',
         description='redis is single-threaded. This graph shows maximum utilization across all cores on each host. Lower is better.',
         query=|||
           max(
             max_over_time(instance:redis_cpu_usage:rate1m{environment="$environment", type="%(serviceType)s", fqdn=~"%(serviceType)s-\\d\\d.*"}[$__interval])
+              %(primarySelectorSnippet)s
+          ) by (fqdn)
+        ||| % formatConfig,
+        legendFormat='{{ fqdn }}',
+        interval='30s',
+        intervalFactor=1,
+      ),
+      basic.saturationTimeseries(
+        title='Redis CPU per Node - Replicas',
+        description='redis is single-threaded. This graph shows maximum utilization across all cores on each host. Lower is better.',
+        query=|||
+          max(
+            max_over_time(instance:redis_cpu_usage:rate1m{environment="$environment", type="%(serviceType)s", fqdn=~"%(serviceType)s-\\d\\d.*"}[$__interval])
+              %(replicaSelectorSnippet)s
           ) by (fqdn)
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',
@@ -66,47 +91,102 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         intervalFactor=1,
       ),
       basic.timeseries(
-        title='Redis Network Out',
+        title='Redis Network Out - Primary',
         format='Bps',
         query=|||
-          sum(rate(redis_net_output_bytes_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
+          sum(rate(redis_net_output_bytes_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+           %(primarySelectorSnippet)s
+          ) by (fqdn)
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',
         intervalFactor=2,
       ),
       basic.timeseries(
-        title='Redis Network In',
+        title='Redis Network Out - Replicas',
         format='Bps',
         query=|||
-          sum(rate(redis_net_input_bytes_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
+          sum(rate(redis_net_output_bytes_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+           %(replicaSelectorSnippet)s
+          ) by (fqdn)
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',
         intervalFactor=2,
       ),
       basic.timeseries(
-        title='Slowlog Events',
+        title='Redis Network In - Primary',
+        format='Bps',
+        query=|||
+          sum(rate(redis_net_input_bytes_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(primarySelectorSnippet)s
+          ) by (fqdn)
+        ||| % formatConfig,
+        legendFormat='{{ fqdn }}',
+        intervalFactor=2,
+      ),
+      basic.timeseries(
+        title='Redis Network In - Replicas',
+        format='Bps',
+        query=|||
+          sum(rate(redis_net_input_bytes_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(replicaSelectorSnippet)s
+          ) by (fqdn)
+        ||| % formatConfig,
+        legendFormat='{{ fqdn }}',
+        intervalFactor=2,
+      ),
+      basic.timeseries(
+        title='Slowlog Events - Primary',
         yAxisLabel='Events',
         query=|||
-          sum(changes(redis_slowlog_last_id{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
+          sum(changes(redis_slowlog_last_id{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(primarySelectorSnippet)s
+          ) by (fqdn)
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',
         intervalFactor=10,
       ),
       basic.timeseries(
-        title='Operation Rate per Command',
+        title='Slowlog Events - Replicas',
+        yAxisLabel='Events',
+        query=|||
+          sum(changes(redis_slowlog_last_id{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(replicaSelectorSnippet)s
+          ) by (fqdn)
+        ||| % formatConfig,
+        legendFormat='{{ fqdn }}',
+        intervalFactor=10,
+      ),
+      basic.timeseries(
+        title='Operation Rate per Command - Primary',
         yAxisLabel='Operations/sec',
         legend_show=false,
         query=|||
-          sum(rate(redis_commands_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (cmd)
+          sum(rate(redis_commands_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(primarySelectorSnippet)s
+          ) by (cmd)
+        ||| % formatConfig,
+        legendFormat='{{ cmd }}',
+        intervalFactor=2,
+      ),
+      basic.timeseries(
+        title='Operation Rate per Command - Replicas',
+        yAxisLabel='Operations/sec',
+        legend_show=false,
+        query=|||
+          sum(rate(redis_commands_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(replicaSelectorSnippet)s
+          ) by (cmd)
         ||| % formatConfig,
         legendFormat='{{ cmd }}',
         intervalFactor=2,
       ),
       basic.latencyTimeseries(
-        title='Average Operation Latency',
+        title='Average Operation Latency - Primary',
         legend_show=false,
         query=|||
-          sum(rate(redis_commands_duration_seconds_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (cmd)
+          sum(rate(redis_commands_duration_seconds_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(primarySelectorSnippet)s
+          ) by (cmd)
           /
           sum(rate(redis_commands_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (cmd)
         ||| % formatConfig,
@@ -114,10 +194,36 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         intervalFactor=2,
       ),
       basic.latencyTimeseries(
-        title='Total Operation Latency',
+        title='Average Operation Latency - Replicas',
         legend_show=false,
         query=|||
-          sum(rate(redis_commands_duration_seconds_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (cmd)
+          sum(rate(redis_commands_duration_seconds_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(replicaSelectorSnippet)s
+          ) by (cmd)
+          /
+          sum(rate(redis_commands_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (cmd)
+        ||| % formatConfig,
+        legendFormat='{{ cmd }}',
+        intervalFactor=2,
+      ),
+      basic.latencyTimeseries(
+        title='Total Operation Latency - Primary',
+        legend_show=false,
+        query=|||
+          sum(rate(redis_commands_duration_seconds_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(primarySelectorSnippet)s
+          ) by (cmd)
+        ||| % formatConfig,
+        legendFormat='{{ cmd }}',
+        intervalFactor=2,
+      ),
+      basic.latencyTimeseries(
+        title='Total Operation Latency - Replicas',
+        legend_show=false,
+        query=|||
+          sum(rate(redis_commands_duration_seconds_total{environment="$environment", type="%(serviceType)s"}[$__interval])
+            %(replicaSelectorSnippet)s
+          ) by (cmd)
         ||| % formatConfig,
         legendFormat='{{ cmd }}',
         intervalFactor=2,
