@@ -1,0 +1,12 @@
+{
+   "index_patterns": [
+      "apm-7.5.1-error*"
+   ],
+   "settings": {
+      "index": {
+         "lifecycle": {
+           "name" : "gitlab-infra-default-ilm-policy"
+         }
+      }
+   }
+}
