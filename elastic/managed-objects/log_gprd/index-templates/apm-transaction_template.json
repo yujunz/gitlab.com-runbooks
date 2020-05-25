@@ -1,12 +1,13 @@
 {
-   "index_patterns": [
-      "apm-7.5.1-transaction*"
-   ],
-   "settings": {
-      "index": {
-         "lifecycle": {
-           "name" : "gitlab-infra-default-ilm-policy"
-         }
+  "order": 3,
+  "index_patterns": [
+    "apm-7.5.1-transaction*"
+  ],
+  "settings": {
+    "index": {
+      "lifecycle": {
+        "name": "gitlab-apm-default-ilm-policy"
       }
-   }
+    }
+  }
 }
