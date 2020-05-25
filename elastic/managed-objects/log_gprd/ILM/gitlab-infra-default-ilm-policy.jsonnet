@@ -5,7 +5,7 @@
         actions: {
           rollover: {
             max_age: '24h',
-            max_size: '10gb',
+            max_size: '20gb',
           },
           set_priority: {
             priority: 100,
