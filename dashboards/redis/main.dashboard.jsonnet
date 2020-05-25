@@ -48,7 +48,16 @@ serviceDashboard.overview('redis', 'db')
 .addPanel(
   row.new(title='Sentinel Processes', collapse=true)
   .addPanels(
-    processExporter.namedGroup('sentinel', 'redis-sentinel 0.0.0.0:26379 [sentinel]', 'redis', '$stage', startRow=1)
+    processExporter.namedGroup(
+      'sentinel',
+      {
+        environment: '$environment',
+        groupname: 'redis-sentinel 0.0.0.0:26379 [sentinel]',
+        type: 'redis',
+        stage: '$stage',
+      },
+      startRow=1
+    )
   ),
   gridPos={
     x: 0,

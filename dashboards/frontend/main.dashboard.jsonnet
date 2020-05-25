@@ -14,6 +14,15 @@ serviceDashboard.overview('frontend', 'lb')
   }
 )
 .addPanels(
-  processExporter.namedGroup('haproxy', 'haproxy', 'frontend', '$stage', startRow=1001)
+  processExporter.namedGroup(
+    'haproxy',
+    {
+      environment: '$environment',
+      groupname: 'haproxy',
+      type: 'frontend',
+      stage: '$stage',
+    },
+    startRow=1001
+  )
 )
 .overviewTrailer()
