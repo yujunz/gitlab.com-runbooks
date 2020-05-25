@@ -60,6 +60,11 @@ local resourceSaturationPoint = function(definition)
     getStaticLabels()::
       ({ staticLabels: {} } + definition).staticLabels,
 
+    // This signifies the minimum period over which this resource is
+    // evaluated. Defaults to 1m, which is the legacy value
+    getBurnRatePeriod()::
+      ({ burnRatePeriod: '1m' } + self).burnRatePeriod,
+
     getRecordingRuleDefinition(componentName)::
       local definition = self;
 
@@ -77,7 +82,7 @@ local resourceSaturationPoint = function(definition)
               'type!=""'
         );
 
-      local query = definition.getQuery('environment!="", %s' % [typeFilter], '1m');
+      local query = definition.getQuery('environment!="", %s' % [typeFilter], definition.getBurnRatePeriod());
 
       {
         record: 'gitlab_component_saturation:ratio',
@@ -137,6 +142,7 @@ local resourceSaturationPoint = function(definition)
           period: triggerDuration,
           bound: 'upper',
           alert_type: 'cause',
+          burnRatePeriod: definition.getBurnRatePeriod(),
           // slo_alert: 'yes' Uncomment after trial period
           // pager: pagerduty Uncomment after trial period
         },
@@ -155,7 +161,7 @@ local resourceSaturationPoint = function(definition)
           grafana_panel_id: '2',
           grafana_variables: 'environment,type,stage',
           grafana_min_zoom_hours: '6',
-          promql_query: definition.getQuery('environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"', '1m', definition.resourceLabels),
+          promql_query: definition.getQuery('environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"', definition.getBurnRatePeriod(), definition.resourceLabels),
         },
       }],
 

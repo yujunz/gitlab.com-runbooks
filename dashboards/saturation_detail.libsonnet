@@ -113,7 +113,7 @@ local saturationResources = import './saturation-resources.libsonnet';
       selector: selector,
     };
     local componentDetails = saturationResources[component];
-    local query = componentDetails.getQuery(selector, '$__interval', maxAggregationLabels=componentDetails.resourceLabels);
+    local query = componentDetails.getQuery(selector, componentDetails.getBurnRatePeriod(), maxAggregationLabels=componentDetails.resourceLabels);
 
     self.saturationPanel(
       '%s component saturation: %s' % [component, componentDetails.title],
@@ -122,7 +122,7 @@ local saturationResources = import './saturation-resources.libsonnet';
       linewidth=1,
       query=query,
       legendFormat=componentDetails.getLegendFormat(),
-      selector=selector,
+      selector=selector
     ),
 
   saturationDetailPanels(selector, components)::
