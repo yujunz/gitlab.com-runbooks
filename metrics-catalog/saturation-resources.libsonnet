@@ -117,7 +117,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
 
   disk_sustained_read_iops: resourceSaturationPoint({
     title: 'Disk Sustained Read IOPS Saturation per Node',
-    appliesTo: { allExcept: ['waf', 'bastion'], default: 'patroni' },
+    appliesTo: { allExcept: ['waf', 'bastion', 'deploy-node'], default: 'patroni' },
     description: |||
       Disk sustained read IOPS saturation per node.
     |||,
@@ -137,7 +137,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
 
   disk_sustained_read_throughput: resourceSaturationPoint({
     title: 'Disk Sustained Read Throughput Saturation per Node',
-    appliesTo: { allExcept: ['waf', 'bastion'], default: 'patroni' },
+    appliesTo: { allExcept: ['waf', 'bastion', 'deploy-node'], default: 'patroni' },
     description: |||
       Disk sustained read throughput saturation per node.
     |||,
@@ -157,7 +157,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
 
   disk_sustained_write_iops: resourceSaturationPoint({
     title: 'Disk Sustained Write IOPS Saturation per Node',
-    appliesTo: { allExcept: ['waf', 'bastion'], default: 'patroni' },
+    appliesTo: { allExcept: ['waf', 'bastion', 'deploy-node'], default: 'patroni' },
     description: |||
       Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
       maximum write IOPS value. This value can be exceeded for brief periods.
@@ -184,7 +184,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
 
   disk_sustained_write_throughput: resourceSaturationPoint({
     title: 'Disk Sustained Write Throughput Saturation per Node',
-    appliesTo: { allExcept: ['waf', 'bastion'], default: 'patroni' },
+    appliesTo: { allExcept: ['waf', 'bastion', 'deploy-node'], default: 'patroni' },
     description: |||
       Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
       maximum write throughput value. This value can be exceeded for brief periods.
