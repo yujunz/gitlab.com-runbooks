@@ -5,7 +5,8 @@
    "settings": {
       "index": {
          "lifecycle": {
-            "name": "gitlab-static-objects-cache-ilm-policy"
+            "name": "gitlab-static-objects-cache-ilm-policy",
+            "rollover_alias": "gstg-static-objects-cache"
          }
       },
       "number_of_shards": 2
