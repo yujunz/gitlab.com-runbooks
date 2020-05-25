@@ -26,6 +26,11 @@ local mapping(index) =
                 },
               },
             },
+            raw_response: {
+              // removed due to field explosion, fix pending in
+              // https://gitlab.com/gitlab-org/gitlab/-/merge_requests/32859
+              enabled: false,
+            },
           },
         },
         user_id: {
