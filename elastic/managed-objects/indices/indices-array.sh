@@ -19,6 +19,7 @@ export indices=(
   runner
   shell
   sidekiq
+  static-objects-cache
   system
   workhorse
 )
