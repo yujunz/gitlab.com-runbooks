@@ -75,60 +75,76 @@ groups:
       component: disk_sustained_read_iops
     expr: |
       max by(environment, tier, type, stage) (
-        clamp_min(
-          clamp_max(
-            rate(node_disk_reads_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[5m])
-            /
-            node_disk_max_read_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+        quantile_over_time(0.80,
+          (
+            clamp_min(
+              clamp_max(
+                rate(node_disk_reads_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[1m])
+                /
+                node_disk_max_read_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+                ,
+                1)
             ,
-            1)
-        ,
-        0)
+            0)
+          )[5m:1m]
+        )
       )
   - record: gitlab_component_saturation:ratio
     labels:
       component: disk_sustained_read_throughput
     expr: |
       max by(environment, tier, type, stage) (
-        clamp_min(
-          clamp_max(
-            rate(node_disk_read_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[5m])
-            /
-            node_disk_max_read_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+        quantile_over_time(0.80,
+          (
+            clamp_min(
+              clamp_max(
+                rate(node_disk_read_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[1m])
+                /
+                node_disk_max_read_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+                ,
+                1)
             ,
-            1)
-        ,
-        0)
+            0)
+          )[5m:1m]
+        )
       )
   - record: gitlab_component_saturation:ratio
     labels:
       component: disk_sustained_write_iops
     expr: |
       max by(environment, tier, type, stage) (
-        clamp_min(
-          clamp_max(
-            rate(node_disk_writes_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[5m])
-            /
-            node_disk_max_write_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+        quantile_over_time(0.80,
+          (
+            clamp_min(
+              clamp_max(
+                rate(node_disk_writes_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[1m])
+                /
+                node_disk_max_write_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+                ,
+                1)
             ,
-            1)
-        ,
-        0)
+            0)
+          )[5m:1m]
+        )
       )
   - record: gitlab_component_saturation:ratio
     labels:
       component: disk_sustained_write_throughput
     expr: |
       max by(environment, tier, type, stage) (
-        clamp_min(
-          clamp_max(
-            rate(node_disk_written_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[5m])
-            /
-            node_disk_max_write_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+        quantile_over_time(0.80,
+          (
+            clamp_min(
+              clamp_max(
+                rate(node_disk_written_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[1m])
+                /
+                node_disk_max_write_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+                ,
+                1)
             ,
-            1)
-        ,
-        0)
+            0)
+          )[5m:1m]
+        )
       )
   - record: gitlab_component_saturation:ratio
     labels:
