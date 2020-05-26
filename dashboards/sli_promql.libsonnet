@@ -67,16 +67,25 @@ local formatConfigForSelectorHash(selectorHash) =
   opsRate:: {
     serviceOpsRateQuery(selectorHash, range)::
       |||
-        avg by (type) (avg_over_time(gitlab_service_ops:rate{%(globalSelector)s}[%(range)s]))
+        avg by (type)
+        (avg_over_time(gitlab_service_ops:rate_5m{%(globalSelector)s}[%(range)s]) or avg_over_time(gitlab_service_ops:rate{%(globalSelector)s}[%(range)s]))
         or
-        sum by (type) (gitlab_service_ops:rate{%(selector)s})
+        sum by (type) (gitlab_service_ops:rate_5m{%(selector)s} or gitlab_service_ops:rate{%(selector)s})
       ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
     serviceOpsRateQueryWithOffset(selectorHash, offset)::
       |||
-        avg by (type) (gitlab_service_ops:rate{%(globalSelector)s} offset %(offset)s)
+        avg by (type) (
+          gitlab_service_ops:rate_5m{%(globalSelector)s} offset %(offset)s
+          or
+          gitlab_service_ops:rate{%(globalSelector)s} offset %(offset)s
+        )
         or
-        sum by (type) (gitlab_service_ops:rate{%(selector)s} offset %(offset)s)
+        sum by (type) (
+          gitlab_service_ops:rate_5m{%(selector)s} offset %(offset)s
+          or
+          gitlab_service_ops:rate{%(selector)s} offset %(offset)s
+        )
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
     serviceOpsRatePrediction(selectorHash, sigma)::
@@ -101,7 +110,7 @@ local formatConfigForSelectorHash(selectorHash) =
       |||
         sum(
           avg_over_time(
-            gitlab_component_ops:rate{%(selector)s}[%(range)s]
+            gitlab_component_ops:rate_5m{%(selector)s}[%(range)s]
           )
         ) by (component)
       ||| % formatConfigForSelectorHash(selectorHash) { range: range },
@@ -113,9 +122,9 @@ local formatConfigForSelectorHash(selectorHash) =
         /* Max case */
         |||
           clamp_max(
-            max by (type) (max_over_time(gitlab_service_errors:ratio{%(globalSelector)s}[$__interval]))
+            max by (type) (max_over_time(gitlab_service_errors:ratio_5m{%(globalSelector)s}[$__interval]))
             or
-            sum by (type) (gitlab_service_errors:ratio{%(selector)s}),
+            sum by (type) (gitlab_service_errors:ratio_5m{%(selector)s}),
             %(clampMax)g
           )
         ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax }
@@ -123,7 +132,7 @@ local formatConfigForSelectorHash(selectorHash) =
         /* Avg case */
         |||
           clamp_max(
-            avg by (type) (avg_over_time(gitlab_service_errors:ratio{%(globalSelector)s}[$__interval])),
+            avg by (type) (avg_over_time(gitlab_service_errors:ratio_5m{%(globalSelector)s}[$__interval])),
             %(clampMax)g
           )
         ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax },
@@ -148,19 +157,19 @@ local formatConfigForSelectorHash(selectorHash) =
 
     serviceErrorRateQueryWithOffset(selectorHash, offset)::
       |||
-        max by (type) (gitlab_service_errors:ratio{%(globalSelector)s} offset %(offset)s)
+        max by (type) (gitlab_service_errors:ratio_5m{%(globalSelector)s} offset %(offset)s)
         or
-        sum by (type) (gitlab_service_errors:ratio{%(selector)s} offset %(offset)s)
+        sum by (type) (gitlab_service_errors:ratio_5m{%(selector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
     componentErrorRateQuery(selectorHash)::
       |||
         sum(
-          gitlab_component_errors:rate{%(selector)s}
+          gitlab_component_errors:rate_5m{%(selector)s}
         ) by (component)
         /
         sum(
-          gitlab_component_ops:rate{%(selector)s}
+          gitlab_component_ops:rate_5m{%(selector)s}
         ) by (component)
       ||| % formatConfigForSelectorHash(selectorHash) {},
   },
