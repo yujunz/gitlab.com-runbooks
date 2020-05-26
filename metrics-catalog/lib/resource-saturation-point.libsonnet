@@ -23,31 +23,62 @@ local resourceSaturationPoint = function(definition)
   local serviceApplicator = getServiceApplicator(definition.appliesTo);
 
   definition {
-    getQuery(selector, rangeInterval, maxAggregationLabels=[])::
+    getQuery(selector, rangeInterval, maxAggregationLabels=[], includeQuantile=false)::
       local staticLabels = self.getStaticLabels();
       local queryAggregationLabels = environmentLabels + definition.resourceLabels;
       local allMaxAggregationLabels = environmentLabels + maxAggregationLabels;
       local queryAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), queryAggregationLabels);
       local maxAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), allMaxAggregationLabels);
 
+      // Apply a quantile_over_time, but only for recording rules
+      // and if we define a quantile parameter
+      local applyQuantile = includeQuantile && std.objectHas(definition, 'quantile');
+
+      local innerRangeInterval = if applyQuantile then
+        definition.quantile.innerRangePeriod
+      else
+        rangeInterval;
+
       local preaggregation = definition.query % {
-        rangeInterval: rangeInterval,
+        rangeInterval: innerRangeInterval,
         selector: selector,
         aggregationLabels: std.join(', ', queryAggregationLabelsExcludingStaticLabels),
       };
 
+      local clampedPreaggregation = |||
+        clamp_min(
+          clamp_max(
+            %(query)s
+            ,
+            1)
+        ,
+        0)
+      ||| % {
+        query: strings.indent(preaggregation, 4),
+      };
+
+      // Use quantile_over_time to remove outliers
+      local quantileOverTimeQuery = if applyQuantile then
+        |||
+          quantile_over_time(0.80,
+            (
+              %(clampedPreaggregation)s
+            )[%(rangeInterval)s:%(innerRangeInterval)s]
+          )
+        ||| % {
+          clampedPreaggregation: strings.indent(clampedPreaggregation, 4),
+          rangeInterval: rangeInterval,
+          innerRangeInterval: innerRangeInterval,
+        }
+      else
+        clampedPreaggregation;
+
       |||
         max by(%(maxAggregationLabels)s) (
-          clamp_min(
-            clamp_max(
-              %(query)s
-              ,
-              1)
-          ,
-          0)
+          %(quantileOverTimeQuery)s
         )
       ||| % {
-        query: strings.indent(preaggregation, 6),
+        quantileOverTimeQuery: strings.indent(quantileOverTimeQuery, 2),
         maxAggregationLabels: std.join(', ', maxAggregationLabelsExcludingStaticLabels),
       },
 
@@ -82,7 +113,7 @@ local resourceSaturationPoint = function(definition)
               'type!=""'
         );
 
-      local query = definition.getQuery('environment!="", %s' % [typeFilter], definition.getBurnRatePeriod());
+      local query = definition.getQuery('environment!="", %s' % [typeFilter], definition.getBurnRatePeriod(), includeQuantile=true);
 
       {
         record: 'gitlab_component_saturation:ratio',
