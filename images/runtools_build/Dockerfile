@@ -1,9 +1,15 @@
 FROM golang:alpine AS go-jsonnet
 
+RUN wget -O go-jsonnet.tar.gz https://api.github.com/repos/google/go-jsonnet/tarball/v0.16.0 && \
+  tar -xf go-jsonnet.tar.gz && \
+  cd google-go-jsonnet-* && \
+  go build ./cmd/jsonnet && \
+  go build ./cmd/jsonnetfmt && \
+  mv jsonnet jsonnetfmt /usr/local/bin/ && \
+  rm -rf go-jsonnet.tar.gz google-go-jsonnet-*
+
 RUN apk add --no-cache bash git && \
     GOPATH=/usr/local go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb && \
-    GOPATH=/usr/local go get github.com/google/go-jsonnet/cmd/jsonnet && \
-    GOPATH=/usr/local go get github.com/google/go-jsonnet/cmd/jsonnetfmt && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/*
 
 FROM alpine:latest
