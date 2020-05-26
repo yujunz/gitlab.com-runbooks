@@ -113,6 +113,15 @@ As of 17-01-2020 we are using ca. **4TiB elastic storage per day** (only pubsub 
 nginx). That means for a **7 day retention** we consume around 28TiB storage. Adding
 nginx logs would increase that by 0.6TiB/day (15%), haproxy logs by 2.5TiB/day (63%).
 
+## Analyzing index mappings
+
+At the moment of writing, we utilize static mappings defined in this repository. Here are a few ideas for analysis of those mappings:
+```bash
+$ jsonnet elastic/managed-objects/lib/index_mappings/rails.jsonnet | jq -r 'leaf_paths|join(".")' | grep -E '\.type$' | wc -l
+$ jsonnet elastic/managed-objects/lib/index_mappings/rails.jsonnet | jq -r 'leaf_paths|join(".")' | grep -E '\.type$' | head
+$ jsonnet elastic/managed-objects/lib/index_mappings/rails.jsonnet | jq -r 'leaf_paths|join(";")' | grep -E ';type$' | awk '{ print $1, 1 }' | inferno-flamegraph > mapping_rails.svg
+```
+
 # Concepts #
 
 ## Elastic learning materials ##
