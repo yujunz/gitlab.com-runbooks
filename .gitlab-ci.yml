@@ -503,3 +503,12 @@ verify_alertmanager_parity:
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
     - alertmanager/verify-alertmanager-parity.sh
+
+assert_consistent_tool_versions:
+  stage: test
+  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
+  script: "./bin/assert-tool-versions.sh"
+  # CI image-building flow is decoupled from use of that image. As long as we
+  # keep referencing `runtools_build:latest`, updating a pinned version would
+  # have to be done across 2 MRs, which is painful.
+  allow_failure: true

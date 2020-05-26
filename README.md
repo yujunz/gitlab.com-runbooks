@@ -485,11 +485,12 @@ legacy_version_file = yes
 
 ### Go, Jsonnet
 
-The single-source-of-truth for tool versions for Go and Jsonnet versions is in
-the `.tool-versions` file. Please keep this file up-to-date, whether or not you
-choose to use `adsf` locally. This is technically not strictly true at the time
-of writing - we build the latest master version in the CI docker image, because
-the `jsonnetfmt` binary is not available in release tags of go-jsonnet yet.
+We use `.tool-versions` to record the version of go-jsonnet that should be used
+for local development. The `asdf` version manager is used by some team members
+to automatically switch versions based on the contents of this file. It should
+be kept up to date. `images/runtools_build/Dockerfile` contains the version of
+go-jsonnet we use in CI. This should be kept in sync with `.tool-versions`, and
+a (non-gating) CI job enforces this.
 
 To install [go-jsonnet](https://github.com/google/go-jsonnet), you have a few
 options.
