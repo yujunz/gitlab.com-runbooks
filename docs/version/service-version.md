@@ -13,6 +13,7 @@
 
 ## Troubleshooting Pointers
 
+* [../elastic/README.md](../elastic/README.md)
 * [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)
 * [../gitaly/gitaly-error-rate.md](../gitaly/gitaly-error-rate.md)
 * [../gitaly/storage-sharding.md](../gitaly/storage-sharding.md)

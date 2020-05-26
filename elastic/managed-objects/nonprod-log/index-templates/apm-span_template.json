@@ -1,0 +1,13 @@
+{
+  "order": 3,
+  "index_patterns": [
+    "apm-7.4.2-span*"
+  ],
+  "settings": {
+    "index": {
+      "lifecycle": {
+        "name": "gitlab-apm-default-ilm-policy"
+      }
+    }
+  }
+}
