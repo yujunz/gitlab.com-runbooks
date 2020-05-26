@@ -22,7 +22,7 @@ verify: verify-shellcheck verify-fmt
 
 .PHONY: verify-fmt
 verify-fmt:
-	$(JSONET_COMMAND) $(JSONNET_FMT_FLAGS) --test $(JSONNET_FILES)
+	$(JSONET_COMMAND) $(JSONNET_FMT_FLAGS) --test $(JSONNET_FILES) || $(JSONET_COMMAND) $(JSONNET_FMT_FLAGS) -i $(JSONNET_FILES) && git --no-pager diff
 	shfmt $(SHELL_FMT_FLAGS) -l -d $(SHELL_FILES)
 
 .PHONY: verify-shellcheck
