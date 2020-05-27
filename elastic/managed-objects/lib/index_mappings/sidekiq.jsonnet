@@ -4,55 +4,6 @@
     '@timestamp': {
       type: 'date',
     },
-    agent: {
-      properties: {
-        ephemeral_id: {
-          type: 'text',
-          fields: {
-            keyword: {
-              type: 'keyword',
-              ignore_above: 256,
-            },
-          },
-        },
-        hostname: {
-          type: 'text',
-          fields: {
-            keyword: {
-              type: 'keyword',
-              ignore_above: 256,
-            },
-          },
-        },
-        id: {
-          type: 'text',
-          fields: {
-            keyword: {
-              type: 'keyword',
-              ignore_above: 256,
-            },
-          },
-        },
-        type: {
-          type: 'text',
-          fields: {
-            keyword: {
-              type: 'keyword',
-              ignore_above: 256,
-            },
-          },
-        },
-        version: {
-          type: 'text',
-          fields: {
-            keyword: {
-              type: 'keyword',
-              ignore_above: 256,
-            },
-          },
-        },
-      },
-    },
     docker: {
       properties: {
         container_id: {
