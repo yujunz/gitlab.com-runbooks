@@ -23,24 +23,15 @@ local resourceSaturationPoint = function(definition)
   local serviceApplicator = getServiceApplicator(definition.appliesTo);
 
   definition {
-    getQuery(selector, rangeInterval, maxAggregationLabels=[], includeQuantile=false)::
+    getQuery(selector, rangeInterval, maxAggregationLabels=[])::
       local staticLabels = self.getStaticLabels();
       local queryAggregationLabels = environmentLabels + definition.resourceLabels;
       local allMaxAggregationLabels = environmentLabels + maxAggregationLabels;
       local queryAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), queryAggregationLabels);
       local maxAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), allMaxAggregationLabels);
 
-      // Apply a quantile_over_time, but only for recording rules
-      // and if we define a quantile parameter
-      local applyQuantile = includeQuantile && std.objectHas(definition, 'quantile');
-
-      local innerRangeInterval = if applyQuantile then
-        definition.quantile.innerRangePeriod
-      else
-        rangeInterval;
-
       local preaggregation = definition.query % {
-        rangeInterval: innerRangeInterval,
+        rangeInterval: rangeInterval,
         selector: selector,
         aggregationLabels: std.join(', ', queryAggregationLabelsExcludingStaticLabels),
       };
@@ -57,28 +48,12 @@ local resourceSaturationPoint = function(definition)
         query: strings.indent(preaggregation, 4),
       };
 
-      // Use quantile_over_time to remove outliers
-      local quantileOverTimeQuery = if applyQuantile then
-        |||
-          quantile_over_time(0.80,
-            (
-              %(clampedPreaggregation)s
-            )[%(rangeInterval)s:%(innerRangeInterval)s]
-          )
-        ||| % {
-          clampedPreaggregation: strings.indent(clampedPreaggregation, 4),
-          rangeInterval: rangeInterval,
-          innerRangeInterval: innerRangeInterval,
-        }
-      else
-        clampedPreaggregation;
-
       |||
         max by(%(maxAggregationLabels)s) (
           %(quantileOverTimeQuery)s
         )
       ||| % {
-        quantileOverTimeQuery: strings.indent(quantileOverTimeQuery, 2),
+        quantileOverTimeQuery: strings.indent(clampedPreaggregation, 2),
         maxAggregationLabels: std.join(', ', maxAggregationLabelsExcludingStaticLabels),
       },
 
@@ -113,7 +88,7 @@ local resourceSaturationPoint = function(definition)
               'type!=""'
         );
 
-      local query = definition.getQuery('environment!="", %s' % [typeFilter], definition.getBurnRatePeriod(), includeQuantile=true);
+      local query = definition.getQuery('environment!="", %s' % [typeFilter], definition.getBurnRatePeriod());
 
       {
         record: 'gitlab_component_saturation:ratio',
@@ -159,6 +134,14 @@ local resourceSaturationPoint = function(definition)
         title: definition.title,
       };
 
+      local quantileDetails = if std.objectHas(definition, 'quantile') then
+        {
+          quantile_period: definition.quantile.period,
+          quantile: '%g' %[definition.quantile.applyQuantile],
+        }
+      else
+        {};
+
       [{
         alert: 'component_saturation_slo_out_of_bounds',
         expr: |||
@@ -173,10 +156,10 @@ local resourceSaturationPoint = function(definition)
           period: triggerDuration,
           bound: 'upper',
           alert_type: 'cause',
-          burnRatePeriod: definition.getBurnRatePeriod(),
+          burn_rate_period: definition.getBurnRatePeriod(),
           // slo_alert: 'yes' Uncomment after trial period
           // pager: pagerduty Uncomment after trial period
-        },
+        } + quantileDetails,
         annotations: {
           title: 'The %(title)s resource of the {{ $labels.type }} service ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity limit.' % formatConfig,
           description: |||

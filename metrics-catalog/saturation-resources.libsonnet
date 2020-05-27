@@ -128,14 +128,11 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
       /
       node_disk_max_read_iops{%(selector)s}
     |||,
-    quantile: {
-      applyQuantile: 0.8,
-      innerRangePeriod: '1m',
-    },
-    burnRatePeriod: '5m',
+    burnRatePeriod: '20m',
     slos: {
       soft: 0.80,
       hard: 0.90,
+      alert_trigger_duration: 'long',
     },
   }),
 
@@ -152,14 +149,11 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
       /
       node_disk_max_read_bytes_seconds{%(selector)s}
     |||,
-    quantile: {
-      applyQuantile: 0.8,
-      innerRangePeriod: '1m',
-    },
-    burnRatePeriod: '5m',
+    burnRatePeriod: '20m',
     slos: {
       soft: 0.70,
       hard: 0.80,
+      alert_trigger_duration: 'long',
     },
   }),
 
@@ -183,14 +177,11 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
       /
       node_disk_max_write_iops{%(selector)s}
     |||,
-    quantile: {
-      applyQuantile: 0.8,
-      innerRangePeriod: '1m',
-    },
-    burnRatePeriod: '5m',
+    burnRatePeriod: '20m',
     slos: {
       soft: 0.80,
       hard: 0.90,
+      alert_trigger_duration: 'long',
     },
   }),
 
@@ -214,14 +205,11 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
       /
       node_disk_max_write_bytes_seconds{%(selector)s}
     |||,
-    quantile: {
-      applyQuantile: 0.8,
-      innerRangePeriod: '1m',
-    },
-    burnRatePeriod: '5m',
+    burnRatePeriod: '20m',
     slos: {
       soft: 0.70,
       hard: 0.80,
+      alert_trigger_duration: 'long',
     },
   }),
 

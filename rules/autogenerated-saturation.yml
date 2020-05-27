@@ -75,76 +75,60 @@ groups:
       component: disk_sustained_read_iops
     expr: |
       max by(environment, tier, type, stage) (
-        quantile_over_time(0.80,
-          (
-            clamp_min(
-              clamp_max(
-                rate(node_disk_reads_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[1m])
-                /
-                node_disk_max_read_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
-                ,
-                1)
+        clamp_min(
+          clamp_max(
+            rate(node_disk_reads_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[20m])
+            /
+            node_disk_max_read_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
             ,
-            0)
-          )[5m:1m]
-        )
+            1)
+        ,
+        0)
       )
   - record: gitlab_component_saturation:ratio
     labels:
       component: disk_sustained_read_throughput
     expr: |
       max by(environment, tier, type, stage) (
-        quantile_over_time(0.80,
-          (
-            clamp_min(
-              clamp_max(
-                rate(node_disk_read_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[1m])
-                /
-                node_disk_max_read_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
-                ,
-                1)
+        clamp_min(
+          clamp_max(
+            rate(node_disk_read_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[20m])
+            /
+            node_disk_max_read_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
             ,
-            0)
-          )[5m:1m]
-        )
+            1)
+        ,
+        0)
       )
   - record: gitlab_component_saturation:ratio
     labels:
       component: disk_sustained_write_iops
     expr: |
       max by(environment, tier, type, stage) (
-        quantile_over_time(0.80,
-          (
-            clamp_min(
-              clamp_max(
-                rate(node_disk_writes_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[1m])
-                /
-                node_disk_max_write_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
-                ,
-                1)
+        clamp_min(
+          clamp_max(
+            rate(node_disk_writes_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[20m])
+            /
+            node_disk_max_write_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
             ,
-            0)
-          )[5m:1m]
-        )
+            1)
+        ,
+        0)
       )
   - record: gitlab_component_saturation:ratio
     labels:
       component: disk_sustained_write_throughput
     expr: |
       max by(environment, tier, type, stage) (
-        quantile_over_time(0.80,
-          (
-            clamp_min(
-              clamp_max(
-                rate(node_disk_written_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[1m])
-                /
-                node_disk_max_write_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
-                ,
-                1)
+        clamp_min(
+          clamp_max(
+            rate(node_disk_written_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[20m])
+            /
+            node_disk_max_write_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
             ,
-            0)
-          )[5m:1m]
-        )
+            1)
+        ,
+        0)
       )
   - record: gitlab_component_saturation:ratio
     labels:
@@ -566,34 +550,42 @@ groups:
     expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
+      alert_trigger_duration: long
       component: disk_sustained_read_iops
     expr: '0.8'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
+      alert_trigger_duration: long
       component: disk_sustained_read_iops
     expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
+      alert_trigger_duration: long
       component: disk_sustained_read_throughput
     expr: '0.7'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
+      alert_trigger_duration: long
       component: disk_sustained_read_throughput
     expr: '0.8'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
+      alert_trigger_duration: long
       component: disk_sustained_write_iops
     expr: '0.8'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
+      alert_trigger_duration: long
       component: disk_sustained_write_iops
     expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
+      alert_trigger_duration: long
       component: disk_sustained_write_throughput
     expr: '0.7'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
+      alert_trigger_duration: long
       component: disk_sustained_write_throughput
     expr: '0.8'
   - record: slo:max:soft:gitlab_component_saturation:ratio
@@ -814,7 +806,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -864,7 +856,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -906,7 +898,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -946,7 +938,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -955,7 +947,7 @@ groups:
       gitlab_component_saturation:ratio{component="disk_space"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_space"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 5m
+    for: 15m
     annotations:
       title: >-
         The Disk Sustained Read IOPS Saturation per Node resource of the {{ $labels.type }} service ({{
@@ -975,7 +967,7 @@ groups:
         max by(environment, tier, type, stage, fqdn, device) (
           clamp_min(
             clamp_max(
-              rate(node_disk_reads_completed_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
+              rate(node_disk_reads_completed_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
               /
               node_disk_max_read_iops{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
               ,
@@ -987,16 +979,16 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 5m
+      burn_rate_period: 20m
       metric: gitlab_component_saturation:ratio
-      period: 5m
+      period: 15m
       rules_domain: general
       severity: s3
     expr: |
       gitlab_component_saturation:ratio{component="disk_sustained_read_iops"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_sustained_read_iops"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 5m
+    for: 15m
     annotations:
       title: >-
         The Disk Sustained Read Throughput Saturation per Node resource of the {{ $labels.type }} service
@@ -1016,7 +1008,7 @@ groups:
         max by(environment, tier, type, stage, fqdn, device) (
           clamp_min(
             clamp_max(
-              rate(node_disk_read_bytes_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
+              rate(node_disk_read_bytes_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
               /
               node_disk_max_read_bytes_seconds{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
               ,
@@ -1028,16 +1020,16 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 5m
+      burn_rate_period: 20m
       metric: gitlab_component_saturation:ratio
-      period: 5m
+      period: 15m
       rules_domain: general
       severity: s3
     expr: |
       gitlab_component_saturation:ratio{component="disk_sustained_read_throughput"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_sustained_read_throughput"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 5m
+    for: 15m
     annotations:
       title: >-
         The Disk Sustained Write IOPS Saturation per Node resource of the {{ $labels.type }} service ({{
@@ -1064,7 +1056,7 @@ groups:
         max by(environment, tier, type, stage, fqdn, device) (
           clamp_min(
             clamp_max(
-              rate(node_disk_writes_completed_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
+              rate(node_disk_writes_completed_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
               /
               node_disk_max_write_iops{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
               ,
@@ -1076,16 +1068,16 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 5m
+      burn_rate_period: 20m
       metric: gitlab_component_saturation:ratio
-      period: 5m
+      period: 15m
       rules_domain: general
       severity: s3
     expr: |
       gitlab_component_saturation:ratio{component="disk_sustained_write_iops"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_sustained_write_iops"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 5m
+    for: 15m
     annotations:
       title: >-
         The Disk Sustained Write Throughput Saturation per Node resource of the {{ $labels.type }} service
@@ -1112,7 +1104,7 @@ groups:
         max by(environment, tier, type, stage, fqdn, device) (
           clamp_min(
             clamp_max(
-              rate(node_disk_written_bytes_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
+              rate(node_disk_written_bytes_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
               /
               node_disk_max_write_bytes_seconds{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
               ,
@@ -1124,9 +1116,9 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 5m
+      burn_rate_period: 20m
       metric: gitlab_component_saturation:ratio
-      period: 5m
+      period: 15m
       rules_domain: general
       severity: s3
     expr: |
@@ -1167,7 +1159,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1211,7 +1203,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1251,7 +1243,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1292,7 +1284,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1338,7 +1330,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1383,7 +1375,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1429,7 +1421,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1467,7 +1459,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1520,7 +1512,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1571,7 +1563,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1616,7 +1608,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1668,7 +1660,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1716,7 +1708,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1761,7 +1753,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1813,7 +1805,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1855,7 +1847,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1903,7 +1895,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1951,7 +1943,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -1996,7 +1988,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 15m
       rules_domain: general
@@ -2037,7 +2029,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -2083,7 +2075,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -2125,7 +2117,7 @@ groups:
     labels:
       alert_type: cause
       bound: upper
-      burnRatePeriod: 1m
+      burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
