@@ -1,6 +1,6 @@
 # Shared Runners Cost Factors
 
-> Available for GitLab.com Admin only
+> Available for GitLab.com Admins only
 
 Cost Factor is a multiplier for every CI minute being counted towards the Usage Quota.  
 `Public` Cost Factor is applied to `public` projects jobs, `Private` Cost Factor is applied to `private` and `internal` projects jobs.
