@@ -1,20 +1,21 @@
 groups:
 - name: ssl-certificate-expiration.rules
   rules:
-  - alert: SSLCertExpiresSoon
-    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 1 * 86400
+  - alert: SSLCertExpiresVerySoon
+    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 7 * 86400
     for: 30m
     labels:
-      severity: s1
+      severity: s2
       alert_type: cause
       pager: pagerduty
+      project: gitlab.com/gitlab-com/gl-infra/infrastructure
     annotations:
       description: Check SSL for specified nodes and consider reissuing certificate.
       runbook: docs/frontend/ssl_cert.md
       title: SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration
         }}
   - alert: SSLCertExpiresSoon
-    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 7 * 86400
+    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 14 * 86400
     for: 30m
     labels:
       severity: s2
