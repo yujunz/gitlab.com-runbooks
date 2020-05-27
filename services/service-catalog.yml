@@ -2363,7 +2363,6 @@ services:
       # For a list of available background workers, see https://gitlab.com/gitlab-org/gitlab-ee/tree/master/app/workers
       # and https://gitlab.com/gitlab-org/gitlab-ee/tree/master/ee/app/workers
     SLA:
-      overall_sla_weighting: 2 # If this exists, this service will be included in the overall SLA, using this value as a weighted average
       availability:
       response_time:
   technical:
@@ -2746,7 +2745,6 @@ services:
       account up to 2000 minutes, but more can be purchased by upgrading
       to a higher plan.
     SLA:
-      overall_sla_weighting: 3 # If this exists, this service will be included in the overall SLA, using this value as a weighted average
       availability:
       response_time: p95 of 60 second job pick up latency
   technical:

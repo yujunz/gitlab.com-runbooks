@@ -36,22 +36,6 @@ groups:
       avg by (environment) (
         avg_over_time(pingdom_check_status{tags=~".*\\bregistry\\b.*"}[5m])
       )
-  - record: gitlab_service_external_availability:ratio_5m
-    labels:
-      tier: sv
-      type: sidekiq
-    expr: |
-      avg by (environment) (
-        avg_over_time(pingdom_check_status{tags=~".*\\bsidekiq\\b.*"}[5m])
-      )
-  - record: gitlab_service_external_availability:ratio_5m
-    labels:
-      tier: sv
-      type: ci-runners
-    expr: |
-      avg by (environment) (
-        avg_over_time(pingdom_check_status{tags=~".*\\bci-runners\\b.*"}[5m])
-      )
   - record: gitlab_service_external_availability:ratio_1h
     labels:
       tier: sv
@@ -83,22 +67,6 @@ groups:
     expr: |
       avg by (environment) (
         avg_over_time(pingdom_check_status{tags=~".*\\bregistry\\b.*"}[1h])
-      )
-  - record: gitlab_service_external_availability:ratio_1h
-    labels:
-      tier: sv
-      type: sidekiq
-    expr: |
-      avg by (environment) (
-        avg_over_time(pingdom_check_status{tags=~".*\\bsidekiq\\b.*"}[1h])
-      )
-  - record: gitlab_service_external_availability:ratio_1h
-    labels:
-      tier: sv
-      type: ci-runners
-    expr: |
-      avg by (environment) (
-        avg_over_time(pingdom_check_status{tags=~".*\\bci-runners\\b.*"}[1h])
       )
 - name: External monitoring, long interval
   interval: 5m
@@ -134,20 +102,4 @@ groups:
     expr: |
       avg by (environment) (
         avg_over_time(pingdom_check_status{tags=~".*\\bregistry\\b.*"}[1d])
-      )
-  - record: gitlab_service_external_availability:ratio_1d
-    labels:
-      tier: sv
-      type: sidekiq
-    expr: |
-      avg by (environment) (
-        avg_over_time(pingdom_check_status{tags=~".*\\bsidekiq\\b.*"}[1d])
-      )
-  - record: gitlab_service_external_availability:ratio_1d
-    labels:
-      tier: sv
-      type: ci-runners
-    expr: |
-      avg by (environment) (
-        avg_over_time(pingdom_check_status{tags=~".*\\bci-runners\\b.*"}[1d])
       )
