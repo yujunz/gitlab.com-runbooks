@@ -27,9 +27,8 @@ As GitLab.com grows, the number of mirrored project is going to grow as well. We
 1. Under "Running Jobs", pay attention to the `UpdateAllMirrorsWorker`. If that has gone flat, then
 you may need to log the state of the pending pull mirror queue.
 1. Check [Sentry](https://sentry.gitlab.net/gitlab/gitlabcom/) for new 500 errors relating to `UpdateAllMirrorsWorker`.
-1. Check the logs on one sidekiq-catchall node, to see if a big upstream (e.g. bitbucket.org, github.com) are down/returning errors:
-   `sudo grep fail /var/log/gitlab/sidekiq-cluster/current|jq .|egrep 'error_message|_at'`.
-   Look for consistent hostnames or errors; note that there is a low grade normal rate of failure here, so you're looking for outliers.
+1. Check the [logs][mirror-worker-logs], to see if a big upstream (e.g. bitbucket.org, github.com) are down/returning errors
+   Look for consistent hostnames, projects/repos, or errors; note that there is a low grade normal rate of failure here, so you're looking for outliers.
 1. Check the top long-running jobs using the script below, it displays how many minutes they have been running and the project ID.
    Check the projects (i.e. `Project.find(id)`) for a common pattern (e.g. they belong to the same user/group, they reside on the same shard, their upstream is the same, ...).
    ```ruby
@@ -45,3 +44,4 @@ you may need to log the state of the pending pull mirror queue.
 
 [maximum-mirroring-capacity]: https://gitlab.com/admin/application_settings/repository#js-mirror-settings
 [sidekiq-queue-sizes]: https://dashboards.gitlab.net/d/sidekiq-main/sidekiq-overview?panelId=89&fullscreen&orgId=1
+[mirror-worker-logs]: https://log.gprd.gitlab.net/app/kibana#/discover/c5bb8a20-a088-11ea-8617-2347010d3aab
