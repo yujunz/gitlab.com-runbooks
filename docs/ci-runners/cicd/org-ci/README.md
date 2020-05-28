@@ -15,3 +15,11 @@ specifically for CI Runners.
 The main chef role is `org-ci-base` with `org-ci-base-runner` as the base role for all manager.
 There is an additional role for each region that a manager may be built in in order to set
 appropriate region/zone specific configurations.
+
+## Network
+
+| Subnet Name   | CIDR        | Purpose                   |
+| ------------- | ----------- | ------------------------- |
+| manager       | 10.1.0.0/24 | Runner manager machines   |
+| bastion       | 10.1.2.0/24 | bastion network           |
+| shared-runner | 10.2.0.0/16 | Ephemeral runner machines |
