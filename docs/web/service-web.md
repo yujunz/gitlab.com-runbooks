@@ -34,6 +34,7 @@
 * [../gitaly/gitaly-latency.md](../gitaly/gitaly-latency.md)
 * [../gitaly/gitaly-profiling.md](../gitaly/gitaly-profiling.md)
 * [../gitaly/gitaly-token-rotation.md](../gitaly/gitaly-token-rotation.md)
+* [../gitaly/gitaly-unusual-activity.md](../gitaly/gitaly-unusual-activity.md)
 * [../gitaly/storage-servers.md](../gitaly/storage-servers.md)
 * [../monitoring/sentry-is-down.md](../monitoring/sentry-is-down.md)
 * [../nfs/recovering-from-nfs-disaster.md](../nfs/recovering-from-nfs-disaster.md)
