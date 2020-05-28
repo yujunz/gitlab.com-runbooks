@@ -138,10 +138,25 @@ local saturationResources = import './saturation-resources.libsonnet';
     text.new(
       title='Help',
       mode='markdown',
-      content=componentDetails.description + |||
-        * [Find related issues on GitLab.com](%s)
-      ||| % [
-        issueSearch.buildInfraIssueSearch(labels=['GitLab.com Resource Saturation'], search=component),
-      ]
+      content=|||
+        ## %(title)s
+
+        %(description)s
+
+        ## What to do from here here?
+
+        * Check the ${type} service overview dashboard (accessible from the menu above)
+        * [Find related issues on GitLab.com](%(issueSearchLink)s)
+        * [Create an issue in the Infrastructure Tracker](%(createIssueLink)s)
+
+        Keep in mind that this is a **causal alert**. This means that this may not neccessarily
+        be leading to user impact. Check the alert list below for active symptom based
+        alerts incidating potential user impact.
+      ||| % {
+        title: componentDetails.title,
+        description: componentDetails.description,
+        issueSearchLink: issueSearch.buildInfraIssueSearch(labels=['GitLab.com Resource Saturation'], search=component),
+        createIssueLink: 'https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/new?issue[title]=Resource+Saturation:+%s&issue[description]=/label+~"GitLab.com+Resource+Saturation"' % [component],
+      }
     ),
 }
