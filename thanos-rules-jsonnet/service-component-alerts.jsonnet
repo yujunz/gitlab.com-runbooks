@@ -1,3 +1,4 @@
+local alerts = import 'lib/alerts.libsonnet';
 local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 
 // For now, only include jobs that run 0.067 times per second, or 4 times a minute
@@ -13,7 +14,7 @@ local rules = {
     name: 'Service Component Alerts',
     partial_response_strategy: 'warn',
     interval: '1m',
-    rules: [
+    rules: [alerts.processAlertRule(
       {
         alert: 'component_apdex_ratio_burn_rate_slo_out_of_bounds_upper',
         expr: |||
@@ -72,7 +73,7 @@ local rules = {
           promql_template_1: 'gitlab_component_apdex:ratio_1h{environment="$environment", type="$type", stage="$stage", component="$component"}',
         },
       },
-    ],
+    )],
   }],
 };
 

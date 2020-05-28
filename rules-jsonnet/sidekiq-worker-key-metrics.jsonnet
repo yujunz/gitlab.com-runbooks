@@ -3,6 +3,7 @@ local sidekiqMetricsCatalog = import './services/sidekiq.jsonnet';
 local IGNORED_GPRD_QUEUES = import './temp-ignored-gprd-queue-list.libsonnet';
 local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 local aggregationLabels = 'environment, tier, type, stage, shard, queue, feature_category, urgency';
+local alerts = import 'lib/alerts.libsonnet';
 
 // For the first iteration, all sidekiq workers will have the samne
 // error budget. In future, we may introduce a criticality attribute to
@@ -81,7 +82,7 @@ local generateRatioRules() =
   } for rangeInterval in multiburnFactors.allWindowIntervals];
 
 local sidekiqSLOAlert(alertname, expr, grafanaPanelId, metricName, alertDescription) =
-  {
+  alerts.processAlertRule({
     alert: alertname,
     expr: expr,
     'for': '2m',
@@ -108,7 +109,7 @@ local sidekiqSLOAlert(alertname, expr, grafanaPanelId, metricName, alertDescript
       grafana_min_zoom_hours: '6',
       promql_template_1: '%s{environment="$environment", type="$type", stage="$stage", component="$component"}' % [metricName],
     },
-  };
+  });
 
 // generateAlerts configures the alerting rules for sidekiq jobs
 // For the first iteration, things are fairly basic:

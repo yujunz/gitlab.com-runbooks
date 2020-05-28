@@ -1,3 +1,4 @@
+local alerts = import 'alerts.libsonnet';
 local strings = import 'strings.libsonnet';
 
 local environmentLabels = ['environment', 'tier', 'type', 'stage'];
@@ -129,12 +130,12 @@ local resourceSaturationPoint = function(definition)
       local quantileDetails = if std.objectHas(definition, 'quantile') then
         {
           quantile_period: definition.quantile.period,
-          quantile: '%g' %[definition.quantile.applyQuantile],
+          quantile: '%g' % [definition.quantile.applyQuantile],
         }
       else
         {};
 
-      [{
+      [alerts.processAlertRule({
         alert: 'component_saturation_slo_out_of_bounds',
         expr: |||
           gitlab_component_saturation:ratio{component="%(componentName)s"} > on(component) group_left
@@ -170,7 +171,7 @@ local resourceSaturationPoint = function(definition)
           grafana_min_zoom_hours: '6',
           promql_query: definition.getQuery('environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"', definition.getBurnRatePeriod(), definition.resourceLabels),
         },
-      }],
+      })],
 
     // Returns a boolean to indicate whether this saturation point applies to
     // a given service
