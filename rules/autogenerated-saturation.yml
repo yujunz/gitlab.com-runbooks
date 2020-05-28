@@ -569,42 +569,34 @@ groups:
     expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: disk_sustained_read_iops
     expr: '0.8'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: disk_sustained_read_iops
     expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: disk_sustained_read_throughput
     expr: '0.7'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: disk_sustained_read_throughput
     expr: '0.8'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: disk_sustained_write_iops
     expr: '0.8'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: disk_sustained_write_iops
     expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: disk_sustained_write_throughput
     expr: '0.7'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: disk_sustained_write_throughput
     expr: '0.8'
   - record: slo:max:soft:gitlab_component_saturation:ratio
@@ -713,12 +705,10 @@ groups:
     expr: '0.95'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: rails_db_connection_pool
     expr: '0.9'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: rails_db_connection_pool
     expr: '0.99'
   - record: slo:max:soft:gitlab_component_saturation:ratio
@@ -763,12 +753,10 @@ groups:
     expr: '0.95'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: sidekiq_workers
     expr: '0.9'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
-      alert_trigger_duration: long
       component: sidekiq_workers
     expr: '0.95'
   - record: slo:max:soft:gitlab_component_saturation:ratio
@@ -833,6 +821,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -883,6 +872,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -925,6 +915,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -965,6 +956,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -976,7 +968,7 @@ groups:
       gitlab_component_saturation:ratio{component="disk_space"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_space"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 15m
+    for: 25m
     annotations:
       title: >-
         The Disk Sustained Read IOPS Saturation per Node resource of the {{ $labels.type }} service ({{
@@ -1006,18 +998,19 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 25m
       alert_type: cause
       bound: upper
       burn_rate_period: 20m
       metric: gitlab_component_saturation:ratio
-      period: 15m
+      period: 25m
       rules_domain: general
       severity: s3
     expr: |
       gitlab_component_saturation:ratio{component="disk_sustained_read_iops"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_sustained_read_iops"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 15m
+    for: 25m
     annotations:
       title: >-
         The Disk Sustained Read Throughput Saturation per Node resource of the {{ $labels.type }} service
@@ -1047,18 +1040,19 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 25m
       alert_type: cause
       bound: upper
       burn_rate_period: 20m
       metric: gitlab_component_saturation:ratio
-      period: 15m
+      period: 25m
       rules_domain: general
       severity: s3
     expr: |
       gitlab_component_saturation:ratio{component="disk_sustained_read_throughput"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_sustained_read_throughput"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 15m
+    for: 25m
     annotations:
       title: >-
         The Disk Sustained Write IOPS Saturation per Node resource of the {{ $labels.type }} service ({{
@@ -1095,18 +1089,19 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 25m
       alert_type: cause
       bound: upper
       burn_rate_period: 20m
       metric: gitlab_component_saturation:ratio
-      period: 15m
+      period: 25m
       rules_domain: general
       severity: s3
     expr: |
       gitlab_component_saturation:ratio{component="disk_sustained_write_iops"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_sustained_write_iops"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 15m
+    for: 25m
     annotations:
       title: >-
         The Disk Sustained Write Throughput Saturation per Node resource of the {{ $labels.type }} service
@@ -1143,11 +1138,12 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 25m
       alert_type: cause
       bound: upper
       burn_rate_period: 20m
       metric: gitlab_component_saturation:ratio
-      period: 15m
+      period: 25m
       rules_domain: general
       severity: s3
     expr: |
@@ -1186,6 +1182,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1230,6 +1227,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1270,6 +1268,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1311,6 +1310,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1357,6 +1357,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1402,6 +1403,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1448,6 +1450,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1486,6 +1489,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1539,6 +1543,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1590,6 +1595,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1635,6 +1641,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1687,6 +1694,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1735,6 +1743,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1785,6 +1794,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 15m
       alert_type: cause
       bound: upper
       burn_rate_period: 5m
@@ -1830,6 +1840,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1882,6 +1893,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1924,6 +1936,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -1972,6 +1985,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -2020,6 +2034,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -2065,6 +2080,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 15m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -2106,6 +2122,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -2152,6 +2169,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m
@@ -2194,6 +2212,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
+      alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
       burn_rate_period: 1m

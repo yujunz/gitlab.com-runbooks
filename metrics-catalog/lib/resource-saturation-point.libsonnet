@@ -102,12 +102,7 @@ local resourceSaturationPoint = function(definition)
       local definition = self;
       local labels = {
         component: componentName,
-      } + (
-        if std.objectHas(definition.slos, 'alert_trigger_duration') then
-          { alert_trigger_duration: definition.slos.alert_trigger_duration }
-        else
-          {}
-      );
+      };
 
       [{
         record: 'slo:max:soft:gitlab_component_saturation:ratio',
@@ -122,10 +117,7 @@ local resourceSaturationPoint = function(definition)
     getSaturationAlerts(componentName)::
       local definition = self;
 
-      local triggerDuration = if ({ alert_trigger_duration: '' } + definition.slos).alert_trigger_duration == 'long' then
-        '15m'
-      else
-        '5m';
+      local triggerDuration = ({ alertTriggerDuration: '5m' } + definition.slos).alertTriggerDuration;
 
       local formatConfig = {
         triggerDuration: triggerDuration,
@@ -156,6 +148,7 @@ local resourceSaturationPoint = function(definition)
           period: triggerDuration,
           bound: 'upper',
           alert_type: 'cause',
+          alert_trigger_duration: triggerDuration,
           burn_rate_period: definition.getBurnRatePeriod(),
           // slo_alert: 'yes' Uncomment after trial period
           // pager: pagerduty Uncomment after trial period

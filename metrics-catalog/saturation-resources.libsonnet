@@ -52,7 +52,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     slos: {
       soft: 0.90,
       hard: 0.99,
-      alert_trigger_duration: 'long',
+      alertTriggerDuration: '15m',
     },
   }),
 
@@ -163,7 +163,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     slos: {
       soft: 0.80,
       hard: 0.90,
-      alert_trigger_duration: 'long',
+      alertTriggerDuration: '25m',
     },
   }),
 
@@ -184,7 +184,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     slos: {
       soft: 0.70,
       hard: 0.80,
-      alert_trigger_duration: 'long',
+      alertTriggerDuration: '25m',
     },
   }),
 
@@ -212,7 +212,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     slos: {
       soft: 0.80,
       hard: 0.90,
-      alert_trigger_duration: 'long',
+      alertTriggerDuration: '25m',
     },
   }),
 
@@ -240,7 +240,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     slos: {
       soft: 0.70,
       hard: 0.80,
-      alert_trigger_duration: 'long',
+      alertTriggerDuration: '25m',
     },
   }),
 
@@ -709,7 +709,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     slos: {
       soft: 0.90,
       hard: 0.95,
-      alert_trigger_duration: 'long',
+      alertTriggerDuration: '15m',
     },
   }),
 
