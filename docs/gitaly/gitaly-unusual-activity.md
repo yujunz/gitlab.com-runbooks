@@ -25,3 +25,9 @@
     1. We tend to do for people using GitLAb as a CDN, highly trafficked repos, etc.  This doesn't always help, at least one project has included authentication to access the private repos.
 
     1. Go through the UI: Settings -> General -> Permissions -> Project Visibility
+
+- If the affected Gitaly server is under load due to multiple instances of `git upload-pack --stateless-rpc` processes corresponding to `git clone` requests, it's possible that there is a packfile bitmap missing in the repo.
+
+    1. Check if the repo has a `pack/objects/.bitmap` file.
+
+    1. If it doesn't, click the housekeeping button on the repo in the web UI: Project Settings -> General -> Advanced -> `[Run housekeeping]`
