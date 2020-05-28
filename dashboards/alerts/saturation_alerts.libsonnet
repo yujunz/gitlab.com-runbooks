@@ -11,6 +11,7 @@ local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local basic = import 'basic.libsonnet';
 local saturationResources = import './saturation-resources.libsonnet';
+local serviceHealth = import './service_health.libsonnet';
 
 local selector = 'environment="$environment", type="$type", stage="$stage"';
 
@@ -42,8 +43,9 @@ local selector = 'environment="$environment", type="$type", stage="$stage"';
       )
     )
     .addTemplate(templates.stage)
-    .addPanel(panel, gridPos={ x: 0, y: 0, h: 20, w: 24 })
-    .addPanel(helpPanel, gridPos={ x: 0, y: 1000, h: 6, w: 24 })
+    .addPanel(panel, gridPos={ x: 0, y: 0, h: 20, w: 18 })
+    .addPanel(helpPanel, gridPos={ x: 18, y: 0, h: 14, w: 6 })
+    .addPanel(serviceHealth.activeAlertsPanel('alert_type="symptom", type="${type}", environment="$environment"', title='Potentially User Impacting Alerts'), gridPos={ x: 18, y: 14, h: 6, w: 6 })
     + {
       links+: platformLinks.parameterizedServiceLink +
               platformLinks.services +
