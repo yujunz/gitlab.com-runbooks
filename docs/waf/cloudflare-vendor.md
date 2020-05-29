@@ -1,12 +1,7 @@
 # Accessing and Using CloudFlare
 
-CloudFlare is configured as an Okta app. Users that have been provisioned can
-access it directly at:
-
-1. https://gitlab.cloudflaresso.com
-2. https://dash.cloudflare.com: Once you've entered your full `@gitlab.com` email
-   address, the Login button should display "Log in with SSO" and the password
-   box will be grayed out.
+Users that have been provisioned can access Cloudflare directly at
+`https://dash.cloudflare.com`.
 
 ## Baseline Entitlements and Provisioning
 
