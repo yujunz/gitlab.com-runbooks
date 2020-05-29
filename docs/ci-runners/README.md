@@ -1,16 +1,22 @@
 # CI Runner Overview
 
 We have several different kind of runners. Below is a brief overview of each.
+They all have acronyms as well, which are indicated next to each name.
 
-- `shared-runners-manager`
-- `gitlab-shared-runners-manager`
-- `private-runners-manager`
-- `gitlab-docker-shared-runners-manager`
-- `windows-shared-runners-manager`
+- [Runner Descriptions](#runner-descriptions)
+  - [shared-runners-manager (SRM)](#shared-runners-manager-srm)
+  - [gitlab-shared-runners-manager (GSRM)](#gitlab-shared-runners-manager-gsrm)
+  - [private-runners-manager (PRM)](#private-runners-manager-prm)
+  - [gitlab-docker-shared-runners-manager (GDSRM)](#gitlab-docker-shared-runners-manager-gdsrm)
+  - [windows-shared-runners-manager (WSRM)](#windows-shared-runners-manager-wsrm)
+- [Network Info](#network-info)
+  - [gitlab-ci project](#gitlab-ci-project)
+  - [gitlab-org-ci project](#gitlab-org-ci-project)
+  - [gitlab-ci-windows project](#gitlab-ci-windows-project)
 
 ## Runner Descriptions
 
-### Share Runners Manager (SRM)
+### shared-runners-manager (SRM)
 
 These are the main runners our customers use. They are housed in the `gitlab-ci` project.
 Each machine is used for one build and then rebuilt. See [`gitlab-ci` network](#gitlab-ci-project)
