@@ -95,6 +95,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     |||,
     grafana_dashboard_uid: 'sat_cpu',
     resourceLabels: [],
+    burnRatePeriod: '5m',
     query: |||
       1 - avg by (%(aggregationLabels)s) (
         rate(node_cpu_seconds_total{mode="idle", %(selector)s}[%(rangeInterval)s])
@@ -116,6 +117,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     |||,
     grafana_dashboard_uid: 'sat_shard_cpu',
     resourceLabels: ['shard'],
+    burnRatePeriod: '5m',
     query: |||
       1 - avg by (%(aggregationLabels)s) (
         rate(node_cpu_seconds_total{mode="idle", %(selector)s}[%(rangeInterval)s])
@@ -724,6 +726,7 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     |||,
     grafana_dashboard_uid: 'sat_single_node_cpu',
     resourceLabels: ['fqdn'],
+    burnRatePeriod: '5m',
     query: |||
       avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", %(selector)s}[%(rangeInterval)s]))
     |||,

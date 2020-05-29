@@ -48,7 +48,7 @@ groups:
         clamp_min(
           clamp_max(
             1 - avg by (environment, tier, type, stage) (
-              rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[1m])
+              rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[5m])
             )
             ,
             1)
@@ -430,7 +430,7 @@ groups:
         clamp_min(
           clamp_max(
             1 - avg by (environment, tier, type, stage, shard) (
-              rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[1m])
+              rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[5m])
             )
             ,
             1)
@@ -498,7 +498,7 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[1m]))
+            avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[5m]))
             ,
             1)
         ,
@@ -915,7 +915,7 @@ groups:
           clamp_min(
             clamp_max(
               1 - avg by (environment, tier, type, stage) (
-                rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
+                rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
               )
               ,
               1)
@@ -927,7 +927,7 @@ groups:
       alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
-      burn_rate_period: 1m
+      burn_rate_period: 5m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -2002,7 +2002,7 @@ groups:
           clamp_min(
             clamp_max(
               1 - avg by (environment, tier, type, stage, shard) (
-                rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
+                rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
               )
               ,
               1)
@@ -2014,7 +2014,7 @@ groups:
       alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
-      burn_rate_period: 1m
+      burn_rate_period: 5m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
@@ -2201,7 +2201,7 @@ groups:
         max by(environment, tier, type, stage, fqdn) (
           clamp_min(
             clamp_max(
-              avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m]))
+              avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m]))
               ,
               1)
           ,
@@ -2212,7 +2212,7 @@ groups:
       alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
-      burn_rate_period: 1m
+      burn_rate_period: 5m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
