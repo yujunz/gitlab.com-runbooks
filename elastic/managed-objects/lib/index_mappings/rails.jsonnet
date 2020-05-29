@@ -87,7 +87,9 @@
           },
         },
         app_id: {
-          type: 'long',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         app_name: {
           type: 'text',
@@ -117,7 +119,9 @@
           },
         },
         author_id: {
-          type: 'float',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         author_name: {
           type: 'text',
@@ -192,7 +196,9 @@
           },
         },
         cluster_id: {
-          type: 'long',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         complexity: {
           type: 'long',
@@ -225,7 +231,9 @@
           type: 'float',
         },
         current_user_id: {
-          type: 'float',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         custom_message: {
           type: 'text',
@@ -261,7 +269,9 @@
           type: 'float',
         },
         entity_id: {
-          type: 'float',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         entity_path: {
           type: 'text',
@@ -391,7 +401,9 @@
         extra: {
           properties: {
             app_id: {
-              type: 'long',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             app_name: {
               type: 'text',
@@ -403,10 +415,14 @@
               },
             },
             bridge_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             build_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             child: {
               type: 'text',
@@ -427,13 +443,19 @@
               },
             },
             cluster_id: {
-              type: 'long',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             deployment_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             downstream_pipeline_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             'error': {
               type: 'text',
@@ -457,7 +479,9 @@
               },
             },
             exportable_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             exportable_path: {
               type: 'text',
@@ -478,10 +502,14 @@
               },
             },
             group_ids: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             iid: {
-              type: 'long',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             import_jid: {
               type: 'text',
@@ -511,7 +539,9 @@
               },
             },
             job_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             merge_request: {
               type: 'text',
@@ -523,7 +553,9 @@
               },
             },
             merge_request_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             message: {
               type: 'text',
@@ -535,7 +567,9 @@
               },
             },
             namespace_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             new_name: {
               type: 'text',
@@ -574,7 +608,9 @@
               },
             },
             pipeline_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             plan: {
               type: 'text',
@@ -595,10 +631,14 @@
               },
             },
             project_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             project_ids: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             project_path: {
               type: 'text',
@@ -865,7 +905,9 @@
               },
             },
             subject_id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             trace: {
               type: 'text',
@@ -908,7 +950,9 @@
               },
             },
             id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
           },
         },
@@ -955,10 +999,14 @@
           },
         },
         group_id: {
-          type: 'float',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         group_ids: {
-          type: 'float',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         group_name: {
           type: 'text',
@@ -991,7 +1039,9 @@
           },
         },
         iid: {
-          type: 'long',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         inline_comments_count: {
           type: 'long',
@@ -1060,7 +1110,9 @@
           },
         },
         merge_request_id: {
-          type: 'float',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         message: {
           type: 'text',
@@ -1182,10 +1234,14 @@
           },
         },
         project_id: {
-          type: 'float',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         project_ids: {
-          type: 'float',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         project_path: {
           type: 'text',
@@ -1498,7 +1554,9 @@
               },
             },
             id: {
-              type: 'float',
+              type: 'keyword',
+              ignore_above: 256,
+              store: true,
             },
             ip_address: {
               type: 'text',
@@ -1521,7 +1579,9 @@
           },
         },
         user_id: {
-          type: 'long',
+          type: 'keyword',
+          ignore_above: 256,
+          store: true,
         },
         username: {
           type: 'text',
