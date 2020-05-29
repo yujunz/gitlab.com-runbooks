@@ -243,6 +243,14 @@ The username is admin, the password is most easily obtained from haproxy.cfg on 
 
 `gkms-vault-show frontend-loadbalancer gstg`
 
+## Removing HAProxy VMs from GCP Load Balancers
+
+It is possible to temporarily remove HAProxy machines from the GCP Load Balancers individually (they are not added as an instance group). Be careful! This operation has user facing impact, such as terminating sessions, and can cause higher load on the remaining HAProxy nodes!
+
+The load balancer backend service is defined in the corresponding tf module (at the moment of writing that's `generic-sv-with-group`) so doing it with the use of Terraform is non-trivial.
+
+It can be done using the GCP cloud console: Load Balancing -> click on the relevant lb -> Edit -> Backend configuration -> remove the HAProxy machine from the "Select existing instances" list -> Click update.
+
 # HAPrpoxy Alert Troubleshooting
 
 ## Reason
