@@ -1056,13 +1056,8 @@
           },
         },
         ip_address: {
-          type: 'text',
-          fields: {
-            keyword: {
-              type: 'keyword',
-              ignore_above: 256,
-            },
-          },
+          type: 'ip',
+          store: true,
         },
         iterations: {
           type: 'long',
@@ -1295,13 +1290,8 @@
           type: 'long',
         },
         remote_ip: {
-          type: 'text',
-          fields: {
-            keyword: {
-              type: 'keyword',
-              ignore_above: 256,
-            },
-          },
+          type: 'ip',
+          store: true,
         },
         remove: {
           type: 'text',
@@ -1559,13 +1549,8 @@
               store: true,
             },
             ip_address: {
-              type: 'text',
-              fields: {
-                keyword: {
-                  type: 'keyword',
-                  ignore_above: 256,
-                },
-              },
+              type: 'ip',
+              store: true,
             },
             username: {
               type: 'text',
