@@ -19,7 +19,7 @@ groups:
       # only care about the main stage alert Alternatively, we have the bad canary alerts
       # specifically for canary stage
       # DEPRECATED in favour of multiwindow, multiburn-rate alerts
-      - alert: service_apdex_slo_out_of_bounds_lower_5m
+      - alert: service_apdex_slo_out_of_bounds_lower_5m_deprecated
         expr: |
           (
             avg(gitlab_service_apdex:ratio{stage!="cny"}) by (environment, tier, type, stage)
@@ -65,7 +65,7 @@ groups:
       # only care about the main stage alert Alternatively, we have the bad canary alerts
       # specifically for canary stage
       # DEPRECATED in favour of multiwindow, multiburn-rate alerts
-      - alert: service_apdex_slo_out_of_bounds_lower_15m
+      - alert: service_apdex_slo_out_of_bounds_lower_15m_deprecated
         expr: |
           (
             avg(gitlab_service_apdex:ratio{stage!="cny"}) by (environment, tier, type, stage)
@@ -115,7 +115,7 @@ groups:
       # only care about the main stage alert Alternatively, we have the bad canary alerts
       # specifically for canary stage
       # DEPRECATED in favour of multiwindow, multiburn-rate alerts
-      - alert: service_error_ratio_slo_out_of_bounds_upper_5m
+      - alert: service_error_ratio_slo_out_of_bounds_upper_5m_deprecated
         expr: |
           (
             avg(gitlab_service_errors:ratio{stage!="cny"}) by (environment, tier, type, stage)
@@ -159,7 +159,7 @@ groups:
       # only care about the main stage alert Alternatively, we have the bad canary alerts
       # specifically for canary stage
       # DEPRECATED in favour of multiwindow, multiburn-rate alerts
-      - alert: service_error_ratio_slo_out_of_bounds_upper_15m
+      - alert: service_error_ratio_slo_out_of_bounds_upper_15m_deprecated
         expr: |
           (
             avg(gitlab_service_errors:ratio{stage!="cny"}) by (environment, tier, type, stage)
@@ -203,7 +203,7 @@ groups:
       # ------------------------------------------------------------------------------
 
       # The error rate SLO target for a component is not being met.
-      - alert: component_error_ratio_burn_rate_slo_out_of_bounds_upper
+      - alert: component_error_ratio_burn_rate_slo_out_of_bounds_upper_deprecated
         expr: |
           (
             gitlab_component_errors:ratio_1h > on(tier, type) group_left() (14.4*(avg(slo:max:events:gitlab_service_errors:ratio) by (tier, type)))
@@ -255,7 +255,7 @@ groups:
       ################################################
       # DEPRECATED in favour of multiwindow, multiburn-rate alerts
 
-      - alert: service_cny_apdex_slo_out_of_bounds_lower_5m
+      - alert: service_cny_apdex_slo_out_of_bounds_lower_5m_deprecated
         expr: |
           (
             (
@@ -321,7 +321,7 @@ groups:
           promql_template_1: 'gitlab_service_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
           promql_template_2: 'gitlab_component_apdex:ratio{environment="$environment", type="$type", stage="$stage"}'
 
-      - alert: service_cny_error_ratio_slo_out_of_bounds_upper_5m
+      - alert: service_cny_error_ratio_slo_out_of_bounds_upper_5m_deprecated
         expr: |
           (
             (
