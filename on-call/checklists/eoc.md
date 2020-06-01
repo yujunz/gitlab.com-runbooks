@@ -99,7 +99,7 @@ on-boarding new team members.
 [prometheus-azure-targets-down]:    https://prometheus.gitlab.com/consoles/up.html
 [prometheus-gprd]:                  https://prometheus.gprd.gitlab.net/alerts
 [prometheus-gprd-targets-down]:     https://prometheus.gprd.gitlab.net/consoles/up.html
-[prometheus-app-gprd]:              https://prometheus-app.gprdgitlab.net/alerts
+[prometheus-app-gprd]:              https://prometheus-app.gprd.gitlab.net/alerts
 [prometheus-app-gprd-targets-down]: https://prometheus-app.gprd.gitlab.net/consoles/up.html
 
 [runbook-repo]:                     https://gitlab.com/gitlab-com/runbooks
