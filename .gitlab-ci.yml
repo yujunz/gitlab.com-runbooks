@@ -27,6 +27,7 @@ workflow:
     - gcloud auth activate-service-account --key-file ${SERVICE_KEY}
     - gcloud config set project ${PROJECT}
     - gcloud container clusters get-credentials ${CLUSTER} --region ${REGION}
+    - ./bin/delete_orphan_kubenetes_rules.sh # Delete ophaned PrometheusRules
     - kubectl apply --namespace monitoring --filename ${CI_PROJECT_DIR}/rules-k8s/
   only:
     refs:
