@@ -7,842 +7,1012 @@ groups:
   - record: gitlab_component_ops:rate
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana"}[1m])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", environment=~"gprd|ops|ci-prd"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[1m])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*", environment=~"gprd|ops|ci-prd"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.2"}[1m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.4"}[1m])
         )
         +
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.4"}[1m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.1"}[1m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[1m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[1m])
+      sum by (stage) (
+        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[1m])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[1m])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_failures_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="1"}[1m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="1"}[1m])
         )
         +
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="5"}[1m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="6"}[1m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[1m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[1m])
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring"}[1m])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[1m])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.4"}[1m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="1"}[1m])
         )
         +
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.8"}[1m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="3"}[1m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[1m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[1m])
+      sum by (stage) (
+        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[1m])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", environment=~"gprd|ops|ci-prd"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[1m])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK", environment=~"gprd|ops|ci-prd"}[1m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana"}[5m])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", environment=~"gprd|ops|ci-prd"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[5m])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*", environment=~"gprd|ops|ci-prd"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.2"}[5m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.4"}[5m])
         )
         +
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.4"}[5m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.1"}[5m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[5m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[5m])
+      sum by (stage) (
+        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[5m])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[5m])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[5m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_failures_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="1"}[5m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="1"}[5m])
         )
         +
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="5"}[5m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="6"}[5m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[5m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[5m])
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring"}[5m])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[5m])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.4"}[5m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="1"}[5m])
         )
         +
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.8"}[5m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="3"}[5m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[5m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[5m])
+      sum by (stage) (
+        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[5m])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", environment=~"gprd|ops|ci-prd"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[5m])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK", environment=~"gprd|ops|ci-prd"}[5m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana"}[30m])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", environment=~"gprd|ops|ci-prd"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[30m])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*", environment=~"gprd|ops|ci-prd"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.2"}[30m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.4"}[30m])
         )
         +
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.4"}[30m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.1"}[30m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[30m])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[30m])
+      sum by (stage) (
+        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[30m])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[30m])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[30m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_failures_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="1"}[30m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="1"}[30m])
         )
         +
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="5"}[30m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="6"}[30m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[30m])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[30m])
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring"}[30m])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[30m])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.4"}[30m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="1"}[30m])
         )
         +
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.8"}[30m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="3"}[30m])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[30m])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[30m])
+      sum by (stage) (
+        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[30m])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", environment=~"gprd|ops|ci-prd"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[30m])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK", environment=~"gprd|ops|ci-prd"}[30m])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana"}[1h])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", environment=~"gprd|ops|ci-prd"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[1h])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*", environment=~"gprd|ops|ci-prd"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.2"}[1h])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.4"}[1h])
         )
         +
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.4"}[1h])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.1"}[1h])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[1h])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[1h])
+      sum by (stage) (
+        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[1h])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[1h])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[1h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_failures_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="1"}[1h])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="1"}[1h])
         )
         +
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="5"}[1h])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="6"}[1h])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[1h])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[1h])
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring"}[1h])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[1h])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.4"}[1h])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="1"}[1h])
         )
         +
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.8"}[1h])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="3"}[1h])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[1h])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[1h])
+      sum by (stage) (
+        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[1h])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", environment=~"gprd|ops|ci-prd"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[1h])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK", environment=~"gprd|ops|ci-prd"}[1h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana"}[6h])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", environment=~"gprd|ops|ci-prd"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
       component: grafana
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_total{job="grafana", statuscode=~"^5.*"}[6h])
+      sum by (stage) (
+        rate(http_request_total{job="grafana", statuscode=~"^5.*", environment=~"gprd|ops|ci-prd"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.2"}[6h])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.4"}[6h])
         )
         +
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="0.4"}[6h])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="0.1"}[6h])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[6h])
+        sum by (stage) (
+          rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", le="+Inf"}[6h])
+      sum by (stage) (
+        rate(prometheus_http_request_duration_seconds_bucket{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring"}[6h])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", environment=~"gprd|ops|ci-prd"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
       component: prometheus
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*"}[6h])
+      sum by (stage) (
+        rate(prometheus_http_requests_total{job="prometheus", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[6h])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: thanos_compactor
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(thanos_compact_group_compactions_failures_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="1"}[6h])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="1"}[6h])
         )
         +
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="5"}[6h])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="6"}[6h])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[6h])
+        sum by (stage) (
+          rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", le="+Inf"}[6h])
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring"}[6h])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", environment=~"gprd|ops|ci-prd"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
       component: thanos_query
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*"}[6h])
+      sum by (stage) (
+        rate(http_requests_total{job="thanos", type="monitoring", code=~"^5.*", environment=~"gprd|ops|ci-prd"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.4"}[6h])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="1"}[6h])
         )
         +
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="0.8"}[6h])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="3"}[6h])
         )
       )
       /
       2
       /
       (
-        sum by (environment, stage) (
-          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[6h])
+        sum by (stage) (
+          rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", le="+Inf"}[6h])
+      sum by (stage) (
+        rate(grpc_server_handling_seconds_bucket{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_type="unary", environment=~"gprd|ops|ci-prd", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store"}[6h])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", environment=~"gprd|ops|ci-prd"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
       component: thanos_store
+      environment: ops
       tier: inf
       type: monitoring
     expr: |
-      sum by (environment, stage) (
-        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK"}[6h])
+      sum by (stage) (
+        rate(grpc_server_handled_total{job="thanos", type="monitoring", grpc_service="thanos.Store", grpc_code!="OK", environment=~"gprd|ops|ci-prd"}[6h])
       )
 - name: 'Component mapping: monitoring'
   interval: 1m
@@ -856,6 +1026,12 @@ groups:
   - record: gitlab_component_service:mapping
     labels:
       component: prometheus
+      tier: inf
+      type: monitoring
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: thanos_compactor
       tier: inf
       type: monitoring
     expr: '1'
