@@ -3,7 +3,7 @@ local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 
 local formatConfig = {
-  productionEnvironmentsSelector: 'environment=~"gprd|ops|ci-prd"'
+  productionEnvironmentsSelector: 'environment=~"gprd|ops|ci-prd"',
 };
 
 {
