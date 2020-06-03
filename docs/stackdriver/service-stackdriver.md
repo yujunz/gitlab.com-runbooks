@@ -18,7 +18,7 @@
 * [../gitaly/gitaly-down.md](../gitaly/gitaly-down.md)
 * [../logging/README.md](../logging/README.md)
 * [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
-* [../pgbouncer/pgbouncer.md](../pgbouncer/pgbouncer.md)
+* [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
 * [../pubsub/pubsub-queing.md](../pubsub/pubsub-queing.md)
 * [../uncategorized/k8s-gitlab.md](../uncategorized/k8s-gitlab.md)
 * [../uncategorized/kubernetes.md](../uncategorized/kubernetes.md)

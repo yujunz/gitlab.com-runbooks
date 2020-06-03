@@ -24,7 +24,7 @@
 * [../ci-runners/shared-runners-cost-factors.md](../ci-runners/shared-runners-cost-factors.md)
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
 * [../logging/README.md](../logging/README.md)
-* [../pgbouncer/pgbouncer.md](../pgbouncer/pgbouncer.md)
+* [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
 * [ci-runner-timeouts.md](ci-runner-timeouts.md)
 * [update-gitlab-runner-on-managers.md](update-gitlab-runner-on-managers.md)
 * [../sidekiq/large-sidekiq-queue.md](../sidekiq/large-sidekiq-queue.md)

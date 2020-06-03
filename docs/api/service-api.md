@@ -44,7 +44,7 @@
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
-* [../pgbouncer/pgbouncer.md](../pgbouncer/pgbouncer.md)
+* [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
 * [../runner/ci-runner-timeouts.md](../runner/ci-runner-timeouts.md)
 * [../sidekiq/large-sidekiq-queue.md](../sidekiq/large-sidekiq-queue.md)
 * [../uncategorized/blocked-user-logins.md](../uncategorized/blocked-user-logins.md)

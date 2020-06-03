@@ -20,8 +20,10 @@
 * [../patroni/pg-ha.md](../patroni/pg-ha.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
 * [../patroni/rotating-rails-postgresql-password.md](../patroni/rotating-rails-postgresql-password.md)
+* [README.md](README.md)
 * [patroni-consul-postgres-pgbouncer-interactions.md](patroni-consul-postgres-pgbouncer-interactions.md)
-* [pgbouncer-1.md](pgbouncer-1.md)
-* [pgbouncer.md](pgbouncer.md)
+* [pgbouncer-applications.md](pgbouncer-applications.md)
+* [pgbouncer-connections.md](pgbouncer-connections.md)
+* [pgbouncer-saturation.md](pgbouncer-saturation.md)
 * [../sidekiq/large-pull-mirror-queue.md](../sidekiq/large-pull-mirror-queue.md)
 <!-- END_MARKER -->
