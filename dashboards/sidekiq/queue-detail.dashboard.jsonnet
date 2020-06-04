@@ -384,11 +384,21 @@ basic.dashboard(
     errorRateTimeseries('Errors per Node', aggregators='fqdn, queue', legendFormat='{{ queue }} - {{ fqdn }}'),
   ], startRow=601)
   +
-  rowGrid('Resource Usage', [
-    multiQuantileTimeseries('CPU Time', bucketMetric='sidekiq_jobs_cpu_seconds_bucket', aggregators='queue'),
-    multiQuantileTimeseries('Gitaly Time', bucketMetric='sidekiq_jobs_gitaly_seconds_bucket', aggregators='queue'),
-    multiQuantileTimeseries('Database Time', bucketMetric='sidekiq_jobs_db_seconds_bucket', aggregators='queue'),
-  ], startRow=701)
+  [
+    row.new(title='Resource Usage') { gridPos: { x: 0, y: 701, w: 24, h: 1 } },
+  ] +
+  layout.grid(
+    [
+      multiQuantileTimeseries('CPU Time', bucketMetric='sidekiq_jobs_cpu_seconds_bucket', aggregators='queue'),
+      multiQuantileTimeseries('Gitaly Time', bucketMetric='sidekiq_jobs_gitaly_seconds_bucket', aggregators='queue'),
+      multiQuantileTimeseries('Database Time', bucketMetric='sidekiq_jobs_db_seconds_bucket', aggregators='queue'),
+    ], cols=3, startRow=702)
+  +
+  layout.grid(
+    [
+      multiQuantileTimeseries('Redis Time', bucketMetric='sidekiq_redis_requests_duration_seconds_bucket', aggregators='queue'),
+      multiQuantileTimeseries('Elasticsearch Time', bucketMetric='sidekiq_elasticsearch_requests_duration_seconds_bucket', aggregators='queue'),
+    ], cols=3, startRow=703)
 )
 .trailer()
 + {
