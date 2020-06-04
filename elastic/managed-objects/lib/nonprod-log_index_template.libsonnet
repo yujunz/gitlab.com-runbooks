@@ -18,7 +18,7 @@ local mappings = {
   system: import './index_mappings/system.jsonnet',
   workhorse: import './index_mappings/workhorse.jsonnet',
 };
-local settings = import 'settings.libsonnet';
+local settings = import 'settings_nonprod.libsonnet';
 
 {
   get(
