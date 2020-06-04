@@ -18,8 +18,11 @@ appropriate region/zone specific configurations.
 
 ## Network
 
-| Subnet Name   | CIDR        | Purpose                   |
-| ------------- | ----------- | ------------------------- |
-| manager       | 10.1.0.0/24 | Runner manager machines   |
-| bastion       | 10.1.2.0/24 | bastion network           |
-| shared-runner | 10.2.0.0/16 | Ephemeral runner machines |
+| Subnet Name             | CIDR        | Purpose                               |
+| ----------------------- | ----------- | ------------------------------------- |
+| manager                 | 10.1.0.0/24 | Runner manager machines               |
+| bastion                 | 10.1.2.0/24 | bastion network                       |
+| gitlab-gke              | 10.1.3.0/24 | GKE network                           |
+| gitlab-gke-pod-cidr     | 10.1.4.0/22 | GKE network used for pod IPs          |
+| gitlab-gke-service-cidr | 10.1.8.0/24 | GKE network used for exposed services |
+| shared-runner           | 10.2.0.0/16 | Ephemeral runner machines             |
