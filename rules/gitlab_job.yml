@@ -1,0 +1,17 @@
+groups:
+- name: GitLab job completion alerts
+  rules:
+  - alert: JobNotCompleted
+    expr: |
+      ((time() - (gitlab_job_success_timestamp_seconds > 0)) > gitlab_job_max_age_seconds)
+      or
+      (time() - gitlab_job_start_timestamp_seconds > gitlab_job_max_age_seconds and gitlab_job_success_timestamp_seconds == 0)
+    for: 1m
+    labels:
+      severity: s4
+      alert_type: symptom
+    annotations:
+      title: GitLab Job has not completed recently
+      description: >
+        The GitLab job "{{ $labels.resource }}" has not started/completed in {{ $value | humanizeDuration }}.
+      runbook: docs/uncategorized/job_completion.md

@@ -25,7 +25,7 @@
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 * [../redis/redis.md](../redis/redis.md)
 * [../uncategorized/access-gcp-hosts.md](../uncategorized/access-gcp-hosts.md)
-* [../uncategorized/deadman-switches.md](../uncategorized/deadman-switches.md)
+* [../uncategorized/job_completion.md](../uncategorized/job_completion.md)
 * [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)
 * [../uncategorized/k8s-gitlab.md](../uncategorized/k8s-gitlab.md)
 * [../uncategorized/k8s-plantuml-operations.md](../uncategorized/k8s-plantuml-operations.md)
