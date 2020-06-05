@@ -718,9 +718,9 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     title: 'Puma Worker Saturation per Node',
     appliesTo: ['web', 'api', 'git', 'sidekiq'],
     description: |||
-      Puma worker saturation per node.
+      Puma thread utilization per node.
 
-      Each concurrent HTTP request being handled in the application needs a dedicated puma worker. When this resource is saturated,
+      Puma uses a fixed size thread pool to handle HTTP requests. This metric shows how many threads are busy handling requests. When this resource is saturated,
       we will see puma queuing taking place. Leading to slowdowns across the application.
 
       Puma saturation is usually caused by latency problems in downstream services: usually Gitaly or Postgres, but possibly also Redis.
