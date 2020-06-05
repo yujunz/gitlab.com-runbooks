@@ -7,30 +7,39 @@ local thresholds = import 'thresholds.libsonnet';
 local row = grafana.row;
 local selectors = import './lib/selectors.libsonnet';
 
+local defaultEnvironmentSelector = { environment: '$environment' };
+
 local getLatencyPercentileForService(service) =
   if std.objectHas(service, 'monitoringThresholds') && std.objectHas(service.monitoringThresholds, 'apdexRatio') then
     service.monitoringThresholds.apdexRatio
   else
     0.95;
 
-local componentOverviewMatrixRow(serviceType, serviceStage, componentName, component, startRow) =
+local componentOverviewMatrixRow(
+  serviceType,
+  serviceStage,
+  componentName,
+  component,
+  startRow,
+  environmentSelectorHash,
+      ) =
   layout.grid(
     std.prune([
       // Component apdex
       if std.objectHas(component, 'apdex') then
-        keyMetrics.singleComponentApdexPanel(serviceType, serviceStage, componentName)
+        keyMetrics.singleComponentApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash)
       else
         null,
 
       // Error rate
       if std.objectHas(component, 'errorRate') then
-        keyMetrics.singleComponentErrorRates(serviceType, serviceStage, componentName)
+        keyMetrics.singleComponentErrorRates(serviceType, serviceStage, componentName, environmentSelectorHash)
       else
         null,
 
       // Component request rate
       if std.objectHas(component, 'requestRate') && std.objectHasAll(component.requestRate, 'aggregatedRateQuery') then
-        keyMetrics.singleComponentQPSPanel(serviceType, serviceStage, componentName)
+        keyMetrics.singleComponentQPSPanel(serviceType, serviceStage, componentName, environmentSelectorHash)
       else
         null,
     ]),
@@ -124,18 +133,36 @@ local componentOverviewMatrixRow(serviceType, serviceStage, componentName, compo
       yAxisLabel='Errors'
     ),
 
-  componentOverviewMatrix(serviceType, serviceStage, startRow)::
+  componentOverviewMatrix(
+    serviceType,
+    serviceStage,
+    startRow,
+    environmentSelectorHash=defaultEnvironmentSelector,
+  )::
     local service = metricsCatalog.getService(serviceType);
     [
       row.new(title='🔬 Component Level Indicators', collapse=false) { gridPos: { x: 0, y: startRow, w: 24, h: 1 } },
     ] +
     std.prune(
       std.flattenArrays(
-        std.mapWithIndex(function(i, c) componentOverviewMatrixRow(serviceType, serviceStage, c, service.components[c], startRow=startRow + 1 + i), std.objectFields(service.components))
+        std.mapWithIndex(function(i, c) componentOverviewMatrixRow(
+          serviceType,
+          serviceStage,
+          c,
+          service.components[c],
+          startRow=startRow + 1 + i,
+          environmentSelectorHash=environmentSelectorHash
+        ), std.objectFields(service.components))
       )
     ),
 
-  componentDetailMatrix(serviceType, componentName, selectorHash, aggregationSets, minLatency=0.01)::
+  componentDetailMatrix(
+    serviceType,
+    componentName,
+    selectorHash,
+    aggregationSets,
+    minLatency=0.01
+  )::
     local service = metricsCatalog.getService(serviceType);
     local component = service.components[componentName];
     local colCount =

@@ -25,20 +25,20 @@ local formatConfigForSelectorHash(selectorHash) =
           avg by (type) (avg_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
         ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
-    serviceApdexDegradationSLOQuery(environment, type, stage)::
+    serviceApdexDegradationSLOQuery(environmentSelectorHash, type, stage)::
       |||
-        avg(slo:min:gitlab_service_apdex:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})
+        avg(slo:min:gitlab_service_apdex:ratio{%(selector)s}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})
       ||| % {
-        environment: environment,
+        selector: selectors.serializeHash(environmentSelectorHash { type: type, stage: stage }),
         type: type,
         stage: stage,
       },
 
-    serviceApdexOutageSLOQuery(environment, type, stage)::
+    serviceApdexOutageSLOQuery(environmentSelectorHash, type, stage)::
       |||
-        2 * (avg(slo:min:gitlab_service_apdex:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s"}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})) - 1
+        2 * (avg(slo:min:gitlab_service_apdex:ratio{%(selector)s}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})) - 1
       ||| % {
-        environment: environment,
+        selector: selectors.serializeHash(environmentSelectorHash { type: type, stage: stage }),
         type: type,
         stage: stage,
       },
@@ -137,20 +137,20 @@ local formatConfigForSelectorHash(selectorHash) =
           )
         ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax },
 
-    serviceErrorRateDegradationSLOQuery(environment, type, stage)::
+    serviceErrorRateDegradationSLOQuery(environmentSelectorHash, type, stage)::
       |||
-        avg(slo:max:gitlab_service_errors:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"})
+        avg(slo:max:gitlab_service_errors:ratio{%(selector)s}) or avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"})
       ||| % {
-        environment: environment,
+        selector: selectors.serializeHash(environmentSelectorHash { type: type, stage: stage }),
         type: type,
         stage: stage,
       },
 
-    serviceErrorRateOutageSLOQuery(environment, type, stage)::
+    serviceErrorRateOutageSLOQuery(environmentSelectorHash, type, stage)::
       |||
-        2 * (avg(slo:max:gitlab_service_errors:ratio{environment="%(environment)s", type="%(type)s", stage="%(stage)s"}) or avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"}))
+        2 * (avg(slo:max:gitlab_service_errors:ratio{%(selector)s}) or avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"}))
       ||| % {
-        environment: environment,
+        selector: selectors.serializeHash(environmentSelectorHash { type: type, stage: stage }),
         type: type,
         stage: stage,
       },

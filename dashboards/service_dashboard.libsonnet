@@ -23,6 +23,8 @@ local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local selectors = import './lib/selectors.libsonnet';
 local systemDiagramPanel = import 'system_diagram_panel.libsonnet';
 
+local defaultEnvironmentSelector = { environment: '$environment' };
+
 local listComponentThresholds(service) =
   std.prune([
     if std.objectHas(service.components[componentName], 'apdex') then
@@ -39,16 +41,23 @@ local getApdexDescription(metricsCatalogServiceInfo) =
     '_Satisfactory/Tolerable_',
   ] + listComponentThresholds(metricsCatalogServiceInfo));
 
-local headlineMetricsRow(serviceType, serviceStage, startRow, metricsCatalogServiceInfo) =
+local headlineMetricsRow(
+  serviceType,
+  serviceStage,
+  startRow,
+  metricsCatalogServiceInfo,
+  environmentSelectorHash,
+  saturationEnvironmentSelectorHash
+      ) =
   local hasApdex = metricsCatalogServiceInfo.hasApdex();
   local hasErrorRate = metricsCatalogServiceInfo.hasErrorRate();
   local hasRequestRate = metricsCatalogServiceInfo.hasRequestRate();
 
   local cells = std.prune([
-    if hasApdex then keyMetrics.apdexPanel(serviceType, serviceStage, compact=true, description=getApdexDescription(metricsCatalogServiceInfo)) else null,
-    if hasErrorRate then keyMetrics.errorRatesPanel(serviceType, serviceStage, compact=true) else null,
-    if hasRequestRate then keyMetrics.qpsPanel(serviceType, serviceStage, compact=true) else null,
-    keyMetrics.saturationPanel(serviceType, serviceStage, compact=true),
+    if hasApdex then keyMetrics.apdexPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash, description=getApdexDescription(metricsCatalogServiceInfo)) else null,
+    if hasErrorRate then keyMetrics.errorRatesPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash) else null,
+    if hasRequestRate then keyMetrics.qpsPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash) else null,
+    keyMetrics.saturationPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=saturationEnvironmentSelectorHash),
   ]);
 
   layout.grid([
@@ -57,12 +66,14 @@ local headlineMetricsRow(serviceType, serviceStage, startRow, metricsCatalogServ
   +
   layout.grid(cells, cols=std.length(cells), rowHeight=5, startRow=startRow + 1);
 
-local overviewDashboard(type, tier, stage) =
-  local selectorHash = {
-    environment: '$environment',
-    type: type,
-    stage: stage,
-  };
+local overviewDashboard(
+  type,
+  tier,
+  stage,
+  environmentSelectorHash,
+  saturationEnvironmentSelectorHash
+      ) =
+  local selectorHash = environmentSelectorHash { type: type, stage: stage };
   local selector = selectors.serializeHash(selectorHash);
   local catalogServiceInfo = serviceCatalog.lookupService(type);
   local metricsCatalogServiceInfo = metricsCatalog.getService(type);
@@ -71,14 +82,23 @@ local overviewDashboard(type, tier, stage) =
     basic.dashboard(
       'Overview',
       tags=['type:' + type, 'tier:' + tier, type, 'service overview'],
+      includeEnvironmentTemplate=environmentSelectorHash == defaultEnvironmentSelector,
     )
-    .addPanels(headlineMetricsRow(type, stage, 0, metricsCatalogServiceInfo))
-    .addPanel(serviceHealth.row(type, stage), gridPos={ x: 0, y: 10 })
+    .addPanels(headlineMetricsRow(
+      type,
+      stage,
+      startRow=0,
+      metricsCatalogServiceInfo=metricsCatalogServiceInfo,
+      environmentSelectorHash=environmentSelectorHash,
+      saturationEnvironmentSelectorHash=saturationEnvironmentSelectorHash
+    ))
+    .addPanel(serviceHealth.row(type, stage, environmentSelectorHash), gridPos={ x: 0, y: 10 })
     .addPanels(
       metricsCatalogDashboards.componentOverviewMatrix(
         type,
         stage,
-        startRow=20
+        startRow=20,
+        environmentSelectorHash=environmentSelectorHash,
       )
     )
     .addPanels(
@@ -94,7 +114,7 @@ local overviewDashboard(type, tier, stage) =
       }
     )
     .addPanel(
-      saturationDetail.saturationDetailPanels(selector, components=metricsCatalogServiceInfo.applicableSaturationTypes()),
+      saturationDetail.saturationDetailPanels(selectors.serializeHash(saturationEnvironmentSelectorHash), components=metricsCatalogServiceInfo.applicableSaturationTypes()),
       gridPos={ x: 0, y: 400, w: 24, h: 1 }
     );
 
@@ -104,8 +124,20 @@ local overviewDashboard(type, tier, stage) =
   dashboardWithStage.addTemplate(templates.sigma);
 
 {
-  overview(type, tier, stage='$stage')::
-    overviewDashboard(type, tier, stage) {
+  overview(
+    type,
+    tier,
+    stage='$stage',
+    environmentSelectorHash=defaultEnvironmentSelector,
+    saturationEnvironmentSelectorHash=defaultEnvironmentSelector
+  )::
+    overviewDashboard(
+      type,
+      tier,
+      stage,
+      environmentSelectorHash=environmentSelectorHash,
+      saturationEnvironmentSelectorHash=saturationEnvironmentSelectorHash
+    ) {
       _serviceType: type,
       _serviceTier: tier,
       _stage: stage,
