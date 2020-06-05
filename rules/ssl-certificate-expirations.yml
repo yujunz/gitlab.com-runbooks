@@ -20,7 +20,7 @@ groups:
       severity: s2
       alert_type: cause
       pager: issue
-      project: gitlab.com/gitlab-com/gl-infra/infrastructure
+      project: gitlab.com/gitlab-com/gl-infra/production
     annotations:
       description: Check SSL for specified nodes and consider reissuing certificate.
       runbook: docs/frontend/ssl_cert.md
