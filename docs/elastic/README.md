@@ -65,7 +65,9 @@ After the upgrade:
 
 ## Performing operations on the Elastic cluster ##
 
-One time Elastic operations should be documented as `api_call` s in this repo. Everything else, for example cluster config, index templates, should be managed using CI (with the exception of dashboards and visualizations created in Kibana by users).
+One time Elastic operations should be documented as `api_calls` in this repo. Everything else, for example cluster config, index templates, should be managed using CI (with the exception of dashboards and visualizations created in Kibana by users).
+
+The convention used in most scripts in `api_calls` is to provide cluster connection details using an env var called `ES7_URL_WITH_CREDS`. It has a format of: `https://<es_username>:<password>@<cluster_url>:<es_port>` . The secret that this env var should contain can be found in 1password.
 
 ## Estimating Log Volume and Cluster Size
 
