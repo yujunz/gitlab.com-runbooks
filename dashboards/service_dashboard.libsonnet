@@ -114,7 +114,7 @@ local overviewDashboard(
       }
     )
     .addPanel(
-      saturationDetail.saturationDetailPanels(selectors.serializeHash(saturationEnvironmentSelectorHash), components=metricsCatalogServiceInfo.applicableSaturationTypes()),
+      saturationDetail.saturationDetailPanels(selectors.serializeHash(saturationEnvironmentSelectorHash { type: type, stage: '$stage' }), components=metricsCatalogServiceInfo.applicableSaturationTypes()),
       gridPos={ x: 0, y: 400, w: 24, h: 1 }
     );
 
