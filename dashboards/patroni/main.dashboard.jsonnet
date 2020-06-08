@@ -49,6 +49,15 @@ serviceDashboard.overview('patroni', 'db', stage='main')
   }
 )
 .addPanels(
-  processExporter.namedGroup('patroni', 'patroni', 'patroni', 'main', startRow=4001)
+  processExporter.namedGroup(
+    'patroni',
+    {
+      environment: '$environment',
+      groupname: 'patroni',
+      type: 'patroni',
+      stage: 'main',
+    },
+    startRow=4001
+  )
 )
 .overviewTrailer()

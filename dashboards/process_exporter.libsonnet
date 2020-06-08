@@ -1,31 +1,28 @@
+local selectors = import './lib/selectors.libsonnet';
 local basic = import 'basic.libsonnet';
 local layout = import 'layout.libsonnet';
 
 {
-  namedGroup(title, groupname, serviceType, serviceStage, startRow)::
+  namedGroup(title, selectorHash, aggregationLabels=['fqdn'], startRow=1)::
     local formatConfig = {
-      groupname: groupname,
-      serviceType: serviceType,
-      serviceStage: serviceStage,
+      selector: selectors.serializeHash(selectorHash),
+      aggregationLabels: std.join(', ', aggregationLabels),
     };
+
+    local legendFormat = std.join(' ', ['{{ ' + i + '}}' for i in aggregationLabels]);
 
     layout.grid([
       basic.timeseries(
         title='Process CPU Time',
         description='Seconds of CPU time for the named process group, per second',
         query=|||
-          sum(
+          sum by(%(aggregationLabels)s) (
             rate(
-              namedprocess_namegroup_cpu_seconds_total{
-                environment="$environment",
-                groupname="%(groupname)s",
-                type="%(serviceType)s",
-                stage="%(serviceStage)s"
-              }[$__interval]
+              namedprocess_namegroup_cpu_seconds_total{%(selector)s}[$__interval]
             )
-          ) without (mode)
+          )
         ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
+        legendFormat=legendFormat,
         interval='1m',
         intervalFactor=1,
         format='s',
@@ -36,16 +33,11 @@ local layout = import 'layout.libsonnet';
         title=title + ': Open File Descriptors',
         description='Maximum number of open file descriptors per host',
         query=|||
-          max(
-              namedprocess_namegroup_open_filedesc{
-                environment="$environment",
-                groupname="%(groupname)s",
-                type="%(serviceType)s",
-                stage="%(serviceStage)s"
-              }
-          ) by (fqdn)
+          max by(%(aggregationLabels)s) (
+              namedprocess_namegroup_open_filedesc{%(selector)s}
+          )
         ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
+        legendFormat=legendFormat,
         interval='1m',
         intervalFactor=1,
         legend_show=false,
@@ -55,16 +47,11 @@ local layout = import 'layout.libsonnet';
         title=title + ': Number of Threads',
         description='Number of threads in the process group',
         query=|||
-          sum(
-              namedprocess_namegroup_num_threads{
-                environment="$environment",
-                groupname="%(groupname)s",
-                type="%(serviceType)s",
-                stage="%(serviceStage)s"
-              }
-          ) by (fqdn)
+          sum by(%(aggregationLabels)s) (
+            namedprocess_namegroup_num_threads{%(selector)s}
+          )
         ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
+        legendFormat=legendFormat,
         interval='1m',
         intervalFactor=1,
         legend_show=false,
@@ -74,16 +61,11 @@ local layout = import 'layout.libsonnet';
         title=title + ': Memory Usage',
         description='Memory usage for named process group',
         query=|||
-          sum(
-              namedprocess_namegroup_memory_bytes{
-                environment="$environment",
-                groupname="%(groupname)s",
-                type="%(serviceType)s",
-                stage="%(serviceStage)s"
-              }
-          ) by (fqdn)
+          sum by(%(aggregationLabels)s) (
+            namedprocess_namegroup_memory_bytes{%(selector)s}
+          )
         ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
+        legendFormat=legendFormat,
         interval='1m',
         format='bytes',
         intervalFactor=1,

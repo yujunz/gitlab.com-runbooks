@@ -21,6 +21,7 @@ local serviceHealth = import 'service_health.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local gitalyCommon = import 'gitaly/gitaly_common.libsonnet';
 local selectors = import 'lib/selectors.libsonnet';
+local processExporter = import 'process_exporter.libsonnet';
 
 local selectorHash = {
   environment: '$environment',
@@ -100,6 +101,26 @@ basic.dashboard(
       { title: 'Overall', aggregationLabels: '', legendFormat: 'gitalyruby' },
     ],
   ), gridPos={ x: 0, y: 7100 }
+)
+.addPanel(
+  row.new(title='git process activity'),
+  gridPos={
+    x: 0,
+    y: 8000,
+    w: 24,
+    h: 1,
+  }
+)
+.addPanels(
+  processExporter.namedGroup(
+    'git processes',
+    selectorHash
+    {
+      groupname: { re: 'git.*' },
+    },
+    aggregationLabels=['groupname'],
+    startRow=8001
+  )
 )
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('gitaly') + platformLinks.services +
