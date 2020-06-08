@@ -125,21 +125,6 @@ local ruleSetIterator(ruleSets) = {
     componentMapping: ruleSetIterator([
       componentMappingRuleSet(),
     ]),
-
-    // The component error ratio recording rules record error rates as a ratio
-    // of total requests.
-    // These alerts are applied across all components with a single set of rules.
-    //
-    // Remove service level aggregations once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689 is complete
-    deprecatedComponentErrorRatios: ruleSetIterator(std.flatMap(
-      function(suffix)
-        [
-          componentErrorRatioRuleSet(suffix=suffix, targetThanos=false),
-          serviceErrorRatioRuleSet(suffix=suffix, targetThanos=false),
-          serviceNodeErrorRatioRuleSet(suffix=suffix, targetThanos=false),
-        ],
-      MULTI_BURN_RATE_SUFFIXES
-    )),
   },
 
   // Recording rules that get evaluated in Thanos
@@ -156,7 +141,7 @@ local ruleSetIterator(ruleSets) = {
     componentErrorRatios: ruleSetIterator(std.flatMap(
       function(suffix)
         [
-          componentErrorRatioRuleSet(suffix=suffix, targetThanos=true),
+          componentErrorRatioRuleSet(suffix=suffix),
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),
@@ -166,8 +151,8 @@ local ruleSetIterator(ruleSets) = {
     serviceErrorRatios: ruleSetIterator(std.flatMap(
       function(suffix)
         [
-          serviceErrorRatioRuleSet(suffix=suffix, targetThanos=true),
-          serviceNodeErrorRatioRuleSet(suffix=suffix, targetThanos=true),
+          serviceErrorRatioRuleSet(suffix=suffix),
+          serviceNodeErrorRatioRuleSet(suffix=suffix),
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),

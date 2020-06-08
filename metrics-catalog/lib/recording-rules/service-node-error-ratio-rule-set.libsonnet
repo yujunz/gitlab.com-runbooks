@@ -4,27 +4,19 @@
   // at a service level.
   //
   // Note: Only gitaly currently uses nodeLevelMonitoring.
-  //
-  // targetThanos is deprecated: remove option once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689 is complete
-  serviceNodeErrorRatioRuleSet(
-    suffix,
-    targetThanos=true,
-  )::
+  serviceNodeErrorRatioRuleSet(suffix)::
     {
       generateRecordingRules()::
-        local monitorSelector = if targetThanos then
-          '{monitor!="global"}'
-        else
-          '';
-
-        local format = { suffix: suffix, monitorSelector: monitorSelector };
+        local format = {
+          suffix: suffix,
+        };
 
         [{
           record: 'gitlab_service_node_errors:ratio%(suffix)s' % format,
           expr: |||
-            sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate%(suffix)s%(monitorSelector)s >= 0)
+            sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_errors:rate%(suffix)s{monitor!="global"} >= 0)
             /
-            sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate%(suffix)s%(monitorSelector)s > 0)
+            sum by (environment, env, tier, type, stage, shard, fqdn) (gitlab_component_node_ops:rate%(suffix)s{monitor!="global"} > 0)
           ||| % format,
         }],
     },
