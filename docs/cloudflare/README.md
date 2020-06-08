@@ -9,7 +9,7 @@ Cloudflare provides a web application firewall (WAF), domain name system
 
 ## Web Application Firewall (WAF)
 
-* [Service Information](../docks/waf/service-waf.md)
+* [Service Information](../docs/waf/service-waf.md)
 
 ## Domain Name System (DNS)
 
