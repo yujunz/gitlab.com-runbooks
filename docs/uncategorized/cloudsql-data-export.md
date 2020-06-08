@@ -10,10 +10,10 @@ Verify that you have access to both the new bucket and the cloudSQL instance in 
 
 # Procedure
 
-## Export
+## Export version
 
 ```
-gcloud sql export sql cloudsql-411f gs://gs-production-db-backups/data-(date +"%Y-%m-%d").gz --database=default
+gcloud sql export sql cloudsql-411f gs://gs-production-db-backups/version-data-(date +"%Y-%m-%d").gz --database=default
 ```
 
 The above operation WILL time out. This is fine. The error message will be something similar to the following:
@@ -23,12 +23,26 @@ Operation https://sqladmin.googleapis.com/sql/v1beta4/projects/gs-production-efd
 ```
 Run the command suggested in that message to check when it finishes. (It might be necessary to run it to check more than once).
 
-## Copy
+## Copy version
 
 Once it completes, copy it to the temporary bucket.
 
 ```
-gsutil cp gs://gs-production-db-backups/data-(date +"%Y-%m-%d").gz gs://tmurphy-temp/data-(date +"%Y-%m-%d").gz
+gsutil cp gs://gs-production-db-backups/version-data-(date +"%Y-%m-%d").gz gs://tmurphy-temp/version-data-(date +"%Y-%m-%d").gz
+```
+
+## Export license
+
+```
+gcloud sql export sql cloudsql-411f gs://license-prd-data/data-(date +"%Y-%m-%d").gz --database=default
+```
+
+## Copy license
+
+Once it completes, copy it to the temporary bucket.
+
+```
+gsutil cp gs://license-prd-data/data/license-data-(date +"%Y-%m-%d").gz gs://tmurphy-temp/license-data-(date +"%Y-%m-%d").gz
 ```
 
 ## Wrap up
