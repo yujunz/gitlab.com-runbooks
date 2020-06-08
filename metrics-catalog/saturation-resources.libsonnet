@@ -1,5 +1,17 @@
 local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonnet').resourceSaturationPoint;
 
+// throttledSidekiqShards is an array of Sidekiq `shard` labels for shards
+// that are configured to run `urgency=throttled` jobs. Queues running on these
+// shards will be saturated by-design, as we throttle jobs to protect backend
+// resources.
+//
+// For this reason, we don't alert on sidekiq saturation on these nodes
+local throttledSidekiqShards = [
+  'export',
+  'elasticsearch',
+  'memory-bound'
+];
+
 {
   active_db_connections: resourceSaturationPoint({
     title: 'Active DB Connection Saturation',
@@ -690,24 +702,60 @@ local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonn
     },
   }),
 
-  sidekiq_workers: resourceSaturationPoint({
-    title: 'Sidekiq Worker Saturation per Node',
+  sidekiq_shard_workers: resourceSaturationPoint({
+    title: 'Sidekiq Worker Saturation per shard',
     appliesTo: ['sidekiq'],
     description: |||
-      Sidekiq worker saturation per node.
+      Sidekiq worker saturation per shard.
 
       This metric represents the percentage of available threads*workers that are utilized actively processing jobs.
 
       When this metric is saturated, new Sidekiq jobs will queue. Depending on whether or not the jobs are latency sensitive,
       this could impact user experience.
     |||,
+    grafana_dashboard_uid: 'sat_sidekiq_shard_workers',
+    resourceLabels: ['shard'],
+    burnRatePeriod: '5m',
+    query: |||
+      sum by (%(aggregationLabels)s) (
+        avg_over_time(sidekiq_running_jobs{shard!~"%(throttledSidekiqShardsRegexp)s", %(selector)s}[%(rangeInterval)s])
+      )
+      /
+      sum by (%(aggregationLabels)s) (
+        avg_over_time(sidekiq_concurrency{shard!~"%(throttledSidekiqShardsRegexp)s", %(selector)s}[%(rangeInterval)s])
+      )
+    |||,
+    queryFormatConfig: {
+      throttledSidekiqShardsRegexp: std.join('|', throttledSidekiqShards)
+    },
+    slos: {
+      soft: 0.85,
+      hard: 0.90,
+      alertTriggerDuration: '10m',
+    },
+  }),
+
+  sidekiq_workers: resourceSaturationPoint({
+    title: 'Sidekiq Worker Saturation per node',
+    appliesTo: ['sidekiq'],
+    description: |||
+      Sidekiq worker saturation per node.
+
+      This metric represents the percentage of available threads*workers that are utilized actively processing jobs.
+
+      When this metric is saturated, new Sidekiq jobs may queue. Depending on whether or not the jobs are latency sensitive,
+      this could impact user experience.
+    |||,
     grafana_dashboard_uid: 'sat_sidekiq_workers',
     resourceLabels: ['fqdn', 'instance', 'pod'],
     query: |||
-      sum by (%(aggregationLabels)s) (sidekiq_running_jobs{shard!~"export|elasticsearch|memory-bound", %(selector)s})
+      sum by (%(aggregationLabels)s) (sidekiq_running_jobs{shard!~"%(throttledSidekiqShardsRegexp)s", %(selector)s})
       /
-      sum by (%(aggregationLabels)s) (sidekiq_concurrency{shard!~"export|elasticsearch|memory-bound", %(selector)s})
+      sum by (%(aggregationLabels)s) (sidekiq_concurrency{shard!~"%(throttledSidekiqShardsRegexp)s", %(selector)s})
     |||,
+    queryFormatConfig: {
+      throttledSidekiqShardsRegexp: std.join('|', throttledSidekiqShards)
+    },
     slos: {
       soft: 0.90,
       hard: 0.95,

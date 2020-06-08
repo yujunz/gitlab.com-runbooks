@@ -30,8 +30,9 @@ local resourceSaturationPoint = function(definition)
       local allMaxAggregationLabels = environmentLabels + maxAggregationLabels;
       local queryAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), queryAggregationLabels);
       local maxAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), allMaxAggregationLabels);
+      local queryFormatConfig = ({ queryFormatConfig: { } } + self).queryFormatConfig;
 
-      local preaggregation = definition.query % {
+      local preaggregation = definition.query % queryFormatConfig {
         rangeInterval: rangeInterval,
         selector: selector,
         aggregationLabels: std.join(', ', queryAggregationLabelsExcludingStaticLabels),
