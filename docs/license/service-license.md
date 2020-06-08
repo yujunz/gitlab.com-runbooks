@@ -13,5 +13,6 @@
 
 ## Troubleshooting Pointers
 
+* [../uncategorized/cloudsql-data-export.md](../uncategorized/cloudsql-data-export.md)
 * [../uncategorized/yubikey.md](../uncategorized/yubikey.md)
 <!-- END_MARKER -->
