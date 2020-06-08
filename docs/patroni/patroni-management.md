@@ -129,16 +129,30 @@ Quoting [Patroni docs][pause-docs]:
 > some nodes can be even temporary promoted, violating the assumption of running only one master.
 > Therefore, Patroni needs to be able to "detach" from the running cluster, implementing an equivalent of the maintenance mode in Pacemaker.
 
-Pausing the cluster disables automatic failover. Run this command to pause the cluster:
+Pausing the cluster disables automatic failover. This is desirable when doing tasks such as upgrading Consul,
+or during a maintenance of the whole Patroni cluster.
+
+It is important to disable `chef-client` before pausing the cluster,
+otherwise a regular `chef-client` can revert the pause status.
+
+To pause the cluster, run the following commands:
 
 ```
-patroni-01-db-gstg $ gitlab-patronictl pause --wait pg-ha-cluster
+workstation        $ knife ssh roles:<env>-base-db-patroni 'sudo chef-client-disable "Database maintenance issue prod#xyz"'
+patroni-01-db-gstg $ sudo gitlab-patronictl pause --wait pg-ha-cluster
 ```
 
-And this command to unpause/resume the cluster:
+You can verify the result of pausing the cluster by running:
 
 ```
-patroni-01-db-gstg $ gitlab-patronictl resume --wait pg-ha-cluster
+patroni-01-db-gstg $ sudo gitlab-patronictl list | grep 'Maintenance mode'
+```
+
+Run these commands to unpause/resume the cluster:
+
+```
+patroni-01-db-gstg $ sudo gitlab-patronictl resume --wait pg-ha-cluster
+workstation        $ knife ssh roles:<env>-base-db-patroni 'sudo chef-client-enable'
 ```
 
 ### Restarting Patroni When Paused
