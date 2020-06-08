@@ -14,6 +14,7 @@
 ## Troubleshooting Pointers
 
 * [../ci-runners/ci-investigate-abuse.md](../ci-runners/ci-investigate-abuse.md)
+* [../cloudflare/logging.md](../cloudflare/logging.md)
 * [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
 * [../gitaly/find-project-from-hashed-storage.md](../gitaly/find-project-from-hashed-storage.md)
 * [../gitaly/gitaly-permission-denied.md](../gitaly/gitaly-permission-denied.md)
@@ -36,5 +37,4 @@
 * [../uncategorized/manage-chef.md](../uncategorized/manage-chef.md)
 * [../uncategorized/node-reboots.md](../uncategorized/node-reboots.md)
 * [../uncategorized/uploads.md](../uncategorized/uploads.md)
-* [../waf/cloudflare.md](../waf/cloudflare.md)
 <!-- END_MARKER -->
