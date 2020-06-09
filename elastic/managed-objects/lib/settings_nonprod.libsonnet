@@ -19,7 +19,7 @@ local setting(index, env) = if std.member(HIGH_THROUHGPUT, index) then {
       },
     },
   },
-  number_of_shards: 2,
+  // number_of_shards: 1,
   // number_of_replicas: 1,
 }
 else if std.member(MEDIUM_THROUGHPUT, index) then {
