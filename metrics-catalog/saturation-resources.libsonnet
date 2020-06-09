@@ -475,21 +475,23 @@ local throttledSidekiqShards = [
     |||,
     grafana_dashboard_uid: 'sat_pgbouncer_async_pool',
     resourceLabels: ['fqdn', 'instance'],
+    burnRatePeriod: '5m',
     query: |||
       (
-        pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s} +
-        pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s} +
-        pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s} +
-        pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}
+        avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s])
       )
       / on(%(aggregationLabels)s) group_left()
       sum by (%(aggregationLabels)s) (
-        pgbouncer_databases_pool_size{name="gitlabhq_production_sidekiq", %(selector)s}
+        avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s])
       )
     |||,
     slos: {
       soft: 0.90,
-      hard: 0.98,
+      hard: 0.95,
+      alertTriggerDuration: '10m',
     },
   }),
 
@@ -529,21 +531,23 @@ local throttledSidekiqShards = [
     |||,
     grafana_dashboard_uid: 'sat_pgbouncer_sync_pool',
     resourceLabels: ['fqdn', 'instance'],
+    burnRatePeriod: '5m',
     query: |||
       (
-        pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production", %(selector)s} +
-        pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production", %(selector)s} +
-        pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production", %(selector)s} +
-        pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production", %(selector)s}
+        avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s])
       )
       / on(%(aggregationLabels)s) group_left()
       sum by (%(aggregationLabels)s) (
-        pgbouncer_databases_pool_size{name="gitlabhq_production", %(selector)s}
+        avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production", %(selector)s}[%(rangeInterval)s])
       )
     |||,
     slos: {
       soft: 0.85,
       hard: 0.95,
+      alertTriggerDuration: '10m',
     },
   }),
 
