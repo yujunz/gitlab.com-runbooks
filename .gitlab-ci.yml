@@ -231,7 +231,7 @@ update_elastic_log_gprd_index_templates:
     changes:
       - elastic/managed-objects/log_gprd/index-templates/*
       - elastic/managed-objects/lib/log_gprd_index_template.libsonnet
-      - elastic/managed-objects/lib/mappings.libsonnet
+      - elastic/managed-objects/lib/index_mappings/*.libsonnet
     variables:
       - $ES_LOG_GPRD_URL
 
@@ -287,7 +287,7 @@ update_elastic_nonprod-log_index_templates:
     changes:
       - elastic/managed-objects/nonprod-log/index-templates/*
       - elastic/managed-objects/lib/nonprod-log_index_template.libsonnet
-      - elastic/managed-objects/lib/mappings.libsonnet
+      - elastic/managed-objects/lib/index_mappings/*.libsonnet
     variables:
       - $ES_NONPROD_URL
 
