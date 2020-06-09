@@ -13,7 +13,7 @@ Cloudflare provides a web application firewall (WAF), domain name system
 
 ## General Information
 * [Vendor Info](../waf/clouflare-vendor.md)
-* [Terraform Management](../wf/cloudflare-terraform.md)
+* [Terraform Management](./cloudflare-terraform.md)
 
 ## Web Application Firewall (WAF)
 * [Service Information](../waf/service-waf.md)
@@ -21,7 +21,7 @@ Cloudflare provides a web application firewall (WAF), domain name system
 ## Domain Name System (DNS)
 * For the zones listed above, Cloudflare is the primary DNS resolver.
 * Route53 in AWS is a secondary resolver.
-* Terraform is used to manage Cloudflare DNS entries.
+* [Terraform](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/-/tree/master/environments/dns) is used to manage Cloudflare DNS entries.
 
 ## Content Deliver Network (CDN)
 * As of the writing of this page, we are caching nothing in Cloudflare.
