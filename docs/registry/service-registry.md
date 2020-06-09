@@ -21,6 +21,7 @@
 * [../ci-runners/runners_cache_disk_space.md](../ci-runners/runners_cache_disk_space.md)
 * [../ci-runners/runners_cache_is_down.md](../ci-runners/runners_cache_is_down.md)
 * [../ci-runners/runners_registry_is_down.md](../ci-runners/runners_registry_is_down.md)
+* [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../logging/README.md](../logging/README.md)
 * [gitlab-registry.md](gitlab-registry.md)
@@ -30,5 +31,4 @@
 * [../uncategorized/k8s-operations.md](../uncategorized/k8s-operations.md)
 * [../uncategorized/kubernetes.md](../uncategorized/kubernetes.md)
 * [../uncategorized/tweeting-guidelines.md](../uncategorized/tweeting-guidelines.md)
-* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 <!-- END_MARKER -->

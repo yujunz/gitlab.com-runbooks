@@ -13,6 +13,7 @@
 
 ## Troubleshooting Pointers
 
+* [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
 * [../elastic/README.md](../elastic/README.md)
 * [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)
 * [../gitaly/gitaly-error-rate.md](../gitaly/gitaly-error-rate.md)
@@ -51,6 +52,5 @@
 * [../uncategorized/yubikey.md](../uncategorized/yubikey.md)
 * [gitaly-version-mismatch.md](gitaly-version-mismatch.md)
 * [version-gitlab-com.md](version-gitlab-com.md)
-* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 * [../web/static-repository-objects-caching.md](../web/static-repository-objects-caching.md)
 <!-- END_MARKER -->
