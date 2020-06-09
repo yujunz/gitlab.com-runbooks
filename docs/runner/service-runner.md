@@ -23,6 +23,7 @@
 * [../ci-runners/runners_registry_is_down.md](../ci-runners/runners_registry_is_down.md)
 * [../ci-runners/shared-runners-cost-factors.md](../ci-runners/shared-runners-cost-factors.md)
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
+* [../license/license-gitlab-com.md](../license/license-gitlab-com.md)
 * [../logging/README.md](../logging/README.md)
 * [../pgbouncer/pgbouncer.md](../pgbouncer/pgbouncer.md)
 * [ci-runner-timeouts.md](ci-runner-timeouts.md)

@@ -21,6 +21,7 @@
 * [../elastic/kibana.md](../elastic/kibana.md)
 * [../frontend/ssh-maxstartups-breach.md](../frontend/ssh-maxstartups-breach.md)
 * [../git/purge-git-data.md](../git/purge-git-data.md)
+* [../license/license-gitlab-com.md](../license/license-gitlab-com.md)
 * [README.md](README.md)
 * [logging_gcs_archive_bigquery.md](logging_gcs_archive_bigquery.md)
 * [../pages/gitlab-pages.md](../pages/gitlab-pages.md)
