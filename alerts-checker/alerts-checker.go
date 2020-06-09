@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/prometheus/prometheus/pkg/rulefmt"
-	"github.com/prometheus/prometheus/promql"
+	"github.com/prometheus/prometheus/promql/parser"
 )
 
 var (
@@ -110,24 +110,24 @@ func processFile(file string) {
 	groups := ruleGroups.Groups
 	for _, group := range groups {
 		for _, rule := range group.Rules {
-			if rule.Alert == "" || ignoredAlerts[rule.Alert] {
+			if rule.Alert.Value == "" || ignoredAlerts[rule.Alert.Value] {
 				continue
 			}
 
-			selectors, err := extractSelectors(rule.Expr)
+			selectors, err := extractSelectors(rule.Expr.Value)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			present, err := checkSelectorsPresence(rule.Alert, selectors)
+			present, err := checkSelectorsPresence(rule.Alert.Value, selectors)
 			if err != nil {
 				log.Println(err)
-				erroredAlerts = append(erroredAlerts, rule.Alert)
+				erroredAlerts = append(erroredAlerts, rule.Alert.Value)
 				continue
 			}
 
 			if !present {
-				offendingAlerts = append(offendingAlerts, rule.Alert)
+				offendingAlerts = append(offendingAlerts, rule.Alert.Value)
 			}
 		}
 	}
@@ -190,14 +190,14 @@ func selectorHasResults(selector string) (bool, error) {
 }
 
 func extractSelectors(exprStr string) ([]string, error) {
-	expr, err := promql.ParseExpr(exprStr)
+	expr, err := parser.ParseExpr(exprStr)
 	if err != nil {
 		return nil, fmt.Errorf("Error parsing the expression: %v", err)
 	}
 
 	// Good programmers traverse the tree, great programmers grep for what they
 	// care for in the tree string representation -- Anonymous
-	tree := promql.Tree(expr)
+	tree := parser.Tree(expr)
 	selectorRegexp := regexp.MustCompile(`(?m)(?:VectorSelector|MatrixSelector) :: (.*)$`)
 	rangeRegexp := regexp.MustCompile(`\[.*\]$`)
 
