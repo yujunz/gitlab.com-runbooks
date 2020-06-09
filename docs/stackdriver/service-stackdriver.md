@@ -16,6 +16,7 @@
 * [../elastic/README.md](../elastic/README.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../gitaly/gitaly-down.md](../gitaly/gitaly-down.md)
+* [../license/license-gitlab-com.md](../license/license-gitlab-com.md)
 * [../logging/README.md](../logging/README.md)
 * [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
 * [../pgbouncer/pgbouncer.md](../pgbouncer/pgbouncer.md)

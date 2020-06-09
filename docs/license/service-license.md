@@ -13,6 +13,7 @@
 
 ## Troubleshooting Pointers
 
+* [license-gitlab-com.md](license-gitlab-com.md)
 * [../uncategorized/cloudsql-data-export.md](../uncategorized/cloudsql-data-export.md)
 * [../uncategorized/yubikey.md](../uncategorized/yubikey.md)
 <!-- END_MARKER -->
