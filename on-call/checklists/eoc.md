@@ -15,7 +15,9 @@ Here is a suggested checklist of things to do at the start of an on-call shift:
 - *Join alert channels*: If not already a member, `/join` `#alerts`, `#alerts-general`, `#alerts-prod-abuse`, `#tenable-notifications`, `#marquee_account_alrts`
 - *Turn on slack channel notifications*: Open `#production` and `#incident-management` Notification Preferences (and optionally #infrastructure-lounge). Set Desktop and Mobile to `All new messages`
 - *Turn on slack alert notifications*: Open `#alerts` and `#alerts-general`, Notification Preferences. Set Desktop only to `All new messages`
-- At the start of each on-call day, read all S1 incidents at: https://gitlab.com/gitlab-com/gl-infra/production/issues?scope=all&utf8=✓&state=opened&label_name%5B%5D=incident&label_name%5B%5D=S1
+- At the start of each on-call day, read the on-call handover issue that has
+  been assigned to you by the previous EOC, and familiarize yourself with any
+  ongoing incidents.
 
 At the end of a shift:
 
