@@ -9,10 +9,10 @@ Cloudflare provides a web application firewall (WAF), domain name system
 
 ## On-Call
 * [Logging](logging.md)
-* [Managing Taffic](../waf/cloudflare-managing-traffic.md)
+* [Managing Taffic](./managing-traffic.md)
 
 ## General Information
-* [Vendor Info](../waf/clouflare-vendor.md)
+* [Vendor Info](./vendor.md)
 * [Terraform Management](./cloudflare-terraform.md)
 
 ## Web Application Firewall (WAF)
