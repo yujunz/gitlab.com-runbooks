@@ -139,7 +139,7 @@ The steps to extend are as follows:
 - Enter `expire`, follow prompts to expire by X years with `2y`
 - Enter `save` to store the changes to the key and exit.
 - Export the updated key(s), and upload to appropriate storage locations & systems.
-- Insure to copy the original key to a backup file in the secure storage location.
+- Ensure to copy the original key to a backup file in the secure storage location.
 
 See [Exporting the Keys]()
 
