@@ -13,6 +13,7 @@
 
 ## Troubleshooting Pointers
 
-* [cloudflare-managing-traffic.md](cloudflare-managing-traffic.md)
-* [cloudflare-terraform.md](cloudflare-terraform.md)
+* [../cloudflare/README.md](../cloudflare/README.md)
+* [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
+* [../cloudflare/terraform.md](../cloudflare/terraform.md)
 <!-- END_MARKER -->

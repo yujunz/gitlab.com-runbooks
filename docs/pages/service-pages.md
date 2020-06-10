@@ -14,6 +14,7 @@
 
 ## Troubleshooting Pointers
 
+* [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../gitaly/gitaly-unusual-activity.md](../gitaly/gitaly-unusual-activity.md)
 * [../logging/README.md](../logging/README.md)
@@ -23,5 +24,4 @@
 * [../uncategorized/chef-vault.md](../uncategorized/chef-vault.md)
 * [../uncategorized/chef.md](../uncategorized/chef.md)
 * [../uncategorized/deploycmd.md](../uncategorized/deploycmd.md)
-* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
 <!-- END_MARKER -->

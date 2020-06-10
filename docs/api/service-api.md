@@ -27,6 +27,9 @@
 * [../ci-runners/create-runners-manager-node.md](../ci-runners/create-runners-manager-node.md)
 * [../ci-runners/pipeline-deletion.md](../ci-runners/pipeline-deletion.md)
 * [../ci-runners/tracing-app-db-queries.md](../ci-runners/tracing-app-db-queries.md)
+* [../cloudflare/logging.md](../cloudflare/logging.md)
+* [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
+* [../cloudflare/terraform.md](../cloudflare/terraform.md)
 * [../customers.gitlab.com/api-key-rotation.md](../customers.gitlab.com/api-key-rotation.md)
 * [../elastic/README.md](../elastic/README.md)
 * [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)
@@ -57,8 +60,5 @@
 * [../uncategorized/pingdom.md](../uncategorized/pingdom.md)
 * [../uncategorized/shared-configurations.md](../uncategorized/shared-configurations.md)
 * [../uncategorized/upgrade-docker-machine.md](../uncategorized/upgrade-docker-machine.md)
-* [../waf/cloudflare-managing-traffic.md](../waf/cloudflare-managing-traffic.md)
-* [../waf/cloudflare-terraform.md](../waf/cloudflare-terraform.md)
-* [../waf/cloudflare.md](../waf/cloudflare.md)
 * [../web/static-repository-objects-caching.md](../web/static-repository-objects-caching.md)
 <!-- END_MARKER -->

@@ -20,6 +20,7 @@
 * [../bastions/gstg-bastions.md](../bastions/gstg-bastions.md)
 * [../bastions/pre-bastions.md](../bastions/pre-bastions.md)
 * [../bastions/testbed-bastion.md](../bastions/testbed-bastion.md)
+* [../cloudflare/logging.md](../cloudflare/logging.md)
 * [../customers.gitlab.com/api-key-rotation.md](../customers.gitlab.com/api-key-rotation.md)
 * [../elastic/README.md](../elastic/README.md)
 * [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
@@ -77,5 +78,4 @@
 * [../uncategorized/uploads.md](../uncategorized/uploads.md)
 * [../uncategorized/workers-high-load.md](../uncategorized/workers-high-load.md)
 * [../version/version-gitlab-com.md](../version/version-gitlab-com.md)
-* [../waf/cloudflare.md](../waf/cloudflare.md)
 <!-- END_MARKER -->
