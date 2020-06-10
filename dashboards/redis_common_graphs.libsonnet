@@ -260,7 +260,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
       .addTarget(
         promQuery.target(
           |||
-            slo:max:soft:gitlab_component_saturation:ratio{component="redis_memory"}
+            max(slo:max:soft:gitlab_component_saturation:ratio{component="redis_memory", environment="$environment"})
           ||| % formatConfig,
           interval='5m',
           legendFormat='Degradation SLO',
@@ -269,7 +269,7 @@ local seriesOverrides = import 'series_overrides.libsonnet';
       .addTarget(
         promQuery.target(
           |||
-            slo:max:hard:gitlab_component_saturation:ratio{component="redis_memory"}
+            max(slo:max:hard:gitlab_component_saturation:ratio{component="redis_memory", environment="$environment"})
           ||| % formatConfig,
           interval='5m',
           legendFormat='Outage SLO',
