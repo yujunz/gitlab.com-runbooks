@@ -20,6 +20,13 @@ UI](https://console.cloud.google.com/bigquery?project=gitlab-production).
 By default, imported tables in the `cloudflare` dataset have a retention of 30
 days.
 
+Note that BigQuery does not deduplicate records. So if you want to import a newer set of files, it's recommended to either import only the new files selectively, or to delete the table before importing, via:
+
+```bash
+bq ls cloudflare
+bq rm cloudflare.logpush_20200610
+```
+
 ## Processing the raw data
 
 If you want to run more ad-hoc analysis, there is also a script, which allows us
