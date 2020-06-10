@@ -74,7 +74,7 @@ To properly secure they key generation process, one should do their best to prov
 
 #### OSX
 
-On a physical OSX machine--**not a virtualized OSX instance**--it is best
+On a physical OSX machine (**not a virtualized instance**) it is best
 to copy a couple of random files to `/dev/random` to insure that there
 is enough entropy in the system. It is best to use files that are unique
 and not generally available. Two to three moderate sized files are sufficient
