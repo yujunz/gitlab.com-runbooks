@@ -5,11 +5,26 @@ the name of `gitlab-<environment>-cloudflare-logpush`. This operation happens
 every 5 minutes so the logs don't give an immediate overview of what's
 currently happening.
 
-At the moment we don't have a way of analyzing them in a controlled manner such
-as BigQuery or Kibana.
+## BigQuery
 
-We have however a script, which allows us to access a NDJSON stream of logs.
-This script can be found in `scripts/cloudflare_logs.sh`
+The logs for a particular day can be imported into BigQuery by using the `bq` tool:
+
+```bash
+bq load --project_id gitlab-production --source_format NEWLINE_DELIMITED_JSON cloudflare.logpush_20200610 'gs://gitlab-gprd-cloudflare-logpush/http/20200610/*.log.gz' <(curl -s https://raw.githubusercontent.com/cloudflare/cloudflare-gcp/master/logpush-to-bigquery/schema-http.json)
+```
+
+This will make the logs for that particular day available for querying with SQL
+via [the BigQuery
+UI](https://console.cloud.google.com/bigquery?project=gitlab-production).
+
+By default, imported tables in the `cloudflare` dataset have a retention of 30
+days.
+
+## Processing the raw data
+
+If you want to run more ad-hoc analysis, there is also a script, which allows us
+to access a NDJSON stream of logs. This script can be found in
+`scripts/cloudflare_logs.sh`
 
 The usage of the script should be limited to a console host because of traffic
 cost. It will need to read the whole logs for the provided timeframe.
