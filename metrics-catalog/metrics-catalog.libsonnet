@@ -22,5 +22,10 @@ local serviceApplicableSaturationTypes(service)
       hasRequestRate():: serviceHasComponentWith(service, 'requestRate'),
       hasErrorRate():: serviceHasComponentWith(service, 'errorRate'),
       applicableSaturationTypes():: serviceApplicableSaturationTypes(service),
+
+      getProvisioning()::
+        local provisioning = ({ provisioning: {} } + service).provisioning;
+        { vms: true, kubernetes: false } + provisioning,
     },
+
 }

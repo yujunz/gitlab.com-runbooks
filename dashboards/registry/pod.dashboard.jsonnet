@@ -1,6 +1,6 @@
 local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
-local k8sCommon = import 'kubernetes_application_common.libsonnet';
+local k8sPodsCommon = import 'kubernetes_pods_common.libsonnet';
 local template = grafana.template;
 local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
@@ -32,7 +32,7 @@ basic.dashboard(
     h: 1,
   }
 )
-.addPanels(k8sCommon.version(startRow=1))
+.addPanels(k8sPodsCommon.version(startRow=1))
 .addPanel(
 
   row.new(title='Deployment Info'),
@@ -43,8 +43,8 @@ basic.dashboard(
     h: 1,
   }
 )
-.addPanels(k8sCommon.deployment(startRow=501))
-.addPanels(k8sCommon.status(startRow=502))
+.addPanels(k8sPodsCommon.deployment(startRow=501))
+.addPanels(k8sPodsCommon.status(startRow=502))
 .addPanel(
 
   row.new(title='CPU'),
@@ -55,7 +55,7 @@ basic.dashboard(
     h: 1,
   }
 )
-.addPanels(k8sCommon.cpu(startRow=1001))
+.addPanels(k8sPodsCommon.cpu(startRow=1001))
 .addPanel(
 
   row.new(title='Memory'),
@@ -66,7 +66,7 @@ basic.dashboard(
     h: 1,
   }
 )
-.addPanels(k8sCommon.memory(startRow=2001, container='registry'))
+.addPanels(k8sPodsCommon.memory(startRow=2001, container='registry'))
 .addPanel(
 
   row.new(title='Network'),
@@ -77,4 +77,4 @@ basic.dashboard(
     h: 1,
   }
 )
-.addPanels(k8sCommon.network(startRow=3001))
+.addPanels(k8sPodsCommon.network(startRow=3001))
