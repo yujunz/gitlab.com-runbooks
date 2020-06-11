@@ -437,6 +437,7 @@ deploy_dashboards:
   stage: deploy
   script:
     - dashboards/upload.sh
+    - dashboards/delete-orphaned-dashboards.sh
   only:
     refs:
       - master
