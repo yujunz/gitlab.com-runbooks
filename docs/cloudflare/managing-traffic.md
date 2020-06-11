@@ -13,6 +13,17 @@
  - Provide a quick overview of what is currently allowlisted or blocklisted and why.
  - Reduce noise in the infrastructure and production trackers by separating it out.
 
+## How do I Enable "I'm Under Attack Mode" in Cloudflare once I determine we are under a large scale attack?
+
+In the cloudflare UI, under the domain in question, click on the Page rules button up the top. Once you
+see the list of page rules, scroll down to the bottom, where you should notice a page rule for
+`*gitlab.com/*` with security level "I'm Under Attack" set to "Off". Click the button to "On" to enable it.
+
+![](cloudflare-attack.png)
+
+If you enable "Under Attack Mode" at the zone level, this will break all Gitlab API traffic, so the method above
+is preferred as it will preserve API traffic from being affected.
+
 ## When to block and how to block
 
 Blocks should be combined to limit the impact on customers sharing the same public IP as the abuser, whenever possible.
