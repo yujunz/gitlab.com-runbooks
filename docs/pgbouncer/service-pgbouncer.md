@@ -22,6 +22,7 @@
 * [../patroni/rotating-rails-postgresql-password.md](../patroni/rotating-rails-postgresql-password.md)
 * [README.md](README.md)
 * [patroni-consul-postgres-pgbouncer-interactions.md](patroni-consul-postgres-pgbouncer-interactions.md)
+* [pgbouncer-add-instance.md](pgbouncer-add-instance.md)
 * [pgbouncer-applications.md](pgbouncer-applications.md)
 * [pgbouncer-connections.md](pgbouncer-connections.md)
 * [pgbouncer-saturation.md](pgbouncer-saturation.md)
