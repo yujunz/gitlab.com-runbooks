@@ -51,7 +51,7 @@ groups:
       )
   - record: queue:sidekiq_jobs_completion:rate1m
     expr: >
-      sum without (fqdn,instance, shard) (
+      sum without (fqdn, instance) (
         rate(sidekiq_jobs_completion_seconds_count[1m])
       )
   - record: queue:sidekiq_jobs_failed:rate1m
