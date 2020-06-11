@@ -43,13 +43,6 @@ local rateMetric = metricsCatalog.rateMetric;
     },
 
     shared_runner_queues: {
-      // CI runners don't expose correct labels at present
-      // https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/8456
-      staticLabels: {
-        environment: 'gprd',
-        stage: 'main',
-      },
-
       apdex: histogramApdex(
         histogram='job_queue_duration_seconds_bucket',
         selector='shared_runner="true", jobs_running_for_project=~"^(0|1|2|3|4)$"',

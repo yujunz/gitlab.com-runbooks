@@ -569,16 +569,10 @@ local throttledSidekiqShards = [
       tier: 'runners',
       stage: 'main',
     },
-    // TODO: remove relabelling silliness once
-    // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/8456
-    // is completed
     query: |||
-      label_replace(
-        sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[%(rangeInterval)s]))
-        /
-        gitlab_runner_limit{job="private-runners"} > 0,
-        "environment", "gprd", "environment", ""
-      )
+      sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[%(rangeInterval)s]))
+      /
+      gitlab_runner_limit{job="private-runners"} > 0
     |||,
     slos: {
       soft: 0.85,
@@ -659,16 +653,10 @@ local throttledSidekiqShards = [
       tier: 'runners',
       stage: 'main',
     },
-    // TODO: remove relabelling silliness once
-    // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/8456
-    // is completed
     query: |||
-      label_replace(
-        sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[%(rangeInterval)s]))
-        /
-        gitlab_runner_limit{job="shared-runners"} > 0,
-        "environment", "gprd", "environment", ""
-      )
+      sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[%(rangeInterval)s]))
+      /
+      gitlab_runner_limit{job="shared-runners"} > 0
     |||,
     slos: {
       soft: 0.90,
@@ -693,12 +681,9 @@ local throttledSidekiqShards = [
     // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/8456
     // is completed
     query: |||
-      label_replace(
-        sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[%(rangeInterval)s]))
-        /
-        gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0,
-        "environment", "gprd", "environment", ""
-      )
+      sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[%(rangeInterval)s]))
+      /
+      gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0
     |||,
     slos: {
       soft: 0.90,
