@@ -21,7 +21,7 @@
 * [../gitaly/gitaly-latency.md](../gitaly/gitaly-latency.md)
 * [../gitaly/gitaly-permission-denied.md](../gitaly/gitaly-permission-denied.md)
 * [../monitoring/sentry-is-down.md](../monitoring/sentry-is-down.md)
-* [../pgbouncer/pgbouncer-1.md](../pgbouncer/pgbouncer-1.md)
+* [../pgbouncer/README.md](../pgbouncer/README.md)
 * [../registry/gitlab-registry.md](../registry/gitlab-registry.md)
 * [../uncategorized/alert-for-ssl-certificate-expiration.md](../uncategorized/alert-for-ssl-certificate-expiration.md)
 * [../uncategorized/chef-guidelines.md](../uncategorized/chef-guidelines.md)

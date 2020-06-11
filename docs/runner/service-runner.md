@@ -25,7 +25,7 @@
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
 * [../license/license-gitlab-com.md](../license/license-gitlab-com.md)
 * [../logging/README.md](../logging/README.md)
-* [../pgbouncer/pgbouncer.md](../pgbouncer/pgbouncer.md)
+* [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
 * [ci-runner-timeouts.md](ci-runner-timeouts.md)
 * [update-gitlab-runner-on-managers.md](update-gitlab-runner-on-managers.md)
 * [../sidekiq/large-sidekiq-queue.md](../sidekiq/large-sidekiq-queue.md)
