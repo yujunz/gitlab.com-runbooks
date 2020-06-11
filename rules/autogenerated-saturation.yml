@@ -356,12 +356,9 @@ groups:
       max by(environment) (
         clamp_min(
           clamp_max(
-            label_replace(
-              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[1m]))
-              /
-              gitlab_runner_limit{job="private-runners"} > 0,
-              "environment", "gprd", "environment", ""
-            )
+            sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[1m]))
+            /
+            gitlab_runner_limit{job="private-runners"} > 0
             ,
             1)
         ,
@@ -447,12 +444,9 @@ groups:
       max by(environment) (
         clamp_min(
           clamp_max(
-            label_replace(
-              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[1m]))
-              /
-              gitlab_runner_limit{job="shared-runners"} > 0,
-              "environment", "gprd", "environment", ""
-            )
+            sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[1m]))
+            /
+            gitlab_runner_limit{job="shared-runners"} > 0
             ,
             1)
         ,
@@ -465,12 +459,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            label_replace(
-              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[1m]))
-              /
-              gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0,
-              "environment", "gprd", "environment", ""
-            )
+            sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[1m]))
+            /
+            gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0
             ,
             1)
         ,
@@ -1820,12 +1811,9 @@ groups:
         max by(environment, instance) (
           clamp_min(
             clamp_max(
-              label_replace(
-                sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[1m]))
-                /
-                gitlab_runner_limit{job="private-runners"} > 0,
-                "environment", "gprd", "environment", ""
-              )
+              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[1m]))
+              /
+              gitlab_runner_limit{job="private-runners"} > 0
               ,
               1)
           ,
@@ -2077,12 +2065,9 @@ groups:
         max by(environment, instance) (
           clamp_min(
             clamp_max(
-              label_replace(
-                sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[1m]))
-                /
-                gitlab_runner_limit{job="shared-runners"} > 0,
-                "environment", "gprd", "environment", ""
-              )
+              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[1m]))
+              /
+              gitlab_runner_limit{job="shared-runners"} > 0
               ,
               1)
           ,
@@ -2129,12 +2114,9 @@ groups:
         max by(environment, tier, type, stage, instance) (
           clamp_min(
             clamp_max(
-              label_replace(
-                sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[1m]))
-                /
-                gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0,
-                "environment", "gprd", "environment", ""
-              )
+              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[1m]))
+              /
+              gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0
               ,
               1)
           ,
