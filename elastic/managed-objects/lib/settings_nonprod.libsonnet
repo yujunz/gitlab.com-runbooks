@@ -4,7 +4,7 @@ local MEDIUM_THROUGHPUT = ['gke', 'shell', 'sidekiq', 'system'];
 local setting(index, env) = if std.member(HIGH_THROUHGPUT, index) then {
   index: {
     lifecycle: {
-      name: 'gitlab-infra-high-ilm-policy',
+      name: 'gitlab-infra-ilm-policy',
       rollover_alias: 'pubsub-%s-inf-%s' % [index, env],
     },
     mapping: {
@@ -25,7 +25,7 @@ local setting(index, env) = if std.member(HIGH_THROUHGPUT, index) then {
 else if std.member(MEDIUM_THROUGHPUT, index) then {
   index: {
     lifecycle: {
-      name: 'gitlab-infra-medium-ilm-policy',
+      name: 'gitlab-infra-ilm-policy',
       rollover_alias: 'pubsub-%s-inf-%s' % [index, env],
     },
     mapping: {
@@ -42,7 +42,7 @@ else if std.member(MEDIUM_THROUGHPUT, index) then {
 } else {
   index: {
     lifecycle: {
-      name: 'gitlab-infra-default-ilm-policy',
+      name: 'gitlab-infra-ilm-policy',
       rollover_alias: 'pubsub-%s-inf-%s' % [index, env],
     },
     mapping: {
