@@ -9,6 +9,7 @@ SHELL_FILES = $(shell find . -type f \( -perm -u=x -o -name "*.sh" \) $(VERIFY_P
 
 YAML_FILES = $(shell find . \( -name "*.yml" -o -name "*.yaml" \) -type f $(VERIFY_PATH_SELECTOR) )
 
+AMTOOL = $(shell which amtool || echo "/alertmanager/amtool")
 JSONET_COMMAND = $(shell which jsonnetfmt || (which jsonnet && echo " fmt"))
 PROMTOOL_COMMAND = $(shell which promtool || echo "/prometheus/promtool")
 
@@ -48,6 +49,12 @@ generate:
 	./scripts/generate-docs
 	./scripts/generate-gitlab-dashboards.sh
 
+alertmanager/alertmanager.yml: alertmanager/alertmanager.jsonnet
+	cd alertmanager && ./generate.sh
+
+test-alertmanager: alertmanager/alertmanager.yml
+	$(AMTOOL) check-config alertmanager/alertmanager.yml
+
 .PHONY: test
 test:
 	./scripts/validate-service-mappings
@@ -58,4 +65,3 @@ test:
 	./scripts/validate-alerts
 	if ! $$(command -v yaml-lint); then echo "Please install yaml-lint with 'gem install -N yaml-lint'"; exit 1; fi
 	yaml-lint $(YAML_FILES)
-

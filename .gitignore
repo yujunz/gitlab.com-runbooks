@@ -2,8 +2,7 @@
 toolbelt/.env/*
 .env
 /dashboards/.env.sh
-alertmanager/chef_alertmanager.*
-alertmanager/k8s_alertmanager.*
+alertmanager/alertmanager.yml
 .env.sh
 /services/service_catalog.json
 /vendor
