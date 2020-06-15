@@ -172,9 +172,9 @@ groups:
   - alert: SentinelLossOfRedundancy
     expr: |
       (
-              sum by (environment, tier, type, stage, shard) (namedprocess_namegroup_num_procs{groupname=~"redis-sentinel.*"})
+              sum by (environment, tier, type, stage, shard) (namedprocess_namegroup_num_procs{groupname="redis-sentinel"})
               /
-             count by (environment, tier, type, stage, shard)       (max_over_time(namedprocess_namegroup_num_procs{groupname=~"redis-sentinel.*"}[1h]))
+             count by (environment, tier, type, stage, shard)       (max_over_time(namedprocess_namegroup_num_procs{groupname="redis-sentinel"}[1h]))
       ) < 1
     labels:
       pager: pagerduty
