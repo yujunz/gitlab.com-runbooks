@@ -650,7 +650,7 @@ $  /opt/gitlab/embedded/bin/redis-cli -h 10.66.2.102 -p 26379 sentinel slaves gi
 
 ##### Get Sentinel machines
 
-[Get Sentinel machines](https://thanos-query.ops.gitlab.net/graph?g0.range_input=1h&g0.max_source_resolution=0s&g0.expr=count%20by%20(env%2C%20type)%20(namedprocess_namegroup_num_procs%7Bgroupname%3D%22redis-sentinel%200.0.0.0%3A26379%20%5Bsentinel%5D%22%7D)&g0.tab=1)
+[Get Sentinel machines](https://thanos-query.ops.gitlab.net/graph?g0.expr=count%20by%20%28env%2C%20type%29%20%28namedprocess_namegroup_num_procs%7Bgroupname%3D%22redis-sentinel%22%7D%29)
 
 
 #### Redis console ####
