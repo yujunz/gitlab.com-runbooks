@@ -8,10 +8,9 @@ groups:
       ) > 10000
     for: 15m
     labels:
-      severity: s1
+      severity: s4
       channel: backend
-      pager: pagerduty
-      alert_type: cause
+      alert_type: symptom
     annotations:
       title: 'Large number of overdue pull mirror jobs'
       description: >
