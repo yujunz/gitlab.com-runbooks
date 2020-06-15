@@ -8,6 +8,6 @@
             "name": "gitlab-release-tools-ilm-policy"
          }
       },
-      "number_of_shards": 2
+      "number_of_shards": 1
    }
 }
