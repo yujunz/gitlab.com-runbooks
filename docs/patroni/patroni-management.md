@@ -196,9 +196,9 @@ $ OPS_API_TOKEN=secure-token MIGRATION_ENV=gprd-or-gstg ansible-playbook -i prod
 If clients are connecting to replicas by means of [service
 discovery][service-discovery] (as opposed to hard-coded list of hosts), you can
 remove a replica from the list of hosts used by the clients by tagging it as not
-suitable for failing over and load balancing.
+suitable for failing over (`nofailover: true`) and load balancing (`noloadbalance: true`).
 
-1. `sudo systemctl stop chef-client && sudo systemctl disable chef-client`
+1. `sudo chef-client-disable "Database maintenance issue prod#xyz"`
 1. Add a `tags` section to `/var/opt/gitlab/patroni/patroni.yml` on the
    node:
 
@@ -217,9 +217,57 @@ suitable for failing over and load balancing.
    ```
 
     If the name is absent, then the reload worked.
+1. Wait until all client connections are drained from the replica
+   (it depends on the interval value set for the clients), use this
+   command to track number of client connections:
+
+   ```
+   while true; do sudo pgb-console -c 'SHOW CLIENTS;' | grep gitlabhq_production | cut -d '|' -f 2 | awk '{$1=$1};1' | grep -v gitlab-monitor | wc -l; sleep 5; done
+   ```
+
+   Note: Usually there are three pgbouncer instances running
+   on a single replica, so make sure they are all drained. Replace `pgb-console` above
+   with `pgb-console-1` and `pgb-console-2`.
 
 You can see an example of taking a node out of service [in this
 issue](https://gitlab.com/gitlab-com/gl-infra/production/issues/1061).
+
+### Permanently marking a replica as in maintenance
+
+The method described above is suitable for short-term maintenance (e.g. 1 hour or less),
+during which it's acceptable to keep `chef-client` disabled. However, if the replica is
+expected to be in maintenance for many hours or days, it is undesirable to keep `chef-client` disabled
+during such period.
+
+Using node attributes to set such attributes is not ideal as node attributes are not as visible as roles,
+and Chef nodes are removed when its GCP node is restarted, so it's not totally persistent.
+
+Alternatively, we can utilize a special Chef role (`<env>-base-db-patroni-maintenance`)
+that sets `nofailover` and `noloadbalance` to `true`, and then instruct Terraform to assign it to a particular instance.
+
+1. In Terraform `patroni` module, add the following snippet:
+
+   ```
+   per_node_chef_run_list = {
+     "3" = "\"role[${var.environment}-base-db-patroni-maintenance]\""
+   }
+   ```
+
+   Replace `3` with the zero-based index of the replica we are targeting. In this example we're targeting
+   `patroni-04`.
+1. Apply the Terraform change.
+1. In the target replica, run:
+   ```
+   sudo google_metadata_script_runner --script-type startup --debug
+   ```
+1. Verify the replica is in maintenance by checking for the node name
+   in the list of replicas:
+
+   ```
+   dig @127.0.0.1 -p 8600 db-replica.service.consul. SRV
+   ```
+
+    If the name is absent, then the reload worked.
 
 ### Legacy Method (Consul Maintenance)
 
