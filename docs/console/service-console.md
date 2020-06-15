@@ -48,6 +48,7 @@
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 * [../pgbouncer/pgbouncer-connections.md](../pgbouncer/pgbouncer-connections.md)
 * [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
+* [../praefect/praefect-database.md](../praefect/praefect-database.md)
 * [../redis/clear_anonymous_sessions.md](../redis/clear_anonymous_sessions.md)
 * [../redis/redis.md](../redis/redis.md)
 * [../registry/gitlab-registry.md](../registry/gitlab-registry.md)

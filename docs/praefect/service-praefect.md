@@ -14,6 +14,7 @@
 ## Troubleshooting Pointers
 
 * [praefect-bypass.md](praefect-bypass.md)
+* [praefect-database.md](praefect-database.md)
 * [praefect-error-rate.md](praefect-error-rate.md)
 * [praefect-file-storages.md](praefect-file-storages.md)
 * [praefect-startup.md](praefect-startup.md)
