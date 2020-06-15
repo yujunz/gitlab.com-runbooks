@@ -12,6 +12,10 @@ local rateMetric = metricsCatalog.rateMetric;
   serviceDependencies: {
     api: true,
   },
+  provisioning: {
+    kubernetes: true,
+    vms: true,  // registry haproxy frontend still runs on vms
+  },
   components: {
     loadbalancer: {
       staticLabels: {

@@ -20,6 +20,10 @@ local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
     nfs: true,
     praefect: true,
   },
+  provisioning: {
+    kubernetes: true,
+    vms: true,
+  },
   components: {
     high_urgency_job_execution: {
       apdex: histogramApdex(

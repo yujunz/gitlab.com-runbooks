@@ -14,6 +14,10 @@ local rateMetric = metricsCatalog.rateMetric;
   serviceDependencies: {
     frontend: true,
   },
+  provisioning: {
+    kubernetes: false,
+    vms: false,
+  },
   components: {
     gitlab_zone: {
       requestRate: rateMetric(

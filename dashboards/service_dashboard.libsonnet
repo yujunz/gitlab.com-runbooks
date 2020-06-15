@@ -22,6 +22,7 @@ local metricsCatalog = import 'metrics-catalog.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local selectors = import './lib/selectors.libsonnet';
 local systemDiagramPanel = import 'system_diagram_panel.libsonnet';
+local kubeEmbeddedDashboards = import 'kubernetes_embedded_dashboards.libsonnet';
 
 local defaultEnvironmentSelector = { environment: '$environment' };
 
@@ -47,7 +48,8 @@ local headlineMetricsRow(
   startRow,
   metricsCatalogServiceInfo,
   environmentSelectorHash,
-  saturationEnvironmentSelectorHash
+  saturationEnvironmentSelectorHash,
+  showSaturationCell,
       ) =
   local hasApdex = metricsCatalogServiceInfo.hasApdex();
   local hasErrorRate = metricsCatalogServiceInfo.hasErrorRate();
@@ -57,7 +59,7 @@ local headlineMetricsRow(
     if hasApdex then keyMetrics.apdexPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash, description=getApdexDescription(metricsCatalogServiceInfo)) else null,
     if hasErrorRate then keyMetrics.errorRatesPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash) else null,
     if hasRequestRate then keyMetrics.qpsPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash) else null,
-    keyMetrics.saturationPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=saturationEnvironmentSelectorHash),
+    if showSaturationCell then keyMetrics.saturationPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=saturationEnvironmentSelectorHash) else null,
   ]);
 
   layout.grid([
@@ -77,6 +79,7 @@ local overviewDashboard(
   local selector = selectors.serializeHash(selectorHash);
   local catalogServiceInfo = serviceCatalog.lookupService(type);
   local metricsCatalogServiceInfo = metricsCatalog.getService(type);
+  local saturationComponents = metricsCatalogServiceInfo.applicableSaturationTypes();
 
   local dashboard =
     basic.dashboard(
@@ -84,15 +87,20 @@ local overviewDashboard(
       tags=['type:' + type, 'tier:' + tier, type, 'service overview'],
       includeEnvironmentTemplate=environmentSelectorHash == defaultEnvironmentSelector,
     )
-    .addPanels(headlineMetricsRow(
-      type,
-      stage,
-      startRow=0,
-      metricsCatalogServiceInfo=metricsCatalogServiceInfo,
-      environmentSelectorHash=environmentSelectorHash,
-      saturationEnvironmentSelectorHash=saturationEnvironmentSelectorHash
-    ))
-    .addPanel(serviceHealth.row(type, stage, environmentSelectorHash), gridPos={ x: 0, y: 10 })
+    .addPanels(
+      headlineMetricsRow(
+        type,
+        stage,
+        startRow=0,
+        metricsCatalogServiceInfo=metricsCatalogServiceInfo,
+        environmentSelectorHash=environmentSelectorHash,
+        saturationEnvironmentSelectorHash=saturationEnvironmentSelectorHash,
+        showSaturationCell=std.length(saturationComponents) > 0
+      )
+    )
+    .addPanels([
+      serviceHealth.row(type, stage, environmentSelectorHash) { gridPos: { x: 0, y: 10 } },
+    ])
     .addPanels(
       metricsCatalogDashboards.componentOverviewMatrix(
         type,
@@ -104,24 +112,70 @@ local overviewDashboard(
     .addPanels(
       metricsCatalogDashboards.autoDetailRows(type, selectorHash, startRow=100)
     )
-    .addPanel(
-      nodeMetrics.nodeMetricsDetailRow(selector),
-      gridPos={
-        x: 0,
-        y: 300,
-        w: 24,
-        h: 1,
-      }
+    .addPanels(
+      if metricsCatalogServiceInfo.getProvisioning().vms == true then
+        [
+          nodeMetrics.nodeMetricsDetailRow(selector) {
+            gridPos: {
+              x: 0,
+              y: 300,
+              w: 24,
+              h: 1,
+            },
+          },
+        ] else []
     )
-    .addPanel(
-      saturationDetail.saturationDetailPanels(selectors.serializeHash(saturationEnvironmentSelectorHash { type: type, stage: '$stage' }), components=metricsCatalogServiceInfo.applicableSaturationTypes()),
-      gridPos={ x: 0, y: 400, w: 24, h: 1 }
+    .addPanels(
+      if metricsCatalogServiceInfo.getProvisioning().kubernetes == true then
+        // TODO: fix nasty regexp: requires https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10249
+        local kubeSelectorHash = { environment: '$environment', pod_name: { re: 'gitlab-%s.*' % [type] } };
+        [
+          row.new(title='☸️ Kubernetes Overview', collapse=true)
+          .addPanels(kubeEmbeddedDashboards.kubernetesOverview(kubeSelectorHash, startRow=1)) +
+          { gridPos: { x: 0, y: 400, w: 24, h: 1 } },
+        ]
+      else [],
+    )
+    .addPanels(
+      if std.length(saturationComponents) > 0 then
+        [
+          local saturationSelector = selectors.serializeHash(saturationEnvironmentSelectorHash { type: type, stage: '$stage' });
+          saturationDetail.saturationDetailPanels(saturationSelector, components=saturationComponents)
+          { gridPos: { x: 0, y: 500, w: 24, h: 1 } },
+        ]
+      else []
     );
 
   // Optionally add the stage variable
   local dashboardWithStage = if stage == '$stage' then dashboard.addTemplate(templates.stage) else dashboard;
 
-  dashboardWithStage.addTemplate(templates.sigma);
+  dashboardWithStage.addTemplate(templates.sigma)
+  {
+    overviewTrailer()::
+      local s = self;
+      self
+      .addPanels(
+        if std.length(saturationComponents) > 0 then
+          [
+            capacityPlanning.capacityPlanningRow(type, stage) { gridPos: { x: 0, y: 100000 } },
+          ] else []
+      )
+      .addPanel(
+        systemDiagramPanel.systemDiagramRowForService(type),
+        gridPos={ x: 0, y: 100010 }
+      )
+      .trailer()
+      + {
+        links+:
+          platformLinks.triage +
+          serviceCatalog.getServiceLinks(type) +
+          platformLinks.services +
+          [
+            platformLinks.dynamicLinks(type + ' Detail', 'type:' + type),
+          ],
+      },
+  };
+
 
 {
   overview(
@@ -137,31 +191,5 @@ local overviewDashboard(
       stage,
       environmentSelectorHash=environmentSelectorHash,
       saturationEnvironmentSelectorHash=saturationEnvironmentSelectorHash
-    ) {
-      _serviceType: type,
-      _serviceTier: tier,
-      _stage: stage,
-      overviewTrailer()::
-        local s = self;
-        self
-        .addPanel(
-          capacityPlanning.capacityPlanningRow(s._serviceType, s._stage),
-          gridPos={ x: 0, y: 100000 }
-        )
-        .addPanel(
-          systemDiagramPanel.systemDiagramRowForService(s._serviceType),
-          gridPos={ x: 0, y: 100010 }
-        )
-        .trailer()
-        + {
-          links+:
-            platformLinks.triage +
-            serviceCatalog.getServiceLinks(s._serviceType) +
-            platformLinks.services +
-            [
-              platformLinks.dynamicLinks(s._serviceType + ' Detail', 'type:' + s._serviceType),
-            ],
-        },
-    },
-
+    ),
 }
