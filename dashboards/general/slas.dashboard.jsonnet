@@ -13,8 +13,8 @@ local INTERVAL = '1d';
 
 local overviewDashboardLinks = [
   {
-    url: '/d/${__field.labels.type}-main/${__field.labels.type}-overview?orgId=1',
-    title: '${__field.labels.type} service: Overview Dashboard',
+    url: '/d/${__field.label.type}-main/${__field.label.type}-overview?orgId=1',
+    title: '${__field.label.type} service: Overview Dashboard',
   },
 ];
 

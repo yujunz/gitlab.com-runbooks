@@ -9,8 +9,8 @@ local sidekiq = import 'sidekiq.libsonnet';
 local serviceDashboard = import 'service_dashboard.libsonnet';
 
 local shardDetailDataLink = {
-  url: '/d/sidekiq-shard-detail?${__url_time_range}&${__all_variables}&var-shard=${__field.labels.shard}&var-shard=${__field.labels.shard}',
-  title: 'Shard Detail: ${__field.labels.shard}',
+  url: '/d/sidekiq-shard-detail?${__url_time_range}&${__all_variables}&var-shard=${__field.label.shard}&var-shard=${__field.label.shard}',
+  title: 'Shard Detail: ${__field.label.shard}',
 };
 
 serviceDashboard.overview('sidekiq', 'sv')
