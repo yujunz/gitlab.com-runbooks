@@ -208,8 +208,8 @@ basic.dashboard(
       color: 'orange',
       default: 'unknown',
       links: [{
-        title: 'Sidekiq Shard Detail: ${__field.labels.shard}',
-        url: '/d/sidekiq-shard-detail/sidekiq-shard-detail?orgId=1&var-shard=${__field.labels.shard}&var-environment=${environment}&var-stage=${stage}&${__url_time_range}',
+        title: 'Sidekiq Shard Detail: ${__field.label.shard}',
+        url: '/d/sidekiq-shard-detail/sidekiq-shard-detail?orgId=1&var-shard=${__field.label.shard}&var-environment=${environment}&var-stage=${stage}&${__url_time_range}',
       }],
     }, {
       label: 'external_dependencies',
