@@ -1,9 +1,11 @@
 ### How to check if WAL-E backups are running
 
-WAL-E is running on all machines in the patroni cluster. However, backups are actually happening only from the master. In order to find out which machine is the master, go to the [relevant Grafana dashboard](https://dashboards.gitlab.net/d/000000244/postgresql-replication-overview?orgId=1)
+> General note: the following instructions are also applicable to WAL-G (because WAL-G is compatible with WAL-E and has the same comands to create backups, `backup-push` and `wal-push`). As of June 2020, we still use WAL-E to create backups, but already switched to WAL-G to restore from backups. Once the migration to WAL-G is fully complete, we are going to update this document to mention WAL-G only.
 
-you can check wale logs in two ways:
-1. using Kibana (bear in mind that there were cases in the past when logs where not shipped):
+WAL-E is installed on all machines in the Patroni cluster. However, backup creation are actually happening only from the primary (in the case of WAL-E, this is true for both "full" daily backups and archiving of the WAL stream). In order to find out which machine is the primary, go to the [relevant Grafana dashboard](https://dashboards.gitlab.net/d/000000244/postgresql-replication-overview?orgId=1)
+
+You can check WAL-E's logs in two ways:
+1. using Kibana (bear in mind that there were cases in the past when logs where not shipped; IMPORTANT: only `wal-push` logs are to be present in Kibana): <!-- Nik: TODO: adjust when backup-push logs will be moved to syslog, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10499 -->
   - [`log.gprd.gitlab.net`](https://log.gprd.gitlab.net)
   - index: `pubsub-system-inf-gprd`
   - document field: `json.ident` with value `wal_e*`

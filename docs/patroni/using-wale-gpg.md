@@ -8,7 +8,23 @@ It works by taking [Write-Ahead Logging][PSQL_WAL] files, compressing them, and 
 
 [WAL-G](https://github.com/wal-g/wal-g) is [the successor of WAL-E](https://www.citusdata.com/blog/2017/08/18/introducing-wal-g-faster-restores-for-postgres/) with a number of key differences. WAL-G uses LZ4, LZMA, or Brotli compression, multiple processors, and non-exclusive base backups for Postgres. It is backward compatible with WAL-E: it is possible to restore from a WAL-E backup using WAL-G, but not vice versa.
 
-Currently (January 2020), the main backup tool for GitLab.com is still WAL-E, it is used for daily backups and to archive WALs. But to restore from such backups, WAL-G is being used, and there is work in progress to migrate to WAL-G completely (to use it for daily backups and WAL archive creation).
+Currently (June 2020), the main backup tool for GitLab.com is still WAL-E, it is used for daily backups and to archive WALs. But to restore from such backups, WAL-G is being used, and there is work in progress to migrate to WAL-G completely (to use it for daily backups and WAL archive creation), and full migration to WAL-G is expected soon (Summer 2020). Once the migration is finished, instructions related to WAL-E become obsolete.
+
+## Very Quick Intro: 5 Main Commands
+
+Backups consists of two parts:
+- periodical "full" backups (we use daily schedule), and
+- "stream" of WALs to enable Point-in-time recovery (PITR).
+
+Both WAL-E and WAL-G have 5 main commands – learn and memorize them as a first step (see below in this document how exactly they should be used):
+
+- `backup-list` – listing the available full backups. This is helpful to see if there are "gaps" (missing full backups). Also, based on displayed LSNs, we can calculate the amount of WALs generated per day. Notice, there is no "wal-list" – this command would print too much information so it would be hard to use it, so neither WAL-E nor WAL-G implement it.
+- creating ("pushing") backups
+    1. `backup-push` – create a full backup (upload a full copy of the data directory to the archive destination). At the moment, it is executed daily (at 00:00 UTC) on the primary, using WAL-E. This operation is very IO-intensive, and the expected speed is ~0.5-1 TiB/h for WAL-E, 1-2 TiB/h for WAL-G. Once the migration to WAL-G is fully complete, one of secondaries will perform `backup-push` daily.
+    1. `wal-push` – archive a WAL (each WAL is 16 MiB by default). This command is usually present in `archive_command` (PostgreSQL configuration parameter) and automatically executed by PostgreSQL on the primary node. At the moment, WAL-E is used. As of June 2020, ~1.5-2 TiB of WAL files is archived each working day (less on holidays and weekends). Once the migration to WAL-G is fully complete, the alternative WAL-G's command will be used – still on the primary, because it disk IO caused by this action is not intensive and moving it to replicas would introduce additional delays (hence, degradation in backup characteristics – a worse RPO, recovery point objective). <!-- Nik: TODO: link here, https://about.gitlab.com/handbook/engineering/infrastructure/library/disaster-recovery/ -- this was recently moved, so Disaster Recovery doc is missing now -->
+- restoring ("fetching") from archive:
+    1. `backup-fetch` – fetch a full backup from the archive. It is to be used just once, when we need to restore data directory fully. This is also done daily in the `gitlab-restore` project that verifies the state of backups on daily basis.
+    1. `wal-fetch` – fetch a WAL. Normally, it is present in `restore_command` (see `recovery.conf` in the case of PostgreSQL 11 or older, and `postgresql.conf` for PostgreSQL 12+). Postgres automatically uses it to fetch and replay a stream of WALs on replicas. As of June 2020, `restore_command` is not configured on production and staging instances – we use only streaming replication there. However, in the future, it may change. Two "special" replicas, "archive" and "delayed", do not use streaming replication -- instead, they rely on fetching WALs from the archive, therefore, they ahve `wal-fetch` present in `restore_command`.
 
 ## Backing Our Data Up
 
@@ -19,7 +35,10 @@ All servers of an environment (like `gprd`) push their WAL to the same bucket lo
 
 The GCS bucket is configured with multi-regional storage (US location).
 
-Our secondary databases (version, customers, sentry, etc.) are still in AWS S3 in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. The key can be found in the Production vault of 1Password.
+Our secondary databases (version, customers, sentry, etc.) are still in AWS S3 in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. The key can be found in the Production vault of 1Password. <!-- Nik: This seems very doubtful to me, should be verified. There are rumors that "version" and "customers" are in Cloud SQL but I didn't manage to see them there -->
+
+<!-- Nik: TODO: decribe the new location -- WAL-E backups after migration to Postgres 11 -->
+<!-- Nik: TODO: decribe the new location -- for WAL-G backups -->
 
 ### Interval and Retention
 
@@ -59,6 +78,8 @@ root@db1:~# tail -f /var/log/gitlab/postgresql/postgresql.log
 2018-11-15_12:39:13.95760 wal_e.worker.upload INFO     MSG: completed archiving to a file
 ```
 
+> See also: [How to check if WAL-E/WAL-G backups are running](./backups-check-if-running.md).
+
 ## Restoring Data
 
 ### Oh Sh*t, I Need to Get It BACK!
@@ -75,9 +96,9 @@ In order to restore, the following steps should be performed. It is assumed that
 
 1. Log in to the `gitlab-psql` user (`su - gitlab-psql`)
 
-1. Create restore.conf file:
+1. Create restore.conf file: <!-- Nik: TODO: review and fix this, this is very outdated -->
 
-    ```
+    ```bash
     cat > /var/opt/gitlab/postgresql/data/recovery.conf <<RECOVERY
     restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch -p 4 "%f" "%p"'
     recovery_target_timeline = 'latest'
@@ -87,15 +108,17 @@ In order to restore, the following steps should be performed. It is assumed that
 
 1. Restore the base backup (run in a screen on tmux session and be ready to wait several hours):
 
-    ```
+    ```bash
     /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
-    PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data <backup name from backup-list command>
+    PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH \
+      /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data <backup name from backup-list command>
     ```
 
     To restore latest backup you can use the following:
-    ```
+    ```bash
     /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
-    PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data LATEST
+    PGHOST=/var/opt/gitlab/postgresql/ PATH=/opt/gitlab/embedded/bin:/opt/gitlab/embedded/sbin:$PATH /usr/bin/envdir \
+      /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data LATEST
     ```
 
 1. This command will output nothing if it is successful.
@@ -123,7 +146,7 @@ The manual procedure:
 1. Prepare the server:
     1. Install necessary software:
 
-        ```
+        ```bash
         # install and stop postgres
         apt-get update && apt-get -y install daemontools lzop gcc make python3 virtualenvwrapper python3-dev libssl-dev postgresql gnupg-agent pinentry-curses
         service postgresql stop
@@ -143,38 +166,38 @@ The manual procedure:
 
 1. Add GPG keys as postgres user:
 
-    ```
+    ```bash
     gpg --allow-secret-key-import --import /etc/wal-e.d/ops-contact+dbcrypt.key
     gpg --import-ownertrust /etc/wal-e.d/gpg_owner_trust
     ```
 
 1. Enable gpg-agent in gpg.conf
 
-    ```
+    ```bash
     echo 'use-agent' > ~/.gnupg/gpg.conf
     ```
 
 1. Add password and test secret keys. This should ask for a password and then create an encrypted file at `/tmp/test.gpg`.
 
-    ```
+    ```bash
     touch /tmp/test
     gpg --encrypt -r 66B9829C /tmp/test
     ```
 
 1. If you have changed to the postgres user via `su`, you will need to be sure `GPG_TTY` is exported and tty device is read/write by postgres user.
 
-    ```
+    ```bash
     root$ chmod o+rw $(tty)
     postgres$ export GPG_TTY=$(tty)
     ```
 
 1. Create restore.conf file.
 
-    ```
+    ```bash
     # precreate recovery.conf, edit the recovery target time to your desired restore time. Ensure the time is AFTER the base backup time.
     export RESTORE_PG_VER=9.5 # 9.3 in case of 14.04
     cat > /var/lib/postgresql/${RESTORE_PG_VER}/main/recovery.conf <<RECOVERY
-    restore_command = '/usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-fetch "%f" "%p"'
+    restore_command = '/usr/bin/envdir /etc/wal-g.d/env /opt/wal-g/bin/wal-g wal-fetch "%f" "%p"'
     recovery_target_time = '2017-XX-YY 06:00:00'
     RECOVERY
     chown postgres:postgres /var/lib/postgresql/${RESTORE_PG_VER}/main/recovery.conf
@@ -182,20 +205,23 @@ The manual procedure:
 
 1. Restore the base backup
 
-    ```
-    /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list
-    /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/lib/postgresql/${RESTORE_PG_VER}/main <backup name from backup-list command>
-    ```
-
-    To restore latest backup you can use the following:
-
-    ```
-    /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-list 2>/dev/null | tail -1 | cut -d ' ' -f1 | xargs -n1 /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/lib/postgresql/${RESTORE_PG_VER}/main
+    ```bash
+    /usr/bin/envdir /etc/wal-g.d/env /opt/wal-e/bin/wal-g backup-list
+    /usr/bin/envdir /etc/wal-g.d/env /opt/wal-e/bin/wal-g backup-fetch /var/lib/postgresql/${RESTORE_PG_VER}/main <backup name from backup-list command>
     ```
 
-1. This command will output nothing if it is successful.
+    To restore from the latest backup you can use the following:
+
+    ```bash
+    /usr/bin/envdir /etc/wal-g.d/env /opt/wal-g/bin/wal-g backup-fetch /var/lib/postgresql/${RESTORE_PG_VER}/main LATEST
+    ```
 
 1. Start PostgreSQL. This will begin the point-in-time recovery to the time specified in recovery.conf. You can watch the progress in the postgres log.
+
+# Further Read
+
+- [How to check if WAL-E/WAL-G backups are running](./backups-check-if-running.md)
+- [How to troubleshoot backup verification job failures](./backups-verification-job-failures.md)
 
 [Wal-E]: https://github.com/wal-e/wal-e
 [PSQL_Archiving]: https://www.postgresql.org/docs/9.6/static/continuous-archiving.html
