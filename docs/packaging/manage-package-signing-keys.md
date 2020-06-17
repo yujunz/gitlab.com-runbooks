@@ -23,8 +23,8 @@ For a complete implementation, the following will be done:
 
 ## Location of the Key
 
-The Omnibus package signing key is kept in an S3 bucket called `omnibus-sig`.
-This bucket is attached to the `Gitlabdotcom` AWS account (#855 262 394 183).
+The location of the Omnibus package signing key can be found by searching for 
+a secure note in the Build vault in 1Password. 
 
 ## Securing Keys
 
