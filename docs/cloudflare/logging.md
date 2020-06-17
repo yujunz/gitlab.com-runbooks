@@ -58,3 +58,15 @@ code:
 
 Note: Due to the way logs are shipped into GCS, there might be a delay of up
 to 10 minutes for logs to be available.
+
+## Cloudflare Audit Logs
+
+Different than traffic logging, Cloudflare audit information provides logs
+on changes to the Cloudflare configuration. What account turned off a page
+rule, or modified a DNS entry, etc.
+
+* Log into cloudflare.com
+* When you see a list of zones to manage, near the top of the page
+  select `Audit Logs`
+
+[Cloudflare Article](https://support.cloudflare.com/hc/en-us/articles/115002833612-Understanding-Cloudflare-Audit-Logs)
