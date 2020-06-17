@@ -379,11 +379,12 @@ local throttledSidekiqShards = [
     |||,
     grafana_dashboard_uid: 'sat_elastic_thread_pools',
     resourceLabels: ['name', 'exported_type'],
+    burnRatePeriod: '5m',
     query: |||
       (
-        elasticsearch_thread_pool_active_count{exported_type!="snapshot", %(selector)s}
+        avg_over_time(elasticsearch_thread_pool_active_count{exported_type!="snapshot", %(selector)s}[%(rangeInterval)s])
         /
-        (elasticsearch_thread_pool_threads_count{exported_type!="snapshot", %(selector)s} > 0)
+        (avg_over_time(elasticsearch_thread_pool_threads_count{exported_type!="snapshot", %(selector)s}[%(rangeInterval)s]) > 0)
       )
     |||,
     slos: {
