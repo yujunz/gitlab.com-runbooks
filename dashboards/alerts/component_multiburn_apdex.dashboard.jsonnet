@@ -21,7 +21,7 @@ local oneHourBurnRate =
     ['5m apdex burn rate', 'gitlab_component_apdex:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
     [
       '1h apdex burn threshold',
-      '1 - (%(burnrate_1h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{environment="$environment", type="$type"})))' % multiburnFactors,
+      '1 - (%(burnrate_1h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="$type"})))' % multiburnFactors,
     ],
     [
       'Proposed SLO @ 1h burn',
@@ -35,7 +35,7 @@ local sixHourBurnRate =
     ['30m apdex burn rate', 'gitlab_component_apdex:ratio_30m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
     [
       '6h apdex burn threshold',
-      '1 - (%(burnrate_6h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{environment="$environment", type="$type"})))' % multiburnFactors,
+      '1 - (%(burnrate_6h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="$type"})))' % multiburnFactors,
     ],
     [
       'Proposed SLO @ 6h burn',
@@ -135,7 +135,7 @@ basic.dashboard(
       basic.slaStats(
         title='SLO',
         description='Availability',
-        query='avg(slo:min:events:gitlab_service_apdex:ratio{environment="$environment", type="$type"}) by (type)',
+        query='avg(slo:min:events:gitlab_service_apdex:ratio{type="$type"}) by (type)',
         legendFormat='{{ type }}',
         fieldTitle='Apdex Rate SLO for the $type service'
       ),
