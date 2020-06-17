@@ -820,5 +820,7 @@ local throttledSidekiqShards = [
   listApplicableServicesFor(type)::
     std.filter(function(k) self[k].appliesToService(type), std.objectFields(self)),
 
-
+  // Iterate over resources, calling the mapping function with (name, definition)
+  mapResources(mapFunc)::
+    std.map(function(saturationName) mapFunc(saturationName, self[saturationName]), std.objectFields(self)),
 }
