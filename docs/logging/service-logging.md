@@ -16,6 +16,7 @@
 ## Troubleshooting Pointers
 
 * [../cloudflare/README.md](../cloudflare/README.md)
+* [../cloudflare/logging.md](../cloudflare/logging.md)
 * [../elastic/README.md](../elastic/README.md)
 * [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)
 * [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
