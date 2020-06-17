@@ -337,7 +337,7 @@ basic.dashboard(
     'disk_space',
     'memory',
     'open_fds',
-    'sidekiq_workers',
+    'sidekiq_shard_workers',
     'single_node_cpu',
     'single_node_puma_workers',
   ]),

@@ -488,21 +488,6 @@ groups:
       )
   - record: gitlab_component_saturation:ratio
     labels:
-      component: sidekiq_workers
-    expr: |
-      max by(environment, tier, type, stage) (
-        clamp_min(
-          clamp_max(
-            sum by (environment, tier, type, stage, fqdn, instance, pod) (sidekiq_running_jobs{shard!~"export|elasticsearch|memory-bound", environment!="", type="sidekiq"})
-            /
-            sum by (environment, tier, type, stage, fqdn, instance, pod) (sidekiq_concurrency{shard!~"export|elasticsearch|memory-bound", environment!="", type="sidekiq"})
-            ,
-            1)
-        ,
-        0)
-      )
-  - record: gitlab_component_saturation:ratio
-    labels:
       component: single_node_cpu
     expr: |
       max by(environment, tier, type, stage) (
@@ -769,14 +754,6 @@ groups:
     labels:
       component: sidekiq_shard_workers
     expr: '0.9'
-  - record: slo:max:soft:gitlab_component_saturation:ratio
-    labels:
-      component: sidekiq_workers
-    expr: '0.9'
-  - record: slo:max:hard:gitlab_component_saturation:ratio
-    labels:
-      component: sidekiq_workers
-    expr: '0.95'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
       component: single_node_cpu
@@ -2188,55 +2165,6 @@ groups:
     expr: |
       gitlab_component_saturation:ratio{component="sidekiq_shard_workers"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="sidekiq_shard_workers"}
-  - alert: component_saturation_slo_out_of_bounds
-    for: 15m
-    annotations:
-      title: >-
-        The Sidekiq Worker Saturation per node resource of the {{ $labels.type }} service ({{ $labels.stage
-        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
-      description: |
-        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
-
-        Details of the Sidekiq Worker Saturation per node resource:
-        -------------------------------------------
-        Sidekiq worker saturation per node.
-
-        This metric represents the percentage of available threads*workers that are utilized actively processing jobs.
-
-        When this metric is saturated, new Sidekiq jobs may queue. Depending on whether or not the jobs are latency sensitive,
-        this could impact user experience.
-      grafana_dashboard_id: alerts-sat_sidekiq_workers
-      grafana_dashboard_link: >-
-        https://dashboards.gitlab.net/d/alerts-sat_sidekiq_workers?from=now-6h/m&to=now-1m/m&var-environment={{
-        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
-      grafana_min_zoom_hours: '6'
-      grafana_panel_id: '2'
-      grafana_variables: environment,type,stage
-      promql_query: |
-        max by(environment, tier, type, stage, fqdn, instance, pod) (
-          clamp_min(
-            clamp_max(
-              sum by (environment, tier, type, stage, fqdn, instance, pod) (sidekiq_running_jobs{shard!~"export|elasticsearch|memory-bound", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"})
-              /
-              sum by (environment, tier, type, stage, fqdn, instance, pod) (sidekiq_concurrency{shard!~"export|elasticsearch|memory-bound", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"})
-              ,
-              1)
-          ,
-          0)
-        )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
-    labels:
-      alert_trigger_duration: 15m
-      alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 15m
-      rules_domain: general
-      severity: s3
-    expr: |
-      gitlab_component_saturation:ratio{component="sidekiq_workers"} > on(component) group_left
-      slo:max:hard:gitlab_component_saturation:ratio{component="sidekiq_workers"}
   - alert: component_saturation_slo_out_of_bounds
     for: 5m
     annotations:
