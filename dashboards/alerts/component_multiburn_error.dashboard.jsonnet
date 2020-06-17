@@ -21,7 +21,7 @@ local oneHourBurnRate =
     ['5m error burn rate', 'gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
     [
       '1h error burn threshold',
-      '%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"})' % multiburnFactors,
+      '%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="$type"})' % multiburnFactors,
     ],
     [
       'Proposed SLO @ 1h burn',
@@ -35,7 +35,7 @@ local sixHourBurnRate =
     ['30m error burn rate', 'gitlab_component_errors:ratio_30m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
     [
       '6h error burn threshold',
-      '%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"})' % multiburnFactors,
+      '%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="$type"})' % multiburnFactors,
     ],
     [
       'Proposed SLO @ 6h burn',
