@@ -221,9 +221,9 @@ groups:
         clamp_min(
           clamp_max(
             (
-              elasticsearch_thread_pool_active_count{exported_type!="snapshot", environment!="", type=~"logging|search"}
+              avg_over_time(elasticsearch_thread_pool_active_count{exported_type!="snapshot", environment!="", type=~"logging|search"}[5m])
               /
-              (elasticsearch_thread_pool_threads_count{exported_type!="snapshot", environment!="", type=~"logging|search"} > 0)
+              (avg_over_time(elasticsearch_thread_pool_threads_count{exported_type!="snapshot", environment!="", type=~"logging|search"}[5m]) > 0)
             )
             ,
             1)
@@ -1452,9 +1452,9 @@ groups:
           clamp_min(
             clamp_max(
               (
-                elasticsearch_thread_pool_active_count{exported_type!="snapshot", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+                avg_over_time(elasticsearch_thread_pool_active_count{exported_type!="snapshot", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m])
                 /
-                (elasticsearch_thread_pool_threads_count{exported_type!="snapshot", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"} > 0)
+                (avg_over_time(elasticsearch_thread_pool_threads_count{exported_type!="snapshot", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m]) > 0)
               )
               ,
               1)
@@ -1466,7 +1466,7 @@ groups:
       alert_trigger_duration: 5m
       alert_type: cause
       bound: upper
-      burn_rate_period: 1m
+      burn_rate_period: 5m
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
