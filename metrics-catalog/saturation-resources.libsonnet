@@ -333,6 +333,7 @@ local throttledSidekiqShards = [
     |||,
     grafana_dashboard_uid: 'sat_elastic_single_node_cpu',
     resourceLabels: ['name'],
+    burnRatePeriod: '5m',
     query: |||
       avg_over_time(elasticsearch_os_cpu_percent{%(selector)s}[%(rangeInterval)s]) / 100
     |||,
