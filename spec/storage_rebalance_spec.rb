@@ -45,6 +45,7 @@ describe ::Storage::Rebalancer do
         id: test_project_id,
         name: test_project_name,
         disk_path: test_project_disk_path,
+        size: test_repository_size,
         repository_storage: test_node_01,
         destination_repository_storage: test_node_02
       }
@@ -61,21 +62,37 @@ describe ::Storage::Rebalancer do
       { id: test_project_id, name: test_project_name, disk_path: test_project_disk_path,
         repository_storage: test_node_02 }
     end
+    let(:test_moves) { [{ 'project': { 'id': test_project_id }, 'state': 'finished' }] }
+    let(:test_move) { { 'project': { 'id': test_project_id }, 'state': 'started' } }
     let(:test_migration_logger) { double('FileLogger') }
     let(:test_time) { DateTime.now.iso8601(::Storage::Helpers::ISO8601_FRACTIONAL_SECONDS_LENGTH) }
     let(:test_artifact) do
       {
         id: test_project_id,
         path: test_project_disk_path,
+        # size: test_repository_size,
         source: test_node_01,
         destination: test_node_02,
         date: test_time
       }
     end
+    let(:test_migration_failure_id) { 1234567890 }
+    let(:test_migration_failures) do
+      [
+        {
+          project_id: test_migration_failure_id,
+          message: "Noticed service failure during repository replication",
+          disk_path: "@hashed/12/34/1234567890abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqr",
+          source: test_node_01,
+          destination: test_node_02,
+          date: test_time
+        }
+      ]
+    end
     let(:test_hostname) { options[:console_nodes][:production] }
     let(:test_command) do
       "sudo gitlab-rails runner /var/opt/gitlab/scripts/storage_project_selector.rb " \
-        "#{test_node_01} #{test_node_02} --limit=1"
+        "#{test_node_01} #{test_node_02} --limit=1 --skip=#{test_migration_failure_id}"
     end
     let(:options) do
       defaults.merge(
@@ -89,6 +106,8 @@ describe ::Storage::Rebalancer do
       allow(subject).to receive(:init_project_migration_logging).and_return(test_migration_logger)
       allow(subject).to receive(:options).and_return(options)
       allow(subject).to receive(:get_commit_id).and_return(test_commit_id)
+      allow(subject).to receive(:fetch_repository_storage_moves).and_return(test_moves)
+      allow(subject).to receive(:load_migration_failures).and_return(test_migration_failures)
       allow_any_instance_of(DateTime).to receive(:iso8601)
         .with(::Storage::Helpers::ISO8601_FRACTIONAL_SECONDS_LENGTH)
         .and_return(test_time)
@@ -100,13 +119,19 @@ describe ::Storage::Rebalancer do
         allow(subject).to receive(:get_projects).and_return([test_project])
         allow(subject).to receive(:paginate_projects).and_yield(test_project)
 
-        expect(subject.log).to receive(:info)
-          .with('Option --move-amount not specified, will only move 1 project...')
+        expect(subject.log).to receive(:info).with(
+          'Option --move-amount not specified, will only move 1 project...')
         expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
-        expect(subject.log).to receive(:info).with("Migrating project id: #{test_project_id}")
-        expect(subject.log).to receive(:info).with("[Dry-run] Would have moved project id: #{test_project_id}")
+        expect(subject.log).to receive(:info).with("Scheduling repository replication to " \
+          "#{test_node_02} for project id: #{test_project_id}")
+        expect(subject.log).to receive(:info).with("  Project name: #{test_project_name}")
+        expect(subject.log).to receive(:info).with("  Current shard name: #{test_node_01}")
+        expect(subject.log).to receive(:info).with("  Disk path: #{test_project_disk_path}")
+        expect(subject.log).to receive(:info).with("  Repository size: #{test_repository_size}")
+        expect(subject.log).to receive(:info).with("[Dry-run] Would have scheduled repository " \
+          "replication for project id: #{test_project_id}")
+        expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
         expect(subject.log).to receive(:info).with('Done')
-        expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
         expect(subject.rebalance).to be_nil
       end
       # it 'logs the rebalance operation'
@@ -121,13 +146,21 @@ describe ::Storage::Rebalancer do
             .with('Option --move-amount not specified, will only move 1 project...')
           expect(subject.log).to receive(:info)
             .with('Selecting projects from console-01-sv-gprd.c.gitlab-production.internal')
+          expect(subject.log).to receive(:info).with("Filtering #{test_migration_failures.length} " \
+            "known failed project repositories")
           expect(subject).to receive(:execute_command).and_return(test_projects_json)
             .with("ssh #{test_hostname} -- #{test_command}")
           expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
-          expect(subject.log).to receive(:info).with("Migrating project id: #{test_project_id}")
-          expect(subject.log).to receive(:info).with("[Dry-run] Would have moved project id: #{test_project_id}")
-          expect(subject.log).to receive(:info).with('Done')
+          expect(subject.log).to receive(:info).with("Scheduling repository replication to " \
+            "#{test_node_02} for project id: #{test_project_id}")
+          expect(subject.log).to receive(:info).with("  Project name: #{test_project_name}")
+          expect(subject.log).to receive(:info).with("  Current shard name: #{test_node_01}")
+          expect(subject.log).to receive(:info).with("  Disk path: #{test_project_disk_path}")
+          expect(subject.log).to receive(:info).with("  Repository size: #{test_repository_size}")
+          expect(subject.log).to receive(:info).with("[Dry-run] Would have scheduled repository " \
+            "replication for project id: #{test_project_id}")
           expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
+          expect(subject.log).to receive(:info).with('Done')
           expect(subject.rebalance).to be_nil
         end
         # it 'selects the projects from the configured console node'
@@ -143,19 +176,23 @@ describe ::Storage::Rebalancer do
         allow(subject).to receive(:get_project).and_return(test_project)
         allow(subject).to receive(:get_projects).and_return([test_project])
         allow(subject).to receive(:paginate_projects).and_yield(test_project)
+        allow(subject).to receive(:create_repository_storage_move).and_return(test_move)
+        allow(subject).to receive(:fetch_repository_storage_move).and_return(test_move)
 
         expect(subject.log).to receive(:info)
           .with('Option --move-amount not specified, will only move 1 project...')
         expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
-        expect(subject.log).to receive(:info).with("Migrating project id: #{test_project_id}")
-        expect(subject.log).to receive(:info).with("Scheduling migration for project id: #{test_project_id} to #{test_node_02}")
-        expect(subject).to receive(:update_repository_storage).with(test_project, test_node_02).and_return(test_full_project)
+        expect(subject.log).to receive(:info).with("Scheduling repository replication to " \
+          "#{test_node_02} for project id: #{test_project_id}")
+        expect(subject.log).to receive(:info).with("  Project name: #{test_project_name}")
+        expect(subject.log).to receive(:info).with("  Current shard name: #{test_node_01}")
+        expect(subject.log).to receive(:info).with("  Disk path: #{test_project_disk_path}")
+        expect(subject.log).to receive(:info).with("  Repository size: #{test_repository_size}")
         expect(subject).to receive(:loop_with_progress_until).and_yield.and_yield
         expect(subject).to receive(:get_project).and_return(test_full_project)
         expect(subject).to receive(:get_project).and_return(test_updated_full_project)
-        expect(subject).to receive(:get_project).and_return(test_updated_full_project)
+        expect(subject).to receive(:fetch_repository_storage_moves).and_return(test_moves)
         expect(subject.log).to receive(:info).with("Success moving project id: #{test_project_id}")
-        expect(subject).to receive(:get_project).and_return(test_updated_full_project)
         expect(test_migration_logger).to receive(:info).with(test_artifact.to_json)
         expect(subject.log).to receive(:info).with("Migrated project id: #{test_project_id}")
         expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
@@ -168,20 +205,29 @@ describe ::Storage::Rebalancer do
 
       context 'when the projects are not given' do
         it 'selects the projects from the configured console node' do
+          allow(subject).to receive(:create_repository_storage_move).and_return(test_move)
+          allow(subject).to receive(:fetch_repository_storage_move).and_return(test_move)
+
           expect(subject.log).to receive(:info)
             .with('Option --move-amount not specified, will only move 1 project...')
           expect(subject.log).to receive(:info)
             .with('Selecting projects from console-01-sv-gprd.c.gitlab-production.internal')
           expect(subject).to receive(:execute_command).and_return(test_projects_json)
             .with("ssh #{test_hostname} -- #{test_command}")
+          expect(subject.log).to receive(:info).with("Filtering #{test_migration_failures.length} " \
+            "known failed project repositories")
           expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
-          expect(subject.log).to receive(:info).with("Migrating project id: #{test_project_id}")
-          expect(subject.log).to receive(:info).with("Scheduling migration for project id: #{test_project_id} to #{test_node_02}")
-          expect(subject).to receive(:update_repository_storage).with(test_project, test_node_02).and_return(test_full_project)
+          expect(subject.log).to receive(:info).with("Scheduling repository replication to " \
+            "#{test_node_02} for project id: #{test_project_id}")
+          expect(subject.log).to receive(:info).with("  Project name: #{test_project_name}")
+          expect(subject.log).to receive(:info).with("  Current shard name: #{test_node_01}")
+          expect(subject.log).to receive(:info).with("  Disk path: #{test_project_disk_path}")
+          expect(subject.log).to receive(:info).with("  Repository size: #{test_repository_size}")
+          expect(subject).to receive(:create_repository_storage_move).with(test_project, test_node_02).and_return(test_move)
           expect(subject).to receive(:loop_with_progress_until).and_yield.and_yield
           expect(subject).to receive(:get_project).and_return(test_full_project)
-          expect(subject).to receive(:get_project).and_return(test_updated_full_project)
-          expect(subject).to receive(:get_project).and_return(test_updated_full_project)
+          allow(subject).to receive(:fetch_repository_storage_moves).and_return(test_moves)
+          allow(subject).to receive(:fetch_repository_storage_moves).and_return(test_moves)
           expect(subject.log).to receive(:info).with("Success moving project id: #{test_project_id}")
           expect(subject).to receive(:get_project).and_return(test_updated_full_project)
           expect(test_migration_logger).to receive(:info).with(test_artifact.to_json)
