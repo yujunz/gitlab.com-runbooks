@@ -77,9 +77,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            rate(node_disk_reads_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[20m])
+            rate(node_disk_reads_completed_total{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}[20m])
             /
-            node_disk_max_read_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+            node_disk_max_read_iops{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}
             ,
             1)
         ,
@@ -92,9 +92,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            rate(node_disk_read_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[20m])
+            rate(node_disk_read_bytes_total{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}[20m])
             /
-            node_disk_max_read_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+            node_disk_max_read_bytes_seconds{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}
             ,
             1)
         ,
@@ -107,9 +107,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            rate(node_disk_writes_completed_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[20m])
+            rate(node_disk_writes_completed_total{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}[20m])
             /
-            node_disk_max_write_iops{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+            node_disk_max_write_iops{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}
             ,
             1)
         ,
@@ -122,9 +122,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            rate(node_disk_written_bytes_total{environment!="", type!="", type!~"waf|bastion|deploy-node"}[20m])
+            rate(node_disk_written_bytes_total{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}[20m])
             /
-            node_disk_max_write_bytes_seconds{environment!="", type!="", type!~"waf|bastion|deploy-node"}
+            node_disk_max_write_bytes_seconds{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}
             ,
             1)
         ,
@@ -998,9 +998,9 @@ groups:
         max by(environment, tier, type, stage, fqdn, device) (
           clamp_min(
             clamp_max(
-              rate(node_disk_reads_completed_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
+              rate(node_disk_reads_completed_total{device!="sda", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
               /
-              node_disk_max_read_iops{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+              node_disk_max_read_iops{device!="sda", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
               ,
               1)
           ,
@@ -1043,9 +1043,9 @@ groups:
         max by(environment, tier, type, stage, fqdn, device) (
           clamp_min(
             clamp_max(
-              rate(node_disk_read_bytes_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
+              rate(node_disk_read_bytes_total{device!="sda", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
               /
-              node_disk_max_read_bytes_seconds{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+              node_disk_max_read_bytes_seconds{device!="sda", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
               ,
               1)
           ,
@@ -1095,9 +1095,9 @@ groups:
         max by(environment, tier, type, stage, fqdn, device) (
           clamp_min(
             clamp_max(
-              rate(node_disk_writes_completed_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
+              rate(node_disk_writes_completed_total{device!="sda", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
               /
-              node_disk_max_write_iops{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+              node_disk_max_write_iops{device!="sda", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
               ,
               1)
           ,
@@ -1147,9 +1147,9 @@ groups:
         max by(environment, tier, type, stage, fqdn, device) (
           clamp_min(
             clamp_max(
-              rate(node_disk_written_bytes_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
+              rate(node_disk_written_bytes_total{device!="sda", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[20m])
               /
-              node_disk_max_write_bytes_seconds{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+              node_disk_max_write_bytes_seconds{device!="sda", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
               ,
               1)
           ,

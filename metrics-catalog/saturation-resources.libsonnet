@@ -12,6 +12,11 @@ local throttledSidekiqShards = [
   'memory-bound'
 ];
 
+// Disk utilisation metrics are currently reporting incorrectly for
+// HDD volumes, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10248
+// as such, we only record this utilisation metric on IO subset of the fleet for now.
+local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
+
 {
   active_db_connections: resourceSaturationPoint({
     title: 'Active DB Connection Saturation',
@@ -162,16 +167,16 @@ local throttledSidekiqShards = [
 
   disk_sustained_read_iops: resourceSaturationPoint({
     title: 'Disk Sustained Read IOPS Saturation per Node',
-    appliesTo: { allExcept: ['waf', 'bastion', 'deploy-node'], default: 'patroni' },
+    appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Disk sustained read IOPS saturation per node.
     |||,
     grafana_dashboard_uid: 'sat_disk_sus_read_iops',
     resourceLabels: ['fqdn', 'device'],
     query: |||
-      rate(node_disk_reads_completed_total{%(selector)s}[%(rangeInterval)s])
+      rate(node_disk_reads_completed_total{device!="sda", %(selector)s}[%(rangeInterval)s])
       /
-      node_disk_max_read_iops{%(selector)s}
+      node_disk_max_read_iops{device!="sda", %(selector)s}
     |||,
     burnRatePeriod: '20m',
     slos: {
@@ -183,16 +188,16 @@ local throttledSidekiqShards = [
 
   disk_sustained_read_throughput: resourceSaturationPoint({
     title: 'Disk Sustained Read Throughput Saturation per Node',
-    appliesTo: { allExcept: ['waf', 'bastion', 'deploy-node'], default: 'patroni' },
+    appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Disk sustained read throughput saturation per node.
     |||,
     grafana_dashboard_uid: 'sat_disk_sus_read_throughput',
     resourceLabels: ['fqdn', 'device'],
     query: |||
-      rate(node_disk_read_bytes_total{%(selector)s}[%(rangeInterval)s])
+      rate(node_disk_read_bytes_total{device!="sda", %(selector)s}[%(rangeInterval)s])
       /
-      node_disk_max_read_bytes_seconds{%(selector)s}
+      node_disk_max_read_bytes_seconds{device!="sda", %(selector)s}
     |||,
     burnRatePeriod: '20m',
     slos: {
@@ -204,7 +209,7 @@ local throttledSidekiqShards = [
 
   disk_sustained_write_iops: resourceSaturationPoint({
     title: 'Disk Sustained Write IOPS Saturation per Node',
-    appliesTo: { allExcept: ['waf', 'bastion', 'deploy-node'], default: 'patroni' },
+    appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
       maximum write IOPS value. This value can be exceeded for brief periods.
@@ -218,9 +223,9 @@ local throttledSidekiqShards = [
     grafana_dashboard_uid: 'sat_disk_sus_write_iops',
     resourceLabels: ['fqdn', 'device'],
     query: |||
-      rate(node_disk_writes_completed_total{%(selector)s}[%(rangeInterval)s])
+      rate(node_disk_writes_completed_total{device!="sda", %(selector)s}[%(rangeInterval)s])
       /
-      node_disk_max_write_iops{%(selector)s}
+      node_disk_max_write_iops{device!="sda", %(selector)s}
     |||,
     burnRatePeriod: '20m',
     slos: {
@@ -232,7 +237,7 @@ local throttledSidekiqShards = [
 
   disk_sustained_write_throughput: resourceSaturationPoint({
     title: 'Disk Sustained Write Throughput Saturation per Node',
-    appliesTo: { allExcept: ['waf', 'bastion', 'deploy-node'], default: 'patroni' },
+    appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
       maximum write throughput value. This value can be exceeded for brief periods.
@@ -246,9 +251,9 @@ local throttledSidekiqShards = [
     grafana_dashboard_uid: 'sat_disk_sus_write_throughput',
     resourceLabels: ['fqdn', 'device'],
     query: |||
-      rate(node_disk_written_bytes_total{%(selector)s}[%(rangeInterval)s])
+      rate(node_disk_written_bytes_total{device!="sda", %(selector)s}[%(rangeInterval)s])
       /
-      node_disk_max_write_bytes_seconds{%(selector)s}
+      node_disk_max_write_bytes_seconds{device!="sda", %(selector)s}
     |||,
     burnRatePeriod: '20m',
     slos: {
