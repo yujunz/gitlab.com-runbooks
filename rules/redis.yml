@@ -64,18 +64,6 @@ groups:
         The redis cluster {{$labels.type}} has no node marked as master.
       runbook: docs/redis/redis.md
       title: Redis master missing for {{$labels.type}}
-  - alert: RedisClusterTooSmall
-    expr: gitlab:redis_cluster_nodes:count < 3
-    for: 30m
-    labels:
-      pager: pagerduty
-      severity: s1
-      alert_type: cause
-    annotations:
-      description: >
-        The redis cluster {{$labels.type}} has only {{$value}} nodes.
-      runbook: docs/redis/redis.md
-      title: Redis cluster {{$labels.type}} is missing instances
   - alert: RedisReplicasFlapping
     expr: changes(redis_connected_slaves[5m]) > 2
     for: 1m
