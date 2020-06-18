@@ -30,7 +30,7 @@ local resourceSaturationPoint = function(definition)
       local allMaxAggregationLabels = environmentLabels + maxAggregationLabels;
       local queryAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), queryAggregationLabels);
       local maxAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), allMaxAggregationLabels);
-      local queryFormatConfig = ({ queryFormatConfig: { } } + self).queryFormatConfig;
+      local queryFormatConfig = ({ queryFormatConfig: {} } + self).queryFormatConfig;
 
       local preaggregation = definition.query % queryFormatConfig {
         rangeInterval: rangeInterval,
@@ -128,13 +128,12 @@ local resourceSaturationPoint = function(definition)
         title: definition.title,
       };
 
-      local quantileDetails = if std.objectHas(definition, 'quantile') then
-        {
-          quantile_period: definition.quantile.period,
-          quantile: '%g' % [definition.quantile.applyQuantile],
-        }
-      else
-        {};
+      local severityLabels =
+        { severity: definition.severity } +
+        if definition.severity == 's1' || definition.severity == 's2' then
+          { pager: 'pagerduty' }
+        else
+          {};
 
       [alerts.processAlertRule({
         alert: 'component_saturation_slo_out_of_bounds',
@@ -146,15 +145,12 @@ local resourceSaturationPoint = function(definition)
         labels: {
           rules_domain: 'general',
           metric: 'gitlab_component_saturation:ratio',
-          severity: 's3',  // TODO: add a criticality indicator
           period: triggerDuration,
           bound: 'upper',
           alert_type: 'cause',
           alert_trigger_duration: triggerDuration,
           burn_rate_period: definition.getBurnRatePeriod(),
-          // slo_alert: 'yes' Uncomment after trial period
-          // pager: pagerduty Uncomment after trial period
-        } + quantileDetails,
+        } + severityLabels,
         annotations: {
           title: 'The %(title)s resource of the {{ $labels.type }} service ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity limit.' % formatConfig,
           description: |||
