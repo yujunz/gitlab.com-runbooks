@@ -14,8 +14,9 @@ local colWidth = 12;
 basic.dashboard(
   'Capacity Planning',
   tags=['general'],
+  includeStandardEnvironmentAnnotations=false,
 )
-.addPanels(capacityPlanning.environmentCapacityPlanningPanels())
+.addPanels(capacityPlanning.environmentCapacityPlanningPanels(''))
 + {
   links+: platformLinks.services,
 }
