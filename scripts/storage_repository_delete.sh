@@ -12,6 +12,9 @@ set -e
 # Immediately exit if any variable previously undefined is referenced.
 set -u
 
+# Ensure that the return value of a pipeline is the value of the last (rightmost) command to exit with a non-zero status
+set -o pipefail
+
 EXPECTED_HASHED_STORAGE_DISK_PATH_LENGTH=78
 REPOSITORIES_DIR_PATH='/var/opt/gitlab/git-data/repositories'
 
@@ -53,7 +56,7 @@ function storage_repository_delete() {
   cmd="rm -rf \"${git_path}\" \"${wiki_git_path}\" \"${design_git_path}\""
   dry_run_cmd="ls -ld \"${git_path}\" \"${wiki_git_path}\" \"${design_git_path}\""
 
-  if [[ "${dry_run}" == "--dry-run=no" ]]; then
+  if [[ "${dry_run}" == "no" ]]; then
     echo "Executing command: ${cmd}"
 
     set -x
