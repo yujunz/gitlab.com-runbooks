@@ -19,14 +19,14 @@ local saturationResources = import 'saturation-resources.libsonnet';
 
 local wrapSaturationQueryWithAlertDashboardJoin(query) =
   local saturationTypeDefinitions = saturationResources.mapResources(
-    function(component, definition) 'absent(fake_dne{component="%s", alert_dashboard="%s"})' % [component, definition.grafana_dashboard_uid]
+    function(component, definition) 'absent(fake_dne{component="%s", alert_dashboard="%s", severity="%s"})' % [component, definition.grafana_dashboard_uid, definition.severity]
   );
 
   |||
     (
       %(query)s
     )
-    * on(component) group_left(alert_dashboard)
+    * on(component) group_left(alert_dashboard, severity)
     (
       %(saturationTypeDefinitions)s
     )
@@ -57,9 +57,15 @@ local saturationTable(title, description, query, saturationDays, valueColumnName
         link: true,
         linkTargetBlank: true,
         linkTooltip: 'Click the link to review the past %d day(s) history for this saturation point.' % [saturationDays],
-        linkUrl: '/d/alerts-${__cell}?var-environment=gprd&var-type=${__cell_4}&var-stage=${__cell_3}&from=now-' + saturationDays + 'd/d&to=now/h',
+        linkUrl: '/d/alerts-${__cell}?var-environment=gprd&var-type=${__cell_5}&var-stage=${__cell_4}&from=now-' + saturationDays + 'd/d&to=now/h',
         mappingType: 1,
         pattern: 'alert_dashboard',
+        type: 'string',
+      },
+      {
+        alias: 'Severity',
+        mappingType: 1,
+        pattern: 'severity',
         type: 'string',
       },
       {

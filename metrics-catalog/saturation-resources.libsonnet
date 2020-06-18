@@ -20,6 +20,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 {
   active_db_connections: resourceSaturationPoint({
     title: 'Active DB Connection Saturation',
+    severity: 's3',
     appliesTo: ['patroni'],
     description: |||
       Active db connection saturation per node.
@@ -44,6 +45,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   rails_db_connection_pool: resourceSaturationPoint({
     title: 'Rails DB Connection Pool Saturation',
+    severity: 's4',
     appliesTo: ['web', 'api', 'git', 'sidekiq'],
     description: |||
       Rails uses connection pools for its database connections. As each
@@ -75,6 +77,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   cgroup_memory: resourceSaturationPoint({
     title: 'Cgroup Memory Saturation per Node',
+    severity: 's4',
     appliesTo: ['gitaly', 'praefect'],
     description: |||
       Cgroup memory saturation per node.
@@ -104,6 +107,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   cpu: resourceSaturationPoint({
     title: 'Average Service CPU',
+    severity: 's3',
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
     description: |||
       This resource measures average CPU across an all cores in a service fleet.
@@ -126,6 +130,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   shard_cpu: resourceSaturationPoint({
     title: 'Average CPU per Shard',
+    severity: 's3',
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'], default: 'sidekiq' },
     description: |||
       This resource measures average CPU across an all cores in a shard of a
@@ -148,6 +153,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   disk_space: resourceSaturationPoint({
     title: 'Disk Utilization per Device per Node',
+    severity: 's2',
     appliesTo: { allExcept: ['waf', 'bastion'], default: 'gitaly' },
     description: |||
       Disk utilization per device per node.
@@ -167,6 +173,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   disk_sustained_read_iops: resourceSaturationPoint({
     title: 'Disk Sustained Read IOPS Saturation per Node',
+    severity: 's3',
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Disk sustained read IOPS saturation per node.
@@ -188,6 +195,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   disk_sustained_read_throughput: resourceSaturationPoint({
     title: 'Disk Sustained Read Throughput Saturation per Node',
+    severity: 's3',
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Disk sustained read throughput saturation per node.
@@ -209,6 +217,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   disk_sustained_write_iops: resourceSaturationPoint({
     title: 'Disk Sustained Write IOPS Saturation per Node',
+    severity: 's3',
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
@@ -237,6 +246,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   disk_sustained_write_throughput: resourceSaturationPoint({
     title: 'Disk Sustained Write Throughput Saturation per Node',
+    severity: 's3',
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
@@ -265,6 +275,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   elastic_cpu: resourceSaturationPoint({
     title: 'Average CPU Saturation per Node',
+    severity: 's4',
     appliesTo: ['logging', 'search'],
     description: |||
       Average CPU per Node.
@@ -287,6 +298,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   elastic_disk_space: resourceSaturationPoint({
     title: 'Disk Utilization Overall',
+    severity: 's3',
     appliesTo: ['logging', 'search'],
     description: |||
       Disk utilization per device per node.
@@ -310,6 +322,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   elastic_jvm_heap_memory: resourceSaturationPoint({
     title: 'JVM Heap Utilization per Node',
+    severity: 's4',
     appliesTo: ['logging', 'search'],
     description: |||
       JVM heap memory utilization per node.
@@ -329,6 +342,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   elastic_single_node_cpu: resourceSaturationPoint({
     title: 'Average CPU Saturation per Node',
+    severity: 's4',
     appliesTo: ['logging', 'search'],
     description: |||
       Average CPU per Node.
@@ -350,6 +364,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   elastic_single_node_disk_space: resourceSaturationPoint({
     title: 'Disk Utilization per Device per Node',
+    severity: 's4',
     appliesTo: ['logging', 'search'],
     description: |||
       Disk utilization per device per node.
@@ -375,6 +390,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   elastic_thread_pools: resourceSaturationPoint({
     title: 'Thread pool utilization',
+    severity: 's4',
     appliesTo: ['logging', 'search'],
     description: |||
       Saturation of each thread pool on each node.
@@ -400,6 +416,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   go_memory: resourceSaturationPoint({
     title: 'Go Memory Saturation per Node',
+    severity: 's4',
     appliesTo: ['gitaly', 'web-pages', 'monitoring', 'web', 'praefect', 'registry', 'api'],
     description: |||
       Go's memory allocation strategy can make it look like a Go process is saturating memory when measured using RSS, when in fact
@@ -425,6 +442,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   memory: resourceSaturationPoint({
     title: 'Memory Utilization per Node',
+    severity: 's4',
     appliesTo: { allExcept: ['waf', 'monitoring'] },
     description: |||
       Memory utilization per device per node.
@@ -442,6 +460,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   open_fds: resourceSaturationPoint({
     title: 'Open file descriptor saturation per instance',
+    severity: 's2',
     appliesTo: { allExcept: ['waf'] },
     description: |||
       Open file descriptor saturation per instance.
@@ -473,6 +492,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   pgbouncer_async_pool: resourceSaturationPoint({
     title: 'Postgres Async (Sidekiq) Connection Pool Saturation per Node',
+    severity: 's4',
     appliesTo: ['pgbouncer', 'patroni'],
     description: |||
       Postgres connection pool saturation per database node.
@@ -504,6 +524,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   pgbouncer_single_core: resourceSaturationPoint({
     title: 'PGBouncer Single Core per Node',
+    severity: 's2',
     appliesTo: ['pgbouncer', 'patroni'],
     description: |||
       PGBouncer single core saturation per node.
@@ -528,6 +549,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   pgbouncer_sync_pool: resourceSaturationPoint({
     title: 'Postgres Sync (Web/API) Connection Pool Saturation per Node',
+    severity: 's3',
     appliesTo: ['pgbouncer', 'patroni'],
     description: |||
       Postgres sync connection pool saturation per database node.
@@ -560,6 +582,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   private_runners: resourceSaturationPoint({
     title: 'Private Runners Saturation',
+    severity: 's4',
     appliesTo: ['ci-runners'],
     description: |||
       Private runners saturation per instance.
@@ -589,6 +612,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   redis_clients: resourceSaturationPoint({
     title: 'Redis Client Saturation per Node',
+    severity: 's3',
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
       Redis client saturation per node.
@@ -613,6 +637,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   redis_memory: resourceSaturationPoint({
     title: 'Redis Memory Saturation per Node',
+    severity: 's2',
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
       Redis memory saturation per node.
@@ -644,6 +669,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   shared_runners: resourceSaturationPoint({
     title: 'Shared Runner Saturation',
+    severity: 's4',
     appliesTo: ['ci-runners'],
     description: |||
       Shared runner saturation per instance.
@@ -673,6 +699,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   shared_runners_gitlab: resourceSaturationPoint({
     title: 'Shared Runner GitLab Saturation',
+    severity: 's4',
     appliesTo: ['ci-runners'],
     description: |||
       Shared runners saturation per instance.
@@ -700,6 +727,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   sidekiq_shard_workers: resourceSaturationPoint({
     title: 'Sidekiq Worker Saturation per shard',
+    severity: 's4',
     appliesTo: ['sidekiq'],
     description: |||
       Sidekiq worker saturation per shard.
@@ -733,6 +761,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   single_node_cpu: resourceSaturationPoint({
     title: 'Average CPU Saturation per Node',
+    severity: 's4',
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
     description: |||
       Average CPU per Node.
@@ -754,6 +783,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   single_node_puma_workers: resourceSaturationPoint({
     title: 'Puma Worker Saturation per Node',
+    severity: 's2',
     appliesTo: ['web', 'api', 'git', 'sidekiq'],
     description: |||
       Puma thread utilization per node.
@@ -779,6 +809,7 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
   single_threaded_cpu: resourceSaturationPoint({
     title: 'Redis CPU Saturation per Node',
+    severity: 's2',
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
       Redis CPU per node.

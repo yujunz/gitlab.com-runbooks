@@ -880,7 +880,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="cgroup_memory"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="cgroup_memory"}
@@ -968,9 +968,10 @@ groups:
       bound: upper
       burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
+      pager: pagerduty
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s2
     expr: |
       gitlab_component_saturation:ratio{component="disk_space"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="disk_space"}
@@ -1211,7 +1212,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="elastic_cpu"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="elastic_cpu"}
@@ -1303,7 +1304,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="elastic_jvm_heap_memory"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="elastic_jvm_heap_memory"}
@@ -1348,7 +1349,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="elastic_single_node_cpu"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="elastic_single_node_cpu"}
@@ -1398,7 +1399,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="elastic_single_node_disk_space"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="elastic_single_node_disk_space"}
@@ -1447,7 +1448,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="elastic_thread_pools"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="elastic_thread_pools"}
@@ -1497,7 +1498,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="go_memory"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="go_memory"}
@@ -1539,7 +1540,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="memory"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="memory"}
@@ -1594,9 +1595,10 @@ groups:
       bound: upper
       burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
+      pager: pagerduty
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s2
     expr: |
       gitlab_component_saturation:ratio{component="open_fds"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="open_fds"}
@@ -1651,7 +1653,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 10m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="pgbouncer_async_pool"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="pgbouncer_async_pool"}
@@ -1698,9 +1700,10 @@ groups:
       bound: upper
       burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
+      pager: pagerduty
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s2
     expr: |
       gitlab_component_saturation:ratio{component="pgbouncer_single_core"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="pgbouncer_single_core"}
@@ -1805,7 +1808,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="private_runners"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="private_runners"}
@@ -1859,7 +1862,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 15m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="rails_db_connection_pool"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="rails_db_connection_pool"}
@@ -1962,9 +1965,10 @@ groups:
       bound: upper
       burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
+      pager: pagerduty
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s2
     expr: |
       gitlab_component_saturation:ratio{component="redis_memory"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="redis_memory"}
@@ -2059,7 +2063,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="shared_runners"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="shared_runners"}
@@ -2108,7 +2112,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="shared_runners_gitlab"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="shared_runners_gitlab"}
@@ -2161,7 +2165,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 10m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="sidekiq_shard_workers"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="sidekiq_shard_workers"}
@@ -2206,7 +2210,7 @@ groups:
       metric: gitlab_component_saturation:ratio
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s4
     expr: |
       gitlab_component_saturation:ratio{component="single_node_cpu"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="single_node_cpu"}
@@ -2254,9 +2258,10 @@ groups:
       bound: upper
       burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
+      pager: pagerduty
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s2
     expr: |
       gitlab_component_saturation:ratio{component="single_node_puma_workers"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="single_node_puma_workers"}
@@ -2300,9 +2305,10 @@ groups:
       bound: upper
       burn_rate_period: 1m
       metric: gitlab_component_saturation:ratio
+      pager: pagerduty
       period: 5m
       rules_domain: general
-      severity: s3
+      severity: s2
     expr: |
       gitlab_component_saturation:ratio{component="single_threaded_cpu"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="single_threaded_cpu"}
