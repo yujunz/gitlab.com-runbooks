@@ -142,19 +142,6 @@ groups:
 
 - name: Misc Gitaly Alerts
   rules:
-  - alert: GitLabComLatencyGitalyCritical
-    expr: gitaly:grpc_server_handling_seconds:p95 >= 60
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: s1
-      alert_type: cause
-    annotations:
-      description: Reach out to the Gitaly team and mitigate the problem restarting
-        gitaly on the affected node if it's causing a partial outage.
-      runbook: docs/gitaly/gitaly-latency.md
-      title: Gitaly latency on {{ $labels.fqdn }} has been over 1m during the last 5m
-
   - alert: GitalyNewVersionDeployed
     expr: |
       sum by (version) (
