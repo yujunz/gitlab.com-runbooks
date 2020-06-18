@@ -49,4 +49,56 @@ serviceDashboard.overview('pgbouncer', 'db', stage='main')
   }
 )
 .addPanels(pgbouncerCommonGraphs.networkStats('pgbouncer', 4001))
+.addPanel(
+  row.new(title='pgbouncer Client Transaction Utilisation'),
+  gridPos={
+    x: 0,
+    y: 5000,
+    w: 24,
+    h: 1,
+  }
+)
+.addPanels(
+  layout.grid([
+    basic.timeseries(
+      title='Async Pool',
+      description='Total async pool utilisation by job.',
+      query=
+      |||
+        sum by (controller, stage) (rate(gitlab_transaction_duration_seconds_sum{environment="$environment", env="$environment", monitor="app", type="sidekiq"}[$__interval]))
+      |||,
+      legendFormat='{{ controller }} - {{ stage }} stage',
+      format='s',
+      yAxisLabel='"Usage client transaction time/sec',
+      interval='1m',
+      intervalFactor=1,
+      legend_show=false,
+      linewidth=1
+    ),
+    basic.timeseries(
+      title='Sync Pool',
+      description='Total sync (web/api/git) pool utilisation by job.',
+      query=
+      |||
+        sum by (controller, stage) (
+          rate(gitlab_transaction_duration_seconds_sum{environment="$environment", env="$environment", monitor="app", type!="sidekiq", controller!="Grape"}[$__interval])
+        )
+        or
+        label_replace(
+          sum by (action, stage) (
+            rate(gitlab_transaction_duration_seconds_sum{environment="$environment", env="$environment", monitor="app", type!="sidekiq", controller="Grape"}[$__interval])
+          ),
+          "controller", "$1", "action", "(.*)"
+        )
+      |||,
+      legendFormat='{{ controller }} - {{ stage }} stage',
+      format='s',
+      yAxisLabel='"Usage client transaction time/sec',
+      interval='1m',
+      intervalFactor=1,
+      legend_show=false,
+      linewidth=1
+    ),
+  ], cols=2, startRow=5001)
+)
 .overviewTrailer()
