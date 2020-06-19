@@ -807,27 +807,62 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
     },
   }),
 
-  single_threaded_cpu: resourceSaturationPoint({
-    title: 'Redis CPU Saturation per Node',
-    severity: 's2',
+  redis_primary_cpu: resourceSaturationPoint({
+    title: 'Redis Primary CPU Saturation per Node',
+    severity: 's1',
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
-      Redis CPU per node.
+      Redis Primary CPU Saturation per Node.
 
       Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
-      When this resource is saturated, major slowdowns should be expected across the application, so avoid if at all
+      When the primary Redis service is saturated, major slowdowns should be expected across the application, so avoid if at all
       possible.
     |||,
-    grafana_dashboard_uid: 'sat_single_threaded_cpu',
+    grafana_dashboard_uid: 'sat_redis_primary_cpu',
     resourceLabels: ['fqdn'],
+    burnRate: '5m',
     query: |||
-      instance:redis_cpu_usage:rate1m{%(selector)s}
+      (
+        rate(redis_cpu_user_seconds_total{%(selector)s}[%(rangeInterval)s])
+        +
+        rate(redis_cpu_sys_seconds_total{%(selector)s}[%(rangeInterval)s])
+      )
+      and on (instance) redis_instance_info{role="master"}
     |||,
     slos: {
       soft: 0.70,
       hard: 0.90,
     },
   }),
+
+  redis_secondary_cpu: resourceSaturationPoint({
+    title: 'Redis Secondary CPU Saturation per Node',
+    severity: 's4',
+    appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
+    description: |||
+      Redis Secondary CPU Saturation per Node.
+
+      Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
+      CPU saturation on a secondary is not as serious as critical as saturation on a primary, but could lead to
+      replication delays.
+    |||,
+    grafana_dashboard_uid: 'sat_redis_secondary_cpu',
+    resourceLabels: ['fqdn'],
+    burnRate: '5m',
+    query: |||
+      (
+        rate(redis_cpu_user_seconds_total{%(selector)s}[%(rangeInterval)s])
+        +
+        rate(redis_cpu_sys_seconds_total{%(selector)s}[%(rangeInterval)s])
+      )
+      and on (instance) redis_instance_info{role!="master"}
+    |||,
+    slos: {
+      soft: 0.85,
+      hard: 0.95,
+    },
+  }),
+
 
   // TODO: figure out how k8s management falls into out environment/tier/type/stage/shard labelling
   // taxonomy. These saturation metrics rely on this in order to work

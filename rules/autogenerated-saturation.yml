@@ -421,6 +421,42 @@ groups:
       )
   - record: gitlab_component_saturation:ratio
     labels:
+      component: redis_primary_cpu
+    expr: |
+      max by(environment, tier, type, stage) (
+        clamp_min(
+          clamp_max(
+            (
+              rate(redis_cpu_user_seconds_total{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+              +
+              rate(redis_cpu_sys_seconds_total{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+            )
+            and on (instance) redis_instance_info{role="master"}
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: redis_secondary_cpu
+    expr: |
+      max by(environment, tier, type, stage) (
+        clamp_min(
+          clamp_max(
+            (
+              rate(redis_cpu_user_seconds_total{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+              +
+              rate(redis_cpu_sys_seconds_total{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+            )
+            and on (instance) redis_instance_info{role!="master"}
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
       component: shard_cpu
     expr: |
       max by(environment, tier, type, stage) (
@@ -509,19 +545,6 @@ groups:
             sum by(environment, tier, type, stage, fqdn) (avg_over_time(puma_active_connections{environment!="", type=~"web|api|git|sidekiq"}[1m]))
             /
             sum by(environment, tier, type, stage, fqdn) (puma_max_threads{pid="puma_master", environment!="", type=~"web|api|git|sidekiq"})
-            ,
-            1)
-        ,
-        0)
-      )
-  - record: gitlab_component_saturation:ratio
-    labels:
-      component: single_threaded_cpu
-    expr: |
-      max by(environment, tier, type, stage) (
-        clamp_min(
-          clamp_max(
-            instance:redis_cpu_usage:rate1m{environment!="", type=~"redis|redis-sidekiq|redis-cache"}
             ,
             1)
         ,
@@ -724,59 +747,67 @@ groups:
     expr: '0.75'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
-      component: shard_cpu
-    expr: '0.85'
-  - record: slo:max:hard:gitlab_component_saturation:ratio
-    labels:
-      component: shard_cpu
-    expr: '0.95'
-  - record: slo:max:soft:gitlab_component_saturation:ratio
-    labels:
-      component: shared_runners
-    expr: '0.9'
-  - record: slo:max:hard:gitlab_component_saturation:ratio
-    labels:
-      component: shared_runners
-    expr: '0.95'
-  - record: slo:max:soft:gitlab_component_saturation:ratio
-    labels:
-      component: shared_runners_gitlab
-    expr: '0.9'
-  - record: slo:max:hard:gitlab_component_saturation:ratio
-    labels:
-      component: shared_runners_gitlab
-    expr: '0.95'
-  - record: slo:max:soft:gitlab_component_saturation:ratio
-    labels:
-      component: sidekiq_shard_workers
-    expr: '0.85'
-  - record: slo:max:hard:gitlab_component_saturation:ratio
-    labels:
-      component: sidekiq_shard_workers
-    expr: '0.9'
-  - record: slo:max:soft:gitlab_component_saturation:ratio
-    labels:
-      component: single_node_cpu
-    expr: '0.9'
-  - record: slo:max:hard:gitlab_component_saturation:ratio
-    labels:
-      component: single_node_cpu
-    expr: '0.95'
-  - record: slo:max:soft:gitlab_component_saturation:ratio
-    labels:
-      component: single_node_puma_workers
-    expr: '0.85'
-  - record: slo:max:hard:gitlab_component_saturation:ratio
-    labels:
-      component: single_node_puma_workers
-    expr: '0.9'
-  - record: slo:max:soft:gitlab_component_saturation:ratio
-    labels:
-      component: single_threaded_cpu
+      component: redis_primary_cpu
     expr: '0.7'
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
-      component: single_threaded_cpu
+      component: redis_primary_cpu
+    expr: '0.9'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: redis_secondary_cpu
+    expr: '0.85'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: redis_secondary_cpu
+    expr: '0.95'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: shard_cpu
+    expr: '0.85'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: shard_cpu
+    expr: '0.95'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: shared_runners
+    expr: '0.9'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: shared_runners
+    expr: '0.95'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: shared_runners_gitlab
+    expr: '0.9'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: shared_runners_gitlab
+    expr: '0.95'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: sidekiq_shard_workers
+    expr: '0.85'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: sidekiq_shard_workers
+    expr: '0.9'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: single_node_cpu
+    expr: '0.9'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: single_node_cpu
+    expr: '0.95'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: single_node_puma_workers
+    expr: '0.85'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: single_node_puma_workers
     expr: '0.9'
 - name: GitLab Saturation Alerts
   interval: 1m
@@ -1976,6 +2007,109 @@ groups:
     for: 5m
     annotations:
       title: >-
+        The Redis Primary CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the Redis Primary CPU Saturation per Node resource:
+        -------------------------------------------
+        Redis Primary CPU Saturation per Node.
+
+        Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
+        When the primary Redis service is saturated, major slowdowns should be expected across the application, so avoid if at all
+        possible.
+      grafana_dashboard_id: alerts-sat_redis_primary_cpu
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/alerts-sat_redis_primary_cpu?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '2'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, tier, type, stage, fqdn) (
+          clamp_min(
+            clamp_max(
+              (
+                rate(redis_cpu_user_seconds_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
+                +
+                rate(redis_cpu_sys_seconds_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
+              )
+              and on (instance) redis_instance_info{role="master"}
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_trigger_duration: 5m
+      alert_type: cause
+      bound: upper
+      burn_rate_period: 1m
+      metric: gitlab_component_saturation:ratio
+      pager: pagerduty
+      period: 5m
+      rules_domain: general
+      severity: s1
+    expr: |
+      gitlab_component_saturation:ratio{component="redis_primary_cpu"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="redis_primary_cpu"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 5m
+    annotations:
+      title: >-
+        The Redis Secondary CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the Redis Secondary CPU Saturation per Node resource:
+        -------------------------------------------
+        Redis Secondary CPU Saturation per Node.
+
+        Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
+        CPU saturation on a secondary is not as serious as critical as saturation on a primary, but could lead to
+        replication delays.
+      grafana_dashboard_id: alerts-sat_redis_secondary_cpu
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/alerts-sat_redis_secondary_cpu?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '2'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, tier, type, stage, fqdn) (
+          clamp_min(
+            clamp_max(
+              (
+                rate(redis_cpu_user_seconds_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
+                +
+                rate(redis_cpu_sys_seconds_total{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
+              )
+              and on (instance) redis_instance_info{role!="master"}
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_trigger_duration: 5m
+      alert_type: cause
+      bound: upper
+      burn_rate_period: 1m
+      metric: gitlab_component_saturation:ratio
+      period: 5m
+      rules_domain: general
+      severity: s4
+    expr: |
+      gitlab_component_saturation:ratio{component="redis_secondary_cpu"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="redis_secondary_cpu"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 5m
+    annotations:
+      title: >-
         The Average CPU per Shard resource of the {{ $labels.type }} service ({{ $labels.stage }} stage),
         component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
@@ -2265,50 +2399,3 @@ groups:
     expr: |
       gitlab_component_saturation:ratio{component="single_node_puma_workers"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="single_node_puma_workers"}
-  - alert: component_saturation_slo_out_of_bounds
-    for: 5m
-    annotations:
-      title: >-
-        The Redis CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
-        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
-      description: |
-        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
-
-        Details of the Redis CPU Saturation per Node resource:
-        -------------------------------------------
-        Redis CPU per node.
-
-        Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
-        When this resource is saturated, major slowdowns should be expected across the application, so avoid if at all
-        possible.
-      grafana_dashboard_id: alerts-sat_single_threaded_cpu
-      grafana_dashboard_link: >-
-        https://dashboards.gitlab.net/d/alerts-sat_single_threaded_cpu?from=now-6h/m&to=now-1m/m&var-environment={{
-        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
-      grafana_min_zoom_hours: '6'
-      grafana_panel_id: '2'
-      grafana_variables: environment,type,stage
-      promql_query: |
-        max by(environment, tier, type, stage, fqdn) (
-          clamp_min(
-            clamp_max(
-              instance:redis_cpu_usage:rate1m{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
-              ,
-              1)
-          ,
-          0)
-        )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
-    labels:
-      alert_trigger_duration: 5m
-      alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      pager: pagerduty
-      period: 5m
-      rules_domain: general
-      severity: s2
-    expr: |
-      gitlab_component_saturation:ratio{component="single_threaded_cpu"} > on(component) group_left
-      slo:max:hard:gitlab_component_saturation:ratio{component="single_threaded_cpu"}
