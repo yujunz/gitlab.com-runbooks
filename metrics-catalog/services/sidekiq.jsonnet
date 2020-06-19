@@ -86,7 +86,7 @@ local shards = [
 
       errorRate: rateMetric(
         counter='sidekiq_jobs_failed_total',
-        selector='shard="%(shard)s"'
+        selector='shard="%(shard)s"' % formatConfig
       ),
 
       significantLabels: ['fqdn'],
