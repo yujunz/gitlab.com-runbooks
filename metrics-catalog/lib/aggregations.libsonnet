@@ -1,3 +1,5 @@
+local strings = import 'strings.libsonnet';
+
 {
   // Wraps a query in an aggregation function, using the provided aggregation labels
   aggregateOverQuery(aggregationFunction, aggregationLabels, query)::
@@ -8,6 +10,6 @@
     ||| % {
       aggregationFunction: aggregationFunction,
       aggregationLabels: aggregationLabels,
-      query: query,
+      query: strings.indent(strings.chomp(query), 2),
     },
 }

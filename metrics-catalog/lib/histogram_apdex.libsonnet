@@ -1,3 +1,4 @@
+local aggregations = import './aggregations.libsonnet';
 local selectors = import './selectors.libsonnet';
 local strings = import 'strings.libsonnet';
 
@@ -14,132 +15,73 @@ local strings = import 'strings.libsonnet';
 //
 // The other functions here all use this to generate the final apdex
 // query.
-//
-local generateApdexQuery(satisfactionQuery, weightScoreQuery, denominator=null) =
-  local denominatorString = if std.isNumber(denominator) then
-    '/\n%s' % [denominator]
-  else
-    '';
 
-  local query = |||
-    (
-      %(satisfactionQuery)s
-    )
-    %(denominatorString)s
-    /
-    (
-      %(weightScoreQuery)s > 0
-    )
-  ||| % {
-    satisfactionQuery: strings.indent(satisfactionQuery, 2),
-    denominatorString: denominatorString,
-    weightScoreQuery: strings.indent(weightScoreQuery, 2),
-  };
+local nullAggregationWrapper = function(f) f;
+local sum(aggregationLabels) =
+  function(f) aggregations.aggregateOverQuery('sum', aggregationLabels, f);
 
-  strings.removeBlankLines(query);
+local generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, leSelector='', aggregationWrapper=null) =
+  local selector = selectors.join([strings.chomp(histogramApdex.selector), strings.chomp(additionalSelectors), leSelector]);
 
-// A single threshold apdex score only has a SATISFACTORY threshold, no TOLERABLE threshold
-local generateSingleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration) =
-  generateApdexQuery(
-    histogramApdex.apdexComponentQuery(aggregationLabels, additionalSelectors, duration, 'le="%g"' % [histogramApdex.satisfiedThreshold]),
-    histogramApdex.apdexComponentQuery(aggregationLabels, additionalSelectors, duration, 'le="+Inf"'),
-  );
+  aggregationWrapper('rate(%(histogram)s{%(selector)s}[%(rangeInterval)s])' % {
+    histogram: histogramApdex.histogram,
+    selector: selector,
+    rangeInterval: rangeInterval,
+  });
 
 // A double threshold apdex score only has both SATISFACTORY threshold and TOLERABLE thresholds
-local generateDoubleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration) =
-  local satisfactionQuery = |||
-    %(satisfied)s
-    +
-    %(tolerated)s
+local generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationWrapper) =
+  local satisfiedQuery = generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, 'le="%g"' % [histogramApdex.satisfiedThreshold], aggregationWrapper);
+  local toleratedQuery = generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, 'le="%g"' % [histogramApdex.toleratedThreshold], aggregationWrapper);
+
+  |||
+    (
+      %(satisfied)s
+      +
+      %(tolerated)s
+    )
+    /
+    2
   ||| % {
-    satisfied: histogramApdex.apdexComponentQuery(aggregationLabels, additionalSelectors, duration, 'le="%g"' % [histogramApdex.satisfiedThreshold]),
-    tolerated: histogramApdex.apdexComponentQuery(aggregationLabels, additionalSelectors, duration, 'le="%g"' % [histogramApdex.toleratedThreshold]),
+    satisfied: strings.indent(satisfiedQuery, 2),
+    tolerated: strings.indent(toleratedQuery, 2),
   };
 
-  generateApdexQuery(
-    satisfactionQuery,
-    histogramApdex.apdexComponentQuery(aggregationLabels, additionalSelectors, duration, 'le="+Inf"'),
-    denominator=2,
-  );
-
-local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration) =
+local generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationWrapper) =
   if histogramApdex.toleratedThreshold == null then
-    generateSingleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration)
+    // A single threshold apdex score only has a SATISFACTORY threshold, no TOLERABLE threshold
+    generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, 'le="%g"' % [histogramApdex.satisfiedThreshold], aggregationWrapper)
   else
-    generateDoubleThresholdApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, duration);
+    generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationWrapper);
 
-local generatePercentileLatencyQuery(percentile, aggregationLabels, rateQuery) =
+local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, rangeInterval, aggregationWrapper) =
+  local numeratorQuery = generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationWrapper);
+  local weightQuery = generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, 'le="+Inf"', aggregationWrapper);
+
+  |||
+    %(numeratorQuery)s
+    /
+    (
+      %(weightQuery)s > 0
+    )
+  ||| % {
+    numeratorQuery: strings.chomp(numeratorQuery),
+    weightQuery: strings.indent(strings.chomp(weightQuery), 2),
+  };
+
+local generatePercentileLatencyQuery(histogram, percentile, aggregationLabels, additionalSelectors, rangeInterval) =
   local aggregationLabelsWithLe = selectors.join([aggregationLabels, 'le']);
+  local aggregatedRateQuery = generateApdexComponentRateQuery(histogram, additionalSelectors, rangeInterval, aggregationWrapper=sum(aggregationLabelsWithLe));
 
   |||
     histogram_quantile(
       %(percentile)f,
-      sum by (%(aggregationLabelsWithLe)s) (
-        %(rateQuery)s
-      )
+      %(aggregatedRateQuery)s
     )
   ||| % {
     percentile: percentile,
-    aggregationLabelsWithLe: aggregationLabelsWithLe,
-    rateQuery: strings.indent(rateQuery, 4),
+    aggregatedRateQuery: strings.indent(strings.chomp(aggregatedRateQuery), 2),
   };
-
-local generateApdexComponentAggregationQuery(aggregationLabels, rateQuery) =
-  |||
-    sum by (%(aggregationLabels)s) (
-      %(rateQuery)s
-    )
-  ||| % {
-    aggregationLabels: aggregationLabels,
-    rateQuery: rateQuery,
-  };
-
-local generateApdexComponentRateQuery(histogramApdex, additionalSelectors, duration, leSelector='') =
-  local selector = selectors.join([histogramApdex.selector, additionalSelectors]);
-
-  'rate(%(histogram)s{%(selector)s}[%(duration)s])' % {
-    histogram: histogramApdex.histogram,
-    selector: std.strReplace(selectors.join([selector, leSelector]), '\n', ''),
-    duration: duration,
-  };
-
-local generateApdexComponentQuery(histogramApdex, aggregationLabels, additionalSelectors, duration, leSelector) =
-  generateApdexComponentAggregationQuery(
-    aggregationLabels,
-    generateApdexComponentRateQuery(histogramApdex, additionalSelectors, duration, leSelector)
-  );
-
-local generateCombinedApdexQuery(histograms, aggregationLabels, additionalSelectors, duration) =
-  local satisfactionRateQueries = std.map(
-    function(h) generateApdexComponentRateQuery(h, additionalSelectors, duration, 'le="%g"' % [h.satisfiedThreshold]),
-    histograms,
-  );
-  local weightScoreQueries = std.map(
-    function(h) generateApdexComponentRateQuery(h, additionalSelectors, duration, 'le="+Inf"'),
-    histograms,
-  );
-  local satisfactionQuery = generateApdexComponentAggregationQuery(
-    aggregationLabels,
-    strings.indent(std.join('\nor\n', satisfactionRateQueries), 2),
-  );
-  local weightScoreQuery = generateApdexComponentAggregationQuery(
-    aggregationLabels,
-    strings.indent(std.join('\nor\n', weightScoreQueries), 2),
-  );
-
-  generateApdexQuery(satisfactionQuery, weightScoreQuery);
-
-local generateCombinedPercentileLatencyQuery(histograms, percentile, aggregationLabels, additionalSelectors, duration) =
-  local rateQueries = std.map(
-    function(h) generateApdexComponentRateQuery(h, additionalSelectors, duration),
-    histograms
-  );
-
-  generatePercentileLatencyQuery(
-    percentile,
-    aggregationLabels,
-    std.join('\nor\n', rateQueries)
-  );
 
 {
   histogramApdex(
@@ -152,27 +94,19 @@ local generateCombinedPercentileLatencyQuery(histograms, percentile, aggregation
     selector: selector,
     satisfiedThreshold: satisfiedThreshold,
     toleratedThreshold: toleratedThreshold,
+
     apdexQuery(aggregationLabels, selector, rangeInterval)::
-      local s = self;
-      generateApdexScoreQuery(s, aggregationLabels, selector, rangeInterval),
+      generateApdexScoreQuery(self, aggregationLabels, selector, rangeInterval, aggregationWrapper=sum(aggregationLabels)),
 
     apdexWeightQuery(aggregationLabels, selector, rangeInterval)::
-      local s = self;
-      generateApdexComponentQuery(s, aggregationLabels, selector, rangeInterval, 'le="+Inf"'),
-
-    apdexComponentQuery(aggregationLabels, selector, rangeInterval, leSelector)::
-      local s = self;
-      generateApdexComponentQuery(s, aggregationLabels, selector, rangeInterval, leSelector),
+      generateApdexComponentRateQuery(self, selector, rangeInterval, 'le="+Inf"', aggregationWrapper=sum(aggregationLabels)),
 
     percentileLatencyQuery(percentile, aggregationLabels, selector, rangeInterval)::
-      local s = self;
-      generateCombinedPercentileLatencyQuery([s], percentile, aggregationLabels, selector, rangeInterval),
+      generatePercentileLatencyQuery(self, percentile, aggregationLabels, selector, rangeInterval),
 
-    combinedApdexQuery(histograms, aggregationLabels, selector, rangeInterval)::
-      generateCombinedApdexQuery(histograms, aggregationLabels, selector, rangeInterval),
-
-    combinedPercentileLatencyQuery(histograms, percentile, aggregationLabels, selector, rangeInterval)::
-      generateCombinedPercentileLatencyQuery(histograms, percentile, aggregationLabels, selector, rangeInterval),
+    // This is used to combine multiple apdex scores for a combined percentileLatencyQuery
+    aggregatedRateQuery(aggregationLabels, selector, rangeInterval)::
+      generateApdexComponentRateQuery(self, selector, rangeInterval, aggregationWrapper=sum(aggregationLabels)),
 
     describe()::
       local s = self;
@@ -181,5 +115,15 @@ local generateCombinedPercentileLatencyQuery(histograms, percentile, aggregation
         '%gs' % [s.satisfiedThreshold]
       else
         '%gs/%gs' % [s.satisfiedThreshold, s.toleratedThreshold],
+
+    // The preaggregated numerator expression
+    // used for combinations
+    apdexNumerator(selector, rangeInterval)::
+      generateApdexNumeratorQuery(self, selector, rangeInterval, aggregationWrapper=nullAggregationWrapper),
+
+    // The preaggregated denominator expression
+    // used for combinations
+    apdexDenominator(selector, rangeInterval)::
+      generateApdexComponentRateQuery(self, selector, rangeInterval, 'le="+Inf"', aggregationWrapper=nullAggregationWrapper),
   },
 }

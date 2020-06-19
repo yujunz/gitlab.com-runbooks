@@ -1,26 +1,54 @@
 local aggregations = import './aggregations.libsonnet';
 local selectors = import './selectors.libsonnet';
+local strings = import 'strings.libsonnet';
+
+local orJoin(queries) =
+  std.join('\nor\n', queries);
 
 local generateRateQuery(c, selector, rangeInterval) =
-  local rateQueries = std.map(function(i) i.rateQuery(selector, rangeInterval), c.metrics);
-  std.join('\n  or\n  ', rateQueries);
+  local rateQueries = std.map(function(metric) metric.rateQuery(selector, rangeInterval), c.metrics);
+  orJoin(rateQueries);
 
 local generateIncreaseQuery(c, selector, rangeInterval) =
-  local increaseQueries = std.map(function(i) i.increaseQuery(selector, rangeInterval), c.metrics);
-  std.join('\n  or\n  ', increaseQueries);
+  local increaseQueries = std.map(function(metric) metric.increaseQuery(selector, rangeInterval), c.metrics);
+  orJoin(increaseQueries);
 
-// Call `combinedApdexQuery` on the first of the queries to combine.
-// This is arbitrary; we'll get the same result by calling this method
-// on any item of `c`.
 local generateApdexQuery(c, aggregationLabels, selector, rangeInterval) =
-  c.firstMetric().combinedApdexQuery(c.metrics, aggregationLabels, selector, rangeInterval);
+  local numeratorQueries = std.map(function(metric) metric.apdexNumerator(selector, rangeInterval), c.metrics);
+  local denominatorQueries = std.map(function(metric) metric.apdexDenominator(selector, rangeInterval), c.metrics);
+
+  local aggregatedNumerators = aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(numeratorQueries));
+  local aggregatedDenominators = aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(denominatorQueries));
+
+  |||
+    %(aggregatedNumerators)s
+    /
+    (
+      %(aggregatedDenominators)s > 0
+    )
+  ||| % {
+    aggregatedNumerators: strings.chomp(aggregatedNumerators),
+    aggregatedDenominators: strings.indent(strings.chomp(aggregatedDenominators), 2),
+  };
 
 local generateApdexWeightQuery(c, aggregationLabels, selector, rangeInterval) =
-  local apdexWeightQueries = std.map(function(i) i.apdexWeightQuery(aggregationLabels, selector, rangeInterval), c.metrics);
-  std.join('or\n', apdexWeightQueries);
+  local apdexWeightQueries = std.map(function(i) i.apdexDenominator(selector, rangeInterval), c.metrics);
+  aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(apdexWeightQueries));
 
 local generateApdexPercentileLatencyQuery(c, percentile, aggregationLabels, selector, rangeInterval) =
-  c.firstMetric().combinedPercentileLatencyQuery(c.metrics, percentile, aggregationLabels, selector, rangeInterval);
+  local aggregationLabelsWithLe = selectors.join([aggregationLabels, 'le']);
+  local rateQueries = std.map(function(i) i.apdexNumerator(selector, rangeInterval), c.metrics);
+  local aggregatedRateQueries = aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(rateQueries));
+
+  |||
+    histogram_quantile(
+      %(percentile)f,
+      %(aggregatedRateQuery)s
+    )
+  ||| % {
+    percentile: percentile,
+    aggregatedRateQuery: strings.indent(strings.chomp(aggregatedRateQueries), 2),
+  };
 
 // "combined" allows two counter metrics to be added together
 // to generate a new metric value
@@ -61,19 +89,16 @@ local generateApdexPercentileLatencyQuery(c, percentile, aggregationLabels, sele
     percentileLatencyQuery(percentile, aggregationLabels, selector, rangeInterval)::
       generateApdexPercentileLatencyQuery(self, percentile, aggregationLabels, selector, rangeInterval),
 
-    firstMetric()::
-      metrics[0],
-
     // Forward the below methods and fields to the first metric for
     // apdex scores, which is wrong but hopefully not catastrophic.
     describe()::
-      self.firstMetric().describe(),
+      metrics[0].describe(),
 
     toleratedThreshold:
-      self.firstMetric().toleratedThreshold,
+      metrics[0].toleratedThreshold,
 
     satisfiedThreshold:
-      self.firstMetric().satisfiedThreshold,
+      metrics[0].satisfiedThreshold,
 
   },
 }
