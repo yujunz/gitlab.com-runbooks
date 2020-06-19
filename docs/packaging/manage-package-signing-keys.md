@@ -1,7 +1,12 @@
 # GPG Keys for Package Signing
 
 As described in the [omnibus project for GitLab](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/package-information/signed_packages.md),
-GitLab, Inc. provides signed packages starting with the release of `9.5`, and all packages on stable trees from that point forward as well (e.g. `9.3.x` as of August 22, 2017). The package signing keys are managed by the [Security Team](https://about.gitlab.com/handbook/engineering/security/#package-signing), and not by the [Build Team](https://about.gitlab.com/handbook/build/) to ensure separation of concerns.
+GitLab, Inc. provides signed packages starting with the release of `9.5`, and
+all packages on stable trees from that point forward as well (e.g. `9.3.x` as
+of August 22, 2017). The package signing keys are managed by the
+[Distribution Team](https://about.gitlab.com/handbook/engineering/development/enablement/distribution/),
+with the [Security Team](https://about.gitlab.com/handbook/security/#contact-gitlab-security)
+over seeing and verifying that the best practices are followed.
 
 The notes contained here are intended to provide documentation on how keys are generated, maintained, revoked, and used in combination with the Omnibus GitLab CI & PackageCloud.
 
@@ -15,6 +20,11 @@ For a complete implementation, the following will be done:
     * Package signing in CI on all supported stable branches.
     * Documentation for activation and verification.
 * Publicly post about addition of the signing, and how to activate on existing installations. Provide links to the documentation on activation and verification.
+
+## Location of the Key
+
+The location of the Omnibus package signing key can be found by searching for 
+a secure note in the Build vault in 1Password. 
 
 ## Securing Keys
 
@@ -38,18 +48,20 @@ The following sections explain how to create and manage the keys.
 
 ### Ensuring Entropy
 
+#### Linux
+
 To properly secure they key generation process, one should do their best to provide extensive amounts entropy on their system. We'll cover how to do so on `Linux`.
 
 - We're **requiring** physical hardware. **Absolutely** *No virtualized instances.*
 - Check for access to a hardware random number generator (`hwrng`), `ls /dev/hwrng`
     - Check loaded kernel modules for `rng` or random number generator. `lsmod | grep rng`. This should output something akin to the following:
-    
+
     ```
     tpm_rng                16384  0
     rng_core               16384  2 tpm_rng
     tpm                    40960  5 tpm_tis,trusted,tpm_crb,tpm_rng,tpm_tis_core
     ```
-    
+
   - What we're looking for is a hardware random source, such as the `tpm`, beyond just `rng_core`. This may be: `intel-rng`, `amd-rng`, `tpm-rng`, even `bcm2708-rng`
   - If there are no modules other than `rng_core` present, then it is likely that you do not have a hardware random generator, or it is not active.
   - Depending on compute hardware, you may have a TPM, but is not active. If the hardware has it, attempt to load the module with `sudo modprobe tpm-rng`, and check `ls /dev/tpm*` and `ls /dev/hwrng` again.
@@ -59,6 +71,14 @@ To properly secure they key generation process, one should do their best to prov
   - Be prepared to run a few tasks in the background (using screen, or backgrounding a call)
     - `dd if=/dev/<largedisk> of=/dev/null bs=1M` will generate extensive amounts of disk read IO, while not impacting any other subsystems.
     - `iperf` command can be used to create network load.
+
+#### OSX
+
+On a physical OSX machine (**not a virtualized instance**) it is best
+to copy a couple of random files to `/dev/random` to insure that there
+is enough entropy in the system. It is best to use files that are unique
+and not generally available. Two to three moderate sized files are sufficient
+to increase the entropy.
 
 ### Generate the keys
 
@@ -91,11 +111,11 @@ _Note: the key id is masked here, as `0000000000000000000000000000000000000000`_
 Once the keys have been generated, you will need to create a public key for
 publishing, and in PackageCloud. This is completed simply via:
 
-`gpg --armor --export 0000000000000000000000000000000000000000 > package-sig.gpg`
+`gpg --armor --export <KEYID> > package-sig.gpg`
 
 Next, we'll to export the entire secret key:
 
-`gpg --export-secret-key 0000000000000000000000000000000000000000 > packages.gitlab.gpg`
+`gpg --export-secret-key <KEYID> > packages.gitlab.gpg`
 
 This key should be uploaded to the secure storage location.
 
@@ -112,26 +132,31 @@ The steps to extend are as follows:
   `gpg -k support@gitlab.com`
 - Edit the key interactively with `gpg`:
 
-  `gpg --edit-key 0000000000000000000000000000000000000000`
-  - Enter `expire`, follow prompts to expire by X years with `2y`
-  - At this stage, you will be prompted to the key's passphrase.
-  - Enter `key 1` to select the subkey
-  - Enter `expire`, follow prompts to expire by X years with `2y`
-  - Enter `save` to store the changes to the key and exit.
+  `gpg --edit-key <KEYID>`
+- Enter `expire`, follow prompts to expire by X years with `2y`
+- At this stage, you will be prompted to the key's passphrase.
+- Enter `key 1` to select the subkey
+- Enter `expire`, follow prompts to expire by X years with `2y`
+- Enter `save` to store the changes to the key and exit.
 - Export the updated key(s), and upload to appropriate storage locations & systems.
+- Ensure to copy the original key to a backup file in the secure storage location.
+
 See [Exporting the Keys]()
 
 Citing from [gpg-announce in 2009'Q1](http://lists.gnupg.org/pipermail/gnupg-announce/2009q1/000282.html) :
 
->  "Anytime you have a key expiring, it is a good time to ask yourself whether it's time to create a new key or extend the life of the old one. Good reasons to create a new key include using larger key size. Good reasons to continue using your existing key include keeping the
-signatures on the key so that any trust you've built up by others signing your key remains."
+> "Anytime you have a key expiring, it is a good time to ask yourself whether
+> it's time to create a new key or extend the life of the old one. Good reasons
+> to create a new key include using larger key size. Good reasons to continue
+> using your existing key include keeping the signatures on the key so that any
+> trust you've built up by others signing your key remains."
 
 ### Purging local copies!
 
 Once one has completed any step here, and have **_safely uploaded to secure
 storage_**, it is **very important** that they then **purge** the signing keys off their system.
 
-`gpg --delete-secret-key 0000000000000000000000000000000000000000`
+`gpg --delete-secret-key <KEYID>`
 
 ## Reference material
 - [http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/]()
