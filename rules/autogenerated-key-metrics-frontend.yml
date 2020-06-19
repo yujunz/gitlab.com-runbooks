@@ -11,10 +11,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[1m])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[1m])
       )
       /
       (
@@ -59,10 +57,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[1m])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[1m])
       )
       /
       (
@@ -157,10 +153,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[5m])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[5m])
       )
       /
       (
@@ -205,10 +199,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[5m])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[5m])
       )
       /
       (
@@ -303,10 +295,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[30m])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[30m])
       )
       /
       (
@@ -351,10 +341,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[30m])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[30m])
       )
       /
       (
@@ -449,10 +437,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[1h])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[1h])
       )
       /
       (
@@ -497,10 +483,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[1h])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[1h])
       )
       /
       (
@@ -595,10 +579,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[6h])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name=~"canary_.*", le="5"}[6h])
       )
       /
       (
@@ -643,10 +625,8 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      (
-        sum by (environment) (
-          rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[6h])
-        )
+      sum by (environment) (
+        rate(haproxy_http_response_duration_seconds_bucket{type="frontend", backend_name!~"canary_.*", backend_name!="api_rate_limit", backend_name!="websockets", le="5"}[6h])
       )
       /
       (

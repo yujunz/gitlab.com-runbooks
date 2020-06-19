@@ -1,5 +1,6 @@
 local aggregations = import './aggregations.libsonnet';
 local selectors = import './selectors.libsonnet';
+local strings = import 'strings.libsonnet';
 
 local generateInstanceFilterQuery(instanceFilter) =
   if instanceFilter == '' then
@@ -27,7 +28,7 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
     instanceFilter='',
   ):: {
     counter: counter,
-    selector: selector,
+    selector: strings.chomp(selector),
     instanceFilter: instanceFilter,
 
     // This creates a rate query of the form

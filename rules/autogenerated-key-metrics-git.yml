@@ -13,7 +13,6 @@ groups:
     expr: |
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
-
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -124,7 +123,6 @@ groups:
     expr: |
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
-
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -235,7 +233,6 @@ groups:
     expr: |
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
-
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -346,7 +343,6 @@ groups:
     expr: |
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
-
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -457,7 +453,6 @@ groups:
     expr: |
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
-
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:

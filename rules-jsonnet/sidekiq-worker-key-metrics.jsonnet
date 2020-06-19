@@ -1,4 +1,8 @@
 local metricsCatalog = import './lib/metrics.libsonnet';
+local histogramApdex = metricsCatalog.histogramApdex;
+local rateMetric = metricsCatalog.rateMetric;
+local sidekiqHelpers = import './services/lib/sidekiq-helpers.libsonnet';
+local combined = metricsCatalog.combined;
 local sidekiqMetricsCatalog = import './services/sidekiq.jsonnet';
 local IGNORED_GPRD_QUEUES = import './temp-ignored-gprd-queue-list.libsonnet';
 local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
@@ -14,59 +18,84 @@ local monthlyErrorBudget = (1 - 0.99);  // 99% of sidekiq executions should succ
 // in the monitoring. This is to avoid low-volume, noisy alerts
 local minimumOperationRateForMonitoring = 4 / 60;
 
-// Uses the component definitions from the metrics catalog to compose new
-// recording rules with alternative aggregations
-local generateRulesForComponentForBurnRate(queueComponent, executionComponent, rangeInterval) =
-  (
-    if queueComponent != null then
-      [{  // Key metric: Queueing apdex (ratio)
-        record: 'gitlab_background_jobs:queue:apdex:ratio_%s' % [rangeInterval],
-        expr: queueComponent.apdex.apdexQuery(aggregationLabels, '', rangeInterval),
-      }, {  // Key metric: Queueing apdex (weight score)
-        record: 'gitlab_background_jobs:queue:apdex:weight:score_%s' % [rangeInterval],
-        expr: queueComponent.apdex.apdexWeightQuery(aggregationLabels, '', rangeInterval),
-      }]
-    else
-      []
-  )
-  +
-  [{  // Key metric: Execution apdex (ratio)
-    record: 'gitlab_background_jobs:execution:apdex:ratio_%s' % [rangeInterval],
-    expr: executionComponent.apdex.apdexQuery(aggregationLabels, '', rangeInterval),
-  }, {  // Key metric: Execution apdex (weight score)
-    record: 'gitlab_background_jobs:execution:apdex:weight:score_%s' % [rangeInterval],
-    expr: executionComponent.apdex.apdexWeightQuery(aggregationLabels, '', rangeInterval),
-  }, {  // Key metric: QPS
-    record: 'gitlab_background_jobs:execution:ops:rate_%s' % [rangeInterval],
-    expr: executionComponent.requestRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
-  }, {  // Key metric: Errors per Second
-    record: 'gitlab_background_jobs:execution:error:rate_%s' % [rangeInterval],
-    expr: executionComponent.errorRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
-  }];
+// This is used to calculate the queue apdex across all queues
+local combinedQueueApdex = combined([
+  histogramApdex(
+    histogram='sidekiq_jobs_queue_duration_seconds_bucket',
+    selector='urgency="high"',
+    satisfiedThreshold=sidekiqHelpers.slos.urgent.queueingDurationSeconds,
+  ),
+  histogramApdex(
+    histogram='sidekiq_jobs_queue_duration_seconds_bucket',
+    selector='urgency="low"',
+    satisfiedThreshold=sidekiqHelpers.slos.lowUrgency.queueingDurationSeconds,
+  ),
+]);
 
-// Generates four key metrics for each urgency, for a single burn rate
-local generateRulesForBurnRate(rangeInterval) =
-  generateRulesForComponentForBurnRate(
-    sidekiqMetricsCatalog.components.high_urgency_job_queueing,
-    sidekiqMetricsCatalog.components.high_urgency_job_execution,
-    rangeInterval
-  ) +
-  generateRulesForComponentForBurnRate(
-    sidekiqMetricsCatalog.components.low_urgency_job_queueing,
-    sidekiqMetricsCatalog.components.low_urgency_job_execution,
-    rangeInterval
-  )
-  +
-  generateRulesForComponentForBurnRate(
-    null,
-    sidekiqMetricsCatalog.components.throttled_job_execution,
-    rangeInterval
-  );
+local combinedExecutionApdex = combined([
+  histogramApdex(
+    histogram='sidekiq_jobs_completion_seconds_bucket',
+    selector='urgency="high"',
+    satisfiedThreshold=sidekiqHelpers.slos.urgent.executionDurationSeconds,
+  ),
+  histogramApdex(
+    histogram='sidekiq_jobs_completion_seconds_bucket',
+    selector='urgency="low"',
+    satisfiedThreshold=sidekiqHelpers.slos.lowUrgency.executionDurationSeconds,
+  ),
+  histogramApdex(
+    histogram='sidekiq_jobs_completion_seconds_bucket',
+    selector='urgency="throttled"',
+    satisfiedThreshold=sidekiqHelpers.slos.throttled.executionDurationSeconds,
+  ),
+]);
+
+local requestRate = rateMetric(
+  counter='sidekiq_jobs_completion_seconds_bucket',
+  selector='le="+Inf"',
+);
+
+local errorRate = rateMetric(
+  counter='sidekiq_jobs_failed_total',
+  selector=''
+);
+
+// Record queue apdex, execution apdex, error rates, QPS metrics
+// for each worker, similar to how we record these for each
+// service
+local generateRulesForComponentForBurnRate(rangeInterval) =
+  [
+    {  // Key metric: Queueing apdex (ratio)
+      record: 'gitlab_background_jobs:queue:apdex:ratio_%s' % [rangeInterval],
+      expr: combinedQueueApdex.apdexQuery(aggregationLabels, '', rangeInterval),
+    },
+    {  // Key metric: Queueing apdex (weight score)
+      record: 'gitlab_background_jobs:queue:apdex:weight:score_%s' % [rangeInterval],
+      expr: combinedQueueApdex.apdexWeightQuery(aggregationLabels, '', rangeInterval),
+    },
+    {  // Key metric: Execution apdex (ratio)
+      record: 'gitlab_background_jobs:execution:apdex:ratio_%s' % [rangeInterval],
+      expr: combinedExecutionApdex.apdexQuery(aggregationLabels, '', rangeInterval),
+    },
+    {  // Key metric: Execution apdex (weight score)
+      record: 'gitlab_background_jobs:execution:apdex:weight:score_%s' % [rangeInterval],
+      expr: combinedExecutionApdex.apdexWeightQuery(aggregationLabels, '', rangeInterval),
+    },
+    {  // Key metric: QPS
+      record: 'gitlab_background_jobs:execution:ops:rate_%s' % [rangeInterval],
+      expr: requestRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
+    },
+    {  // Key metric: Errors per Second
+      record: 'gitlab_background_jobs:execution:error:rate_%s' % [rangeInterval],
+      expr: errorRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
+    },
+  ];
+
 
 // Generates four key metrics for each urgency, for each burn rate
 local generateKeyMetricRules() =
   std.flattenArrays([
-    generateRulesForBurnRate(rangeInterval)
+    generateRulesForComponentForBurnRate(rangeInterval)
     for rangeInterval in multiburnFactors.allWindowIntervals
   ]);
 
