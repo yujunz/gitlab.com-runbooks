@@ -1,4 +1,6 @@
-# Using WAL-E and WAL-G
+[[_TOC_]]
+
+# PostgreSQL Backups: WAL-E, WAL-G
 
 ## Wal-E and WAL-G Overview
 
@@ -25,6 +27,14 @@ Both WAL-E and WAL-G have 5 main commands – learn and memorize them as a first
 - restoring ("fetching") from archive:
     1. `backup-fetch` – fetch a full backup from the archive. It is to be used just once, when we need to restore data directory fully. This is also done daily in the `gitlab-restore` project that verifies the state of backups on daily basis.
     1. `wal-fetch` – fetch a WAL. Normally, it is present in `restore_command` (see `recovery.conf` in the case of PostgreSQL 11 or older, and `postgresql.conf` for PostgreSQL 12+). Postgres automatically uses it to fetch and replay a stream of WALs on replicas. As of June 2020, `restore_command` is not configured on production and staging instances – we use only streaming replication there. However, in the future, it may change. Two "special" replicas, "archive" and "delayed", do not use streaming replication -- instead, they rely on fetching WALs from the archive, therefore, they ahve `wal-fetch` present in `restore_command`.
+
+| The command | Purpose | How it is executed |
+| ----------     |  ------  |---------|
+| `backup-list`   | Get the list of full backups currently stored in the archive   | Manually  |
+| `backup-push`   | Create new full backup and send it to the archive (GCS)   | Either manually or automatically via configured cron record, daily<br/> (see `crontab -l` under `gitlab-psql`)  |
+| `wal-push`   | Archive WALs   | Automatically (continuously executed by Postgres, see `archive_command` in PostgreSQL configuration)   |
+| <nobr>`backup-fetch`</nobr>   | Restore from a full backup   | Manually. Also used in "gitlab-restore" for daily verification of backups<br/> (see https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/-/blob/master/bootstrap.sh)   |
+| `wal-push`   | Get a WAL   | Automatically (continuously executed by Postgres if `restore-command` in `recovery.conf` is configured;<br/> note that `patroni-XX` nodes do not use it know; archive, delayed replicas, and all nodes in the "gitlab-restore" project use it)   |
 
 ## Backing Our Data Up
 
