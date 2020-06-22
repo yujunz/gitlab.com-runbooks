@@ -231,7 +231,7 @@ update_elastic_log_gprd_index_templates:
     changes:
       - elastic/managed-objects/log_gprd/index-templates/*
       - elastic/managed-objects/lib/log_gprd_index_template.libsonnet
-      - elastic/managed-objects/lib/index_mappings/*.libsonnet
+      - elastic/managed-objects/lib/index_mappings/*.jsonnet
     variables:
       - $ES_LOG_GPRD_URL
 
