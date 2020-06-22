@@ -12,7 +12,6 @@ local railsCommon = import 'rails_common_graphs.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';
 local templates = import 'templates.libsonnet';
-local unicornCommon = import 'unicorn_common_graphs.libsonnet';
 local workhorseCommon = import 'workhorse_common_graphs.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
@@ -36,16 +35,6 @@ serviceDashboard.overview('web', 'sv')
   }
 )
 .addPanels(workhorseCommon.workhorsePanels(serviceType='web', serviceStage='$stage', startRow=1001))
-.addPanel(
-  row.new(title='Unicorn'),
-  gridPos={
-    x: 0,
-    y: 2000,
-    w: 24,
-    h: 1,
-  }
-)
-.addPanels(unicornCommon.unicornPanels(serviceType='web', serviceStage='$stage', startRow=2001))
 .addPanel(
   row.new(title='Rails'),
   gridPos={
