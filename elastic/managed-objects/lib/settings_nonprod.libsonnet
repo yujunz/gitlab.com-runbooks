@@ -13,11 +13,6 @@ local setting(index, env) = if std.member(HIGH_THROUHGPUT, index) then {
         limit: 10000,
       },
     },
-    routing: {
-      allocation: {
-        total_shards_per_node: 2,
-      },
-    },
   },
   // number_of_shards: 1,
   // number_of_replicas: 1,
@@ -30,11 +25,6 @@ else if std.member(MEDIUM_THROUGHPUT, index) then {
     },
     mapping: {
       ignore_malformed: true,
-    },
-    routing: {
-      allocation: {
-        total_shards_per_node: 2,
-      },
     },
   },
   // number_of_shards: 1,
