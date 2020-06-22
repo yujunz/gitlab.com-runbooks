@@ -4,7 +4,7 @@
 
 ## Wal-E and WAL-G Overview
 
-[WAL-E][WAL-E] was designed by Heroku to solve their PostgreSQL backup issues. It is a python based application that is invoked by the PostgreSQL process via the 'archive_command' as part of PostgreSQLs [continuous archiving][PSQL_Archiving] setup.
+[WAL-E][WAL-E] was designed by Heroku to solve their PostgreSQL backup issues. It is a Python-based application that is invoked by the PostgreSQL process via the 'archive_command' as part of PostgreSQLs [continuous archiving][PSQL_Archiving] setup.
 
 It works by taking [Write-Ahead Logging][PSQL_WAL] files, compressing them, and then archiving them off to a storage target in near realtime. On a nightly schedule, WAL-E also pushes a full backup to the storage target, referred to as a 'base backup'. A restore then is a combination of a 'base backup' and all of the WAL transaction files since the backup to recover the database to a given point in time.
 
@@ -15,18 +15,20 @@ Currently (June 2020), the main backup tool for GitLab.com is still WAL-E, it is
 ## Very Quick Intro: 5 Main Commands
 
 Backups consists of two parts:
-- periodical (daily) "full" backups, and
+- periodical (daily) "full" backups (a.k.a "base backups"), and
 - "stream" of WALs to enable Point-in-time recovery (PITR).
 
-Both WAL-E and WAL-G have 5 main commands – learn and memorize them as a first step (see below in this document how exactly they should be used):
+To restore to a given point of time or to the latest available point, a full backup and a sequence of WALs are needed. To reduce the size of such a sequence, full backups can be performed more frequently. On the other hand, creation of full backups is a very IO-intensive operation, so it doesn't make sense to do it very often. Currently, for the GitLab.com database, full backups are created daily.
+
+Both WAL-E and WAL-G have 5 main commands:
 
 | Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Purpose | How it is executed |
 | ----------     |  ------  |---------|
-| `backup-list`   | Get the list of full backups currently stored in the archive.   | Manually. It is helpful to see if there are "gaps" (missing full backups).<br/> Also, based on displayed LSNs, we can calculate the amount of WALs generated per day.<br/> Notice, there is no "wal-list" – this command would print too much information so it would be hard to use it, so neither WAL-E nor WAL-G implement it. |
-| `backup-push`   | Create new full backup and send it to the archive in GCS.   | Either manually or automatically via configured cron record, daily<br/> (see `crontab -l` under `gitlab-psql`). At the moment, it is executed daily (at 00:00 UTC) on the primary, using WAL-E.<br/>  This operation is very IO-intensive, the expected speed: ~0.5-1 TiB/h for WAL-E, 1-2 TiB/h for WAL-G.<br/>  (*Once the migration to WAL-G is fully complete, one of secondaries will perform WAl-G's `backup-push` daily.*).   |
-| `wal-push`   | Archive WALs. Each WAL is 16 MiB by default.    | Automatically: this command is usually present in `archive_command` (PostgreSQL configuration parameter) and automatically executed<br/>  by PostgreSQL on the primary node. At the moment, WAL-E is used. As of June 2020, ~1.5-2 TiB of WAL files is archived each working day<br/>  (less on holidays and weekends). Once the migration to WAL-G is fully complete, the alternative WAL-G's command will be used – still on the primary,<br/>  because it disk IO caused by this action is not intensive and moving it to replicas would introduce additional delays<br/>  (hence, degradation in backup characteristics – a worse RPO, recovery point objective).   |
-| <nobr>`backup-fetch`</nobr>   | Restore PostgreSQL data directory from a full backup.  | Manually when a fresh restore from backups is needed. Also used in "gitlab-restore" for daily verification of backups<br/> (see https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/-/blob/master/bootstrap.sh).   |
-| `wal-push`   | Get a WAL.   | Normally, it is present in `restore_command` (see `recovery.conf` in the case of PostgreSQL 11 or older, and `postgresql.conf` for PostgreSQL 12+).<br/>  Postgres automatically uses it to fetch and replay a stream of WALs on replicas.<br/>  As of June 2020, `restore_command` is not configured on production and staging instances – we use only streaming replication there. However, in the future, it may change.<br/>  Two "special" replicas, "archive" and "delayed", do not use streaming replication – instead, they rely on fetching WALs from the archive, therefore, they ahve `wal-fetch` present in `restore_command`. |
+| `backup-list`   | Get the list of full backups currently stored in the archive   | Manually. It is helpful to see if there are "gaps" (missing full backups).<br/> Also, based on displayed LSNs, we can calculate the amount of WALs generated per day.<br/> Notice, there is no "wal-list" – this command would print too much information so it would be hard to use it, so neither WAL-E nor WAL-G implement it. |
+| `backup-push`   | Create a full backup: archive PostgreSQL data directory fully   | Either manually or automatically via configured cron record, daily<br/> (see `crontab -l` under `gitlab-psql`). At the moment, it is executed daily (at 00:00 UTC) on the primary, using WAL-E.<br/>  This operation is very IO-intensive, the expected speed: ~0.5-1 TiB/h for WAL-E, 1-2 TiB/h for WAL-G.<br/>  (*Once the migration to WAL-G is fully complete, one of secondaries will perform WAl-G's `backup-push` daily.*).   |
+| `wal-push`   | Archive WALs. Each WAL is 16 MiB by default    | Automatically: this command is usually present in `archive_command` (PostgreSQL configuration parameter) and automatically executed<br/>  by PostgreSQL on the primary node. At the moment, WAL-E is used. As of June 2020, ~1.5-2 TiB of WAL files is archived each working day<br/>  (less on holidays and weekends). Once the migration to WAL-G is fully complete, the alternative WAL-G's command will be used – still on the primary,<br/>  because it disk IO caused by this action is not intensive and moving it to replicas would introduce additional delays<br/>  (hence, degradation in backup characteristics – a worse RPO, recovery point objective).   |
+| <nobr>`backup-fetch`</nobr>   | Restore PostgreSQL data directory from a full backup  | Manually when a fresh restore from backups is needed. Also used in "gitlab-restore" for daily verification of backups<br/> (see https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/-/blob/master/bootstrap.sh).   |
+| `wal-push`   | Get a WAL from the archive   | Automatically: it is to be used in `restore_command` (see `recovery.conf` in the case of PostgreSQL 11 or older, and `postgresql.conf` for PostgreSQL 12+).<br/>  Postgres automatically uses it to fetch and replay a stream of WALs on replicas.<br/>  As of June 2020, `restore_command` is not configured on production and staging instances – we use only streaming replication there. However, in the future, it may change.<br/>  Two "special" replicas, "archive" and "delayed", do not use streaming replication – instead, they rely on fetching WALs from the archive, therefore, they ahve `wal-fetch` present in `restore_command`. |
 
 ## Backing Our Data Up
 
