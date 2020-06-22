@@ -250,9 +250,11 @@ In the case of failing Postgres backup verification jobs, use the following to t
 
 # Further Read
 
+- [Continuous Archiving and Point-in-Time Recovery (PITR)](https://www.postgresql.org/docs/current/continuous-archiving.html)
 - [WAL Internals](https://www.postgresql.org/docs/current/wal-internals.html)
 - [Write Ahead Logging — WAL](http://www.interdb.jp/pg/pgsql09.html)
 - [Understanding WAL nomenclature](http://www.interdb.jp/pg/pgsql09.html)
+- [What does pg_start_backup() do?](https://www.2ndquadrant.com/en/blog/what-does-pg_start_backup-do/)
 
 [Wal-E]: https://github.com/wal-e/wal-e
 [PSQL_Archiving]: https://www.postgresql.org/docs/9.6/static/continuous-archiving.html
