@@ -250,8 +250,9 @@ In the case of failing Postgres backup verification jobs, use the following to t
 
 # Further Read
 
-- [How to check if WAL-E/WAL-G backups are running](./backups-check-if-running.md)
-- [How to troubleshoot backup verification job failures](./backups-verification-job-failures.md)
+- [WAL Internals](https://www.postgresql.org/docs/current/wal-internals.html)
+- [Write Ahead Logging — WAL](http://www.interdb.jp/pg/pgsql09.html)
+- [Understanding WAL nomenclature](http://www.interdb.jp/pg/pgsql09.html)
 
 [Wal-E]: https://github.com/wal-e/wal-e
 [PSQL_Archiving]: https://www.postgresql.org/docs/9.6/static/continuous-archiving.html
