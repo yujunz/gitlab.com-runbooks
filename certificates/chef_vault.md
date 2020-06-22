@@ -16,6 +16,8 @@ knife vault show -Fj ${data_bag} ${item} > ${data_bag}_bak.json
 sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' ${new_certificate}.pem
 ```
 
+- __Always make sure to take the chained certificate - else you will see cert verify issues later!__
+
 - Update the values in the data bag. Make sure to only edit the fields that were specified. Some data bags will contain multiple certificates!
 ```bash
 knife vault edit ${data_bag} ${item}
