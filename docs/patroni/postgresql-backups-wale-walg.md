@@ -136,96 +136,111 @@ In order to restore, the following steps should be performed. It is assumed that
 
 1. Start PostgreSQL. This will begin the archive recovery. You can watch the progress in the postgres log.
 
-#### Secondary
 
-For now, please follow the manual procedure below.
+## Troubleshooting: How to Check if WAL-E Backups are Running
 
-## Creating servers for testing backups
+WAL-E is running on all machines in the patroni cluster. However, backups are actually happening only from the master. In order to find out which machine is the master, go to the [relevant Grafana dashboard](https://dashboards.gitlab.net/d/000000244/postgresql-replication-overview?orgId=1)
 
-The semi-automated procedure (secondary db):
-1. `mkdir ./bad && cd ./bad`
-1. grab backup_scripts/02-secondary-db.sh, edit variables
-1. `time bash 02-secondary-db.sh`
-1. continue from customizing wal-e access keys and selecting time to restore.
-    (Make sure the cloud-init finished: `tail -f /var/log/cloud-init-output.log`
+you can check wale logs in two ways:
+1. using Kibana (bear in mind that there were cases in the past when logs where not shipped):
+  - [`log.gprd.gitlab.net`](https://log.gprd.gitlab.net)
+  - index: `pubsub-system-inf-gprd`
+  - document field: `json.ident` with value `wal_e*`
+2. by logging directly into the VM:
+  - ssh to the patroni master
+  - logs are located in `/var/log/wal-e/wal-e_backup_push.log` (and are also duplicated in `/var/log/syslog`, look for `wal\_e.worker.upload`)
 
-The manual procedure:
 
-1. For testing of secondary database restore, create a server of similar size to the database you are restoring. Just use the same Ubuntu version, as they have different postgresql versions, and backup from 9.5 won't install on 9.3.
-1. Prepare the server:
-    1. Install necessary software:
+Example of a log entry on a master working correctly:
+```
+2019-06-07_16:50:42 patroni-04-db-gprd wal_e.worker.upload  INFO     MSG: begin archiving a file#012        DETAIL: Uploading "pg_xlog/000000140001003100000077" to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/000000140001003100000077.lzo".#012        STRUCTURED: time=2019-06-07T16:50:42.145335-00 pid=35067 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/000000140001003100000077.lzo prefix=pitr-wale-v1/ seg=000000140001003100000077 state=begin
+```
 
-        ```bash
-        # install and stop postgres
-        apt-get update && apt-get -y install daemontools lzop gcc make python3 virtualenvwrapper python3-dev libssl-dev postgresql gnupg-agent pinentry-curses
-        service postgresql stop
+Example of log entries on a slave working correctly (no backups are actually happening from slaves):
+```
+2019-06-07_00:00:03 patroni-01-db-gprd wal_e.main    INFO     MSG: starting WAL-E#012        DETAIL: The subcommand is "backup-push".#012        STRUCTURED: time=2019-06-07T00:00:03.077171-00 pid=37922
+2019-06-07_00:00:05 patroni-01-db-gprd wal_e.operator.backup  WARNING  MSG: blocking on sending WAL segments#012        DETAIL: The backup was not completed successfully, but we have to wait anyway.  See README: TODO about pg_cancel_backup#012        STRUCTURED: time=2019-06-07T00:00:05.263203-00 pid=37922
+2019-06-07_00:00:05 patroni-01-db-gprd wal_e.main    ERROR    MSG: Could not stop hot backup#012        STRUCTURED: time=2019-06-07T00:00:05.296652-00 pid=37922
+```
 
-        # Configure wal-e
-        mkdir -p /opt/wal-e /etc/wal-e.d/env
-        virtualenv --python=python3 /opt/wal-e
-        /opt/wal-e/bin/pip3 install --upgrade pip
-        /opt/wal-e/bin/pip3 install boto azure wal-e
-        ```
+### WAL-E is not working
 
-    1. `mkdir /etc/wal-e.d/env -p` and populate files `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `WALE_S3_PREFIX`, `WALE_GPG_KEY_ID`, `GPG_AGENT_INFO`
-        1. `WALE_GPG_KEY_ID` should be `66B9829C`.
-        1. The format of `GPG_AGENT_INFO` is `/path/to/socket:gpg-agent-pid:1`
-            * For gpg version 1.4 you can run `eval $(gpg-agent --daemon)` as the postgres user. This will add `GPG_AGENT_INFO` variable to the environment for the user. You can then populate `/etc/wal-e.d/env/GPG_AGENT_INFO` with that data.
-            * For gpg version 2.1 `gpg-agent` does not output anything. You will need to run `gpg-agent --daemon` as the postgres user and then construct the variable manually by looking for the socket path and pid.
+#### WAL-E process stuck ####
 
-1. Add GPG keys as postgres user:
+WAL-E works by uploading files to a GCS bucket every few seconds. The upload is done by a forked process which lives only a few seconds. For each successful upload there should be log entries similar to this:
+```
+2019-10-03_12:07:33 patroni-02-db-gprd wal_e.worker.upload  INFO     MSG: begin archiving a file#012        DETAIL: Uploading "pg_xlog/0000001D00014F69000000E7" to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/0000001D00014F69000000E7.lzo".#012        STRUCTURED: t
+ime=2019-10-03T12:07:33.719239-00 pid=20408 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/0000001D00014F69000000E7.lzo prefix=pitr-wale-v1/ seg=0000001D00014F69000000E7 state=begin
+2019-10-03_12:07:34 patroni-02-db-gprd wal_e.worker.upload  INFO     MSG: completed archiving to a file#012        DETAIL: Archiving to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/0000001D00014F69000000E7.lzo" complete at 14281KiB/s.#012        STRUCTURED: time=2
+019-10-03T12:07:34.439057-00 pid=20408 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/0000001D00014F69000000E7.lzo prefix=pitr-wale-v1/ rate=14281 seg=0000001D00014F69000000E7 state=complete
+```
 
-    ```bash
-    gpg --allow-secret-key-import --import /etc/wal-e.d/ops-contact+dbcrypt.key
-    gpg --import-ownertrust /etc/wal-e.d/gpg_owner_trust
-    ```
+If you're not seeing logs like this (e.g. nothing writes to the log file or there are only entries with `state=begin` but not with `state=complete`) then there's something wrong with WAL-E.
 
-1. Enable gpg-agent in gpg.conf
+##### Check the WAL-E upload process
 
-    ```bash
-    echo 'use-agent' > ~/.gnupg/gpg.conf
-    ```
+Run ps a few times (the upload process is short-lived so you might not catch it the first time), example output:
+```
+# ps aux | grep 'wal-push'
+gitlab-+ 29632  0.0  0.0   4500   844 ?        S    12:16   0:00 sh -c /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-push pg_xlog/0000001D00014F6B000000A2
+gitlab-+ 29633 35.0  0.0 124200 41488 ?        D    12:16   0:00 /opt/wal-e/bin/python /opt/wal-e/bin/wal-e wal-push pg_xlog/0000001D00014F6B000000A2
+root     29638  0.0  0.0  12940   920 pts/0    S+   12:16   0:00 grep wal-push
+```
 
-1. Add password and test secret keys. This should ask for a password and then create an encrypted file at `/tmp/test.gpg`.
+If the timestamp on the wall-e process is relatively long time in the past (e.g. 15 mins, 1h) then that's a hint that it's stuck at uploading files.
 
-    ```bash
-    touch /tmp/test
-    gpg --encrypt -r 66B9829C /tmp/test
-    ```
+Check the state of the process with: `strace -p <pid>` . If the process is stuck, `strace` will show no activity.
 
-1. If you have changed to the postgres user via `su`, you will need to be sure `GPG_TTY` is exported and tty device is read/write by postgres user.
+Another indicator of a stuck process is the timestamp on the latest file uploaded to GCS, i.e. it will be close to the timestamp on the upload process. `gsutil` might take too long to list files in the bucket, so go to the [web UI](https://console.cloud.google.com/storage/browser/gitlab-gprd-postgres-backup/) and start typing in the prefix of the filename last uploaded (don't type in the full name).
 
-    ```bash
-    root$ chmod o+rw $(tty)
-    postgres$ export GPG_TTY=$(tty)
-    ```
+If everything points to the fact that WAL-E upload process is stuck, consider killing it. BE EXTREMELY CAREFUL! After killing the process it should be restarted automatically and the backups should resume immediately.
 
-1. Create restore.conf file.
+#### Other ####
 
-    ```bash
-    # precreate recovery.conf, edit the recovery target time to your desired restore time. Ensure the time is AFTER the base backup time.
-    export RESTORE_PG_VER=9.5 # 9.3 in case of 14.04
-    cat > /var/lib/postgresql/${RESTORE_PG_VER}/main/recovery.conf <<RECOVERY
-    restore_command = '/usr/bin/envdir /etc/wal-g.d/env /opt/wal-g/bin/wal-g wal-fetch "%f" "%p"'
-    recovery_target_time = '2017-XX-YY 06:00:00'
-    RECOVERY
-    chown postgres:postgres /var/lib/postgresql/${RESTORE_PG_VER}/main/recovery.conf
-    ```
+If WAL-E is not working, it will probably be something related with the network or S3.
 
-1. Restore the base backup
+PostgreSQL is configured to archive to WAL-E upon some conditions, as specified via Chef:
+```
+    gitlab_rb:
+      postgresql:
+        archive_command:              /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-push %p
+```
 
-    ```bash
-    /usr/bin/envdir /etc/wal-g.d/env /opt/wal-e/bin/wal-g backup-list
-    /usr/bin/envdir /etc/wal-g.d/env /opt/wal-e/bin/wal-g backup-fetch /var/lib/postgresql/${RESTORE_PG_VER}/main <backup name from backup-list command>
-    ```
+### WAL-E is working (but I still got paged)
 
-    To restore from the latest backup you can use the following:
+The problem might be `mtail`.
 
-    ```bash
-    /usr/bin/envdir /etc/wal-g.d/env /opt/wal-g/bin/wal-g backup-fetch /var/lib/postgresql/${RESTORE_PG_VER}/main LATEST
-    ```
+1. Check `mtail` is working with `sudo sv status mtail`
+1. If `mtail` is up, check `/var/log/mtail` for errors under `/var/log/mtail.ERROR`.
+1. You might want to restart `mtail` if it's stuck with `sudo sv restart mtail`.
 
-1. Start PostgreSQL. This will begin the point-in-time recovery to the time specified in recovery.conf. You can watch the progress in the postgres log.
+
+## Database Backups Restore Testing
+
+Backups restore testing is fully automated, see https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/. Backups of production GitLab.com backup are tested twice per day:
+
+1. Slightly after the time when `backup-push` is expected to be finished on the primary (at 11:30 a.m. UTC as of June 2020). This verifies the fresh full backup and small addition of WALs.
+1. Right after `backup-push` is invoked on the primary (at 00:05 a.m.). This allows to ensure that not only full backups are in a good state, but also WAL stream, all the WALs in the archive are OK, without gaps.
+
+### Troubleshooting: What to Do if Backup Restore Verification Fails
+
+In the case of failing Postgres backup verification jobs, use the following to troubleshoot:
+
+1. In ["gitlab-restore/postgres-grpd" CI/CD pipelines](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/pipelines), find the pipeline that is subject to investigation and remember its ID.
+1. First, look inside the pipeline's jobs output. Sometimes the instance even hasn't been provisioned – quite often due to hitting some quotas (such as number of vCPUs or IP addresses in "gitlab-restore" project). In this case, either clean up instances that are not needed anymore or increase the quotas in GCP.
+1. In ["gitlab-restore" project at GCP console](https://console.cloud.google.com/compute/instances?project=gitlab-restore), find an instance with the pipeline ID in instance name. SSH to it and check:
+    - Disk space (`df -hT`). If we hit the disk space limit, it is time to increase the disk size again – usually, it's done in the [source code of the "gitlab-restore" project](https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd), but it is also possible to configure CI/CD schedules to override it.
+    - Recent logs (`sudo journalctl -f`, `sudo journalctl --since yesterday | less`). There might be some insights related to, say, WAL-E/WAL-G failures.
+    - Postgres replica is working (`sudo gitlab-psql`). If you cannot connect, then either Postgres is not installed properly, or it hasn't reached the point when PGDATA can be considered consistent. If the replaying of WALs is still happening (see the logs), then it is worth waiting some time. Otherwise, the logs should be carefully investigated.
+1. Finally, if none of above items revealed any issues, try performing `backup-fetch` manually. For that:
+    1. Run a new CI/CD pipeline in "gitlab-restore", using the CI variable values taking them from "Schedules" section (there is "Reveal" button there), and adding `NO_CLEANUP = 1` to preserve the instance.
+    1. SSH to the instance after a few minutes, when it's up and running.
+    1. Before proceeding, use WAL-E's (WAL-G's) `backup-list` to see the available backups. One of possible reasons of failure is lack of some daily basebackup. In such a case, you need to so to Postgres master node and analyze WAL-E (WAL-G) log (check `sudo -u postgres crontab -l`, it should show how daily basebackups are triggered and where the logs are located). If the list of backups looks right, continue troubleshooting.
+    1. Wait until the issue repeats and backup verification fails (assuming it's permament – if not, we only can analyze the logs of the previous runs).
+    1. Manually follow the steps from https://ops.gitlab.net/gitlab-com/gl-infra/gitlab-restore/postgres-gprd/blob/master/bootstrap.sh, starting from erasing PGDATA directory and proceedign to WAL-E's (WAL-G's) `backup-fetch` step which normally takes a few hours.
+    1. Once `backup-fetch` is finished, you should have a Postgres "archive replica" – a Postgres instance that constantly pulls new WAL data from WAL-E (WAL-G) archive. Check it with `sudo gitlab-psql`. Note, that it is normal if you cannot connect during some period of time and see `FATAL: the database system is starting up` error: until recovery mode is reached a consistent point, Postgres performs REDO and doesn't allow connections. It may take some time (minutes, dozens of minutes), after which you should be able to connect and observe how the database state is constantly changing due to receving (via `wal-fetch`) and replaying new WALs. To see that, use either `select pg_last_xact_replay_timestamp()` or `select now(), created_at, now() - created_at from issues order by id desc limit 1`.
+    1. Troubleshoot any failures in place, checking the logs, free disk space and so on.
+    1. Finally, once troubleshooting is done, do not forget to destroy the instance manually, it won't get destroyed automatically because of `NO_CLEANUP = 1` we have used!
 
 # Further Read
 
