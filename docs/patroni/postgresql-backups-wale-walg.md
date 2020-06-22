@@ -250,12 +250,12 @@ In the case of failing Postgres backup verification jobs, use the following to t
 
 # Further Read
 
-- [Continuous Archiving and Point-in-Time Recovery (PITR)](https://www.postgresql.org/docs/current/continuous-archiving.html)
-- [Backup Control Functions](https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADMIN-BACKUP)
-- [WAL Internals](https://www.postgresql.org/docs/current/wal-internals.html)
-- [Write Ahead Logging — WAL](http://www.interdb.jp/pg/pgsql09.html)
-- [Understanding WAL nomenclature](http://www.interdb.jp/pg/pgsql09.html)
-- [What does pg_start_backup() do?](https://www.2ndquadrant.com/en/blog/what-does-pg_start_backup-do/)
+- [Continuous Archiving and Point-in-Time Recovery (PITR)](https://www.postgresql.org/docs/current/continuous-archiving.html) (PostgreSQL official documentation)
+- [Backup Control Functions](https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADMIN-BACKUP) (PostgreSQL official documentation)
+- [WAL Internals](https://www.postgresql.org/docs/current/wal-internals.html) (PostgreSQL official documentation)
+- [Write Ahead Logging — WAL](http://www.interdb.jp/pg/pgsql09.html) (The Internals of PostgreSQL)
+- [Understanding WAL nomenclature](https://eulerto.blogspot.com/2011/11/understanding-wal-nomenclature.html) (Euler Taveira)
+- [What does pg_start_backup() do?](https://www.2ndquadrant.com/en/blog/what-does-pg_start_backup-do/) (2nd Quadrant)
 
 [Wal-E]: https://github.com/wal-e/wal-e
 [PSQL_Archiving]: https://www.postgresql.org/docs/9.6/static/continuous-archiving.html
