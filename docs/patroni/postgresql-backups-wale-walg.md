@@ -139,10 +139,12 @@ In order to restore, the following steps should be performed. It is assumed that
 
 ## Troubleshooting: How to Check if WAL-E Backups are Running
 
-WAL-E is running on all machines in the patroni cluster. However, backups are actually happening only from the master. In order to find out which machine is the master, go to the [relevant Grafana dashboard](https://dashboards.gitlab.net/d/000000244/postgresql-replication-overview?orgId=1)
+WAL-E is running on all machines in the patroni cluster. However, backups are actually happening only from the master. In order to find out which machine is the master, go to the [relevant Grafana dashboard](https://dashboards.gitlab.net/d/000000244/postgresql-replication-overview?orgId=1).
 
-you can check wale logs in two ways:
-1. using Kibana (bear in mind that there were cases in the past when logs where not shipped):
+`wal-push` logs can be observed in syslog (`sudo journalctl -f`, Kibana).
+
+`backup-push` logs you can check wale logs in two ways:
+1. using Kibana (bear in mind that there were cases in the past when logs where not shipped): <!-- NS: doubtful, TODO: double check it; update once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10499 is done-->
   - [`log.gprd.gitlab.net`](https://log.gprd.gitlab.net)
   - index: `pubsub-system-inf-gprd`
   - document field: `json.ident` with value `wal_e*`
@@ -150,22 +152,21 @@ you can check wale logs in two ways:
   - ssh to the patroni master
   - logs are located in `/var/log/wal-e/wal-e_backup_push.log` (and are also duplicated in `/var/log/syslog`, look for `wal\_e.worker.upload`)
 
-
-Example of a log entry on a master working correctly:
+`wal-push`: example of a log entry on the primary working correctly:
 ```
 2019-06-07_16:50:42 patroni-04-db-gprd wal_e.worker.upload  INFO     MSG: begin archiving a file#012        DETAIL: Uploading "pg_xlog/000000140001003100000077" to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/000000140001003100000077.lzo".#012        STRUCTURED: time=2019-06-07T16:50:42.145335-00 pid=35067 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/000000140001003100000077.lzo prefix=pitr-wale-v1/ seg=000000140001003100000077 state=begin
 ```
 
-Example of log entries on a slave working correctly (no backups are actually happening from slaves):
+`backup-push`: example of log entries on a replica working correctly (no backups are actually happening from replicas):
 ```
 2019-06-07_00:00:03 patroni-01-db-gprd wal_e.main    INFO     MSG: starting WAL-E#012        DETAIL: The subcommand is "backup-push".#012        STRUCTURED: time=2019-06-07T00:00:03.077171-00 pid=37922
 2019-06-07_00:00:05 patroni-01-db-gprd wal_e.operator.backup  WARNING  MSG: blocking on sending WAL segments#012        DETAIL: The backup was not completed successfully, but we have to wait anyway.  See README: TODO about pg_cancel_backup#012        STRUCTURED: time=2019-06-07T00:00:05.263203-00 pid=37922
 2019-06-07_00:00:05 patroni-01-db-gprd wal_e.main    ERROR    MSG: Could not stop hot backup#012        STRUCTURED: time=2019-06-07T00:00:05.296652-00 pid=37922
 ```
 
-### WAL-E is not working
+### WAL-E's `wal-push` is not working
 
-#### WAL-E process stuck ####
+#### WAL-E `wal-push` process stuck ####
 
 WAL-E works by uploading files to a GCS bucket every few seconds. The upload is done by a forked process which lives only a few seconds. For each successful upload there should be log entries similar to this:
 ```
@@ -177,9 +178,9 @@ ime=2019-10-03T12:07:33.719239-00 pid=20408 action=push-wal key=gs://gitlab-gprd
 
 If you're not seeing logs like this (e.g. nothing writes to the log file or there are only entries with `state=begin` but not with `state=complete`) then there's something wrong with WAL-E.
 
-##### Check the WAL-E upload process
+##### Check the WAL-E's `wal-push` upload process
 
-Run ps a few times (the upload process is short-lived so you might not catch it the first time), example output:
+Run `ps` a few times (the upload process is short-lived so you might not catch it the first time), example output:
 ```
 # ps aux | grep 'wal-push'
 gitlab-+ 29632  0.0  0.0   4500   844 ?        S    12:16   0:00 sh -c /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e wal-push pg_xlog/0000001D00014F6B000000A2
@@ -187,7 +188,7 @@ gitlab-+ 29633 35.0  0.0 124200 41488 ?        D    12:16   0:00 /opt/wal-e/bin/
 root     29638  0.0  0.0  12940   920 pts/0    S+   12:16   0:00 grep wal-push
 ```
 
-If the timestamp on the wall-e process is relatively long time in the past (e.g. 15 mins, 1h) then that's a hint that it's stuck at uploading files.
+If the timestamp on the WAL-E process is relatively long time in the past (e.g. 15 mins, 1h) then that's a hint that it's stuck at uploading files.
 
 Check the state of the process with: `strace -p <pid>` . If the process is stuck, `strace` will show no activity.
 
