@@ -136,6 +136,11 @@ In order to restore, the following steps should be performed. It is assumed that
 
 1. Start PostgreSQL. This will begin the archive recovery. You can watch the progress in the postgres log.
 
+1. IMPORTANT:
+    - WAL-G won't stores the PostgreSQL configuration (postgresql.conf, postgresql.auto.conf, recovery.conf). You need to take care about configuration separately.
+    - As of June 2020, `restore_command` is not used on `patroni-XX` nodes. Therefore, if your restoration is happening as a part of DR, you need to consider removing `restore_command` in the very end.
+    - If this is your new master (again, if it is DR actions), then you need to promote it (using `/var/opt/gitlab/postgresql/trigger` or `pg_ctl promote`), and adjust configuration (`archive_command`, `restore_command`).
+
 
 ## Troubleshooting: How to Check if WAL-E Backups are Running
 
