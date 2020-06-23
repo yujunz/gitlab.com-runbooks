@@ -18,6 +18,7 @@
 * [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
 * [../patroni/pg-ha.md](../patroni/pg-ha.md)
+* [../patroni/scale-down-patroni.md](../patroni/scale-down-patroni.md)
 * [../pgbouncer/README.md](../pgbouncer/README.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 * [../pgbouncer/pgbouncer-connections.md](../pgbouncer/pgbouncer-connections.md)
