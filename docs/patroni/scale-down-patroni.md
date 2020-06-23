@@ -9,10 +9,10 @@ If you are reading this runbook you are most likely tasked to scale down our Pat
 ### Pre-requisite 
 
 - Patroni
-    This runbook assumes that you know what Patroni is, what and how we use it for and possible consequences that might come up if we do not approach this operation carefully. This is not to scare you away, but in the worst case: Patroni going down means we will lose our ability to preserve HA (High Availability) on Postgres. Postgres not being HA means if there is an issue with the primary node Postgres wouldn't be able to do a failover and GitLab would shut down to the world. Thus, thus runbook assumes you know this ahead of time before you execute this runbook. 
+    This runbook assumes that you know what Patroni is, what and how we use it for and possible consequences that might come up if we do not approach this operation carefully. This is not to scare you away, but in the worst case: Patroni going down means we will lose our ability to preserve HA (High Availability) on Postgres. Postgres not being HA means if there is an issue with the primary node Postgres wouldn't be able to do a failover and GitLab would shut down to the world. Thus, this runbook assumes you know this ahead of time before you execute this runbook. 
 
 - Chef
-    You are also expected to know what Chef is, how we use it in production, what they manage and how we stop/start chef-client across our hosts.
+    You are also expected to know what Chef is, how we use it in production, what it manages and how we stop/start chef-client across our hosts.
 
 - Terraform
     You are expected to know what Terraform is, how we use it and how we make change safely (`tf plan` first).  
@@ -29,14 +29,14 @@ Let's build a mental model of what all are at play before you scale down Patroni
 - We have a Patroni cluster up and running in production
 - The replica nodes are taking read requests and processing them 
 - The fact that we have a cluster, it means the cluster might decide to promote any replica to primary (can be the target replica node you are trying to remove)
-- There is Chef running always to enforce consistency of what is on Chef server on Patroni
+- There is chef-client running regularly to enforce consistency
 - The cluster size is Terraform'd via [this](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/-/blob/989d22c9d15b75812d3d116a94513d34428c021e/shared/gstg-gprd/main.tf#L505-533)
 
 What this means is that we need to be aware of and think of:
 
 - Prevent the target replica node from getting promoted to primary
 - Stop chef-client so that any change we make to the replica node and patroni doesn't get overwritten
-- Take the replica node out of the cluster and drain all client connections
+- Take the node out of loadbalancing to drain all connections and then take the replica node out of the cluster
 - Make a Terraform change and merge. Given this is Terraform, what this means is that Terraform starts removing nodes from the highest ordered/numbered node. For example, if you are trying to remove a `patroni-56` but there is a `patroni-57` also then you cannot remove `patroni-56` itself. You would have to work with `patroni-57` (assuming `57` is the highest number)
 
 ## Execution
@@ -44,29 +44,23 @@ What this means is that we need to be aware of and think of:
 ### Preparation
 
 - You should do this activity in a CR (thus, allowing you to practice all of it in staging first)
-- Make sure the replica you are trying to remove is NOT the master, by running `gitlab-patronictl list` on a patroni node
+- Make sure the replica you are trying to remove is NOT the primary, by running `gitlab-patronictl list` on a patroni node
 - Pull up the [Host Stats](https://dashboards.gitlab.net/d/bd2Kl9Imk) Grafana dashboard and switch to the target replica host to be removed. This will help you monitor the host.
 
-### Step 1 - Prevent failover from happening to the replica node that needs to be removed
-
-- `ssh` into the target replicata node in the appropriate environment (`gstg` vs `gprd`)
-- Run `gitlab-patronictl pause --wait pg-ha-cluster`
-
-### Step 2 - Stop chef-client
+### Step 1 - Stop chef-client
 
 - On the replica node run: `sudo chef-client-disable "Removing patroni node: Ref issue prod#xyz"`
 
-### Step 3 - Take the replicate node out of the cluster and drain all client connections
+### Step 2 - Take the replicate node out of load balancing
 
  If clients are connecting to replicas by means of [service discovery](https://docs.gitlab.com/ee/administration/database_load_balancing.html#service-discovery) (as opposed to hard-coded list of hosts), you can remove a replica from the list of hosts used by the clients by tagging it as not suitable for failing over (`nofailover: true`) and load balancing (`noloadbalance: true`). (If clients are configured with `replica.patroni.service.consul. DNS record` look at [this legacy method](https://gitlab.com/gitlab-com/runbooks/-/blob/master/docs/patroni/patroni-management.md#legacy-method-consul-maintenance))
 
-- sudo chef-client-disable "Database maintenance issue prod#xyz"
 - Add a tags section to /var/opt/gitlab/patroni/patroni.yml on the node:
 
     ```
     tags:
-    nofailover: true
-    noloadbalance: true
+      nofailover: true
+      noloadbalance: true
     ```
 - sudo systemctl reload patroni
 - Test the efficacy of that reload by checking for the node name in the list of replicas:
@@ -81,13 +75,25 @@ What this means is that we need to be aware of and think of:
 - Wait until all client connections are drained from the replica (it depends on the interval value set for the clients), use this command to track number of client connections:
 
     ```
-    while true; do sudo pgb-console -c 'SHOW CLIENTS;' | grep gitlabhq_production | cut -d '|' -f 2 | awk '{$1=$1};1' | grep -v gitlab-monitor | wc -l; sleep 5; done
+    for c in /usr/local/bin/pgb-console*; do $c -c 'SHOW CLIENTS;' | grep gitlabhq_production | grep -v gitlab-monitor; done | wc -l
     ```
 
-    Note: Usually there are three pgbouncer instances running on a single replica, so make sure they are all drained. Replace pgb-console above with pgb-console-1 and pgb-console-2.
+    It can take a few minutes until all connections are gone. If there are still a few connections on pgbouncers after 5m you can check if there are actually any active connections in the DB (should be 0 most of the time):
 
+    ```
+    gitlab-psql -qtc "SELECT count(*) FROM pg_stat_activity
+    WHERE pid <> pg_backend_pid()
+    AND datname = '{{ database }}'
+    AND state <> 'idle'
+    AND usename <> 'gitlab-monitor'
+    AND usename <> 'postgres_exporter';"
+    ```
 
 You can see an example of taking a node out of service in [this issue](https://gitlab.com/gitlab-com/gl-infra/production/-/issues/1061).
+
+### Step 3 - Stop patroni service on the node
+
+Now it is save to stop the patroni service on this node. This will also stop postgres and thus terminate all remaining db connections if there are still some. With the patroni service stopped, you should see this node vanish from the cluster after a while when you run `gitlab-patronictl list` on any of the other nodes. We have alerts that fire when patroni is deemed to be down. Since this is an intentional change - either silence the alarm in advance and/or give a heads up to the EOC.
 
 ### Step 4 - Terraform change to decrease the count 
 
@@ -98,45 +104,9 @@ You can see an example of taking a node out of service in [this issue](https://g
 
 Take a look at a sample [code change](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/-/merge_requests/1828).
 
-### Step 5 - Resume Patroni cluster
-
-When the cluster is paused, before restarting the Patroni process, it is better to check if Postgres postmaster didn't start when the system clock was skewed for any reason:
-
-```
-  postmaster=/var/opt/gitlab/postgresql/data/postmaster.pid;\
-  postpid=$(cat $postmaster | head -1);\
-  posttime=$(cat $postmaster | tail -n +3 | head -1);\
-  btime=$(cat /proc/stat | grep btime | cut -d' ' -f2);\
-  starttime=$(cat /proc/$postpid/stat | awk '{print $22}');\
-  clktck=$(getconf CLK_TCK);\
-  echo $((($starttime / $clktck + $btime) - $posttime))
-```
-
-If the command above returned a value higher than 3, then Patroni is going to have [trouble starting](https://github.com/zalando/patroni/blob/13c88e8b7a27b68e5c554d83d14e5cf640871ccc/patroni/postmaster.py#L55-L58), so it is advised to fix this issue with the help of a DBRE before restarting.
-
-If the command above returned a value lower than 3, proceed further. 
-
-- `ssh` into any other replica node 
-- Run `gitlab-patronictl resume --wait pg-ha-cluster`
-
 ## Automation Thoughts
 
-Technically, it seems to be possible to automate majority of the steps above. Perhaps, some sort of an Ansible playbook that:
-
-- Takes `n` as number of patroni node(s) to remove
-- Validates that the highest numbered `n` nodes are all read replica (via `gitlab-patronictl`)
-- Some safety check to satisfy predesignated min node requirement...etc (so that we don't end up under resourced)
-- Pause patroni
-- Stop chef-client
-- Some way to automatically update the `/var/opt/gitlab/patroni/patroni.yml` and get patroni to reload it
-- Poll until client connections are dropped
-- Terraform MR that decreases the patroni node_count by `n` and provides `tf plan -target=module.patroni` output
-- (Manual) SRE reviews `tf plan` output, approves MR 
-- `tf apply -target=module.patroni`
-- Polls until GCP removes the nodes 
-- Resumes patroni
-
-Perhaps not all of the above can be automated at once, but overall seems possible if we invest time and resource into it. (Logging, monitoring, alerting, rollback, auditing, authentication...etc are not considered above)
+An excellent automation initiative is underway: https://ops.gitlab.net/gitlab-com/gl-infra/db-ops/-/blob/master/ansible/playbooks/roles/patroni/tasks/stop_traffic.yml. 
 
 ## Reference
 
