@@ -21,6 +21,7 @@
 * [gitlab-com-walg-backups.md](gitlab-com-walg-backups.md)
 * [patroni-management.md](patroni-management.md)
 * [pg-ha.md](pg-ha.md)
+* [postgres-checkup.md](postgres-checkup.md)
 * [postgres.md](postgres.md)
 * [postgresql-disk-space.md](postgresql-disk-space.md)
 * [postgresql-replica.md](postgresql-replica.md)

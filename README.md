@@ -180,7 +180,7 @@ During an incident there are at least 2 roles, and one more optional
 
 ### PostgreSQL
 
-* [Postgresql](docs/patroni/postgres.md)
+* [PostgreSQL](docs/patroni/postgres.md)
 * [more postgresql](docs/patroni/postgresql.md)
 * [PgBouncer](docs/pgbouncer/pgbouncer-1.md)
 * [PostgreSQL High Availability & Failovers](docs/patroni/pg-ha.md)
@@ -190,6 +190,7 @@ During an incident there are at least 2 roles, and one more optional
 * [Database backups](docs/patroni/using-wale-gpg.md)
 * [Database backups restore testing](https://gitlab.com/gitlab-restore/postgres-01.db.prd.gitlab.com/)
 * [Rebuild a corrupt index](docs/patroni/postgresql.md#rebuild-a-corrupt-index)
+* [Checking PostgreSQL health with postgres-checkup](docs/patroni/postgres-checkup)
 
 ### Frontend Services
 
