@@ -2,6 +2,9 @@ local alerts = import 'alerts.libsonnet';
 local strings = import 'strings.libsonnet';
 local selectors = import './selectors.libsonnet';
 
+// The severity labels that we allow on resources
+local severities = std.set(['s1', 's2', 's3', 's4']);
+
 local environmentLabels = ['environment', 'tier', 'type', 'stage'];
 
 local getAllowedServiceApplicator(allowedList) =
@@ -20,23 +23,48 @@ local getServiceApplicator(appliesTo) =
   else
     getDisallowedServiceApplicator(appliesTo.allExcept);
 
+local validateAndApplyDefaults(definition) =
+  local validated =
+    std.isString(definition.title) &&
+    std.setMember(definition.severity, severities) &&
+    (std.isArray(definition.appliesTo) || std.isObject(definition.appliesTo)) &&
+    std.isString(definition.description) &&
+    std.isString(definition.grafana_dashboard_uid) &&
+    std.isArray(definition.resourceLabels) &&
+    std.isString(definition.query) &&
+    std.isNumber(definition.slos.soft) && definition.slos.soft > 0 && definition.slos.soft <= 1 &&
+    std.isNumber(definition.slos.hard) && definition.slos.hard > 0 && definition.slos.hard <= 1;
 
-local resourceSaturationPoint = function(definition)
+  // Apply defaults
+  if validated then
+    {
+      queryFormatConfig: { }
+    } + definition + {
+      // slo defaults
+      slos: {
+        alertTriggerDuration: '5m'
+      } + definition.slos
+    }
+  else
+    std.assertEqual(definition, { __assert__: "Resource definition is invalid" });
+
+local resourceSaturationPoint = function(options)
+  local definition = validateAndApplyDefaults(options);
   local serviceApplicator = getServiceApplicator(definition.appliesTo);
 
   definition {
     getQuery(selectorHash, rangeInterval, maxAggregationLabels=[])::
       local staticLabels = self.getStaticLabels();
-      local queryAggregationLabels = environmentLabels + definition.resourceLabels;
+      local queryAggregationLabels = environmentLabels + self.resourceLabels;
       local allMaxAggregationLabels = environmentLabels + maxAggregationLabels;
       local queryAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), queryAggregationLabels);
       local maxAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), allMaxAggregationLabels);
-      local queryFormatConfig = ({ queryFormatConfig: {} } + self).queryFormatConfig;
+      local queryFormatConfig = self.queryFormatConfig;
 
       // Remove any statically defined labels from the selectors, if they are defined
       local selectorWithoutStaticLabels = if staticLabels == {} then selectorHash else selectors.without(selectorHash, staticLabels);
 
-      local preaggregation = definition.query % queryFormatConfig {
+      local preaggregation = self.query % queryFormatConfig {
         rangeInterval: rangeInterval,
         selector: selectors.serializeHash(selectorWithoutStaticLabels),
         aggregationLabels: std.join(', ', queryAggregationLabelsExcludingStaticLabels),
@@ -123,7 +151,7 @@ local resourceSaturationPoint = function(definition)
     getSaturationAlerts(componentName)::
       local definition = self;
 
-      local triggerDuration = ({ alertTriggerDuration: '5m' } + definition.slos).alertTriggerDuration;
+      local triggerDuration = definition.slos.alertTriggerDuration;
 
       local formatConfig = {
         triggerDuration: triggerDuration,
