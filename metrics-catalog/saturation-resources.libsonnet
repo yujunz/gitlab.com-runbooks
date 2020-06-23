@@ -12,6 +12,7 @@ local pgbouncerAsyncPool(serviceType, role) =
   resourceSaturationPoint({
     title: 'Postgres Async (Sidekiq) %s Connection Pool Utilization per Node' % [role],
     severity: 's4',
+    horizontallyScalable: role == 'replica', // Replicas can be scaled horizontally, primary cannot
     appliesTo: [serviceType],
     description: |||
       pgbouncer async connection pool utilization per database node, for %(role)s database connections.
@@ -45,6 +46,7 @@ local pgbouncerSyncPool(serviceType, role) =
   resourceSaturationPoint({
     title: 'Postgres Sync (Web/API/Git) %s Connection Pool Utilization per Node' % [role],
     severity: 's3',
+    horizontallyScalable: role == 'replica', // Replicas can be scaled horizontally, primary cannot
     appliesTo: [serviceType],
     description: |||
       pgbouncer sync connection pool Saturation per database node, for %(role)s database connections.
@@ -80,6 +82,7 @@ local pgbouncerSyncPool(serviceType, role) =
   pg_active_db_connections_primary: resourceSaturationPoint({
     title: 'Active Primary DB Connection Utilization',
     severity: 's3',
+    horizontallyScalable: false, // Connections to the primary are not horizontally scalable
     appliesTo: ['patroni'],
     description: |||
       Active db connection utilization on the primary node.
@@ -105,6 +108,7 @@ local pgbouncerSyncPool(serviceType, role) =
   pg_active_db_connections_replica: resourceSaturationPoint({
     title: 'Active Secondary DB Connection Utilization',
     severity: 's3',
+    horizontallyScalable: true, // Connections to the replicas are horizontally scalable
     appliesTo: ['patroni'],
     description: |||
       Active db connection utilization per replica node
@@ -130,6 +134,7 @@ local pgbouncerSyncPool(serviceType, role) =
   rails_db_connection_pool: resourceSaturationPoint({
     title: 'Rails DB Connection Pool Utilization',
     severity: 's4',
+    horizontallyScalable: true, // Add more replicas for achieve greater scalability
     appliesTo: ['web', 'api', 'git', 'sidekiq'],
     description: |||
       Rails uses connection pools for its database connections. As each
@@ -162,6 +167,7 @@ local pgbouncerSyncPool(serviceType, role) =
   cgroup_memory: resourceSaturationPoint({
     title: 'Cgroup Memory Utilization per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['gitaly', 'praefect'],
     description: |||
       Cgroup memory utilization per node.
@@ -192,6 +198,7 @@ local pgbouncerSyncPool(serviceType, role) =
   cpu: resourceSaturationPoint({
     title: 'Average Service CPU Utilization',
     severity: 's3',
+    horizontallyScalable: true,
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
     description: |||
       This resource measures average CPU utilization across an all cores in a service fleet.
@@ -215,6 +222,7 @@ local pgbouncerSyncPool(serviceType, role) =
   shard_cpu: resourceSaturationPoint({
     title: 'Average CPU Utilization per Shard',
     severity: 's3',
+    horizontallyScalable: true,
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'], default: 'sidekiq' },
     description: |||
       This resource measures average CPU utilization across an all cores in a shard of a
@@ -238,6 +246,7 @@ local pgbouncerSyncPool(serviceType, role) =
   disk_space: resourceSaturationPoint({
     title: 'Disk Space Utilization per Device per Node',
     severity: 's2',
+    horizontallyScalable: true,
     appliesTo: { allExcept: ['waf', 'bastion'], default: 'gitaly' },
     description: |||
       Disk space utilization per device per node.
@@ -258,6 +267,7 @@ local pgbouncerSyncPool(serviceType, role) =
   disk_inodes: resourceSaturationPoint({
     title: 'Disk inode Utilization per Device per Node',
     severity: 's2',
+    horizontallyScalable: true,
     appliesTo: { allExcept: ['waf', 'bastion'], default: 'gitaly' },
     description: |||
       Disk inode utilization per device per node.
@@ -285,6 +295,7 @@ local pgbouncerSyncPool(serviceType, role) =
   disk_sustained_read_iops: resourceSaturationPoint({
     title: 'Disk Sustained Read IOPS Utilization per Node',
     severity: 's3',
+    horizontallyScalable: true,
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Disk sustained read IOPS utilization per node.
@@ -307,6 +318,7 @@ local pgbouncerSyncPool(serviceType, role) =
   disk_sustained_read_throughput: resourceSaturationPoint({
     title: 'Disk Sustained Read Throughput Utilization per Node',
     severity: 's3',
+    horizontallyScalable: true,
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Disk sustained read throughput utilization per node.
@@ -329,6 +341,7 @@ local pgbouncerSyncPool(serviceType, role) =
   disk_sustained_write_iops: resourceSaturationPoint({
     title: 'Disk Sustained Write IOPS Utilization per Node',
     severity: 's3',
+    horizontallyScalable: true,
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
@@ -358,6 +371,7 @@ local pgbouncerSyncPool(serviceType, role) =
   disk_sustained_write_throughput: resourceSaturationPoint({
     title: 'Disk Sustained Write Throughput Utilization per Node',
     severity: 's3',
+    horizontallyScalable: true,
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
       Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
@@ -387,6 +401,7 @@ local pgbouncerSyncPool(serviceType, role) =
   elastic_cpu: resourceSaturationPoint({
     title: 'Average CPU Utilization per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['logging', 'search'],
     description: |||
       Average CPU utilization per Node.
@@ -410,6 +425,7 @@ local pgbouncerSyncPool(serviceType, role) =
   elastic_disk_space: resourceSaturationPoint({
     title: 'Disk Utilization Overall',
     severity: 's3',
+    horizontallyScalable: true,
     appliesTo: ['logging', 'search'],
     description: |||
       Disk utilization per device per node.
@@ -434,6 +450,7 @@ local pgbouncerSyncPool(serviceType, role) =
   elastic_jvm_heap_memory: resourceSaturationPoint({
     title: 'JVM Heap Utilization per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['logging', 'search'],
     description: |||
       JVM heap memory utilization per node.
@@ -454,6 +471,7 @@ local pgbouncerSyncPool(serviceType, role) =
   elastic_single_node_cpu: resourceSaturationPoint({
     title: 'Average CPU Utilization per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['logging', 'search'],
     description: |||
       Average CPU per Node.
@@ -476,6 +494,7 @@ local pgbouncerSyncPool(serviceType, role) =
   elastic_single_node_disk_space: resourceSaturationPoint({
     title: 'Disk Utilization per Device per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['logging', 'search'],
     description: |||
       Disk utilization per device per node.
@@ -502,6 +521,7 @@ local pgbouncerSyncPool(serviceType, role) =
   elastic_thread_pools: resourceSaturationPoint({
     title: 'Thread pool utilization',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['logging', 'search'],
     description: |||
       Utilization of each thread pool on each node.
@@ -528,6 +548,7 @@ local pgbouncerSyncPool(serviceType, role) =
   go_memory: resourceSaturationPoint({
     title: 'Go Memory Utilization per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['gitaly', 'web-pages', 'monitoring', 'web', 'praefect', 'registry', 'api'],
     description: |||
       Go's memory allocation strategy can make it look like a Go process is saturating memory when measured using RSS, when in fact
@@ -554,6 +575,7 @@ local pgbouncerSyncPool(serviceType, role) =
   memory: resourceSaturationPoint({
     title: 'Memory Utilization per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: { allExcept: ['waf', 'monitoring'] },
     description: |||
       Memory utilization per device per node.
@@ -572,6 +594,7 @@ local pgbouncerSyncPool(serviceType, role) =
   open_fds: resourceSaturationPoint({
     title: 'Open file descriptor utilization per instance',
     severity: 's2',
+    horizontallyScalable: true,
     appliesTo: { allExcept: ['waf'] },
     description: |||
       Open file descriptor utilization per instance.
@@ -612,6 +635,7 @@ local pgbouncerSyncPool(serviceType, role) =
   pgbouncer_single_core: resourceSaturationPoint({
     title: 'PGBouncer Single Core per Node',
     severity: 's2',
+    horizontallyScalable: true, // Add more pgbouncer processes (for patroni) or nodes (for pgbouncer)
     appliesTo: ['pgbouncer', 'patroni'],
     description: |||
       PGBouncer single core CPU utilization per node.
@@ -637,6 +661,7 @@ local pgbouncerSyncPool(serviceType, role) =
   private_runners: resourceSaturationPoint({
     title: 'Private Runners utilization',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['ci-runners'],
     description: |||
       Private runners utilization per instance.
@@ -667,6 +692,7 @@ local pgbouncerSyncPool(serviceType, role) =
   redis_clients: resourceSaturationPoint({
     title: 'Redis Client Utilization per Node',
     severity: 's3',
+    horizontallyScalable: false,
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
       Redis client utilization per node.
@@ -692,6 +718,7 @@ local pgbouncerSyncPool(serviceType, role) =
   redis_memory: resourceSaturationPoint({
     title: 'Redis Memory Utilization per Node',
     severity: 's2',
+    horizontallyScalable: false,
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
       Redis memory utilization per node.
@@ -724,6 +751,7 @@ local pgbouncerSyncPool(serviceType, role) =
   shared_runners: resourceSaturationPoint({
     title: 'Shared Runner utilization',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['ci-runners'],
     description: |||
       Shared runner utilization per instance.
@@ -754,6 +782,7 @@ local pgbouncerSyncPool(serviceType, role) =
   shared_runners_gitlab: resourceSaturationPoint({
     title: 'Shared Runner GitLab Utilization',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['ci-runners'],
     description: |||
       Shared runners utilization per instance.
@@ -782,6 +811,7 @@ local pgbouncerSyncPool(serviceType, role) =
   sidekiq_shard_workers: resourceSaturationPoint({
     title: 'Sidekiq Worker Utilization per shard',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['sidekiq'],
     description: |||
       Sidekiq worker utilization per shard.
@@ -816,6 +846,7 @@ local pgbouncerSyncPool(serviceType, role) =
   single_node_cpu: resourceSaturationPoint({
     title: 'Average CPU Utilization per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
     description: |||
       Average CPU utilization per Node.
@@ -838,6 +869,7 @@ local pgbouncerSyncPool(serviceType, role) =
   single_node_puma_workers: resourceSaturationPoint({
     title: 'Puma Worker Saturation per Node',
     severity: 's2',
+    horizontallyScalable: true,
     appliesTo: ['web', 'api', 'git', 'sidekiq'],
     description: |||
       Puma thread utilization per node.
@@ -864,6 +896,7 @@ local pgbouncerSyncPool(serviceType, role) =
   redis_primary_cpu: resourceSaturationPoint({
     title: 'Redis Primary CPU Utilization per Node',
     severity: 's1',
+    horizontallyScalable: false,
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
       Redis Primary CPU Utilization per Node.
@@ -892,6 +925,7 @@ local pgbouncerSyncPool(serviceType, role) =
   redis_secondary_cpu: resourceSaturationPoint({
     title: 'Redis Secondary CPU Utilization per Node',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
       Redis Secondary CPU Utilization per Node.
@@ -947,6 +981,7 @@ local pgbouncerSyncPool(serviceType, role) =
   kube_hpa_instances: resourceSaturationPoint({
     title: 'HPA Instances',
     severity: 's2',
+    horizontallyScalable: true,
     appliesTo: ['kube'],
     description: |||
       This measures the HPA that manages our Deployments. If we are running low on
@@ -990,6 +1025,7 @@ local pgbouncerSyncPool(serviceType, role) =
   kube_persistent_volume_claim_inodes: resourceSaturationPoint({
     title: 'Kube Persistent Volume Claim inode Utilisation',
     severity: 's2',
+    horizontallyScalable: true,
     appliesTo: ['kube'],
     description: |||
       inode utilization on persistent volume claims.
@@ -1018,6 +1054,7 @@ local pgbouncerSyncPool(serviceType, role) =
   kube_persistent_volume_claim_disk_space: resourceSaturationPoint({
     title: 'Kube Persistent Volume Claim inode Utilisation',
     severity: 's2',
+    horizontallyScalable: true,
     appliesTo: ['kube'],
     description: |||
       disk space utilization on persistent volume claims.
@@ -1046,6 +1083,7 @@ local pgbouncerSyncPool(serviceType, role) =
   cloudsql_cpu: resourceSaturationPoint({
     title: 'Average CPU Utilization',
     severity: 's4',
+    horizontallyScalable: true,
     appliesTo: ['monitoring'],
     description: |||
       Average CPU utilization.

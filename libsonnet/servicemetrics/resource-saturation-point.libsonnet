@@ -28,6 +28,7 @@ local validateAndApplyDefaults(definition) =
   local validated =
     std.isString(definition.title) &&
     std.setMember(definition.severity, severities) &&
+    std.isBoolean(definition.horizontallyScalable) &&
     (std.isArray(definition.appliesTo) || std.isObject(definition.appliesTo)) &&
     std.isString(definition.description) &&
     std.isString(definition.grafana_dashboard_uid) &&
@@ -148,6 +149,20 @@ local resourceSaturationPoint = function(options)
         labels: labels,
         expr: '%g' % [definition.slos.hard],
       }],
+
+    getMetadataRecordingRuleDefinition(componentName)::
+      local definition = self;
+
+      {
+        record: 'gitlab_component_saturation_info',
+        labels: {
+          component: componentName,
+          horiz_scaling: if definition.horizontallyScalable then 'yes' else 'no',
+          severity: definition.severity
+        },
+        expr: '1',
+      },
+
 
     getSaturationAlerts(componentName)::
       local definition = self;
