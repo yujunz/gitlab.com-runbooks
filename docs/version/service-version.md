@@ -45,6 +45,7 @@
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
 * [../uncategorized/mtail.md](../uncategorized/mtail.md)
 * [../uncategorized/omnibus-package-updates.md](../uncategorized/omnibus-package-updates.md)
+* [../uncategorized/project-export.md](../uncategorized/project-export.md)
 * [../uncategorized/remove-kernels.md](../uncategorized/remove-kernels.md)
 * [../uncategorized/tweeting-guidelines.md](../uncategorized/tweeting-guidelines.md)
 * [../uncategorized/upgrade-camoproxy.md](../uncategorized/upgrade-camoproxy.md)
