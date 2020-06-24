@@ -19,7 +19,8 @@ Example, the Container Registry is of service type `registry`.  Therefore,
 # Local Development
 
 * Install `jsonnet`, `jq` and `curl`
-  * On a Mac, `jsonnet` can be installed with `brew install jsonnet`
+  * On a Mac, `jsonnet` can be installed with `brew install jsonnet` (you'll
+    need at least v0.15.0)
   * On Linux, you'll need to build the binary yourself, or use the docker image: `docker run --rm registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest`
 * Install `jb` [jsonet bundler](https://github.com/jsonnet-bundler/jsonnet-bundler)
   * `GO111MODULE="on" go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb`
