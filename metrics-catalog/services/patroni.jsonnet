@@ -25,7 +25,7 @@ local combined = metricsCatalog.combined;
         toleratedThreshold=0.1
       ),
 
-      significantLabels: ['fqdn'],
+      significantLabels: [],
     },
 
     service: {

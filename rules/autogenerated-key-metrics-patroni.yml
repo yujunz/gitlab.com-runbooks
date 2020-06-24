@@ -10,7 +10,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1m])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1m])
@@ -55,7 +55,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1m])
         or
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
@@ -66,7 +66,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
       )
   - record: gitlab_component_ops:rate_5m
@@ -75,7 +75,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[5m])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[5m])
@@ -120,7 +120,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[5m])
         or
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[5m])
@@ -131,7 +131,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[5m])
       )
   - record: gitlab_component_ops:rate_30m
@@ -140,7 +140,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[30m])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[30m])
@@ -185,7 +185,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[30m])
         or
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[30m])
@@ -196,7 +196,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[30m])
       )
   - record: gitlab_component_ops:rate_1h
@@ -205,7 +205,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1h])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1h])
@@ -250,7 +250,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1h])
         or
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1h])
@@ -261,7 +261,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1h])
       )
   - record: gitlab_component_ops:rate_6h
@@ -270,7 +270,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[6h])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[6h])
@@ -315,7 +315,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[6h])
         or
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[6h])
@@ -326,7 +326,7 @@ groups:
       tier: db
       type: patroni
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[6h])
       )
 - name: 'Component mapping: patroni'

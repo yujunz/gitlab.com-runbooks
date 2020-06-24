@@ -48,21 +48,22 @@ local rateMetric = metricsCatalog.rateMetric;
     },
 
     puma: {
+      local baseSelector = { job: 'gitlab-rails', type: 'web' },
       apdex: histogramApdex(
         histogram='http_request_duration_seconds_bucket',
-        selector='job="gitlab-rails", type="web"',
+        selector=baseSelector,
         satisfiedThreshold=1,
         toleratedThreshold=10
       ),
 
       requestRate: rateMetric(
         counter='http_request_duration_seconds_count',
-        selector='job="gitlab-rails", type="web"'
+        selector=baseSelector,
       ),
 
       errorRate: rateMetric(
         counter='http_request_duration_seconds_count',
-        selector='job="gitlab-rails", type="web", status=~"5.."'
+        selector=baseSelector { status: { re: '5..' } }
       ),
 
       significantLabels: ['fqdn', 'method'],

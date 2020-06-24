@@ -22,12 +22,12 @@ local minimumOperationRateForMonitoring = 4 / 60;
 local combinedQueueApdex = combined([
   histogramApdex(
     histogram='sidekiq_jobs_queue_duration_seconds_bucket',
-    selector='urgency="high"',
+    selector={ urgency: 'high' },
     satisfiedThreshold=sidekiqHelpers.slos.urgent.queueingDurationSeconds,
   ),
   histogramApdex(
     histogram='sidekiq_jobs_queue_duration_seconds_bucket',
-    selector='urgency="low"',
+    selector={ urgency: 'low' },
     satisfiedThreshold=sidekiqHelpers.slos.lowUrgency.queueingDurationSeconds,
   ),
 ]);
@@ -35,29 +35,29 @@ local combinedQueueApdex = combined([
 local combinedExecutionApdex = combined([
   histogramApdex(
     histogram='sidekiq_jobs_completion_seconds_bucket',
-    selector='urgency="high"',
+    selector={ urgency: 'high' },
     satisfiedThreshold=sidekiqHelpers.slos.urgent.executionDurationSeconds,
   ),
   histogramApdex(
     histogram='sidekiq_jobs_completion_seconds_bucket',
-    selector='urgency="low"',
+    selector={ urgency: 'low' },
     satisfiedThreshold=sidekiqHelpers.slos.lowUrgency.executionDurationSeconds,
   ),
   histogramApdex(
     histogram='sidekiq_jobs_completion_seconds_bucket',
-    selector='urgency="throttled"',
+    selector={ urgency: 'throttled' },
     satisfiedThreshold=sidekiqHelpers.slos.throttled.executionDurationSeconds,
   ),
 ]);
 
 local requestRate = rateMetric(
   counter='sidekiq_jobs_completion_seconds_bucket',
-  selector='le="+Inf"',
+  selector={ le: '+Inf' },
 );
 
 local errorRate = rateMetric(
   counter='sidekiq_jobs_failed_total',
-  selector=''
+  selector={},
 );
 
 // Record queue apdex, execution apdex, error rates, QPS metrics
@@ -67,27 +67,27 @@ local generateRulesForComponentForBurnRate(rangeInterval) =
   [
     {  // Key metric: Queueing apdex (ratio)
       record: 'gitlab_background_jobs:queue:apdex:ratio_%s' % [rangeInterval],
-      expr: combinedQueueApdex.apdexQuery(aggregationLabels, '', rangeInterval),
+      expr: combinedQueueApdex.apdexQuery(aggregationLabels, {}, rangeInterval),
     },
     {  // Key metric: Queueing apdex (weight score)
       record: 'gitlab_background_jobs:queue:apdex:weight:score_%s' % [rangeInterval],
-      expr: combinedQueueApdex.apdexWeightQuery(aggregationLabels, '', rangeInterval),
+      expr: combinedQueueApdex.apdexWeightQuery(aggregationLabels, {}, rangeInterval),
     },
     {  // Key metric: Execution apdex (ratio)
       record: 'gitlab_background_jobs:execution:apdex:ratio_%s' % [rangeInterval],
-      expr: combinedExecutionApdex.apdexQuery(aggregationLabels, '', rangeInterval),
+      expr: combinedExecutionApdex.apdexQuery(aggregationLabels, {}, rangeInterval),
     },
     {  // Key metric: Execution apdex (weight score)
       record: 'gitlab_background_jobs:execution:apdex:weight:score_%s' % [rangeInterval],
-      expr: combinedExecutionApdex.apdexWeightQuery(aggregationLabels, '', rangeInterval),
+      expr: combinedExecutionApdex.apdexWeightQuery(aggregationLabels, {}, rangeInterval),
     },
     {  // Key metric: QPS
       record: 'gitlab_background_jobs:execution:ops:rate_%s' % [rangeInterval],
-      expr: requestRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
+      expr: requestRate.aggregatedRateQuery(aggregationLabels, {}, rangeInterval),
     },
     {  // Key metric: Errors per Second
       record: 'gitlab_background_jobs:execution:error:rate_%s' % [rangeInterval],
-      expr: errorRate.aggregatedRateQuery(aggregationLabels, '', rangeInterval),
+      expr: errorRate.aggregatedRateQuery(aggregationLabels, {}, rangeInterval),
     },
   ];
 

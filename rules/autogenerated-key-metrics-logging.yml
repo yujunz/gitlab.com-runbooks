@@ -10,7 +10,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_indexing_index_total{type="logging"}[1m]), 0)
       )
   - record: gitlab_component_ops:rate
@@ -19,7 +19,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[1m]), 0)
       )
   - record: gitlab_component_ops:rate
@@ -38,7 +38,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_indexing_index_total{type="logging"}[5m]), 0)
       )
   - record: gitlab_component_ops:rate_5m
@@ -47,7 +47,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[5m]), 0)
       )
   - record: gitlab_component_ops:rate_5m
@@ -66,7 +66,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_indexing_index_total{type="logging"}[30m]), 0)
       )
   - record: gitlab_component_ops:rate_30m
@@ -75,7 +75,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[30m]), 0)
       )
   - record: gitlab_component_ops:rate_30m
@@ -94,7 +94,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_indexing_index_total{type="logging"}[1h]), 0)
       )
   - record: gitlab_component_ops:rate_1h
@@ -103,7 +103,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[1h]), 0)
       )
   - record: gitlab_component_ops:rate_1h
@@ -122,7 +122,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_indexing_index_total{type="logging"}[6h]), 0)
       )
   - record: gitlab_component_ops:rate_6h
@@ -131,7 +131,7 @@ groups:
       tier: inf
       type: logging
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[6h]), 0)
       )
   - record: gitlab_component_ops:rate_6h

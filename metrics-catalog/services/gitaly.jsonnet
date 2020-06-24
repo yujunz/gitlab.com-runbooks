@@ -24,26 +24,35 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
   },
   components: {
     goserver: {
+      local baseSelector = { job: 'gitaly' },
       apdex: histogramApdex(
         histogram='grpc_server_handling_seconds_bucket',
-        selector='job="gitaly", grpc_type="unary", grpc_method!~"%(gitalyApdexIgnoredMethodsRegexp)s"' % { gitalyApdexIgnoredMethodsRegexp: gitalyHelpers.gitalyApdexIgnoredMethodsRegexp },
+        selector=baseSelector {
+          grpc_type: 'unary',
+          grpc_method: { nre: gitalyHelpers.gitalyApdexIgnoredMethodsRegexp },
+        },
         satisfiedThreshold=0.5,
         toleratedThreshold=1
       ),
 
       requestRate: rateMetric(
         counter='gitaly_service_client_requests_total',
-        selector='job="gitaly"'
+        selector=baseSelector
       ),
 
       errorRate: combined([
         rateMetric(
           counter='gitaly_service_client_requests_total',
-          selector='job="gitaly", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$"'
+          selector=baseSelector {
+            grpc_code: { nre: '^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded)$' },
+          }
         ),
         rateMetric(
           counter='gitaly_service_client_requests_total',
-          selector='job="gitaly", grpc_code="DeadlineExceeded", deadline_type!="limited"'
+          selector=baseSelector {
+            grpc_code: 'DeadlineExceeded',
+            deadline_type: { ne: 'limited' },
+          }
         ),
       ]),
 
@@ -51,13 +60,15 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
     },
 
     gitalyruby: {
+      local baseSelector = { job: 'gitaly' },
+
       // Uses the goservers histogram, but only selects client unary calls: this is an effective proxy
       // go gitaly-ruby client call times
       apdex: customApdex(
         rateQueryTemplate=|||
           rate(grpc_server_handling_seconds_bucket{%(selector)s}[%(rangeInterval)s]) and on(grpc_service,grpc_method) grpc_client_handled_total{job="gitaly"}
         |||,
-        selector='job="gitaly",grpc_type="unary"',
+        selector=baseSelector { grpc_type: 'unary' },
         satisfiedThreshold=10,
         toleratedThreshold=30
       ),
