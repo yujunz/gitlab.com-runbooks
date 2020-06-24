@@ -87,7 +87,7 @@ root@db1:~# tail -f /var/log/gitlab/postgresql/postgresql.log
 2018-11-15_12:39:13.95760 wal_e.worker.upload INFO     MSG: completed archiving to a file
 ```
 
-> See also: [How to check if WAL-E/WAL-G backups are running](./backups-check-if-running.md).
+> See also: [How to check if WAL-E/WAL-G backups are running](#troubleshooting-how-to-check-if-wal-e-backups-are-running).
 
 ## Restoring Data
 
