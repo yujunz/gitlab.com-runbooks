@@ -83,7 +83,7 @@ What this means is that we need to be aware of and think of:
     ```
     gitlab-psql -qtc "SELECT count(*) FROM pg_stat_activity
     WHERE pid <> pg_backend_pid()
-    AND datname = '{{ database }}'
+    AND datname = 'gitlabhq_production'
     AND state <> 'idle'
     AND usename <> 'gitlab-monitor'
     AND usename <> 'postgres_exporter';"
