@@ -155,7 +155,8 @@ WAL-E is running on all machines in the patroni cluster. However, backups are ac
   - document field: `json.ident` with value `wal_e*`
 2. by logging directly into the VM:
   - ssh to the patroni master
-  - logs are located in `/var/log/wal-e/wal-e_backup_push.log` (and are also duplicated in `/var/log/syslog`, look for `wal\_e.worker.upload`)
+  - logs are located in `/var/log/wal-e/wal-e_backup_push.log`, the file is under rotation, so check also `/var/log/wal-e/wal-e_backup_push.log.1`, etc
+  - alternatively, see syslog `/var/log/syslog`, look for `wal\_e.worker.upload` (or `sudo journalctl --since yesterday | grep "worker.upload"` to see activity for yesterday and today)
 
 `wal-push`: example of a log entry on the primary working correctly:
 ```
