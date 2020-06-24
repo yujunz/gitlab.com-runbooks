@@ -211,7 +211,7 @@ If everything points to the fact that WAL-E upload process is stuck, consider ki
 
 #### Other ####
 
-If WAL-E is not working, it will probably be something related with the network or S3.
+If `wal-push` is not working, it will probably be something related with the network or GCS.
 
 PostgreSQL is configured to archive to WAL-E upon some conditions, as specified via Chef:
 ```
