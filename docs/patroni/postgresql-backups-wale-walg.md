@@ -156,15 +156,19 @@ WAL-E is running on all machines in the patroni cluster. However, backups are ac
 2. by logging directly into the VM:
   - ssh to the patroni master
   - logs are located in `/var/log/wal-e/wal-e_backup_push.log`, the file is under rotation, so check also `/var/log/wal-e/wal-e_backup_push.log.1`, etc
-  - alternatively, see syslog `/var/log/syslog`, look for `wal\_e.worker.upload` (or `sudo journalctl --since yesterday | grep "worker.upload"` to see activity for yesterday and today)
+  - alternatively, see syslog `/var/log/syslog`, look for `wal\_e.worker.upload` – but note, that `wal-push` log entries also have ``wal\_e.worker.upload`. So reading syslog, look only for those lines that are deal with `basebackup` (example: `sudo journalctl --since yesterday | grep "worker.upload" | grep basebackup` to see activity for yesterday and today))
 
-`wal-push`: example of a log entry on the primary working correctly:
+`wal-push` on the primary: example of a log entry on the primary working correctly:
 ```
-Jun 24 06:26:22 patroni-01-db-gprd wal_e.worker.upload INFO     MSG: begin uploading a base backup volume#012        DETAIL: Uploading to "gs://gitlab-gprd-postgres-backup/pitr-wale-pg11/basebackups_005/base_0000000300026C2A00000096_02438808/tar_partitions/part_00005595.tar.lzo".#012        STRUCTURED: time=2020-06-24T06:26:22.528122-00 pid=63737
+Jun 24 15:39:53 patroni-01-db-gprd wal-e[40141]: wal_e.worker.upload INFO     MSG: completed archiving to a file
+                                                         DETAIL: Archiving to "gs://gitlab-gprd-postgres-backup/pitr-wale-pg11/wal_005/0000000300026D59000000ED.lzo" complete at 19593.2KiB/s.
+                                                         STRUCTURED: time=2020-06-24T15:39:53.973629-00 pid=40141 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-pg11/wal_005/0000000300026D59000000ED.lzo prefix=pitr-wale-pg11/ rate=19593.2 seg=0000000300026D59000000ED state=complete
 ```
 
 `backup-push` on the primary: example of log entries on the primary working correctly:
-
+```
+Jun 24 06:26:22 patroni-01-db-gprd wal_e.worker.upload INFO     MSG: begin uploading a base backup volume#012        DETAIL: Uploading to "gs://gitlab-gprd-postgres-backup/pitr-wale-pg11/basebackups_005/base_0000000300026C2A00000096_02438808/tar_partitions/part_00005595.tar.lzo".#012        STRUCTURED: time=2020-06-24T06:26:22.528122-00 pid=63737
+```
 
 `backup-push` on a replica: example of log entries on a replica working correctly (no backups are actually happening from replicas while we are on WAL-E, so these line just report that there is nothing to do; this will be changed after migration to WAL-G):
 ```
