@@ -477,12 +477,35 @@ git commit --allow-empty -m '[BREAKING CHANGE|feat|fix]: <changelog summary mess
 
 This project has adopted [`adsf version-manager`](https://github.com/asdf-vm/asdf) for tool versioning.
 
+Installation instructions for `asdf` can be found at https://asdf-vm.com/#/core-manage-asdf-vm?id=install.
+
 For compatibility, please configure the following line in `~/.asdfrc`
 
 ```
 legacy_version_file = yes
 ```
 
+### Required tooling
+
+Our `asdf` toolset uses the following plugins:
+
+* `golang`: `asdf plugin add golang`
+* `ruby`: `asdf plugin add ruby`
+* `go-jsonnet`: `asdf plugin add go-jsonnet https://gitlab.com/craigfurman/asdf-go-jsonnet`.
+
+Once you have installed these plugins, run the following command to install the required versions.
+
+```console
+$ asdf install
+go-jsonnet 0.16.0 is already installed
+golang 1.14 is already installed
+ruby 2.6.5 is already installed
+$ # Confirm everything is working with....
+$ asdf current
+go-jsonnet     0.16.0   (set by ~/runbooks/.tool-versions)
+golang         1.14     (set by ~/runbooks/.tool-versions)
+ruby           2.6.5    (set by ~/runbooks/.ruby-version)
+```
 
 ### Go, Jsonnet
 
@@ -503,8 +526,7 @@ Or via homebrew:
 ```
 brew install go-jsonnet
 ```
-Or use [an asdf
-plugin](https://gitlab.com/craigfurman/asdf-go-jsonnet).
+Or use [an asdf plugin](https://gitlab.com/craigfurman/asdf-go-jsonnet).
 
 ### Ruby
 
