@@ -10,7 +10,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_server_rpcs_total{type="nfs"}[1m])
       )
   - record: gitlab_component_errors:rate
@@ -19,7 +19,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[1m])
       )
   - record: gitlab_component_ops:rate_5m
@@ -28,7 +28,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_server_rpcs_total{type="nfs"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
@@ -37,7 +37,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[5m])
       )
   - record: gitlab_component_ops:rate_30m
@@ -46,7 +46,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_server_rpcs_total{type="nfs"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
@@ -55,7 +55,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[30m])
       )
   - record: gitlab_component_ops:rate_1h
@@ -64,7 +64,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_server_rpcs_total{type="nfs"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
@@ -73,7 +73,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[1h])
       )
   - record: gitlab_component_ops:rate_6h
@@ -82,7 +82,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_server_rpcs_total{type="nfs"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
@@ -91,7 +91,7 @@ groups:
       tier: stor
       type: nfs
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(node_nfsd_rpc_errors_total{type="nfs"}[6h])
       )
 - name: 'Component mapping: nfs'

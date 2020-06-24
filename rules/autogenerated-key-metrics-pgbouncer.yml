@@ -10,7 +10,7 @@ groups:
       tier: db
       type: pgbouncer
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[1m])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[1m])
@@ -21,7 +21,7 @@ groups:
       tier: db
       type: pgbouncer
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[5m])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[5m])
@@ -32,7 +32,7 @@ groups:
       tier: db
       type: pgbouncer
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[30m])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[30m])
@@ -43,7 +43,7 @@ groups:
       tier: db
       type: pgbouncer
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[1h])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[1h])
@@ -54,7 +54,7 @@ groups:
       tier: db
       type: pgbouncer
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(pgbouncer_stats_sql_transactions_pooled_total{type="pgbouncer", tier="db"}[6h])
         or
         rate(pgbouncer_stats_queries_pooled_total{type="pgbouncer", tier="db"}[6h])

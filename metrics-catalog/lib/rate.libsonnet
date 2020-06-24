@@ -11,12 +11,12 @@ local generateInstanceFilterQuery(instanceFilter) =
 
 // Generates a range-vector function using the provided functions
 local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, rangeInterval) =
-  local selector = selectors.join([rate.selector, additionalSelectors]);
+  local selector = selectors.merge(rate.selector, additionalSelectors);
 
   '%(rangeFunction)s(%(counter)s{%(selector)s}[%(rangeInterval)s])%(instanceFilterQuery)s' % {
     rangeFunction: rangeFunction,
     counter: rate.counter,
-    selector: selector,
+    selector: selectors.serializeHash(selector),
     rangeInterval: rangeInterval,
     instanceFilterQuery: generateInstanceFilterQuery(rate.instanceFilter),
   };
@@ -24,11 +24,11 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
 {
   rateMetric(
     counter,
-    selector='',
+    selector={},
     instanceFilter='',
   ):: {
     counter: counter,
-    selector: strings.chomp(selector),
+    selector: selector,
     instanceFilter: instanceFilter,
 
     // This creates a rate query of the form
@@ -44,6 +44,7 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
     // This creates an aggregated rate query of the form
     // sum by(<aggregationLabels>) (rate(....{<selector>}[<rangeInterval>]))
     aggregatedRateQuery(aggregationLabels, selector, rangeInterval)::
+      local combinedSelector = selectors.merge(self.selector, selector);
       local query = generateRangeFunctionQuery(self, 'rate', selector, rangeInterval);
       aggregations.aggregateOverQuery('sum', aggregationLabels, query),
 

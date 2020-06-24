@@ -10,7 +10,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net"}[1m])
       )
   - record: gitlab_component_errors:rate
@@ -19,7 +19,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net", edge_response_status=~"5.."}[1m])
       )
   - record: gitlab_component_ops:rate
@@ -28,7 +28,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com"}[1m])
       )
   - record: gitlab_component_errors:rate
@@ -37,7 +37,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com", edge_response_status=~"5.."}[1m])
       )
   - record: gitlab_component_ops:rate_5m
@@ -46,7 +46,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
@@ -55,7 +55,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net", edge_response_status=~"5.."}[5m])
       )
   - record: gitlab_component_ops:rate_5m
@@ -64,7 +64,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
@@ -73,7 +73,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com", edge_response_status=~"5.."}[5m])
       )
   - record: gitlab_component_ops:rate_30m
@@ -82,7 +82,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
@@ -91,7 +91,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net", edge_response_status=~"5.."}[30m])
       )
   - record: gitlab_component_ops:rate_30m
@@ -100,7 +100,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
@@ -109,7 +109,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com", edge_response_status=~"5.."}[30m])
       )
   - record: gitlab_component_ops:rate_1h
@@ -118,7 +118,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
@@ -127,7 +127,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net", edge_response_status=~"5.."}[1h])
       )
   - record: gitlab_component_ops:rate_1h
@@ -136,7 +136,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
@@ -145,7 +145,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com", edge_response_status=~"5.."}[1h])
       )
   - record: gitlab_component_ops:rate_6h
@@ -154,7 +154,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
@@ -163,7 +163,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone="gitlab.net", edge_response_status=~"5.."}[6h])
       )
   - record: gitlab_component_ops:rate_6h
@@ -172,7 +172,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
@@ -181,7 +181,7 @@ groups:
       tier: lb
       type: waf
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(cloudflare_zones_http_responses_total{zone=~"gitlab.com|staging.gitlab.com", edge_response_status=~"5.."}[6h])
       )
 - name: 'Component mapping: waf'

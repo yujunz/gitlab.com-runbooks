@@ -13,6 +13,22 @@ local shards = [
   'urgent-cpu-bound',
 ];
 
+local highUrgencySelector = {
+  urgency: 'high',
+};
+
+local lowUrgencySelector = {
+  urgency: 'low',
+};
+
+local throttledUrgencySelector = {
+  urgency: 'throttled',
+};
+
+local noUrgencySelector = {
+  urgency: '',
+};
+
 {
   type: 'sidekiq',
   tier: 'sv',
@@ -36,57 +52,55 @@ local shards = [
   },
   components: {
     ['shard_' + std.strReplace(k, '-', '_')]: {
-      local formatConfig = {
-        shard: k,
-      },
+      local shardSelector = { shard: k },
       apdex: combined([
         histogramApdex(
           histogram='sidekiq_jobs_completion_seconds_bucket',
-          selector='urgency="high", shard="%(shard)s"' % formatConfig,
+          selector=highUrgencySelector + shardSelector,
           satisfiedThreshold=sidekiqHelpers.slos.urgent.executionDurationSeconds,
         ),
         histogramApdex(
           histogram='sidekiq_jobs_queue_duration_seconds_bucket',
-          selector='urgency="high", shard="%(shard)s"' % formatConfig,
+          selector=highUrgencySelector + shardSelector,
           satisfiedThreshold=sidekiqHelpers.slos.urgent.queueingDurationSeconds,
         ),
         histogramApdex(
           histogram='sidekiq_jobs_completion_seconds_bucket',
-          selector='urgency="low", shard="%(shard)s"' % formatConfig,
+          selector=lowUrgencySelector + shardSelector,
           satisfiedThreshold=sidekiqHelpers.slos.lowUrgency.executionDurationSeconds,
         ),
         histogramApdex(
           histogram='sidekiq_jobs_queue_duration_seconds_bucket',
-          selector='urgency="low", shard="%(shard)s"' % formatConfig,
+          selector=lowUrgencySelector + shardSelector,
           satisfiedThreshold=sidekiqHelpers.slos.lowUrgency.queueingDurationSeconds,
         ),
         histogramApdex(
           histogram='sidekiq_jobs_completion_seconds_bucket',
-          selector='urgency="throttled", shard="%(shard)s"' % formatConfig,
+          selector=throttledUrgencySelector + shardSelector,
           satisfiedThreshold=sidekiqHelpers.slos.throttled.executionDurationSeconds,
         ),
         // TODO: remove this once all unattribute jobs are removed
         // Treat `urgency=""` as low urgency jobs.
         histogramApdex(
           histogram='sidekiq_jobs_completion_seconds_bucket',
-          selector='urgency="", shard="%(shard)s"' % formatConfig,
+          selector=noUrgencySelector + shardSelector,
           satisfiedThreshold=sidekiqHelpers.slos.lowUrgency.executionDurationSeconds,
         ),
         histogramApdex(
           histogram='sidekiq_jobs_queue_duration_seconds_bucket',
-          selector='urgency="", shard="%(shard)s"' % formatConfig,
+          selector=noUrgencySelector + shardSelector,
           satisfiedThreshold=sidekiqHelpers.slos.lowUrgency.queueingDurationSeconds,
         ),
       ]),
 
       requestRate: rateMetric(
         counter='sidekiq_jobs_completion_seconds_bucket',
-        selector='shard="%(shard)s", le="+Inf"' % formatConfig,
+        selector=shardSelector { le: '+Inf' },
       ),
 
       errorRate: rateMetric(
         counter='sidekiq_jobs_failed_total',
-        selector='shard="%(shard)s"' % formatConfig
+        selector=shardSelector { le: '+Inf' },
       ),
 
       significantLabels: ['fqdn'],

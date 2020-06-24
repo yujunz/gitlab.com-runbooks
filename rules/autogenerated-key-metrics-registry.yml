@@ -51,11 +51,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="1"}[1m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="2.5"}[1m])
         )
       )
@@ -63,7 +63,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])
         ) > 0
       )
@@ -73,7 +73,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
@@ -82,7 +82,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry"}[1m])
       )
   - record: gitlab_component_errors:rate
@@ -91,7 +91,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[1m])
       )
   - record: gitlab_component_apdex:ratio
@@ -101,11 +101,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="5"}[1m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="10"}[1m])
         )
       )
@@ -113,7 +113,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="+Inf"}[1m])
         ) > 0
       )
@@ -123,7 +123,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_bucket{le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
@@ -132,7 +132,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_count{}[1m])
       )
   - record: gitlab_component_ops:rate_5m
@@ -182,11 +182,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="1"}[5m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="2.5"}[5m])
         )
       )
@@ -194,7 +194,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[5m])
         ) > 0
       )
@@ -204,7 +204,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
@@ -213,7 +213,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
@@ -222,7 +222,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
@@ -232,11 +232,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="5"}[5m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="10"}[5m])
         )
       )
@@ -244,7 +244,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="+Inf"}[5m])
         ) > 0
       )
@@ -254,7 +254,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_bucket{le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
@@ -263,7 +263,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_count{}[5m])
       )
   - record: gitlab_component_ops:rate_30m
@@ -313,11 +313,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="1"}[30m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="2.5"}[30m])
         )
       )
@@ -325,7 +325,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[30m])
         ) > 0
       )
@@ -335,7 +335,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
@@ -344,7 +344,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
@@ -353,7 +353,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
@@ -363,11 +363,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="5"}[30m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="10"}[30m])
         )
       )
@@ -375,7 +375,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="+Inf"}[30m])
         ) > 0
       )
@@ -385,7 +385,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_bucket{le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
@@ -394,7 +394,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_count{}[30m])
       )
   - record: gitlab_component_ops:rate_1h
@@ -444,11 +444,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="1"}[1h])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="2.5"}[1h])
         )
       )
@@ -456,7 +456,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1h])
         ) > 0
       )
@@ -466,7 +466,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
@@ -475,7 +475,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
@@ -484,7 +484,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
@@ -494,11 +494,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="5"}[1h])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="10"}[1h])
         )
       )
@@ -506,7 +506,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="+Inf"}[1h])
         ) > 0
       )
@@ -516,7 +516,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_bucket{le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
@@ -525,7 +525,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_count{}[1h])
       )
   - record: gitlab_component_ops:rate_6h
@@ -575,11 +575,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="1"}[6h])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="2.5"}[6h])
         )
       )
@@ -587,7 +587,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[6h])
         ) > 0
       )
@@ -597,7 +597,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
@@ -606,7 +606,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
@@ -615,7 +615,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
@@ -625,11 +625,11 @@ groups:
       type: registry
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="5"}[6h])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="10"}[6h])
         )
       )
@@ -637,7 +637,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="+Inf"}[6h])
         ) > 0
       )
@@ -647,7 +647,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_bucket{le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
@@ -656,7 +656,7 @@ groups:
       tier: sv
       type: registry
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(registry_storage_action_seconds_count{}[6h])
       )
 - name: 'Component mapping: registry'

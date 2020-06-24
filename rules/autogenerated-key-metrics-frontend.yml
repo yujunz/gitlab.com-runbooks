@@ -103,11 +103,11 @@ groups:
       type: frontend
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="16"}[1m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="32"}[1m])
         )
       )
@@ -115,7 +115,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[1m])
         ) > 0
       )
@@ -125,7 +125,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
@@ -134,7 +134,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_total{type="frontend"}[1m])
       )
   - record: gitlab_component_errors:rate
@@ -143,7 +143,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[1m])
       )
   - record: gitlab_component_apdex:ratio_5m
@@ -245,11 +245,11 @@ groups:
       type: frontend
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="16"}[5m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="32"}[5m])
         )
       )
@@ -257,7 +257,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[5m])
         ) > 0
       )
@@ -267,7 +267,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
@@ -276,7 +276,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_total{type="frontend"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
@@ -285,7 +285,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[5m])
       )
   - record: gitlab_component_apdex:ratio_30m
@@ -387,11 +387,11 @@ groups:
       type: frontend
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="16"}[30m])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="32"}[30m])
         )
       )
@@ -399,7 +399,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[30m])
         ) > 0
       )
@@ -409,7 +409,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
@@ -418,7 +418,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_total{type="frontend"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
@@ -427,7 +427,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[30m])
       )
   - record: gitlab_component_apdex:ratio_1h
@@ -529,11 +529,11 @@ groups:
       type: frontend
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="16"}[1h])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="32"}[1h])
         )
       )
@@ -541,7 +541,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[1h])
         ) > 0
       )
@@ -551,7 +551,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
@@ -560,7 +560,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_total{type="frontend"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
@@ -569,7 +569,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[1h])
       )
   - record: gitlab_component_apdex:ratio_6h
@@ -671,11 +671,11 @@ groups:
       type: frontend
     expr: |
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="16"}[6h])
         )
         +
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="32"}[6h])
         )
       )
@@ -683,7 +683,7 @@ groups:
       2
       /
       (
-        sum by (environment, stage) (
+        sum by (environment,stage) (
           rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[6h])
         ) > 0
       )
@@ -693,7 +693,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_request_duration_seconds_bucket{type="frontend", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
@@ -702,7 +702,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_total{type="frontend"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
@@ -711,7 +711,7 @@ groups:
       tier: lb
       type: frontend
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(haproxy_ssh_requests_terminated_total{type="frontend", cause=~"K|S|s|P|I|D"}[6h])
       )
 - name: 'Component mapping: frontend'

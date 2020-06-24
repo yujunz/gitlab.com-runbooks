@@ -4,7 +4,7 @@ local generateApdexScoreRules(ruleSet, aggregationLabels, componentDefinition, r
     [{
       record: ruleSet.recordingRuleNames.apdexRatio,
       labels: recordingRuleStaticLabels,
-      expr: componentDefinition.apdex.apdexQuery(aggregationLabels, selector='', rangeInterval=ruleSet.burnRate),
+      expr: componentDefinition.apdex.apdexQuery(aggregationLabels, selector={}, rangeInterval=ruleSet.burnRate),
     }]
   else
     [];
@@ -15,7 +15,7 @@ local generateApdexWeightRules(ruleSet, aggregationLabels, componentDefinition, 
     [{
       record: ruleSet.recordingRuleNames.apdexWeight,
       labels: recordingRuleStaticLabels,
-      expr: componentDefinition.apdex.apdexWeightQuery(aggregationLabels, selector='', rangeInterval=ruleSet.burnRate),
+      expr: componentDefinition.apdex.apdexWeightQuery(aggregationLabels, selector={}, rangeInterval=ruleSet.burnRate),
     }]
   else
     [];
@@ -25,7 +25,7 @@ local generateRequestRateRules(ruleSet, aggregationLabels, componentDefinition, 
     [{
       record: ruleSet.recordingRuleNames.requestRate,
       labels: recordingRuleStaticLabels,
-      expr: componentDefinition.requestRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval=ruleSet.burnRate),
+      expr: componentDefinition.requestRate.aggregatedRateQuery(aggregationLabels, selector={}, rangeInterval=ruleSet.burnRate),
     }]
   else
     [];
@@ -35,7 +35,7 @@ local generateErrorRateRules(ruleSet, aggregationLabels, componentDefinition, re
     [{
       record: ruleSet.recordingRuleNames.errorRate,
       labels: recordingRuleStaticLabels,
-      expr: componentDefinition.errorRate.aggregatedRateQuery(aggregationLabels, selector='', rangeInterval=ruleSet.burnRate),
+      expr: componentDefinition.errorRate.aggregatedRateQuery(aggregationLabels, selector={}, rangeInterval=ruleSet.burnRate),
     }]
   else
     [];
@@ -56,10 +56,9 @@ local generateRecordingRulesForComponent(ruleSet, serviceDefinition, componentNa
 
   // Remove any fixed labels from the aggregation labels
   local aggregationLabelsArray = std.filter(function(label) !std.objectHas(labels, label), aggregationLabels);
-  local aggregationLabelsString = std.join(', ', aggregationLabelsArray);
 
   std.flatMap(
-    function(generator) generator(ruleSet, aggregationLabelsString, componentDefinition, labels),
+    function(generator) generator(ruleSet, aggregationLabelsArray, componentDefinition, labels),
     [
       generateApdexScoreRules,
       generateApdexWeightRules,

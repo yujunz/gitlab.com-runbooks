@@ -10,7 +10,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[1m]) and on (instance) redis_instance_info{role="master"}
       )
   - record: gitlab_component_ops:rate
@@ -19,7 +19,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[1m]) and on (instance) redis_instance_info{role="slave"}
       )
   - record: gitlab_component_ops:rate_5m
@@ -28,7 +28,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[5m]) and on (instance) redis_instance_info{role="master"}
       )
   - record: gitlab_component_ops:rate_5m
@@ -37,7 +37,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[5m]) and on (instance) redis_instance_info{role="slave"}
       )
   - record: gitlab_component_ops:rate_30m
@@ -46,7 +46,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[30m]) and on (instance) redis_instance_info{role="master"}
       )
   - record: gitlab_component_ops:rate_30m
@@ -55,7 +55,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[30m]) and on (instance) redis_instance_info{role="slave"}
       )
   - record: gitlab_component_ops:rate_1h
@@ -64,7 +64,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[1h]) and on (instance) redis_instance_info{role="master"}
       )
   - record: gitlab_component_ops:rate_1h
@@ -73,7 +73,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[1h]) and on (instance) redis_instance_info{role="slave"}
       )
   - record: gitlab_component_ops:rate_6h
@@ -82,7 +82,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[6h]) and on (instance) redis_instance_info{role="master"}
       )
   - record: gitlab_component_ops:rate_6h
@@ -91,7 +91,7 @@ groups:
       tier: db
       type: redis
     expr: |
-      sum by (environment, stage) (
+      sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[6h]) and on (instance) redis_instance_info{role="slave"}
       )
 - name: 'Component mapping: redis'

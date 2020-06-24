@@ -18,21 +18,27 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
   },
   components: {
     proxy: {
+      local baseSelector = { job: 'praefect' },
       apdex: histogramApdex(
         histogram='grpc_server_handling_seconds_bucket',
-        selector='job="praefect", grpc_type="unary", grpc_method!~"%(gitalyApdexIgnoredMethodsRegexp)s"' % { gitalyApdexIgnoredMethodsRegexp: gitalyHelpers.gitalyApdexIgnoredMethodsRegexp },
+        selector=baseSelector {
+          grpc_type: 'unary',
+          grpc_method: { nre: gitalyHelpers.gitalyApdexIgnoredMethodsRegexp },
+        },
         satisfiedThreshold=0.5,
         toleratedThreshold=1
       ),
 
       requestRate: rateMetric(
         counter='grpc_server_handled_total',
-        selector='job="praefect"'
+        selector=baseSelector
       ),
 
       errorRate: rateMetric(
         counter='grpc_server_handled_total',
-        selector='job="praefect", grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$"'
+        selector=baseSelector {
+          grpc_code: { nre: '^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$' },
+        }
       ),
 
       significantLabels: ['fqdn'],
