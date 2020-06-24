@@ -2,13 +2,13 @@ groups:
 - name: gitlab-walg-backup.rules
   rules:
   - record: gitlab_com:last_walg_backup_age_in_seconds
-    expr: min(time() - walg_backup_last_completed_time_seconds) by (environment)
+    expr: min(time() - walg_backup_last_completed_time_seconds) by (environment,fqdn)
   - record: gitlab_com:last_walg_basebackup_age_in_hours
-    expr: min(time() - walg_basebackup_last_completed_time_seconds) by (environment) / 3600
+    expr: min(time() - walg_basebackup_last_completed_time_seconds) by (environment,fqdn) / 3600
   - record: gitlab_com:last_walg_successful_basebackup_age_in_hours
-    expr: min(time()-push_time_seconds{job='walg-basebackup',status="1"}) by (environment) / 3600
+    expr: min(time()-push_time_seconds{job='walg-basebackup',status="1"}) by (environment,fqdn) / 3600
   - record: gitlab_com:last_walg_failed_basebackup_age_in_hours
-    expr: min(time()-push_time_seconds{job='walg-basebackup',status="-1"}) by (environment) / 3600
+    expr: min(time()-push_time_seconds{job='walg-basebackup',status="-1"}) by (environment,fqdn) / 3600
   - alert: walgBackupDelayed
     expr: gitlab_com:last_walg_backup_age_in_seconds >= 60 * 15
     for: 5m
@@ -20,7 +20,7 @@ groups:
       description: walg syncs to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: docs/patroni/gitlab-com-walg-backups.md
-      title: Last walg backup was seen {{ .Value | humanizeDuration }} ago.
+      title: Last walg backup was seen {{ .Value | humanizeDuration }} ago for {{ $labels.fqdn }}.
   - alert: walgBaseBackupDelayed
     expr: gitlab_com:last_walg_successful_basebackup_age_in_hours >= 48
     for: 5m
