@@ -41,7 +41,7 @@ The GCS bucket is configured with multi-regional storage (US location).
 
 Our secondary databases (version, customers, sentry, etc.) are still in AWS S3 in a bucket labeled `gitlab-secondarydb-backups`. The data is being encrypted with GPG. The key can be found in the Production vault of 1Password. <!-- Nik: This seems very doubtful to me, should be verified. There are rumors that "version" and "customers" are in Cloud SQL but I didn't manage to see them there -->
 
-GitLab.com production database archive is located in the bucket `gitlab-gprd-postgres-backup` in GCS, in the folder `pitr-wale-pg11`. Note that WAL-E uses path with two slashes, so in GCP Console, you might need to modify the URL to see the folder (`gitlab-gprd-postgres-backup//pitr-wale-pg11`). Similarly, use two slashes when using `gsutil`:
+GitLab.com production database archive is located in the bucket `gitlab-gprd-postgres-backup` in GCS, in the folder `pitr-wale-pg11`. It has two subfolders, `wal_005` to store the stream of WALs (16 MiB each), and `basebackup_005` to store daily full backups. Note that WAL-E uses path with two slashes, so in GCP Console, you might need to modify the URL to see the folder (`gitlab-gprd-postgres-backup//pitr-wale-pg11`). Similarly, use two slashes when using `gsutil`:
 
 ```bash
 gsutil ls -L gs://gitlab-gprd-postgres-backup//pitr-wale-pg11/
