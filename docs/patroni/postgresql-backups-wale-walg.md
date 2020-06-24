@@ -160,10 +160,13 @@ WAL-E is running on all machines in the patroni cluster. However, backups are ac
 
 `wal-push`: example of a log entry on the primary working correctly:
 ```
-2019-06-07_16:50:42 patroni-04-db-gprd wal_e.worker.upload  INFO     MSG: begin archiving a file#012        DETAIL: Uploading "pg_xlog/000000140001003100000077" to "gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/000000140001003100000077.lzo".#012        STRUCTURED: time=2019-06-07T16:50:42.145335-00 pid=35067 action=push-wal key=gs://gitlab-gprd-postgres-backup/pitr-wale-v1/wal_005/000000140001003100000077.lzo prefix=pitr-wale-v1/ seg=000000140001003100000077 state=begin
+Jun 24 06:26:22 patroni-01-db-gprd wal_e.worker.upload INFO     MSG: begin uploading a base backup volume#012        DETAIL: Uploading to "gs://gitlab-gprd-postgres-backup/pitr-wale-pg11/basebackups_005/base_0000000300026C2A00000096_02438808/tar_partitions/part_00005595.tar.lzo".#012        STRUCTURED: time=2020-06-24T06:26:22.528122-00 pid=63737
 ```
 
-`backup-push`: example of log entries on a replica working correctly (no backups are actually happening from replicas):
+`backup-push` on the primary: example of log entries on the primary working correctly:
+
+
+`backup-push` on a replica: example of log entries on a replica working correctly (no backups are actually happening from replicas while we are on WAL-E, so these line just report that there is nothing to do; this will be changed after migration to WAL-G):
 ```
 2019-06-07_00:00:03 patroni-01-db-gprd wal_e.main    INFO     MSG: starting WAL-E#012        DETAIL: The subcommand is "backup-push".#012        STRUCTURED: time=2019-06-07T00:00:03.077171-00 pid=37922
 2019-06-07_00:00:05 patroni-01-db-gprd wal_e.operator.backup  WARNING  MSG: blocking on sending WAL segments#012        DETAIL: The backup was not completed successfully, but we have to wait anyway.  See README: TODO about pg_cancel_backup#012        STRUCTURED: time=2019-06-07T00:00:05.263203-00 pid=37922
