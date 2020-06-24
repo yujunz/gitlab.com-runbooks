@@ -2,26 +2,26 @@ local basic = import 'basic.libsonnet';
 local layout = import 'layout.libsonnet';
 
 basic.dashboard(
-  'Bitbucket Importer',
+  'Bitbucket Server Importer',
   tags=['sidekiq'],
 )
 .addPanels(
   layout.grid([
     basic.singlestat(
       title='Total Imported Projects',
-      query='sum(increase(bitbucket_importer_imported_projects_total{env="$environment"}[$__interval]))',
+      query='sum(increase(bitbucket_server_importer_imported_projects_total{env="$environment"}[$__interval]))',
       format='locale',
       valueName='total'
     ),
     basic.singlestat(
       title='Total Imported Merge (Pull) Requests',
-      query='sum(increase(bitbucket_importer_imported_merge_requests_total{env="$environment"}[$__interval]))',
+      query='sum(increase(bitbucket_server_importer_imported_merge_requests_total{env="$environment"}[$__interval]))',
       format='locale',
       valueName='total'
     ),
     basic.singlestat(
       title='Total Imported Issues',
-      query='sum(increase(bitbucket_importer_imported_issues_total{env="$environment"}[$__interval]))',
+      query='sum(increase(bitbucket_server_importer_imported_issues_total{env="$environment"}[$__interval]))',
       format='locale',
       valueName='total'
     ),
@@ -31,19 +31,19 @@ basic.dashboard(
   layout.grid([
     basic.timeseries(
       title='Imported Projects Per Hour',
-      query='sum(rate(bitbucket_importer_imported_projects_total{env="$environment"}[$__interval])) * 3600',
+      query='sum(rate(bitbucket_server_importer_imported_projects_total{env="$environment"}[$__interval])) * 3600',
       legendFormat='Amount',
       interval='1h'
     ),
     basic.timeseries(
       title='Imported Merge (Pull) Requests Per Hour',
-      query='sum(rate(bitbucket_importer_imported_merge_requests_total{env="$environment"}[$__interval])) * 3600',
+      query='sum(rate(bitbucket_server_importer_imported_merge_requests_total{env="$environment"}[$__interval])) * 3600',
       legendFormat='Amount',
       interval='1h'
     ),
     basic.timeseries(
       title='Imported Issues Per Hour',
-      query='sum(rate(bitbucket_importer_imported_issues_total{env="$environment"}[$__interval])) * 3600',
+      query='sum(rate(bitbucket_server_importer_imported_issues_total{env="$environment"}[$__interval])) * 3600',
       legendFormat='Amount',
       interval='1h'
     ),
@@ -59,7 +59,7 @@ basic.dashboard(
           query: |||
             histogram_quantile(0.50,
               sum(
-                rate(bitbucket_importer_total_duration_seconds_bucket{
+                rate(bitbucket_server_importer_total_duration_seconds_bucket{
                   environment="$environment"
                 }[$__interval])
               ) by (le, environment))
@@ -70,7 +70,7 @@ basic.dashboard(
           query: |||
             histogram_quantile(0.90,
               sum(
-                rate(bitbucket_importer_total_duration_seconds_bucket{
+                rate(bitbucket_server_importer_total_duration_seconds_bucket{
                   environment="$environment"
                 }[$__interval])
               ) by (le, environment))
@@ -81,7 +81,7 @@ basic.dashboard(
           query: |||
             histogram_quantile(0.95,
               sum(
-                rate(bitbucket_importer_total_duration_seconds_bucket{
+                rate(bitbucket_server_importer_total_duration_seconds_bucket{
                   environment="$environment"
                 }[$__interval])
               ) by (le, environment))
@@ -92,7 +92,7 @@ basic.dashboard(
           query: |||
             histogram_quantile(0.99,
               sum(
-                rate(bitbucket_importer_total_duration_seconds_bucket{
+                rate(bitbucket_server_importer_total_duration_seconds_bucket{
                   environment="$environment"
                 }[$__interval])
               ) by (le, environment))
