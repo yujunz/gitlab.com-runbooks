@@ -863,7 +863,6 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
     },
   }),
 
-
   // TODO: figure out how k8s management falls into out environment/tier/type/stage/shard labelling
   // taxonomy. These saturation metrics rely on this in order to work
   // See https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10249 for more details

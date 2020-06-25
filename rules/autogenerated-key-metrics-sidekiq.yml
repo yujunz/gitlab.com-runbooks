@@ -11,36 +11,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="60"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="300"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="60"}[1m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -50,19 +50,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -71,7 +71,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="catchall"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="catchall"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -80,7 +80,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="catchall"}[1m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="catchall"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -89,36 +89,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="60"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="300"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="60"}[1m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -128,19 +128,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -149,7 +149,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="elasticsearch"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="elasticsearch"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -158,7 +158,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="elasticsearch"}[1m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="elasticsearch"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -167,36 +167,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="60"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="300"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="60"}[1m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -206,19 +206,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -227,7 +227,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="low-urgency-cpu-bound"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="low-urgency-cpu-bound"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -236,7 +236,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="low-urgency-cpu-bound"}[1m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="low-urgency-cpu-bound"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -245,36 +245,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="60"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="300"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="60"}[1m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -284,19 +284,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -305,7 +305,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="memory-bound"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="memory-bound"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -314,7 +314,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="memory-bound"}[1m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="memory-bound"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -323,36 +323,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="60"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="300"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="60"}[1m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -362,19 +362,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -383,7 +383,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-cpu-bound"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-cpu-bound"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -392,7 +392,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-cpu-bound"}[1m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-cpu-bound"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -401,36 +401,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="60"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="300"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="300"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="300"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="60"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="60"}[1m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[1m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[1m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -440,19 +440,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[1m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[1m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -461,7 +461,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-other"}[1m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-other"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -470,7 +470,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-other"}[1m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-other"}[1m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -479,36 +479,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="60"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="300"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="60"}[5m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -518,19 +518,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -539,7 +539,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="catchall"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="catchall"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -548,7 +548,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="catchall"}[5m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="catchall"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -557,36 +557,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="60"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="300"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="60"}[5m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -596,19 +596,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -617,7 +617,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="elasticsearch"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="elasticsearch"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -626,7 +626,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="elasticsearch"}[5m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="elasticsearch"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -635,36 +635,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="60"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="300"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="60"}[5m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -674,19 +674,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -695,7 +695,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="low-urgency-cpu-bound"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="low-urgency-cpu-bound"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -704,7 +704,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="low-urgency-cpu-bound"}[5m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="low-urgency-cpu-bound"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -713,36 +713,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="60"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="300"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="60"}[5m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -752,19 +752,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -773,7 +773,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="memory-bound"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="memory-bound"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -782,7 +782,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="memory-bound"}[5m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="memory-bound"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -791,36 +791,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="60"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="300"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="60"}[5m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -830,19 +830,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -851,7 +851,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-cpu-bound"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-cpu-bound"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -860,7 +860,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-cpu-bound"}[5m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-cpu-bound"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -869,36 +869,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="60"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="300"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="300"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="300"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="60"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="60"}[5m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[5m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[5m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -908,19 +908,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[5m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[5m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -929,7 +929,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-other"}[5m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-other"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -938,7 +938,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-other"}[5m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-other"}[5m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -947,36 +947,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="60"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="300"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="60"}[30m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -986,19 +986,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1007,7 +1007,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="catchall"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="catchall"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -1016,7 +1016,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="catchall"}[30m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="catchall"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -1025,36 +1025,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="60"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="300"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="60"}[30m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1064,19 +1064,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1085,7 +1085,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="elasticsearch"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="elasticsearch"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -1094,7 +1094,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="elasticsearch"}[30m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="elasticsearch"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -1103,36 +1103,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="60"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="300"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="60"}[30m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1142,19 +1142,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1163,7 +1163,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="low-urgency-cpu-bound"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="low-urgency-cpu-bound"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -1172,7 +1172,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="low-urgency-cpu-bound"}[30m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="low-urgency-cpu-bound"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -1181,36 +1181,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="60"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="300"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="60"}[30m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1220,19 +1220,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1241,7 +1241,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="memory-bound"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="memory-bound"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -1250,7 +1250,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="memory-bound"}[30m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="memory-bound"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -1259,36 +1259,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="60"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="300"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="60"}[30m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1298,19 +1298,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1319,7 +1319,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-cpu-bound"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-cpu-bound"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -1328,7 +1328,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-cpu-bound"}[30m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-cpu-bound"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -1337,36 +1337,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="60"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="300"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="300"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="300"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="60"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="60"}[30m])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[30m])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[30m])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1376,19 +1376,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[30m])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[30m])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1397,7 +1397,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-other"}[30m])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-other"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -1406,7 +1406,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-other"}[30m])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-other"}[30m])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -1415,36 +1415,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="60"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="300"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="60"}[1h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -1454,19 +1454,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -1475,7 +1475,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="catchall"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="catchall"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -1484,7 +1484,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="catchall"}[1h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="catchall"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -1493,36 +1493,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="60"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="300"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="60"}[1h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -1532,19 +1532,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -1553,7 +1553,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="elasticsearch"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="elasticsearch"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -1562,7 +1562,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="elasticsearch"}[1h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="elasticsearch"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -1571,36 +1571,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="60"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="300"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="60"}[1h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -1610,19 +1610,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -1631,7 +1631,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="low-urgency-cpu-bound"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="low-urgency-cpu-bound"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -1640,7 +1640,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="low-urgency-cpu-bound"}[1h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="low-urgency-cpu-bound"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -1649,36 +1649,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="60"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="300"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="60"}[1h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -1688,19 +1688,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -1709,7 +1709,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="memory-bound"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="memory-bound"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -1718,7 +1718,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="memory-bound"}[1h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="memory-bound"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -1727,36 +1727,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="60"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="300"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="60"}[1h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -1766,19 +1766,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -1787,7 +1787,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-cpu-bound"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-cpu-bound"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -1796,7 +1796,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-cpu-bound"}[1h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-cpu-bound"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -1805,36 +1805,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="60"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="300"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="300"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="300"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="60"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="60"}[1h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[1h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[1h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -1844,19 +1844,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[1h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[1h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -1865,7 +1865,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-other"}[1h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-other"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -1874,7 +1874,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-other"}[1h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-other"}[1h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
@@ -1883,36 +1883,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="60"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="300"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="60"}[6h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -1922,19 +1922,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="throttled", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="throttled", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="catchall",urgency="", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -1943,7 +1943,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="catchall"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="catchall"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -1952,7 +1952,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="catchall"}[6h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="catchall"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
@@ -1961,36 +1961,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="60"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="300"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="60"}[6h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2000,19 +2000,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="throttled", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="throttled", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="elasticsearch",urgency="", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2021,7 +2021,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="elasticsearch"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="elasticsearch"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -2030,7 +2030,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="elasticsearch"}[6h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="elasticsearch"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
@@ -2039,36 +2039,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="60"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="300"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="60"}[6h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2078,19 +2078,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="throttled", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="throttled", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="low-urgency-cpu-bound",urgency="", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2099,7 +2099,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="low-urgency-cpu-bound"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="low-urgency-cpu-bound"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -2108,7 +2108,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="low-urgency-cpu-bound"}[6h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="low-urgency-cpu-bound"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
@@ -2117,36 +2117,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="60"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="300"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="60"}[6h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2156,19 +2156,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="throttled", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="throttled", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="memory-bound",urgency="", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2177,7 +2177,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="memory-bound"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="memory-bound"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -2186,7 +2186,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="memory-bound"}[6h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="memory-bound"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
@@ -2195,36 +2195,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="60"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="300"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="60"}[6h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2234,19 +2234,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="throttled", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="throttled", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-cpu-bound",urgency="", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2255,7 +2255,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-cpu-bound"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-cpu-bound"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -2264,7 +2264,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-cpu-bound"}[6h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-cpu-bound"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
@@ -2273,36 +2273,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="10"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="10"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="60"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="300"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="300"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="300"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="60"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="60"}[6h])
       )
       /
       (
         sum by (environment,stage) (
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[6h])
           or
-          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[6h])
+          rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2312,19 +2312,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="high", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="high", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="low", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="low", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="throttled", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="throttled", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[6h])
         or
-        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other", urgency="", le="+Inf"}[6h])
+        rate(sidekiq_jobs_queue_duration_seconds_bucket{shard="urgent-other",urgency="", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2333,7 +2333,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf", shard="urgent-other"}[6h])
+        rate(sidekiq_jobs_completion_seconds_bucket{le="+Inf",shard="urgent-other"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -2342,7 +2342,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        rate(sidekiq_jobs_failed_total{le="+Inf", shard="urgent-other"}[6h])
+        rate(sidekiq_jobs_failed_total{le="+Inf",shard="urgent-other"}[6h])
       )
 - name: 'Component mapping: sidekiq'
   interval: 1m

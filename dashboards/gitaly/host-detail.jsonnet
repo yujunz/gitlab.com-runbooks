@@ -67,7 +67,7 @@ basic.dashboard(
 )
 .addPanel(nodeMetrics.nodeMetricsDetailRow(selector), gridPos={ x: 0, y: 6000 })
 .addPanel(
-  saturationDetail.saturationDetailPanels(selector, components=[
+  saturationDetail.saturationDetailPanels(selectorHash, components=[
     'cgroup_memory',
     'cpu',
     'disk_space',

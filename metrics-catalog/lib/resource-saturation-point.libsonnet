@@ -1,5 +1,6 @@
 local alerts = import 'alerts.libsonnet';
 local strings = import 'strings.libsonnet';
+local selectors = import './selectors.libsonnet';
 
 local environmentLabels = ['environment', 'tier', 'type', 'stage'];
 
@@ -24,7 +25,7 @@ local resourceSaturationPoint = function(definition)
   local serviceApplicator = getServiceApplicator(definition.appliesTo);
 
   definition {
-    getQuery(selector, rangeInterval, maxAggregationLabels=[])::
+    getQuery(selectorHash, rangeInterval, maxAggregationLabels=[])::
       local staticLabels = self.getStaticLabels();
       local queryAggregationLabels = environmentLabels + definition.resourceLabels;
       local allMaxAggregationLabels = environmentLabels + maxAggregationLabels;
@@ -32,9 +33,12 @@ local resourceSaturationPoint = function(definition)
       local maxAggregationLabelsExcludingStaticLabels = std.filter(function(label) !std.objectHas(staticLabels, label), allMaxAggregationLabels);
       local queryFormatConfig = ({ queryFormatConfig: {} } + self).queryFormatConfig;
 
+      // Remove any statically defined labels from the selectors, if they are defined
+      local selectorWithoutStaticLabels = if staticLabels == {} then selectorHash else selectors.without(selectorHash, staticLabels);
+
       local preaggregation = definition.query % queryFormatConfig {
         rangeInterval: rangeInterval,
-        selector: selector,
+        selector: selectors.serializeHash(selectorWithoutStaticLabels),
         aggregationLabels: std.join(', ', queryAggregationLabelsExcludingStaticLabels),
       };
 
@@ -80,17 +84,17 @@ local resourceSaturationPoint = function(definition)
         (
           if std.isArray(definition.appliesTo) then
             if std.length(definition.appliesTo) > 1 then
-              'type=~"%s"' % [std.join('|', definition.appliesTo)]
+              { type: { re: std.join('|', definition.appliesTo) } }
             else
-              'type="%s"' % [definition.appliesTo[0]]
+              { type: definition.appliesTo[0] }
           else
             if std.length(definition.appliesTo.allExcept) > 0 then
-              'type!="", type!~"%s"' % [std.join('|', definition.appliesTo.allExcept)]
+              { type: [{ ne: ""}, { nre: std.join('|', definition.appliesTo.allExcept) }] }
             else
-              'type!=""'
+              { type: { ne: ""} }
         );
 
-      local query = definition.getQuery('environment!="", %s' % [typeFilter], definition.getBurnRatePeriod());
+      local query = definition.getQuery({ environment: {ne: ""} } + typeFilter, definition.getBurnRatePeriod());
 
       {
         record: 'gitlab_component_saturation:ratio',
@@ -166,7 +170,11 @@ local resourceSaturationPoint = function(definition)
           grafana_panel_id: '2',
           grafana_variables: 'environment,type,stage',
           grafana_min_zoom_hours: '6',
-          promql_query: definition.getQuery('environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"', definition.getBurnRatePeriod(), definition.resourceLabels),
+          promql_query: definition.getQuery({
+              environment: "{{ $labels.environment }}",
+              stage: "{{ $labels.stage }}",
+              type: "{{ $labels.type }}",
+            }, definition.getBurnRatePeriod(), definition.resourceLabels),
         },
       })],
 

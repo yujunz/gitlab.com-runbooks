@@ -12,10 +12,10 @@ groups:
         clamp_min(
           clamp_max(
             sum without (state) (
-              pg_stat_activity_count{datname="gitlabhq_production", state!="idle", environment!="", type="patroni"}
+              pg_stat_activity_count{datname="gitlabhq_production", state!="idle", environment!="",type="patroni"}
             )
             / on (environment, tier, type, stage, fqdn)
-            pg_settings_max_connections{environment!="", type="patroni"}
+            pg_settings_max_connections{environment!="",type="patroni"}
             ,
             1)
         ,
@@ -29,12 +29,12 @@ groups:
         clamp_min(
           clamp_max(
             (
-              container_memory_usage_bytes{id="/system.slice/gitlab-runsvdir.service", environment!="", type=~"gitaly|praefect"} -
-              container_memory_cache{id="/system.slice/gitlab-runsvdir.service", environment!="", type=~"gitaly|praefect"} -
-              container_memory_swap{id="/system.slice/gitlab-runsvdir.service", environment!="", type=~"gitaly|praefect"}
+              container_memory_usage_bytes{id="/system.slice/gitlab-runsvdir.service", environment!="",type=~"gitaly|praefect"} -
+              container_memory_cache{id="/system.slice/gitlab-runsvdir.service", environment!="",type=~"gitaly|praefect"} -
+              container_memory_swap{id="/system.slice/gitlab-runsvdir.service", environment!="",type=~"gitaly|praefect"}
             )
             /
-            container_spec_memory_limit_bytes{id="/system.slice/gitlab-runsvdir.service", environment!="", type=~"gitaly|praefect"}
+            container_spec_memory_limit_bytes{id="/system.slice/gitlab-runsvdir.service", environment!="",type=~"gitaly|praefect"}
             ,
             1)
         ,
@@ -48,7 +48,7 @@ groups:
         clamp_min(
           clamp_max(
             1 - avg by (environment, tier, type, stage) (
-              rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[5m])
+              rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node"}[5m])
             )
             ,
             1)
@@ -63,7 +63,7 @@ groups:
         clamp_min(
           clamp_max(
             (
-              1 - instance:node_filesystem_avail:ratio{fstype=~"ext.|xfs", environment!="", type!="", type!~"waf|bastion"}
+              1 - instance:node_filesystem_avail:ratio{fstype=~"ext.|xfs", environment!="",type!="",type!~"waf|bastion"}
             )
             ,
             1)
@@ -77,9 +77,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            rate(node_disk_reads_completed_total{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}[20m])
+            rate(node_disk_reads_completed_total{device!="sda", environment!="",type=~"patroni|gitaly|nfs"}[20m])
             /
-            node_disk_max_read_iops{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}
+            node_disk_max_read_iops{device!="sda", environment!="",type=~"patroni|gitaly|nfs"}
             ,
             1)
         ,
@@ -92,9 +92,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            rate(node_disk_read_bytes_total{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}[20m])
+            rate(node_disk_read_bytes_total{device!="sda", environment!="",type=~"patroni|gitaly|nfs"}[20m])
             /
-            node_disk_max_read_bytes_seconds{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}
+            node_disk_max_read_bytes_seconds{device!="sda", environment!="",type=~"patroni|gitaly|nfs"}
             ,
             1)
         ,
@@ -107,9 +107,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            rate(node_disk_writes_completed_total{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}[20m])
+            rate(node_disk_writes_completed_total{device!="sda", environment!="",type=~"patroni|gitaly|nfs"}[20m])
             /
-            node_disk_max_write_iops{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}
+            node_disk_max_write_iops{device!="sda", environment!="",type=~"patroni|gitaly|nfs"}
             ,
             1)
         ,
@@ -122,9 +122,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            rate(node_disk_written_bytes_total{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}[20m])
+            rate(node_disk_written_bytes_total{device!="sda", environment!="",type=~"patroni|gitaly|nfs"}[20m])
             /
-            node_disk_max_write_bytes_seconds{device!="sda", environment!="", type=~"patroni|gitaly|nfs"}
+            node_disk_max_write_bytes_seconds{device!="sda", environment!="",type=~"patroni|gitaly|nfs"}
             ,
             1)
         ,
@@ -138,7 +138,7 @@ groups:
         clamp_min(
           clamp_max(
             avg by (environment, tier, type, stage) (
-              avg_over_time(elasticsearch_os_cpu_percent{environment!="", type=~"logging|search"}[1m]) / 100
+              avg_over_time(elasticsearch_os_cpu_percent{environment!="",type=~"logging|search"}[1m]) / 100
             )
             ,
             1)
@@ -153,11 +153,11 @@ groups:
         clamp_min(
           clamp_max(
             sum by (environment, tier, type, stage) (
-              (elasticsearch_filesystem_data_size_bytes{environment!="", type=~"logging|search"} - elasticsearch_filesystem_data_free_bytes{environment!="", type=~"logging|search"})
+              (elasticsearch_filesystem_data_size_bytes{environment!="",type=~"logging|search"} - elasticsearch_filesystem_data_free_bytes{environment!="",type=~"logging|search"})
             )
             /
             sum by (environment, tier, type, stage) (
-              elasticsearch_filesystem_data_size_bytes{environment!="", type=~"logging|search"}
+              elasticsearch_filesystem_data_size_bytes{environment!="",type=~"logging|search"}
             )
             ,
             1)
@@ -171,9 +171,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            elasticsearch_jvm_memory_used_bytes{area="heap", environment!="", type=~"logging|search"}
+            elasticsearch_jvm_memory_used_bytes{area="heap", environment!="",type=~"logging|search"}
             /
-            elasticsearch_jvm_memory_max_bytes{area="heap", environment!="", type=~"logging|search"}
+            elasticsearch_jvm_memory_max_bytes{area="heap", environment!="",type=~"logging|search"}
             ,
             1)
         ,
@@ -186,7 +186,7 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            avg_over_time(elasticsearch_os_cpu_percent{environment!="", type=~"logging|search"}[5m]) / 100
+            avg_over_time(elasticsearch_os_cpu_percent{environment!="",type=~"logging|search"}[5m]) / 100
             ,
             1)
         ,
@@ -201,12 +201,12 @@ groups:
           clamp_max(
             (
               (
-                elasticsearch_filesystem_data_size_bytes{environment!="", type=~"logging|search"}
+                elasticsearch_filesystem_data_size_bytes{environment!="",type=~"logging|search"}
                 -
-                elasticsearch_filesystem_data_free_bytes{environment!="", type=~"logging|search"}
+                elasticsearch_filesystem_data_free_bytes{environment!="",type=~"logging|search"}
               )
               /
-              elasticsearch_filesystem_data_size_bytes{environment!="", type=~"logging|search"}
+              elasticsearch_filesystem_data_size_bytes{environment!="",type=~"logging|search"}
             )
             ,
             1)
@@ -221,9 +221,9 @@ groups:
         clamp_min(
           clamp_max(
             (
-              avg_over_time(elasticsearch_thread_pool_active_count{exported_type!="snapshot", environment!="", type=~"logging|search"}[5m])
+              avg_over_time(elasticsearch_thread_pool_active_count{exported_type!="snapshot", environment!="",type=~"logging|search"}[5m])
               /
-              (avg_over_time(elasticsearch_thread_pool_threads_count{exported_type!="snapshot", environment!="", type=~"logging|search"}[5m]) > 0)
+              (avg_over_time(elasticsearch_thread_pool_threads_count{exported_type!="snapshot", environment!="",type=~"logging|search"}[5m]) > 0)
             )
             ,
             1)
@@ -238,11 +238,11 @@ groups:
         clamp_min(
           clamp_max(
             sum by (environment, tier, type, stage, fqdn) (
-              go_memstats_alloc_bytes{environment!="", type=~"gitaly|web-pages|monitoring|web|praefect|registry|api"}
+              go_memstats_alloc_bytes{environment!="",type=~"gitaly|web-pages|monitoring|web|praefect|registry|api"}
             )
             /
             sum by (environment, tier, type, stage, fqdn) (
-              node_memory_MemTotal_bytes{environment!="", type=~"gitaly|web-pages|monitoring|web|praefect|registry|api"}
+              node_memory_MemTotal_bytes{environment!="",type=~"gitaly|web-pages|monitoring|web|praefect|registry|api"}
             )
             ,
             1)
@@ -256,7 +256,7 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            instance:node_memory_utilization:ratio{environment!="", type!="", type!~"waf|monitoring"}
+            instance:node_memory_utilization:ratio{environment!="",type!="",type!~"waf|monitoring"}
             ,
             1)
         ,
@@ -270,15 +270,15 @@ groups:
         clamp_min(
           clamp_max(
             (
-              process_open_fds{environment!="", type!="", type!~"waf"}
+              process_open_fds{environment!="",type!="",type!~"waf"}
               /
-              process_max_fds{environment!="", type!="", type!~"waf"}
+              process_max_fds{environment!="",type!="",type!~"waf"}
             )
             or
             (
-              ruby_file_descriptors{environment!="", type!="", type!~"waf"}
+              ruby_file_descriptors{environment!="",type!="",type!~"waf"}
               /
-              ruby_process_max_fds{environment!="", type!="", type!~"waf"}
+              ruby_process_max_fds{environment!="",type!="",type!~"waf"}
             )
             ,
             1)
@@ -293,14 +293,14 @@ groups:
         clamp_min(
           clamp_max(
             (
-              avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production_sidekiq", environment!="", type=~"pgbouncer|patroni"}[5m]) +
-              avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production_sidekiq", environment!="", type=~"pgbouncer|patroni"}[5m]) +
-              avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production_sidekiq", environment!="", type=~"pgbouncer|patroni"}[5m]) +
-              avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production_sidekiq", environment!="", type=~"pgbouncer|patroni"}[5m])
+              avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production_sidekiq", environment!="",type=~"pgbouncer|patroni"}[5m]) +
+              avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production_sidekiq", environment!="",type=~"pgbouncer|patroni"}[5m]) +
+              avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production_sidekiq", environment!="",type=~"pgbouncer|patroni"}[5m]) +
+              avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production_sidekiq", environment!="",type=~"pgbouncer|patroni"}[5m])
             )
             / on(environment, tier, type, stage, fqdn, instance) group_left()
             sum by (environment, tier, type, stage, fqdn, instance) (
-              avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production_sidekiq", environment!="", type=~"pgbouncer|patroni"}[5m])
+              avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production_sidekiq", environment!="",type=~"pgbouncer|patroni"}[5m])
             )
             ,
             1)
@@ -316,7 +316,7 @@ groups:
           clamp_max(
             sum without(cpu, mode) (
               rate(
-                namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", environment!="", type=~"pgbouncer|patroni"}[1m]
+                namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", environment!="",type=~"pgbouncer|patroni"}[1m]
               )
             )
             ,
@@ -332,14 +332,14 @@ groups:
         clamp_min(
           clamp_max(
             (
-              avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production", environment!="", type=~"pgbouncer|patroni"}[5m]) +
-              avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production", environment!="", type=~"pgbouncer|patroni"}[5m]) +
-              avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production", environment!="", type=~"pgbouncer|patroni"}[5m]) +
-              avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production", environment!="", type=~"pgbouncer|patroni"}[5m])
+              avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production", environment!="",type=~"pgbouncer|patroni"}[5m]) +
+              avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production", environment!="",type=~"pgbouncer|patroni"}[5m]) +
+              avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production", environment!="",type=~"pgbouncer|patroni"}[5m]) +
+              avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production", environment!="",type=~"pgbouncer|patroni"}[5m])
             )
             / on(environment, tier, type, stage, fqdn, instance) group_left()
             sum by (environment, tier, type, stage, fqdn, instance) (
-              avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production", environment!="", type=~"pgbouncer|patroni"}[5m])
+              avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production", environment!="",type=~"pgbouncer|patroni"}[5m])
             )
             ,
             1)
@@ -372,12 +372,12 @@ groups:
         clamp_min(
           clamp_max(
             (
-              avg_over_time(gitlab_database_connection_pool_busy{class="ActiveRecord::Base", environment!="", type=~"web|api|git|sidekiq"}[5m])
+              avg_over_time(gitlab_database_connection_pool_busy{class="ActiveRecord::Base", environment!="",type=~"web|api|git|sidekiq"}[5m])
               +
-              avg_over_time(gitlab_database_connection_pool_dead{class="ActiveRecord::Base", environment!="", type=~"web|api|git|sidekiq"}[5m])
+              avg_over_time(gitlab_database_connection_pool_dead{class="ActiveRecord::Base", environment!="",type=~"web|api|git|sidekiq"}[5m])
             )
             /
-            gitlab_database_connection_pool_size{class="ActiveRecord::Base", environment!="", type=~"web|api|git|sidekiq"}
+            gitlab_database_connection_pool_size{class="ActiveRecord::Base", environment!="",type=~"web|api|git|sidekiq"}
             ,
             1)
         ,
@@ -390,9 +390,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            max_over_time(redis_connected_clients{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+            max_over_time(redis_connected_clients{environment!="",type=~"redis|redis-sidekiq|redis-cache"}[1m])
             /
-            redis_config_maxclients{environment!="", type=~"redis|redis-sidekiq|redis-cache"}
+            redis_config_maxclients{environment!="",type=~"redis|redis-sidekiq|redis-cache"}
             ,
             1)
         ,
@@ -406,13 +406,13 @@ groups:
         clamp_min(
           clamp_max(
             max by (environment, tier, type, stage, fqdn) (
-              label_replace(redis_memory_used_rss_bytes{environment!="", type=~"redis|redis-sidekiq|redis-cache"}, "memtype", "rss","","")
+              label_replace(redis_memory_used_rss_bytes{environment!="",type=~"redis|redis-sidekiq|redis-cache"}, "memtype", "rss","","")
               or
-              label_replace(redis_memory_used_bytes{environment!="", type=~"redis|redis-sidekiq|redis-cache"}, "memtype", "used","","")
+              label_replace(redis_memory_used_bytes{environment!="",type=~"redis|redis-sidekiq|redis-cache"}, "memtype", "used","","")
             )
             /
             avg by (environment, tier, type, stage, fqdn) (
-              node_memory_MemTotal_bytes{environment!="", type=~"redis|redis-sidekiq|redis-cache"}
+              node_memory_MemTotal_bytes{environment!="",type=~"redis|redis-sidekiq|redis-cache"}
             )
             ,
             1)
@@ -427,9 +427,9 @@ groups:
         clamp_min(
           clamp_max(
             (
-              rate(redis_cpu_user_seconds_total{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+              rate(redis_cpu_user_seconds_total{environment!="",type=~"redis|redis-sidekiq|redis-cache"}[1m])
               +
-              rate(redis_cpu_sys_seconds_total{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+              rate(redis_cpu_sys_seconds_total{environment!="",type=~"redis|redis-sidekiq|redis-cache"}[1m])
             )
             and on (instance) redis_instance_info{role="master"}
             ,
@@ -445,9 +445,9 @@ groups:
         clamp_min(
           clamp_max(
             (
-              rate(redis_cpu_user_seconds_total{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+              rate(redis_cpu_user_seconds_total{environment!="",type=~"redis|redis-sidekiq|redis-cache"}[1m])
               +
-              rate(redis_cpu_sys_seconds_total{environment!="", type=~"redis|redis-sidekiq|redis-cache"}[1m])
+              rate(redis_cpu_sys_seconds_total{environment!="",type=~"redis|redis-sidekiq|redis-cache"}[1m])
             )
             and on (instance) redis_instance_info{role!="master"}
             ,
@@ -463,7 +463,7 @@ groups:
         clamp_min(
           clamp_max(
             1 - avg by (environment, tier, type, stage, shard) (
-              rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[5m])
+              rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node"}[5m])
             )
             ,
             1)
@@ -511,11 +511,11 @@ groups:
         clamp_min(
           clamp_max(
             sum by (environment, tier, type, stage, shard) (
-              avg_over_time(sidekiq_running_jobs{shard!~"export|elasticsearch|memory-bound", environment!="", type="sidekiq"}[5m])
+              avg_over_time(sidekiq_running_jobs{shard!~"export|elasticsearch|memory-bound", environment!="",type="sidekiq"}[5m])
             )
             /
             sum by (environment, tier, type, stage, shard) (
-              avg_over_time(sidekiq_concurrency{shard!~"export|elasticsearch|memory-bound", environment!="", type="sidekiq"}[5m])
+              avg_over_time(sidekiq_concurrency{shard!~"export|elasticsearch|memory-bound", environment!="",type="sidekiq"}[5m])
             )
             ,
             1)
@@ -529,7 +529,7 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment!="", type!="", type!~"waf|console-node|deploy-node"}[5m]))
+            avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node"}[5m]))
             ,
             1)
         ,
@@ -542,9 +542,9 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            sum by(environment, tier, type, stage, fqdn) (avg_over_time(puma_active_connections{environment!="", type=~"web|api|git|sidekiq"}[1m]))
+            sum by(environment, tier, type, stage, fqdn) (avg_over_time(puma_active_connections{environment!="",type=~"web|api|git|sidekiq"}[1m]))
             /
-            sum by(environment, tier, type, stage, fqdn) (puma_max_threads{pid="puma_master", environment!="", type=~"web|api|git|sidekiq"})
+            sum by(environment, tier, type, stage, fqdn) (puma_max_threads{pid="puma_master", environment!="",type=~"web|api|git|sidekiq"})
             ,
             1)
         ,

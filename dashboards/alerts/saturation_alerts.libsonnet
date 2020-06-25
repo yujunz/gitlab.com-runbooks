@@ -13,7 +13,7 @@ local basic = import 'basic.libsonnet';
 local saturationResources = import './saturation-resources.libsonnet';
 local serviceHealth = import './service_health.libsonnet';
 
-local selector = 'environment="$environment", type="$type", stage="$stage"';
+local selector = { environment: "$environment", type: "$type", stage: "$stage" };
 
 {
   saturationDashboard(

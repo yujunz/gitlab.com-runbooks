@@ -4,15 +4,6 @@ local rateMetric = metricsCatalog.rateMetric;
 local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
 local combined = metricsCatalog.combined;
 
-local shards = [
-  'memory-bound',
-  'urgent-other',
-  'elasticsearch',
-  'catchall',
-  'low-urgency-cpu-bound',
-  'urgent-cpu-bound',
-];
-
 local highUrgencySelector = {
   urgency: 'high',
 };
@@ -105,6 +96,6 @@ local noUrgencySelector = {
 
       significantLabels: ['fqdn'],
     }
-    for k in shards
+    for k in sidekiqHelpers.shards.listAll()
   },
 }
