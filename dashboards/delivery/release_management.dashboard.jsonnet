@@ -264,6 +264,9 @@ grafana.dashboard.new(
   graphPanel.new(
     '%s Auto-deploy pressure' % icons.gprd,
     aliasColors={ Commits: 'semi-dark-purple' },
+    decimals=0,
+    labelY1='Commits',
+    legend_show=false,
     min=0,
   )
   .addTarget(environmentPressure('gprd')),
@@ -273,6 +276,9 @@ grafana.dashboard.new(
   graphPanel.new(
     '%s New Sentry issues' % icons.gprd,
     aliasColors={ Issues: 'dark-orange' },
+    decimals=0,
+    labelY1='Issues',
+    legend_show=false,
     min=0,
   )
   .addTarget(environmentSentry('gprd')),
@@ -293,6 +299,9 @@ grafana.dashboard.new(
   graphPanel.new(
     '%s Auto-deploy pressure' % icons.cny,
     aliasColors={ Commits: 'semi-dark-purple' },
+    decimals=0,
+    labelY1='Commits',
+    legend_show=false,
     min=0,
   )
   .addTarget(environmentPressure('gprd-cny')),
@@ -302,6 +311,9 @@ grafana.dashboard.new(
   graphPanel.new(
     '%s New Sentry issues' % icons.cny,
     aliasColors={ Issues: 'dark-orange' },
+    decimals=0,
+    labelY1='Issues',
+    legend_show=false,
     min=0,
   )
   .addTarget(environmentSentry('gprd-cny')),
@@ -322,6 +334,9 @@ grafana.dashboard.new(
   graphPanel.new(
     '%s Auto-deploy pressure' % icons.gstg,
     aliasColors={ Commits: 'semi-dark-purple' },
+    decimals=0,
+    labelY1='Commits',
+    legend_show=false,
     min=0,
   )
   .addTarget(environmentPressure('gstg')),
@@ -331,6 +346,9 @@ grafana.dashboard.new(
   graphPanel.new(
     '%s New Sentry issues' % icons.gstg,
     aliasColors={ Issues: 'dark-orange' },
+    decimals=0,
+    labelY1='Issues',
+    legend_show=false,
     min=0,
   )
   .addTarget(environmentSentry('gstg')),
