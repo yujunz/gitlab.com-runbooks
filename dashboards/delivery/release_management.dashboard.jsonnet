@@ -2,6 +2,7 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 local prometheus = grafana.prometheus;
 local promQuery = import 'prom_query.libsonnet';
 
+local timepickerlib = import 'grafonnet/timepicker.libsonnet';
 local annotation = grafana.annotation;
 local dashboard = grafana.dashboard;
 local graphPanel = grafana.graphPanel;
@@ -120,6 +121,9 @@ grafana.dashboard.new(
   'Release Management',
   tags=['release'],
   editable=true,
+  refresh='5m',
+  timezone='',
+  timepicker=timepickerlib.new(refresh_intervals=['1m', '5m', '10m', '30m']),
 )
 .addAnnotations(annotations)
 
