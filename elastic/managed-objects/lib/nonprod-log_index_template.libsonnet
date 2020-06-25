@@ -8,6 +8,7 @@ local mappings = {
   pages: import './index_mappings/pages.jsonnet',
   postgres: import './index_mappings/postgres.jsonnet',
   praefect: import './index_mappings/praefect.jsonnet',
+  pubsubbeat: import './index_mappings/pubsubbeat.jsonnet',
   puma: import './index_mappings/puma.jsonnet',
   rails: import './index_mappings/rails.jsonnet',
   redis: import './index_mappings/redis.jsonnet',
