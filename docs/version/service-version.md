@@ -27,6 +27,7 @@
 * [../patroni/postgres-checkup.md](../patroni/postgres-checkup.md)
 * [../patroni/using-wale-gpg.md](../patroni/using-wale-gpg.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
+* [../postgres-dr-delayed/postgres-dr-replicas.md](../postgres-dr-delayed/postgres-dr-replicas.md)
 * [../runner/update-gitlab-runner-on-managers.md](../runner/update-gitlab-runner-on-managers.md)
 * [../uncategorized/about-gitlab-com.md](../uncategorized/about-gitlab-com.md)
 * [../uncategorized/aptly.md](../uncategorized/aptly.md)
