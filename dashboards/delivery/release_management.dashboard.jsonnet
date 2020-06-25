@@ -117,6 +117,41 @@ local statPanel(
     type: 'stat',
   };
 
+// Bar Gauge panel used by top-level Release pressure
+local bargaugePanel(
+  title,
+  description='',
+  query='',
+  legendFormat='',
+  thresholds={},
+  links=[],
+  orientation='horizontal',
+      ) =
+  {
+    description: description,
+    fieldConfig: {
+      values: false,
+      calcs: [
+        'lastNotNull',
+      ],
+      defaults: {
+        min: 0,
+        max: 25,
+        thresholds: thresholds,
+      },
+    },
+    links: links,
+    options: {
+      orientation: orientation,
+      displayMode: 'basic',
+      showUnfilled: true,
+    },
+    pluginVersion: '7.0.3',
+    targets: [promQuery.target(query, legendFormat=legendFormat)],
+    title: title,
+    type: 'bargauge',
+  };
+
 grafana.dashboard.new(
   'Release Management',
   tags=['release'],
@@ -248,6 +283,32 @@ grafana.dashboard.new(
     ],
   ),
   gridPos={ x: 11, y: 0, w: 4, h: 9 },
+)
+
+// Release pressure
+.addPanel(
+  bargaugePanel(
+    'Release pressure',
+    description='Number of `Pick into` merge requests for previous releases.',
+    query=|||
+      label_replace(
+        max(delivery_release_pressure{state="merged"}) by (state, version),
+        "version", "$1",
+        "version", "Pick into (.*)"
+      )
+    |||,
+    legendFormat='{{version}} ({{state}})',
+    thresholds={
+      mode: 'absolute',
+      steps: [
+        { color: 'green', value: null },
+        { color: '#EAB839', value: 5 },
+        { color: '#EF843C', value: 10 },
+        { color: 'red', value: 15 },
+      ],
+    },
+  ),
+  gridPos={ x: 15, y: 0, w: 5, h: 9 },
 )
 
 // ----------------------------------------------------------------------------
