@@ -220,7 +220,7 @@ grafana.dashboard.new(
       },
     ],
   ),
-  gridPos={ x: 7, y: 0, w: 6, h: 9 },
+  gridPos={ x: 7, y: 0, w: 4, h: 9 },
 )
 
 // New Sentry issues
@@ -247,7 +247,7 @@ grafana.dashboard.new(
       },
     ],
   ),
-  gridPos={ x: 13, y: 0, w: 6, h: 9 },
+  gridPos={ x: 11, y: 0, w: 4, h: 9 },
 )
 
 // ----------------------------------------------------------------------------
