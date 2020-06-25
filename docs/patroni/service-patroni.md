@@ -16,6 +16,7 @@
 
 * [../ci-runners/tracing-app-db-queries.md](../ci-runners/tracing-app-db-queries.md)
 * [../monitoring/prometheus-failing-rule-evaluations.md](../monitoring/prometheus-failing-rule-evaluations.md)
+* [check_wraparound.md](check_wraparound.md)
 * [geo-patroni-cluster.md](geo-patroni-cluster.md)
 * [gitlab-com-wale-backups.md](gitlab-com-wale-backups.md)
 * [gitlab-com-walg-backups.md](gitlab-com-walg-backups.md)

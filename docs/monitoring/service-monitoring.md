@@ -22,6 +22,7 @@
 * [monitoring-overview.md](monitoring-overview.md)
 * [prometheus-failed-compactions.md](prometheus-failed-compactions.md)
 * [sentry-is-down.md](sentry-is-down.md)
+* [../patroni/check_wraparound.md](../patroni/check_wraparound.md)
 * [../patroni/postgres-checkup.md](../patroni/postgres-checkup.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
