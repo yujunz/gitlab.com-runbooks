@@ -223,6 +223,33 @@ grafana.dashboard.new(
   gridPos={ x: 7, y: 0, w: 6, h: 9 },
 )
 
+// New Sentry issues
+.addPanel(
+  statPanel(
+    'New Sentry issues',
+    description='The number of new Sentry issues for each environment.',
+    query='max(delivery_sentry_issues{role!=""}) by (role)',
+    legendFormat='{{role}}',
+    thresholds={
+      mode: 'absolute',
+      steps: [
+        { color: 'green', value: null },
+        { color: '#EAB839', value: 50 },
+        { color: '#EF843C', value: 100 },
+        { color: 'red', value: 150 },
+      ],
+    },
+    links=[
+      {
+        targetBlank: true,
+        title: 'Sentry releases',
+        url: 'https://sentry.gitlab.net/gitlab/gitlabcom/releases/',
+      },
+    ],
+  ),
+  gridPos={ x: 13, y: 0, w: 6, h: 9 },
+)
+
 // ----------------------------------------------------------------------------
 // gprd row
 // ----------------------------------------------------------------------------
