@@ -43,6 +43,7 @@
 * [../patroni/postgres-backup-verification-failures.md](../patroni/postgres-backup-verification-failures.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
 * [../patroni/rotating-rails-postgresql-password.md](../patroni/rotating-rails-postgresql-password.md)
+* [../patroni/scale-down-patroni.md](../patroni/scale-down-patroni.md)
 * [../patroni/using-wale-gpg.md](../patroni/using-wale-gpg.md)
 * [../pgbouncer/README.md](../pgbouncer/README.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
