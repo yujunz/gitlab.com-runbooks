@@ -11,7 +11,7 @@ local singlestat = grafana.singlestat;
 
 local icons = {
   gprd: '🚀',
-  cny: '🐤',
+  'gprd-cny': '🐤',
   gstg: '🏗',
 };
 
@@ -67,16 +67,36 @@ local packageVersion(env, stage='main') =
     legendFormat='{{version}}',
   );
 
-local environmentPressure(role) =
-  prometheus.target(
-    'delivery_auto_deploy_pressure{job="auto-deploy-pressure", role="%(role)s"}' % { role: role },
-    legendFormat='Commits',
+local environmentPressurePanel(role) =
+  graphPanel.new(
+    '%s Auto-deploy pressure' % icons[role],
+    aliasColors={ Commits: 'semi-dark-purple' },
+    decimals=0,
+    labelY1='Commits',
+    legend_show=false,
+    min=0,
+  )
+  .addTarget(
+    prometheus.target(
+      'delivery_auto_deploy_pressure{job="auto-deploy-pressure", role="%(role)s"}' % { role: role },
+      legendFormat='Commits',
+    )
   );
 
-local environmentSentry(role) =
-  prometheus.target(
-    'delivery_sentry_issues{job="sentry-issues", role="%(role)s"}' % { role: role },
-    legendFormat='Issues',
+local environmentIssuesPanel(role) =
+  graphPanel.new(
+    '%s New Sentry issues' % icons[role],
+    aliasColors={ Issues: 'dark-orange' },
+    decimals=0,
+    labelY1='Issues',
+    legend_show=false,
+    min=0,
+  )
+  .addTarget(
+    prometheus.target(
+      'delivery_sentry_issues{job="sentry-issues", role="%(role)s"}' % { role: role },
+      legendFormat='Issues',
+    )
   );
 
 // Stat panel used by top-level Auto-deploy Pressure and New Sentry issues
@@ -187,7 +207,7 @@ grafana.dashboard.new(
 // gprd-cny
 .addPanel(
   singlestat.new(
-    '%s gprd-cny' % icons.cny,
+    '%s gprd-cny' % icons['gprd-cny'],
     description='Rails revision on Canary.',
     valueFontSize='100%',
   )
@@ -196,7 +216,7 @@ grafana.dashboard.new(
 )
 .addPanel(
   singlestat.new(
-    '%s gprd-cny' % icons.cny,
+    '%s gprd-cny' % icons['gprd-cny'],
     description='Package running on Canary.',
     valueFontSize='50%',
   )
@@ -315,27 +335,11 @@ grafana.dashboard.new(
   gridPos={ x: 0, y: 12, w: 24, h: 12 },
 )
 .addPanel(
-  graphPanel.new(
-    '%s Auto-deploy pressure' % icons.gprd,
-    aliasColors={ Commits: 'semi-dark-purple' },
-    decimals=0,
-    labelY1='Commits',
-    legend_show=false,
-    min=0,
-  )
-  .addTarget(environmentPressure('gprd')),
+  environmentPressurePanel('gprd'),
   gridPos={ x: 0, y: 12, w: 10, h: 12 },
 )
 .addPanel(
-  graphPanel.new(
-    '%s New Sentry issues' % icons.gprd,
-    aliasColors={ Issues: 'dark-orange' },
-    decimals=0,
-    labelY1='Issues',
-    legend_show=false,
-    min=0,
-  )
-  .addTarget(environmentSentry('gprd')),
+  environmentIssuesPanel('gprd'),
   gridPos={ x: 10, y: 12, w: 10, h: 12 },
 )
 
@@ -345,32 +349,16 @@ grafana.dashboard.new(
 
 .addPanel(
   row.new(
-    title='%s gprd-cny' % icons.cny
+    title='%s gprd-cny' % icons['gprd-cny']
   ),
   gridPos={ x: 0, y: 24, w: 24, h: 12 },
 )
 .addPanel(
-  graphPanel.new(
-    '%s Auto-deploy pressure' % icons.cny,
-    aliasColors={ Commits: 'semi-dark-purple' },
-    decimals=0,
-    labelY1='Commits',
-    legend_show=false,
-    min=0,
-  )
-  .addTarget(environmentPressure('gprd-cny')),
+  environmentPressurePanel('gprd-cny'),
   gridPos={ x: 0, y: 24, w: 10, h: 12 },
 )
 .addPanel(
-  graphPanel.new(
-    '%s New Sentry issues' % icons.cny,
-    aliasColors={ Issues: 'dark-orange' },
-    decimals=0,
-    labelY1='Issues',
-    legend_show=false,
-    min=0,
-  )
-  .addTarget(environmentSentry('gprd-cny')),
+  environmentIssuesPanel('gprd-cny'),
   gridPos={ x: 10, y: 24, w: 10, h: 12 },
 )
 
@@ -385,26 +373,10 @@ grafana.dashboard.new(
   gridPos={ x: 0, y: 36, w: 24, h: 12 },
 )
 .addPanel(
-  graphPanel.new(
-    '%s Auto-deploy pressure' % icons.gstg,
-    aliasColors={ Commits: 'semi-dark-purple' },
-    decimals=0,
-    labelY1='Commits',
-    legend_show=false,
-    min=0,
-  )
-  .addTarget(environmentPressure('gstg')),
+  environmentPressurePanel('gstg'),
   gridPos={ x: 0, y: 36, w: 10, h: 12 },
 )
 .addPanel(
-  graphPanel.new(
-    '%s New Sentry issues' % icons.gstg,
-    aliasColors={ Issues: 'dark-orange' },
-    decimals=0,
-    labelY1='Issues',
-    legend_show=false,
-    min=0,
-  )
-  .addTarget(environmentSentry('gstg')),
+  environmentIssuesPanel('gstg'),
   gridPos={ x: 10, y: 36, w: 10, h: 12 },
 )
