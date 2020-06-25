@@ -45,6 +45,7 @@
 * [../monitoring/alertmanager-notification-failures.md](../monitoring/alertmanager-notification-failures.md)
 * [../monitoring/alerts_manual.md](../monitoring/alerts_manual.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
+* [../patroni/pg_repack.md](../patroni/pg_repack.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 * [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
