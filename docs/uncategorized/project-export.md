@@ -67,7 +67,8 @@ node (and delete it again when you are done!)
 
 That can happen because of some non-optimized queries in the current Exporter
 code (e.g. https://gitlab.com/gitlab-org/gitlab/-/issues/212355#note_364049215).
-This needs to get fixed in code probably. Try to get help from the Gitaly team.
+This needs to get fixed in code probably. Try to get help from the Import team
+(#g_manage_import).
 
 # Debugging
 
