@@ -1,4 +1,5 @@
 local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonnet').resourceSaturationPoint;
+local sidekiqHelpers = import './services/lib/sidekiq-helpers.libsonnet';
 
 // throttledSidekiqShards is an array of Sidekiq `shard` labels for shards
 // that are configured to run `urgency=throttled` jobs. Queues running on these
@@ -921,6 +922,53 @@ local pgbouncerSyncPool(serviceType, role) =
   //     hard: 0.90,
   //   },
   // }),
+
+
+  // TODO: figure out how k8s management falls into out environment/tier/type/stage/shard labelling
+  // taxonomy. These saturation metrics rely on this in order to work
+  // See https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10249 for more details
+  kube_hpa_instances: resourceSaturationPoint({
+    title: 'HPA Instances',
+    severity: 's2',
+    appliesTo: ['kube'],
+    description: |||
+      This measures the HPA that manages our Deployments. If we are running low on
+      ability to scale up by hitting our maximum HPA Pod allowance, we will have
+      fully saturated this service.
+    |||,
+    runbook: 'docs/uncategorized/kubernetes.md#hpascalecapability',
+    grafana_dashboard_uid: 'sat_kube_hpa_instances',
+    resourceLabels: ['hpa'],
+    // TODO: keep these resources with the services they're managing, once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10249 is resolved
+    // do not apply static labels
+    staticLabels: {
+      type: 'kube',
+      tier: 'inf',
+      stage: 'main',
+    },
+    // TODO: remove label-replace ugliness once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10249 is resolved
+    // TODO: add %(selector)s once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10249 is resolved
+    query: |||
+      label_replace(
+        label_replace(
+          kube_hpa_status_desired_replicas{%(selector)s, hpa!~"gitlab-sidekiq-(%(ignored_sidekiq_shards)s)-v1"}
+          /
+          kube_hpa_spec_max_replicas,
+          "stage", "cny", "hpa", "gitlab-cny-.*"
+        ),
+        "type", "$1", "hpa", "gitlab-(?:cny-)?(\\w+)"
+      )
+    |||,
+    queryFormatConfig: {
+      // Ignore non-autoscaled shards and throttled shards
+      ignored_sidekiq_shards: std.join('|', sidekiqHelpers.shards.listFiltered(function(shard) !shard.autoScaling || shard.throttled)),
+    },
+    slos: {
+      soft: 0.95,
+      hard: 0.90,
+      alertTriggerDuration: '25m',
+    },
+  }),
 
   // Add some helpers. Note that these use :: to "hide" then:
   listApplicableServicesFor(type)::

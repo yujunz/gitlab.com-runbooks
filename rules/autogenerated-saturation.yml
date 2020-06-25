@@ -234,6 +234,30 @@ groups:
       )
   - record: gitlab_component_saturation:ratio
     labels:
+      component: kube_hpa_instances
+      stage: main
+      tier: inf
+      type: kube
+    expr: |
+      max by(environment) (
+        clamp_min(
+          clamp_max(
+            label_replace(
+              label_replace(
+                kube_hpa_status_desired_replicas{environment!="", hpa!~"gitlab-sidekiq-(elasticsearch|memory-bound|urgent-other)-v1"}
+                /
+                kube_hpa_spec_max_replicas,
+                "stage", "cny", "hpa", "gitlab-cny-.*"
+              ),
+              "type", "$1", "hpa", "gitlab-(?:cny-)?(\\w+)"
+            )
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
       component: memory
     expr: |
       max by(environment, tier, type, stage) (
@@ -704,6 +728,14 @@ groups:
     labels:
       component: go_memory
     expr: '0.98'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: kube_hpa_instances
+    expr: '0.95'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: kube_hpa_instances
+    expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
       component: memory
@@ -1539,6 +1571,59 @@ groups:
     expr: |
       gitlab_component_saturation:ratio{component="go_memory"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="go_memory"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 25m
+    annotations:
+      title: >-
+        The HPA Instances resource of the {{ $labels.type }} service ({{ $labels.stage }} stage), component
+        has a saturation exceeding SLO and is close to its capacity limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the HPA Instances resource:
+        -------------------------------------------
+        This measures the HPA that manages our Deployments. If we are running low on
+        ability to scale up by hitting our maximum HPA Pod allowance, we will have
+        fully saturated this service.
+      grafana_dashboard_id: alerts-sat_kube_hpa_instances
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/alerts-sat_kube_hpa_instances?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '2'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, hpa) (
+          clamp_min(
+            clamp_max(
+              label_replace(
+                label_replace(
+                  kube_hpa_status_desired_replicas{environment="{{ $labels.environment }}", hpa!~"gitlab-sidekiq-(elasticsearch|memory-bound|urgent-other)-v1"}
+                  /
+                  kube_hpa_spec_max_replicas,
+                  "stage", "cny", "hpa", "gitlab-cny-.*"
+                ),
+                "type", "$1", "hpa", "gitlab-(?:cny-)?(\\w+)"
+              )
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_trigger_duration: 25m
+      alert_type: cause
+      bound: upper
+      burn_rate_period: 1m
+      metric: gitlab_component_saturation:ratio
+      pager: pagerduty
+      period: 25m
+      rules_domain: general
+      severity: s2
+    expr: |
+      gitlab_component_saturation:ratio{component="kube_hpa_instances"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="kube_hpa_instances"}
   - alert: component_saturation_slo_out_of_bounds
     for: 5m
     annotations:
