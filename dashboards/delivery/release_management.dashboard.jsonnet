@@ -1,8 +1,8 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
+local timepickerlib = import 'grafonnet/timepicker.libsonnet';
 local prometheus = grafana.prometheus;
 local promQuery = import 'prom_query.libsonnet';
 
-local timepickerlib = import 'grafonnet/timepicker.libsonnet';
 local annotation = grafana.annotation;
 local dashboard = grafana.dashboard;
 local graphPanel = grafana.graphPanel;
@@ -92,16 +92,12 @@ local statPanel(
     description: description,
     fieldConfig: {
       values: false,
-      calcs: [
-        'lastNotNull',
-      ],
       defaults: {
         decimals: 0,
         mappings: [],
         min: 0,
         thresholds: thresholds,
       },
-      overrides: [],
     },
     links: links,
     options: {
@@ -131,9 +127,6 @@ local bargaugePanel(
     description: description,
     fieldConfig: {
       values: false,
-      calcs: [
-        'lastNotNull',
-      ],
       defaults: {
         min: 0,
         max: 25,
@@ -142,8 +135,8 @@ local bargaugePanel(
     },
     links: links,
     options: {
-      orientation: orientation,
       displayMode: 'basic',
+      orientation: orientation,
       showUnfilled: true,
     },
     pluginVersion: '7.0.3',
