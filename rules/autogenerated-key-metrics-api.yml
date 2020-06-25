@@ -12,11 +12,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="1"}[1m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="1"}[1m])
         )
         +
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="10"}[1m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="10"}[1m])
         )
       )
       /
@@ -24,7 +24,7 @@ groups:
       /
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[1m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -34,7 +34,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[1m])
+        rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -43,7 +43,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[1m])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",type="api"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -52,7 +52,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", status=~"5..", type="api"}[1m])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",status=~"5..",type="api"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -112,11 +112,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="1"}[5m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="1"}[5m])
         )
         +
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="10"}[5m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="10"}[5m])
         )
       )
       /
@@ -124,7 +124,7 @@ groups:
       /
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[5m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -134,7 +134,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[5m])
+        rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -143,7 +143,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[5m])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",type="api"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -152,7 +152,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", status=~"5..", type="api"}[5m])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",status=~"5..",type="api"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -212,11 +212,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="1"}[30m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="1"}[30m])
         )
         +
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="10"}[30m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="10"}[30m])
         )
       )
       /
@@ -224,7 +224,7 @@ groups:
       /
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[30m])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[30m])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -234,7 +234,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[30m])
+        rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -243,7 +243,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[30m])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",type="api"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -252,7 +252,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", status=~"5..", type="api"}[30m])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",status=~"5..",type="api"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -312,11 +312,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="1"}[1h])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="1"}[1h])
         )
         +
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="10"}[1h])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="10"}[1h])
         )
       )
       /
@@ -324,7 +324,7 @@ groups:
       /
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[1h])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -334,7 +334,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[1h])
+        rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -343,7 +343,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[1h])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",type="api"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -352,7 +352,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", status=~"5..", type="api"}[1h])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",status=~"5..",type="api"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -412,11 +412,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="1"}[6h])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="1"}[6h])
         )
         +
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="10"}[6h])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="10"}[6h])
         )
       )
       /
@@ -424,7 +424,7 @@ groups:
       /
       (
         sum by (environment,stage) (
-          rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[6h])
+          rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[6h])
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -434,7 +434,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_bucket{job="gitlab-rails", type="api", le="+Inf"}[6h])
+        rate(http_request_duration_seconds_bucket{job="gitlab-rails",type="api", le="+Inf"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -443,7 +443,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", type="api"}[6h])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",type="api"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -452,7 +452,7 @@ groups:
       type: api
     expr: |
       sum by (environment,stage) (
-        rate(http_request_duration_seconds_count{job="gitlab-rails", status=~"5..", type="api"}[6h])
+        rate(http_request_duration_seconds_count{job="gitlab-rails",status=~"5..",type="api"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:

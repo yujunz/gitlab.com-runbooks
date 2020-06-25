@@ -139,7 +139,8 @@ local overviewDashboard(
     .addPanels(
       if std.length(saturationComponents) > 0 then
         [
-          local saturationSelector = selectors.serializeHash(saturationEnvironmentSelectorHash { type: type, stage: stage });
+          // saturationSelector is env + type + stage
+          local saturationSelector = saturationEnvironmentSelectorHash { type: type, stage: stage };
           saturationDetail.saturationDetailPanels(saturationSelector, components=saturationComponents)
           { gridPos: { x: 0, y: 500, w: 24, h: 1 } },
         ]

@@ -15,13 +15,14 @@ local layout = import 'layout.libsonnet';
 local text = grafana.text;
 local issueSearch = import 'issue_search.libsonnet';
 local saturationResources = import './saturation-resources.libsonnet';
+local selectors = import './lib/selectors.libsonnet';
 
 {
   saturationPanel(title, description, component, linewidth=1, query=null, legendFormat=null, selector=null)::
     local formatConfig = {
       component: component,
       query: query,
-      selector: selector,
+      selector: selectors.serializeHash(selector),
     };
 
     local panel = graphPanel.new(
@@ -107,13 +108,9 @@ local saturationResources = import './saturation-resources.libsonnet';
     .addSeriesOverride(seriesOverrides.hardSlo)
     .addSeriesOverride(seriesOverrides.goldenMetric('/aggregated /', { linewidth: 2 },)),
 
-  componentSaturationPanel(component, selector)::
-    local formatConfig = {
-      component: component,
-      selector: selector,
-    };
+  componentSaturationPanel(component, selectorHash)::
     local componentDetails = saturationResources[component];
-    local query = componentDetails.getQuery(selector, componentDetails.getBurnRatePeriod(), maxAggregationLabels=componentDetails.resourceLabels);
+    local query = componentDetails.getQuery(selectorHash, componentDetails.getBurnRatePeriod(), maxAggregationLabels=componentDetails.resourceLabels);
 
     self.saturationPanel(
       '%s component saturation: %s' % [component, componentDetails.title],
@@ -122,13 +119,13 @@ local saturationResources = import './saturation-resources.libsonnet';
       linewidth=1,
       query=query,
       legendFormat=componentDetails.getLegendFormat(),
-      selector=selector
+      selector=selectorHash
     ),
 
-  saturationDetailPanels(selector, components)::
+  saturationDetailPanels(selectorHash, components)::
     row.new(title='🌡 Saturation Details', collapse=true)
     .addPanels(layout.grid([
-      self.componentSaturationPanel(component, selector)
+      self.componentSaturationPanel(component, selectorHash)
       for component in components
     ])),
 
