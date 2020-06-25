@@ -1,5 +1,6 @@
 local grafana = import 'grafonnet/grafana.libsonnet';
 local prometheus = grafana.prometheus;
+local promQuery = import 'prom_query.libsonnet';
 
 local annotation = grafana.annotation;
 local dashboard = grafana.dashboard;
@@ -77,6 +78,44 @@ local environmentSentry(role) =
     legendFormat='Issues',
   );
 
+// Stat panel used by top-level Auto-deploy Pressure and New Sentry issues
+local statPanel(
+  title,
+  description='',
+  query='',
+  legendFormat='',
+  thresholds={},
+  links=[]
+      ) =
+  {
+    description: description,
+    fieldConfig: {
+      values: false,
+      calcs: [
+        'lastNotNull',
+      ],
+      defaults: {
+        decimals: 0,
+        mappings: [],
+        min: 0,
+        thresholds: thresholds,
+      },
+      overrides: [],
+    },
+    links: links,
+    options: {
+      colorMode: 'value',
+      graphMode: 'area',
+      justifyMode: 'auto',
+      orientation: 'horizontal',
+      reduceOptions: { calcs: ['lastNotNull'] },
+    },
+    pluginVersion: '7.0.3',
+    targets: [promQuery.target(query, legendFormat=legendFormat)],
+    title: title,
+    type: 'stat',
+  };
+
 grafana.dashboard.new(
   'Release Management',
   tags=['release'],
@@ -151,6 +190,33 @@ grafana.dashboard.new(
   )
   .addTarget(packageVersion('gstg')),
   gridPos={ x: 3, y: 7, w: 4, h: 3 },
+)
+
+// Auto-deploy pressure
+.addPanel(
+  statPanel(
+    'Auto-deploy pressure',
+    description='The number of commits in `master` not yet deployed to each environment.',
+    query='max(delivery_auto_deploy_pressure{role!=""}) by (role)',
+    legendFormat='{{role}}',
+    thresholds={
+      mode: 'absolute',
+      steps: [
+        { color: 'green', value: null },
+        { color: '#EAB839', value: 50 },
+        { color: '#EF843C', value: 100 },
+        { color: 'red', value: 150 },
+      ],
+    },
+    links=[
+      {
+        targetBlank: true,
+        title: 'Latest commits',
+        url: 'https://gitlab.com/gitlab-org/gitlab/commits/master',
+      },
+    ],
+  ),
+  gridPos={ x: 7, y: 0, w: 6, h: 9 },
 )
 
 // ----------------------------------------------------------------------------
