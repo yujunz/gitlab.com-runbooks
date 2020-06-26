@@ -112,6 +112,9 @@
             },
           },
         },
+        'time': {
+          type: 'date',
+        },
         type: {
           type: 'text',
           fields: {
