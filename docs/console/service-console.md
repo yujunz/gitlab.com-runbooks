@@ -50,6 +50,7 @@
 * [../pgbouncer/pgbouncer-add-instance.md](../pgbouncer/pgbouncer-add-instance.md)
 * [../pgbouncer/pgbouncer-connections.md](../pgbouncer/pgbouncer-connections.md)
 * [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
+* [../postgres-dr-delayed/postgres-dr-replicas.md](../postgres-dr-delayed/postgres-dr-replicas.md)
 * [../praefect/praefect-database.md](../praefect/praefect-database.md)
 * [../redis/clear_anonymous_sessions.md](../redis/clear_anonymous_sessions.md)
 * [../redis/redis.md](../redis/redis.md)
