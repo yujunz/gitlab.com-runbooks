@@ -12,7 +12,7 @@
 #
 # Staging example:
 #
-#    bundle exec scripts/storage_rebalance.rb nfs-file01 nfs-file09 --staging --limit=1 --max-failures=1 --verbose --dry-run=yes
+#    bundle exec scripts/storage_rebalance.rb nfs-file01 nfs-file09 --staging --max-failures=1 --verbose --dry-run=yes
 #
 # Production examples:
 #
@@ -22,6 +22,7 @@
 #    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes --projects=13007013 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
 #    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
 #    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=no --move-amount=10 --skip=9271929 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file53 nfs-file02 --validate-commits --wait=10800 --max-failures=1 --projects=19438807 --dry-run=yes | tee scripts/logs/nfs-file53.migration.$(date +%Y-%m-%d_%H%M).log
 #
 # Logs may be reviewed:
 #
@@ -45,13 +46,15 @@ module Storage
   module RebalanceScript
     LOG_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
     MIGRATION_TIMESTAMP_FORMAT = '%Y-%m-%d_%H%M%S'
+    LOG_META_INFO_LENGTH = 26
+    DISPLAY_WIDTH = 80 - LOG_META_INFO_LENGTH
     DEFAULT_NODE_CONFIG = {}.freeze
     PROJECT_FIELDS = %i[
       id name full_path disk_path repository_storage destination_repository_storage
       size repository_size_bytes
     ].freeze
     INTEGER_PATTERN = /\A\d+\Z/.freeze
-    SEPARATOR = ('=' * 72).freeze
+    SEPARATOR = ('=' * DISPLAY_WIDTH).freeze
     PROGRESS_BRAILLES = [
       "\u28F7", "\u28EF", "\u28DF", "\u287F", "\u28BF", "\u28FB", "\u28FD", "\u28FE"
     ].freeze
@@ -78,7 +81,21 @@ module Storage
         projects_repository_commits_api_uri: 'projects/%<project_id>s/repository/commits',
         projects_repository_api_uri: 'projects/%<project_id>s/repository',
         projects_api_uri: 'projects/%<project_id>s',
+        projects_repository_storage_move_api_uri: 'projects/%<project_id>s/' \
+          'repository_storage_moves/%<repository_storage_move_id>s',
+        projects_repository_storage_moves_api_uri: 'projects/%<project_id>s/repository_storage_moves',
         projects_statistics_api_uri: 'projects/%<project_id>s/statistics',
+        project_repository_move_states: {
+          # For reference to the API state enumeration only:
+          # initial: 1,
+          # scheduled: 2,
+          # started: 3,
+          # finished: 4,
+          # failed: 5,
+          success: :finished,
+          failure: :failed,
+          in_progress: %i[initial scheduled started]
+        },
         project_selector_script_path: '/var/opt/gitlab/scripts/storage_project_selector.rb',
         project_selector_command: 'sudo gitlab-rails runner ' \
           '%<project_selector_script_path>s ' \
@@ -88,11 +105,17 @@ module Storage
         repository_storage_update_timeout: 10800,
         validate_commits: false,
         max_failures: 3,
+        retry_known_failures: false,
         limit: -1,
+        use_tty_display_settings: false,
         projects: [],
         excluded_projects: [],
         logdir_path: File.expand_path(File.join(__dir__, 'storage_migrations')),
-        migration_logfile_name: 'migrated_projects_%{date}.log'
+        migration_logfile_name: 'migrated_projects_%{date}.log',
+        migration_error_logfile_prefix: 'failed_projects_',
+        migration_error_logfile_name: 'failed_projects_%{date}.log',
+        log_format: "%<timestamp>s %-5<level>s %<msg>s\n",
+        log_format_progress: "\r%<timestamp>s %-5<level>s %<msg>s"
       }.freeze
     end
   end
@@ -101,6 +124,13 @@ module Storage
   class Timeout < StandardError; end
   class NoCommits < StandardError; end
   class MigrationTimeout < StandardError; end
+  class ServiceFailure < StandardError
+    attr_reader :repository_move
+    def initialize(message, migration_state_info = nil)
+      super(message)
+      @repository_move = migration_state_info
+    end
+  end
   class CommitsMismatch < StandardError; end
   class ShardMismatch < StandardError; end
 end
@@ -109,20 +139,36 @@ end
 module Storage
   # This module defines logging methods
   module Logging
-    def initialize_log
-      STDOUT.sync = true
-      timestamp_format = ::Storage::RebalanceScript::LOG_TIMESTAMP_FORMAT
-      log = Logger.new STDOUT
-      log.level = Logger::INFO
-      log.formatter = proc do |level, t, _name, msg|
-        fields = { timestamp: t.strftime(timestamp_format), level: level, msg: msg }
-        Kernel.format("%<timestamp>s %-5<level>s %<msg>s\n", **fields)
+    LOG_FORMAT = "%<timestamp>s %-5<level>s %<msg>s\n"
+    PROGRESS_LOG_FORMAT = "\r%<timestamp>s %-5<level>s %<msg>s"
+    DEFAULT_LOG_ERROR_OPTIONS = {
+      include_backtrace: false,
+      persist: true
+    }.freeze
+
+    def formatter_procedure(format_template = LOG_FORMAT)
+      proc do |level, t, _name, msg|
+        format(
+          format_template,
+          timestamp: t.strftime(::Storage::RebalanceScript::LOG_TIMESTAMP_FORMAT),
+          level: level, msg: msg)
       end
+    end
+
+    def initialize_log(formatter = formatter_procedure)
+      STDOUT.sync = true
+      log = Logger.new(STDOUT)
+      log.level = Logger::INFO
+      log.formatter = formatter
       log
     end
 
     def log
       @log ||= initialize_log
+    end
+
+    def progress_log
+      @progress_log ||= initialize_log(formatter_procedure(::Storage::Logging::PROGRESS_LOG_FORMAT))
     end
 
     def with_log_level(log_level = Logger::INFO, &block)
@@ -147,11 +193,35 @@ module Storage
       cmd
     end
 
+    def log_and_record_migration_error(error, project, options = {})
+      options = DEFAULT_LOG_ERROR_OPTIONS.merge(options)
+      error_record = { project_id: project[:id], message: error.message }
+      error_record[:disk_path] = project[:disk_path] if project.include?(:disk_path)
+      log_migration_error(project, error_record) if options[:persist]
+      migration_errors << error_record
+      if options[:include_backtrace]
+        error.backtrace.each { |t| log.error t }
+      else
+        log.error "Error: #{error}"
+      end
+      log.warn "Skipping migration"
+    end
+
     PRIVATE_TOKEN_HEADER_PATTERN = /Private-Token/i.freeze
 
     def get_request_headers(request)
       request.instance_variable_get('@header'.to_sym) || []
     end
+
+    # rubocop: disable Style/PercentLiteralDelimiters
+    # rubocop: disable Style/RegexpLiteral
+    def to_unescaped_json(data)
+      return data unless data.respond_to?(:to_json)
+
+      data.to_json.gsub(%r[\\"], '"').gsub(%r[^"{], '{').gsub(%r[{"$], '}')
+    end
+    # rubocop: enable Style/PercentLiteralDelimiters
+    # rubocop: enable Style/RegexpLiteral
 
     def debug_request(request)
       headers = get_request_headers(request)
@@ -170,11 +240,8 @@ module Storage
         curl_command = curl_command.concat(" ")
         curl_command = curl_command.concat(header_arguments.join(' '))
       end
-      unless request.body.nil?
-        body = request.body
-        body = body.to_json if body.respond_to?(:to_json)
-        curl_command = curl_command.concat(" --data '#{body}'")
-      end
+      body = request.body
+      curl_command = curl_command.concat(" --data '#{to_unescaped_json(body)}'") unless body.nil? || body.empty?
       log.debug curl_command
     end
 
@@ -186,14 +253,26 @@ module Storage
       end
     end
 
-    def init_project_migration_logging
+    def load_migration_failures
+      logfiles_glob = File.join(options[:logdir_path], format('%s*.log', options[:migration_error_logfile_prefix]))
+      migration_failures = []
+      Dir.glob(logfiles_glob).each do |file_path|
+        IO.foreach(file_path) do |line|
+          migration_failures << JSON.parse(line).transform_keys!(&:to_sym)
+        end
+      end
+      migration_failures
+    end
+
+    def init_project_migration_logging(
+      logfile_name = options[:migration_logfile_name], log_level = Logger::INFO)
       fields = { date: Time.now.strftime(::Storage::RebalanceScript::MIGRATION_TIMESTAMP_FORMAT) }
-      logfile_name = format(options[:migration_logfile_name], **fields)
+      logfile_name = format(logfile_name, **fields)
       logdir_path = options[:logdir_path]
       FileUtils.mkdir_p logdir_path
       logfile_path = File.join(logdir_path, logfile_name)
       FileUtils.touch logfile_path
-      logger = Logger.new(logfile_path, level: Logger::INFO)
+      logger = Logger.new(logfile_path, level: log_level)
       logger.formatter = proc { |level, t, name, msg| "#{msg}\n" }
       log.debug "Migration log file path: #{logfile_path}"
       logger
@@ -204,6 +283,10 @@ module Storage
 
     def migration_log
       @migration_log ||= init_project_migration_logging
+    end
+
+    def migration_error_log
+      @migration_error_log ||= init_project_migration_logging(options[:migration_error_logfile_name], Logger::ERROR)
     end
   end
 end
@@ -220,6 +303,8 @@ module Storage
       'GB': 1024 * 1024 * 1024 * 1024,
       'TB': 1024 * 1024 * 1024 * 1024 * 1024
     }.freeze
+    DEFAULT_TERMINAL_LINE_HEIGHT = 45
+    DEFAULT_TERMINAL_COLUMN_WIDTH = 80
 
     def execute_remote_command(hostname, command)
       execute_command(format(options[:ssh_command], hostname: hostname, command: command))
@@ -290,11 +375,22 @@ module Storage
       projects.all? { |project| project.include?(:destination_repository_storage) }
     end
 
+    def get_columns
+      if options[:use_tty_display_settings]
+        _rows, columns = IO.console.winsize
+        columns -= ::Storage::RebalanceScript::LOG_META_INFO_LENGTH
+      else
+        columns = ::Storage::RebalanceScript::DISPLAY_WIDTH
+      end
+      columns
+    end
+
     def loop_with_progress_until(timeout = ::Storage::RebalanceScript::DEFAULT_TIMEOUT, &block)
       progress_character = ::Storage::RebalanceScript::PROGRESS_FULL_BRAILLE
       spinner_characters = ::Storage::RebalanceScript::PROGRESS_BRAILLES
       seconds_per_spin = ::Storage::RebalanceScript::SECONDS_PER_SPIN
       spinner_pause_interval_seconds = 1 / spinner_characters.length.to_f
+      columns = get_columns
       bar_characters = ''
       iteration = 0
       start = Time.now.to_i
@@ -306,20 +402,23 @@ module Storage
 
         seconds_per_spin.times do
           spinner_characters.each do |character|
-            $stdout.write("\r#{bar_characters}#{character}")
-            $stdout.flush
+            progress_log.info(format('%s%s', bar_characters, character))
             sleep(spinner_pause_interval_seconds)
           end
         end
         iteration += 1
-        bar_characters = progress_character * iteration
-        $stdout.write("\r#{bar_characters}")
-        $stdout.write("\n") if (iteration % 80).zero?
+        bar_characters = progress_character * (iteration % columns)
+        progress_log.info(format('%s%s', bar_characters, progress_character))
+        if (iteration % (columns - 1)).zero?
+          bar_characters = ''
+          $stdout.write("\n")
+        elsif log.level == Logger::DEBUG
+          $stdout.write("\n")
+        end
         $stdout.flush
       end
     ensure
-      $stdout.write("\n")
-      $stdout.flush
+      puts "\n"
     end
   end
 end
@@ -353,7 +452,9 @@ module Storage
         define_wait_option
         define_validate_commits_option
         define_max_failures_option
+        define_retry_known_failures_option
         define_limit_option
+        define_tty_option
         define_env_option
         define_verbose_option
         define_tail
@@ -436,11 +537,11 @@ module Storage
       def define_skip_option
         description = 'Skip specific project(s)'
         @parser.on('--skip=<project_id,...>', Array, description) do |project_identifiers|
-          @options[:excluded_projects] ||= []
+          @options[:excluded_projects] ||= Set.new
           if project_identifiers.respond_to?(:all?) &&
               project_identifiers.all? { |s| resembles_integer? s }
             positive_numbers = project_identifiers.map(&:to_i).delete_if { |i| !i.positive? }
-            @options[:excluded_projects].concat(positive_numbers)
+            @options[:excluded_projects] |= positive_numbers.uniq
           else
             message = 'Argument given for --skip must be a list of one or more integers'
             raise OptionParser::InvalidArgument, message
@@ -479,9 +580,16 @@ module Storage
         end
       end
 
+      def define_retry_known_failures_option
+        description = "Retry known recorded migration failures; default: #{@options[:retry_known_failures]}"
+        @parser.on('-f', '--retry-known-failures', description) do
+          @options[:max_failures] = true
+        end
+      end
+
       def define_validate_commits_option
         description = 'Validate project commits are equal post-migration'
-        @parser.on('-c', '--validate-commits', description) do |checksum|
+        @parser.on('-c', '--validate-commits', description) do
           @options[:validate_commits] = true
         end
       end
@@ -496,6 +604,12 @@ module Storage
       def define_include_mirrors_option
         @parser.on('-M', '--include-mirrors', 'Include mirror repositories') do |include_mirrors|
           @options[:include_mirrors] = true
+        end
+      end
+
+      def define_tty_option
+        @parser.on('--tty', 'Format progress display using tty settings') do
+          @options[:use_tty_display_settings] = true
         end
       end
 
@@ -575,6 +689,8 @@ module Storage
     end
 
     def post(url, opts = {})
+      opts.update(headers: { 'Content-Type': 'application/json' }) if opts.fetch(
+        :body, nil).respond_to?(:[]) && !opts.fetch(:headers, {}).include?('Content-Type')
       request(Net::HTTP::Post, url, opts)
     end
 
@@ -598,7 +714,7 @@ module Storage
     # rubocop: disable Metrics/AbcSize
     def invoke(client, request, opts = {})
       body = opts[:body]
-      request.body = body unless body.nil?
+      request.body = body.respond_to?(:bytesize) ? body : body.to_json unless body.nil?
       debug_request(request)
 
       response = DEFAULT_RESPONSE
@@ -683,11 +799,13 @@ module Storage
           error = e
         end
       rescue IOError => e
-        log.error "Unexpected IO error: #{e} (#{e.class})"
+        log.error format('Unexpected IO error: %<error>s (%<error_class>s)', error: e, error_class: e.class)
         error = e
       rescue StandardError => e
-        log.error "Unexpected error: #{e} (#{e.class})"
-        log.error e.exception_type if e.respond_to? :exception_type
+        log.error format(
+          'Unexpected error: %<error>s (%<error_class>s%<error_type>s)',
+          error: e, error_class: e.class,
+          error_type: e.respond_to?(:exception_type) ? format('/%s', e.exception_type) : '')
         error = e
       end
       [result, error]
@@ -709,15 +827,24 @@ module Storage
       log.level = @options[:log_level]
     end
 
-    def log_migration(project, destination)
+    def log_migration(project)
       log_artifact = {
         id: project[:id],
         path: project[:disk_path],
         source: project[:repository_storage],
-        destination: destination,
+        destination: options[:destination_shard],
         date: DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
       }
       migration_log.info log_artifact.to_json
+    end
+
+    def log_migration_error(project, error)
+      log_artifact = error.merge(
+        source: project[:repository_storage],
+        destination: options[:destination_shard],
+        date: DateTime.now.iso8601(ISO8601_FRACTIONAL_SECONDS_LENGTH)
+      )
+      migration_error_log.error log_artifact.to_json
     end
 
     def get_first_commit(commits)
@@ -737,7 +864,7 @@ module Storage
       commits, error, status = gitlab_api_client.get(url)
       raise error unless error.nil?
 
-      raise "Invalid response status code: #{status}" unless status == 200
+      raise "Invalid response status code: #{status}" unless [200].include?(status)
 
       raise NoCommits, "Failed to get commits for project id #{project_id}" if commits.empty?
 
@@ -754,38 +881,73 @@ module Storage
       project, error, status = gitlab_api_client.get(url, parameters: { statistics: true })
       raise error unless error.nil?
 
-      raise "Invalid response status code: #{status}" if status != 200
+      raise "Invalid response status code: #{status}" unless [200].include?(status)
 
       raise "Failed to get project id: #{project_id}" if project.nil? || project.empty?
 
       project.transform_keys(&:to_sym)
     end
 
-    def update_repository_storage(project, destination)
-      url = format(get_api_url(:projects_api_uri), project_id: project[:id])
-      result, error, status = gitlab_api_client.put(url, body: 'repository_storage=' + destination)
+    def fetch_repository_storage_move(project, repository_storage_move)
+      url = format(
+        get_api_url(:projects_repository_storage_move_api_uri),
+        project_id: project[:id],
+        repository_storage_move_id: repository_storage_move[:id])
+      result, error, status = gitlab_api_client.get(url)
       raise error unless error.nil?
 
-      raise "Invalid response status code: #{status}" unless [200, 204].include?(status)
+      raise "Invalid response status code: #{status}" unless [200].include?(status)
 
-      raise "Unexpected response: #{result}" unless result['id'] == project[:id]
+      raise "Unexpected response: #{result}" unless result.fetch('project', {}).fetch('id', nil) == project[:id]
 
       result.transform_keys(&:to_sym)
     end
 
-    def wait_for_repository_storage_update(project)
-      project_id = project[:id]
-      destination = options[:destination_shard] || project[:destination_repository_storage]
+    def fetch_repository_storage_moves(project)
+      url = format(get_api_url(:projects_repository_storage_moves_api_uri), project_id: project[:id])
+      result, error, status = gitlab_api_client.get(url)
+      raise error unless error.nil?
+
+      raise "Invalid response status code: #{status}" unless [200].include?(status)
+
+      raise "Unexpected response: #{result}" if result.nil?
+
+      result.each { |element| element.transform_keys(&:to_sym) }
+      result
+    end
+
+    def create_repository_storage_move(project, destination)
+      url = format(get_api_url(:projects_repository_storage_moves_api_uri), project_id: project[:id])
+      result, error, status = gitlab_api_client.post(url, body: { destination_storage_name: destination })
+      raise error unless error.nil?
+
+      raise "Invalid response status code: #{status}" unless [200, 201].include?(status)
+
+      raise "Unexpected response: #{result}" unless result.fetch('project', {}).fetch('id', nil) == project[:id]
+
+      result.transform_keys(&:to_sym)
+    end
+
+    def wait_for_repository_storage_move(project, repository_storage_move, opts = {})
+      project_repository_move_states = options[:project_repository_move_states].merge(opts)
       timeout = options[:repository_storage_update_timeout]
+      success_state = project_repository_move_states[:success]
+      failure_state = project_repository_move_states[:failure]
 
       begin
         loop_with_progress_until(timeout) do
           with_log_level(Logger::INFO) do
-            get_project(project_id).fetch(:repository_storage, nil) == destination
+            repository_move = fetch_repository_storage_move(project, repository_storage_move)
+            repository_move_state = repository_move.fetch(:state, nil)&.to_sym
+            if repository_move_state == failure_state
+              raise ServiceFailure.new(
+                'Noticed service failure during repository replication', repository_move)
+            end
+            repository_move_state == success_state
           end
         end
       rescue Timeout => e
-        log.warn "Gave up waiting for repository_storage update of project id: #{project_id}: #{e.message}"
+        log.warn "Gave up waiting for repository storage move to reach state: #{success_state}: #{e.message}"
       end
     end
 
@@ -830,28 +992,37 @@ module Storage
       end
     end
 
+    def repository_replication_already_in_progress?(project)
+      fetch_repository_storage_moves(project).any? do |move|
+        options[:project_repository_move_states][:in_progress].include?(move[:state]&.to_sym)
+      end
+    end
+
     # rubocop: disable Metrics/AbcSize
-    def migrate(project)
+    def schedule_repository_replication(project)
       verify_source(project)
+      if repository_replication_already_in_progress?(project)
+        log.warn "Repository replication for project id #{project[:id]} already in progress; skipping"
+        return
+      end
 
       destination = options[:destination_shard] || project[:destination_repository_storage]
       log_separator
-      log.info "Migrating project id: #{project[:id]}"
-      log.debug "  Name: #{project[:name]}"
-      log.debug "  Storage: #{project[:repository_storage]}"
-      log.debug "  Path: #{project[:disk_path]}"
-      log.debug "  Size: #{project[:size]}"
+      log.info "Scheduling repository replication to #{destination} for project id: #{project[:id]}"
+      log.info "  Project name: #{project[:name]}"
+      log.info "  Current shard name: #{project[:repository_storage]}"
+      log.info "  Disk path: #{project[:disk_path]}"
+      log.info "  Repository size: #{project[:size]}"
 
       original_commit_id = get_commit_id(project[:id]) if options[:validate_commits]
 
       if options[:dry_run]
-        log.info "[Dry-run] Would have moved project id: #{project[:id]}"
+        log.info "[Dry-run] Would have scheduled repository replication for project id: #{project[:id]}"
         return
       end
 
-      log.info "Scheduling migration for project id: #{project[:id]} to #{destination}"
-      update_repository_storage(project, destination)
-      wait_for_repository_storage_update(project)
+      repository_storage_move = create_repository_storage_move(project, destination)
+      wait_for_repository_storage_move(project, repository_storage_move)
       post_migration_project = project.merge(get_project(project[:id]))
       if post_migration_project[:repository_storage] == destination
         log.info "Success moving project id: #{project[:id]}"
@@ -866,7 +1037,7 @@ module Storage
       log.debug "  Name: #{post_migration_project[:name]}"
       log.debug "  Storage: #{post_migration_project[:repository_storage]}"
       log.debug "  Path: #{post_migration_project[:disk_path]}"
-      log_migration(project, destination)
+      log_migration(project)
     end
     # rubocop: enable Metrics/AbcSize
 
@@ -875,36 +1046,38 @@ module Storage
       project_info = get_project(project_id)
       project.update(project_info)
 
-      migrate(project)
+      schedule_repository_replication(project)
     rescue NoCommits => e
-      migration_errors << { project_id: project_id, message: e.message }
-      log.error "Error: #{e}"
-      log.warn "Skipping migration"
+      log_and_record_migration_error(e, project)
     rescue CommitsMismatch => e
-      migration_errors << { project_id: project_id, message: e.message }
       log.error "Failed to validate integrity of project id: #{project_id}"
-      log.error "Error: #{e}"
-      log.warn "Skipping migration"
+      log_and_record_migration_error(e, project)
     rescue ShardMismatch => e
-      migration_errors << { project_id: project_id, message: e.message }
       log.error "Wrong shard given for project id: #{project_id}"
-      log.error "Error: #{e}"
-      log.warn "Skipping migration"
+      log_and_record_migration_error(e, project)
     rescue MigrationTimeout => e
-      migration_errors << { project_id: project_id, message: e.message }
       log.error "Timed out migrating project id: #{project_id}"
-      log.error "Error: #{e}"
-      log.warn "Skipping migration"
+      log_and_record_migration_error(e, project)
+    rescue ServiceFailure => e
+      log.error "Service error migrating project id: #{project_id}"
+      log_and_record_migration_error(e, project)
     rescue StandardError => e
-      migration_errors << { project_id: project_id, message: e.message }
       log.error "Unexpected error migrating project id #{project_id}: #{e}"
-      e.backtrace.each { |t| log.error t }
-      log.warn "Skipping migration"
+      log_and_record_migration_error(e, project, include_backtrace: true, persist: false)
+    end
+
+    def exclude_known_failures
+      failed_reprojectories = load_migration_failures.collect { |failure| failure.fetch(:project_id, nil) }
+      failed_reprojectories.compact!
+      log.info "Filtering #{failed_reprojectories.length} known failed project repositories"
+      log.debug "Known failed project repositories: #{failed_reprojectories}"
+      options[:excluded_projects] |= failed_reprojectories
     end
 
     # Execute remote script to select projects
     def select_projects(hostname = console_node_hostname)
       log.info "Selecting projects from #{hostname}"
+      exclude_known_failures unless options[:retry_known_failures]
       fields = options.slice(:project_selector_script_path, :source_shard, :destination_shard)
       command = format(options[:project_selector_command], **fields)
       command = command.concat(" --staging") if options[:env] == :staging
@@ -936,7 +1109,7 @@ module Storage
         next if project.empty?
 
         yield project
-        projects = select_projects if projects.empty? && given_projects.empty?
+        projects = select_projects if projects.empty?
       end
     end
 
