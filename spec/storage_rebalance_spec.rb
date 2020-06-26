@@ -33,7 +33,8 @@ describe ::Storage::Rebalancer do
       { test_node_01 => { 'gitaly_address' => gitaly_address_01 },
         test_node_02 => { 'gitaly_address' => gitaly_address_02 } }
     end
-    let(:test_project_name) { 'test/test_project_name' }
+    let(:test_project_name) { 'test_project_name' }
+    let(:test_project_path_with_namespace) { 'test/test_project_name' }
     let(:test_project_disk_path) { 'test/project_disk_path' }
     let(:test_repository) do
       repository = double('Repository')
@@ -44,8 +45,11 @@ describe ::Storage::Rebalancer do
       {
         id: test_project_id,
         name: test_project_name,
+        path_with_namespace: test_project_path_with_namespace,
         disk_path: test_project_disk_path,
-        size: test_repository_size,
+        statistics: {
+          repository_size: test_repository_size
+        },
         repository_storage: test_node_01,
         destination_repository_storage: test_node_02
       }
@@ -54,13 +58,13 @@ describe ::Storage::Rebalancer do
     let(:test_projects) { { projects: [test_project] } }
     let(:test_projects_json) { test_projects.to_json }
     let(:test_full_project) do
-      { id: test_project_id, name: test_project_name, disk_path: test_project_disk_path,
-        repository_storage: test_node_01 }
+      { id: test_project_id, name: test_project_name, path_with_namespace: test_project_path_with_namespace,
+        disk_path: test_project_disk_path, repository_storage: test_node_01 }
     end
     let(:test_project_put_response) { { 'id': test_project_id }.transform_keys(&:to_s) }
     let(:test_updated_full_project) do
-      { id: test_project_id, name: test_project_name, disk_path: test_project_disk_path,
-        repository_storage: test_node_02 }
+      { id: test_project_id, name: test_project_name, path_with_namespace: test_project_path_with_namespace,
+        disk_path: test_project_disk_path, repository_storage: test_node_02 }
     end
     let(:test_moves) { [{ 'project': { 'id': test_project_id }, 'state': 'finished' }] }
     let(:test_move) { { 'project': { 'id': test_project_id }, 'state': 'started' } }
@@ -114,52 +118,53 @@ describe ::Storage::Rebalancer do
     end
 
     context 'when the --dry-run option is true' do
+      before do
+        allow(subject).to receive(:fetch_project).and_return(test_project)
+        allow(subject).to receive(:fetch_largest_projects).and_return([test_project])
+      end
+
       it 'logs the rebalance operation' do
-        allow(subject).to receive(:get_project).and_return(test_project)
-        allow(subject).to receive(:get_projects).and_return([test_project])
-        allow(subject).to receive(:paginate_projects).and_yield(test_project)
+        # allow(subject).to receive(:paginate_projects).and_yield(test_project)
 
         expect(subject.log).to receive(:info).with(
           'Option --move-amount not specified, will only move 1 project...')
+        expect(subject.log).to receive(:info).with('Fetching largest projects')
+        expect(subject.log).to receive(:info).with("Filtering #{test_migration_failures.length} " \
+          "known failed project repositories")
         expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
         expect(subject.log).to receive(:info).with("Scheduling repository replication to " \
           "#{test_node_02} for project id: #{test_project_id}")
-        expect(subject.log).to receive(:info).with("  Project name: #{test_project_name}")
+        expect(subject.log).to receive(:info).with("  Project path: #{test_project_path_with_namespace}")
         expect(subject.log).to receive(:info).with("  Current shard name: #{test_node_01}")
         expect(subject.log).to receive(:info).with("  Disk path: #{test_project_disk_path}")
-        expect(subject.log).to receive(:info).with("  Repository size: #{test_repository_size}")
+        expect(subject.log).to receive(:info).with("  Repository size: 1.0 GB")
         expect(subject.log).to receive(:info).with("[Dry-run] Would have scheduled repository " \
           "replication for project id: #{test_project_id}")
         expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
+        expect(subject.log).to receive(:info).with('[Dry-run] Would have processed 1.0 GB of data')
         expect(subject.log).to receive(:info).with('Done')
         expect(subject.rebalance).to be_nil
       end
       # it 'logs the rebalance operation'
 
       context 'when the projects are not given' do
-        before do
-          allow(subject).to receive(:get_project).and_return(test_project)
-        end
-
         it 'selects the projects from the configured console node' do
           expect(subject.log).to receive(:info)
             .with('Option --move-amount not specified, will only move 1 project...')
-          expect(subject.log).to receive(:info)
-            .with('Selecting projects from console-01-sv-gprd.c.gitlab-production.internal')
+          expect(subject.log).to receive(:info).with('Fetching largest projects')
           expect(subject.log).to receive(:info).with("Filtering #{test_migration_failures.length} " \
             "known failed project repositories")
-          expect(subject).to receive(:execute_command).and_return(test_projects_json)
-            .with("ssh #{test_hostname} -- #{test_command}")
           expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
           expect(subject.log).to receive(:info).with("Scheduling repository replication to " \
             "#{test_node_02} for project id: #{test_project_id}")
-          expect(subject.log).to receive(:info).with("  Project name: #{test_project_name}")
+          expect(subject.log).to receive(:info).with("  Project path: #{test_project_path_with_namespace}")
           expect(subject.log).to receive(:info).with("  Current shard name: #{test_node_01}")
           expect(subject.log).to receive(:info).with("  Disk path: #{test_project_disk_path}")
-          expect(subject.log).to receive(:info).with("  Repository size: #{test_repository_size}")
+          expect(subject.log).to receive(:info).with("  Repository size: 1.0 GB")
           expect(subject.log).to receive(:info).with("[Dry-run] Would have scheduled repository " \
             "replication for project id: #{test_project_id}")
           expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
+          expect(subject.log).to receive(:info).with('[Dry-run] Would have processed 1.0 GB of data')
           expect(subject.log).to receive(:info).with('Done')
           expect(subject.rebalance).to be_nil
         end
@@ -172,31 +177,38 @@ describe ::Storage::Rebalancer do
     context 'when the --dry-run option is false' do
       let(:dry_run) { false }
 
+      before do
+        allow(subject).to receive(:fetch_project).and_return(test_project)
+        allow(subject).to receive(:fetch_largest_projects).and_return([test_project])
+      end
+
       it 'logs the rebalance operation' do
-        allow(subject).to receive(:get_project).and_return(test_project)
-        allow(subject).to receive(:get_projects).and_return([test_project])
-        allow(subject).to receive(:paginate_projects).and_yield(test_project)
+        # allow(subject).to receive(:paginate_projects).and_yield(test_project)
         allow(subject).to receive(:create_repository_storage_move).and_return(test_move)
         allow(subject).to receive(:fetch_repository_storage_move).and_return(test_move)
 
         expect(subject.log).to receive(:info)
           .with('Option --move-amount not specified, will only move 1 project...')
+        expect(subject.log).to receive(:info).with('Fetching largest projects')
+        expect(subject.log).to receive(:info).with("Filtering #{test_migration_failures.length} " \
+          "known failed project repositories")
         expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
         expect(subject.log).to receive(:info).with("Scheduling repository replication to " \
           "#{test_node_02} for project id: #{test_project_id}")
-        expect(subject.log).to receive(:info).with("  Project name: #{test_project_name}")
+        expect(subject.log).to receive(:info).with("  Project path: #{test_project_path_with_namespace}")
         expect(subject.log).to receive(:info).with("  Current shard name: #{test_node_01}")
         expect(subject.log).to receive(:info).with("  Disk path: #{test_project_disk_path}")
-        expect(subject.log).to receive(:info).with("  Repository size: #{test_repository_size}")
+        expect(subject.log).to receive(:info).with("  Repository size: 1.0 GB")
         expect(subject).to receive(:loop_with_progress_until).and_yield.and_yield
-        expect(subject).to receive(:get_project).and_return(test_full_project)
-        expect(subject).to receive(:get_project).and_return(test_updated_full_project)
+        expect(subject).to receive(:fetch_project).and_return(test_full_project)
+        expect(subject).to receive(:fetch_project).and_return(test_updated_full_project)
         expect(subject).to receive(:fetch_repository_storage_moves).and_return(test_moves)
         expect(subject.log).to receive(:info).with("Success moving project id: #{test_project_id}")
         expect(test_migration_logger).to receive(:info).with(test_artifact.to_json)
         expect(subject.log).to receive(:info).with("Migrated project id: #{test_project_id}")
         expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
         expect(subject.log).to receive(:info).with('Done')
+        expect(subject.log).to receive(:info).with('Processed 1.0 GB of data')
         expect(subject.log).to receive(:info).with("Finished migrating projects from #{test_node_01} to #{test_node_02}")
         expect(subject.log).to receive(:info).with('No errors encountered during migration')
         expect(subject.rebalance).to be_nil
@@ -210,30 +222,28 @@ describe ::Storage::Rebalancer do
 
           expect(subject.log).to receive(:info)
             .with('Option --move-amount not specified, will only move 1 project...')
-          expect(subject.log).to receive(:info)
-            .with('Selecting projects from console-01-sv-gprd.c.gitlab-production.internal')
-          expect(subject).to receive(:execute_command).and_return(test_projects_json)
-            .with("ssh #{test_hostname} -- #{test_command}")
+          expect(subject.log).to receive(:info).with('Fetching largest projects')
           expect(subject.log).to receive(:info).with("Filtering #{test_migration_failures.length} " \
             "known failed project repositories")
           expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
           expect(subject.log).to receive(:info).with("Scheduling repository replication to " \
             "#{test_node_02} for project id: #{test_project_id}")
-          expect(subject.log).to receive(:info).with("  Project name: #{test_project_name}")
+          expect(subject.log).to receive(:info).with("  Project path: #{test_project_path_with_namespace}")
           expect(subject.log).to receive(:info).with("  Current shard name: #{test_node_01}")
           expect(subject.log).to receive(:info).with("  Disk path: #{test_project_disk_path}")
-          expect(subject.log).to receive(:info).with("  Repository size: #{test_repository_size}")
+          expect(subject.log).to receive(:info).with("  Repository size: 1.0 GB")
           expect(subject).to receive(:create_repository_storage_move).with(test_project, test_node_02).and_return(test_move)
           expect(subject).to receive(:loop_with_progress_until).and_yield.and_yield
-          expect(subject).to receive(:get_project).and_return(test_full_project)
+          expect(subject).to receive(:fetch_project).and_return(test_full_project)
           allow(subject).to receive(:fetch_repository_storage_moves).and_return(test_moves)
           allow(subject).to receive(:fetch_repository_storage_moves).and_return(test_moves)
           expect(subject.log).to receive(:info).with("Success moving project id: #{test_project_id}")
-          expect(subject).to receive(:get_project).and_return(test_updated_full_project)
+          expect(subject).to receive(:fetch_project).and_return(test_updated_full_project)
           expect(test_migration_logger).to receive(:info).with(test_artifact.to_json)
           expect(subject.log).to receive(:info).with("Migrated project id: #{test_project_id}")
           expect(subject.log).to receive(:info).with(::Storage::RebalanceScript::SEPARATOR)
           expect(subject.log).to receive(:info).with('Done')
+          expect(subject.log).to receive(:info).with('Processed 1.0 GB of data')
           expect(subject.log).to receive(:info).with("Finished migrating projects from #{test_node_01} to #{test_node_02}")
           expect(subject.log).to receive(:info).with('No errors encountered during migration')
           expect(subject.rebalance).to be_nil
@@ -330,12 +340,14 @@ describe ::Storage::GitLabClient do
     body['resource'] = 'value'
     body
   end
+  let(:test_response_headers) { {} }
   let(:test_response_body_serialized_json) { test_response_body.to_json }
   let(:test_error) { nil }
   let(:test_response_successful) do
     response = double('Net::HTTP::Response')
     allow(response).to receive(:code).and_return(test_response_code_ok)
     allow(response).to receive(:body).and_return(test_response_body_serialized_json)
+    allow(response).to receive(:each_header)
     response
   end
   let(:test_response_code_not_found) { 404 }
@@ -372,7 +384,7 @@ describe ::Storage::GitLabClient do
     let(:test_response) { test_response_successful }
 
     it 'returns the deserialized resource with no error and status code 200' do
-      expect(subject.get(get_url)).to eq([test_response_body, test_error, test_status_code])
+      expect(subject.get(get_url)).to eq([test_response_body, test_error, test_status_code, test_response_headers])
     end
 
     context 'when the requested resource does not exist' do
@@ -384,7 +396,7 @@ describe ::Storage::GitLabClient do
       it 'returns an empty hash with the error and status code 404' do
         expect(subject).to receive(:execute).and_raise(test_http_not_found_error)
         expect(subject.log).to receive(:error).with(test_not_found_message)
-        expect(subject.get(get_url)).to eq([test_response_body, test_error, test_status_code])
+        expect(subject.get(get_url)).to eq([test_response_body, test_error, test_status_code, test_response_headers])
       end
       # it 'returns an empty hash with the error and status code 404'
     end
@@ -397,7 +409,7 @@ describe ::Storage::GitLabClient do
     let(:test_response) { test_response_successful }
 
     it 'returns the deserialized resource with no error and status code 200' do
-      expect(subject.put(put_url)).to eq([test_response_body, nil, 200])
+      expect(subject.put(put_url)).to eq([test_response_body, nil, 200, test_response_headers])
     end
 
     context 'when the requested resource does not exist' do
@@ -409,7 +421,7 @@ describe ::Storage::GitLabClient do
       it 'returns an empty hash with the error and status code 404' do
         expect(subject).to receive(:execute).and_raise(test_http_not_found_error)
         expect(subject.log).to receive(:error).with(test_not_found_message)
-        expect(subject.get(get_url)).to eq([test_response_body, test_error, test_status_code])
+        expect(subject.get(get_url)).to eq([test_response_body, test_error, test_status_code, test_response_headers])
       end
       # it 'returns an empty hash with the error and status code 404'
     end
@@ -422,7 +434,7 @@ describe ::Storage::GitLabClient do
     let(:test_response) { test_response_successful }
 
     it 'returns the deserialized resource with no error and status code 200' do
-      expect(subject.post(post_url)).to eq([test_response_body, nil, 200])
+      expect(subject.post(post_url)).to eq([test_response_body, nil, 200, test_response_headers])
     end
 
     context 'when the requested resource does not exist' do
@@ -434,7 +446,7 @@ describe ::Storage::GitLabClient do
       it 'returns an empty hash with the error and status code 404' do
         expect(subject).to receive(:execute).and_raise(test_http_not_found_error)
         expect(subject.log).to receive(:error).with(test_not_found_message)
-        expect(subject.get(get_url)).to eq([test_response_body, test_error, test_status_code])
+        expect(subject.get(get_url)).to eq([test_response_body, test_error, test_status_code, test_response_headers])
       end
       # it 'returns an empty hash with the error and status code 404'
     end
