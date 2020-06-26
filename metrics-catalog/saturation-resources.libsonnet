@@ -17,22 +17,115 @@ local throttledSidekiqShards = [
 // as such, we only record this utilisation metric on IO subset of the fleet for now.
 local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
+local pgbouncerAsyncPool(serviceType, role) =
+  resourceSaturationPoint({
+    title: 'Postgres Async (Sidekiq) %s Connection Pool Saturation per Node' % [role],
+    severity: 's4',
+    appliesTo: [serviceType],
+    description: |||
+      pgbouncer async connection pool saturation per database node, for %(role)s database connections.
+
+      Sidekiq maintains it's own pgbouncer connection pool. When this resource is saturated,
+      database operations may queue, leading to additional latency in background processing.
+    ||| % { role: role },
+    grafana_dashboard_uid: 'sat_pgbouncer_async_pool_' + role,
+    resourceLabels: ['fqdn', 'instance'],
+    burnRatePeriod: '5m',
+    query: |||
+      (
+        avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s])
+      )
+      / on(%(aggregationLabels)s) group_left()
+      sum by (%(aggregationLabels)s) (
+        avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s])
+      )
+    |||,
+    slos: {
+      soft: 0.90,
+      hard: 0.95,
+      alertTriggerDuration: '10m',
+    },
+  });
+
+local pgbouncerSyncPool(serviceType, role) =
+  resourceSaturationPoint({
+    title: 'Postgres Sync (Web/API/Git) %s Connection Pool Saturation per Node' % [role],
+    severity: 's3',
+    appliesTo: [serviceType],
+    description: |||
+      pgbouncer sync connection pool saturation per database node, for %(role)s database connections.
+
+      Web/api/git applications use a separate connection pool to sidekiq.
+
+      When this resource is saturated, web/api database operations may queue, leading to unicorn/puma
+      saturation and 503 errors in the web.
+    ||| % { role: role },
+    grafana_dashboard_uid: 'sat_pgbouncer_sync_pool_' + role,
+    resourceLabels: ['fqdn', 'instance'],
+    burnRatePeriod: '5m',
+    query: |||
+      (
+        avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
+        avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s])
+      )
+      / on(%(aggregationLabels)s) group_left()
+      sum by (%(aggregationLabels)s) (
+        avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production", %(selector)s}[%(rangeInterval)s])
+      )
+    |||,
+    slos: {
+      soft: 0.85,
+      hard: 0.95,
+      alertTriggerDuration: '10m',
+    },
+  });
+
 {
-  active_db_connections: resourceSaturationPoint({
-    title: 'Active DB Connection Saturation',
+  pg_active_db_connections_primary: resourceSaturationPoint({
+    title: 'Active Primary DB Connection Saturation',
     severity: 's3',
     appliesTo: ['patroni'],
     description: |||
-      Active db connection saturation per node.
+      Active db connection saturation on the primary node.
 
-      Postgres is configured to use a maximum number of connections. When this resource is saturated,
-      connections may queue.
+      Postgres is configured to use a maximum number of connections.
+      When this resource is saturated, connections may queue.
     |||,
-    grafana_dashboard_uid: 'sat_active_db_connections',
+    grafana_dashboard_uid: 'sat_active_db_connections_primary',
     resourceLabels: ['fqdn'],
     query: |||
       sum without (state) (
-        pg_stat_activity_count{datname="gitlabhq_production", state!="idle", %(selector)s}
+        pg_stat_activity_count{datname="gitlabhq_production", state!="idle", %(selector)s} unless on(instance) (pg_replication_is_replica == 1)
+      )
+      / on (%(aggregationLabels)s)
+      pg_settings_max_connections{%(selector)s}
+    |||,
+    slos: {
+      soft: 0.70,
+      hard: 0.80,
+    },
+  }),
+
+  pg_active_db_connections_replica: resourceSaturationPoint({
+    title: 'Active Secondary DB Connection Saturation',
+    severity: 's3',
+    appliesTo: ['patroni'],
+    description: |||
+      Active db connection saturation per replica node
+
+      Postgres is configured to use a maximum number of connections.
+      When this resource is saturated, connections may queue.
+    |||,
+    grafana_dashboard_uid: 'sat_active_db_connections_replica',
+    resourceLabels: ['fqdn'],
+    query: |||
+      sum without (state) (
+        pg_stat_activity_count{datname="gitlabhq_production", state!="idle", %(selector)s} and on(instance) (pg_replication_is_replica == 1)
       )
       / on (%(aggregationLabels)s)
       pg_settings_max_connections{%(selector)s}
@@ -490,37 +583,13 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
     },
   }),
 
-  pgbouncer_async_pool: resourceSaturationPoint({
-    title: 'Postgres Async (Sidekiq) Connection Pool Saturation per Node',
-    severity: 's4',
-    appliesTo: ['pgbouncer', 'patroni'],
-    description: |||
-      Postgres connection pool saturation per database node.
+  pgbouncer_async_primary_pool: pgbouncerAsyncPool('pgbouncer', 'primary'),
 
-      Sidekiq maintains it's own pgbouncer connection pool. When this resource is saturated, database operations may
-      queue, leading to additional latency in background processing.
-    |||,
-    grafana_dashboard_uid: 'sat_pgbouncer_async_pool',
-    resourceLabels: ['fqdn', 'instance'],
-    burnRatePeriod: '5m',
-    query: |||
-      (
-        avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
-        avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
-        avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s]) +
-        avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s])
-      )
-      / on(%(aggregationLabels)s) group_left()
-      sum by (%(aggregationLabels)s) (
-        avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production_sidekiq", %(selector)s}[%(rangeInterval)s])
-      )
-    |||,
-    slos: {
-      soft: 0.90,
-      hard: 0.95,
-      alertTriggerDuration: '10m',
-    },
-  }),
+  // Note that this pool is currently not used, but may be added in the medium
+  // term
+  // pgbouncer_async_replica_pool: pgbouncerAsyncPool('patroni', 'replica'),
+  pgbouncer_sync_primary_pool: pgbouncerSyncPool('pgbouncer', 'primary'),
+  pgbouncer_sync_replica_pool: pgbouncerSyncPool('patroni', 'replica'),
 
   pgbouncer_single_core: resourceSaturationPoint({
     title: 'PGBouncer Single Core per Node',
@@ -544,39 +613,6 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
     slos: {
       soft: 0.80,
       hard: 0.90,
-    },
-  }),
-
-  pgbouncer_sync_pool: resourceSaturationPoint({
-    title: 'Postgres Sync (Web/API) Connection Pool Saturation per Node',
-    severity: 's3',
-    appliesTo: ['pgbouncer', 'patroni'],
-    description: |||
-      Postgres sync connection pool saturation per database node.
-
-      Web/api/git applications use a separate connection pool to sidekiq.
-
-      When this resource is saturated, web/api database operations may queue, leading to unicorn/puma saturation and 503 errors in the web.
-    |||,
-    grafana_dashboard_uid: 'sat_pgbouncer_sync_pool',
-    resourceLabels: ['fqdn', 'instance'],
-    burnRatePeriod: '5m',
-    query: |||
-      (
-        avg_over_time(pgbouncer_pools_server_active_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
-        avg_over_time(pgbouncer_pools_server_testing_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
-        avg_over_time(pgbouncer_pools_server_used_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s]) +
-        avg_over_time(pgbouncer_pools_server_login_connections{user="gitlab", database="gitlabhq_production", %(selector)s}[%(rangeInterval)s])
-      )
-      / on(%(aggregationLabels)s) group_left()
-      sum by (%(aggregationLabels)s) (
-        avg_over_time(pgbouncer_databases_pool_size{name="gitlabhq_production", %(selector)s}[%(rangeInterval)s])
-      )
-    |||,
-    slos: {
-      soft: 0.85,
-      hard: 0.95,
-      alertTriggerDuration: '10m',
     },
   }),
 
