@@ -26,6 +26,7 @@
 * [pgbouncer-add-instance.md](pgbouncer-add-instance.md)
 * [pgbouncer-applications.md](pgbouncer-applications.md)
 * [pgbouncer-connections.md](pgbouncer-connections.md)
+* [pgbouncer-remove-instance.md](pgbouncer-remove-instance.md)
 * [pgbouncer-saturation.md](pgbouncer-saturation.md)
 * [../sidekiq/large-pull-mirror-queue.md](../sidekiq/large-pull-mirror-queue.md)
 <!-- END_MARKER -->
