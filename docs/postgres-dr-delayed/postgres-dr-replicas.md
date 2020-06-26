@@ -11,6 +11,7 @@
     * [Restoring with WAL-G](#restoring-with-wal-g)
     * [Restoring with a disk-snapshot](#restoring-with-a-disk-snapshot)
 * [Check Replication Lag](#check-replication-lag)
+* [Pause Replay on Delayed Replica](#pause-replay-on-delayed-replica)
 
 <!-- vim-markdown-toc -->
 
@@ -57,7 +58,7 @@ GCS after a primary failover or for a major postgres version upgrade).
 
 There are 2 ways to (re-)start replication:
 
-* Using wal-g to fetch a base-backup form GCS (easy and works in all cases, but slow)
+* Using wal-g to fetch a base-backup from GCS (easy and works in all cases, but slow)
 * Using a disk snapshot from the dr replica before replication broke (faster,
   but a bit more involved and mostly applicable for diverged timelines after a
   failover)
@@ -204,3 +205,18 @@ catching up slowly.
 ## Check Replication Lag
 
 [Thanos](https://thanos-query.ops.gitlab.net/graph?g0.range_input=1h&g0.max_source_resolution=0s&g0.expr=pg_replication_lag%7Benv%3D%22gprd%22%2C%20fqdn%3D~%22postgres-dr.*%22%7D&g0.tab=0)
+
+## Pause Replay on Delayed Replica
+
+If we want to restore content that was changed/deleted less than 8h before on
+our Patroni cluster, we can do it on the delayed replica, because it is
+replaying the WAL files with an 8h delay. To prevent reaching the 8h limit, we
+can temporarily pause the replay:
+
+* eventually silence replication lag alerts first
+* ssh to the delayed replica
+* `systemctl stop chef-client`
+* `gitlab-psql -c 'SELECT pg_xlog_replay_pause();'`
+* extract the data you need...
+* `gitlab-psql -c 'SELECT pg_xlog_replay_resume();'`
+* `systemctl start chef-client`
