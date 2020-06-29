@@ -7,7 +7,7 @@ local rateMetric = metricsCatalog.rateMetric;
   tier: 'sv',
   monitoringThresholds: {
     apdexRatio: 0.95,
-    errorRatio: 0.005,
+    errorRatio: 0.0001,
   },
   eventBasedSLOTargets: {
     apdexScore: 0.999,  // 99.9% of Web requests should complete with satisfactory threshold
