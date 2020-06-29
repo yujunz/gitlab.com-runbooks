@@ -20,7 +20,7 @@ This runbook is intended only for one or more `read` replica node(s) of Patroni 
 
 ### Mental Model
 
-A good mental model to have for this exercise is that we have a Patroni cluster running in production. There is a primary and several secondary/read-only nodes. Your first task is to spin up a node in our infra and get it configured. This is a pretty safe and straightforward process After that, you would need to start `patroni` on the node. Once `patroni` starts up, it should start receiving traffic without any issue. Also, a `pg_basebackup` process will start taking a backup of the running Postgres cluster. This will take a while. Once it is completed streaming replication will begin. 
+A good mental model to have for this exercise is that we have a Patroni cluster running in production. There is a primary and several secondary/read-only nodes. Your first task is to spin up a node in our infra and get it configured. This is a pretty safe and straightforward process. After that, you would need to manually start the `patroni` service on the node. Once the `patroni` service starts up, it will register the node in the configured cluster in consul and start a `reinit` which will delete the current PGDATA dir and transfer a basebackup from the current leader. This will take a while (in the order of 6h). Once it is completed, streaming replication and replay of WAL files will begin (which also can take a while for replication lag to catch up). Only then, the node will be marked as ready and added to load-balancing to start receiving requests.
 
 ## Execution
 
@@ -39,15 +39,17 @@ Apply the terraform and wait for chef to converge.
 
 ### Step 3
 
-On the new box, `gitlab-patronictl list` and ensure that the other cluster members are identical to those seen by running the same command on another cluster member. Also on the node, run `dig @127.0.0.1 -p 8600 db-replica.service.consul. SRV` to make sure the node shows up.
+On the node, run: `systemctl enable patroni && systemctl start patroni`
 
 ### Step 4
 
-On the node, run: `systemctl enable patroni && systemctl start patroni`
+On the new box, `gitlab-patronictl list` and ensure that the other cluster members are identical to those seen by running the same command on another cluster member. Also on the node, run `dig @127.0.0.1 -p 8600 db-replica.service.consul. SRV` to make sure the node shows up.
+
+If you get an error `No module named 'psycopg2'` you need to do this: `pip install psycopg2 -t /opt/patroni/lib/python3.5/site-packages` (this is assuming we still support python3.5 when you are running this runbook)
 
 ### Step 5
 
-Follow the patroni logs. A pg_basebackup will take several hours, after which point streaming replication will begin. Silence alerts as necessary.
+Follow the patroni logs (`journalctl -u patroni`). A pg_basebackup will take several hours, after which streaming replication will begin. Have a look at `/var/log/gitlab/postgresql/postgresql.csv` if replaying WAL files is succeeding at this point. Check with `gitlab-patronictl list` - the node should go through the states `creating replica`, `starting`, `running`. Silence alerts as necessary.
 
 ## Automation Thoughts
 
