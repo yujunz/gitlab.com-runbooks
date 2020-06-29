@@ -91,7 +91,7 @@ local noUrgencySelector = {
 
       errorRate: rateMetric(
         counter='sidekiq_jobs_failed_total',
-        selector=shardSelector { le: '+Inf' },
+        selector=shardSelector,
       ),
 
       significantLabels: ['fqdn'],
