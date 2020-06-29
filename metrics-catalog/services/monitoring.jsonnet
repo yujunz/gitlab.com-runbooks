@@ -10,11 +10,12 @@ local productionEnvironmentsSelector = {
   type: 'monitoring',
   tier: 'inf',
   monitoringThresholds: {
-    /*
-    TODO: enable SLOs for monitoring service
-    apdexRatio: 0.95,
-    errorRatio: 0.005,
-    */
+    apdexRatio: 0.999,
+    errorRatio: 0.001,
+  },
+  eventBasedSLOTargets: {
+    apdexScore: 0.999,  // 99.9% of monitoring requests should complete with satisfactory threshold
+    errorRatio: 0.999,  // 99.9% of monitoring requests should succeed, over multiple window periods
   },
   /*
    * Our anomaly detection uses normal distributions and the monitoring service

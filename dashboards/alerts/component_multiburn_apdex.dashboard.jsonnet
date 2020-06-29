@@ -17,8 +17,8 @@ local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 
 local oneHourBurnRate =
   [
-    ['1h apdex burn rate', 'gitlab_component_apdex:ratio_1h{environment="$environment", type="$type", stage="$stage", component="$component"}'],
-    ['5m apdex burn rate', 'gitlab_component_apdex:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
+    ['1h apdex burn rate', 'gitlab_component_apdex:ratio_1h{environment="$environment", env="$environment", type="$type", stage="$stage", component="$component"}'],
+    ['5m apdex burn rate', 'gitlab_component_apdex:ratio_5m{environment="$environment", env="$environment", type="$type", stage="$stage", component="$component"}'],
     [
       '1h apdex burn threshold',
       '1 - (%(burnrate_1h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="$type"})))' % multiburnFactors,
@@ -31,8 +31,8 @@ local oneHourBurnRate =
 
 local sixHourBurnRate =
   [
-    ['6h apdex burn rate', 'gitlab_component_apdex:ratio_6h{environment="$environment", type="$type", stage="$stage", component="$component"}'],
-    ['30m apdex burn rate', 'gitlab_component_apdex:ratio_30m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
+    ['6h apdex burn rate', 'gitlab_component_apdex:ratio_6h{environment="$environment", env="$environment", type="$type", stage="$stage", component="$component"}'],
+    ['30m apdex burn rate', 'gitlab_component_apdex:ratio_30m{environment="$environment", env="$environment", type="$type", stage="$stage", component="$component"}'],
     [
       '6h apdex burn threshold',
       '1 - (%(burnrate_6h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="$type"})))' % multiburnFactors,
@@ -116,7 +116,7 @@ local burnRatePanelWithHelp(title, combinations, content) =
   ];
 
 basic.dashboard(
-  'Component Multi-window Multi-burn-rate Apdex Out of SLO',
+  'MWMBR Apdex SLA Monitoring',
   tags=['alert-target', 'general'],
 )
 .addTemplate(templates.type)
