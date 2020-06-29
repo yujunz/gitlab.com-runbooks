@@ -2,6 +2,8 @@
 # This file needs to be kept in sync with runbooks/alertmanager/alertmanager.yml.erb
 # It's a temporary state until all config is moved over to the other file, see: https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/7071
 ################################################
+global:
+  slack_api_url: "<%= @conf['slack']['api_url'] %>"
 
 templates:
 - "<%= node["alertmanager"]["templates"]["dir"] %>/*.tmpl"
@@ -73,78 +75,27 @@ route:
   # Team Alerts
   # Route certain alerts directly to teams
   ################################################
-  # Gitaly warnings do not fallthrough
+<% node['alertmanager']['gitlab-teams'].each do |team| -%>
   - match:
-      channel: gitaly
-      severity: warn
+      channel: <%= team %>
+    continue: true
     group_by: ['env', 'alertname','instance','job', 'stage']
-    receiver: gitaly_low_priority_alerts_channel
-    continue: false
+    receiver: <%= team %>_alerts_channel
+    route:
+    # Warnings do not fallthrough
+    - match:
+        severity: warn
+      group_by: ['env', 'alertname','instance','job', 'stage']
+      receiver: <%= team %>_low_priority_alerts_channel
+      continue: false
+    # Errors do not fallthrough
+    - match:
+        severity: error
+      group_by: ['env', 'alertname','instance','job', 'stage']
+      receiver: <%= team %>_alerts_channel
+      continue: false
 
-  # Gitaly errors do not fallthrough
-  - match:
-      channel: gitaly
-      severity: error
-    group_by: ['env', 'alertname','instance','job', 'stage']
-    receiver: gitaly_alerts_channel
-    continue: false
-
-  - match:
-      channel: gitaly
-    group_by: ['env', 'alertname','instance','job', 'stage']
-    receiver: gitaly_alerts_channel
-    continue: true
-
-  # ci-cd warnings do not fallthrough
-  - match:
-      channel: ci-cd
-      severity: warn
-    group_by: ['env', 'alertname', 'stage']
-    receiver: cicd_alerts_channel
-    continue: false
-
-  # ci-cd errors do not fallthrough
-  - match:
-      channel: ci-cd
-      severity: error
-    group_by: ['env', 'alertname', 'stage']
-    receiver: cicd_alerts_channel
-    continue: false
-
-  - match:
-      channel: ci-cd
-    group_by: ['env', 'alertname', 'stage']
-    receiver: cicd_alerts_channel
-    continue: true
-
-  # database warnings do not fallthrough
-  - match:
-      channel: database
-      severity: warn
-    group_by: ['env', 'alertname', 'stage']
-    receiver: database_low_priority_alerts_channel
-    continue: false
-
-  # database errors do not fallthrough
-  - match:
-      channel: database
-      severity: error
-    group_by: ['env', 'alertname', 'stage']
-    receiver: database_alerts_channel
-    continue: false
-
-  - match:
-      channel: database
-    group_by: ['env', 'alertname', 'stage']
-    receiver: database_alerts_channel
-    continue: true
-
-  # observability alerts
-  - match:
-      channel: observability
-    group_by: ['env', 'alertname', 'stage']
-    receiver: observability_alerts_channel
-    continue: true
+<% end %>
 
 <% if @conf['issues'] -%>
   ################################################
@@ -239,14 +190,13 @@ receivers:
 <% end %>
 
 ################################################
-# Slack Channel Alerts
+# Slack Channels
 ################################################
-<% %w(main_alerts_channel pager_alerts_channel database_alerts_channel database_low_priority_alerts_channel gitaly_alerts_channel gitaly_low_priority_alerts_channel cicd_alerts_channel observability_alerts_channel).each do   |slack_channel| %>
-- name: "<%=slack_channel%>"
+<% node['alertmanager']['slack']['channels'].each do |receiver, channel| %>
+- name: "<%= receiver %>"
   slack_configs:
-  - api_url: "<%= @conf['slack']['api_url'] %>"
+  - channel: "<%= channel %>"
     send_resolved: true
-    channel: "<%= node['alertmanager']['slack'][slack_channel] %>"
     icon_emoji: '{{ template "slack.icon" . }}'
     color: '{{ template "slack.color" . }}'
     title: '{{ template "slack.title" . }}'
@@ -257,8 +207,7 @@ receivers:
 # This is temporary while https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/4881 is ongoing
 - name: slack_alerts_general
   slack_configs:
-  - api_url: "<%= @conf['slack']['api_url'] %>"
-    channel: '#alerts-gen-svc-test'
+  - channel: '#alerts-gen-svc-test'
     send_resolved: true
     icon_emoji: '{{ template "slack.icon" . }}'
     title: '{{ template "slack.title" . }}'
