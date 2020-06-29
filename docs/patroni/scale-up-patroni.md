@@ -27,7 +27,7 @@ A good mental model to have for this exercise is that we have a Patroni cluster 
 ### Preparation
 
 - You should do this activity in a CR (thus, allowing you to practice all of it in staging first)
-- After you have executed Step 4, you should silence alerts around replication lag for the new nodes. 
+- After you have executed Step 3, you should silence alerts around replication lag for the new nodes. 
 
 ### Step 1
 
