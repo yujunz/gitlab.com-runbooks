@@ -153,7 +153,7 @@ select pg_terminate_backend(<pid>);
 
 Both functions will return `true` or `false`, meaning that operation was succesfully achieved (or not).
 
-The difference between each of those, is that `pg_cancel_backend()` sends a SIGINT (terminates gracefully), and `pg_terminate_backend()` sends a SIGTERM signal (terminate immediately). Since terminating any process with SIGINT can lead to undesired results, you should always try `pg_cancel_backend()` first.
+The difference between each of those, is that `pg_cancel_backend()` sends a SIGINT (cancels only the current query, but let's the connection continue to execute queries - idle connections or connections in transaction can't be canceled) and `pg_terminate_backend()` sends a SIGTERM signal (terminating the backend process immediately, also terminating the whole connection). Since terminating any process with SIGTERM can lead to undesired results, you should always try `pg_cancel_backend()` first.
 
 
 ## How to check if queries are waiting for aquire locks from the logs
