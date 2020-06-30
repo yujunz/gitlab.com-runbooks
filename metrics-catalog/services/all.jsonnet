@@ -1,5 +1,6 @@
 [
   import 'api.jsonnet',
+  import 'camoproxy.jsonnet',
   import 'ci-runners.jsonnet',
   import 'frontend.jsonnet',
   import 'git.jsonnet',

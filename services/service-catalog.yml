@@ -366,6 +366,66 @@ services:
   observability:
     monitors:
 
+- name: camoproxy
+  tier: sv
+  teams:
+    - infrastructure-coreinfra
+  infra_owner:
+  label: Service:Camoproxy
+  business:
+    requirement:
+      Camo is an SSL image proxy to prevent mixed content warnings on secure pages.
+    customers:
+      - GitLab.com customers
+    business_value:
+      Prevents insecure user content on TLS-encrypted pages, by proxying the
+      content through the camoproxy.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+      - https://github.com/cactus/go-camo
+      - https://gitlab.com/gitlab-cookbooks/gitlab-camoproxy
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+      security:
+    dependencies:
+    configurations:
+    chef_roles:
+      - gstg-svc-camoproxy
+      - gprd-svc-camoproxy
+    scalability:
+      bound: cpu
+      scalable: horizontal
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name: Camoproxy
+        permalink: https://log.gprd.gitlab.net/goto/f86d35a17e46e0de9d8454b3a5d4387f
+  infrastructure:
+    provider: gcp
+    architecture:
+    provisioning: terraform
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      primary_grafana_dashboard: "camoproxy-main/camoproxy-overview"
+
 - name: console
   tier: sv
   teams:
