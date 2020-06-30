@@ -63,7 +63,7 @@ local componentOverviewMatrixRow(
     local service = metricsCatalog.getService(serviceType);
     local component = service.components[componentName];
     local percentile = getLatencyPercentileForService(service);
-    local formatConfig = { percentile_humanized: 'p' + (percentile * 100), componentName: componentName };
+    local formatConfig = { percentile_humanized: 'p%g' % [percentile * 100], componentName: componentName };
 
     basic.latencyTimeseries(
       title=(if title == null then 'Estimated %(percentile_humanized)s latency for %(componentName)s' + componentName else title) % formatConfig,
