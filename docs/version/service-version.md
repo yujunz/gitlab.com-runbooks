@@ -25,6 +25,7 @@
 * [../packaging/manage-package-signing-keys.md](../packaging/manage-package-signing-keys.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
 * [../patroni/postgres-checkup.md](../patroni/postgres-checkup.md)
+* [../patroni/postgres_exporter.md](../patroni/postgres_exporter.md)
 * [../patroni/using-wale-gpg.md](../patroni/using-wale-gpg.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 * [../postgres-dr-delayed/postgres-dr-replicas.md](../postgres-dr-delayed/postgres-dr-replicas.md)
