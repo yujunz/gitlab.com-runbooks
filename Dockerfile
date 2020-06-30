@@ -9,6 +9,7 @@ RUN apk add --no-cache tar gcc libc-dev make ruby ruby-dev && \
    tar -xvf prometheus.tar.gz -C /prometheus --strip-components 1 --wildcards */promtool && \
    rm prometheus.tar.gz && \
    wget -O alertmanager.tar.gz https://github.com/prometheus/alertmanager/releases/download/v$ALERTMANAGER_VERSION/alertmanager-$ALERTMANAGER_VERSION.linux-amd64.tar.gz && \
+   mkdir /alertmanager && \
    tar -xvf alertmanager.tar.gz -C /alertmanager --strip-components 1 --wildcards */amtool && \
    rm alertmanager.tar.gz && \
    gcloud components install kubectl -q
