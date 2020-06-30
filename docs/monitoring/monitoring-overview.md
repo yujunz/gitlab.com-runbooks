@@ -27,7 +27,21 @@ Grafana dashboards on dashboards.gitlab.net are managed in 3 ways:
    1. json - literally exported from grafana by hand, and added to that repo
    1. jsonnet - JSON generated using jsonnet/grafonnet; see https://gitlab.com/gitlab-com/runbooks/blob/master/dashboards/README.md
 
+Grafana dashboards can utilize metrics from a specific Prometheus cluster (e.g. prometheus-app, prometheus-db, ...), but it's preferred to
+use the "Global" data source as it points to Thanos which aggregates metrics from all Prometheus instances and it has higher data retention
+than any of the regular Prometheus instances.
+
 All dashbaords are downloaded/saved automatically into https://gitlab.com/gitlab-org/grafana-dashboards, in the dashboards directory.
 This happens from the gitlab-grafan:export_dashboards recipe, which runs some Ruby/chef code at every *chef run* on the *public* dashboards server, pulling from the pulling from the *private* dashboards server and then committing any changes to the git repository.  The repo is also mirror to https://ops.gitlab.net/gitlab-org/grafana-dashboards
 
 Grafana dashboards on dashboards.gitlab.com are synced from dashboards.gitlab.net every 5 minutes by a script (/usr/local/sbin/sync_grafana_dashboards) run by cron every 5 minutes on the public grafana server (dashboards-com-01-inf-ops.c.gitlab-ops.internal).
+
+### Troubleshooting
+
+#### Grafana graph is empty
+
+1. Click on the graph title and select "Edit"
+1. Try setting the data source to Global, see if this fixes the problem.
+1. If not, try expanding the time range (say, 1 day, 1 week or even 1 month). If you got a graph then it could mean that:
+  a. The metric exporter stopped working at some point in the past, or no more nodes are using this exporter anymore.
+  b. The metric got renamed.
