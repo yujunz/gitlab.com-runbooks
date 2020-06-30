@@ -5,6 +5,8 @@ local serviceSLORuleSet = (import 'service-slo-rule-set.libsonnet').serviceSLORu
 local componentErrorRatioRuleSet = (import 'component-error-ratio-rule-set.libsonnet').componentErrorRatioRuleSet;
 local serviceErrorRatioRuleSet = (import 'service-error-ratio-rule-set.libsonnet').serviceErrorRatioRuleSet;
 local serviceNodeErrorRatioRuleSet = (import 'service-node-error-ratio-rule-set.libsonnet').serviceNodeErrorRatioRuleSet;
+local serviceApdexRatioRuleSet = (import 'service-apdex-ratio-rule-set.libsonnet').serviceApdexRatioRuleSet;
+local serviceNodeApdexRatioRuleSet = (import 'service-node-apdex-ratio-rule-set.libsonnet').serviceNodeApdexRatioRuleSet;
 
 local COMPONENT_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
 local NODE_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage', 'shard', 'fqdn'];
@@ -95,6 +97,8 @@ local ruleSetIterator(ruleSets) = {
       ),
       componentMetricsRuleSet(
         burnRate='5m',
+        apdexRatio='gitlab_component_node_apdex:ratio_5m',
+        apdexWeight='gitlab_component_node_apdex:weight:score_5m',
         requestRate='gitlab_component_node_ops:rate_5m',
         errorRate='gitlab_component_node_errors:rate_5m',
         aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
@@ -156,6 +160,23 @@ local ruleSetIterator(ruleSets) = {
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),
+
+
+    // This rolls the component-level error ratios up to the service-level,
+    // as a Thanos aggregation
+    serviceApdexRatios: ruleSetIterator(std.flatMap(
+      function(suffix)
+        [
+          // 1m burn rates use 5m weight scores
+          // All other burn rates use the same burn rate as the ratio
+          serviceApdexRatioRuleSet(suffix=suffix, weightScoreSuffix=(if suffix == '' then '_5m' else suffix)),
+        ],
+      MULTI_BURN_RATE_SUFFIXES
+    ) + [
+      // We are only recording node-level apdex scores for 1m and 5m burn rates for now
+      serviceNodeApdexRatioRuleSet(suffix='', weightScoreSuffix='_5m'),
+      serviceNodeApdexRatioRuleSet(suffix='_5m', weightScoreSuffix='_5m'),
+    ]),
 
     // Component mappings are static recording rules which help
     // determine whether a component is being monitored. This helps
