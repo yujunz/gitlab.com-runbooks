@@ -505,6 +505,7 @@ verify_alertmanager_parity:
   image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
     - alertmanager/verify-alertmanager-parity.sh
+  allow_failure: true
 
 assert_consistent_tool_versions:
   stage: test
