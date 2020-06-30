@@ -462,8 +462,7 @@ build_runtools_build_image:
   only:
     - tags
 
-build_runbooks_image:
-  stage: images
+.build_runbooks_image_template:
   image: docker:19.03.1-git
   services:
     - docker:19.03.1-dind
@@ -472,6 +471,19 @@ build_runbooks_image:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
     IMAGE: ${CI_REGISTRY_IMAGE}
+
+test_runbooks_iamge:
+  extends: .build_runbooks_image_template
+  stage: test
+  script:
+    - docker build .
+  only:
+    changes:
+      - Dockerfile
+
+build_runbooks_image:
+  extends: .build_runbooks_image_template
+  stage: images
   script:
     - export ci_image_tag=${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
     - echo ${CI_JOB_TOKEN} | docker login --password-stdin -u $CI_REGISTRY_USER $CI_REGISTRY
