@@ -46,6 +46,5 @@
 * [../uncategorized/debug-failed-chef-provisioning.md](../uncategorized/debug-failed-chef-provisioning.md)
 * [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
-* [../uncategorized/project-export.md](../uncategorized/project-export.md)
 * [../uncategorized/tweeting-guidelines.md](../uncategorized/tweeting-guidelines.md)
 <!-- END_MARKER -->
