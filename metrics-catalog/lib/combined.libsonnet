@@ -38,7 +38,7 @@ local groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels) =
     ''
   else
     ' on(%(aggregationLabels)s) group_left()' % {
-      aggregationLabels: aggregations.serialize(aggregationLabels)
+      aggregationLabels: aggregations.serialize(aggregationLabels),
     };
 
 local generateApdexQuery(c, aggregationLabels, selector, rangeInterval, substituteWeightWithRecordingRule) =
@@ -46,10 +46,10 @@ local generateApdexQuery(c, aggregationLabels, selector, rangeInterval, substitu
   local aggregatedNumerators = aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(numeratorQueries));
 
   local aggregatedDenominators = if substituteWeightWithRecordingRule == null then
-      local denominatorQueries = std.mapWithIndex(function(index, metric) wrapForUniqueness(index, metric.apdexDenominator(selector, rangeInterval)), c.metrics);
-      aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(denominatorQueries))
-    else
-      substituteWeightWithRecordingRule;
+    local denominatorQueries = std.mapWithIndex(function(index, metric) wrapForUniqueness(index, metric.apdexDenominator(selector, rangeInterval)), c.metrics);
+    aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(denominatorQueries))
+  else
+    substituteWeightWithRecordingRule;
 
   |||
     %(aggregatedNumerators)s

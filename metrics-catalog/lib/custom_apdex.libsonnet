@@ -15,7 +15,7 @@ local groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels) =
     ''
   else
     ' on(%(aggregationLabels)s) group_left()' % {
-      aggregationLabels: aggregations.serialize(aggregationLabels)
+      aggregationLabels: aggregations.serialize(aggregationLabels),
     };
 
 // A single threshold apdex score only has a SATISFACTORY threshold, no TOLERABLE threshold

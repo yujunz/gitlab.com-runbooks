@@ -74,15 +74,15 @@ local groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels) =
     ''
   else
     ' on(%(aggregationLabels)s) group_left()' % {
-      aggregationLabels: aggregations.serialize(aggregationLabels)
+      aggregationLabels: aggregations.serialize(aggregationLabels),
     };
 
-local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, rangeInterval, aggregationFunction=null,substituteWeightWithRecordingRule=null) =
+local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, rangeInterval, aggregationFunction=null, substituteWeightWithRecordingRule=null) =
   local numeratorQuery = generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels);
   local weightQuery = if substituteWeightWithRecordingRule == null then
-      generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, { le: '+Inf' }, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels)
-    else
-      substituteWeightWithRecordingRule;
+    generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, { le: '+Inf' }, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels)
+  else
+    substituteWeightWithRecordingRule;
 
   |||
     %(numeratorQuery)s
@@ -123,7 +123,8 @@ local generatePercentileLatencyQuery(histogram, percentile, aggregationLabels, a
     toleratedThreshold: toleratedThreshold,
 
     apdexQuery(aggregationLabels, selector, rangeInterval, substituteWeightWithRecordingRule=null)::
-      generateApdexScoreQuery(self,
+      generateApdexScoreQuery(
+        self,
         aggregationLabels,
         selector,
         rangeInterval,
