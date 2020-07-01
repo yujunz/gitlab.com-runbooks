@@ -7,7 +7,7 @@ stages:
   - deploy-rules-production
 
 default:
-  image: "${CI_REGISTRY_IMAGE}:latest"
+  image: "${CI_REGISTRY_IMAGE}:v1.5.2"
   tags:
     - gitlab-org
 

@@ -44,7 +44,6 @@ COPY --from=go-jsonnet /build/bin/jb /bin/jb
 
 RUN gem install --no-document json && \
     gem install --no-document yaml-lint && \
-    apk del build-base ruby-dev && \
     rm -rf /tmp/* /var/tmp/* /var/cache/apk/*
 
 ENTRYPOINT ["/bin/sh", "-c"]
