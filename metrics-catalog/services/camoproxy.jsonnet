@@ -5,11 +5,11 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'camoproxy',
   tier: 'sv',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.999,
     errorRatio: 0.001,
   },
-  eventBasedSLOTargets: {
+  monitoringThresholds: {
     apdexScore: 0.999,
     errorRatio: 0.999,
   },

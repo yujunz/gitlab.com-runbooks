@@ -75,14 +75,14 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       promQuery.target(
         sliPromQL.apdex.serviceApdexDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
         interval='5m',
-        legendFormat='Degradation SLO',
+        legendFormat='6h Degradation SLO',
       ),
     )
     .addTarget(  // Double apdex SLO is Outage-level SLO
       promQuery.target(
         sliPromQL.apdex.serviceApdexOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
         interval='5m',
-        legendFormat='Outage SLO',
+        legendFormat='1h Outage SLO',
       ),
     )
     .addTarget(  // Last week
@@ -130,13 +130,18 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
         legendFormat='{{ component }} apdex',
       )
     )
-    .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
-      // TODO: Replace with component-level MWMBR-error rate thresholds once
-      // we're fully migrated to those
+    .addTarget(
+      promQuery.target(
+        sliPromQL.apdex.serviceApdexOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
+        interval='5m',
+        legendFormat='1h Outage SLO',
+      ),
+    )
+    .addTarget(
       promQuery.target(
         sliPromQL.apdex.serviceApdexDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
         interval='5m',
-        legendFormat='SLO',
+        legendFormat='6h Degradation SLO',
       ),
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* apdex$/'))
@@ -227,14 +232,14 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       promQuery.target(
         sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
         interval='5m',
-        legendFormat='Degradation SLO',
+        legendFormat='6h Degradation SLO',
       ),
     )
     .addTarget(  // Outage level SLO
       promQuery.target(
         sliPromQL.errorRate.serviceErrorRateOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
         interval='5m',
-        legendFormat='Outage SLO',
+        legendFormat='1h Outage SLO',
       ),
     )
     .addTarget(  // Last week
@@ -289,14 +294,14 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       promQuery.target(
         sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
         interval='5m',
-        legendFormat='Degradation SLO',
+        legendFormat='6h Degradation SLO',
       ),
     )
     .addTarget(  // Outage level SLO
       promQuery.target(
         sliPromQL.errorRate.serviceErrorRateOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
         interval='5m',
-        legendFormat='Outage SLO',
+        legendFormat='1h Outage SLO',
       ),
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* error rate$/'))

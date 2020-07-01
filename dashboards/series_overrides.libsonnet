@@ -102,7 +102,7 @@ local capacityComponentColors = {
     zindex: -2,
   },
   degradationSlo:: {
-    alias: 'Degradation SLO',
+    alias: '6h Degradation SLO',
     color: '#FF4500',  // "Orange red"
     dashes: true,
     legend: true,
@@ -114,7 +114,7 @@ local capacityComponentColors = {
     zindex: -2,
   },
   outageSlo:: {
-    alias: 'Outage SLO',
+    alias: '1h Outage SLO',
     color: '#F2495C',  // "Red"
     dashes: true,
     legend: true,

@@ -6,9 +6,13 @@ local combined = metricsCatalog.combined;
 {
   type: 'web-pages',
   tier: 'sv',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.9,
     errorRatio: 0.005,
+  },
+  monitoringThresholds: {
+    apdexScore: 0.995,
+    errorRatio: 0.9995,
   },
   components: {
     loadbalancer: {

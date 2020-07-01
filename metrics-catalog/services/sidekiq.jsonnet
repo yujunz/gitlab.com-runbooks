@@ -23,9 +23,13 @@ local noUrgencySelector = {
 {
   type: 'sidekiq',
   tier: 'sv',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.05,
+  },
+  monitoringThresholds: {
+    apdexScore: 0.995,
+    errorRatio: 0.999,
   },
   serviceDependencies: {
     gitaly: true,
