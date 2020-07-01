@@ -29,7 +29,7 @@ groups:
       severity: s1
       alert_type: cause
     annotations:
-      description: WAL-E backup-push syncs to GCS might be not working. Please follow the runbook
+      description: WAL-E backup-push creating full backups and archiving them to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: docs/patroni/postgresql-backups-wale-walg.md
       title: Last successful WAL-E basebackup was seen {{ .Value }} hours ago.
