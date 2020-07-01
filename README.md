@@ -512,7 +512,7 @@ ruby           2.6.5    (set by ~/runbooks/.ruby-version)
 We use `.tool-versions` to record the version of go-jsonnet that should be used
 for local development. The `asdf` version manager is used by some team members
 to automatically switch versions based on the contents of this file. It should
-be kept up to date. `images/runtools_build/Dockerfile` contains the version of
+be kept up to date. The top-level `Dockerfile` contains the version of
 go-jsonnet we use in CI. This should be kept in sync with `.tool-versions`, and
 a (non-gating) CI job enforces this.
 
