@@ -28,10 +28,11 @@ for disaster recovery and wal archive testing purposes:
   * postgres-dr-delayed-01-db-gstg.c.gitlab-staging-1.internal
 
 Archive and delayed replica both are replaying WAL archive files from GCS via
-wal-g which are send to GCS by the Patroni primary (with a retention of 2
-weeks). The delayed replica though is replaying them with an 8 hour delay, so we
-are able to retrieve deleted objects from there within 8h after deletion if
-needed.
+wal-g which are send to GCS by the Patroni primary (with a [retention
+policy](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/database-backup-bucket/-/merge_requests/10)
+sending them to nearline storage after 2 weeks and deletion after 120 days).
+The delayed replica though is replaying them with an 8 hour delay, so we are
+able to retrieve deleted objects from there within 8h after deletion if needed.
 
 The archive replica is also used for long-running queries for business
 intelligence purposes, which would be problematic to run on the patroni cluster.
@@ -61,7 +62,8 @@ There are 2 ways to (re-)start replication:
 * Using wal-g to fetch a base-backup from GCS (easy and works in all cases, but slow)
 * Using a disk snapshot from the dr replica before replication broke (faster,
   but a bit more involved and mostly applicable for diverged timelines after a
-  failover)
+  failover). You also could take a snapshot from a patroni node, but then you
+  need to move PGDATA from `.../data11` to `.../data` manually.
 
 #### Pre-requisites
 
@@ -84,7 +86,7 @@ base_000000020000493E0000006D_00000040 2020-06-05T07:42:27Z 000000020000493E0000
 ```
 
 The `/var/opt/gitlab/postgresql/data/recovery.conf` file is not managed by
-configuration management and needs to be setup manually.
+configuration management nor backed up by WAL-G and needs to be setup manually.
 
 ##### recovery.conf for archive replica
 
@@ -106,9 +108,9 @@ recovery_min_apply_delay = '8h'
 #### Restoring with WAL-G
 
 We will delete the content of the existing PGDATA dir and re-fill it using
-wal-g. Retrieving the base-backup will take several hours (around 6h or so) and
+wal-g. Retrieving the base-backup will take several hours (1.5 - 2 TiB/h -> ~3.5 - 4.5 hours for a 7TiB database) and
 then fetching and replaying the necessary WAL files since the base-backup also can
-take a few hours.
+take a few hours, depending on how much time passed since the last base-backup.
 
 * make a backup copy of `recovery.conf`:
   * `cp -a /var/opt/gitlab/postgresql/data/recovery.conf $HOME/`
@@ -128,7 +130,7 @@ take a few hours.
 #### Restoring with a disk-snapshot
 
 This is faster than downloading a base-backup first (at least for gprd - for
-gstg downloading a basse-backup takes around half an hour). We will create a new
+gstg downloading a base-backup takes around half an hour). We will create a new
 disk from the latest data disk snapshot of the postgres dr instance and mount it
 in place of the existing data disk and then start WAL fetching.
 
@@ -183,7 +185,7 @@ gcloud --project $project --zone $zone compute instances start $instance
 ```
 
 It could be that the data disk isn't mounted correctly, because Linux tries to
-mount by the enumerated order of the disks. Try to re-shuffel the
+mount by the enumerated order of the disks. Try to reshuffle the
 order of disks on the instance in google cloud console by detaching and
 attaching them accordingly until they match the original order that you saved in
 the screenshot at the beginning.
@@ -220,3 +222,5 @@ can temporarily pause the replay:
 * extract the data you need...
 * `gitlab-psql -c 'SELECT pg_xlog_replay_resume();'`
 * `systemctl start chef-client`
+
+Also see the [deleted-project-restore runbook](../uncategorized/deleted-project-restore.md).
