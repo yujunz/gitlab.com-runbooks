@@ -34,6 +34,7 @@
 * [rotating-rails-postgresql-password.md](rotating-rails-postgresql-password.md)
 * [scale-down-patroni.md](scale-down-patroni.md)
 * [scale-up-patroni.md](scale-up-patroni.md)
+* [using-wale-gpg.md](using-wale-gpg.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 * [../pgbouncer/pgbouncer-add-instance.md](../pgbouncer/pgbouncer-add-instance.md)
 * [../pgbouncer/pgbouncer-connections.md](../pgbouncer/pgbouncer-connections.md)
