@@ -18,7 +18,7 @@
 * [../gitaly/find-project-from-hashed-storage.md](../gitaly/find-project-from-hashed-storage.md)
 * [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
 * [../logging/README.md](../logging/README.md)
-* [../patroni/gitlab-com-wale-backups.md](../patroni/gitlab-com-wale-backups.md)
+* [../patroni/postgresql-backups-wale-walg.md](../patroni/postgresql-backups-wale-walg.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [pubsub-queing.md](pubsub-queing.md)
 * [../registry/gitlab-registry.md](../registry/gitlab-registry.md)

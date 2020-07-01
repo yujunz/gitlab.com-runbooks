@@ -17,10 +17,10 @@ groups:
       severity: s1
       alert_type: symptom
     annotations:
-      description: walg syncs to GCS might be not working. Please follow the runbook
+      description: WAL-G wal-push archiving WALs to GCS might be not working. Please follow the runbook
         to review the problem.
-      runbook: docs/patroni/gitlab-com-walg-backups.md
-      title: Last walg backup was seen {{ .Value | humanizeDuration }} ago for {{ $labels.fqdn }}.
+      runbook: docs/patroni/postgresql-backups-wale-walg.md
+      title: Last WAL was archived {{ .Value | humanizeDuration }} ago for {{ $labels.fqdn }}.
   - alert: walgBaseBackupDelayed
     expr: gitlab_com:last_walg_successful_basebackup_age_in_hours >= 48
     for: 5m
@@ -29,7 +29,7 @@ groups:
       severity: s1
       alert_type: symptom
     annotations:
-      description: walg basebackup syncs to GCS might be not working. Please follow the runbook
+      description: WAL-G backup-push creating full backups and archiving them to GCS might be not working. Please follow the runbook
         to review the problem.
-      runbook: docs/patroni/gitlab-com-walg-backups.md
-      title: Last successful walg basebackup was seen {{ .Value | humanizeDuration }} ago.
+      runbook: docs/patroni/postgresql-backups-wale-walg.md
+      title: Last successful WAL-G basebackup was seen {{ .Value | humanizeDuration }} ago for {{ $labels.fqdn }}.

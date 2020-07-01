@@ -187,8 +187,8 @@ During an incident there are at least 2 roles, and one more optional
 * [PostgreSQL switchover](howto/postgresql-switchover.md)
 * [Read-only Load Balancing](docs/ci-runners/load-balancing.md)
 * [Add a new secondary replica](docs/patroni/postgresql-replica.md)
-* [Database backups](docs/patroni/using-wale-gpg.md)
-* [Database backups restore testing](https://gitlab.com/gitlab-restore/postgres-01.db.prd.gitlab.com/)
+* [Database backups](docs/patroni/postgresql-backups-wale-walg.md)
+* [Database backups restore testing](docs/patroni/postgresql-backups-wale-walg.md#database-backups-restore-testing)
 * [Rebuild a corrupt index](docs/patroni/postgresql.md#rebuild-a-corrupt-index)
 * [Checking PostgreSQL health with postgres-checkup](docs/patroni/postgres-checkup.md)
 
@@ -306,7 +306,7 @@ During an incident there are at least 2 roles, and one more optional
 ### Restore Backups
 
 * [Deleted Project Restoration](docs/uncategorized/deleted-project-restore.md)
-* [Database Backups and Recovery using WAL-E / WAL-G](docs/patroni/using-wale-gpg.md)
+* [PostgreSQL Backups: WAL-E, WAL-G](docs/patroni/postgresql-backups-wale-walg.md)
 * [Work with Azure Snapshots](docs/uncategorized/azure-snapshots.md)
 * [Work with GCP Snapshots](docs/uncategorized/gcp-snapshots.md)
 * [PackageCloud Infrastructure And Recovery](docs/uncategorized/packagecloud-infrastructure.md)
