@@ -7,7 +7,7 @@ stages:
   - deploy-rules-production
 
 default:
-  image: "${CI_REGISTRY_IMAGE}:v1.5.2"
+  image: "${CI_REGISTRY_IMAGE}:latest"
   tags:
     - gitlab-org
 
@@ -44,7 +44,6 @@ workflow:
       - rules-k8s
 
 .dashboards:
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   before_script:
     - dashboards/bundler.sh # Install jsonnet bundles
     - dashboards/generate-mixins.sh # Generate dashboards from mixins
@@ -58,7 +57,6 @@ workflow:
 
 verify:
   stage: test
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
     - make verify
 
@@ -131,7 +129,6 @@ test:
     - make test
 
 ensure_generated_content_up_to_date:
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   stage: test
   script:
     - make generate
@@ -142,7 +139,6 @@ ensure_generated_content_up_to_date:
 ################################################################################
 update_elastic_log_dashboards:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/dashboards/update-dashboards.sh
   only:
@@ -155,7 +151,6 @@ update_elastic_log_dashboards:
 
 update_elastic_log_searches:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/searches/update-searches.sh
   only:
@@ -168,7 +163,6 @@ update_elastic_log_searches:
 
 update_elastic_log_watches:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/watches/update-watches.sh
   only:
@@ -181,7 +175,6 @@ update_elastic_log_watches:
 
 update_elastic_log_visualizations:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log/visualizations/update-visualizations.sh
   only:
@@ -196,7 +189,6 @@ update_elastic_log_visualizations:
 ################################################################################
 update_elastic_log_gprd_ilm:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log_gprd/ILM/update-ilm.sh
   only:
@@ -209,7 +201,6 @@ update_elastic_log_gprd_ilm:
 
 update_elastic_log_gprd_watches:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log_gprd/watches/update-watches.sh
   only:
@@ -222,7 +213,6 @@ update_elastic_log_gprd_watches:
 
 update_elastic_log_gprd_index_templates:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log_gprd/index-templates/update-index-templates.sh
   only:
@@ -237,7 +227,6 @@ update_elastic_log_gprd_index_templates:
 
 update_elastic_log_gprd_cluster_settings:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/log_gprd/cluster-settings/update-cluster-settings.sh
   only:
@@ -252,7 +241,6 @@ update_elastic_log_gprd_cluster_settings:
 ################################################################################
 update_elastic_nonprod-log_watches:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/nonprod-log/watches/update-watches.sh
   only:
@@ -265,7 +253,6 @@ update_elastic_nonprod-log_watches:
 
 update_elastic_nonprod-log_ilm:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/nonprod-log/ILM/update-ilm.sh
   only:
@@ -278,7 +265,6 @@ update_elastic_nonprod-log_ilm:
 
 update_elastic_nonprod-log_index_templates:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/nonprod-log/index-templates/update-index-templates.sh
   only:
@@ -293,7 +279,6 @@ update_elastic_nonprod-log_index_templates:
 
 update_elastic_nonprod-log_cluster_settings:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/nonprod-log/cluster-settings/update-cluster-settings.sh
   only:
@@ -308,7 +293,6 @@ update_elastic_nonprod-log_cluster_settings:
 ################################################################################
 update_elastic_security_dev_ilm:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/security_dev/ILM/update-ilm.sh
   only:
@@ -321,7 +305,6 @@ update_elastic_security_dev_ilm:
 
 update_elastic_security_dev_watches:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/security_dev/watches/update-watches.sh
   only:
@@ -334,7 +317,6 @@ update_elastic_security_dev_watches:
 
 update_elastic_security_dev_index_templates:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/security_dev/index-templates/update-index-templates.sh
   only:
@@ -347,7 +329,6 @@ update_elastic_security_dev_index_templates:
 
 update_elastic_security_dev_cluster_settings:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/security_dev/cluster-settings/update-cluster-settings.sh
   only:
@@ -363,7 +344,6 @@ update_elastic_security_dev_cluster_settings:
 
 update_elastic_monitoring-es7_cluster_settings:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/monitoring-es7/cluster-settings/update-cluster-settings.sh
   only:
@@ -376,7 +356,6 @@ update_elastic_monitoring-es7_cluster_settings:
 
 update_elastic_monitoring-es7_ilm:
   stage: deploy
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script:
   - ./elastic/managed-objects/monitoring-es7/ILM/update-ilm.sh
   only:
@@ -496,16 +475,14 @@ publish:
 
 verify_alertmanager_parity:
   stage: test
-  image: registry.gitlab.com/gitlab-com/runbooks/runtools_build:latest
   script:
     - alertmanager/verify-alertmanager-parity.sh
   allow_failure: true
 
 assert_consistent_tool_versions:
   stage: test
-  image: "${CI_REGISTRY_IMAGE}/runtools_build:latest"
   script: "./bin/assert-tool-versions.sh"
   # CI image-building flow is decoupled from use of that image. As long as we
-  # keep referencing `runtools_build:latest`, updating a pinned version would
+  # keep referencing `${CI_REGISTRY_IMAGE}:latest`, updating a pinned version would
   # have to be done across 2 MRs, which is painful.
   allow_failure: true
