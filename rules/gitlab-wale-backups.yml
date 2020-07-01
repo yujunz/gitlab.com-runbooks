@@ -20,7 +20,7 @@ groups:
       description: WAL-E wal-push archiving WALs to GCS might be not working. Please follow the runbook
         to review the problem.
       runbook: docs/patroni/postgresql-backups-wale-walg.md
-      title: Last WAL archived was archived {{ .Value | humanizeDuration }} ago.
+      title: Last WAL was archived {{ .Value | humanizeDuration }} ago.
   - alert: WALEBaseBackupDelayed
     expr: gitlab_com:last_wale_successful_basebackup_age_in_hours >= 48
     for: 5m
