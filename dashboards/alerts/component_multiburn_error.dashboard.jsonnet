@@ -17,8 +17,8 @@ local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 
 local oneHourBurnRate =
   [
-    ['1h error burn rate', 'gitlab_component_errors:ratio_1h{environment="$environment", type="$type", stage="$stage", component="$component"}'],
-    ['5m error burn rate', 'gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
+    ['1h error burn rate', 'gitlab_component_errors:ratio_1h{environment="$environment", env="$environment", type="$type", stage="$stage", component="$component"}'],
+    ['5m error burn rate', 'gitlab_component_errors:ratio_5m{environment="$environment", env="$environment", type="$type", stage="$stage", component="$component"}'],
     [
       '1h error burn threshold',
       '%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="$type"})' % multiburnFactors,
@@ -31,8 +31,8 @@ local oneHourBurnRate =
 
 local sixHourBurnRate =
   [
-    ['6h error burn rate', 'gitlab_component_errors:ratio_6h{environment="$environment", type="$type", stage="$stage", component="$component"}'],
-    ['30m error burn rate', 'gitlab_component_errors:ratio_30m{environment="$environment", type="$type", stage="$stage", component="$component"}'],
+    ['6h error burn rate', 'gitlab_component_errors:ratio_6h{environment="$environment", env="$environment", type="$type", stage="$stage", component="$component"}'],
+    ['30m error burn rate', 'gitlab_component_errors:ratio_30m{environment="$environment", env="$environment", type="$type", stage="$stage", component="$component"}'],
     [
       '6h error burn threshold',
       '%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="$type"})' % multiburnFactors,
@@ -116,7 +116,7 @@ local burnRatePanelWithHelp(title, combinations, content) =
   ];
 
 basic.dashboard(
-  'Component Multi-window Multi-burn-rate Out of SLO',
+  'MWMBR Error Rate SLA Monitoring',
   tags=['alert-target', 'general'],
 )
 .addTemplate(templates.type)
@@ -135,7 +135,7 @@ basic.dashboard(
       basic.slaStats(
         title='SLO',
         description='Availability',
-        query='1 - avg(slo:max:events:gitlab_service_errors:ratio{environment="$environment", type="$type"}) by (type)',
+        query='1 - avg(slo:max:events:gitlab_service_errors:ratio{type="$type"}) by (type)',
         legendFormat='{{ type }}',
         fieldTitle='Error Rate SLO for the $type service'
       ),
