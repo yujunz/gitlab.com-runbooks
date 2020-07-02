@@ -59,7 +59,7 @@ estimate:
   real_size_threshold: 10000000 # real size of object in bytes (set to 0 for testing)
   objects_per_repack: 1
 repack:
-- command: PGPASSWORD=xxx pg_repack -h patroni-04-db-gstg.c.gitlab-staging-1.internal -p 5432 -U gitlab-superuser -d gitlabhq_production --no-kill-backend
+  command: PGPASSWORD=xxx pg_repack -h patroni-04-db-gstg.c.gitlab-staging-1.internal -p 5432 -U gitlab-superuser -d gitlabhq_production --no-kill-backend
 
 # Optional: Grafana annotations
 grafana:
