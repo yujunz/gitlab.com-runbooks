@@ -244,7 +244,7 @@ groups:
           clamp_max(
             label_replace(
               label_replace(
-                kube_hpa_status_desired_replicas{environment!="", hpa!~"gitlab-sidekiq-(elasticsearch|memory-bound|urgent-other)-v1"}
+                kube_hpa_status_desired_replicas{environment!="", hpa!~"gitlab-sidekiq-(elasticsearch|memory-bound|urgent-cpu-bound|urgent-other)-v1"}
                 /
                 kube_hpa_spec_max_replicas,
                 "stage", "cny", "hpa", "gitlab-cny-.*"
@@ -1598,7 +1598,7 @@ groups:
             clamp_max(
               label_replace(
                 label_replace(
-                  kube_hpa_status_desired_replicas{environment="{{ $labels.environment }}", hpa!~"gitlab-sidekiq-(elasticsearch|memory-bound|urgent-other)-v1"}
+                  kube_hpa_status_desired_replicas{environment="{{ $labels.environment }}", hpa!~"gitlab-sidekiq-(elasticsearch|memory-bound|urgent-cpu-bound|urgent-other)-v1"}
                   /
                   kube_hpa_spec_max_replicas,
                   "stage", "cny", "hpa", "gitlab-cny-.*"

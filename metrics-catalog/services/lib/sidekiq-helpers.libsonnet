@@ -13,7 +13,7 @@
 local shards = {
   'low-urgency-cpu-bound': {},
   'memory-bound': { throttled: true },
-  'urgent-cpu-bound': {},
+  'urgent-cpu-bound': { autoScaling: false },
   'urgent-other': { autoScaling: false },
   catchall: {},
   elasticsearch: { throttled: true },
