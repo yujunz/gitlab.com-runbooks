@@ -33,11 +33,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.4"}[1m])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="1"}[1m])
         )
         +
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.1"}[1m])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="3"}[1m])
         )
       )
       /
@@ -235,11 +235,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.4"}[5m])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="1"}[5m])
         )
         +
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.1"}[5m])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="3"}[5m])
         )
       )
       /
@@ -437,11 +437,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.4"}[30m])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="1"}[30m])
         )
         +
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.1"}[30m])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="3"}[30m])
         )
       )
       /
@@ -639,11 +639,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.4"}[1h])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="1"}[1h])
         )
         +
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.1"}[1h])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="3"}[1h])
         )
       )
       /
@@ -841,11 +841,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.4"}[6h])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="1"}[6h])
         )
         +
         sum by (stage) (
-          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="0.1"}[6h])
+          rate(prometheus_http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="prometheus",type="monitoring", le="3"}[6h])
         )
       )
       /
