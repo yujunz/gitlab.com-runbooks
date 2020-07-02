@@ -166,50 +166,6 @@ groups:
       (
           slo:max:events:gitlab_service_errors:ratio{monitor="global"}
       )
-  - alert: component_error_ratio_burn_rate_slo_out_of_bounds_upper
-    for: 2m
-    annotations:
-      title: >-
-        The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage,
-        has an error burn-rate exceeding SLO
-      description: |
-        The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage has an error burn-rate outside of SLO
-        The error-burn rate for this service is outside of SLO over multiple windows. Currently the error-rate is {{ $value | humanizePercentage }}%.
-      grafana_dashboard_id: alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo
-      grafana_dashboard_link: >-
-        https://dashboards.gitlab.net/d/alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo?from=now-6h/m&to=now-1m/m&var-environment={{
-        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}&var-component={{
-        $labels.component }}
-      grafana_min_zoom_hours: '6'
-      grafana_panel_id: '4'
-      grafana_variables: environment,type,stage,component
-      link1_title: Definition
-      link1_url: >-
-        https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-error-rate.md
-      promql_template_1: >-
-        gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
-    labels:
-      alert_type: symptom
-      bound: upper
-      metric: gitlab_component_errors:ratio_1h
-      pager: pagerduty
-      period: 2m
-      rules_domain: general
-      severity: s2
-      slo_alert: 'yes'
-    expr: |
-      (
-          gitlab_component_errors:ratio_1h{monitor="global"} > on(tier, type) group_left() (14.4*(avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)))
-      and
-        gitlab_component_errors:ratio_5m{monitor="global"} > on(tier, type) group_left()  (14.4*(avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)))
-      )
-      or
-      (
-          gitlab_component_errors:ratio_6h{monitor="global"} > on(tier, type) group_left() (6*(avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)))
-      and
-        gitlab_component_errors:ratio_30m{monitor="global"} > on(tier, type) group_left() (6*(avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)))
-      )
   - alert: service_ops_out_of_bounds_upper_5m
     for: 5m
     annotations:
