@@ -371,6 +371,13 @@ local alertmanager = {
   ],
 };
 
+local k8sAlertmanager = {
+  alertmanager: {
+    config: alertmanager,
+  },
+};
+
 {
   'alertmanager.yml': std.manifestYamlDoc(alertmanager, indent_array_in_object=true),
+  'k8s_alertmanager.yaml': std.manifestYamlDoc(k8sAlertmanager, indent_array_in_object=true),
 }

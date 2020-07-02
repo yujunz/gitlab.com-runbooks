@@ -14,6 +14,8 @@ if ! jsonnet -J . --ext-code-file "secrets=${secrets_file}" --multi . --string a
 fi
 
 # Pretty-format the YAML.
-tmpfile=$(mktemp)
-ruby -ryaml -e 'puts YAML.load(ARGF.read).to_yaml' alertmanager.yml >"${tmpfile}"
-mv -v "${tmpfile}" alertmanager.yml
+for file in *.yml *.yaml; do
+  tmpfile=$(mktemp)
+  ruby -ryaml -e 'puts YAML.load(ARGF.read).to_yaml' "${file}" >"${tmpfile}"
+  mv -v "${tmpfile}" "${file}"
+done
