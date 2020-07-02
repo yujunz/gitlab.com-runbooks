@@ -21,6 +21,7 @@
 * [../patroni/pg-ha.md](../patroni/pg-ha.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
 * [../patroni/rotating-rails-postgresql-password.md](../patroni/rotating-rails-postgresql-password.md)
+* [../patroni/user_grants_permission.md](../patroni/user_grants_permission.md)
 * [README.md](README.md)
 * [patroni-consul-postgres-pgbouncer-interactions.md](patroni-consul-postgres-pgbouncer-interactions.md)
 * [pgbouncer-add-instance.md](pgbouncer-add-instance.md)
