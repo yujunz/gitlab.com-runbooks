@@ -143,8 +143,8 @@ local productionEnvironmentsSelector = {
       apdex: histogramApdex(
         histogram='prometheus_http_request_duration_seconds_bucket',
         selector=prometheusSelector,
-        satisfiedThreshold=0.4,
-        toleratedThreshold=0.1
+        satisfiedThreshold=1,
+        toleratedThreshold=3
       ),
 
       requestRate: rateMetric(
