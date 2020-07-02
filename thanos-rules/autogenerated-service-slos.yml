@@ -213,7 +213,7 @@ groups:
     labels:
       tier: sv
       type: web
-    expr: '0.000100'
+    expr: '0.005000'
   - record: slo:min:events:gitlab_service_apdex:ratio
     labels:
       tier: sv
