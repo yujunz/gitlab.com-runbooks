@@ -157,7 +157,7 @@ local productionEnvironmentsSelector = {
         selector=prometheusSelector { code: { re: '^5.*' } }
       ),
 
-      significantLabels: ['fqdn'],
+      significantLabels: ['fqdn', 'handler'],
     },
   },
 }
