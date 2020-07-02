@@ -112,8 +112,8 @@ deploy-rules-production:
 update-alert-manager:
   stage: alertmanager
   script:
+    - make test-alertmanager
     - cd alertmanager
-    - ./template.rb
     - ./update.sh
   only:
     refs:
@@ -473,11 +473,17 @@ publish:
     refs:
       - tags
 
-verify_alertmanager_parity:
+alertmanager_test:
   stage: test
   script:
-    - alertmanager/verify-alertmanager-parity.sh
-  allow_failure: true
+    - make test-alertmanager
+  only:
+    changes:
+      - alertmanager/*
+    refs:
+      - master
+      - merge_requests
+      - tags
 
 assert_consistent_tool_versions:
   stage: test
