@@ -17,17 +17,24 @@ exporting via UI fails for some reason.
 
 # From where to run the restore
 
-If the project isn't big, triggering the export from the console node could
-work. If the project is big (several GiB), the console node might [run out of
-disk space](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10691),
-because the archive file will be created on the small `/` filesystem. Also, the
-gitlab-ee version on the console might be outdated, which can lead to
-compatibility problems or errors because of certain bugs that haven't been fixed
-there.
+Manual project exports should work from the console node. The root disk space
+was increased to 200GB recently, leaving more than 150GB free space for project
+exports. Typically, a project export needs twice it's size on disk space - for
+extracting all files and then writing out the tar.gz archive.
 
-__The best option seems to be to run the export from the file-node on which the
-repository is located.__ You can find that by looking up the Gitaly storage name
-and relative path of the project in the Admin UI or via rails console:
+__Warning:__ You can't judge the size of a project export by the size shown in
+the admin UI! It doesn't account for uploads. We have cases, where small
+projects have more than 30GB of uploads (release files or attachments...) which
+are using external object storage and need to be downloaded from there when
+creating the export.
+
+Also, the gitlab-ee version on the console might be outdated, which can lead to
+compatibility problems with importing exports or other errors.
+
+If you encounter this or really run out of disk space, run the export from the
+file-node on which the repository is located. You can find that by looking up
+the Gitaly storage name and relative path of the project in the Admin UI or via
+rails console:
 
 ```ruby
 p = Project.find_by_full_path('some/project')
@@ -38,7 +45,7 @@ path = p.disk_path
 
 # Restore a project via rails-console
 
-* ssh to the file-node found above
+* ssh to the console node (or the file-node found above, if console doesn't work).
 * sudo gitlab-rails console
 
 ```ruby
