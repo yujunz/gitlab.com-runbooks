@@ -14,4 +14,5 @@
 ## Troubleshooting Pointers
 
 * [../redis/redis.md](../redis/redis.md)
+* [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 <!-- END_MARKER -->

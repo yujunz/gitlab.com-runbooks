@@ -30,6 +30,7 @@
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 * [../pgbouncer/pgbouncer-add-instance.md](../pgbouncer/pgbouncer-add-instance.md)
 * [../redis/redis.md](../redis/redis.md)
+* [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 * [../uncategorized/access-gcp-hosts.md](../uncategorized/access-gcp-hosts.md)
 * [../uncategorized/job_completion.md](../uncategorized/job_completion.md)
 * [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)

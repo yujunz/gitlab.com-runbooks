@@ -56,6 +56,7 @@
 * [../registry/gitlab-registry.md](../registry/gitlab-registry.md)
 * [../sidekiq/large-sidekiq-queue.md](../sidekiq/large-sidekiq-queue.md)
 * [../sidekiq/sidekiq-inspection.md](../sidekiq/sidekiq-inspection.md)
+* [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 * [../sidekiq/sidekiq_error_rate_high.md](../sidekiq/sidekiq_error_rate_high.md)
 * [../sidekiq/sidekiq_stats_no_longer_showing.md](../sidekiq/sidekiq_stats_no_longer_showing.md)
 * [../sidekiq/silent-project-exports.md](../sidekiq/silent-project-exports.md)
