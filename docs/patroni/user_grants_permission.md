@@ -85,7 +85,7 @@ You can use the clause `ALL PRIVILEGES`  to grant all permission, if we want to 
 There are [another types](https://www.postgresql.org/docs/11/sql-grant.html) of object to granting permission, for example, SEQUENCE, FUNCTIONS, DOMAIN, etc
 
 ### In Roles
-Also you can grant permission from `role/user` to another `role/user` and the 
+You also can grant permission from `role/user` to another `role/user`:
 
 ```
 --grant readonly_roles role permission to user1
