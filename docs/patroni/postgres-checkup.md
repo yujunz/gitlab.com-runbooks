@@ -1,5 +1,7 @@
 ## Introduction
 
+Link to the video of the [runbook simulation](https://youtu.be/ibqBq9rjgCg).
+
 postgres-checkup is an open-source diagnostics tool for a deep analysis of a Postgres database health. It detects current and potential issues with database performance, scalability, and security. It also produces recommendations on how to resolve or prevent them. It is considered as an addition to existing monitoring data, augmenting it. A monitoring system will only show current, urgent problems. And postgres-checkup will show sneaking up, deeper problems that may hit you in the future. It helps to solve many known database administration problems and common pitfalls. It aims to detect issues at a very early stage and to suggest the best ways to prevent them.
 
 Project home: https://gitlab.com/postgres-ai/postgres-checkup. It contains all the details of how it works and how to use it. As of June 2020, 28 reports are implemented, and 25 of them are available when PG connection (not SSH connection) is used to generate reports, and two snapshots of pg_stat_statements (standard Postgres extension for query macro-analysis) data are collected. The full list of reports can be found here: https://gitlab.com/postgres-ai/postgres-checkup#the-full-list-of-reports.
