@@ -6,10 +6,6 @@ local combined = metricsCatalog.combined;
 metricsCatalog.serviceDefinition({
   type: 'patroni',
   tier: 'db',
-  deprecatedSingleBurnThresholds: {
-    apdexRatio: 0.95,
-    errorRatio: 0.005,
-  },
   monitoringThresholds: {
     apdexScore: 0.995,
     errorRatio: 0.9995,

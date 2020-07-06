@@ -6,10 +6,6 @@ local combined = metricsCatalog.combined;
 metricsCatalog.serviceDefinition({
   type: 'web-pages',
   tier: 'sv',
-  deprecatedSingleBurnThresholds: {
-    apdexRatio: 0.9,
-    errorRatio: 0.005,
-  },
   monitoringThresholds: {
     apdexScore: 0.995,
     errorRatio: 0.9999,

@@ -13,10 +13,6 @@ local noUrgencySelector = { urgency: '' };
 metricsCatalog.serviceDefinition({
   type: 'sidekiq',
   tier: 'sv',
-  deprecatedSingleBurnThresholds: {
-    apdexRatio: 0.95,
-    errorRatio: 0.05,
-  },
   monitoringThresholds: {
     apdexScore: 0.995,
     errorRatio: 0.995,

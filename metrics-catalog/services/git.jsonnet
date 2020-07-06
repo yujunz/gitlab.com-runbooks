@@ -6,7 +6,7 @@ local customRateQuery = metricsCatalog.customRateQuery;
 metricsCatalog.serviceDefinition({
   type: 'git',
   tier: 'sv',
-  deprecatedSingleBurnThresholds: {
+  contractualThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.005,
   },

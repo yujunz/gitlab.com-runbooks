@@ -27,12 +27,12 @@ local minApdexMonitoringSLO(labels, expr) =
   };
 
 local generateServiceSLORules(serviceDefinition) =
-  local hasDeprecatedSingleBurnThresholds = std.objectHas(serviceDefinition, 'deprecatedSingleBurnThresholds');
+  local hasContractualThresholds = std.objectHas(serviceDefinition, 'contractualThresholds');
   local hasMonitoringThresholds = std.objectHas(serviceDefinition, 'monitoringThresholds');
 
-  local triggerDurationLabels = if hasDeprecatedSingleBurnThresholds && std.objectHas(serviceDefinition.deprecatedSingleBurnThresholds, 'alertTriggerDuration') then
+  local triggerDurationLabels = if hasContractualThresholds && std.objectHas(serviceDefinition.contractualThresholds, 'alertTriggerDuration') then
     {
-      alert_trigger_duration: serviceDefinition.deprecatedSingleBurnThresholds.alertTriggerDuration,
+      alert_trigger_duration: serviceDefinition.contractualThresholds.alertTriggerDuration,
     }
   else {};
 
@@ -44,17 +44,17 @@ local generateServiceSLORules(serviceDefinition) =
   local labelsWithTriggerDurations = labels + triggerDurationLabels;
 
   std.prune([
-    if hasDeprecatedSingleBurnThresholds && std.objectHas(serviceDefinition.deprecatedSingleBurnThresholds, 'apdexRatio') then
+    if hasContractualThresholds && std.objectHas(serviceDefinition.contractualThresholds, 'apdexRatio') then
       minApdexDeprecatedSingleBurnSLO(
         labels=labelsWithTriggerDurations,
-        expr='%f' % [serviceDefinition.deprecatedSingleBurnThresholds.apdexRatio]
+        expr='%f' % [serviceDefinition.contractualThresholds.apdexRatio]
       )
     else null,
 
-    if hasDeprecatedSingleBurnThresholds && std.objectHas(serviceDefinition.deprecatedSingleBurnThresholds, 'errorRatio') then
+    if hasContractualThresholds && std.objectHas(serviceDefinition.contractualThresholds, 'errorRatio') then
       maxErrorsDeprecatedSingleBurnSLO(
         labels=labelsWithTriggerDurations,
-        expr='%f' % [serviceDefinition.deprecatedSingleBurnThresholds.errorRatio],
+        expr='%f' % [serviceDefinition.contractualThresholds.errorRatio],
       )
     else null,
 

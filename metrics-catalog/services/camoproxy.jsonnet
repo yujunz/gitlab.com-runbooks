@@ -5,10 +5,6 @@ local rateMetric = metricsCatalog.rateMetric;
 metricsCatalog.serviceDefinition({
   type: 'camoproxy',
   tier: 'sv',
-  deprecatedSingleBurnThresholds: {
-    apdexRatio: 0.999,
-    errorRatio: 0.001,
-  },
   monitoringThresholds: {
     apdexScore: 0.999,
     errorRatio: 0.999,

@@ -9,10 +9,6 @@ local productionEnvironmentsSelector = {
 metricsCatalog.serviceDefinition({
   type: 'monitoring',
   tier: 'inf',
-  deprecatedSingleBurnThresholds: {
-    apdexRatio: 0.999,
-    errorRatio: 0.001,
-  },
   monitoringThresholds: {
     apdexScore: 0.999,
     errorRatio: 0.999,
