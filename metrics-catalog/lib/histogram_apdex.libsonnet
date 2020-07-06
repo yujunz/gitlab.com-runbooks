@@ -45,14 +45,14 @@ local generateApdexComponentRateQuery(histogramApdex, additionalSelectors, range
     resolvedRecordingRule;
 
 // A double threshold apdex score only has both SATISFACTORY threshold and TOLERABLE thresholds
-local generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=null, aggregationLabels=[]) =
+local generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=null, aggregationLabels=[], ignoreLe=false) =
   local satisfiedQuery = generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, { le: histogramApdex.satisfiedThreshold }, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels);
   local toleratedQuery = generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, { le: histogramApdex.toleratedThreshold }, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels);
 
   |||
     (
       %(satisfied)s
-      +
+      +%(ignoreLe)s
       %(tolerated)s
     )
     /
@@ -60,14 +60,15 @@ local generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelec
   ||| % {
     satisfied: strings.indent(satisfiedQuery, 2),
     tolerated: strings.indent(toleratedQuery, 2),
+    ignoreLe: if ignoreLe then ' ignoring(le)' else ''
   };
 
-local generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=null, aggregationLabels=[]) =
+local generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=null, aggregationLabels=[], ignoreLe=false) =
   if histogramApdex.toleratedThreshold == null then
     // A single threshold apdex score only has a SATISFACTORY threshold, no TOLERABLE threshold
     generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, { le: histogramApdex.satisfiedThreshold }, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels)
   else
-    generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels);
+    generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels, ignoreLe=ignoreLe);
 
 local groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels) =
   if substituteWeightWithRecordingRule == null then
@@ -78,7 +79,7 @@ local groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels) =
     };
 
 local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, rangeInterval, aggregationFunction=null, substituteWeightWithRecordingRule=null) =
-  local numeratorQuery = generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels);
+  local numeratorQuery = generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels, ignoreLe=false);
   local weightQuery = if substituteWeightWithRecordingRule == null then
     generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, { le: '+Inf' }, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels)
   else
@@ -153,7 +154,7 @@ local generatePercentileLatencyQuery(histogram, percentile, aggregationLabels, a
     // The preaggregated numerator expression
     // used for combinations
     apdexNumerator(selector, rangeInterval)::
-      generateApdexNumeratorQuery(self, selector, rangeInterval, aggregationFunction=null, aggregationLabels=[]),
+      generateApdexNumeratorQuery(self, selector, rangeInterval, aggregationFunction=null, aggregationLabels=[], ignoreLe=true),
 
     // The preaggregated denominator expression
     // used for combinations
