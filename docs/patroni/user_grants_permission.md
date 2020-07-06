@@ -134,7 +134,7 @@ DROP ROLE readonly_roles ;
 ```
 
 ## Modify pg_hba conf
-PostgreSQL manage client authentication using a configuration file  called [`pg_hba.conf`](https://www.postgresql.org/docs/11/auth-pg-hba-conf.html) and sometimes is required adjust this file for right access, if not have permissionion to connect you will see an error similar to:
+PostgreSQL manages client authentication using a configuration file called [`pg_hba.conf`](https://www.postgresql.org/docs/11/auth-pg-hba-conf.html) and sometimes it is required to adjust this file for access rights - if you don't have permission to connect, you will see an error similar to:
 
 ```
 connect to PostgreSQL server: FATAL: no pg_hba.conf entry for host "XXX.XXX.XX.XXX", user "userXXX", database "dbXXX"...
