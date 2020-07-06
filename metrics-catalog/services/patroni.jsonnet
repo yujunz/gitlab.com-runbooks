@@ -6,9 +6,13 @@ local combined = metricsCatalog.combined;
 {
   type: 'patroni',
   tier: 'db',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.005,
+  },
+  monitoringThresholds: {
+    apdexScore: 0.995,
+    errorRatio: 0.9995,
   },
   components: {
     // We don't have latency histograms for patroni but for now we will

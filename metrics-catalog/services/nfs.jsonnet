@@ -5,10 +5,10 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'nfs',
   tier: 'stor',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     errorRatio: 0.0001,
   },
-  eventBasedSLOTargets: {
+  monitoringThresholds: {
     errorRatio: 0.9999,  // 99.99% of nfs requests should succeed, over multiple window periods
   },
   components: {

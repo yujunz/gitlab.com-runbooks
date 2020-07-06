@@ -1,25 +1,25 @@
-local minApdexSLO(labels, expr) =
+local minApdexDeprecatedSingleBurnSLO(labels, expr) =
   {
     record: 'slo:min:gitlab_service_apdex:ratio',
     labels: labels,
     expr: expr,
   };
 
-local maxErrorsSLO(labels, expr) =
+local maxErrorsDeprecatedSingleBurnSLO(labels, expr) =
   {
     record: 'slo:max:gitlab_service_errors:ratio',
     labels: labels,
     expr: expr,
   };
 
-local maxErrorsEventRateSLO(labels, expr) =
+local maxErrorsMonitoringSLO(labels, expr) =
   {
     record: 'slo:max:events:gitlab_service_errors:ratio',
     labels: labels,
     expr: expr,
   };
 
-local minApdexTargetSLO(labels, expr) =
+local minApdexMonitoringSLO(labels, expr) =
   {
     record: 'slo:min:events:gitlab_service_apdex:ratio',
     labels: labels,
@@ -27,12 +27,12 @@ local minApdexTargetSLO(labels, expr) =
   };
 
 local generateServiceSLORules(serviceDefinition) =
+  local hasDeprecatedSingleBurnThresholds = std.objectHas(serviceDefinition, 'deprecatedSingleBurnThresholds');
   local hasMonitoringThresholds = std.objectHas(serviceDefinition, 'monitoringThresholds');
-  local hasEventBasedSLOTargets = std.objectHas(serviceDefinition, 'eventBasedSLOTargets');
 
-  local triggerDurationLabels = if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'alertTriggerDuration') then
+  local triggerDurationLabels = if hasDeprecatedSingleBurnThresholds && std.objectHas(serviceDefinition.deprecatedSingleBurnThresholds, 'alertTriggerDuration') then
     {
-      alert_trigger_duration: serviceDefinition.monitoringThresholds.alertTriggerDuration,
+      alert_trigger_duration: serviceDefinition.deprecatedSingleBurnThresholds.alertTriggerDuration,
     }
   else {};
 
@@ -44,33 +44,33 @@ local generateServiceSLORules(serviceDefinition) =
   local labelsWithTriggerDurations = labels + triggerDurationLabels;
 
   std.prune([
-    if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'apdexRatio') then
-      minApdexSLO(
+    if hasDeprecatedSingleBurnThresholds && std.objectHas(serviceDefinition.deprecatedSingleBurnThresholds, 'apdexRatio') then
+      minApdexDeprecatedSingleBurnSLO(
         labels=labelsWithTriggerDurations,
-        expr='%f' % [serviceDefinition.monitoringThresholds.apdexRatio]
+        expr='%f' % [serviceDefinition.deprecatedSingleBurnThresholds.apdexRatio]
       )
     else null,
 
-    if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'errorRatio') then
-      maxErrorsSLO(
+    if hasDeprecatedSingleBurnThresholds && std.objectHas(serviceDefinition.deprecatedSingleBurnThresholds, 'errorRatio') then
+      maxErrorsDeprecatedSingleBurnSLO(
         labels=labelsWithTriggerDurations,
-        expr='%f' % [serviceDefinition.monitoringThresholds.errorRatio],
+        expr='%f' % [serviceDefinition.deprecatedSingleBurnThresholds.errorRatio],
       )
     else null,
 
     // Min apdex SLO (multiburn)
-    if hasEventBasedSLOTargets && std.objectHas(serviceDefinition.eventBasedSLOTargets, 'apdexScore') then
-      minApdexTargetSLO(
+    if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'apdexScore') then
+      minApdexMonitoringSLO(
         labels=labels,
-        expr='%f' % [serviceDefinition.eventBasedSLOTargets.apdexScore],
+        expr='%f' % [serviceDefinition.monitoringThresholds.apdexScore],
       )
     else null,
 
     // Note: the max error rate is `1 - sla` (multiburn)
-    if hasEventBasedSLOTargets && std.objectHas(serviceDefinition.eventBasedSLOTargets, 'errorRatio') then
-      maxErrorsEventRateSLO(
+    if hasMonitoringThresholds && std.objectHas(serviceDefinition.monitoringThresholds, 'errorRatio') then
+      maxErrorsMonitoringSLO(
         labels=labels,
-        expr='%f' % [1 - serviceDefinition.eventBasedSLOTargets.errorRatio],
+        expr='%f' % [1 - serviceDefinition.monitoringThresholds.errorRatio],
       )
     else null,
   ]);

@@ -9,13 +9,13 @@ local productionEnvironmentsSelector = {
 {
   type: 'monitoring',
   tier: 'inf',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.999,
     errorRatio: 0.001,
   },
-  eventBasedSLOTargets: {
-    apdexScore: 0.999,  // 99.9% of monitoring requests should complete with satisfactory threshold
-    errorRatio: 0.999,  // 99.9% of monitoring requests should succeed, over multiple window periods
+  monitoringThresholds: {
+    apdexScore: 0.999,
+    errorRatio: 0.999,
   },
   /*
    * Our anomaly detection uses normal distributions and the monitoring service

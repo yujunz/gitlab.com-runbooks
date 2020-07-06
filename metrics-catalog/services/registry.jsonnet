@@ -5,9 +5,13 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'registry',
   tier: 'sv',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.9,
     errorRatio: 0.005,
+  },
+  monitoringThresholds: {
+    apdexScore: 0.995,
+    errorRatio: 0.9999,
   },
   serviceDependencies: {
     api: true,

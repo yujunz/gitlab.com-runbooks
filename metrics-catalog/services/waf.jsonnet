@@ -5,10 +5,10 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'waf',
   tier: 'lb',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     errorRatio: 0.001,
   },
-  eventBasedSLOTargets: {
+  monitoringThresholds: {
     errorRatio: 0.999,
   },
   serviceDependencies: {

@@ -5,13 +5,13 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'web',
   tier: 'sv',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.005,
   },
-  eventBasedSLOTargets: {
-    apdexScore: 0.999,  // 99.9% of Web requests should complete with satisfactory threshold
-    errorRatio: 0.9999,  // 99.99% of Web requests should succeed, over multiple window periods
+  monitoringThresholds: {
+    apdexScore: 0.999,
+    errorRatio: 0.9999,
   },
   serviceDependencies: {
     gitaly: true,
