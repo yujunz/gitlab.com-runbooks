@@ -14,7 +14,7 @@ PostgreSQL have default roles that provide access to some database information, 
 
 In the following sections, we will see  some common activities to manage roles and user in PostgreSQL
 
-*Note: To do some of the following operations you will need to have superuser, create role permission or owner of objects.*
+*Note: To do some of the following operations you will need to have `superuser` or `create role` permissions or be owner of the objects.*
 
 ## Create new roles and users
 To create roles/user you can use the command [`CREATE ROLE`](https://www.postgresql.org/docs/11/sql-createrole.html)
