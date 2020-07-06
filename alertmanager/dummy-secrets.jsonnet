@@ -17,7 +17,6 @@
   // GitLab Slack.
   slackAPIURL: 'https://example.com/secret',
   // https://deadmanssnitch.com/
-  snitchApiKey: 'secret',
   snitchChannels: [
     { name: 'ops', apiKey: 'secret' },
     { name: 'gprd', apiKey: 'secret' },

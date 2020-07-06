@@ -28,9 +28,6 @@ local slackChannels = [
 
 local webhookChannels =
   [
-    { name: 'dead_mans_snitch', url: 'https://nosnch.in/' + secrets.snitchApiKey, sendResolved: false },
-  ] +
-  [
     { name: 'dead_mans_snitch_' + s.name, url: 'https://nosnch.in/' + s.apiKey, sendResolved: false }
     for s in secrets.snitchChannels
   ] +
@@ -332,18 +329,6 @@ local generalAlertsRoutes = [
 
 local routes =
   [SnitchRoute(c) for c in secrets.snitchChannels] +
-  [
-    {
-      match: {
-        alertname: 'SnitchHeartBeat',
-      },
-      receiver: 'dead_mans_snitch',
-      group_wait: '1m',
-      group_interval: '5m',
-      repeat_interval: '5m',
-      continue: false,
-    },
-  ] +
   [slackBridge] +
   [slackAlertsGeneralNoPager] +
   [slackAlertsGeneralPager] +
