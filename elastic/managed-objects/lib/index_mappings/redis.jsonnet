@@ -112,7 +112,7 @@
             },
           },
         },
-        'time': {
+        time: {
           type: 'date',
         },
         type: {

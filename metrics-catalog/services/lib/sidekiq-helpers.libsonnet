@@ -1,4 +1,3 @@
-
 // Sidekiq Shard Definitions
 // This should contain a list of sidekiq shards
 //

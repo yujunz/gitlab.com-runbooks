@@ -10,7 +10,7 @@ local combined = metricsCatalog.combined;
     errorRatio: 0.005,
   },
   monitoringThresholds: {
-    errorRatio: 0.9995
+    errorRatio: 0.9995,
   },
   components: {
     loadbalancer: {

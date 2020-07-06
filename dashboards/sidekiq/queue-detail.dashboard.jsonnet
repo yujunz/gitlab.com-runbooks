@@ -392,13 +392,15 @@ basic.dashboard(
       multiQuantileTimeseries('CPU Time', bucketMetric='sidekiq_jobs_cpu_seconds_bucket', aggregators='queue'),
       multiQuantileTimeseries('Gitaly Time', bucketMetric='sidekiq_jobs_gitaly_seconds_bucket', aggregators='queue'),
       multiQuantileTimeseries('Database Time', bucketMetric='sidekiq_jobs_db_seconds_bucket', aggregators='queue'),
-    ], cols=3, startRow=702)
+    ], cols=3, startRow=702
+  )
   +
   layout.grid(
     [
       multiQuantileTimeseries('Redis Time', bucketMetric='sidekiq_redis_requests_duration_seconds_bucket', aggregators='queue'),
       multiQuantileTimeseries('Elasticsearch Time', bucketMetric='sidekiq_elasticsearch_requests_duration_seconds_bucket', aggregators='queue'),
-    ], cols=3, startRow=703)
+    ], cols=3, startRow=703
+  )
 )
 .trailer()
 + {

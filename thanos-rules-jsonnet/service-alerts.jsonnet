@@ -1,15 +1,15 @@
 local alerts = import 'lib/alerts.libsonnet';
 
 local rules = [
-  # ------------------------------------------------------------------------------
-  # Latency alerts
-  # ------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------
+  // Latency alerts
+  // ------------------------------------------------------------------------------
 
-  # Warn: Latency SLO not being met, default alert_trigger_duration (short, 5m)
-  # Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
-  # only care about the main stage alert Alternatively, we have the bad canary alerts
-  # specifically for canary stage
-  # DEPRECATED in favour of multiwindow, multiburn-rate alerts
+  // Warn: Latency SLO not being met, default alert_trigger_duration (short, 5m)
+  // Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
+  // only care about the main stage alert Alternatively, we have the bad canary alerts
+  // specifically for canary stage
+  // DEPRECATED in favour of multiwindow, multiburn-rate alerts
   {
     alert: 'service_apdex_slo_out_of_bounds_lower_5m',
     expr: |||
@@ -53,11 +53,11 @@ local rules = [
     },
   },
 
-  # Warn: Latency SLO not being met, long alert_trigger_duration (15m)
-  # Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
-  # only care about the main stage alert Alternatively, we have the bad canary alerts
-  # specifically for canary stage
-  # DEPRECATED in favour of multiwindow, multiburn-rate alerts
+  // Warn: Latency SLO not being met, long alert_trigger_duration (15m)
+  // Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
+  // only care about the main stage alert Alternatively, we have the bad canary alerts
+  // specifically for canary stage
+  // DEPRECATED in favour of multiwindow, multiburn-rate alerts
   {
     alert: 'service_apdex_slo_out_of_bounds_lower_15m',
     expr: |||
@@ -101,15 +101,15 @@ local rules = [
     },
   },
 
-  # ------------------------------------------------------------------------------
-  # Error Rate alerts
-  # ------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------
+  // Error Rate alerts
+  // ------------------------------------------------------------------------------
 
-  # Warn: Error ratio SLO not being met, default alert_trigger_duration (short, 5m)
-  # Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
-  # only care about the main stage alert Alternatively, we have the bad canary alerts
-  # specifically for canary stage
-  # DEPRECATED in favour of multiwindow, multiburn-rate alerts
+  // Warn: Error ratio SLO not being met, default alert_trigger_duration (short, 5m)
+  // Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
+  // only care about the main stage alert Alternatively, we have the bad canary alerts
+  // specifically for canary stage
+  // DEPRECATED in favour of multiwindow, multiburn-rate alerts
   {
     alert: 'service_error_ratio_slo_out_of_bounds_upper_5m',
     expr: |||
@@ -153,11 +153,11 @@ local rules = [
     },
   },
 
-  # Warn: Error ratio SLO not being met, long alert_trigger_duration (15m)
-  # Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
-  # only care about the main stage alert Alternatively, we have the bad canary alerts
-  # specifically for canary stage
-  # DEPRECATED in favour of multiwindow, multiburn-rate alerts
+  // Warn: Error ratio SLO not being met, long alert_trigger_duration (15m)
+  // Note: we ignore `cny` stage for this alert, since if both cny and main stage are firing, we
+  // only care about the main stage alert Alternatively, we have the bad canary alerts
+  // specifically for canary stage
+  // DEPRECATED in favour of multiwindow, multiburn-rate alerts
   {
     alert: 'service_error_ratio_slo_out_of_bounds_upper_15m',
     expr: |||
@@ -201,13 +201,13 @@ local rules = [
     },
   },
 
-  ################################################
-  # Operation Rate: how many operations is this service handling per second?
-  ################################################
-  # ------------------------------------
-  # Upper bound thresholds exceeded
-  # ------------------------------------
-  # Warn: Operation rate above 2 sigma
+  //###############################################
+  // Operation Rate: how many operations is this service handling per second?
+  //###############################################
+  // ------------------------------------
+  // Upper bound thresholds exceeded
+  // ------------------------------------
+  // Warn: Operation rate above 2 sigma
   {
     alert: 'service_ops_out_of_bounds_upper_5m',
     expr: |||
@@ -249,10 +249,10 @@ local rules = [
       promql_template_2: 'gitlab_component_ops:rate{environment="$environment", type="$type", stage="$stage"}',
     },
   },
-  # ------------------------------------
-  # Lower bound thresholds exceeded
-  # ------------------------------------
-  # Warn: Operation rate below 2 sigma
+  // ------------------------------------
+  // Lower bound thresholds exceeded
+  // ------------------------------------
+  // Warn: Operation rate below 2 sigma
   {
     alert: 'service_ops_out_of_bounds_lower_5m',
     expr: |||
@@ -295,18 +295,18 @@ local rules = [
     },
   },
 
-  ################################################
-  # Bad canary: we are experiencing errors or latency issues in
-  # canary, but not in production. This probably indicates that
-  # we have a dud canary
-  #
-  # When traffic volume to the canary is below 1% of the
-  # traffic to the main production stage, the bad-canary
-  # alerts will not fire. This avoids low-traffic
-  # random noise alerts.
-  #
-  ################################################
-  # DEPRECATED in favour of multiwindow, multiburn-rate alerts
+  //###############################################
+  // Bad canary: we are experiencing errors or latency issues in
+  // canary, but not in production. This probably indicates that
+  // we have a dud canary
+  //
+  // When traffic volume to the canary is below 1% of the
+  // traffic to the main production stage, the bad-canary
+  // alerts will not fire. This avoids low-traffic
+  // random noise alerts.
+  //
+  //###############################################
+  // DEPRECATED in favour of multiwindow, multiburn-rate alerts
   {
     alert: 'service_cny_apdex_slo_out_of_bounds_lower_5m',
     expr: |||
@@ -441,7 +441,7 @@ local rules = [
       {
         name: 'slo_alerts.rules',
         partial_response_strategy: 'warn',
-        rules: [alerts.processAlertRule(r) for r in rules]
+        rules: [alerts.processAlertRule(r) for r in rules],
       },
     ],
   }),

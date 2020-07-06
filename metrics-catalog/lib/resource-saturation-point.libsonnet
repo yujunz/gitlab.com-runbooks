@@ -1,6 +1,6 @@
+local selectors = import './selectors.libsonnet';
 local alerts = import 'alerts.libsonnet';
 local strings = import 'strings.libsonnet';
-local selectors = import './selectors.libsonnet';
 
 // The severity labels that we allow on resources
 local severities = std.set(['s1', 's2', 's3', 's4']);
@@ -38,15 +38,15 @@ local validateAndApplyDefaults(definition) =
   // Apply defaults
   if validated then
     {
-      queryFormatConfig: { }
+      queryFormatConfig: {},
     } + definition + {
       // slo defaults
       slos: {
-        alertTriggerDuration: '5m'
-      } + definition.slos
+        alertTriggerDuration: '5m',
+      } + definition.slos,
     }
   else
-    std.assertEqual(definition, { __assert__: "Resource definition is invalid" });
+    std.assertEqual(definition, { __assert__: 'Resource definition is invalid' });
 
 local resourceSaturationPoint = function(options)
   local definition = validateAndApplyDefaults(options);
@@ -117,12 +117,12 @@ local resourceSaturationPoint = function(options)
               { type: definition.appliesTo[0] }
           else
             if std.length(definition.appliesTo.allExcept) > 0 then
-              { type: [{ ne: ""}, { nre: std.join('|', definition.appliesTo.allExcept) }] }
+              { type: [{ ne: '' }, { nre: std.join('|', definition.appliesTo.allExcept) }] }
             else
-              { type: { ne: ""} }
+              { type: { ne: '' } }
         );
 
-      local query = definition.getQuery({ environment: {ne: ""} } + typeFilter, definition.getBurnRatePeriod());
+      local query = definition.getQuery({ environment: { ne: '' } } + typeFilter, definition.getBurnRatePeriod());
 
       {
         record: 'gitlab_component_saturation:ratio',
@@ -199,10 +199,10 @@ local resourceSaturationPoint = function(options)
           grafana_variables: 'environment,type,stage',
           grafana_min_zoom_hours: '6',
           promql_query: definition.getQuery({
-              environment: "{{ $labels.environment }}",
-              stage: "{{ $labels.stage }}",
-              type: "{{ $labels.type }}",
-            }, definition.getBurnRatePeriod(), definition.resourceLabels),
+            environment: '{{ $labels.environment }}',
+            stage: '{{ $labels.stage }}',
+            type: '{{ $labels.type }}',
+          }, definition.getBurnRatePeriod(), definition.resourceLabels),
         },
       })],
 
