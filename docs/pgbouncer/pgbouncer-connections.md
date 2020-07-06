@@ -53,6 +53,7 @@ away. If `cl_waiting` is trending upwards it could indicate a number of issues:
       Sidekiq-specific PgBouncers
     - `roles/gprd-base-db-pgbouncer.json` for read-write general purpose
       PgBouncers
+- Verify if the number of sv_idle is high when the cl_waiting is queueing high, that could represent a problem how the application is managing the connections, not finishing the connections when idle, generating a possible misusage of resources.
 
 ## Resource saturation
 
