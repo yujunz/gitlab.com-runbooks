@@ -41,6 +41,7 @@
 * [large-pull-mirror-queue.md](large-pull-mirror-queue.md)
 * [large-sidekiq-queue.md](large-sidekiq-queue.md)
 * [sidekiq-inspection.md](sidekiq-inspection.md)
+* [sidekiq-survival-guide-for-sres.md](sidekiq-survival-guide-for-sres.md)
 * [sidekiq_error_rate_high.md](sidekiq_error_rate_high.md)
 * [sidekiq_stats_no_longer_showing.md](sidekiq_stats_no_longer_showing.md)
 * [../uncategorized/debug-failed-chef-provisioning.md](../uncategorized/debug-failed-chef-provisioning.md)

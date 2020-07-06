@@ -22,6 +22,7 @@
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [pubsub-queing.md](pubsub-queing.md)
 * [../registry/gitlab-registry.md](../registry/gitlab-registry.md)
+* [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 * [../uncategorized/camoproxy.md](../uncategorized/camoproxy.md)
 * [../uncategorized/k8s-gitlab.md](../uncategorized/k8s-gitlab.md)
 <!-- END_MARKER -->
