@@ -1,3 +1,76 @@
+# PgBouncer connection management and troubleshooting
+
+We use PgBouncer for connection pooling with the purpose of optimizing our usage
+of database connections. This runbook includes some pointers on monitoring,
+tuning and troubleshooting PgBouncer connectivity. For incident response see
+[./pgbouncer-saturation.md](./pgbouncer/pgbouncer-saturation.md).
+
+The main metrics dashboard for PgBouncer can be found at
+https://dashboards.gitlab.net/d/pgbouncer-main/pgbouncer-overview?orgId=1. Of
+particular interest is the `pgbouncer Connection Pooling` section, which allows
+us to visualize connection usage trends on PgBouncer. An upwards trend in
+saturation per node or per pool may indicate the need to tune our PgBouncer
+setup.
+
+## Connection pooling monitoring and tuning
+
+If you identify a problematic pool or node you can drill down on each individual
+instance by ssh-ing into the relevant PgBouncer (for read/write PgBouncers) or
+Patroni (for read-only PgBouncers) node and querying the pgb console(s).
+
+Running `show pools` in `pgb-console` allows us to see more details regarding
+the interaction of clients with the connection pools. For example:
+
+````
+pgbouncer=# show pools;
+      database       |    user    | cl_active | cl_waiting | sv_active | sv_idle | sv_used | sv_tested | sv_login | maxwait | maxwait_us |  pool_mode
+---------------------+------------+-----------+------------+-----------+---------+---------+-----------+----------+---------+------------+-------------
+ gitlabhq_production | gitlab     |      1051 |          0 |         5 |      20 |       3 |         0 |        0 |       0 |          0 | transaction
+ gitlabhq_production | gitlab-app |         0 |          0 |         0 |       0 |       0 |         0 |        0 |       0 |          0 | transaction
+ gitlabhq_production | pgbouncer  |         0 |          0 |         0 |       1 |       0 |         0 |        0 |       0 |          0 | transaction
+ pgbouncer           | pgbouncer  |         2 |          0 |         0 |       0 |       0 |         0 |        0 |       0 |          0 | statement
+(4 rows)
+````
+
+We're mainly interested in the connections of the `gitlab` user, as it's the one
+used by our clients (web, git, api, sidekiq). A description of each column can
+be found at https://www.pgbouncer.org/usage.html. Of particular interest is
+`cl_waiting`: it indicates that a number of clients are attempting to execute a
+transaction but PgBouncer couldn't assign a server connection to them right
+away. If `cl_waiting` is trending upwards it could indicate a number of issues:
+
+- Connections are getting hogged somehow. We should investigate if there are
+  long-running SQL queries/transactions that could be causing this.
+- We're reaching client saturation and we need to provide more server
+  connections. Notice that doing so increases the number of _real_ connections
+  to the underlying database, so we also need to make sure the database is
+  correctly tuned for that increase and that we don't run into any limits (for
+  more details, see https://www.postgresql.org/docs/11/kernel-resources.html).
+  To achieve this, increase `pool_size` in the relevant chef-repo role for the
+  affected pool:
+    - `roles/gprd-base-db-patroni.json` for read-only PgBouncers
+    - `roles/gprd-base-db-pgbouncer-sidekiq.json` for read-write
+      Sidekiq-specific PgBouncers
+    - `roles/gprd-base-db-pgbouncer.json` for read-write general purpose
+      PgBouncers
+- Verify if the number of sv_idle is high when the cl_waiting is queueing high, that could represent a problem how the application is managing the connections, not finishing the connections when idle, generating a possible misusage of resources.
+
+## Resource saturation
+
+PgBouncer is
+[single-threaded](https://www.pgbouncer.org/config.html#low-level-network-settings),
+so an increased workload may lead to CPU saturation. CPU saturation can be
+visualized on [this
+graph](https://dashboards.gitlab.net/d/pgbouncer-main/pgbouncer-overview?viewPanel=29&orgId=1).
+First you should check if there's an incident causing the resource saturation
+(see [./pgbouncer-saturation.md](./pgbouncer-saturation.md) for that purpose).
+If instead we're experiencing an organic increase in PgBouncer load we can scale
+horizontally either by adding more PgBouncer processes in read-only nodes or by
+adding new PgBouncer nodes for the primary database (see
+[(./pgbouncer-add-instance.md](./pgbouncer-add-instance.md)).
+
+## Troubleshooting
+
 ### Primary database connections are not working.
 
 Verify that the configuration exists in the `databases.ini`

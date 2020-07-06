@@ -29,6 +29,7 @@
 * [../patroni/postgresql-locking.md](../patroni/postgresql-locking.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
 * [../pgbouncer/pgbouncer-add-instance.md](../pgbouncer/pgbouncer-add-instance.md)
+* [../pgbouncer/pgbouncer-connections.md](../pgbouncer/pgbouncer-connections.md)
 * [../redis/redis.md](../redis/redis.md)
 * [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 * [../uncategorized/access-gcp-hosts.md](../uncategorized/access-gcp-hosts.md)
