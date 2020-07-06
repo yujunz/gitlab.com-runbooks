@@ -32,7 +32,7 @@ To create roles/user you can use the command [`CREATE ROLE`](https://www.postgre
   CREATE ROLE user1 WITH login password 'pass1';
  ```
 
- Alsa can use the commnad:  [`CREATE USER`](https://www.postgresql.org/docs/11/sql-createuser.html), it is an alias for CREATE ROLE + LOGIN cluase
+You also can use the command:  [`CREATE USER`](https://www.postgresql.org/docs/11/sql-createuser.html), it is an alias for CREATE ROLE + LOGIN clause
 
 To check the created Roles/Users in the database instance, you can use the [meta-commands](https://www.postgresql.org/docs/11/app-psql.html#APP-PSQL-META-COMMANDS) `\dg` or  `\du`
 
