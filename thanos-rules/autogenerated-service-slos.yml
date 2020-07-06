@@ -258,7 +258,7 @@ groups:
     labels:
       tier: sv
       type: sidekiq
-    expr: '0.001000'
+    expr: '0.005000'
   - record: slo:max:gitlab_service_errors:ratio
     labels:
       tier: lb
