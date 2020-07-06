@@ -10,7 +10,7 @@ local sidekiqHelpers = import './services/lib/sidekiq-helpers.libsonnet';
 local throttledSidekiqShards = [
   'export',
   'elasticsearch',
-  'memory-bound'
+  'memory-bound',
 ];
 
 // Disk utilisation metrics are currently reporting incorrectly for
@@ -787,7 +787,7 @@ local pgbouncerSyncPool(serviceType, role) =
       )
     |||,
     queryFormatConfig: {
-      throttledSidekiqShardsRegexp: std.join('|', throttledSidekiqShards)
+      throttledSidekiqShardsRegexp: std.join('|', throttledSidekiqShards),
     },
     slos: {
       soft: 0.85,

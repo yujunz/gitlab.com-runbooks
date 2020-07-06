@@ -26,7 +26,7 @@ local rateMetric = metricsCatalog.rateMetric;
 
       requestRate: rateMetric(
         counter='camo_response_duration_seconds_bucket',
-        selector={le: "+Inf" },
+        selector={ le: '+Inf' },
       ),
 
       errorRate: rateMetric(

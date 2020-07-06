@@ -1,8 +1,8 @@
-local serviceDashboard = import 'service_dashboard.libsonnet';
 local basic = import 'basic.libsonnet';
+local grafana = import 'grafonnet/grafana.libsonnet';
 local layout = import 'layout.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
-local grafana = import 'grafonnet/grafana.libsonnet';
+local serviceDashboard = import 'service_dashboard.libsonnet';
 local row = grafana.row;
 
 local trafficPanel() =
@@ -41,9 +41,9 @@ local eventPanel() =
 
 
 serviceDashboard.overview('camoproxy', 'sv')
-.addPanel(row.new(title='Workhorse'), gridPos={ x: 0, y: 1000, w: 24, h: 1, } )
+.addPanel(row.new(title='Workhorse'), gridPos={ x: 0, y: 1000, w: 24, h: 1 })
 .addPanels(layout.grid([
   trafficPanel(),
-  eventPanel()
+  eventPanel(),
 ], cols=2, rowHeight=10, startRow=1000))
 .overviewTrailer()

@@ -88,7 +88,7 @@ local serializeHashItem(label, value) =
   // Remove certain selectors from a selectorHash
   without(selectorHash, labels)::
     if std.isString(selectorHash) then
-      std.assertEqual(selectorHash, { __assert__: "selectors.without requires a selector hash" })
+      std.assertEqual(selectorHash, { __assert__: 'selectors.without requires a selector hash' })
     else
       local fields = std.set(std.objectFields(selectorHash));
       local labelSet = if std.isArray(labels) then std.set(labels) else std.set(std.objectFields(labels));
