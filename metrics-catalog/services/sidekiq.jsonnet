@@ -29,7 +29,7 @@ local noUrgencySelector = {
   },
   monitoringThresholds: {
     apdexScore: 0.995,
-    errorRatio: 0.999,
+    errorRatio: 0.995,
   },
   serviceDependencies: {
     gitaly: true,
