@@ -151,7 +151,7 @@ host    dbXXX         userXXX         XXX.XXX.XX.XXX/N_mask_byte     md5
 
 
 ## Propagated user to PGBouncer 
-In the case of Gitlab is not necessary due to is using the  [auth_query](https://www.pgbouncer.org/config.html#auth_query) parameter
+PGBouncer also needs to be setup for authenticating users. This can be done via a pgbouncer authentication file or by setting up an auth_query against postgres. In our case we are using the [auth_query](https://www.pgbouncer.org/config.html#auth_query) parameter:
 
 ```
 auth_query = SELECT username, password FROM public.pg_shadow_lookup($1)
