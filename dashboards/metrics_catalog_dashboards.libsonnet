@@ -178,7 +178,6 @@ local componentOverviewMatrixRow(
     local filteredSelectorHash = selectors.without(selectorHash, [
       'type',
     ] + staticLabelNames);
-    local selector = selectors.serializeHash(filteredSelectorHash);
 
     row.new(title='🔬 %(componentName)s Component Detail' % { componentName: componentName }, collapse=true)
     .addPanels(
@@ -193,7 +192,7 @@ local componentOverviewMatrixRow(
                       title='Estimated %(percentile_humanized)s ' + componentName + ' Latency - ' + aggregationSet.title,
                       serviceType=serviceType,
                       componentName=componentName,
-                      selector=selector,
+                      selector=filteredSelectorHash,
                       legendFormat='%(percentile_humanized)s ' + aggregationSet.legendFormat,
                       aggregationLabels=aggregationSet.aggregationLabels,
                       min=minLatency,
@@ -208,7 +207,7 @@ local componentOverviewMatrixRow(
                       componentName=componentName,
                       legendFormat=aggregationSet.legendFormat,
                       aggregationLabels=aggregationSet.aggregationLabels,
-                      selector=selector,
+                      selector=filteredSelectorHash,
                     )
                   else
                     null,
@@ -218,7 +217,7 @@ local componentOverviewMatrixRow(
                       title=componentName + ' RPS - ' + aggregationSet.title,
                       serviceType=serviceType,
                       componentName=componentName,
-                      selector=selector,
+                      selector=filteredSelectorHash,
                       legendFormat=aggregationSet.legendFormat,
                       aggregationLabels=aggregationSet.aggregationLabels
                     )

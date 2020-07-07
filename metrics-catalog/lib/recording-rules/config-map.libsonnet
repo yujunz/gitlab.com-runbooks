@@ -1,3 +1,4 @@
+local sliRecordingRulesSet = (import 'sli-recording-rule-set.libsonnet').sliRecordingRulesSet;
 local componentMetricsRuleSet = (import 'component-metrics-rule-set.libsonnet').componentMetricsRuleSet;
 local componentMappingRuleSet = (import 'component-mapping-rule-set.libsonnet').componentMappingRuleSet;
 local serviceMappingRuleSet = (import 'service-mapping-rule-set.libsonnet').serviceMappingRuleSet;
@@ -37,10 +38,10 @@ local ruleSetIterator(ruleSets) = {
   // Recording rules that get evaluated in Prometheus
   // should be contained within this stanza
   prometheus: {
-
     // Component metrics are the key metrics for each component.
     // Each burn-rate is a separate ruleset.
     componentMetrics: ruleSetIterator([
+      sliRecordingRulesSet(burnRate='1m'),
       componentMetricsRuleSet(
         burnRate='1m',
         // TODO: consider renaming the 1m rates for consistency
@@ -50,6 +51,7 @@ local ruleSetIterator(ruleSets) = {
         errorRate='gitlab_component_errors:rate',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
       ),
+      sliRecordingRulesSet(burnRate='5m'),
       componentMetricsRuleSet(
         burnRate='5m',
         apdexRatio='gitlab_component_apdex:ratio_5m',
@@ -58,6 +60,7 @@ local ruleSetIterator(ruleSets) = {
         errorRate='gitlab_component_errors:rate_5m',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
       ),
+      sliRecordingRulesSet(burnRate='30m'),
       componentMetricsRuleSet(
         burnRate='30m',
         apdexRatio='gitlab_component_apdex:ratio_30m',
@@ -66,6 +69,7 @@ local ruleSetIterator(ruleSets) = {
         errorRate='gitlab_component_errors:rate_30m',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
       ),
+      sliRecordingRulesSet(burnRate='1h'),
       componentMetricsRuleSet(
         burnRate='1h',
         apdexRatio='gitlab_component_apdex:ratio_1h',
@@ -74,6 +78,7 @@ local ruleSetIterator(ruleSets) = {
         errorRate='gitlab_component_errors:rate_1h',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
       ),
+      sliRecordingRulesSet(burnRate='6h'),
       componentMetricsRuleSet(
         burnRate='6h',
         apdexRatio='gitlab_component_apdex:ratio_6h',

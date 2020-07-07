@@ -46,6 +46,15 @@ local noUrgencySelector = {
     kubernetes: true,
     vms: true,
   },
+  // Use recordingRuleMetrics to specify a set of metrics with known high
+  // cardinality. The metrics catalog will generate recording rules with
+  // the appropriate aggregations based on this set.
+  // Use sparingly, and don't overuse.
+  recordingRuleMetrics: [
+    'sidekiq_jobs_completion_seconds_bucket',
+    'sidekiq_jobs_queue_duration_seconds_bucket',
+    'sidekiq_jobs_failed_total',
+  ],
   components: {
     ['shard_' + std.strReplace(k, '-', '_')]: {
       local shardSelector = { shard: k },
@@ -99,7 +108,7 @@ local noUrgencySelector = {
         selector=shardSelector,
       ),
 
-      significantLabels: ['fqdn'],
+      significantLabels: ['feature_category', 'queue', 'urgency'],
     }
     for k in sidekiqHelpers.shards.listAll()
   },
