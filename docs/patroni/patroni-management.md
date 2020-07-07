@@ -46,16 +46,16 @@ Run `gitlab-patronictl list` on any Patroni member to list all the cluster membe
 ```
 patroni-01-db-gstg $ gitlab-patronictl list
 
-+---------------+------------------------------------------------+---------------+--------+---------+-----------+
-|    Cluster    |                     Member                     |      Host     |  Role  |  State  | Lag in MB |
-+---------------+------------------------------------------------+---------------+--------+---------+-----------+
-| pg-ha-cluster | patroni-01-db-gstg.c.gitlab-staging-1.internal | 10.224.29.101 | Leader | running |         0 |
-| pg-ha-cluster | patroni-02-db-gstg.c.gitlab-staging-1.internal | 10.224.29.102 |        | running |         0 |
-| pg-ha-cluster | patroni-03-db-gstg.c.gitlab-staging-1.internal | 10.224.29.103 |        | running |         0 |
-| pg-ha-cluster | patroni-04-db-gstg.c.gitlab-staging-1.internal | 10.224.29.104 |        | running |         0 |
-| pg-ha-cluster | patroni-05-db-gstg.c.gitlab-staging-1.internal | 10.224.29.105 |        | running |         0 |
-| pg-ha-cluster | patroni-06-db-gstg.c.gitlab-staging-1.internal | 10.224.29.106 |        | running |         0 |
-+---------------+------------------------------------------------+---------------+--------+---------+-----------+
++-----------------+------------------------------------------------+---------------+--------+---------+-----------+
+|     Cluster     |                     Member                     |      Host     |  Role  |  State  | Lag in MB |
++-----------------+------------------------------------------------+---------------+--------+---------+-----------+
+| pg11-ha-cluster | patroni-01-db-gstg.c.gitlab-staging-1.internal | 10.224.29.101 | Leader | running |         0 |
+| pg11-ha-cluster | patroni-02-db-gstg.c.gitlab-staging-1.internal | 10.224.29.102 |        | running |         0 |
+| pg11-ha-cluster | patroni-03-db-gstg.c.gitlab-staging-1.internal | 10.224.29.103 |        | running |         0 |
+| pg11-ha-cluster | patroni-04-db-gstg.c.gitlab-staging-1.internal | 10.224.29.104 |        | running |         0 |
+| pg11-ha-cluster | patroni-05-db-gstg.c.gitlab-staging-1.internal | 10.224.29.105 |        | running |         0 |
+| pg11-ha-cluster | patroni-06-db-gstg.c.gitlab-staging-1.internal | 10.224.29.106 |        | running |         0 |
++-----------------+------------------------------------------------+---------------+--------+---------+-----------+
 ```
 
 ## Bootstrapping modes
@@ -116,7 +116,7 @@ While nothing prevents you from specifying them under `node['gitlab-patroni']['p
 thinking that the cluster needs a restart (you may see a "Pending Restart" column when running `gitlab-patronictl list`).
 
 When parameters are updated in Chef and propagated across the cluster, Patroni updates `postgresql.conf` then signals PostgreSQL to reload the configuration.
-A restart may still be needed for some parameters, which you can see hints of in the logs, so you may need to run `gitlab-patronictl restart pg-ha-cluster MEMBER_NAME`.
+A restart may still be needed for some parameters, which you can see hints of in the logs, so you may need to run `gitlab-patronictl restart pg11-ha-cluster MEMBER_NAME`.
 
 ## Pausing Patroni
 
@@ -139,7 +139,7 @@ To pause the cluster, run the following commands:
 
 ```
 workstation        $ knife ssh roles:<env>-base-db-patroni 'sudo chef-client-disable "Database maintenance issue prod#xyz"'
-patroni-01-db-gstg $ sudo gitlab-patronictl pause --wait pg-ha-cluster
+patroni-01-db-gstg $ sudo gitlab-patronictl pause --wait pg11-ha-cluster
 ```
 
 You can verify the result of pausing the cluster by running:
@@ -151,7 +151,7 @@ patroni-01-db-gstg $ sudo gitlab-patronictl list | grep 'Maintenance mode'
 Run these commands to unpause/resume the cluster:
 
 ```
-patroni-01-db-gstg $ sudo gitlab-patronictl resume --wait pg-ha-cluster
+patroni-01-db-gstg $ sudo gitlab-patronictl resume --wait pg11-ha-cluster
 workstation        $ knife ssh roles:<env>-base-db-patroni 'sudo chef-client-enable'
 ```
 
@@ -341,7 +341,7 @@ If for whatever reason you can't get the node to a healthy state and don't mind
 waiting several hours, you can reinitialise the node:
 
 ```
-root@pg$ gitlab-patronictl reinit pg-ha-cluster patroni-XX-db-gprd.c.gitlab-production.internal
+root@pg$ gitlab-patronictl reinit pg11-ha-cluster patroni-XX-db-gprd.c.gitlab-production.internal
 ```
 
 This command can be run from any member of the patroni cluster. It wipes the
@@ -371,7 +371,7 @@ to destroy and re-create the node.
 ```
 chef-repo $ knife ssh roles:gstg-base-db-patroni 'sudo systemctl stop patroni'
 chef-repo $ knife ssh roles:gstg-base-db-patroni 'sudo rm -rf /var/opt/gitlab/postgresql/data' # TAKE CARE!
-chef-repo $ knife ssh roles:gstg-base-db-patroni 'consul kv delete -recurse service/pg-ha-cluster'
+chef-repo $ knife ssh roles:gstg-base-db-patroni 'consul kv delete -recurse service/pg11-ha-cluster'
 chef-repo $ knife ssh roles:gstg-base-db-patroni 'sudo systemctl start patroni'
 ```
 
