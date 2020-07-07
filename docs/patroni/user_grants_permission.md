@@ -2,7 +2,7 @@
 
 
 ## Intro
-PostgreSQL uses the concept of [roles](https://www.postgresql.org/docs/11/user-manag.html) to manage database access permissions. The roles are database instance global objects it means that a role doesn't belong to a specific database and can access all databases if given the appropriate permissions.
+PostgreSQL uses the concept of [roles](https://www.postgresql.org/docs/11/user-manag.html) to manage database access permissions. The roles are database instance global objects which means that a role doesn't belong to a specific database and can access all databases if given the appropriate permissions.
 
 The term of `roles` encapsulate the concepts of roles and users at the same time:
 
