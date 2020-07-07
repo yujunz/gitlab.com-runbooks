@@ -16,13 +16,14 @@
 #
 # Production examples:
 #
-#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes --wait=10800 --max-failures=1
-#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes --count
-#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes
-#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes --projects=13007013 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
-#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=yes | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
-#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --validate-commits --dry-run=no --move-amount=10 --skip=9271929 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
-#    bundle exec scripts/storage_rebalance.rb nfs-file53 nfs-file02 --validate-commits --wait=10800 --max-failures=1 --projects=19438807 --dry-run=yes | tee scripts/logs/nfs-file53.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --dry-run=yes --wait=10800 --max-failures=1
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --dry-run=yes --count
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --dry-run=yes
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --dry-run=yes --projects=13007013 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --dry-run=yes | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --dry-run=no --move-amount=10 --skip=9271929 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file53 nfs-file02 --wait=10800 --max-failures=1 --projects=19438807 --dry-run=yes | tee scripts/logs/nfs-file53.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file25 nfs-file07 --move-amount=300 --wait=10800 --max-failures=10 --dry-run=yes | tee scripts/logs/nfs-file25.migration.$(date +%Y-%m-%d_%H%M).log
 #
 # Logs may be reviewed:
 #
@@ -78,7 +79,6 @@ module Storage
           staging: 'https://staging.gitlab.com/api/v4',
           production: 'https://gitlab.com/api/v4'
         },
-        projects_repository_commits_api_uri: 'projects/%<project_id>s/repository/commits',
         projects_repository_api_uri: 'projects/%<project_id>s/repository',
         projects_api_uri: 'projects/%<project_id>s',
         projects_repository_storage_move_api_uri: 'projects/%<project_id>s/' \
@@ -103,7 +103,6 @@ module Storage
         ssh_command: 'ssh %<hostname>s -- %<command>s',
         move_amount: 0,
         repository_storage_update_timeout: 10800,
-        validate_commits: false,
         max_failures: 3,
         retry_known_failures: false,
         limit: -1,
@@ -450,7 +449,6 @@ module Storage
         define_skip_option
         define_move_amount_option
         define_wait_option
-        define_validate_commits_option
         define_max_failures_option
         define_retry_known_failures_option
         define_limit_option
@@ -584,13 +582,6 @@ module Storage
         description = "Retry known recorded migration failures; default: #{@options[:retry_known_failures]}"
         @parser.on('-f', '--retry-known-failures', description) do
           @options[:max_failures] = true
-        end
-      end
-
-      def define_validate_commits_option
-        description = 'Validate project commits are equal post-migration'
-        @parser.on('-c', '--validate-commits', description) do
-          @options[:validate_commits] = true
         end
       end
 
@@ -847,33 +838,6 @@ module Storage
       migration_error_log.error log_artifact.to_json
     end
 
-    def get_first_commit(commits)
-      return nil if commits.empty?
-
-      first_commit = commits.first
-      return nil if first_commit.nil?
-
-      first_commit.transform_keys!(&:to_sym)
-      log.debug "Commits 1 of #{commits.length}:"
-      log.debug { JSON.pretty_generate(first_commit) }
-      first_commit[:id]
-    end
-
-    def get_commit_id(project_id)
-      url = format(get_api_url(:projects_repository_commits_api_uri), project_id: project_id)
-      commits, error, status = gitlab_api_client.get(url)
-      raise error unless error.nil?
-
-      raise "Invalid response status code: #{status}" unless [200].include?(status)
-
-      raise NoCommits, "Failed to get commits for project id #{project_id}" if commits.empty?
-
-      commit_id = get_first_commit(commits)
-      raise NoCommits, "Failed to get a commit id for project id #{project_id}" if commit_id.nil?
-
-      commit_id
-    end
-
     def get_project(project_id)
       return {} if project_id.nil? || project_id.to_s.empty?
 
@@ -958,18 +922,6 @@ module Storage
         "#{project[:repository_storage]} not #{options[:source_shard]}"
     end
 
-    def validate_commits(project, commit_id)
-      log.info "Validating project integrity by comparing latest commit " \
-        "identifiers before and after"
-      current_commit_id = get_commit_id(project[:id])
-      log.debug "Original commit id: #{commit_id}, current commit id: " \
-        "#{current_commit_id}"
-      return if commit_id == current_commit_id
-
-      raise CommitsMismatch, "Current commit id #{current_commit_id} " \
-        "does not match original commit id #{commit_id}"
-    end
-
     def summarize(total)
       log_separator
       log.info "Done"
@@ -998,7 +950,6 @@ module Storage
       end
     end
 
-    # rubocop: disable Metrics/AbcSize
     def schedule_repository_replication(project)
       verify_source(project)
       if repository_replication_already_in_progress?(project)
@@ -1013,8 +964,6 @@ module Storage
       log.info "  Current shard name: #{project[:repository_storage]}"
       log.info "  Disk path: #{project[:disk_path]}"
       log.info "  Repository size: #{project[:size]}"
-
-      original_commit_id = get_commit_id(project[:id]) if options[:validate_commits]
 
       if options[:dry_run]
         log.info "[Dry-run] Would have scheduled repository replication for project id: #{project[:id]}"
@@ -1031,15 +980,12 @@ module Storage
           "project id: #{post_migration_project[:id]}"
       end
 
-      validate_commits(post_migration_project, original_commit_id) if options[:validate_commits]
-
       log.info "Migrated project id: #{post_migration_project[:id]}"
       log.debug "  Name: #{post_migration_project[:name]}"
       log.debug "  Storage: #{post_migration_project[:repository_storage]}"
       log.debug "  Path: #{post_migration_project[:disk_path]}"
       log_migration(project)
     end
-    # rubocop: enable Metrics/AbcSize
 
     def move_project(project)
       project_id = project[:id]
@@ -1048,9 +994,6 @@ module Storage
 
       schedule_repository_replication(project)
     rescue NoCommits => e
-      log_and_record_migration_error(e, project)
-    rescue CommitsMismatch => e
-      log.error "Failed to validate integrity of project id: #{project_id}"
       log_and_record_migration_error(e, project)
     rescue ShardMismatch => e
       log.error "Wrong shard given for project id: #{project_id}"
