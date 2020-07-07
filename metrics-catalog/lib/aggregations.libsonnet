@@ -11,6 +11,12 @@ local serialize(labels) =
   serialize(labels)::
     serialize(labels),
 
+  // Joins an array of aggregation labels and returns a serialized string
+  join(labels)::
+    local labelsSerialized = std.map(function(x) self.serialize(x), labels);
+    local nonEmptyLabels = std.filter(function(x) std.length(x) > 0, labelsSerialized);
+    std.join(',', nonEmptyLabels),
+
   // Wraps a query in an aggregation function, using the provided aggregation labels
   aggregateOverQuery(aggregationFunction, aggregationLabels, query)::
     |||

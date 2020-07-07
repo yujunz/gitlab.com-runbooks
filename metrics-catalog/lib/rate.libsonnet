@@ -1,5 +1,6 @@
 local aggregations = import './aggregations.libsonnet';
 local selectors = import './selectors.libsonnet';
+local recordingRuleRegistry = import 'recording-rule-registry.libsonnet';
 local strings = import 'strings.libsonnet';
 
 local generateInstanceFilterQuery(instanceFilter) =
@@ -45,14 +46,36 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
     // sum by(<aggregationLabels>) (rate(....{<selector>}[<rangeInterval>]))
     aggregatedRateQuery(aggregationLabels, selector, rangeInterval)::
       local combinedSelector = selectors.merge(self.selector, selector);
-      local query = generateRangeFunctionQuery(self, 'rate', selector, rangeInterval);
-      aggregations.aggregateOverQuery('sum', aggregationLabels, query),
+
+      local resolvedRecordingRule = recordingRuleRegistry.resolveRecordingRuleFor(
+        aggregationFunction='sum',
+        aggregationLabels=aggregationLabels,
+        rangeVectorFunction='rate',
+        metricName=counter,
+        rangeInterval=rangeInterval,
+        selector=combinedSelector,
+      );
+
+      if resolvedRecordingRule == null then
+        local query = generateRangeFunctionQuery(self, 'rate', selector, rangeInterval);
+        aggregations.aggregateOverQuery('sum', aggregationLabels, query)
+      else
+        resolvedRecordingRule,
 
     // This creates an aggregated increase query of the form
     // sum by(<aggregationLabels>) (increase(....{<selector>}[<rangeInterval>]))
     aggregatedIncreaseQuery(aggregationLabels, selector, rangeInterval)::
       local query = generateRangeFunctionQuery(self, 'increase', selector, rangeInterval);
       aggregations.aggregateOverQuery('sum', aggregationLabels, query),
+
+    // Only support reflection on hash selectors
+    [if std.isObject(selector) then 'supportsReflection']():: {
+      // Returns a list of metrics and the labels that they use
+      getMetricNamesAndLabels()::
+        {
+          [counter]: std.set(std.objectFields(selector)),
+        },
+    },
   },
 
   // clampMinZero is useful for taking derivatives of poorly-behaved counters
@@ -102,5 +125,14 @@ local generateRangeFunctionQuery(rate, rangeFunction, additionalSelectors, range
     aggregatedIncreaseQuery(aggregationLabels, selector, rangeInterval)::
       local query = generateRangeFunctionQuery(self, 'increase', selector, rangeInterval);
       aggregations.aggregateOverQuery('sum', aggregationLabels, query),
+
+    // Only support reflection on hash selectors
+    [if std.isObject(selector) then 'supportsReflection']():: {
+      // Returns a list of metrics and the labels that they use
+      getMetricNamesAndLabels()::
+        {
+          [counter]: std.set(std.objectFields(selector)),
+        },
+    },
   },
 }

@@ -2,6 +2,20 @@ local aggregations = import './aggregations.libsonnet';
 local selectors = import './selectors.libsonnet';
 local strings = import 'strings.libsonnet';
 
+// Merge two hashes of the form { key: set },
+local merge(h1, h2) =
+  local folderFunc = function(memo, k)
+    if std.objectHas(memo, k) then
+      memo {
+        [k]: std.setUnion(memo[k], h2[k]),
+      }
+    else
+      memo {
+        [k]: h2[k],
+      };
+
+  std.foldl(folderFunc, std.objectFields(h2), h1);
+
 local orJoin(queries) =
   std.join('\nor\n', queries);
 
@@ -36,7 +50,7 @@ local generateApdexWeightQuery(c, aggregationLabels, selector, rangeInterval) =
   aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(apdexWeightQueries));
 
 local generateApdexPercentileLatencyQuery(c, percentile, aggregationLabels, selector, rangeInterval) =
-  local aggregationLabelsWithLe = selectors.join([aggregationLabels, 'le']);
+  local aggregationLabelsWithLe = aggregations.join([aggregationLabels, 'le']);
   local rateQueries = std.map(function(i) i.apdexNumerator(selector, rangeInterval), c.metrics);
   local aggregatedRateQueries = aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(rateQueries));
 
@@ -100,5 +114,14 @@ local generateApdexPercentileLatencyQuery(c, percentile, aggregationLabels, sele
     satisfiedThreshold:
       metrics[0].satisfiedThreshold,
 
+    [if std.objectHasAll(metrics[0], 'supportsReflection') then 'supportsReflection']():: {
+      // Returns a list of metrics and the labels that they use
+      getMetricNamesAndLabels()::
+        std.foldl(
+          function(memo, metric) merge(memo, metric.supportsReflection().getMetricNamesAndLabels()),
+          metrics,
+          {}
+        ),
+    },
   },
 }
