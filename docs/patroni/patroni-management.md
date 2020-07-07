@@ -132,6 +132,10 @@ Quoting [Patroni docs][pause-docs]:
 Pausing the cluster disables automatic failover. This is desirable when doing tasks such as upgrading Consul,
 or during a maintenance of the whole Patroni cluster.
 
+Note that disabling automatic failover can have undesirable side-effects, for example, if the primary PostgreSQL went down
+for any reason while Patroni is paused, there will be no primary for the clients to write to, effectively resulting in 500
+errors for the end-user, so plan ahead carefully.
+
 It is important to disable `chef-client` before pausing the cluster,
 otherwise a regular `chef-client` can revert the pause status.
 
