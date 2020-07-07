@@ -10,6 +10,8 @@
 //
 // To avoid even more complication, this list should remain the SSOT for the runbooks project if at all possible!
 local shards = {
+  'database-throttled': { throttled: true },
+  'gitaly-throttled': { throttled: true },
   'low-urgency-cpu-bound': {},
   'memory-bound': { throttled: true },
   'urgent-cpu-bound': { autoScaling: false },
