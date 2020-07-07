@@ -1,18 +1,6 @@
 local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonnet').resourceSaturationPoint;
 local sidekiqHelpers = import './services/lib/sidekiq-helpers.libsonnet';
 
-// throttledSidekiqShards is an array of Sidekiq `shard` labels for shards
-// that are configured to run `urgency=throttled` jobs. Queues running on these
-// shards will be saturated by-design, as we throttle jobs to protect backend
-// resources.
-//
-// For this reason, we don't alert on sidekiq saturation on these nodes
-local throttledSidekiqShards = [
-  'export',
-  'elasticsearch',
-  'memory-bound',
-];
-
 // Disk utilisation metrics are currently reporting incorrectly for
 // HDD volumes, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10248
 // as such, we only record this utilisation metric on IO subset of the fleet for now.
@@ -787,7 +775,7 @@ local pgbouncerSyncPool(serviceType, role) =
       )
     |||,
     queryFormatConfig: {
-      throttledSidekiqShardsRegexp: std.join('|', throttledSidekiqShards),
+      throttledSidekiqShardsRegexp: std.join('|', sidekiqHelpers.shards.listFiltered(function(shard) shard.urgency == 'throttled')),
     },
     slos: {
       soft: 0.85,
@@ -961,7 +949,7 @@ local pgbouncerSyncPool(serviceType, role) =
     |||,
     queryFormatConfig: {
       // Ignore non-autoscaled shards and throttled shards
-      ignored_sidekiq_shards: std.join('|', sidekiqHelpers.shards.listFiltered(function(shard) !shard.autoScaling || shard.throttled)),
+      ignored_sidekiq_shards: std.join('|', sidekiqHelpers.shards.listFiltered(function(shard) !shard.autoScaling || shard.urgency == 'throttled')),
     },
     slos: {
       soft: 0.95,
