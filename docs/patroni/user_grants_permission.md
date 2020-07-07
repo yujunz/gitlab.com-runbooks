@@ -9,7 +9,7 @@ The term of `roles` encapsulates the concepts of groups and users at the same ti
  * roles: Can be group (can't no login) and user 
  * group: can't login
 
-PostgreSQL have default roles that provide access to some database information, you can find this informations [here](https://www.postgresql.org/docs/11/default-roles.html), In addition  have a default user (superuser) called generally `postgres`  
+PostgreSQL has default roles that provide access to some database information - you can find more information [here](https://www.postgresql.org/docs/11/default-roles.html). In addition, there is a default superuser, generally called `postgres`.
 
 
 In the following sections, we will see  some common activities to manage roles and user in PostgreSQL
