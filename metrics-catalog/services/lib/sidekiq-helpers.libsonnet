@@ -10,16 +10,15 @@
 //
 // To avoid even more complication, this list should remain the SSOT for the runbooks project if at all possible!
 local shards = {
-  'database-throttled': { throttled: true },
-  'gitaly-throttled': { throttled: true },
-  'low-urgency-cpu-bound': {},
-  'memory-bound': { throttled: true },
-  'urgent-cpu-bound': { autoScaling: false },
-  'urgent-other': { autoScaling: false },
-  catchall: {},
-  elasticsearch: { throttled: true },
+  'database-throttled': { urgency: 'throttled' },
+  'gitaly-throttled': { urgency: 'throttled' },
+  'low-urgency-cpu-bound': { urgency: 'low' },
+  'memory-bound': { urgency: 'throttled' },
+  'urgent-cpu-bound': { urgency: 'high', autoScaling: false },
+  'urgent-other': { urgency: 'high', autoScaling: false },
+  catchall: { urgency: null /* no urgency attribute since multiple values are supported */ },
+  elasticsearch: { urgency: 'throttled' },
 };
-
 
 // These values are used in several places, so best to DRY them up
 {
@@ -39,9 +38,11 @@ local shards = {
     },
   },
   shards: {
-    listAll():: std.objectFields(shards),
+    listByName():: std.objectFields(shards),
+
+    listAll():: std.map(function(name) shards[name] { name: name }, std.objectFields(shards)),
 
     // List shards which match on the supplied predicate
-    listFiltered(filterPredicate): std.filter(function(f) filterPredicate({ autoScaling: true, throttled: false } + shards[f]), std.objectFields(shards)),
+    listFiltered(filterPredicate): std.filter(function(f) filterPredicate({ autoScaling: true } + shards[f]), std.objectFields(shards)),
   },
 }

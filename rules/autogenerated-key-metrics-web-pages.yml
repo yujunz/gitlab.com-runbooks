@@ -22,9 +22,9 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1m])
+        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1m]), "_c", "0", "", "")
         or
-        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1m])
+        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1m]), "_c", "1", "", "")
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -94,9 +94,9 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[5m])
+        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[5m]), "_c", "0", "", "")
         or
-        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[5m])
+        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[5m]), "_c", "1", "", "")
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -166,9 +166,9 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[30m])
+        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[30m]), "_c", "0", "", "")
         or
-        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[30m])
+        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[30m]), "_c", "1", "", "")
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -238,9 +238,9 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1h])
+        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1h]), "_c", "0", "", "")
         or
-        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1h])
+        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1h]), "_c", "1", "", "")
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -310,9 +310,9 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[6h])
+        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[6h]), "_c", "0", "", "")
         or
-        rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[6h])
+        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[6h]), "_c", "1", "", "")
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:

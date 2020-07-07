@@ -26,36 +26,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -65,19 +65,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -104,36 +104,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="database-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -143,19 +119,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="database-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -182,36 +146,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="elasticsearch",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -221,19 +161,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="elasticsearch",urgency=""}
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -260,36 +188,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="gitaly-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -299,19 +203,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="gitaly-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -338,36 +230,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -377,19 +249,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -416,36 +278,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="memory-bound",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -455,19 +293,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="memory-bound",urgency=""}
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -494,36 +320,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -533,19 +339,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -572,36 +368,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score
@@ -611,19 +387,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -665,36 +431,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -704,19 +470,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -743,36 +509,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="database-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -782,19 +524,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="database-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -821,36 +551,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="elasticsearch",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -860,19 +566,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="elasticsearch",urgency=""}
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -899,36 +593,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="gitaly-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -938,19 +608,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="gitaly-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -977,36 +635,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -1016,19 +654,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -1055,36 +683,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="memory-bound",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -1094,19 +698,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="memory-bound",urgency=""}
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -1133,36 +725,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -1172,19 +744,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -1211,36 +773,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_5m
@@ -1250,19 +792,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -1304,36 +836,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1343,19 +875,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1382,36 +914,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="database-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1421,19 +929,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="database-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1460,36 +956,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="elasticsearch",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1499,19 +971,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="elasticsearch",urgency=""}
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1538,36 +998,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="gitaly-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1577,19 +1013,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="gitaly-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1616,36 +1040,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1655,19 +1059,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1694,36 +1088,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="memory-bound",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1733,19 +1103,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="memory-bound",urgency=""}
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1772,36 +1130,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1811,19 +1149,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1850,36 +1178,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_30m
@@ -1889,19 +1197,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1943,36 +1241,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -1982,19 +1280,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -2021,36 +1319,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="database-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -2060,19 +1334,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="database-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -2099,36 +1361,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="elasticsearch",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -2138,19 +1376,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="elasticsearch",urgency=""}
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -2177,36 +1403,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="gitaly-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -2216,19 +1418,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="gitaly-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -2255,36 +1445,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -2294,19 +1464,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -2333,36 +1493,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="memory-bound",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -2372,19 +1508,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="memory-bound",urgency=""}
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -2411,36 +1535,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -2450,19 +1554,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -2489,36 +1583,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_1h
@@ -2528,19 +1602,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -2582,36 +1646,36 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2621,19 +1685,19 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="high"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="low"}, "_c", "2", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="low"}, "_c", "3", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency="throttled"}, "_c", "4", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency=""}, "_c", "5", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchall",urgency=""}, "_c", "6", "", "")
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2660,36 +1724,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="database-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2699,19 +1739,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="database-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2738,36 +1766,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="elasticsearch",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2777,19 +1781,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="elasticsearch",urgency=""}
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2816,36 +1808,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="gitaly-throttled",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2855,19 +1823,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="gitaly-throttled",urgency=""}
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2894,36 +1850,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -2933,19 +1869,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="low-urgency-cpu-bound",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -2972,36 +1898,12 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="memory-bound",urgency=""}
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="low"}
-          or
           sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency=""}
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -3011,19 +1913,7 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="low"}
-        or
         sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="memory-bound",urgency=""}
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -3050,36 +1940,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -3089,19 +1959,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-cpu-bound",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -3128,36 +1988,16 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,stage) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="high"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="low"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="throttled"}
-          or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency=""}
-          or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency=""}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_component_apdex:weight:score_6h
@@ -3167,19 +2007,9 @@ groups:
       type: sidekiq
     expr: |
       sum by (environment,stage) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="high"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="low"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="throttled"}
-        or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency=""}
-        or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency=""}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="urgent-other",urgency="high"}, "_c", "1", "", "")
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -3202,52 +2032,52 @@ groups:
   - record: gitlab_background_jobs:queue:apdex:ratio_5m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_background_jobs:queue:apdex:weight:score_5m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_background_jobs:execution:apdex:ratio_5m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",urgency="low"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",urgency="throttled"}, "_c", "2", "", "")
       )
       /
       (
         sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="low"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="throttled"}, "_c", "2", "", "")
         ) > 0
       )
   - record: gitlab_background_jobs:execution:apdex:weight:score_5m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="low"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",urgency="throttled"}, "_c", "2", "", "")
       )
   - record: gitlab_background_jobs:execution:ops:rate_5m
     expr: |
@@ -3267,52 +2097,52 @@ groups:
   - record: gitlab_background_jobs:queue:apdex:ratio_30m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_background_jobs:queue:apdex:weight:score_30m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_background_jobs:execution:apdex:ratio_30m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",urgency="low"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",urgency="throttled"}, "_c", "2", "", "")
       )
       /
       (
         sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="low"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="throttled"}, "_c", "2", "", "")
         ) > 0
       )
   - record: gitlab_background_jobs:execution:apdex:weight:score_30m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="low"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",urgency="throttled"}, "_c", "2", "", "")
       )
   - record: gitlab_background_jobs:execution:ops:rate_30m
     expr: |
@@ -3332,52 +2162,52 @@ groups:
   - record: gitlab_background_jobs:queue:apdex:ratio_1h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_background_jobs:queue:apdex:weight:score_1h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_background_jobs:execution:apdex:ratio_1h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",urgency="low"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",urgency="throttled"}, "_c", "2", "", "")
       )
       /
       (
         sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="low"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="throttled"}, "_c", "2", "", "")
         ) > 0
       )
   - record: gitlab_background_jobs:execution:apdex:weight:score_1h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="low"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",urgency="throttled"}, "_c", "2", "", "")
       )
   - record: gitlab_background_jobs:execution:ops:rate_1h
     expr: |
@@ -3397,52 +2227,52 @@ groups:
   - record: gitlab_background_jobs:queue:apdex:ratio_6h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",urgency="low"}, "_c", "1", "", "")
       )
       /
       (
         sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="low"}, "_c", "1", "", "")
         ) > 0
       )
   - record: gitlab_background_jobs:queue:apdex:weight:score_6h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="low"}, "_c", "1", "", "")
       )
   - record: gitlab_background_jobs:execution:apdex:ratio_6h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",urgency="low"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",urgency="throttled"}, "_c", "2", "", "")
       )
       /
       (
         sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="high"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="high"}, "_c", "0", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="low"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="low"}, "_c", "1", "", "")
           or
-          sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="throttled"}
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="throttled"}, "_c", "2", "", "")
         ) > 0
       )
   - record: gitlab_background_jobs:execution:apdex:weight:score_6h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="high"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="low"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="low"}, "_c", "1", "", "")
         or
-        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="throttled"}
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",urgency="throttled"}, "_c", "2", "", "")
       )
   - record: gitlab_background_jobs:execution:ops:rate_6h
     expr: |
