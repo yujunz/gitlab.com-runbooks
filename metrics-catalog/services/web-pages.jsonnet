@@ -12,7 +12,7 @@ local combined = metricsCatalog.combined;
   },
   monitoringThresholds: {
     apdexScore: 0.995,
-    errorRatio: 0.9995,
+    errorRatio: 0.9999,
   },
   components: {
     loadbalancer: {

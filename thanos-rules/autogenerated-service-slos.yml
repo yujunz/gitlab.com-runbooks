@@ -168,7 +168,7 @@ groups:
     labels:
       tier: lb
       type: pages
-    expr: '0.000500'
+    expr: '0.000100'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: db
@@ -288,7 +288,7 @@ groups:
     labels:
       tier: sv
       type: web-pages
-    expr: '0.000500'
+    expr: '0.000100'
   - record: slo:min:gitlab_service_apdex:ratio
     labels:
       tier: sv
