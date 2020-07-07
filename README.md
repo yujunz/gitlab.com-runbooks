@@ -30,7 +30,8 @@ on-boarding new team member
 ## Checklists
 
 - [Engineer on Call (EOC)](on-call/checklists/eoc.md)
-- [Incident Manager on Call (IMOC)](on-call/checklists/imoc.md)
+- [Incident Manager on Call (IMOC)](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#incident-manager-on-call-imoc-responsibilities)
+- [Communications Manager on Call (CMOC)](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#communications-manager-on-call-cmoc-responsibilities)
 
 To start with the right foot let's define a set of tasks that are nice things to do before you go any further in your week
 
@@ -51,12 +52,12 @@ issues.
 
 Start by checking how many alerts are in flight right now
 
--   go to the [fleet overview dashboard](https://dashboards.gitlab.net/dashboard/db/fleet-overview) and check the number of Active Alerts, it should be 0. If it is not 0
+-   go to the [fleet overview dashboard](https://dashboards.gitlab.net/d/RZmbBr7mk/gitlab-triage) and check the number of Active Alerts, it should be 0. If it is not 0
     -   go to the alerts dashboard and check what is being triggered
         -   [azure][prometheus-azure]
         -   [gprd prometheus][prometheus-gprd]
         -   [gprd prometheus-app][prometheus-app-gprd]
-    -   watch the [#alerts][slack-alerts], [#alerts-general][slack-alerts-general], and [#alerts-gstg][slack-alerts-gstg] channels for alert notifications; each alert here should point you to the right [runbook][runbook-repo] to fix it.
+    -   watch the [#alerts][slack-alerts] and [#feed_alerts-general][slack-alerts-general] channels for alert notifications; each alert here should point you to the right [runbook][runbook-repo] to fix it.
     -   if they don't, you have more work to do.
     -   be sure to create an issue, particularly to declare toil so we can work on it and suppress it.
 
@@ -64,7 +65,7 @@ Start by checking how many alerts are in flight right now
 
 Check how many targets are not scraped at the moment. alerts are in flight right now, to do this:
 
--   go to the [fleet overview dashboard](https://dashboards.gitlab.net/dashboard/db/fleet-overview) and check the number of Targets down. It should be 0. If it is not 0
+-   go to the [fleet overview dashboard](https://dashboards.gitlab.net/d/RZmbBr7mk/gitlab-triage) and check the number of Targets down. It should be 0. If it is not 0
     -   go to the [targets down list] and check what is.
         -   [azure][prometheus-azure-targets-down]
         -   [gprd prometheus][prometheus-gprd-targets-down]
