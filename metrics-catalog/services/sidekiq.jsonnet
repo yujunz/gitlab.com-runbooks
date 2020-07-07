@@ -2,6 +2,7 @@ local metricsCatalog = import '../lib/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
+local perWorkerRecordingRules = (import './lib/sidekiq-per-worker-recording-rules.libsonnet').perWorkerRecordingRules;
 local combined = metricsCatalog.combined;
 
 local highUrgencySelector = {
@@ -102,4 +103,11 @@ local noUrgencySelector = {
     }
     for k in sidekiqHelpers.shards.listAll()
   },
+
+  // Special per-worker recording rules
+  extraRecordingRulesPerBurnRate: [
+    // Adds per-work queuing/execution apdex, plus error rates etc
+    // across multiple burn rates
+    perWorkerRecordingRules,
+  ],
 }

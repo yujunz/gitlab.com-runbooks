@@ -7,9 +7,12 @@ local serviceErrorRatioRuleSet = (import 'service-error-ratio-rule-set.libsonnet
 local serviceNodeErrorRatioRuleSet = (import 'service-node-error-ratio-rule-set.libsonnet').serviceNodeErrorRatioRuleSet;
 local serviceApdexRatioRuleSet = (import 'service-apdex-ratio-rule-set.libsonnet').serviceApdexRatioRuleSet;
 local serviceNodeApdexRatioRuleSet = (import 'service-node-apdex-ratio-rule-set.libsonnet').serviceNodeApdexRatioRuleSet;
+local extraRecordingRuleSet = (import 'extra-recording-rule-set.libsonnet').extraRecordingRuleSet;
 
 local COMPONENT_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
 local NODE_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage', 'shard', 'fqdn'];
+
+local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 
 local MULTI_BURN_RATE_SUFFIXES = [
   '',  // For historical reasons, no suffix implies 1m
@@ -79,6 +82,14 @@ local ruleSetIterator(ruleSets) = {
         errorRate='gitlab_component_errors:rate_6h',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
       ),
+    ]),
+
+
+    // Component metrics are the key metrics for each component.
+    // Each burn-rate is a separate ruleset.
+    extraRecordingRules: ruleSetIterator([
+      extraRecordingRuleSet(burnRate)
+      for burnRate in multiburnFactors.allWindowIntervals
     ]),
 
     // Nodes metrics are the key metrics for each component, aggregated to the
