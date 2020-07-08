@@ -49,7 +49,7 @@ local rules = {
           )
           and ignoring(monitor)
           (
-            gitlab_component_ops:rate_6h >= %(minimumOperationRateForMonitoring)g
+            gitlab_component_ops:rate_1h >= %(minimumOperationRateForMonitoring)g
           )
         ||| % formatConfig,
         'for': '2m',
@@ -119,7 +119,7 @@ local rules = {
         )
         and ignoring(monitor)
         (
-          gitlab_component_ops:rate_6h >= %(minimumOperationRateForMonitoring)g
+          gitlab_component_ops:rate_1h >= %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
       'for': '2m',
