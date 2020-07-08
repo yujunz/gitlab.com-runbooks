@@ -69,17 +69,29 @@ local generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInte
   else
     generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels);
 
-local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, rangeInterval, aggregationFunction=null) =
+local groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels) =
+  if substituteWeightWithRecordingRule == null then
+    ''
+  else
+    ' on(%(aggregationLabels)s) group_left()' % {
+      aggregationLabels: aggregations.serialize(aggregationLabels)
+    };
+
+local generateApdexScoreQuery(histogramApdex, aggregationLabels, additionalSelectors, rangeInterval, aggregationFunction=null,substituteWeightWithRecordingRule=null) =
   local numeratorQuery = generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels);
-  local weightQuery = generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, { le: '+Inf' }, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels);
+  local weightQuery = if substituteWeightWithRecordingRule == null then
+      generateApdexComponentRateQuery(histogramApdex, additionalSelectors, rangeInterval, { le: '+Inf' }, aggregationFunction=aggregationFunction, aggregationLabels=aggregationLabels)
+    else
+      substituteWeightWithRecordingRule;
 
   |||
     %(numeratorQuery)s
-    /
+    /%(groupByClause)s
     (
       %(weightQuery)s > 0
     )
   ||| % {
+    groupByClause: groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels),
     numeratorQuery: strings.chomp(numeratorQuery),
     weightQuery: strings.indent(strings.chomp(weightQuery), 2),
   };
@@ -110,8 +122,14 @@ local generatePercentileLatencyQuery(histogram, percentile, aggregationLabels, a
     satisfiedThreshold: satisfiedThreshold,
     toleratedThreshold: toleratedThreshold,
 
-    apdexQuery(aggregationLabels, selector, rangeInterval)::
-      generateApdexScoreQuery(self, aggregationLabels, selector, rangeInterval, aggregationFunction='sum'),
+    apdexQuery(aggregationLabels, selector, rangeInterval, substituteWeightWithRecordingRule=null)::
+      generateApdexScoreQuery(self,
+        aggregationLabels,
+        selector,
+        rangeInterval,
+        aggregationFunction='sum',
+        substituteWeightWithRecordingRule=substituteWeightWithRecordingRule
+      ),
 
     apdexWeightQuery(aggregationLabels, selector, rangeInterval)::
       generateApdexComponentRateQuery(self, selector, rangeInterval, { le: '+Inf' }, aggregationFunction='sum', aggregationLabels=aggregationLabels),

@@ -33,20 +33,32 @@ local generateIncreaseQuery(c, selector, rangeInterval) =
   local increaseQueries = std.mapWithIndex(function(index, metric) wrapForUniqueness(index, metric.increaseQuery(selector, rangeInterval)), c.metrics);
   orJoin(increaseQueries);
 
-local generateApdexQuery(c, aggregationLabels, selector, rangeInterval) =
-  local numeratorQueries = std.mapWithIndex(function(index, metric) wrapForUniqueness(index, metric.apdexNumerator(selector, rangeInterval)), c.metrics);
-  local denominatorQueries = std.mapWithIndex(function(index, metric) wrapForUniqueness(index, metric.apdexDenominator(selector, rangeInterval)), c.metrics);
+local groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels) =
+  if substituteWeightWithRecordingRule == null then
+    ''
+  else
+    ' on(%(aggregationLabels)s) group_left()' % {
+      aggregationLabels: aggregations.serialize(aggregationLabels)
+    };
 
+local generateApdexQuery(c, aggregationLabels, selector, rangeInterval, substituteWeightWithRecordingRule) =
+  local numeratorQueries = std.mapWithIndex(function(index, metric) wrapForUniqueness(index, metric.apdexNumerator(selector, rangeInterval)), c.metrics);
   local aggregatedNumerators = aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(numeratorQueries));
-  local aggregatedDenominators = aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(denominatorQueries));
+
+  local aggregatedDenominators = if substituteWeightWithRecordingRule == null then
+      local denominatorQueries = std.mapWithIndex(function(index, metric) wrapForUniqueness(index, metric.apdexDenominator(selector, rangeInterval)), c.metrics);
+      aggregations.aggregateOverQuery('sum', aggregationLabels, orJoin(denominatorQueries))
+    else
+      substituteWeightWithRecordingRule;
 
   |||
     %(aggregatedNumerators)s
-    /
+    /%(groupByClause)s
     (
       %(aggregatedDenominators)s > 0
     )
   ||| % {
+    groupByClause: groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels),
     aggregatedNumerators: strings.chomp(aggregatedNumerators),
     aggregatedDenominators: strings.indent(strings.chomp(aggregatedDenominators), 2),
   };
@@ -106,8 +118,8 @@ local generateApdexPercentileLatencyQuery(c, percentile, aggregationLabels, sele
           local query = generateIncreaseQuery(self, selector, rangeInterval);
           aggregations.aggregateOverQuery('sum', aggregationLabels, query),
 
-        apdexQuery(aggregationLabels, selector, rangeInterval)::
-          generateApdexQuery(self, aggregationLabels, selector, rangeInterval),
+        apdexQuery(aggregationLabels, selector, rangeInterval, substituteWeightWithRecordingRule=null)::
+          generateApdexQuery(self, aggregationLabels, selector, rangeInterval, substituteWeightWithRecordingRule),
 
         apdexWeightQuery(aggregationLabels, selector, rangeInterval)::
           generateApdexWeightQuery(self, aggregationLabels, selector, rangeInterval),
