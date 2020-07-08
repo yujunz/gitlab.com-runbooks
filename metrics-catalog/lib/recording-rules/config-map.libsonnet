@@ -38,6 +38,11 @@ local ruleSetIterator(ruleSets) = {
   // Recording rules that get evaluated in Prometheus
   // should be contained within this stanza
   prometheus: {
+    // This should only be done at the Prometheus level
+    // as the group_left may not work correctly in all
+    // cases at the Thanos level
+    local substituteWeightWithRecordingRule = true,
+
     // Component metrics are the key metrics for each component.
     // Each burn-rate is a separate ruleset.
     componentMetrics: ruleSetIterator([
@@ -50,6 +55,7 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate',
         errorRate='gitlab_component_errors:rate',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=false, // Initially only use this for slow burns
       ),
       sliRecordingRulesSet(burnRate='5m'),
       componentMetricsRuleSet(
@@ -59,6 +65,7 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate_5m',
         errorRate='gitlab_component_errors:rate_5m',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=false, // Initially only use this for slow burns
       ),
       sliRecordingRulesSet(burnRate='30m'),
       componentMetricsRuleSet(
@@ -68,6 +75,7 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate_30m',
         errorRate='gitlab_component_errors:rate_30m',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
       ),
       sliRecordingRulesSet(burnRate='1h'),
       componentMetricsRuleSet(
@@ -77,6 +85,7 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate_1h',
         errorRate='gitlab_component_errors:rate_1h',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=false, // Initially only use this for slow burns
       ),
       sliRecordingRulesSet(burnRate='6h'),
       componentMetricsRuleSet(
@@ -86,6 +95,7 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate_6h',
         errorRate='gitlab_component_errors:rate_6h',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
       ),
     ]),
 

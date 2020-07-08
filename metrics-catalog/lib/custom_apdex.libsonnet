@@ -10,35 +10,56 @@ local generateQuery(rateQueryTemplate, selector, rangeInterval) =
     rangeInterval: rangeInterval,
   };
 
+local groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels) =
+  if substituteWeightWithRecordingRule == null then
+    ''
+  else
+    ' on(%(aggregationLabels)s) group_left()' % {
+      aggregationLabels: aggregations.serialize(aggregationLabels)
+    };
+
 // A single threshold apdex score only has a SATISFACTORY threshold, no TOLERABLE threshold
-local generateSingleThresholdApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration) =
+local generateSingleThresholdApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration, substituteWeightWithRecordingRule) =
   local selector = selectors.merge(customApdex.selector, additionalSelectors);
   local satisfiedSelector = selectors.merge(selector, { le: customApdex.satisfiedThreshold });
-  local totalSelector = selectors.merge(selector, { le: '+Inf' });
   local satisfiedRateQuery = generateQuery(customApdex.rateQueryTemplate, satisfiedSelector, duration);
-  local totalRateQuery = generateQuery(customApdex.rateQueryTemplate, totalSelector, duration);
+
+  local denominatorAggregation = if substituteWeightWithRecordingRule == null then
+    local totalSelector = selectors.merge(selector, { le: '+Inf' });
+    local totalRateQuery = generateQuery(customApdex.rateQueryTemplate, totalSelector, duration);
+    aggregations.aggregateOverQuery('sum', aggregationLabels, totalRateQuery)
+  else
+    substituteWeightWithRecordingRule;
+
   |||
     (
       %(satisfactoryAggregation)s
     )
-    /
+    /%(groupByClause)s
     (
       %(denominatorAggregation)s > 0
     )
   ||| % {
+    groupByClause: groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels),
     satisfactoryAggregation: strings.indent(aggregations.aggregateOverQuery('sum', aggregationLabels, satisfiedRateQuery), 2),
-    denominatorAggregation: strings.indent(aggregations.aggregateOverQuery('sum', aggregationLabels, totalRateQuery), 2),
+    denominatorAggregation: strings.indent(denominatorAggregation, 2),
   };
 
 // A double threshold apdex score only has both SATISFACTORY threshold and TOLERABLE thresholds
-local generateDoubleThresholdApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration) =
+local generateDoubleThresholdApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration, substituteWeightWithRecordingRule) =
   local selector = selectors.merge(customApdex.selector, additionalSelectors);
   local satisfiedSelector = selectors.merge(selector, { le: customApdex.satisfiedThreshold });
   local toleratedSelector = selectors.merge(selector, { le: customApdex.toleratedThreshold });
-  local totalSelector = selectors.merge(selector, { le: '+Inf' });
   local satisfiedRateQuery = generateQuery(customApdex.rateQueryTemplate, satisfiedSelector, duration);
   local toleratedRateQuery = generateQuery(customApdex.rateQueryTemplate, toleratedSelector, duration);
-  local totalRateQuery = generateQuery(customApdex.rateQueryTemplate, totalSelector, duration);
+
+  local denominatorAggregation = if substituteWeightWithRecordingRule == null then
+    local totalSelector = selectors.merge(selector, { le: '+Inf' });
+    local totalRateQuery = generateQuery(customApdex.rateQueryTemplate, totalSelector, duration);
+    aggregations.aggregateOverQuery('sum', aggregationLabels, totalRateQuery)
+  else
+    substituteWeightWithRecordingRule;
+
   |||
     (
       %(satisfactoryAggregation)s
@@ -47,22 +68,23 @@ local generateDoubleThresholdApdexScoreQuery(customApdex, aggregationLabels, add
     )
     /
     2
-    /
+    /%(groupByClause)s
     (
       %(denominatorAggregation)s > 0
     )
   ||| % {
+    groupByClause: groupByClauseFor(substituteWeightWithRecordingRule, aggregationLabels),
     satisfactoryAggregation: strings.indent(aggregations.aggregateOverQuery('sum', aggregationLabels, satisfiedRateQuery), 2),
     toleratedAggregation: strings.indent(aggregations.aggregateOverQuery('sum', aggregationLabels, toleratedRateQuery), 2),
-    denominatorAggregation: strings.indent(aggregations.aggregateOverQuery('sum', aggregationLabels, totalRateQuery), 2),
+    denominatorAggregation: strings.indent(denominatorAggregation, 2),
   };
 
 
-local generateApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration) =
+local generateApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration, substituteWeightWithRecordingRule) =
   if customApdex.toleratedThreshold == null then
-    generateSingleThresholdApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration)
+    generateSingleThresholdApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration, substituteWeightWithRecordingRule)
   else
-    generateDoubleThresholdApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration);
+    generateDoubleThresholdApdexScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration, substituteWeightWithRecordingRule);
 
 local generatePercentileLatencyQuery(customApdex, percentile, aggregationLabels, additionalSelectors, duration) =
   local aggregationLabelsWithLe = aggregationLabels + ['le'];
@@ -96,9 +118,9 @@ local generateApdexWeightScoreQuery(customApdex, aggregationLabels, additionalSe
     satisfiedThreshold: satisfiedThreshold,
     toleratedThreshold: toleratedThreshold,
 
-    apdexQuery(aggregationLabels, selector, rangeInterval)::
+    apdexQuery(aggregationLabels, selector, rangeInterval, substituteWeightWithRecordingRule=null)::
       local s = self;
-      generateApdexScoreQuery(s, aggregationLabels, selector, rangeInterval),
+      generateApdexScoreQuery(s, aggregationLabels, selector, rangeInterval, substituteWeightWithRecordingRule=substituteWeightWithRecordingRule),
 
     apdexWeightQuery(aggregationLabels, selector, rangeInterval)::
       local s = self;
