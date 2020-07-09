@@ -13,6 +13,7 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local selectors = import 'lib/selectors.libsonnet';
+local statusDescription = import 'status_description.libsonnet';
 
 local defaultEnvironmentSelector = { environment: '$environment' };
 
@@ -553,12 +554,22 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       row.new(title=rowTitle, collapse=false),
     ], cols=1, rowHeight=1, startRow=startRow)
     +
-    layout.grid([
-      self.apdexPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
-      self.errorRatesPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
-      self.qpsPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
-      self.saturationPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
-    ], cols=4, rowHeight=5, startRow=startRow + 1),
+    layout.splitColumnGrid([
+      [
+        self.apdexPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
+        statusDescription.serviceApdexStatusDescriptionPanel(environmentSelectorHash { type: serviceType, stage: serviceStage }),
+      ],
+      [
+        self.errorRatesPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
+        statusDescription.serviceErrorStatusDescriptionPanel(environmentSelectorHash { type: serviceType, stage: serviceStage }),
+      ],
+      [
+        self.qpsPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
+      ],
+      [
+        self.saturationPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
+      ],
+    ], [4, 1], startRow=startRow + 1),
 
   keyServiceMetricsRow(
     serviceType,

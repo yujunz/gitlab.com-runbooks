@@ -21,7 +21,7 @@ groups:
         $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}&var-component={{
         $labels.component }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '4'
+      grafana_panel_id: '5'
       grafana_variables: environment,type,stage,component
       promql_template_1: >-
         gitlab_component_apdex:ratio_1h{environment="$environment", type="$type", stage="$stage", component="$component"}
@@ -83,7 +83,7 @@ groups:
         $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}&var-component={{
         $labels.component }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '4'
+      grafana_panel_id: '5'
       grafana_variables: environment,type,stage,component
       link1_title: Definition
       link1_url: >-

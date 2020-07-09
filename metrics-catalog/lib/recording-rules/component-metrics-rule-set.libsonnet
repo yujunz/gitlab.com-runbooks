@@ -17,7 +17,7 @@ local generateApdexScoreRulesCurry(substituteWeightWithRecordingRule) =
     local weightRecordingRule = if substituteWeightWithRecordingRule then
       '%(recordingRule)s{%(selector)s}' % {
         recordingRule: ruleSet.recordingRuleNames.apdexWeight,
-        selector: selectors.serializeHash(recordingRuleStaticLabels)
+        selector: selectors.serializeHash(recordingRuleStaticLabels),
       }
     else
       null;
@@ -27,11 +27,11 @@ local generateApdexScoreRulesCurry(substituteWeightWithRecordingRule) =
         record: ruleSet.recordingRuleNames.apdexRatio,
         labels: recordingRuleStaticLabels,
         expr: componentDefinition.apdex.apdexQuery(
-            aggregationLabels,
-            selector={},
-            rangeInterval=ruleSet.burnRate,
-            substituteWeightWithRecordingRule=weightRecordingRule,
-          ),
+          aggregationLabels,
+          selector={},
+          rangeInterval=ruleSet.burnRate,
+          substituteWeightWithRecordingRule=weightRecordingRule,
+        ),
       }]
     else
       [];
