@@ -104,6 +104,11 @@ deploy-rules-pre:
   extends: .deploy-rules
   stage: deploy-rules
 
+deploy-rules-ops:
+  environment: ops
+  extends: .deploy-rules
+  stage: deploy-rules
+
 deploy-rules-production:
   environment: gprd
   extends: .deploy-rules
