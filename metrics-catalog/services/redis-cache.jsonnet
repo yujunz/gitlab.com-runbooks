@@ -10,8 +10,27 @@ local rateMetric = metricsCatalog.rateMetric;
   },
   monitoringThresholds: {
     apdexScore: 0.9995,
+    errorRatio: 0.999,
   },
   components: {
+    rails_redis_client: {
+      staticLabels: {
+        tier: 'db',
+        stage: 'main',
+      },
+      significantLabels: ['type'],
+
+      requestRate: rateMetric(
+        counter='gitlab_redis_client_requests_total',
+        selector='storage="cache"',
+      ),
+
+      errorRate: rateMetric(
+        counter='gitlab_redis_client_exceptions_total',
+        selector='storage="cache"',
+      ),
+    },
+
     primary_server: {
       requestRate: rateMetric(
         counter='redis_commands_processed_total',
