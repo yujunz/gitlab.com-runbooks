@@ -23,6 +23,7 @@
 * [redis.md](redis.md)
 * [../sidekiq/large-pull-mirror-queue.md](../sidekiq/large-pull-mirror-queue.md)
 * [../sidekiq/sidekiq-inspection.md](../sidekiq/sidekiq-inspection.md)
+* [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 * [../sidekiq/sidekiq_stats_no_longer_showing.md](../sidekiq/sidekiq_stats_no_longer_showing.md)
 * [../uncategorized/chef-guidelines.md](../uncategorized/chef-guidelines.md)
 * [../uncategorized/deleted-project-restore.md](../uncategorized/deleted-project-restore.md)

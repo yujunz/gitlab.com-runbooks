@@ -43,6 +43,17 @@ local errorsPanel =
     ),
   );
 
+local errorsPerHostPanel =
+  panels.generalGraphPanel('Cloud NAT errors per host', legend_show=true)
+  .addTarget(
+    promQuery.target(
+      |||
+        stackdriver_nat_gateway_logging_googleapis_com_user_nat_errors_by_vm{environment="$environment"}
+      |||,
+      legendFormat='errors'
+    ),
+  );
+
 basic.dashboard(
   'Cloud NAT',
   tags=['general'],
@@ -51,4 +62,5 @@ basic.dashboard(
 .addTemplate(gatewayNameTemplate)
 .addPanels(layout.grid([
   errorsPanel,
+  errorsPerHostPanel,
 ], cols=1, rowHeight=10))

@@ -12,6 +12,7 @@ export indices=(
   pages
   postgres
   praefect
+  pubsubbeat
   puma
   rails
   redis

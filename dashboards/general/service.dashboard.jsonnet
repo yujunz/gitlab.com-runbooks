@@ -16,6 +16,9 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local basic = import 'basic.libsonnet';
+local statusDescription = import 'status_description.libsonnet';
+
+local selector = { environment: '$environment', stage: '$stage', type: '$type' };
 
 local generalGraphPanel(title, description=null, linewidth=2, sort='increasing') =
   graphPanel.new(
@@ -55,12 +58,18 @@ basic.dashboard(
 .addTemplate(templates.type)
 .addTemplate(templates.stage)
 .addTemplate(templates.sigma)
-.addPanel(serviceHealth.row('$type', '$stage'), gridPos={ x: 0, y: 0 })
+.addPanels(
+  layout.grid([
+    statusDescription.serviceApdexStatusDescriptionPanel(selector),
+    statusDescription.serviceErrorStatusDescriptionPanel(selector),
+  ], startRow=0, rowHeight=4)
+)
+.addPanel(serviceHealth.row('$type', '$stage'), gridPos={ x: 0, y: 1000 })
 .addPanel(
   row.new(title='🏅 Key Service Metrics'),
   gridPos={
     x: 0,
-    y: 1000,
+    y: 2000,
     w: 24,
     h: 1,
   }
@@ -71,13 +80,13 @@ basic.dashboard(
     keyMetrics.errorRatesPanel('$type', '$stage'),
     keyMetrics.qpsPanel('$type', '$stage'),
     keyMetrics.saturationPanel('$type', '$stage'),
-  ], startRow=1001)
+  ], startRow=3001)
 )
 .addPanel(
   keyMetrics.keyComponentMetricsRow('$type', '$stage'),
   gridPos={
     x: 0,
-    y: 2000,
+    y: 4000,
     w: 24,
     h: 1,
   }
@@ -86,12 +95,12 @@ basic.dashboard(
   nodeMetrics.nodeMetricsDetailRow('environment="$environment", stage=~"|$stage", type="$type"'),
   gridPos={
     x: 0,
-    y: 3000,
+    y: 5000,
     w: 24,
     h: 1,
   }
 )
-.addPanel(capacityPlanning.capacityPlanningRow('$type', '$stage'), gridPos={ x: 0, y: 4000 })
+.addPanel(capacityPlanning.capacityPlanningRow('$type', '$stage'), gridPos={ x: 0, y: 6000 })
 
 + {
   links+: platformLinks.services + platformLinks.triage,

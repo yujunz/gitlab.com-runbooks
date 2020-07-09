@@ -30,7 +30,8 @@ on-boarding new team member
 ## Checklists
 
 - [Engineer on Call (EOC)](on-call/checklists/eoc.md)
-- [Incident Manager on Call (IMOC)](on-call/checklists/imoc.md)
+- [Incident Manager on Call (IMOC)](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#incident-manager-on-call-imoc-responsibilities)
+- [Communications Manager on Call (CMOC)](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#communications-manager-on-call-cmoc-responsibilities)
 
 To start with the right foot let's define a set of tasks that are nice things to do before you go any further in your week
 
@@ -51,12 +52,12 @@ issues.
 
 Start by checking how many alerts are in flight right now
 
--   go to the [fleet overview dashboard](https://dashboards.gitlab.net/dashboard/db/fleet-overview) and check the number of Active Alerts, it should be 0. If it is not 0
+-   go to the [fleet overview dashboard](https://dashboards.gitlab.net/d/RZmbBr7mk/gitlab-triage) and check the number of Active Alerts, it should be 0. If it is not 0
     -   go to the alerts dashboard and check what is being triggered
         -   [azure][prometheus-azure]
         -   [gprd prometheus][prometheus-gprd]
         -   [gprd prometheus-app][prometheus-app-gprd]
-    -   watch the [#alerts][slack-alerts], [#alerts-general][slack-alerts-general], and [#alerts-gstg][slack-alerts-gstg] channels for alert notifications; each alert here should point you to the right [runbook][runbook-repo] to fix it.
+    -   watch the [#alerts][slack-alerts] and [#feed_alerts-general][slack-alerts-general] channels for alert notifications; each alert here should point you to the right [runbook][runbook-repo] to fix it.
     -   if they don't, you have more work to do.
     -   be sure to create an issue, particularly to declare toil so we can work on it and suppress it.
 
@@ -64,7 +65,7 @@ Start by checking how many alerts are in flight right now
 
 Check how many targets are not scraped at the moment. alerts are in flight right now, to do this:
 
--   go to the [fleet overview dashboard](https://dashboards.gitlab.net/dashboard/db/fleet-overview) and check the number of Targets down. It should be 0. If it is not 0
+-   go to the [fleet overview dashboard](https://dashboards.gitlab.net/d/RZmbBr7mk/gitlab-triage) and check the number of Targets down. It should be 0. If it is not 0
     -   go to the [targets down list] and check what is.
         -   [azure][prometheus-azure-targets-down]
         -   [gprd prometheus][prometheus-gprd-targets-down]
@@ -187,10 +188,10 @@ During an incident there are at least 2 roles, and one more optional
 * [PostgreSQL switchover](howto/postgresql-switchover.md)
 * [Read-only Load Balancing](docs/ci-runners/load-balancing.md)
 * [Add a new secondary replica](docs/patroni/postgresql-replica.md)
-* [Database backups](docs/patroni/using-wale-gpg.md)
-* [Database backups restore testing](https://gitlab.com/gitlab-restore/postgres-01.db.prd.gitlab.com/)
+* [Database backups](docs/patroni/postgresql-backups-wale-walg.md)
+* [Database backups restore testing](docs/patroni/postgresql-backups-wale-walg.md#database-backups-restore-testing)
 * [Rebuild a corrupt index](docs/patroni/postgresql.md#rebuild-a-corrupt-index)
-* [Checking PostgreSQL health with postgres-checkup](docs/patroni/postgres-checkup)
+* [Checking PostgreSQL health with postgres-checkup](docs/patroni/postgres-checkup.md)
 
 ### Frontend Services
 
@@ -306,7 +307,7 @@ During an incident there are at least 2 roles, and one more optional
 ### Restore Backups
 
 * [Deleted Project Restoration](docs/uncategorized/deleted-project-restore.md)
-* [Database Backups and Recovery using WAL-E / WAL-G](docs/patroni/using-wale-gpg.md)
+* [PostgreSQL Backups: WAL-E, WAL-G](docs/patroni/postgresql-backups-wale-walg.md)
 * [Work with Azure Snapshots](docs/uncategorized/azure-snapshots.md)
 * [Work with GCP Snapshots](docs/uncategorized/gcp-snapshots.md)
 * [PackageCloud Infrastructure And Recovery](docs/uncategorized/packagecloud-infrastructure.md)
@@ -512,7 +513,7 @@ ruby           2.6.5    (set by ~/runbooks/.ruby-version)
 We use `.tool-versions` to record the version of go-jsonnet that should be used
 for local development. The `asdf` version manager is used by some team members
 to automatically switch versions based on the contents of this file. It should
-be kept up to date. `images/runtools_build/Dockerfile` contains the version of
+be kept up to date. The top-level `Dockerfile` contains the version of
 go-jsonnet we use in CI. This should be kept in sync with `.tool-versions`, and
 a (non-gating) CI job enforces this.
 

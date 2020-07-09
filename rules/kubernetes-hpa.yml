@@ -23,30 +23,3 @@ groups:
         labels:
           severity: s3
           alert_type: cause
-
-      - alert: HPAScaleCapability
-        annotations:
-          title: HPA unable to scale up
-          description: '{{$labels.hpa}} in {{$labels.env}} has hit the maximum number of desired Pods'
-          runbook: docs/uncategorized/kubernetes.md#hpascalecapability
-        # Some sidekiq shards are excluded from alerting when they are unable to
-        # scale
-        # - memory-bound (sidekiq-export)
-        #   We are ok to be at the max pods
-        #   https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/733
-        # - elasticsearch
-        #   Not set to scale for throttling
-        #   https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/846
-        # - urgent-other
-        #   Currently not set to scale for performance reasons
-        #   https://gitlab.com/gitlab-com/gl-infra/delivery/-/issues/918
-        expr: |
-          sum(kube_hpa_status_desired_replicas{hpa!~"gitlab-sidekiq-(memory-bound|elasticsearch|urgent-other)-v1"})
-            by (hpa, env)
-            >=
-          sum(kube_hpa_spec_max_replicas) by (hpa, env)
-        for: 30m
-        labels:
-          pager: pagerduty
-          severity: s2
-          alert_type: cause

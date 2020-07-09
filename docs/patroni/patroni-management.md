@@ -195,6 +195,10 @@ Quoting [Patroni docs][pause-docs]:
 Pausing the cluster disables automatic failover. This is desirable when doing tasks such as upgrading Consul,
 or during a maintenance of the whole Patroni cluster.
 
+Note that disabling automatic failover can have undesirable side-effects, for example, if the primary PostgreSQL went down
+for any reason while Patroni is paused, there will be no primary for the clients to write to, effectively resulting in 500
+errors for the end-user, so plan ahead carefully.
+
 It is important to disable `chef-client` before pausing the cluster,
 otherwise a regular `chef-client` can revert the pause status.
 
@@ -414,59 +418,14 @@ replicating again.
 ### Diverged timeline WAL segments in GCS after failover
 
 Our primary Postgres node is configured to archive WAL segments to GCS. These
-segments are pulled by wal-e on another node in recovery mode, and replayed.
+segments are pulled by wal-g on another node in recovery mode, and replayed.
 This process acts as a continuous test of our ability to restore our database
 state from archived WAL segments. Sometimes, during a failover, both the old
-master and the new will have uploaded WAL segments, causing the DR archive that
+primary and the new will have uploaded WAL segments, causing the DR archive that
 is consuming these segments from GCS to not be able to replay the diverged
 timeline. In the past we have solved this by rolling back the DR archive to an
-earlier state:
-
-1. In the GCE console: stop the machine
-1. Edit the machine: write down (or take a screenshot) of the attachment details
-   of **all** extra disks. Specfically, we want the custom name (if any) and the
-   order they are attached in.
-1. Detach the data disk and save the machine.
-1. In the GCE console, find the most recent snapshot of the data disk before the
-   incident occurred. Copy its ID.
-1. Find the data disk in GCE. Write down its name, zone, type (standard/SSD),
-   and labels.
-1. Delete the data disk.
-1. Create a new GCE disk with the same name, zone, and type as the old data
-   disk. Select the "snapshot" option as source and enter the snapshot ID.
-1. When the disk has finished creating, attach it to the stopped machine using
-   the GCE console.
-1. Save the machine and examine the order of attached disks. If they are not in
-   the same order as before, you will have to detach and reattach disks as
-   appropriate. This is necessary because unfortunately we still have code that
-   makes assumptions about the udev-ordering of disks (sdb, sdc etc).
-1. Start the machine.
-1. `ssh` to the machine and start postgres: `gitlab-ctl start postgresql`.
-1. Tail the log file at `/var/log/gitlab/postgresql/current`. You should see it
-   successfully ingesting WAL segments in sequential order, e.g.: `LOG:  restored
-   log file "00000017000128AC00000087" from archive`.
-1. You should also see a message "FATAL:  the database system is starting up"
-   every 15s. These are due to attempted scrapes by the postgres exporter. After
-   a few minutes, these messages should stop and metrics from the machine should
-   be observable again.
-1. In prometheus, you should see the `pg_replication_lag` metric for this
-   instance begin to decrease. Recovery from GCS WAL segments is slow, and
-   during times of high traffic (when the postgres data ingestion rate is high)
-   recovery will slow. It might take days to recover, so be sure to silence any
-   replication lag alerts for enough time not to rudely wake the on-call.
-1. Check there is no terraform plan diff for the archival replicas. Run the
-   following for the gprd environment:
-
-   ```
-   tf plan -out plan -target module.postgres-dr-archive -target module.postgres-dr-delayed
-   ```
-
-   If there is a plan diff for mutable things like labels, apply it. If there is
-   a plan diff for more severe things like disk name, you might have made a
-   mistake and will have to repeat this whole procedure.
-
-This procedure is rather manual and lengthy, but this does not happen often and
-has no directly user-facing impact.
+earlier state.
+See [../postgres-dr-delayed/postgres-dr-replicas.md](../postgres-dr-delayed/postgres-dr-replicas.md#restoring-with-a-disk-snapshot)
 
 ## Replacing a cluster with a new one
 

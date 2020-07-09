@@ -1,3 +1,4 @@
+local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 local selectors = import 'lib/selectors.libsonnet';
 
 local globalSelector = { monitor: 'global' };
@@ -25,22 +26,26 @@ local formatConfigForSelectorHash(selectorHash) =
           avg by (type) (avg_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
         ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
+    // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
     serviceApdexDegradationSLOQuery(environmentSelectorHash, type, stage)::
       |||
-        avg(slo:min:gitlab_service_apdex:ratio{%(selector)s}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})
+        (1 - %(burnrate_6h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="%(type)s"})))
+        or
+        avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})
       ||| % {
-        selector: selectors.serializeHash(environmentSelectorHash { type: type, stage: stage }),
         type: type,
-        stage: stage,
+        burnrate_6h: multiburnFactors.burnrate_6h,
       },
 
+    // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
     serviceApdexOutageSLOQuery(environmentSelectorHash, type, stage)::
       |||
-        2 * (avg(slo:min:gitlab_service_apdex:ratio{%(selector)s}) or avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})) - 1
+        (1 - %(burnrate_1h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="%(type)s"})))
+        or
+        (2 * avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"}) - 1)
       ||| % {
-        selector: selectors.serializeHash(environmentSelectorHash { type: type, stage: stage }),
         type: type,
-        stage: stage,
+        burnrate_1h: multiburnFactors.burnrate_1h,
       },
 
     serviceApdexQueryWithOffset(selectorHash, offset)::
@@ -137,22 +142,26 @@ local formatConfigForSelectorHash(selectorHash) =
           )
         ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax },
 
+    // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
     serviceErrorRateDegradationSLOQuery(environmentSelectorHash, type, stage)::
       |||
-        avg(slo:max:gitlab_service_errors:ratio{%(selector)s}) or avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"})
+        (%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="%(type)s"}))
+        or
+        avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"})
       ||| % {
-        selector: selectors.serializeHash(environmentSelectorHash { type: type, stage: stage }),
         type: type,
-        stage: stage,
+        burnrate_6h: multiburnFactors.burnrate_6h,
       },
 
+    // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
     serviceErrorRateOutageSLOQuery(environmentSelectorHash, type, stage)::
       |||
-        2 * (avg(slo:max:gitlab_service_errors:ratio{%(selector)s}) or avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"}))
+        (%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="%(type)s"}))
+        or
+        (2 * avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"}))
       ||| % {
-        selector: selectors.serializeHash(environmentSelectorHash { type: type, stage: stage }),
         type: type,
-        stage: stage,
+        burnrate_1h: multiburnFactors.burnrate_1h,
       },
 
     serviceErrorRateQueryWithOffset(selectorHash, offset)::

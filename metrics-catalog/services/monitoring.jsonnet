@@ -9,12 +9,13 @@ local productionEnvironmentsSelector = {
 {
   type: 'monitoring',
   tier: 'inf',
+  deprecatedSingleBurnThresholds: {
+    apdexRatio: 0.999,
+    errorRatio: 0.001,
+  },
   monitoringThresholds: {
-    /*
-    TODO: enable SLOs for monitoring service
-    apdexRatio: 0.95,
-    errorRatio: 0.005,
-    */
+    apdexScore: 0.999,
+    errorRatio: 0.999,
   },
   /*
    * Our anomaly detection uses normal distributions and the monitoring service
@@ -142,8 +143,8 @@ local productionEnvironmentsSelector = {
       apdex: histogramApdex(
         histogram='prometheus_http_request_duration_seconds_bucket',
         selector=prometheusSelector,
-        satisfiedThreshold=0.4,
-        toleratedThreshold=0.1
+        satisfiedThreshold=1,
+        toleratedThreshold=3
       ),
 
       requestRate: rateMetric(
@@ -156,7 +157,7 @@ local productionEnvironmentsSelector = {
         selector=prometheusSelector { code: { re: '^5.*' } }
       ),
 
-      significantLabels: ['fqdn'],
+      significantLabels: ['fqdn', 'handler'],
     },
   },
 }

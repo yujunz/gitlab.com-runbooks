@@ -25,6 +25,7 @@
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [../runner/ci-runner-timeouts.md](../runner/ci-runner-timeouts.md)
 * [../runner/update-gitlab-runner-on-managers.md](../runner/update-gitlab-runner-on-managers.md)
+* [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 * [../sidekiq/sidekiq_error_rate_high.md](../sidekiq/sidekiq_error_rate_high.md)
 * [../uncategorized/camoproxy.md](../uncategorized/camoproxy.md)
 * [../uncategorized/chef-documentation.md](../uncategorized/chef-documentation.md)

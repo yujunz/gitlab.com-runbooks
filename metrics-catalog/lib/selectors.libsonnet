@@ -28,6 +28,9 @@ local serializeItems(label, operator, value) =
 local serializeHashItem(label, value) =
   if std.isString(value) || std.isNumber(value) then
     serializeItems(label, '=', value)
+  else if std.isArray(value) then
+    // if the value is an array, iterate over the items
+    std.flatMap(function(va) serializeHashItem(label, va), value)
   else
     (if std.objectHas(value, 're') then serializeItems(label, '=~', value.re) else [])
     +
@@ -79,18 +82,22 @@ local serializeHashItem(label, value) =
       (
         local fields = std.set(std.objectFields(selectorHash));
         local pairs = std.flatMap(function(key) serializeHashItem(key, selectorHash[key]), fields);
-        std.join(', ', pairs)
+        std.join(',', pairs)
       ),
 
   // Remove certain selectors from a selectorHash
   without(selectorHash, labels)::
-    local fields = std.set(std.objectFields(selectorHash));
-    local remaining = std.setDiff(fields, std.set(labels));
+    if std.isString(selectorHash) then
+      std.assertEqual(selectorHash, { __assert__: 'selectors.without requires a selector hash' })
+    else
+      local fields = std.set(std.objectFields(selectorHash));
+      local labelSet = if std.isArray(labels) then std.set(labels) else std.set(std.objectFields(labels));
+      local remaining = std.setDiff(fields, labelSet);
 
-    std.foldl(function(memo, key)
-                memo { [key]: selectorHash[key] },
-              remaining,
-              {}),
+      std.foldl(function(memo, key)
+                  memo { [key]: selectorHash[key] },
+                remaining,
+                {}),
 
   // Given a selector, returns the labels
   getLabels(selector)::

@@ -11,9 +11,19 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1m])
+        label_replace(rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1m]), "_c", "0", "", "")
         or
-        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1m])
+        label_replace(rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1m]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: rails_sql
+      stage: main
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment) (
+        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -39,16 +49,6 @@ groups:
           rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1m])
         ) > 0
       )
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      component: rails_sql
-      stage: main
-      tier: db
-      type: patroni
-    expr: |
-      sum by (environment) (
-        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1m])
-      )
   - record: gitlab_component_ops:rate
     labels:
       component: service
@@ -56,9 +56,9 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1m])
+        label_replace(rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1m]), "_c", "0", "", "")
         or
-        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m])
+        label_replace(rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1m]), "_c", "1", "", "")
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -76,9 +76,19 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[5m])
+        label_replace(rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[5m]), "_c", "0", "", "")
         or
-        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[5m])
+        label_replace(rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[5m]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: rails_sql
+      stage: main
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment) (
+        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -104,16 +114,6 @@ groups:
           rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[5m])
         ) > 0
       )
-  - record: gitlab_component_apdex:weight:score_5m
-    labels:
-      component: rails_sql
-      stage: main
-      tier: db
-      type: patroni
-    expr: |
-      sum by (environment) (
-        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[5m])
-      )
   - record: gitlab_component_ops:rate_5m
     labels:
       component: service
@@ -121,9 +121,9 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[5m])
+        label_replace(rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[5m]), "_c", "0", "", "")
         or
-        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[5m])
+        label_replace(rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[5m]), "_c", "1", "", "")
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -141,9 +141,19 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[30m])
+        label_replace(rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[30m]), "_c", "0", "", "")
         or
-        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[30m])
+        label_replace(rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[30m]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: rails_sql
+      stage: main
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment) (
+        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -163,21 +173,9 @@ groups:
       )
       /
       2
-      /
+      / on(environment) group_left()
       (
-        sum by (environment) (
-          rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[30m])
-        ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score_30m
-    labels:
-      component: rails_sql
-      stage: main
-      tier: db
-      type: patroni
-    expr: |
-      sum by (environment) (
-        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[30m])
+        gitlab_component_apdex:weight:score_30m{component="rails_sql",stage="main",tier="db",type="patroni"} > 0
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -186,9 +184,9 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[30m])
+        label_replace(rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[30m]), "_c", "0", "", "")
         or
-        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[30m])
+        label_replace(rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[30m]), "_c", "1", "", "")
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -206,9 +204,19 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1h])
+        label_replace(rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[1h]), "_c", "0", "", "")
         or
-        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1h])
+        label_replace(rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[1h]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: rails_sql
+      stage: main
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment) (
+        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -234,16 +242,6 @@ groups:
           rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1h])
         ) > 0
       )
-  - record: gitlab_component_apdex:weight:score_1h
-    labels:
-      component: rails_sql
-      stage: main
-      tier: db
-      type: patroni
-    expr: |
-      sum by (environment) (
-        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[1h])
-      )
   - record: gitlab_component_ops:rate_1h
     labels:
       component: service
@@ -251,9 +249,9 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1h])
+        label_replace(rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[1h]), "_c", "0", "", "")
         or
-        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1h])
+        label_replace(rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[1h]), "_c", "1", "", "")
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -271,9 +269,19 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[6h])
+        label_replace(rate(pgbouncer_stats_sql_transactions_pooled_total{type="patroni", tier="db"}[6h]), "_c", "0", "", "")
         or
-        rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[6h])
+        label_replace(rate(pgbouncer_stats_queries_pooled_total{type="patroni", tier="db"}[6h]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: rails_sql
+      stage: main
+      tier: db
+      type: patroni
+    expr: |
+      sum by (environment) (
+        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
@@ -293,21 +301,9 @@ groups:
       )
       /
       2
-      /
+      / on(environment) group_left()
       (
-        sum by (environment) (
-          rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[6h])
-        ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score_6h
-    labels:
-      component: rails_sql
-      stage: main
-      tier: db
-      type: patroni
-    expr: |
-      sum by (environment) (
-        rate(gitlab_sql_duration_seconds_bucket{le="+Inf"}[6h])
+        gitlab_component_apdex:weight:score_6h{component="rails_sql",stage="main",tier="db",type="patroni"} > 0
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -316,9 +312,9 @@ groups:
       type: patroni
     expr: |
       sum by (environment,stage) (
-        rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[6h])
+        label_replace(rate(pg_stat_database_xact_commit{type="patroni", tier="db"}[6h]), "_c", "0", "", "")
         or
-        rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[6h])
+        label_replace(rate(pg_stat_database_xact_rollback{type="patroni", tier="db"}[6h]), "_c", "1", "", "")
       )
   - record: gitlab_component_errors:rate_6h
     labels:

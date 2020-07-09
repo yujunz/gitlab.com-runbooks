@@ -1,3 +1,4 @@
+local sliRecordingRulesSet = (import 'sli-recording-rule-set.libsonnet').sliRecordingRulesSet;
 local componentMetricsRuleSet = (import 'component-metrics-rule-set.libsonnet').componentMetricsRuleSet;
 local componentMappingRuleSet = (import 'component-mapping-rule-set.libsonnet').componentMappingRuleSet;
 local serviceMappingRuleSet = (import 'service-mapping-rule-set.libsonnet').serviceMappingRuleSet;
@@ -5,9 +6,14 @@ local serviceSLORuleSet = (import 'service-slo-rule-set.libsonnet').serviceSLORu
 local componentErrorRatioRuleSet = (import 'component-error-ratio-rule-set.libsonnet').componentErrorRatioRuleSet;
 local serviceErrorRatioRuleSet = (import 'service-error-ratio-rule-set.libsonnet').serviceErrorRatioRuleSet;
 local serviceNodeErrorRatioRuleSet = (import 'service-node-error-ratio-rule-set.libsonnet').serviceNodeErrorRatioRuleSet;
+local serviceApdexRatioRuleSet = (import 'service-apdex-ratio-rule-set.libsonnet').serviceApdexRatioRuleSet;
+local serviceNodeApdexRatioRuleSet = (import 'service-node-apdex-ratio-rule-set.libsonnet').serviceNodeApdexRatioRuleSet;
+local extraRecordingRuleSet = (import 'extra-recording-rule-set.libsonnet').extraRecordingRuleSet;
 
 local COMPONENT_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
 local NODE_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage', 'shard', 'fqdn'];
+
+local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 
 local MULTI_BURN_RATE_SUFFIXES = [
   '',  // For historical reasons, no suffix implies 1m
@@ -32,10 +38,15 @@ local ruleSetIterator(ruleSets) = {
   // Recording rules that get evaluated in Prometheus
   // should be contained within this stanza
   prometheus: {
+    // This should only be done at the Prometheus level
+    // as the group_left may not work correctly in all
+    // cases at the Thanos level
+    local substituteWeightWithRecordingRule = true,
 
     // Component metrics are the key metrics for each component.
     // Each burn-rate is a separate ruleset.
     componentMetrics: ruleSetIterator([
+      sliRecordingRulesSet(burnRate='1m'),
       componentMetricsRuleSet(
         burnRate='1m',
         // TODO: consider renaming the 1m rates for consistency
@@ -44,7 +55,9 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate',
         errorRate='gitlab_component_errors:rate',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
       ),
+      sliRecordingRulesSet(burnRate='5m'),
       componentMetricsRuleSet(
         burnRate='5m',
         apdexRatio='gitlab_component_apdex:ratio_5m',
@@ -52,7 +65,9 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate_5m',
         errorRate='gitlab_component_errors:rate_5m',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
       ),
+      sliRecordingRulesSet(burnRate='30m'),
       componentMetricsRuleSet(
         burnRate='30m',
         apdexRatio='gitlab_component_apdex:ratio_30m',
@@ -60,7 +75,9 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate_30m',
         errorRate='gitlab_component_errors:rate_30m',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
       ),
+      sliRecordingRulesSet(burnRate='1h'),
       componentMetricsRuleSet(
         burnRate='1h',
         apdexRatio='gitlab_component_apdex:ratio_1h',
@@ -68,7 +85,9 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate_1h',
         errorRate='gitlab_component_errors:rate_1h',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
       ),
+      sliRecordingRulesSet(burnRate='6h'),
       componentMetricsRuleSet(
         burnRate='6h',
         apdexRatio='gitlab_component_apdex:ratio_6h',
@@ -76,7 +95,16 @@ local ruleSetIterator(ruleSets) = {
         requestRate='gitlab_component_ops:rate_6h',
         errorRate='gitlab_component_errors:rate_6h',
         aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+        substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
       ),
+    ]),
+
+
+    // Component metrics are the key metrics for each component.
+    // Each burn-rate is a separate ruleset.
+    extraRecordingRules: ruleSetIterator([
+      extraRecordingRuleSet(burnRate)
+      for burnRate in multiburnFactors.allWindowIntervals
     ]),
 
     // Nodes metrics are the key metrics for each component, aggregated to the
@@ -95,6 +123,8 @@ local ruleSetIterator(ruleSets) = {
       ),
       componentMetricsRuleSet(
         burnRate='5m',
+        apdexRatio='gitlab_component_node_apdex:ratio_5m',
+        apdexWeight='gitlab_component_node_apdex:weight:score_5m',
         requestRate='gitlab_component_node_ops:rate_5m',
         errorRate='gitlab_component_node_errors:rate_5m',
         aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
@@ -156,6 +186,23 @@ local ruleSetIterator(ruleSets) = {
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),
+
+
+    // This rolls the component-level error ratios up to the service-level,
+    // as a Thanos aggregation
+    serviceApdexRatios: ruleSetIterator(std.flatMap(
+      function(suffix)
+        [
+          // 1m burn rates use 5m weight scores
+          // All other burn rates use the same burn rate as the ratio
+          serviceApdexRatioRuleSet(suffix=suffix, weightScoreSuffix=(if suffix == '' then '_5m' else suffix)),
+        ],
+      MULTI_BURN_RATE_SUFFIXES
+    ) + [
+      // We are only recording node-level apdex scores for 1m and 5m burn rates for now
+      serviceNodeApdexRatioRuleSet(suffix='', weightScoreSuffix='_5m'),
+      serviceNodeApdexRatioRuleSet(suffix='_5m', weightScoreSuffix='_5m'),
+    ]),
 
     // Component mappings are static recording rules which help
     // determine whether a component is being monitored. This helps

@@ -56,7 +56,7 @@ basic.dashboard(
     ],
   ), gridPos={ x: 0, y: 5100 }
 )
-.addPanel(saturationDetail.saturationDetailPanels(selector, components=[
+.addPanel(saturationDetail.saturationDetailPanels(selectorHash, components=[
             'private_runners',
             'shared_runners',
             'shared_runners_gitlab',

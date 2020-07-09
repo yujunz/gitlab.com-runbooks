@@ -6,11 +6,12 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 {
   type: 'praefect',
   tier: 'stor',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.995,
     errorRatio: 0.0005,
   },
-  eventBasedSLOTargets: {
+  monitoringThresholds: {
+    apdexScore: 0.995,
     errorRatio: 0.9995,  // 99.95% of Praefect requests should succeed, over multiple window periods
   },
   serviceDependencies: {

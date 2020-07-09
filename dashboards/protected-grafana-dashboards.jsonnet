@@ -102,7 +102,7 @@ local union(sets) = std.foldl(function(memo, a) std.setUnion(std.set(a), memo), 
         'O92e3k9Zk',
         'F2W0LV5Wk',
         '99GH9R8Wk',
-      ]
+      ],
     ]),
 
   folderTitles: [

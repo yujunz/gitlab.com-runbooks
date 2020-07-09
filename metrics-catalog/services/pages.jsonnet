@@ -6,8 +6,11 @@ local combined = metricsCatalog.combined;
 {
   type: 'pages',
   tier: 'lb',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     errorRatio: 0.005,
+  },
+  monitoringThresholds: {
+    errorRatio: 0.9999,
   },
   components: {
     loadbalancer: {

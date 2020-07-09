@@ -44,6 +44,15 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[1m])
       )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])
+      )
   - record: gitlab_component_apdex:ratio
     labels:
       component: server
@@ -67,15 +76,6 @@ groups:
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])
         ) > 0
       )
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      component: server
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1m])
-      )
   - record: gitlab_component_ops:rate
     labels:
       component: server
@@ -93,6 +93,15 @@ groups:
     expr: |
       sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[1m])
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_storage_action_seconds_bucket{le="+Inf"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -116,15 +125,6 @@ groups:
         sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="+Inf"}[1m])
         ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score
-    labels:
-      component: storage
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_storage_action_seconds_bucket{le="+Inf"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -175,6 +175,15 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[5m])
       )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[5m])
+      )
   - record: gitlab_component_apdex:ratio_5m
     labels:
       component: server
@@ -198,15 +207,6 @@ groups:
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[5m])
         ) > 0
       )
-  - record: gitlab_component_apdex:weight:score_5m
-    labels:
-      component: server
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[5m])
-      )
   - record: gitlab_component_ops:rate_5m
     labels:
       component: server
@@ -224,6 +224,15 @@ groups:
     expr: |
       sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[5m])
+      )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_storage_action_seconds_bucket{le="+Inf"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -247,15 +256,6 @@ groups:
         sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="+Inf"}[5m])
         ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score_5m
-    labels:
-      component: storage
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_storage_action_seconds_bucket{le="+Inf"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -306,6 +306,15 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[30m])
       )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[30m])
+      )
   - record: gitlab_component_apdex:ratio_30m
     labels:
       component: server
@@ -323,20 +332,9 @@ groups:
       )
       /
       2
-      /
+      / on(environment,stage) group_left()
       (
-        sum by (environment,stage) (
-          rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[30m])
-        ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score_30m
-    labels:
-      component: server
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[30m])
+        gitlab_component_apdex:weight:score_30m{component="server",tier="sv",type="registry"} > 0
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -356,6 +354,15 @@ groups:
       sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[30m])
       )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_storage_action_seconds_bucket{le="+Inf"}[30m])
+      )
   - record: gitlab_component_apdex:ratio_30m
     labels:
       component: storage
@@ -373,20 +380,9 @@ groups:
       )
       /
       2
-      /
+      / on(environment,stage) group_left()
       (
-        sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="+Inf"}[30m])
-        ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score_30m
-    labels:
-      component: storage
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_storage_action_seconds_bucket{le="+Inf"}[30m])
+        gitlab_component_apdex:weight:score_30m{component="storage",tier="sv",type="registry"} > 0
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -437,6 +433,15 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[1h])
       )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1h])
+      )
   - record: gitlab_component_apdex:ratio_1h
     labels:
       component: server
@@ -460,15 +465,6 @@ groups:
           rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1h])
         ) > 0
       )
-  - record: gitlab_component_apdex:weight:score_1h
-    labels:
-      component: server
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[1h])
-      )
   - record: gitlab_component_ops:rate_1h
     labels:
       component: server
@@ -486,6 +482,15 @@ groups:
     expr: |
       sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[1h])
+      )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_storage_action_seconds_bucket{le="+Inf"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -509,15 +514,6 @@ groups:
         sum by (environment,stage) (
           rate(registry_storage_action_seconds_bucket{le="+Inf"}[1h])
         ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score_1h
-    labels:
-      component: storage
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_storage_action_seconds_bucket{le="+Inf"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -568,6 +564,15 @@ groups:
       sum by (environment) (
         rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[6h])
       )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: server
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[6h])
+      )
   - record: gitlab_component_apdex:ratio_6h
     labels:
       component: server
@@ -585,20 +590,9 @@ groups:
       )
       /
       2
-      /
+      / on(environment,stage) group_left()
       (
-        sum by (environment,stage) (
-          rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[6h])
-        ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score_6h
-    labels:
-      component: server
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_http_request_duration_seconds_bucket{type="registry", le="+Inf"}[6h])
+        gitlab_component_apdex:weight:score_6h{component="server",tier="sv",type="registry"} > 0
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -618,6 +612,15 @@ groups:
       sum by (environment,stage) (
         rate(registry_http_requests_total{type="registry", code=~"5.."}[6h])
       )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: storage
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment,stage) (
+        rate(registry_storage_action_seconds_bucket{le="+Inf"}[6h])
+      )
   - record: gitlab_component_apdex:ratio_6h
     labels:
       component: storage
@@ -635,20 +638,9 @@ groups:
       )
       /
       2
-      /
+      / on(environment,stage) group_left()
       (
-        sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="+Inf"}[6h])
-        ) > 0
-      )
-  - record: gitlab_component_apdex:weight:score_6h
-    labels:
-      component: storage
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment,stage) (
-        rate(registry_storage_action_seconds_bucket{le="+Inf"}[6h])
+        gitlab_component_apdex:weight:score_6h{component="storage",tier="sv",type="registry"} > 0
       )
   - record: gitlab_component_ops:rate_6h
     labels:

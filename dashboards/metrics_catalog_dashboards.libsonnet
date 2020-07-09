@@ -10,8 +10,8 @@ local selectors = import './lib/selectors.libsonnet';
 local defaultEnvironmentSelector = { environment: '$environment' };
 
 local getLatencyPercentileForService(service) =
-  if std.objectHas(service, 'monitoringThresholds') && std.objectHas(service.monitoringThresholds, 'apdexRatio') then
-    service.monitoringThresholds.apdexRatio
+  if std.objectHas(service, 'deprecatedSingleBurnThresholds') && std.objectHas(service.deprecatedSingleBurnThresholds, 'apdexRatio') then
+    service.deprecatedSingleBurnThresholds.apdexRatio
   else
     0.95;
 
@@ -63,7 +63,7 @@ local componentOverviewMatrixRow(
     local service = metricsCatalog.getService(serviceType);
     local component = service.components[componentName];
     local percentile = getLatencyPercentileForService(service);
-    local formatConfig = { percentile_humanized: 'p' + (percentile * 100), componentName: componentName };
+    local formatConfig = { percentile_humanized: 'p%g' % [percentile * 100], componentName: componentName };
 
     basic.latencyTimeseries(
       title=(if title == null then 'Estimated %(percentile_humanized)s latency for %(componentName)s' + componentName else title) % formatConfig,
@@ -178,7 +178,6 @@ local componentOverviewMatrixRow(
     local filteredSelectorHash = selectors.without(selectorHash, [
       'type',
     ] + staticLabelNames);
-    local selector = selectors.serializeHash(filteredSelectorHash);
 
     row.new(title='🔬 %(componentName)s Component Detail' % { componentName: componentName }, collapse=true)
     .addPanels(
@@ -193,7 +192,7 @@ local componentOverviewMatrixRow(
                       title='Estimated %(percentile_humanized)s ' + componentName + ' Latency - ' + aggregationSet.title,
                       serviceType=serviceType,
                       componentName=componentName,
-                      selector=selector,
+                      selector=filteredSelectorHash,
                       legendFormat='%(percentile_humanized)s ' + aggregationSet.legendFormat,
                       aggregationLabels=aggregationSet.aggregationLabels,
                       min=minLatency,
@@ -208,7 +207,7 @@ local componentOverviewMatrixRow(
                       componentName=componentName,
                       legendFormat=aggregationSet.legendFormat,
                       aggregationLabels=aggregationSet.aggregationLabels,
-                      selector=selector,
+                      selector=filteredSelectorHash,
                     )
                   else
                     null,
@@ -218,7 +217,7 @@ local componentOverviewMatrixRow(
                       title=componentName + ' RPS - ' + aggregationSet.title,
                       serviceType=serviceType,
                       componentName=componentName,
-                      selector=selector,
+                      selector=filteredSelectorHash,
                       legendFormat=aggregationSet.legendFormat,
                       aggregationLabels=aggregationSet.aggregationLabels
                     )

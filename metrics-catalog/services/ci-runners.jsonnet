@@ -13,12 +13,13 @@ local rateMetric = metricsCatalog.rateMetric;
    * alert when the p50 exceeds 60s. As the service improves, we can improve the target,
    * but setting this to p95 initially will just generate a lot of unhelpful alerts.
    */
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.80,
     errorRatio: 0.2,
     alertTriggerDuration: 'long',
   },
-  eventBasedSLOTargets: {
+  monitoringThresholds: {
+    apdexScore: 0.97,
     errorRatio: 0.995,  // 99.5% of ci-runner requests should succeed, over multiple window periods
   },
   serviceDependencies: {

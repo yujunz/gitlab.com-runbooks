@@ -5,9 +5,13 @@ local rateMetric = metricsCatalog.rateMetric;
 {
   type: 'frontend',
   tier: 'lb',
+  deprecatedSingleBurnThresholds: {
+    apdexRatio: 0.999,
+    errorRatio: 0.0001,
+  },
   monitoringThresholds: {
-    apdexRatio: 0.9,
-    errorRatio: 0.0005,
+    apdexScore: 0.999,
+    errorRatio: 0.9999,
   },
   serviceDependencies: {
     web: true,

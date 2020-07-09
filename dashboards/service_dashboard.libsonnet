@@ -23,6 +23,7 @@ local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local selectors = import './lib/selectors.libsonnet';
 local systemDiagramPanel = import 'system_diagram_panel.libsonnet';
 local kubeEmbeddedDashboards = import 'kubernetes_embedded_dashboards.libsonnet';
+local statusDescription = import 'status_description.libsonnet';
 
 local defaultEnvironmentSelector = { environment: '$environment' };
 
@@ -54,19 +55,50 @@ local headlineMetricsRow(
   local hasApdex = metricsCatalogServiceInfo.hasApdex();
   local hasErrorRate = metricsCatalogServiceInfo.hasErrorRate();
   local hasRequestRate = metricsCatalogServiceInfo.hasRequestRate();
+  local serviceSelector = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
-  local cells = std.prune([
-    if hasApdex then keyMetrics.apdexPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash, description=getApdexDescription(metricsCatalogServiceInfo)) else null,
-    if hasErrorRate then keyMetrics.errorRatesPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash) else null,
-    if hasRequestRate then keyMetrics.qpsPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash) else null,
-    if showSaturationCell then keyMetrics.saturationPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=saturationEnvironmentSelectorHash) else null,
-  ]);
+  local columns =
+    (
+      if hasApdex then
+        [[
+          keyMetrics.apdexPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash, description=getApdexDescription(metricsCatalogServiceInfo)),
+          statusDescription.serviceApdexStatusDescriptionPanel(serviceSelector),
+        ]]
+      else
+        []
+    )
+    +
+    (
+      if hasErrorRate then
+        [[
+          keyMetrics.errorRatesPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
+          statusDescription.serviceErrorStatusDescriptionPanel(serviceSelector),
+        ]]
+      else
+        []
+    )
+    +
+    (
+      if hasRequestRate then
+        [[
+          keyMetrics.qpsPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=environmentSelectorHash),
+        ]]
+      else
+        []
+    )
+    +
+    (
+      if showSaturationCell then
+        [[
+          keyMetrics.saturationPanel(serviceType, serviceStage, compact=true, environmentSelectorHash=saturationEnvironmentSelectorHash),
+        ]]
+      else
+        []
+    );
 
-  layout.grid([
-    row.new(title='🌡️ Service Level Indicators (𝙎𝙇𝙄𝙨)', collapse=false),
-  ], cols=1, rowHeight=1, startRow=startRow)
+  layout.grid([row.new(title='🌡️ Service Level Indicators (𝙎𝙇𝙄𝙨)', collapse=false)], cols=1, rowHeight=1, startRow=startRow)
   +
-  layout.grid(cells, cols=std.length(cells), rowHeight=5, startRow=startRow + 1);
+  layout.splitColumnGrid(columns, [5, 1], startRow=startRow + 1);
 
 local overviewDashboard(
   type,
@@ -139,7 +171,8 @@ local overviewDashboard(
     .addPanels(
       if std.length(saturationComponents) > 0 then
         [
-          local saturationSelector = selectors.serializeHash(saturationEnvironmentSelectorHash { type: type, stage: stage });
+          // saturationSelector is env + type + stage
+          local saturationSelector = saturationEnvironmentSelectorHash { type: type, stage: stage };
           saturationDetail.saturationDetailPanels(saturationSelector, components=saturationComponents)
           { gridPos: { x: 0, y: 500, w: 24, h: 1 } },
         ]

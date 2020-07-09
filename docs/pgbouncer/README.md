@@ -84,9 +84,3 @@ been removed.
 The healthcheck now is a simple TCP check to the pgbouncer port.  This causes
 pgbouncer logs about connections to 'nodb' by 'nouser'; do not be alarmed by these.
 
-## I think we need more connections, how can I check this?
-
-Log in to the PgBouncer database, then run `show lists`. If `free_servers` is 0
-this means you need more backend connections. If `free_clients` is 0 this means
-you need more frontend connections. Both can be changed by reloading PgBouncer.
-

@@ -6,12 +6,13 @@ local customRateQuery = metricsCatalog.customRateQuery;
 {
   type: 'git',
   tier: 'sv',
-  monitoringThresholds: {
+  deprecatedSingleBurnThresholds: {
     apdexRatio: 0.95,
     errorRatio: 0.005,
   },
-  eventBasedSLOTargets: {
-    errorRatio: 0.995,  // 99.5% of Git requests should succeed, over multiple window periods
+  monitoringThresholds: {
+    apdexScore: 0.9995,
+    errorRatio: 0.9995,
   },
   serviceDependencies: {
     gitaly: true,

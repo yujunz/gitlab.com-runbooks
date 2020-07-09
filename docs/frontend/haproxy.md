@@ -251,6 +251,16 @@ The load balancer backend service is defined in the corresponding tf module (at 
 
 It can be done using the GCP cloud console: Load Balancing -> click on the relevant lb -> Edit -> Backend configuration -> remove the HAProxy machine from the "Select existing instances" list -> Click update.
 
+## `hatop`
+
+[hatop](http://feurix.org/projects/hatop/readme/) is an ncurses-based command-line GUI for inspecting the status of haproxy.
+
+It can be run on any haproxy (`*-lb-*`) host via:
+
+```
+sudo hatop -s /run/haproxy/admin.sock
+```
+
 # HAPrpoxy Alert Troubleshooting
 
 ## Reason
