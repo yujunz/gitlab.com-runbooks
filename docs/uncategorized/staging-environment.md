@@ -27,6 +27,7 @@ Access to staging environment is treated the same as production as per
   for examples.
 * After the data bag is uploaded you will have console access on instances that
   chef-client has subsequently run on. This may take up to 30m.
+* [Configure the ssh bastion hosts](../../bastions/gstg-bastions.md)
 * Try to start a console with:
 
     ```
