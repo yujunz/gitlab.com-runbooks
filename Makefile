@@ -58,6 +58,7 @@ test-alertmanager: alertmanager/alertmanager.yml
 .PHONY: test
 test:
 	./scripts/validate-service-mappings
+	# TODO: Add rules/*/*.yml when valid rules are created.
 	$(PROMTOOL_COMMAND) check rules rules/*.yml thanos-rules/*.yml
 	# Prometheus config checks are stricter than rules checks, so use a fake config to check this too
 	$(PROMTOOL_COMMAND)  check config scripts/prometheus.yml

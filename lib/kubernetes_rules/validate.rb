@@ -4,8 +4,8 @@
 module KubernetesRules
   # Validate confirms both the yaml and rules are legit
   class Validate
-    def initialize
-      @output_dir = './rules-k8s'
+    def initialize(output_dir: './rules-k8s')
+      @output_dir = output_dir
     end
 
     def validate!
