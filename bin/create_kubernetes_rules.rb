@@ -21,5 +21,9 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+# Create from the "all" shards rules dir.
 KubernetesRules::Create.new.create! if options[:create]
+# Create from the "default" shard rules dir. There is currently only one K8s shard,
+# so output into the same dir as the "all" rules.
+KubernetesRules::Create.new(input_dir: "./rules/default").create! if options[:create]
 KubernetesRules::Validate.new.validate! if options[:validate]
