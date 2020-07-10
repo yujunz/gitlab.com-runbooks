@@ -29,7 +29,7 @@ basic.dashboard(
         (sum by (env) (avg_over_time(gitlab_service_ops:rate{type="sidekiq", stage="main", env="gprd", monitor="global"}[1w]))
          or
          sum by (env) (avg_over_time(gitlab_service_ops:rate{type="sidekiq", stage="main", env="gprd", monitor!="global"}[1w]))
-         ) * 604800
+         ) * 86400 * 7
       |||,
     ),
   ], cols=1, rowHeight=12, startRow=100)
