@@ -7,6 +7,7 @@ basic.dashboard(
   tags=['general'],
   time_from='now-6M',
   time_to='now',
+  includeStandardEnvironmentAnnotations=false
 )
 .addPanels(
   layout.grid([
@@ -14,8 +15,11 @@ basic.dashboard(
         title='Application Demand Indicators Help',
         mode='markdown',
         content=|||
-          Application demand refers to how the application takes a user request and passes it on to the
-          underlying infrastructure.
+          Application demand is used as a way to identify that there may have been an application level change that
+          alters how the application makes requests of the underlying infrastructure.
+
+          For more information, please view the [Indicators section on the Scalability Team
+          Handbook Page](https://about.gitlab.com/handbook/engineering/infrastructure/team/scalability#).
         |||
       ),
   ], cols=1, rowHeight=3, startRow=100)
