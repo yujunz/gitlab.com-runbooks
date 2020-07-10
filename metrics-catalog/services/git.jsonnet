@@ -3,7 +3,7 @@ local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local customRateQuery = metricsCatalog.customRateQuery;
 
-{
+metricsCatalog.serviceDefinition({
   type: 'git',
   tier: 'sv',
   deprecatedSingleBurnThresholds: {
@@ -82,4 +82,4 @@ local customRateQuery = metricsCatalog.customRateQuery;
       significantLabels: [],
     },
   },
-}
+})

@@ -4,7 +4,7 @@ local rateMetric = metricsCatalog.rateMetric;
 local derivMetric = metricsCatalog.derivMetric;
 local customQuery = metricsCatalog.customQuery;
 
-{
+metricsCatalog.serviceDefinition({
   type: 'search',
   tier: 'inf',
   slos: {
@@ -35,4 +35,4 @@ local customQuery = metricsCatalog.customQuery;
       significantLabels: ['name'],
     },
   },
-}
+})

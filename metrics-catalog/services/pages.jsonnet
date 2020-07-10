@@ -3,7 +3,7 @@ local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local combined = metricsCatalog.combined;
 
-{
+metricsCatalog.serviceDefinition({
   type: 'pages',
   tier: 'lb',
   deprecatedSingleBurnThresholds: {
@@ -37,4 +37,4 @@ local combined = metricsCatalog.combined;
       significantLabels: [],
     },
   },
-}
+})

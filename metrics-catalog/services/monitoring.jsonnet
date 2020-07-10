@@ -6,7 +6,7 @@ local productionEnvironmentsSelector = {
   environment: { re: 'gprd|ops|ci-prd' },
 };
 
-{
+metricsCatalog.serviceDefinition({
   type: 'monitoring',
   tier: 'inf',
   deprecatedSingleBurnThresholds: {
@@ -160,4 +160,4 @@ local productionEnvironmentsSelector = {
       significantLabels: ['fqdn', 'handler'],
     },
   },
-}
+})
