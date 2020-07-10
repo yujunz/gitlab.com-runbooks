@@ -8,8 +8,7 @@ panel_groups:
     metrics:
     - id: line-chart-latency-apdex-redis-service
       label: "{{type}} Service"
-      query_range: >-
-        avg(avg_over_time(gitlab_service_apdex:ratio{environment="gprd", type="redis", stage="main"}[1m]))
+      query_range: avg(gitlab_service_apdex:ratio_5m{environment="gprd", type="redis", stage="main"})
         by (type)
       unit: "%"
     type: line-chart
@@ -18,8 +17,7 @@ panel_groups:
     metrics:
     - id: line-chart-redis-service-error-ratios
       label: "{{type}} Service"
-      query_range: >-
-        avg(avg_over_time(gitlab_service_errors:ratio{environment="gprd", type="redis", stage="main"}[1m]))
+      query_range: avg(gitlab_service_errors:ratio_5m{environment="gprd", type="redis", stage="main"})
         by (type)
       unit: "%"
     type: line-chart
@@ -28,9 +26,8 @@ panel_groups:
     metrics:
     - id: line_chart_rps_redis_service_normal
       label: "{{type}} service"
-      query_range: >-
-        sum(avg_over_time(gitlab_service_ops:rate{environment="gprd", type="redis", stage="main"}[1m]))
-        by (type)
+      query_range: sum(gitlab_service_ops:rate_5m{environment="gprd", type="redis", stage="main"}) by
+        (type)
       unit: "%"
     - id: line_chart_rps_redis_service_upper_limit
       label: upper limit

@@ -43,7 +43,7 @@ local apdexPanel() =
       |||
         min(
           min_over_time(
-            gitlab_service_apdex:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
+            gitlab_service_apdex:ratio_5m{environment="$environment", type="$type", stage!=""}[$__interval]
           )
         ) by (stage)
       |||,
@@ -85,7 +85,7 @@ local errorRatesPanel() =
       |||
         max(
           max_over_time(
-            gitlab_service_errors:ratio{environment="$environment", type="$type", stage!=""}[$__interval]
+            gitlab_service_errors:ratio_5m{environment="$environment", type="$type", stage!=""}[$__interval]
           )
         ) by (stage)
       |||,

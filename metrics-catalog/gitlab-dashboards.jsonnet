@@ -17,7 +17,7 @@ local generateDashboardForService(service) =
             metrics: [
               {
                 id: 'line-chart-latency-apdex-%(type)s-service' % formatConfig,
-                query_range: 'avg(avg_over_time(gitlab_service_apdex:ratio{environment="gprd", type="%(type)s", stage="main"}[1m])) by (type)' % formatConfig,
+                query_range: 'avg(gitlab_service_apdex:ratio_5m{environment="gprd", type="%(type)s", stage="main"}) by (type)' % formatConfig,
                 unit: '%',
                 label: '{{type}} Service' % formatConfig,
               },
@@ -30,7 +30,7 @@ local generateDashboardForService(service) =
             metrics: [
               {
                 id: 'line-chart-%(type)s-service-error-ratios' % formatConfig,
-                query_range: 'avg(avg_over_time(gitlab_service_errors:ratio{environment="gprd", type="%(type)s", stage="main"}[1m])) by (type)' % formatConfig,
+                query_range: 'avg(gitlab_service_errors:ratio_5m{environment="gprd", type="%(type)s", stage="main"}) by (type)' % formatConfig,
                 unit: '%',
                 label: '{{type}} Service' % formatConfig,
               },
@@ -43,7 +43,7 @@ local generateDashboardForService(service) =
             metrics: [
               {
                 id: 'line_chart_rps_%(type)s_service_normal' % formatConfig,
-                query_range: 'sum(avg_over_time(gitlab_service_ops:rate{environment="gprd", type="%(type)s", stage="main"}[1m])) by (type)' % formatConfig,
+                query_range: 'sum(gitlab_service_ops:rate_5m{environment="gprd", type="%(type)s", stage="main"}) by (type)' % formatConfig,
                 unit: '%',
                 label: '{{type}} service',
               },
