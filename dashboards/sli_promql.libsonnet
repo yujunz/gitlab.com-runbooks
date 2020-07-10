@@ -16,13 +16,15 @@ local formatConfigForSelectorHash(selectorHash) =
       if worstCase then
         /* Min apdex case */
         |||
-          min by (type) (min_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
+          min by (type) (min_over_time(gitlab_service_apdex:ratio_5m{%(globalSelector)s}[%(range)s]))
           or
-          min by (type) (gitlab_service_apdex:ratio{%(selector)s})
+          min by (type) (min_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
         ||| % formatConfigForSelectorHash(selectorHash) { range: range }
       else
         /* Avg apdex case */
         |||
+          avg by (type) (avg_over_time(gitlab_service_apdex:ratio_5m{%(globalSelector)s}[%(range)s]))
+          or
           avg by (type) (avg_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
         ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
@@ -50,9 +52,9 @@ local formatConfigForSelectorHash(selectorHash) =
 
     serviceApdexQueryWithOffset(selectorHash, offset)::
       |||
-        min by (type) (gitlab_service_apdex:ratio{%(globalSelector)s} offset %(offset)s)
+        min by (type) (gitlab_service_apdex:ratio_5m{%(globalSelector)s} offset %(offset)s)
         or
-        min by (type) (gitlab_service_apdex:ratio{%(selector)s} offset %(offset)s)
+        min by (type) (gitlab_service_apdex:ratio{%(globalSelector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
     componentApdexQuery(selectorHash, range)::

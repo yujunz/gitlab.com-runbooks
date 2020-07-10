@@ -195,25 +195,7 @@ basic.dashboard(
     min=0,
     show=false,
   ),
-  gridPos=genGridPos(0, 0.5)
-)
-.addPanel(
-  // This is deprecated: replace with a % of SLO value instead
-  generateAnomalyPanel(
-    'Anomaly detection: Latency: Apdex Score',
-    |||
-      (
-        gitlab_service_apdex:ratio{environment="$environment", stage="$stage"}
-        - gitlab_service_apdex:ratio:avg_over_time_1w{environment="$environment", stage="$stage"}
-      )
-      /
-      gitlab_service_apdex:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-    |||,
-    maxY=0.5,
-    minY=-12,
-    sort='increasing',
-  ),
-  gridPos=genGridPos(1, 0.5)
+  gridPos=genGridPos(0, 0.5, w=2)
 )
 .addPanel(
   generalGraphPanel(
@@ -240,25 +222,7 @@ basic.dashboard(
     min=0,
     show=false,
   ),
-  gridPos=genGridPos(0, 1.5)
-)
-.addPanel(
-  // This is deprecated: replace with a % of SLO value instead
-  generateAnomalyPanel(
-    'Anomaly detection: Error Ratio',
-    |||
-      (
-        gitlab_service_errors:ratio{environment="$environment", stage="$stage"}
-        - gitlab_service_errors:ratio:avg_over_time_1w{environment="$environment", stage="$stage"}
-      )
-      /
-      gitlab_service_errors:ratio:stddev_over_time_1w{environment="$environment", stage="$stage"}
-    |||,
-    maxY=12,
-    minY=-0.5,
-    sort='decreasing',
-  ),
-  gridPos=genGridPos(1, 1.5)
+  gridPos=genGridPos(0, 1.5, w=2)
 )
 .addPanel(
   generalGraphPanel(
@@ -308,6 +272,7 @@ basic.dashboard(
   gridPos=genGridPos(1, 2.5)
 )
 .addPanel(
+  // TODO: get rid of this: aggregating these saturation values in this manner makes litter sense
   generalGraphPanel(
     'Saturation',
     description='Saturation is a measure of the most saturated component of the service. Lower is better.',
@@ -318,7 +283,7 @@ basic.dashboard(
       |||
         max(
           max_over_time(
-            gitlab_service_saturation:ratio{environment="$environment", stage="$stage"}[$__interval]
+            gitlab_component_saturation:ratio{environment="$environment", stage="$stage"}[$__interval]
           )
         ) by (type)
       |||,

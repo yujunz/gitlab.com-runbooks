@@ -19,7 +19,7 @@ local triageDashboard =
             metrics: [
               {
                 id: 'line-chart-latency-apdex-%(type)s-service' % formatConfig,
-                query_range: 'min(min_over_time(gitlab_service_apdex:ratio{environment="gprd", type="%(type)s", stage="main"}[1m])) by (type)' % formatConfig,
+                query_range: 'min(gitlab_service_apdex:ratio_5m{environment="gprd", type="%(type)s", stage="main"}) by (type)' % formatConfig,
                 unit: '%',
                 label: '{{type}} Service' % formatConfig,
               },
