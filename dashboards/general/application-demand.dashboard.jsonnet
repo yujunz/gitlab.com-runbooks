@@ -19,7 +19,7 @@ basic.dashboard(
           alters how the application makes requests of the underlying infrastructure.
 
           For more information, please view the [Indicators section on the Scalability Team
-          Handbook Page](https://about.gitlab.com/handbook/engineering/infrastructure/team/scalability#).
+          Handbook Page](https://about.gitlab.com/handbook/engineering/infrastructure/team/scalability#indicators).
         |||
       ),
   ], cols=1, rowHeight=3, startRow=100)
