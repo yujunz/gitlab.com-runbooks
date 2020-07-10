@@ -31,6 +31,7 @@ basic.dashboard(
          sum by (env) (avg_over_time(gitlab_service_ops:rate{type="sidekiq", stage="main", env="gprd", monitor!="global"}[1w]))
          ) * 86400 * 7
       |||,
+      legendFormat="{{env}}"
     ),
   ], cols=1, rowHeight=12, startRow=100)
   +
@@ -41,9 +42,9 @@ basic.dashboard(
         (sum by (env, type) (avg_over_time(gitlab_service_ops:rate{type=~"redis|redis-cache|redis-sidekiq", stage="main", env="gprd", monitor="global"}[1w]))
         or
         sum by (env, type) (avg_over_time(gitlab_service_ops:rate{type=~"redis(-cache|-sidekiq)?", stage="main", env="gprd", monitor!="global"}[1w]))
-        ) * 604800
-
+        ) * 86400 * 7
       |||,
+      legendFormat="{{env}} - {{type}}"
     ),
   ], cols=1, rowHeight=12, startRow=100)
 )
