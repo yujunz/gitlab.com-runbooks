@@ -15,6 +15,26 @@ groups:
       )
   - record: gitlab_component_ops:rate
     labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_total{storage="shared_state"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_exceptions_total{storage="shared_state"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
       component: secondary_servers
       tier: db
       type: redis
@@ -30,6 +50,26 @@ groups:
     expr: |
       sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[5m]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_total{storage="shared_state"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_exceptions_total{storage="shared_state"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -51,6 +91,26 @@ groups:
       )
   - record: gitlab_component_ops:rate_30m
     labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_total{storage="shared_state"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_exceptions_total{storage="shared_state"}[30m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
       component: secondary_servers
       tier: db
       type: redis
@@ -66,6 +126,26 @@ groups:
     expr: |
       sum by (environment,stage) (
         rate(redis_commands_processed_total{type="redis"}[1h]) and on (instance) redis_instance_info{role="master"}
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_total{storage="shared_state"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_exceptions_total{storage="shared_state"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -87,6 +167,26 @@ groups:
       )
   - record: gitlab_component_ops:rate_6h
     labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_total{storage="shared_state"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_exceptions_total{storage="shared_state"}[6h])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
       component: secondary_servers
       tier: db
       type: redis
@@ -100,6 +200,12 @@ groups:
   - record: gitlab_component_service:mapping
     labels:
       component: primary_server
+      tier: db
+      type: redis
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      component: rails_redis_client
       tier: db
       type: redis
     expr: '1'
