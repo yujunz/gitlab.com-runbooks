@@ -108,6 +108,29 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn'],
     },
 
+    thanos_rule_alert_sender: {
+      local thanosRuleAlertsSelector = productionEnvironmentsSelector {
+        job: 'thanos',
+        type: 'monitoring',
+      },
+
+      staticLabels: {
+        environment: 'ops',
+      },
+
+      requestRate: rateMetric(
+        counter='thanos_alert_sender_alerts_sent_total',
+        selector=thanosRuleAlertsSelector
+      ),
+
+      errorRate: rateMetric(
+        counter='thanos_alert_sender_errors_total',
+        selector=thanosRuleAlertsSelector
+      ),
+
+      significantLabels: ['fqdn'],
+    },
+
     grafana: {
       local grafanaSelector = productionEnvironmentsSelector {
         job: 'grafana',
