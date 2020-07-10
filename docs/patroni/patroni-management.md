@@ -16,7 +16,7 @@ Patroni binaries runs in the same host as the PostgreSQL database. In a sense, P
    cluster member.
 1. `systemctl enable patroni && systemctl start patroni` (for some reason we do
    not automate this yet, but this operation is rare).
-1. Follow the patroni logs. A pg_basebackup will take several hours, after which
+1. Follow the patroni logs. Current implementation for bootstraping new nodes implies taking a `pg_basebackup` from the leader. This will take several hours, after which
    point streaming replication will begin. Silence alerts as necessary.
 
 ## Scaling the cluster down
@@ -28,7 +28,8 @@ Patroni binaries runs in the same host as the PostgreSQL database. In a sense, P
    cluster down: follow the [replica maintenance](#replica-maintenance)
    instructions.
 1. Decrease the node count of `patroni` in [terraform][environment-variables].
-   Carefully read the plan and apply the terraform.
+   Review the terraform plan carefully, and then apply it.
+
 
 
 ## Patroni basics
@@ -43,7 +44,17 @@ Is located at `/var/opt/gitlab/patroni/patroni.yml`. It contains all the directi
 
 ### Checking service status
 
-`patroni` service is managed with systemd, so you can check the service status with `systemctl status patroni` and logs with `journalctl -u patroni` (it should be enabled and running).
+### Patroni configuration file
+Is located at `/var/opt/gitlab/patroni/patroni.yml`. It contains all the directives to configure patroni and PostgreSQL instances. It's divided in sections, the main ones being:
+- `scope`: Cluster name
+- `name`: Name of this instance
+- `consul`: Location of the consul agent (usually localhost)
+- `bootstrap`: Directives to configure and deploy new instances
+- `postgresql`: General configuration settings for PostgreSQL 
+
+### Checking service status
+
+The `patroni` service is managed with systemd, so you can check the service status with `systemctl status patroni` and logs with `journalctl -u patroni` (it should be enabled and running).
 
 Run `gitlab-patronictl list` to check the state of the patroni cluster, you should see the new node join the cluster and go through the following states:
 - creating replica
@@ -55,16 +66,28 @@ the node will also be added to the consul DNS entry, you can verify that with:
 $ dig @127.0.0.1 -p8600 +short replica.patroni.service.consul.
 ```
 
-At the moment of writing the database is 4TB big and it takes ~3h for a new node to catch up.
+At the moment of writing the database is ~7TB big and it takes ~4h for a new node to catch up.
 
 ## Cluster information
 
-Run `gitlab-patronictl list` on any Patroni member to list all the cluster members and their statuses. It can be only a sinle `Leader` for the cluster.
+Run `gitlab-patronictl list` on any Patroni member to list all the cluster members and their statuses. There can be only a single `Leader` for the cluster.
 
 A leader change is an important event. When unexpected, this leader change is call a `FailOver`. Under controled circumstances (i.e. when upgrading), this is call a `SwitchOver`, and Patroni has a special command for doing this.
 
 ```
 patroni-01-db-gstg $ gitlab-patronictl list
++-----------------+------------------------------------------------+---------------+--------+---------+----+-----------+
+|     Cluster     |                     Member                     |      Host     |  Role  |  State  | TL | Lag in MB |
++-----------------+------------------------------------------------+---------------+--------+---------+----+-----------+
+| pg11-ha-cluster | patroni-01-db-gstg.c.gitlab-staging-1.internal | 10.224.29.101 |        | running |  8 |           |
+| pg11-ha-cluster | patroni-02-db-gstg.c.gitlab-staging-1.internal | 10.224.29.102 |        | running |  8 |           |
+| pg11-ha-cluster | patroni-04-db-gstg.c.gitlab-staging-1.internal | 10.224.29.104 | Leader | running |  8 |         0 |
+| pg11-ha-cluster | patroni-05-db-gstg.c.gitlab-staging-1.internal | 10.224.29.105 |        | running |  8 |         0 |
+| pg11-ha-cluster | patroni-06-db-gstg.c.gitlab-staging-1.internal | 10.224.29.106 |        | running |  8 |         0 |
++-----------------+------------------------------------------------+---------------+--------+---------+----+-----------+
+```
+
+You may want to use it in conjunction with `watch`, to automatically refresh the command each 30 seconds or so:
 
 +-----------------+------------------------------------------------+---------------+--------+---------+----+-----------+
 |     Cluster     |                     Member                     |      Host     |  Role  |  State  | TL | Lag in MB |
@@ -100,6 +123,46 @@ Under certain circumnstances, you may see an extra column labeled `Pending resta
 
 
 ```
+watch -n 30 'gitlab-patronictl list'
+```
+
+
+Under certain circumnstances, you may see an extra column labeled `Pending restart`, which looks like this:
+
+```
++-----------------+-----------------------------------------------+--------------+--------+---------+---+-----------+----------------+
+|     Cluster     |                     Member                    |      Host    |  Role  |  State  | TL| Lag in MB | Pending restart|
++-----------------+-----------------------------------------------+--------------+--------+---------+---+-----------+----------------+
+| pg11-ha-cluster | patroni-01-db-gstg.c.gitlab-staging-1.internal| 10.224.29.101|        | running |  8|           |                |
+| pg11-ha-cluster | patroni-02-db-gstg.c.gitlab-staging-1.internal| 10.224.29.102|        | running |  8|           |        *       |
+| pg11-ha-cluster | patroni-04-db-gstg.c.gitlab-staging-1.internal| 10.224.29.104| Leader | running |  8|         0 |        *       |
+| pg11-ha-cluster | patroni-05-db-gstg.c.gitlab-staging-1.internal| 10.224.29.105|        | running |  8|         0 |                |
+| pg11-ha-cluster | patroni-06-db-gstg.c.gitlab-staging-1.internal| 10.224.29.106|        | running |  8|         0 |                |
++-----------------+-----------------------------------------------+--------------+--------+---------+---+-----------+----------------+
+
+
+```
+
+In the previous example, members `patroni-02-db-gstg.c.gitlab-staging-1.internal` and `patroni-03-db-gstg.c.gitlab-staging-1.internal` are waiting for a restart in order to apply some configuration changes.
+
+If you need to know what those _Pending restart_ settings are, execute the following in the instance you need to verify:
+
+```sh
+sudo gitlab-psql -c "select name, setting,  short_desc, sourcefile, sourceline  from pg_settings where pending_restart"
+
+```
+
+And a possible result:
+```
+      name       | setting |                     short_desc                     |               sourcefile                | sourceline 
+-----------------+---------+----------------------------------------------------+-----------------------------------------+------------
+ max_connections | 500     | Sets the maximum number of concurrent connections. | /etc/postgresql/11/main/postgresql.conf |         64
+
+```
+
+### Restarting a node
+To force the restart of a specific member you can execute (on any node)
+`sudo gitlab-patronictl restart pg11-ha-cluster <member>`
 
 In the example above, members `patroni-02-db-gstg.c.gitlab-staging-1.internal` and `patroni-03-db-gstg.c.gitlab-staging-1.internal` are waiting for a restart in order to apply some configuration changes.
 
@@ -142,7 +205,7 @@ node['gitlab-patroni']['patroni']['config']['bootstrap']['dcs']['standby_cluster
 }
 ```
 
-You'd need an extra setup on the remote master side:
+You'd need some extra setup on the remote master side:
 
 1. Create a replication user with a username/password matching the ones you have in `node['gitlab-patroni']['patroni']['users']['replication']`
     * `CREATE USER "gitlab-replicator" LOGIN REPLICATION PASSWORD 'hunter1';`
@@ -275,7 +338,7 @@ $ OPS_API_TOKEN=secure-token MIGRATION_ENV=gprd-or-gstg ansible-playbook -i prod
 ## Replica Maintenance
 
 If clients are connecting to replicas by means of [service
-discovery][service-discovery] (as opposed to hard-coded list of hosts), you can
+discovery][service-discovery] (as opposed to hard-coded list of hosts), you can temporarly
 remove a replica from the list of hosts used by the clients by tagging it as not
 suitable for failing over (`nofailover: true`) and load balancing (`noloadbalance: true`).
 
@@ -307,11 +370,10 @@ suitable for failing over (`nofailover: true`) and load balancing (`noloadbalanc
    ```
 
    Note: Usually there are three pgbouncer instances running
-   on a single replica, so make sure they are all drained. Replace `pgb-console` above
-   with `pgb-console-1` and `pgb-console-2`.
+   on a single replica.
 
 You can see an example of taking a node out of service [in this
-issue](https://gitlab.com/gitlab-com/gl-infra/production/issues/1061).
+issue](https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2195).
 
 ### Permanently marking a replica as in maintenance
 
@@ -418,14 +480,59 @@ replicating again.
 ### Diverged timeline WAL segments in GCS after failover
 
 Our primary Postgres node is configured to archive WAL segments to GCS. These
-segments are pulled by wal-g on another node in recovery mode, and replayed.
+segments are pulled by wal-e on another node in recovery mode, and replayed.
 This process acts as a continuous test of our ability to restore our database
 state from archived WAL segments. Sometimes, during a failover, both the old
-primary and the new will have uploaded WAL segments, causing the DR archive that
+master and the new will have uploaded WAL segments, causing the DR archive that
 is consuming these segments from GCS to not be able to replay the diverged
 timeline. In the past we have solved this by rolling back the DR archive to an
-earlier state.
-See [../postgres-dr-delayed/postgres-dr-replicas.md](../postgres-dr-delayed/postgres-dr-replicas.md#restoring-with-a-disk-snapshot)
+earlier state:
+
+1. In the GCE console: stop the machine
+1. Edit the machine: write down (or take a screenshot) of the attachment details
+   of **all** extra disks. Specfically, we want the custom name (if any) and the
+   order they are attached in.
+1. Detach the data disk and save the machine.
+1. In the GCE console, find the most recent snapshot of the data disk before the
+   incident occurred. Copy its ID.
+1. Find the data disk in GCE. Write down its name, zone, type (standard/SSD),
+   and labels.
+1. Delete the data disk.
+1. Create a new GCE disk with the same name, zone, and type as the old data
+   disk. Select the "snapshot" option as source and enter the snapshot ID.
+1. When the disk has finished creating, attach it to the stopped machine using
+   the GCE console.
+1. Save the machine and examine the order of attached disks. If they are not in
+   the same order as before, you will have to detach and reattach disks as
+   appropriate. This is necessary because unfortunately we still have code that
+   makes assumptions about the udev-ordering of disks (sdb, sdc etc).
+1. Start the machine.
+1. `ssh` to the machine and start postgres: `gitlab-ctl start postgresql`.
+1. Tail the log file at `/var/log/gitlab/postgresql/current`. You should see it
+   successfully ingesting WAL segments in sequential order, e.g.: `LOG:  restored
+   log file "00000017000128AC00000087" from archive`.
+1. You should also see a message "FATAL:  the database system is starting up"
+   every 15s. These are due to attempted scrapes by the postgres exporter. After
+   a few minutes, these messages should stop and metrics from the machine should
+   be observable again.
+1. In prometheus, you should see the `pg_replication_lag` metric for this
+   instance begin to decrease. Recovery from GCS WAL segments is slow, and
+   during times of high traffic (when the postgres data ingestion rate is high)
+   recovery will slow. It might take days to recover, so be sure to silence any
+   replication lag alerts for enough time not to rudely wake the on-call.
+1. Check there is no terraform plan diff for the archival replicas. Run the
+   following for the gprd environment:
+
+   ```
+   tf plan -out plan -target module.postgres-dr-archive -target module.postgres-dr-delayed
+   ```
+
+   If there is a plan diff for mutable things like labels, apply it. If there is
+   a plan diff for more severe things like disk name, you might have made a
+   mistake and will have to repeat this whole procedure.
+
+This procedure is rather manual and lengthy, but this does not happen often and
+has no directly user-facing impact.
 
 ## Replacing a cluster with a new one
 
@@ -451,3 +558,23 @@ by running `sudo chef-client` across the cluster.
 [patroni-is-postmaster]: https://github.com/zalando/patroni/blob/13c88e8b7a27b68e5c554d83d14e5cf640871ccc/patroni/postmaster.py#L55-L58
 [upgrade-patroni-ansible]: https://gitlab.com/gitlab-com/gl-infra/ansible-migrations/blob/master/production-1172
 [chef-repo]: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/
+
+
+## Auditing patroni 
+
+Patroni holds a log file under `/var/log/gitlab/patroni/patroni.log` where patroni activity and messages can be found:
+```
+gerardoherzig@patroni-03-db-gstg.c.gitlab-staging-1.internal:~$ sudo tail /var/log/gitlab/patroni/patroni.log
+2020-06-26_19:08:55 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:08:55,397 INFO: no action.  i am a secondary and i am following a leader
+2020-06-26_19:09:05 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:05,278 INFO: Lock owner: patroni-04-db-gstg.c.gitlab-staging-1.internal; I am patroni-03-db-gstg.c.gitlab-staging-1.internal
+2020-06-26_19:09:05 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:05,278 INFO: does not have lock
+2020-06-26_19:09:05 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:05,288 INFO: no action.  i am a secondary and i am following a leader
+2020-06-26_19:09:15 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:15,279 INFO: Lock owner: patroni-04-db-gstg.c.gitlab-staging-1.internal; I am patroni-03-db-gstg.c.gitlab-staging-1.internal
+2020-06-26_19:09:15 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:15,279 INFO: does not have lock
+2020-06-26_19:09:15 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:15,290 INFO: no action.  i am a secondary and i am following a leader
+2020-06-26_19:09:25 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:25,394 INFO: Lock owner: patroni-04-db-gstg.c.gitlab-staging-1.internal; I am patroni-03-db-gstg.c.gitlab-staging-1.internal
+2020-06-26_19:09:25 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:25,394 INFO: does not have lock
+2020-06-26_19:09:25 patroni-03-db-gstg patroni[14726]:  2020-06-26 19:09:25,405 INFO: no action.  i am a secondary and i am following a leader
+```
+
+This is mainly useful when investigating an event like an unexpected leader change (failover)
