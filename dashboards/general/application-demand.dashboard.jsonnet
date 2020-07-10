@@ -16,8 +16,6 @@ basic.dashboard(
         content=|||
           Application demand refers to how the application takes a user request and passes it on to the
           underlying infrastructure.
-
-          For more information, please see the entry in the handbook page.
         |||
       ),
   ], cols=1, rowHeight=3, startRow=100)
