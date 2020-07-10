@@ -29,7 +29,7 @@ local defaultEnvironmentSelector = { environment: '$environment' };
 
 local listComponentThresholds(service) =
   std.prune([
-    if std.objectHas(service.components[componentName], 'apdex') then
+    if service.components[componentName].hasApdex() then
       ' * %s: %s' % [componentName, service.components[componentName].apdex.describe()]
     else
       null

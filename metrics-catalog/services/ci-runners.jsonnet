@@ -2,7 +2,7 @@ local metricsCatalog = import '../lib/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 
-{
+metricsCatalog.serviceDefinition({
   type: 'ci-runners',
   tier: 'runners',
   /*
@@ -77,4 +77,4 @@ local rateMetric = metricsCatalog.rateMetric;
       ),
     },
   },
-}
+})

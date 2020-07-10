@@ -2,7 +2,7 @@ local selectors = import './lib/selectors.libsonnet';
 
 // Generates apdex weight recording rules for a component definition
 local generateApdexWeightRules(ruleSet, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
-  if ruleSet.recordingRuleNames.apdexWeight != null && std.objectHas(componentDefinition, 'apdex') then
+  if ruleSet.recordingRuleNames.apdexWeight != null && componentDefinition.hasApdex() then
     [{
       record: ruleSet.recordingRuleNames.apdexWeight,
       labels: recordingRuleStaticLabels,
@@ -22,7 +22,7 @@ local generateApdexScoreRulesCurry(substituteWeightWithRecordingRule) =
     else
       null;
 
-    if ruleSet.recordingRuleNames.apdexRatio != null && std.objectHas(componentDefinition, 'apdex') then
+    if ruleSet.recordingRuleNames.apdexRatio != null && componentDefinition.hasApdex() then
       [{
         record: ruleSet.recordingRuleNames.apdexRatio,
         labels: recordingRuleStaticLabels,
@@ -37,7 +37,8 @@ local generateApdexScoreRulesCurry(substituteWeightWithRecordingRule) =
       [];
 
 local generateRequestRateRules(ruleSet, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
-  if ruleSet.recordingRuleNames.requestRate != null && std.objectHas(componentDefinition, 'requestRate') then
+  // All components has a requestRate metric
+  if ruleSet.recordingRuleNames.requestRate != null then
     [{
       record: ruleSet.recordingRuleNames.requestRate,
       labels: recordingRuleStaticLabels,
@@ -47,7 +48,7 @@ local generateRequestRateRules(ruleSet, aggregationLabels, componentDefinition, 
     [];
 
 local generateErrorRateRules(ruleSet, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
-  if ruleSet.recordingRuleNames.errorRate != null && std.objectHas(componentDefinition, 'errorRate') then
+  if ruleSet.recordingRuleNames.errorRate != null && componentDefinition.hasErrorRate() then
     [{
       record: ruleSet.recordingRuleNames.errorRate,
       labels: recordingRuleStaticLabels,

@@ -60,7 +60,7 @@ local generateDoubleThresholdApdexNumeratorQuery(histogramApdex, additionalSelec
   ||| % {
     satisfied: strings.indent(satisfiedQuery, 2),
     tolerated: strings.indent(toleratedQuery, 2),
-    ignoreLe: if ignoreLe then ' ignoring(le)' else ''
+    ignoreLe: if ignoreLe then ' ignoring(le)' else '',
   };
 
 local generateApdexNumeratorQuery(histogramApdex, additionalSelectors, rangeInterval, aggregationFunction=null, aggregationLabels=[], ignoreLe=false) =

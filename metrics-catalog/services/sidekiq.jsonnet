@@ -10,7 +10,7 @@ local lowUrgencySelector = { urgency: 'low' };
 local throttledUrgencySelector = { urgency: 'throttled' };
 local noUrgencySelector = { urgency: '' };
 
-{
+metricsCatalog.serviceDefinition({
   type: 'sidekiq',
   tier: 'sv',
   deprecatedSingleBurnThresholds: {
@@ -130,4 +130,4 @@ local noUrgencySelector = { urgency: '' };
     // across multiple burn rates
     perWorkerRecordingRules,
   ],
-}
+})

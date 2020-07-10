@@ -18,6 +18,7 @@ local gitalyApdexIgnoredMethods = std.set([
   'RepackIncremental',
   'ReplicateRepository',
   'FetchIntoObjectPool',
+  'FetchSourceBranch',
 
   // Excluding Hook RPCs, as these are dependent on the internal Rails API.
   // Almost all time is spend there, once it's slow of failing it's usually not

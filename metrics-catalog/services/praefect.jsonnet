@@ -2,7 +2,7 @@ local metricsCatalog = import '../lib/metrics.libsonnet';
 local rateMetric = metricsCatalog.rateMetric;
 local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 
-{
+metricsCatalog.serviceDefinition({
   type: 'praefect',
   tier: 'stor',
   deprecatedSingleBurnThresholds: {
@@ -36,4 +36,4 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
       significantLabels: ['fqdn'],
     },
   },
-}
+})

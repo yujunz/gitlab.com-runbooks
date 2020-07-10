@@ -2,7 +2,7 @@ local metricsCatalog = import '../lib/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 
-{
+metricsCatalog.serviceDefinition({
   type: 'waf',
   tier: 'lb',
   deprecatedSingleBurnThresholds: {
@@ -47,4 +47,4 @@ local rateMetric = metricsCatalog.rateMetric;
       significantLabels: [],
     },
   },
-}
+})
