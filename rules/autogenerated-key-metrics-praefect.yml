@@ -66,6 +66,47 @@ groups:
       sum by (environment,stage) (
         rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[1m])
       )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="+Inf"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="0.5"}[1m])
+        )
+        +
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="1"}[1m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_count{job="praefect"}[1m])
+      )
 - name: 'Component-Level SLIs: praefect - 5m burn-rate'
   interval: 1m
   rules:
@@ -131,6 +172,47 @@ groups:
       sum by (environment,stage) (
         rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[5m])
       )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="+Inf"}[5m])
+      )
+  - record: gitlab_component_apdex:ratio_5m
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="0.5"}[5m])
+        )
+        +
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="1"}[5m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="+Inf"}[5m])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_count{job="praefect"}[5m])
+      )
 - name: 'Component-Level SLIs: praefect - 30m burn-rate'
   interval: 2m
   rules:
@@ -191,6 +273,45 @@ groups:
     expr: |
       sum by (environment,stage) (
         rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[30m])
+      )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="+Inf"}[30m])
+      )
+  - record: gitlab_component_apdex:ratio_30m
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="0.5"}[30m])
+        )
+        +
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="1"}[30m])
+        )
+      )
+      /
+      2
+      / on(environment,stage) group_left()
+      (
+        gitlab_component_apdex:weight:score_30m{component="replicator",tier="stor",type="praefect"} > 0
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_count{job="praefect"}[30m])
       )
 - name: 'Component-Level SLIs: praefect - 1h burn-rate'
   interval: 1m
@@ -257,6 +378,47 @@ groups:
       sum by (environment,stage) (
         rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[1h])
       )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="+Inf"}[1h])
+      )
+  - record: gitlab_component_apdex:ratio_1h
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="0.5"}[1h])
+        )
+        +
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="1"}[1h])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="+Inf"}[1h])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_count{job="praefect"}[1h])
+      )
 - name: 'Component-Level SLIs: praefect - 6h burn-rate'
   interval: 2m
   rules:
@@ -318,6 +480,45 @@ groups:
       sum by (environment,stage) (
         rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[6h])
       )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="+Inf"}[6h])
+      )
+  - record: gitlab_component_apdex:ratio_6h
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="0.5"}[6h])
+        )
+        +
+        sum by (environment,stage) (
+          rate(gitaly_praefect_replication_latency_bucket{job="praefect",le="1"}[6h])
+        )
+      )
+      /
+      2
+      / on(environment,stage) group_left()
+      (
+        gitlab_component_apdex:weight:score_6h{component="replicator",tier="stor",type="praefect"} > 0
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: replicator
+      tier: stor
+      type: praefect
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_praefect_replication_latency_count{job="praefect"}[6h])
+      )
 - name: 'Component mapping: praefect'
   interval: 1m
   rules:
@@ -325,6 +526,13 @@ groups:
     labels:
       aggregate_rps: 'yes'
       component: proxy
+      tier: stor
+      type: praefect
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'yes'
+      component: replicator
       tier: stor
       type: praefect
     expr: '1'

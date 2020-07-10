@@ -1,5 +1,6 @@
 local metricsCatalog = import '../lib/metrics.libsonnet';
 local rateMetric = metricsCatalog.rateMetric;
+local histogramApdex = metricsCatalog.histogramApdex;
 local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 
 metricsCatalog.serviceDefinition({
@@ -30,6 +31,23 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+    },
+
+    replicator: {
+      local baseSelector = { job: 'praefect' },
+      apdex: histogramApdex(
+        histogram='gitaly_praefect_replication_latency_bucket',
+        selector=baseSelector,
+        satisfiedThreshold=0.5,
+        toleratedThreshold=1
+      ),
+
+      requestRate: rateMetric(
+        counter='gitaly_praefect_replication_latency_count',
+        selector=baseSelector
+      ),
+
+      significantLabels: ['fqdn', 'type'],
     },
   },
 })
