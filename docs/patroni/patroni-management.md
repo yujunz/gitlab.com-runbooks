@@ -9,6 +9,8 @@ Patroni binaries runs in the same host as the PostgreSQL database. In a sense, P
 
 ## Scaling the cluster up
 
+Here the link to the video of the [runbook simulation](https://youtu.be/smTxWP9q3EQ).
+
 1. Increase the node count of `patroni` in [terraform][environment-variables].
 1. Apply the terraform and wait for chef to converge.
 1. On the new box, `gitlab-patronictl list` and ensure that the other cluster
@@ -20,6 +22,8 @@ Patroni binaries runs in the same host as the PostgreSQL database. In a sense, P
    point streaming replication will begin. Silence alerts as necessary.
 
 ## Scaling the cluster down
+
+Here the link to the video of the [runbook simulation](https://youtu.be/smTxWP9q3EQ).
 
 1. Using this method, we can only delete the highest index of patroni. Make sure
    it isn't the primary!
