@@ -101,8 +101,9 @@ local generatePercentileLatencyQuery(customApdex, percentile, aggregationLabels,
   };
 
 local generateApdexWeightScoreQuery(customApdex, aggregationLabels, additionalSelectors, duration) =
-  local totalSelector = selectors.merge(additionalSelectors, { le: '+Inf' });
-  local totalRateQuery = generateQuery(customApdex.rateQueryTemplate, totalSelector, duration);
+  local selectorsWithAdditional = selectors.merge(customApdex.selector, additionalSelectors);
+  local selectorsWithAdditionalAndLe = selectors.merge(selectorsWithAdditional, { le: '+Inf' });
+  local totalRateQuery = generateQuery(customApdex.rateQueryTemplate, selectorsWithAdditionalAndLe, duration);
 
   aggregations.aggregateOverQuery('sum', aggregationLabels, totalRateQuery);
 
