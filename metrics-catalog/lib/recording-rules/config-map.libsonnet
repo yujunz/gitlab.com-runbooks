@@ -45,109 +45,161 @@ local ruleSetIterator(ruleSets) = {
 
     // Component metrics are the key metrics for each component.
     // Each burn-rate is a separate ruleset.
-    componentMetrics: ruleSetIterator([
-      sliRecordingRulesSet(burnRate='1m'),
-      componentMetricsRuleSet(
-        burnRate='1m',
-        // TODO: consider renaming the 1m rates for consistency
-        apdexRatio='gitlab_component_apdex:ratio',
-        apdexWeight='gitlab_component_apdex:weight:score',
-        requestRate='gitlab_component_ops:rate',
-        errorRate='gitlab_component_errors:rate',
-        aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
-        substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
-      ),
-      sliRecordingRulesSet(burnRate='5m'),
-      componentMetricsRuleSet(
-        burnRate='5m',
-        apdexRatio='gitlab_component_apdex:ratio_5m',
-        apdexWeight='gitlab_component_apdex:weight:score_5m',
-        requestRate='gitlab_component_ops:rate_5m',
-        errorRate='gitlab_component_errors:rate_5m',
-        aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
-        substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
-      ),
-      sliRecordingRulesSet(burnRate='30m'),
-      componentMetricsRuleSet(
-        burnRate='30m',
-        apdexRatio='gitlab_component_apdex:ratio_30m',
-        apdexWeight='gitlab_component_apdex:weight:score_30m',
-        requestRate='gitlab_component_ops:rate_30m',
-        errorRate='gitlab_component_errors:rate_30m',
-        aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
-        substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
-      ),
-      sliRecordingRulesSet(burnRate='1h'),
-      componentMetricsRuleSet(
-        burnRate='1h',
-        apdexRatio='gitlab_component_apdex:ratio_1h',
-        apdexWeight='gitlab_component_apdex:weight:score_1h',
-        requestRate='gitlab_component_ops:rate_1h',
-        errorRate='gitlab_component_errors:rate_1h',
-        aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
-        substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
-      ),
-      sliRecordingRulesSet(burnRate='6h'),
-      componentMetricsRuleSet(
-        burnRate='6h',
-        apdexRatio='gitlab_component_apdex:ratio_6h',
-        apdexWeight='gitlab_component_apdex:weight:score_6h',
-        requestRate='gitlab_component_ops:rate_6h',
-        errorRate='gitlab_component_errors:rate_6h',
-        aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
-        substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
-      ),
-    ]),
+    perBurnRateRecordingRules: [
+      {
+        /* note: 1m burn rate evaluations are deprecated to be removed */
+        local burnRate = '1m',
+        burnRate: burnRate,
+        evaluationInterval: '1m',
+        rules: ruleSetIterator([
+          // 1m burn rate intermediate recording rules. This should always be first
+          sliRecordingRulesSet(burnRate),
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            // TODO: consider renaming the 1m rates for consistency
+            apdexRatio='gitlab_component_apdex:ratio',
+            apdexWeight='gitlab_component_apdex:weight:score',
+            requestRate='gitlab_component_ops:rate',
+            errorRate='gitlab_component_errors:rate',
+            aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+            substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
+          ),
+          extraRecordingRuleSet(burnRate),
+        ]),
 
+        nodeLevelRules: ruleSetIterator([
+          // 1m node-level metrics
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            // TODO: consider renaming the 1m rates for consistency
+            apdexRatio='gitlab_component_node_apdex:ratio',
+            apdexWeight='gitlab_component_node_apdex:weight:score',
+            requestRate='gitlab_component_node_ops:rate',
+            errorRate='gitlab_component_node_errors:rate',
+            aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
+          ),
+        ]),
+      },
+      {
+        local burnRate = '5m',
+        burnRate: burnRate,
+        evaluationInterval: '1m',  // 5m burn rate is part of fast burn rule, evaluate every minute
+        rules: ruleSetIterator([
+          // 5m burn rate intermediate recording rules. This should always be first
+          sliRecordingRulesSet(burnRate),
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            apdexRatio='gitlab_component_apdex:ratio_5m',
+            apdexWeight='gitlab_component_apdex:weight:score_5m',
+            requestRate='gitlab_component_ops:rate_5m',
+            errorRate='gitlab_component_errors:rate_5m',
+            aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+            substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
+          ),
+          extraRecordingRuleSet(burnRate),
+        ]),
 
-    // Component metrics are the key metrics for each component.
-    // Each burn-rate is a separate ruleset.
-    extraRecordingRules: ruleSetIterator([
-      extraRecordingRuleSet(burnRate)
-      for burnRate in multiburnFactors.allWindowIntervals
-    ]),
+        nodeLevelRules: ruleSetIterator([
+          // 5m node-level metrics
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            apdexRatio='gitlab_component_node_apdex:ratio_5m',
+            apdexWeight='gitlab_component_node_apdex:weight:score_5m',
+            requestRate='gitlab_component_node_ops:rate_5m',
+            errorRate='gitlab_component_node_errors:rate_5m',
+            aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
+          ),
+        ]),
 
-    // Nodes metrics are the key metrics for each component, aggregated to the
-    // node level.
-    //
-    // Each burn-rate is a separate ruleset.
-    nodeMetrics: ruleSetIterator([
-      componentMetricsRuleSet(
-        burnRate='1m',
-        // TODO: consider renaming the 1m rates for consistency
-        apdexRatio='gitlab_component_node_apdex:ratio',
-        apdexWeight='gitlab_component_node_apdex:weight:score',
-        requestRate='gitlab_component_node_ops:rate',
-        errorRate='gitlab_component_node_errors:rate',
-        aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
-      ),
-      componentMetricsRuleSet(
-        burnRate='5m',
-        apdexRatio='gitlab_component_node_apdex:ratio_5m',
-        apdexWeight='gitlab_component_node_apdex:weight:score_5m',
-        requestRate='gitlab_component_node_ops:rate_5m',
-        errorRate='gitlab_component_node_errors:rate_5m',
-        aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
-      ),
-      componentMetricsRuleSet(
-        burnRate='30m',
-        requestRate='gitlab_component_node_ops:rate_30m',
-        errorRate='gitlab_component_node_errors:rate_30m',
-        aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
-      ),
-      componentMetricsRuleSet(
-        burnRate='1h',
-        requestRate='gitlab_component_node_ops:rate_1h',
-        errorRate='gitlab_component_node_errors:rate_1h',
-        aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
-      ),
-      componentMetricsRuleSet(
-        burnRate='6h',
-        requestRate='gitlab_component_node_ops:rate_6h',
-        errorRate='gitlab_component_node_errors:rate_6h',
-        aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
-      ),
-    ]),
+      },
+      {
+        local burnRate = '30m',
+        burnRate: burnRate,
+        evaluationInterval: '2m',  // 30m burn rate is part of slow burn rule, evaluate every 2 minutes
+        rules: ruleSetIterator([
+          // 30m burn rate intermediate recording rules. This should always be first
+          sliRecordingRulesSet(burnRate),
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            apdexRatio='gitlab_component_apdex:ratio_30m',
+            apdexWeight='gitlab_component_apdex:weight:score_30m',
+            requestRate='gitlab_component_ops:rate_30m',
+            errorRate='gitlab_component_errors:rate_30m',
+            aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+            substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
+          ),
+          extraRecordingRuleSet(burnRate='30m'),
+        ]),
+
+        nodeLevelRules: ruleSetIterator([
+          // 30m node-level metrics, (no apdex)
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            requestRate='gitlab_component_node_ops:rate_30m',
+            errorRate='gitlab_component_node_errors:rate_30m',
+            aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
+          ),
+        ]),
+      },
+      {
+        local burnRate = '1h',
+        burnRate: burnRate,
+        evaluationInterval: '1m',  // 1h burn rate is part of fast burn rule, evaluate every minute
+        rules: ruleSetIterator([
+          // 1h burn rate intermediate recording rules. This should always be first
+          sliRecordingRulesSet(burnRate),
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            apdexRatio='gitlab_component_apdex:ratio_1h',
+            apdexWeight='gitlab_component_apdex:weight:score_1h',
+            requestRate='gitlab_component_ops:rate_1h',
+            errorRate='gitlab_component_errors:rate_1h',
+            aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+            substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
+          ),
+          extraRecordingRuleSet(burnRate),
+        ]),
+
+        nodeLevelRules: ruleSetIterator([
+          // 1h node-level metrics (no apdex for now)
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            requestRate='gitlab_component_node_ops:rate_1h',
+            errorRate='gitlab_component_node_errors:rate_1h',
+            aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
+          ),
+        ]),
+      },
+      {
+        local burnRate = '6h',
+        burnRate: burnRate,
+        evaluationInterval: '2m',  // 6h burn rate is part of slow burn rule, evaluate every 2 minutes
+        rules: ruleSetIterator([
+          // 6h burn rate intermediate recording rules. This should always be first
+          sliRecordingRulesSet(burnRate),
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            apdexRatio='gitlab_component_apdex:ratio_6h',
+            apdexWeight='gitlab_component_apdex:weight:score_6h',
+            requestRate='gitlab_component_ops:rate_6h',
+            errorRate='gitlab_component_errors:rate_6h',
+            aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
+            substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
+          ),
+          extraRecordingRuleSet(burnRate),
+        ]),
+
+        nodeLevelRules: ruleSetIterator([
+          // 6h node-level metrics (no apdex)
+          componentMetricsRuleSet(
+            burnRate=burnRate,
+            requestRate='gitlab_component_node_ops:rate_6h',
+            errorRate='gitlab_component_node_errors:rate_6h',
+            aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
+          ),
+        ]),
+      },
+    ],
 
     // Component mappings are static recording rules which help
     // determine whether a component is being monitored. This helps
@@ -155,6 +207,30 @@ local ruleSetIterator(ruleSets) = {
     componentMapping: ruleSetIterator([
       componentMappingRuleSet(),
     ]),
+
+    recordingRuleGroupsForService(serviceDefinition)::
+      local prometheusConfig = self;
+      [
+        {
+          name: 'Component-Level SLIs: %s - %s burn-rate' % [serviceDefinition.type, perBurnRateRecordingRules.burnRate],
+          interval: perBurnRateRecordingRules.evaluationInterval,
+          rules:
+            perBurnRateRecordingRules.rules.generateRecordingRulesForService(serviceDefinition)
+            +
+            (
+              if serviceDefinition.nodeLevelMonitoring then
+                perBurnRateRecordingRules.nodeLevelRules.generateRecordingRulesForService(serviceDefinition)
+              else []
+            ),
+        }
+        for perBurnRateRecordingRules in self.perBurnRateRecordingRules
+      ]
+      +
+      [{
+        name: 'Component mapping: %s' % [serviceDefinition.type],
+        interval: '1m',  // TODO: we could probably extend this out to 5m
+        rules: prometheusConfig.componentMapping.generateRecordingRulesForService(serviceDefinition),
+      }],
   },
 
   // Recording rules that get evaluated in Thanos

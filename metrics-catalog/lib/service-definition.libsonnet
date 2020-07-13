@@ -1,5 +1,10 @@
 // For now we assume that services are provisioned on vms and not kubernetes
 local provisioningDefaults = { vms: true, kubernetes: false };
+local serviceDefaults = {
+  autogenerateRecordingRules: true,
+  disableOpsRatePrediction: false,
+  nodeLevelMonitoring: false,  // By default we do not use node-level monitoring
+};
 
 local validateHasField(object, field, message) =
   if std.objectHas(object, field) then
@@ -33,7 +38,7 @@ local validateAndApplyServiceDefaults(service) =
     },
   };
 
-  serviceWithComponentDefaults;
+  serviceDefaults + serviceWithComponentDefaults;
 
 local serviceDefinition(service) =
   // Private functions
