@@ -6,7 +6,7 @@ groups:
     expr: vector(1)
     labels:
       severity: s4
-      alert_type: cause
+      alert_type: heartbeat
     annotations:
       description: SnitchHeartBeat
       runbook: docs/monitoring/prometheus-snitch.md

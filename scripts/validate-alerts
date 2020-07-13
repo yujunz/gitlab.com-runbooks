@@ -53,7 +53,7 @@ class Validator
 
     validation_error("rules must contain a `severity` label") unless labels["severity"]
     validation_error("rules contains an invalid `severity` label: #{labels['severity']}") unless %w[s1 s2 s3 s4].include?(labels["severity"])
-    validation_error("alerts must include an alert_type label. This label should either be 'cause' or 'symptom'. For more information on cause and symptom-based alerts, review http://landing.google.com/sre/sre-book/chapters/monitoring-distributed-systems/#symptoms-versus-causes-g0sEi4") unless %w[cause symptom].include?(labels["alert_type"])
+    validation_error("alerts must include an alert_type label. This label should either be 'cause' or 'symptom'. For more information on cause and symptom-based alerts, review http://landing.google.com/sre/sre-book/chapters/monitoring-distributed-systems/#symptoms-versus-causes-g0sEi4") unless %w[cause heartbeat symptom].include?(labels["alert_type"])
 
     if labels["pager"]
       validation_error("rules contains an invalid `pager` label: #{labels['pager']}") unless %w[pagerduty issue].include?(labels["pager"])
