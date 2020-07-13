@@ -164,7 +164,16 @@ local slackBridge = {
   match: {
     rules_domain: 'general',
   },
-  receiver: 'slack_bridge',
+  receiver: 'slack_bridge-nonprod',
+  routes: [
+    {
+      continue: true,
+      match: {
+        env: 'gprd',
+      },
+      receiver: 'slack_bridge-prod',
+    }
+  ]
 };
 
 local slackAlertsGeneralNoPager = {
@@ -305,7 +314,16 @@ local generalAlertsRoutes = [
       rules_domain: 'general',
     },
     group_by: defaultGroupBy,
-    receiver: 'slack_bridge',
+    receiver: 'slack_bridge-nonprod',
+    routes: [
+      {
+        continue: true,
+        match: {
+          env: 'gprd',
+        },
+        receiver: 'slack_bridge-prod',
+      },
+    ],
   },
   {
     continue: false,
