@@ -5,6 +5,9 @@ local serviceDefaults = {
   disableOpsRatePrediction: false,
   nodeLevelMonitoring: false,  // By default we do not use node-level monitoring
 };
+local componentDefaults = {
+  aggregateRequestRate: true // by default, requestRate is aggregated up to the service level
+};
 
 local validateHasField(object, field, message) =
   if std.objectHas(object, field) then
@@ -17,7 +20,7 @@ local validateAndApplyComponentDefaults(service, componentName, component) =
   // we filter out low-RPS alerts for apdex monitoring and require the RPS for error ratios
   local v1 = validateHasField(component, 'requestRate', '%s component requires a requestRate measurement' % [componentName]);
 
-  v1;
+  componentDefaults + v1;
 
 // Definition of a component
 local componentDefinition(component) =

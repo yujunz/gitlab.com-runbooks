@@ -46,7 +46,7 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
-      aggregate_rps: 'no',
+      aggregateRequestRate: false,
     },
 
     // Rails Cache uses metrics from the main application to guage to performance of the Redis cache

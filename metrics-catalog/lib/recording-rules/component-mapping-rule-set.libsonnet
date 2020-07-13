@@ -11,16 +11,13 @@
         [
           {
             local component = serviceDefinition.components[componentName],
-            local aggregate_rps = if std.objectHas(component, 'aggregate_rps') then
-              component.aggregate_rps
-            else
-              "yes",
+            local aggregateRequestRate = if component.aggregateRequestRate then 'yes' else 'no',
 
             record: 'gitlab_component_service:mapping',
             labels: {
               type: serviceDefinition.type,
               tier: serviceDefinition.tier,
-              aggregate_rps: aggregate_rps,
+              aggregate_rps: aggregateRequestRate,
               component: componentName,
             },
             expr: '1',
