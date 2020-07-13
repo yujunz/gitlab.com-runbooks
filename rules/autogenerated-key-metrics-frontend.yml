@@ -719,18 +719,21 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: cnyHttpServices
       tier: lb
       type: frontend
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: mainHttpServices
       tier: lb
       type: frontend
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: sshServices
       tier: lb
       type: frontend

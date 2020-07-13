@@ -10,15 +10,22 @@
       generateRecordingRulesForService(serviceDefinition)::
         [
           {
+            local component = serviceDefinition.components[componentName],
+            local aggregate_rps = if std.objectHas(component, 'aggregate_rps') then
+              component.aggregate_rps
+            else
+              "yes",
+
             record: 'gitlab_component_service:mapping',
             labels: {
               type: serviceDefinition.type,
               tier: serviceDefinition.tier,
-              component: component,
+              aggregate_rps: aggregate_rps,
+              component: componentName,
             },
             expr: '1',
           }
-          for component in std.objectFields(serviceDefinition.components)
+          for componentName in std.objectFields(serviceDefinition.components)
         ],
 
     },

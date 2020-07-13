@@ -563,18 +563,21 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: gitlab_shell
       tier: sv
       type: git
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: puma
       tier: sv
       type: git
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: workhorse
       tier: sv
       type: git

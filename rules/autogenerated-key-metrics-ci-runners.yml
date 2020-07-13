@@ -407,18 +407,21 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: polling
       tier: runners
       type: ci-runners
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shared_runner_queues
       tier: runners
       type: ci-runners
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: trace_archiving_ci_jobs
       tier: runners
       type: ci-runners

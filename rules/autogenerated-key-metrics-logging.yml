@@ -161,18 +161,21 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: elasticsearch_indexing
       tier: inf
       type: logging
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: elasticsearch_searching
       tier: inf
       type: logging
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: stackdriver
       tier: inf
       type: logging

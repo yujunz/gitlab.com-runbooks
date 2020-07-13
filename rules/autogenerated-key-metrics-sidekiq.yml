@@ -2303,48 +2303,56 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shard_catchall
       tier: sv
       type: sidekiq
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shard_database_throttled
       tier: sv
       type: sidekiq
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shard_elasticsearch
       tier: sv
       type: sidekiq
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shard_gitaly_throttled
       tier: sv
       type: sidekiq
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shard_low_urgency_cpu_bound
       tier: sv
       type: sidekiq
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shard_memory_bound
       tier: sv
       type: sidekiq
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shard_urgent_cpu_bound
       tier: sv
       type: sidekiq
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: shard_urgent_other
       tier: sv
       type: sidekiq

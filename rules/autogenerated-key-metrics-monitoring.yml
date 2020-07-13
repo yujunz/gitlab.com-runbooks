@@ -1209,42 +1209,49 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: grafana
       tier: inf
       type: monitoring
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: prometheus
       tier: inf
       type: monitoring
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: rule_evaluation
       tier: inf
       type: monitoring
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: thanos_compactor
       tier: inf
       type: monitoring
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: thanos_query
       tier: inf
       type: monitoring
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: thanos_rule_alert_sender
       tier: inf
       type: monitoring
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: thanos_store
       tier: inf
       type: monitoring

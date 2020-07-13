@@ -921,12 +921,14 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: gitalyruby
       tier: stor
       type: gitaly
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: goserver
       tier: stor
       type: gitaly
