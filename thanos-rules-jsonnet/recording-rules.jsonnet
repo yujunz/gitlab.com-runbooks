@@ -7,7 +7,7 @@ local outputPromYaml(groups) =
   });
 
 // Select all services with `autogenerateRecordingRules` (default on)
-local selectedServices = std.filter(function(service) ({ autogenerateRecordingRules: true } + service).autogenerateRecordingRules, services);
+local selectedServices = std.filter(function(service) service.autogenerateRecordingRules, services);
 
 {
   'service-slos.yml':

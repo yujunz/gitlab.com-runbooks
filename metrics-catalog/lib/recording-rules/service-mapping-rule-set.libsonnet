@@ -9,7 +9,7 @@
           // Disable ops-rate-prediction and anomaly detection.
           // This should be used on services with non-normal distributions
           // of their ops rate metrics
-          if ({ disableOpsRatePrediction: false } + serviceDefinition).disableOpsRatePrediction then
+          if serviceDefinition.disableOpsRatePrediction then
             [
               {
                 record: 'gitlab_service:mapping:disable_ops_rate_prediction',
