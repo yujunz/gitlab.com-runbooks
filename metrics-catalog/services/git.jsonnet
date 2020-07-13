@@ -25,21 +25,34 @@ metricsCatalog.serviceDefinition({
   },
   components: {
     workhorse: {
+      local baseSelector = {
+        job: "gitlab-workhorse-git",
+        type: "git",
+        route: [ { ne: "^/-/health$" }, { ne: "^/-/(readiness|liveness)$" } ]
+      },
       apdex: histogramApdex(
         histogram='gitlab_workhorse_http_request_duration_seconds_bucket',
-        selector='job="gitlab-workhorse-git", type="git", route!="^/-/health$", route!="^/-/(readiness|liveness)$"',
+        selector=baseSelector {
+          route+: [{
+            ne: "^/([^/]+/){1,}[^/]+/-/jobs/[0-9]+/terminal.ws\\\\z"
+          }, {
+            ne: "^/([^/]+/){1,}[^/]+/-/environments/[0-9]+/terminal.ws\\\\z"
+          }]
+        },
         satisfiedThreshold=30,
         toleratedThreshold=60
       ),
 
       requestRate: rateMetric(
         counter='gitlab_workhorse_http_requests_total',
-        selector='job="gitlab-workhorse-git", type="git"'
+        selector=baseSelector
       ),
 
       errorRate: rateMetric(
         counter='gitlab_workhorse_http_requests_total',
-        selector='job="gitlab-workhorse-git", type="git", code=~"^5.*", route!="^/-/health$", route!="^/-/(readiness|liveness)$"'
+        selector=baseSelector + {
+          code: { re: "^5.*" }
+        }
       ),
 
       significantLabels: ['fqdn', 'route'],
