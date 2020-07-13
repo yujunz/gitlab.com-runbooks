@@ -26,6 +26,7 @@
   ],
   // Generic webhook configs.
   webhookChannels: [
-    { name: 'slack_bridge', url: 'http://example.com', token: 'secret' },
+    { name: 'slack_bridge-nonprod', url: 'http://example.com', token: 'secret' },
+    { name: 'slack_bridge-prod', url: 'http://example.com', token: 'secret' },
   ],
 }
