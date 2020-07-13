@@ -114,9 +114,9 @@ groups:
   - alert: RedisMemoryUsageTooHigh
     expr: >
       (
-        redis_memory_used_rss_bytes
+        redis_memory_used_rss_bytes{fqdn!=""}
         / on(fqdn, tier, type, environment)
-        node_memory_MemTotal_bytes
+        node_memory_MemTotal_bytes{fqdn!=""}
       ) > 0.90
     for: 5m
     labels:
