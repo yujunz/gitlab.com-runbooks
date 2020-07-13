@@ -1,5 +1,8 @@
 ## About Locking
 
+Link to the video of the [runbook simulation](https://youtu.be/-mrKyJuTd5w).
+
+
 A `lock` in PostgreSQL is a feature that allows transactions to _hold_ something. Usually, that _something_ is a table, an index, or a portion (row/s) of these.
 
 Locks are the way PostgreSQL ensure transactional data consistency, and this is specially handy when concurrent transactions tries to write the same data.
@@ -154,6 +157,8 @@ select pg_terminate_backend(<pid>);
 Both functions will return `true` or `false`, meaning that operation was succesfully achieved (or not).
 
 The difference between each of those, is that `pg_cancel_backend()` sends a SIGINT (cancels only the current query, but let's the connection continue to execute queries - idle connections or connections in transaction can't be canceled) and `pg_terminate_backend()` sends a SIGTERM signal (terminating the backend process immediately, also terminating the whole connection). Since terminating any process with SIGTERM can lead to undesired results, you should always try `pg_cancel_backend()` first.
+
+As a last resort, in case pg_cancel_backend or pg_terminate_backend does not terminate the session, we could execute a kill <pid> from the session that is generating the block.
 
 
 ## How to check if queries are waiting for aquire locks from the logs
