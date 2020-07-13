@@ -33,12 +33,12 @@ metricsCatalog.serviceDefinition({
 
       requestRate: rateMetric(
         counter='haproxy_backend_http_responses_total',
-        selector='type="frontend", backend!~"canary_.*"'
+        selector='type="frontend", backend!~"canary_.*", backend_name!="api_rate_limit"'
       ),
 
       errorRate: rateMetric(
         counter='haproxy_backend_response_errors_total',
-        selector='type="frontend", backend!~"canary_.*"'
+        selector='type="frontend", backend!~"canary_.*", backend_name!="api_rate_limit"'
       ),
 
       significantLabels: ['fqdn'],
