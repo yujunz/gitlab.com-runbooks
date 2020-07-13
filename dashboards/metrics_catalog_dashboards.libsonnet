@@ -6,6 +6,7 @@ local metricsCatalog = import 'metrics-catalog.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local row = grafana.row;
 local selectors = import './lib/selectors.libsonnet';
+local statusDescription = import 'status_description.libsonnet';
 
 local defaultEnvironmentSelector = { environment: '$environment' };
 
@@ -23,30 +24,41 @@ local componentOverviewMatrixRow(
   startRow,
   environmentSelectorHash,
       ) =
-  layout.grid(
-    std.prune([
+  local componentSelectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: componentName };
+  local columns =
+    (
       // Component apdex
       if component.hasApdex() then
-        keyMetrics.singleComponentApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash)
+        [[
+          keyMetrics.singleComponentApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash),
+          statusDescription.componentApdexStatusDescriptionPanel(componentSelectorHash),
+        ]]
       else
-        null,
-
+        []
+    )
+    +
+    (
       // Error rate
       if component.hasErrorRate() then
-        keyMetrics.singleComponentErrorRates(serviceType, serviceStage, componentName, environmentSelectorHash)
+        [[
+          keyMetrics.singleComponentErrorRates(serviceType, serviceStage, componentName, environmentSelectorHash),
+          statusDescription.componentErrorRateStatusDescriptionPanel(componentSelectorHash),
+        ]]
       else
-        null,
-
+        []
+    )
+    +
+    (
       // Component request rate (mandatory, but not all are aggregatable)
       if component.hasAggregatableRequestRate() then
-        keyMetrics.singleComponentQPSPanel(serviceType, serviceStage, componentName, environmentSelectorHash)
+        [[
+          keyMetrics.singleComponentQPSPanel(serviceType, serviceStage, componentName, environmentSelectorHash),
+        ]]
       else
-        null,
-    ]),
-    cols=3,
-    startRow=startRow,
-    rowHeight=7
-  );
+        []
+    );
+
+  layout.splitColumnGrid(columns, [7, 1], startRow=startRow);
 
 {
   componentLatencyPanel(
@@ -150,7 +162,7 @@ local componentOverviewMatrixRow(
           serviceStage,
           c,
           service.components[c],
-          startRow=startRow + 1 + i,
+          startRow=startRow + 1 + i * 10,
           environmentSelectorHash=environmentSelectorHash
         ), std.objectFields(service.components))
       )

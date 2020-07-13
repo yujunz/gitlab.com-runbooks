@@ -6,7 +6,7 @@ local descriptionMappings = [
   /* 0 */
   {
     name: 'Healthy',
-    color: 'green',
+    color: 'black',
   },
   /* 1 */
   {
@@ -173,23 +173,27 @@ local statusDescriptionPanel(legendFormat, query) =
         defaults: {
           thresholds: {
             mode: 'absolute',
-            steps: std.mapWithIndex(function(index, v)
-                                      {
-                                        value: index,
-                                        color: v.color,
-                                      },
-                                    descriptionMappings),
+            steps: std.mapWithIndex(
+              function(index, v)
+                {
+                  value: index,
+                  color: v.color,
+                },
+              descriptionMappings
+            ),
           },
-          mappings: std.mapWithIndex(function(index, v)
-            {
-              from: '' + index,
-              id: index,
-              op: '=',
-              text: v.name,
-              to: '' + index,
-              type: 2,
-              value: '' + index,
-            }, descriptionMappings),
+          mappings: std.mapWithIndex(
+            function(index, v)
+              {
+                from: '' + index,
+                id: index,
+                op: '=',
+                text: v.name,
+                to: '' + index,
+                type: 2,
+                value: '' + index,
+              }, descriptionMappings
+          ),
           unit: 'none',
           nullValueMode: 'connected',
           title: 'Status',
@@ -204,18 +208,18 @@ local statusDescriptionPanel(legendFormat, query) =
 {
   componentApdexStatusDescriptionPanel(selectorHash)::
     local query = apdexStatusQuery(selectorHash, selectorHash.type, 'gitlab_component_apdex');
-    statusDescriptionPanel(legendFormat='Latency/Apdex', query=query),
+    statusDescriptionPanel(legendFormat=selectorHash.component + ' | Latency/Apdex', query=query),
 
   serviceApdexStatusDescriptionPanel(selectorHash)::
     local query = apdexStatusQuery(selectorHash, selectorHash.type, 'gitlab_service_apdex');
-    statusDescriptionPanel(legendFormat=selectorHash.type + ' Latency/Apdex', query=query),
+    statusDescriptionPanel(legendFormat=selectorHash.type + ' | Latency/Apdex', query=query),
 
   componentErrorRateStatusDescriptionPanel(selectorHash)::
     local query = errorRateStatusQuery(selectorHash, selectorHash.type, 'gitlab_component_errors');
-    statusDescriptionPanel(legendFormat='Errors', query=query),
+    statusDescriptionPanel(legendFormat=selectorHash.component + ' | Errors', query=query),
 
   serviceErrorStatusDescriptionPanel(selectorHash)::
     local query = errorRateStatusQuery(selectorHash, selectorHash.type, 'gitlab_service_errors');
-    statusDescriptionPanel(legendFormat=selectorHash.type + ' Errors', query=query),
+    statusDescriptionPanel(legendFormat=selectorHash.type + ' | Errors', query=query),
 
 }
