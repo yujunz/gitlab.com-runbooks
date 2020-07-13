@@ -85,6 +85,51 @@ local panelMethods = {
         ),
     },
 
+  graphPanel(
+    title,
+    linewidth=1,
+    fill=0,
+    datasource='$PROMETHEUS_DS',
+    description='',
+    decimals=2,
+    sort='desc',
+    legend_show=true,
+    legend_values=true,
+    legend_min=true,
+    legend_max=true,
+    legend_current=true,
+    legend_total=false,
+    legend_avg=true,
+    legend_alignAsTable=true,
+    legend_hideEmpty=true,
+    legend_rightSide=false,
+    thresholds=[],
+    points=false,
+    pointradius=5,
+  )::
+    graphPanel.new(
+      title=title,
+      linewidth=linewidth,
+      fill=fill,
+      datasource=datasource,
+      description=description,
+      decimals=decimals,
+      sort=sort,
+      legend_show=legend_show,
+      legend_values=legend_values,
+      legend_min=legend_min,
+      legend_max=legend_max,
+      legend_current=legend_current,
+      legend_total=legend_total,
+      legend_avg=legend_avg,
+      legend_alignAsTable=legend_alignAsTable,
+      legend_hideEmpty=legend_hideEmpty,
+      legend_rightSide=legend_rightSide,
+      thresholds=thresholds,
+      points=points,
+      pointradius=pointradius,
+    ) + panelMethods,
+
   heatmap(
     title='Heatmap',
     description='',
@@ -187,7 +232,7 @@ local panelMethods = {
     decimals=0,
     thresholds=[],
   )::
-    local panel = graphPanel.new(
+    local panel = self.graphPanel(
       title,
       description=description,
       sort=sort,
@@ -224,8 +269,7 @@ local panelMethods = {
       max=1,
       min=0,
       show=false,
-    ) +
-    panelMethods,
+    ),
 
   timeseries(
     title='Timeseries',
@@ -272,7 +316,7 @@ local panelMethods = {
     yAxisLabel='Queue Length',
     linewidth=2,
   )::
-    graphPanel.new(
+    self.graphPanel(
       title,
       description=description,
       sort='decreasing',
@@ -302,8 +346,7 @@ local panelMethods = {
       max=1,
       min=0,
       show=false,
-    ) +
-    panelMethods,
+    ),
 
   percentageTimeseries(
     title,
@@ -323,7 +366,7 @@ local panelMethods = {
     local formatConfig = {
       query: query,
     };
-    graphPanel.new(
+    self.graphPanel(
       title,
       description=description,
       sort='decreasing',
@@ -364,8 +407,7 @@ local panelMethods = {
       max=1,
       min=0,
       show=false,
-    ) +
-    panelMethods,
+    ),
 
   saturationTimeseries(
     title='Saturation',
@@ -410,7 +452,7 @@ local panelMethods = {
     local formatConfig = {
       query: query,
     };
-    graphPanel.new(
+    self.graphPanel(
       title,
       description=description,
       sort='increasing',
@@ -450,8 +492,7 @@ local panelMethods = {
       max=1,
       min=0,
       show=false,
-    ) +
-    panelMethods,
+    ),
 
   latencyTimeseries(
     title='Latency',
@@ -468,7 +509,7 @@ local panelMethods = {
     linewidth=2,
     min=0,
   )::
-    graphPanel.new(
+    self.graphPanel(
       title,
       description=description,
       sort='decreasing',
@@ -499,7 +540,7 @@ local panelMethods = {
       max=1,
       min=0,
       show=false,
-    ) + panelMethods,
+    ),
 
   slaTimeseries(
     title='SLA',
@@ -515,7 +556,7 @@ local panelMethods = {
     local formatConfig = {
       query: query,
     };
-    graphPanel.new(
+    self.graphPanel(
       title,
       description=description,
       sort='decreasing',
@@ -556,8 +597,7 @@ local panelMethods = {
       max=1,
       min=0,
       show=false,
-    ) +
-    panelMethods,
+    ),
 
   networkTrafficGraph(
     title='Node Network Utilization',
@@ -568,7 +608,7 @@ local panelMethods = {
     intervalFactor=3,
     legend_show=true
   )::
-    graphPanel.new(
+    self.graphPanel(
       title,
       linewidth=1,
       fill=0,
@@ -606,8 +646,7 @@ local panelMethods = {
       max=1,
       min=0,
       show=false,
-    ) +
-    panelMethods,
+    ),
 
   slaStats(
     title,

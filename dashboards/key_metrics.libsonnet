@@ -7,6 +7,7 @@ local promQuery = import 'prom_query.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local sliPromQL = import 'sli_promql.libsonnet';
 local templates = import 'templates.libsonnet';
+local basic = import 'basic.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -18,23 +19,12 @@ local statusDescription = import 'status_description.libsonnet';
 local defaultEnvironmentSelector = { environment: '$environment' };
 
 local generalGraphPanel(title, description=null, linewidth=2, sort='increasing', legend_show=true) =
-  graphPanel.new(
+  basic.graphPanel(
     title,
     linewidth=linewidth,
-    fill=0,
-    datasource='$PROMETHEUS_DS',
     description=description,
-    decimals=2,
     sort=sort,
     legend_show=legend_show,
-    legend_values=true,
-    legend_min=true,
-    legend_max=true,
-    legend_current=true,
-    legend_total=false,
-    legend_avg=true,
-    legend_alignAsTable=true,
-    legend_hideEmpty=true,
   )
   .addSeriesOverride(seriesOverrides.upper)
   .addSeriesOverride(seriesOverrides.lower)
@@ -105,7 +95,12 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       show=false,
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/'))
-    .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillBelowTo: serviceType + ' service' })),
+    .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillBelowTo: serviceType + ' service' }))
+    .addDataLink({
+      url: '/d/alerts-service_multiburn_apdex?${__all_variables}&var-type=%(type)s' % { type: serviceType  },
+      title: 'Service Apdex Multi-Burn Analysis',
+      targetBlank: true,
+    }),
 
   singleComponentApdexPanel(
     serviceType,
@@ -156,7 +151,15 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       max=1,
       min=0,
       show=false,
-    ),
+    )
+    .addDataLink({
+      url: '/d/alerts-component_multiburn_apdex?${__all_variables}&var-type=%(type)s&var-component=%(component)s' % {
+        type: serviceType,
+        component: component,
+      },
+      title: 'Component Apdex Multi-Burn Analysis',
+      targetBlank: true,
+    }),
 
   componentApdexPanel(
     serviceType,
@@ -264,7 +267,12 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       show=false,
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/', { fillBelowTo: serviceType + ' service (avg)' }))
-    .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillGradient: 10 })),
+    .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillGradient: 10 }))
+    .addDataLink({
+      url: '/d/alerts-service_multiburn_error?${__all_variables}&var-type=%(type)s' % { type: serviceType  },
+      title: 'Service Error-Rate Multi-Burn Analysis',
+      targetBlank: true,
+    }),
 
   singleComponentErrorRates(
     serviceType,
@@ -316,7 +324,15 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       max=1,
       min=0,
       show=false,
-    ),
+    )
+    .addDataLink({
+      url: '/d/alerts-component_multiburn_error?${__all_variables}&var-type=%(type)s&var-component=%(component)s' % {
+        type: serviceType,
+        component: componentName,
+      },
+      title: 'Component Error-Rate Multi-Burn Analysis',
+      targetBlank: true,
+    }),
 
   componentErrorRates(
     serviceType,
