@@ -668,24 +668,28 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: loadbalancer
       tier: sv
       type: registry
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: loadbalancer_cny
       tier: sv
       type: registry
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: server
       tier: sv
       type: registry
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: storage
       tier: sv
       type: registry

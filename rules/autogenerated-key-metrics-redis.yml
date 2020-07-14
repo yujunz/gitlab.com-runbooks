@@ -211,18 +211,21 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: primary_server
       tier: db
       type: redis
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'yes'
       component: rails_redis_client
       tier: db
       type: redis
     expr: '1'
   - record: gitlab_component_service:mapping
     labels:
+      aggregate_rps: 'no'
       component: secondary_servers
       tier: db
       type: redis

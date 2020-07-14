@@ -11,12 +11,12 @@ groups:
   - record: gitlab_service_ops:rate
     expr: >
       sum by (env, environment, tier, type, stage) (
-        gitlab_component_ops:rate{monitor!="global"} >= 0
+        gitlab_component_ops:rate{monitor!="global"} >= 0 and on(component) (gitlab_component_service:mapping{monitor!="global", aggregate_rps="yes"})
       )
   - record: gitlab_service_ops:rate_5m
     expr: >
       sum by (env, environment, tier, type, stage) (
-        gitlab_component_ops:rate_5m{monitor!="global"} >= 0
+        gitlab_component_ops:rate_5m{monitor!="global"} >= 0 and on(component) (gitlab_component_service:mapping{monitor!="global", aggregate_rps="yes"})
       )
 
   # Aggregate over all components within a service, for a node

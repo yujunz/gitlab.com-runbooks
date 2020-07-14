@@ -45,6 +45,7 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+      aggregateRequestRate: false,
     },
   },
 })
