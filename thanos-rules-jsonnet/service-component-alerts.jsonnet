@@ -21,13 +21,13 @@ local rules = {
           (
             (
               (
-                gitlab_component_apdex:ratio_1h{monitor!="global"}
+                gitlab_component_apdex:ratio_1h{monitor="global"}
                 < on(tier, type) group_left()
                 (1 - (%(burnrate_1h)g * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
               )
               and
               (
-                gitlab_component_apdex:ratio_5m{monitor!="global"}
+                gitlab_component_apdex:ratio_5m{monitor="global"}
                 < on(tier, type) group_left()
                 (1 - (%(burnrate_1h)g * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
               )
@@ -35,13 +35,13 @@ local rules = {
             or
             (
               (
-                gitlab_component_apdex:ratio_6h{monitor!="global"}
+                gitlab_component_apdex:ratio_6h{monitor="global"}
                 < on(tier, type) group_left()
                 (1 - (%(burnrate_6h)g * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
               )
               and
               (
-                gitlab_component_apdex:ratio_30m{monitor!="global"}
+                gitlab_component_apdex:ratio_30m{monitor="global"}
                 < on(tier, type) group_left()
                 (1 - (%(burnrate_6h)g * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
               )

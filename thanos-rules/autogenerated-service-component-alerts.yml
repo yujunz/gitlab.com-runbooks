@@ -38,13 +38,13 @@ groups:
       (
         (
           (
-            gitlab_component_apdex:ratio_1h{monitor!="global"}
+            gitlab_component_apdex:ratio_1h{monitor="global"}
             < on(tier, type) group_left()
             (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
           )
           and
           (
-            gitlab_component_apdex:ratio_5m{monitor!="global"}
+            gitlab_component_apdex:ratio_5m{monitor="global"}
             < on(tier, type) group_left()
             (1 - (14.4 * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
           )
@@ -52,13 +52,13 @@ groups:
         or
         (
           (
-            gitlab_component_apdex:ratio_6h{monitor!="global"}
+            gitlab_component_apdex:ratio_6h{monitor="global"}
             < on(tier, type) group_left()
             (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
           )
           and
           (
-            gitlab_component_apdex:ratio_30m{monitor!="global"}
+            gitlab_component_apdex:ratio_30m{monitor="global"}
             < on(tier, type) group_left()
             (1 - (6 * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
           )

@@ -57,16 +57,22 @@ local formatConfigForSelectorHash(selectorHash) =
         min by (type) (gitlab_service_apdex:ratio{%(globalSelector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
+    // Fallback to non-aggregated, non-global query for backwards
+    // compatability, remove after 1 Jan 2021
     componentApdexQuery(selectorHash, range)::
       |||
-        sum by (component, type) (
-          (avg_over_time(gitlab_component_apdex:ratio{%(selector)s}[%(range)s]) >= 0)
-          *
-          (avg_over_time(gitlab_component_apdex:weight:score{%(selector)s}[10m]) >= 0)
-        )
-        /
-        sum by (component, type) (
-          (avg_over_time(gitlab_component_apdex:weight:score{%(selector)s}[10m]) >= 0)
+        avg_over_time(gitlab_component_apdex:ratio_5m{%(globalSelector)s}[%(range)s])
+        or
+        (
+          sum by (component, type) (
+            (avg_over_time(gitlab_component_apdex:ratio{%(selector)s}[%(range)s]) >= 0)
+            *
+            (avg_over_time(gitlab_component_apdex:weight:score{%(selector)s}[10m]) >= 0)
+          )
+          /
+          sum by (component, type) (
+            (avg_over_time(gitlab_component_apdex:weight:score{%(selector)s}[10m]) >= 0)
+          )
         )
       ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
