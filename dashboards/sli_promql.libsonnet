@@ -62,7 +62,7 @@ local formatConfigForSelectorHash(selectorHash) =
     componentApdexQuery(selectorHash, range)::
       |||
         avg_over_time(gitlab_component_apdex:ratio_5m{%(globalSelector)s}[%(range)s])
-        or
+        or on(component, type)
         (
           sum by (component, type) (
             (avg_over_time(gitlab_component_apdex:ratio{%(selector)s}[%(range)s]) >= 0)
