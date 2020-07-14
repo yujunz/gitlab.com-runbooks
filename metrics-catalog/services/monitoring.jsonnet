@@ -178,5 +178,24 @@ metricsCatalog.serviceDefinition({
 
       significantLabels: ['fqdn', 'handler'],
     },
+
+
+    // This component represents rule evaluations in
+    // Prometheus and Thanos ruler
+    rule_evaluation: {
+      local selector = productionEnvironmentsSelector { type: 'monitoring' },
+
+      requestRate: rateMetric(
+        counter='prometheus_rule_evaluations_total',
+        selector=selector
+      ),
+
+      errorRate: rateMetric(
+        counter='prometheus_rule_evaluation_failures_total',
+        selector=selector
+      ),
+
+      significantLabels: ['fqdn'],
+    },
   },
 })
