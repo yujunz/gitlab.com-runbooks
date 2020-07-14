@@ -3,7 +3,8 @@ local componentMetricsRuleSet = (import 'component-metrics-rule-set.libsonnet').
 local componentMappingRuleSet = (import 'component-mapping-rule-set.libsonnet').componentMappingRuleSet;
 local serviceMappingRuleSet = (import 'service-mapping-rule-set.libsonnet').serviceMappingRuleSet;
 local serviceSLORuleSet = (import 'service-slo-rule-set.libsonnet').serviceSLORuleSet;
-local componentErrorRatioRuleSet = (import 'component-error-ratio-rule-set.libsonnet').componentErrorRatioRuleSet;
+local aggregatedComponentErrorRatioRuleSet = (import 'aggregated-component-error-ratio-rule-set.libsonnet').aggregatedComponentErrorRatioRuleSet;
+local aggregatedComponentApdexRatioRuleSet = (import 'aggregated-component-apdex-ratio-rule-set.libsonnet').aggregatedComponentApdexRatioRuleSet;
 local serviceErrorRatioRuleSet = (import 'service-error-ratio-rule-set.libsonnet').serviceErrorRatioRuleSet;
 local serviceNodeErrorRatioRuleSet = (import 'service-node-error-ratio-rule-set.libsonnet').serviceNodeErrorRatioRuleSet;
 local serviceApdexRatioRuleSet = (import 'service-apdex-ratio-rule-set.libsonnet').serviceApdexRatioRuleSet;
@@ -241,13 +242,24 @@ local ruleSetIterator(ruleSets) = {
       serviceSLORuleSet(),
     ]),
 
-    // Component-level ratios, aggregated at the Thanos level, to
+    // Component-level apdex ratios, aggregated at the Thanos level, to
     // prevent split-brain aggregation prometheus issues and
     // spurious alerts.
-    componentErrorRatios: ruleSetIterator(std.flatMap(
+    aggregatedComponentApdexRatios: ruleSetIterator(std.flatMap(
       function(suffix)
         [
-          componentErrorRatioRuleSet(suffix=suffix),
+          aggregatedComponentApdexRatioRuleSet(suffix=suffix),
+        ],
+      MULTI_BURN_RATE_SUFFIXES
+    )),
+
+    // Component-level error ratios, aggregated at the Thanos level, to
+    // prevent split-brain aggregation prometheus issues and
+    // spurious alerts.
+    aggregatedComponentErrorRatios: ruleSetIterator(std.flatMap(
+      function(suffix)
+        [
+          aggregatedComponentErrorRatioRuleSet(suffix=suffix),
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),

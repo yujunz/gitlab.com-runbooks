@@ -1,7 +1,7 @@
 {
   // The component error ratio recording ruleset records the rate of errors divides by the rate of requests
   // across all components.
-  componentErrorRatioRuleSet(suffix)::
+  aggregatedComponentErrorRatioRuleSet(suffix)::
     {
       generateRecordingRules()::
         local format = { suffix: suffix };

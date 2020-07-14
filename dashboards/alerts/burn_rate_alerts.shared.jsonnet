@@ -17,25 +17,52 @@ local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 local selectors = import 'lib/selectors.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
 
-local combinations(shortMetric, shortDuration, longMetric, longDuration, selectorHash, apdexInverted, sloMetric) =
+local combinations(shortMetric, shortDuration, longMetric, longDuration, selectorHash, apdexInverted, sloMetric, nonGlobalFallback) =
   local formatConfig = {
     shortMetric: shortMetric,
     shortDuration: shortDuration,
     longMetric: longMetric,
     longDuration: longDuration,
     longBurnFactor: multiburnFactors['burnrate_' + longDuration],
-    selector: selectors.serializeHash(selectorHash),
+    globalSelector: selectors.serializeHash(selectorHash { monitor: "global" }),
+    nonGlobalSelector: selectors.serializeHash(selectorHash { monitor: { ne: "global" } }),
     sloMetric: sloMetric,
   };
+
+  // For backwards compatability, fall-back to non global
+  // metric. Remove after 1 Jan 2021
+  local longQuery = if nonGlobalFallback then
+    |||
+      %(longMetric)s{%(globalSelector)s}
+      or
+      %(longMetric)s{%(nonGlobalSelector)s}
+    ||| % formatConfig
+  else
+    |||
+      %(shortMetric)s{%(globalSelector)s}
+    ||| % formatConfig;
+
+  // For backwards compatability, fall-back to non global
+  // metric. Remove after 1 Jan 2021
+  local shortQuery = if nonGlobalFallback then
+    |||
+      %(shortMetric)s{%(globalSelector)s}
+      or
+      %(shortMetric)s{%(nonGlobalSelector)s}
+    ||| % formatConfig
+  else
+    |||
+      %(shortMetric)s{%(globalSelector)s}
+    ||| % formatConfig;
 
   [
     {
       legendFormat: '%(longDuration)s apdex burn rate' % formatConfig,
-      query: '%(longMetric)s{%(selector)s}' % formatConfig,
+      query: longQuery,
     },
     {
       legendFormat: '%(shortDuration)s apdex burn rate' % formatConfig,
-      query: '%(shortMetric)s{%(selector)s}' % formatConfig,
+      query: shortQuery,
     },
     {
       legendFormat: '%(longDuration)s apdex burn threshold' % formatConfig,
@@ -255,6 +282,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       selectorHash=componentSelectorHash,
       apdexInverted=true,
       sloMetric=apdexSLOMetric,
+      nonGlobalFallback=true,
     ),
     sixHourBurnRateCombinations=combinations(
       shortMetric='gitlab_component_apdex:ratio_30m',
@@ -264,6 +292,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       selectorHash=componentSelectorHash,
       apdexInverted=true,
       sloMetric=apdexSLOMetric,
+      nonGlobalFallback=true,
     ),
     componentLevel=true,
     statusDescriptionPanel=statusDescription.componentApdexStatusDescriptionPanel(componentSelectorHash)
@@ -281,6 +310,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       selectorHash=componentSelectorHash,
       apdexInverted=false,
       sloMetric=errorSLOMetric,
+      nonGlobalFallback=false,
     ),
     sixHourBurnRateCombinations=combinations(
       shortMetric='gitlab_component_errors:ratio_30m',
@@ -290,6 +320,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       selectorHash=componentSelectorHash,
       apdexInverted=false,
       sloMetric=errorSLOMetric,
+      nonGlobalFallback=false,
     ),
     componentLevel=true,
     statusDescriptionPanel=statusDescription.componentErrorRateStatusDescriptionPanel(componentSelectorHash)
@@ -307,6 +338,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       selectorHash=serviceSelectorHash,
       apdexInverted=true,
       sloMetric=apdexSLOMetric,
+      nonGlobalFallback=false,
     ),
     sixHourBurnRateCombinations=combinations(
       shortMetric='gitlab_service_apdex:ratio_30m',
@@ -316,6 +348,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       selectorHash=serviceSelectorHash,
       apdexInverted=true,
       sloMetric=apdexSLOMetric,
+      nonGlobalFallback=false,
     ),
     componentLevel=false,
     statusDescriptionPanel=statusDescription.serviceApdexStatusDescriptionPanel(serviceSelectorHash)
@@ -332,6 +365,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       selectorHash=serviceSelectorHash,
       apdexInverted=false,
       sloMetric=errorSLOMetric,
+      nonGlobalFallback=false,
     ),
     sixHourBurnRateCombinations=combinations(
       shortMetric='gitlab_service_errors:ratio_30m',
@@ -341,6 +375,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       selectorHash=serviceSelectorHash,
       apdexInverted=false,
       sloMetric=errorSLOMetric,
+      nonGlobalFallback=false,
     ),
     componentLevel=false,
     statusDescriptionPanel=statusDescription.serviceErrorStatusDescriptionPanel(serviceSelectorHash)
