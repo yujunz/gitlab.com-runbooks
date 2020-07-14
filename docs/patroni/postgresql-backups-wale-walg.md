@@ -4,6 +4,8 @@
 
 ## WAL-E and WAL-G Overview
 
+Here the link to the video of the [runbook simulation](https://www.youtube.com/watch?v=YqAeOblI4NM&feature=youtu.be).
+
 [WAL-E][WAL-E] was designed by Heroku to solve their PostgreSQL backup issues. It is a Python-based application that is invoked by the PostgreSQL process via the 'archive_command' as part of PostgreSQLs [continuous archiving][PSQL_Archiving] setup.
 
 It works by taking [Write-Ahead Logging][PSQL_WAL] files, compressing them, and then archiving them off to a storage target in near realtime. On a nightly schedule, WAL-E also pushes a full backup to the storage target, referred to as a 'base backup'. A restore then is a combination of a 'base backup' and all of the WAL transaction files since the backup to recover the database to a given point in time.
