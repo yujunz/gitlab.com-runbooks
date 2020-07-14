@@ -240,7 +240,7 @@ local rules = [
       runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
       title: 'Anomaly detection: The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving more requests than normal',
       grafana_dashboard_id: 'general-service/service-platform-metrics',
-      grafana_panel_id: '9',
+      grafana_panel_id: '11',
       grafana_variables: 'environment,type,stage',
       grafana_min_zoom_hours: '12',
       link1_title: 'Definition',
