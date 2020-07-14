@@ -1,5 +1,6 @@
 # Check the status of transaction wraparound Runbook
 
+Here the link to the video of the [runbook simulation](https://youtu.be/lR-yjLbRrmk).
 
 ## Intro
 The autovacuum process executes a "special" maintenance task called **[to prevent wraparound](https://www.postgresql.org/docs/11/routine-vacuuming.html#VACUUM-FOR-WRAPAROUND)** or **[wraparound protection](https://www.postgresql.org/docs/11/routine-vacuuming.html#VACUUM-FOR-WRAPAROUND)** on tables that the TXID reaches the [autovacuum_freeze_max_age](https://postgresqlco.nf/en/doc/param/autovacuum_freeze_max_age/). Sometimes this activity can be annoying in a high workload on the database server due to the expense of consuming additional resources. A manual `frozen vacuum` command helps avoid this "situation", but running `frozen vacuum` on the entire database can slow down the database server, hence the importance of monitoring and executing it by table(especially on big tables) it is a smart decision
