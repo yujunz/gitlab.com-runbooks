@@ -19,10 +19,10 @@ basic.dashboard(
           alters how the application makes requests of the underlying infrastructure.
 
           For more information, please view the [Indicators section on the Scalability Team
-          Handbook Page](https://about.gitlab.com/handbook/engineering/infrastructure/team/scalability#indicators).
+          Handbook Page](https://about.gitlab.com/handbook/engineering/infrastructure/team/scalability#application-demand).
         |||
       ),
-  ], cols=1, rowHeight=3, startRow=100)
+  ], cols=1, rowHeight=4, startRow=100)
   +
   layout.grid([
     basic.timeseries(
