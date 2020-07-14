@@ -8,7 +8,7 @@ groups:
           description: '{{ $labels.environment }} has reached maximum allowed nodes'
           runbook: docs/uncategorized/kubernetes.md#gkenodecount
         expr: |-
-          count(stackdriver_gce_instance_compute_googleapis_com_instance_uptime{instance_name=~"gke-.*"}) by (environment) >= 28
+          count(stackdriver_gce_instance_compute_googleapis_com_instance_uptime{instance_name=~"gke-.*"}) by (environment) >= 210
         for: 5m
         labels:
           pager: pagerduty
@@ -19,9 +19,9 @@ groups:
         annotations:
           title: High node count in GKE
           description: '{{ $labels.environment }} is close to the maximum allowed nodes'
-          runbook: docs/uncategorized/kubernetes.md#gkenodecout
+          runbook: docs/uncategorized/kubernetes.md#gkenodecount
         expr: |-
-          count(stackdriver_gce_instance_compute_googleapis_com_instance_uptime{instance_name=~"gke-.*"}) by (environment) > 25
+          count(stackdriver_gce_instance_compute_googleapis_com_instance_uptime{instance_name=~"gke-.*"}) by (environment) > 189
         for: 30m
         labels:
           severity: s3
