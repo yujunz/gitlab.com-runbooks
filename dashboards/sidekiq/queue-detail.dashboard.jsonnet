@@ -278,7 +278,15 @@ basic.dashboard(
       title='Queue Apdex',
       description='Queue apdex monitors the percentage of jobs that are dequeued within their queue threshold. Higher is better. Different jobs have different thresholds.',
       query=|||
-        gitlab_background_jobs:queue:apdex:ratio_5m{environment="$environment", queue=~"$queue"}
+        sum by (queue) (
+          (gitlab_background_jobs:queue:apdex:ratio_5m{environment="$environment", queue=~"$queue"} >= 0)
+          *
+          (gitlab_background_jobs:queue:apdex:weight:score_5m{environment="$environment", queue=~"$queue"} >= 0)
+        )
+        /
+        sum by (queue) (
+          (gitlab_background_jobs:queue:apdex:weight:score_5m{environment="$environment", queue=~"$queue"})
+        )
       |||,
       yAxisLabel='% Jobs within Max Queuing Duration SLO',
       legendFormat='{{ queue }} queue apdex',
@@ -295,7 +303,15 @@ basic.dashboard(
       title='Execution Apdex',
       description='Execution apdex monitors the percentage of jobs that run within their execution (run-time) threshold. Higher is better. Different jobs have different thresholds.',
       query=|||
-        gitlab_background_jobs:execution:apdex:ratio_5m{environment="$environment", queue=~"$queue"}
+        sum by (queue) (
+          (gitlab_background_jobs:execution:apdex:ratio_5m{environment="$environment", queue=~"$queue"} >= 0)
+          *
+          (gitlab_background_jobs:execution:apdex:weight:score_5m{environment="$environment", queue=~"$queue"} >= 0)
+        )
+        /
+        sum by (queue) (
+          (gitlab_background_jobs:execution:apdex:weight:score_5m{environment="$environment", queue=~"$queue"})
+        )
       |||,
       yAxisLabel='% Jobs within Max Execution Duration SLO',
       legendFormat='{{ queue }} execution apdex',
@@ -313,7 +329,7 @@ basic.dashboard(
       title='Execution Rate (RPS)',
       description='Jobs executed per second',
       query=|||
-        gitlab_background_jobs:execution:ops:rate_5m{environment="$environment", queue=~"$queue"}
+        sum by (queue) (gitlab_background_jobs:execution:ops:rate_5m{environment="$environment", queue=~"$queue"})
       |||,
       legendFormat='{{ queue }} rps',
       format='ops',
@@ -331,7 +347,13 @@ basic.dashboard(
       'Error Ratio',
       description='Percentage of jobs that fail with an error. Lower is better.',
       query=|||
-        gitlab_background_jobs:execution:error:ratio_5m{environment="$environment", queue=~"$queue"}
+        sum by (queue) (
+          (gitlab_background_jobs:execution:error:rate_5m{environment="$environment", queue=~"$queue"} >= 0)
+        )
+        /
+        sum by (queue) (
+          (gitlab_background_jobs:execution:ops:rate_5m{environment="$environment", queue=~"$queue"} >= 0)
+        )
       |||,
       legendFormat='{{ queue }} error ratio',
       yAxisLabel='Error Percentage',
