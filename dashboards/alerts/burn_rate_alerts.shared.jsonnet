@@ -34,7 +34,7 @@ local combinations(shortMetric, shortDuration, longMetric, longDuration, selecto
   local longQuery = if nonGlobalFallback then
     |||
       %(longMetric)s{%(globalSelector)s}
-      or
+      or on(env, environment, tier, type, stage, component)
       %(longMetric)s{%(nonGlobalSelector)s}
     ||| % formatConfig
   else
@@ -47,7 +47,7 @@ local combinations(shortMetric, shortDuration, longMetric, longDuration, selecto
   local shortQuery = if nonGlobalFallback then
     |||
       %(shortMetric)s{%(globalSelector)s}
-      or
+      or on(env, environment, tier, type, stage, component)
       %(shortMetric)s{%(nonGlobalSelector)s}
     ||| % formatConfig
   else
