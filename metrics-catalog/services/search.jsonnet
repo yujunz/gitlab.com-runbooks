@@ -7,13 +7,6 @@ local customQuery = metricsCatalog.customQuery;
 metricsCatalog.serviceDefinition({
   type: 'search',
   tier: 'inf',
-  slos: {
-    /*
-    TODO: enable SLOs
-    apdexRatio: 0.95,
-    errorRatio: 0.005,
-    */
-  },
   components: {
     elasticsearch_searching: {
       requestRate: derivMetric(

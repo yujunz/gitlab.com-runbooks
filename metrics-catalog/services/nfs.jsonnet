@@ -5,9 +5,6 @@ local rateMetric = metricsCatalog.rateMetric;
 metricsCatalog.serviceDefinition({
   type: 'nfs',
   tier: 'stor',
-  deprecatedSingleBurnThresholds: {
-    errorRatio: 0.0001,
-  },
   monitoringThresholds: {
     errorRatio: 0.9999,  // 99.99% of nfs requests should succeed, over multiple window periods
   },

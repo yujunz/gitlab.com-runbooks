@@ -5,9 +5,6 @@ local rateMetric = metricsCatalog.rateMetric;
 metricsCatalog.serviceDefinition({
   type: 'redis-cache',
   tier: 'db',
-  deprecatedSingleBurnThresholds: {
-    apdexRatio: 0.95,
-  },
   monitoringThresholds: {
     apdexScore: 0.9995,
     errorRatio: 0.999,

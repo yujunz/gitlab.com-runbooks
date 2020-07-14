@@ -5,9 +5,6 @@ local rateMetric = metricsCatalog.rateMetric;
 metricsCatalog.serviceDefinition({
   type: 'waf',
   tier: 'lb',
-  deprecatedSingleBurnThresholds: {
-    errorRatio: 0.001,
-  },
   monitoringThresholds: {
     errorRatio: 0.999,
   },

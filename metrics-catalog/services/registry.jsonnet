@@ -5,7 +5,7 @@ local rateMetric = metricsCatalog.rateMetric;
 metricsCatalog.serviceDefinition({
   type: 'registry',
   tier: 'sv',
-  deprecatedSingleBurnThresholds: {
+  contractualThresholds: {
     apdexRatio: 0.9,
     errorRatio: 0.005,
   },

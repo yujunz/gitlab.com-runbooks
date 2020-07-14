@@ -11,8 +11,8 @@ local statusDescription = import 'status_description.libsonnet';
 local defaultEnvironmentSelector = { environment: '$environment' };
 
 local getLatencyPercentileForService(service) =
-  if std.objectHas(service, 'deprecatedSingleBurnThresholds') && std.objectHas(service.deprecatedSingleBurnThresholds, 'apdexRatio') then
-    service.deprecatedSingleBurnThresholds.apdexRatio
+  if std.objectHas(service, 'contractualThresholds') && std.objectHas(service.contractualThresholds, 'apdexRatio') then
+    service.contractualThresholds.apdexRatio
   else
     0.95;
 

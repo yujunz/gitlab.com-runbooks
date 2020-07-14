@@ -5,10 +5,6 @@ local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 metricsCatalog.serviceDefinition({
   type: 'praefect',
   tier: 'stor',
-  deprecatedSingleBurnThresholds: {
-    apdexRatio: 0.995,
-    errorRatio: 0.0005,
-  },
   monitoringThresholds: {
     apdexScore: 0.995,
     errorRatio: 0.9995,  // 99.95% of Praefect requests should succeed, over multiple window periods
