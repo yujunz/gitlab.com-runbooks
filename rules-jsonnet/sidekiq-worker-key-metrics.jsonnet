@@ -167,7 +167,7 @@ local generateAlerts() =
         |||,
         runbook: 'docs/sidekiq/service-sidekiq.md',
         grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
-        grafana_panel_id: '15',
+        grafana_panel_id: '16',
         grafana_variables: 'environment,stage,queue',
         grafana_min_zoom_hours: '6',
         promql_template_1: 'sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}',
