@@ -39,7 +39,7 @@ local combinations(shortMetric, shortDuration, longMetric, longDuration, selecto
     ||| % formatConfig
   else
     |||
-      %(shortMetric)s{%(globalSelector)s}
+      %(longMetric)s{%(globalSelector)s}
     ||| % formatConfig;
 
   // For backwards compatability, fall-back to non global
