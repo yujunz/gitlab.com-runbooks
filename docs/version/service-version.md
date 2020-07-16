@@ -23,6 +23,7 @@
 * [../monitoring/filesystem_alerts_inodes.md](../monitoring/filesystem_alerts_inodes.md)
 * [../monitoring/update-prometheus-and-exporters.md](../monitoring/update-prometheus-and-exporters.md)
 * [../packaging/manage-package-signing-keys.md](../packaging/manage-package-signing-keys.md)
+* [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
 * [../patroni/postgres-checkup.md](../patroni/postgres-checkup.md)
 * [../patroni/postgres_exporter.md](../patroni/postgres_exporter.md)

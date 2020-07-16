@@ -52,6 +52,7 @@
 * [../monitoring/alerts_manual.md](../monitoring/alerts_manual.md)
 * [../monitoring/monitoring-overview.md](../monitoring/monitoring-overview.md)
 * [../nfs/recovering-from-nfs-disaster.md](../nfs/recovering-from-nfs-disaster.md)
+* [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
 * [../patroni/pg_repack.md](../patroni/pg_repack.md)
 * [../pgbouncer/pgbouncer-connections.md](../pgbouncer/pgbouncer-connections.md)

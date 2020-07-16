@@ -28,7 +28,6 @@
 * [logging_gcs_archive_bigquery.md](logging_gcs_archive_bigquery.md)
 * [../pages/gitlab-pages.md](../pages/gitlab-pages.md)
 * [../pages/pages-letsencrypt.md](../pages/pages-letsencrypt.md)
-* [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)
 * [../patroni/postgres-checkup.md](../patroni/postgres-checkup.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
 * [../patroni/postgresql-backups-wale-walg.md](../patroni/postgresql-backups-wale-walg.md)

@@ -44,6 +44,7 @@
 * [../logging/README.md](../logging/README.md)
 * [../monitoring/alertmanager-notification-failures.md](../monitoring/alertmanager-notification-failures.md)
 * [../monitoring/alerts_manual.md](../monitoring/alerts_manual.md)
+* [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
 * [../patroni/pg_repack.md](../patroni/pg_repack.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
