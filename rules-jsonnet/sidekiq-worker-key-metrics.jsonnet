@@ -13,7 +13,7 @@ local monthlyErrorBudget = (1 - 0.99);  // 99% of sidekiq executions should succ
 local minimumOperationRateForMonitoring = 4 / 60;
 
 local sidekiqSLOAlert(alertname, expr, grafanaPanelStableId, metricName, alertDescription) =
-  alerts.processAlertRule({
+  {
     alert: alertname,
     expr: expr,
     'for': '2m',
@@ -40,7 +40,7 @@ local sidekiqSLOAlert(alertname, expr, grafanaPanelStableId, metricName, alertDe
       grafana_min_zoom_hours: '6',
       promql_template_1: '%s{environment="$environment", type="$type", stage="$stage", component="$component"}' % [metricName],
     },
-  });
+  };
 
 // generateAlerts configures the alerting rules for sidekiq jobs
 // For the first iteration, things are fairly basic:
@@ -229,7 +229,7 @@ local rules = {
     name: 'Sidekiq Per Worker Alerting',
     interval: '1m',
     rules:
-      generateAlerts(),
+      std.map(alerts.processAlertRule, generateAlerts())
   }],
 };
 

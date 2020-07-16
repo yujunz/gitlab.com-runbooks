@@ -153,8 +153,11 @@ groups:
         This could be the result of a Sidekiq server configuration issue, where
         no Sidekiq servers are configured to dequeue the specific queue.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-stage={{ $labels.stage }}&var-queue={{ $labels.queue }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: 80616
+      grafana_panel_id: '80616'
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}
@@ -207,8 +210,11 @@ groups:
 
         Also, review https://ops.gitlab.net/gitlab-cookbooks/chef-repo/-/merge_requests/2948
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-stage={{ $labels.stage }}&var-queue={{ $labels.queue }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: 80616
+      grafana_panel_id: '80616'
       grafana_variables: environment,stage,queue
       promql_template_1: sidekiq_enqueued_jobs_total{environment="$environment", queue="$queue"}
       runbook: docs/sidekiq/service-sidekiq.md

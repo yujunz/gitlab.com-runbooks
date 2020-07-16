@@ -45,6 +45,13 @@ class Validator
     else
       validation_warning("alerts should reference a runbook")
     end
+
+    # Check that all label attributes are strings since non-string values, while being technically valid,
+    # will trip-up the Prometheus Operator, leading to downstream failures.
+    # Validate this here to catch this exception early
+    annotations.each do |key, value|
+      validation_error("All attribute values must be strings. labels.#{key} is a #{value.class}") unless value.is_a?(String)
+    end
   end
 
   # Ensures that the rule conforms to our labeling rules
@@ -61,6 +68,13 @@ class Validator
       validation_error("'pager: issue' alerts need a project label") if (labels["pager"] == "issue") && labels["project"].nil?
     elsif (labels["severity"] == "s1") || (labels["severity"] == "s2")
       validation_error("s1 and s2 alerts must be configured to send to pagerduty")
+    end
+
+    # Check that all label values are strings since non-string values, while being technically valid,
+    # will trip-up the Prometheus Operator, leading to downstream failures.
+    # Validate this here to catch this exception early
+    labels.each do |key, value|
+      validation_error("All label values must be strings. labels.#{key} is a #{value.class}") unless value.is_a?(String)
     end
   end
 
