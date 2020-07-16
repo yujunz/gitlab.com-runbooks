@@ -76,9 +76,9 @@ basic.dashboard(
 )
 .addPanels(
   layout.grid([
-    keyMetrics.apdexPanel('$type', '$stage'),
-    keyMetrics.errorRatesPanel('$type', '$stage'),
-    keyMetrics.qpsPanel('$type', '$stage'),
+    keyMetrics.apdexPanel('$type', '$stage', stableId='apdex-ratio'),
+    keyMetrics.errorRatesPanel('$type', '$stage', stableId='error-ratio'),
+    keyMetrics.qpsPanel('$type', '$stage', stableId='request-rate'),
     keyMetrics.saturationPanel('$type', '$stage'),
   ], startRow=3001)
 )

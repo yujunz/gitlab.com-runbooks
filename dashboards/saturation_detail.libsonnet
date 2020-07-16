@@ -1,3 +1,4 @@
+local basic = import 'basic.libsonnet';
 local colors = import 'colors.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
@@ -9,7 +10,6 @@ local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
-local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local layout = import 'layout.libsonnet';
 local text = grafana.text;
@@ -25,9 +25,9 @@ local selectors = import './lib/selectors.libsonnet';
       selector: selectors.serializeHash(selector),
     };
 
-    local panel = graphPanel.new(
-      title,
-      description,
+    local panel = basic.graphPanel(
+      title=title,
+      description=description,
       sort='decreasing',
       linewidth=linewidth,
       fill=0,
@@ -42,6 +42,7 @@ local selectors = import './lib/selectors.libsonnet';
       legend_avg=true,
       legend_alignAsTable=true,
       legend_hideEmpty=true,
+      stableId='saturation-' + component,
     );
 
     local p2 = if query != null then
@@ -119,7 +120,7 @@ local selectors = import './lib/selectors.libsonnet';
       linewidth=1,
       query=query,
       legendFormat=componentDetails.getLegendFormat(),
-      selector=selectorHash
+      selector=selectorHash,
     ),
 
   saturationDetailPanels(selectorHash, components)::

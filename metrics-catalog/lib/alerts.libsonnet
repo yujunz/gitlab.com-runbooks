@@ -12,6 +12,14 @@ local getGrafanaLink(annotations) =
   ];
   'https://dashboards.gitlab.net/d/' + dashboardId + '?' + std.join('&', queryParams);
 
+local ensureObjectHasStringValues(hash) =
+  std.foldl(
+    function(memo, key)
+      memo { [if hash[key] != null then key]: std.toString(hash[key]) },
+    std.objectFields(hash),
+    {}
+  );
+
 {
   processAlertRule(alertRule)::
     local annotations = alertRule.annotations +
@@ -22,5 +30,9 @@ local getGrafanaLink(annotations) =
                         else
                           {};
 
-    alertRule { annotations: annotations },
+    // The Prometheus Operator doesn't like label values that are not strings
+    alertRule {
+      annotations: ensureObjectHasStringValues(annotations),
+      labels: ensureObjectHasStringValues(alertRule.labels),
+    },
 }

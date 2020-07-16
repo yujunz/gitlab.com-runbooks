@@ -1,3 +1,4 @@
+local basic = import 'basic.libsonnet';
 local colors = import 'colors.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
@@ -7,7 +8,6 @@ local promQuery = import 'prom_query.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local sliPromQL = import 'sli_promql.libsonnet';
 local templates = import 'templates.libsonnet';
-local basic = import 'basic.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -18,13 +18,21 @@ local statusDescription = import 'status_description.libsonnet';
 
 local defaultEnvironmentSelector = { environment: '$environment' };
 
-local generalGraphPanel(title, description=null, linewidth=2, sort='increasing', legend_show=true) =
+local generalGraphPanel(
+  title,
+  description=null,
+  linewidth=2,
+  sort='increasing',
+  legend_show=true,
+  stableId=null
+      ) =
   basic.graphPanel(
     title,
     linewidth=linewidth,
     description=description,
     sort=sort,
     legend_show=legend_show,
+    stableId=stableId,
   )
   .addSeriesOverride(seriesOverrides.upper)
   .addSeriesOverride(seriesOverrides.lower)
@@ -39,7 +47,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     serviceStage,
     environmentSelectorHash=defaultEnvironmentSelector,
     compact=false,
-    description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.'
+    description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
+    stableId=null,
   )::
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
@@ -49,6 +58,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       sort=0,
       legend_show=!compact,
       linewidth=if compact then 1 else 2,
+      stableId=stableId,
     )
     .addTarget(  // Primary metric (worst case)
       promQuery.target(
@@ -97,7 +107,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/'))
     .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillBelowTo: serviceType + ' service' }))
     .addDataLink({
-      url: '/d/alerts-service_multiburn_apdex?${__all_variables}&var-type=%(type)s' % { type: serviceType  },
+      url: '/d/alerts-service_multiburn_apdex?${__all_variables}&var-type=%(type)s' % { type: serviceType },
       title: 'Service Apdex Multi-Burn Analysis',
       targetBlank: true,
     }),
@@ -209,7 +219,8 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     serviceStage,
     environmentSelectorHash=defaultEnvironmentSelector,
     compact=false,
-    includeLastWeek=true
+    includeLastWeek=true,
+    stableId=null,
   )::
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
@@ -219,6 +230,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       sort=0,
       legend_show=!compact,
       linewidth=if compact then 1 else 2,
+      stableId=stableId,
     )
     .addTarget(  // Primary metric (max)
       promQuery.target(
@@ -269,7 +281,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/', { fillBelowTo: serviceType + ' service (avg)' }))
     .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillGradient: 10 }))
     .addDataLink({
-      url: '/d/alerts-service_multiburn_error?${__all_variables}&var-type=%(type)s' % { type: serviceType  },
+      url: '/d/alerts-service_multiburn_error?${__all_variables}&var-type=%(type)s' % { type: serviceType },
       title: 'Service Error-Rate Multi-Burn Analysis',
       targetBlank: true,
     }),
@@ -386,6 +398,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
     serviceStage,
     compact=false,
     environmentSelectorHash=defaultEnvironmentSelector,
+    stableId=null,
   )::
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
@@ -395,6 +408,7 @@ local generalGraphPanel(title, description=null, linewidth=2, sort='increasing',
       sort=0,
       legend_show=!compact,
       linewidth=if compact then 1 else 2,
+      stableId=stableId,
     )
     .addTarget(  // Primary metric
       promQuery.target(

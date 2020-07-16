@@ -24,8 +24,8 @@ local combinations(shortMetric, shortDuration, longMetric, longDuration, selecto
     longMetric: longMetric,
     longDuration: longDuration,
     longBurnFactor: multiburnFactors['burnrate_' + longDuration],
-    globalSelector: selectors.serializeHash(selectorHash { monitor: "global" }),
-    nonGlobalSelector: selectors.serializeHash(selectorHash { monitor: { ne: "global" } }),
+    globalSelector: selectors.serializeHash(selectorHash { monitor: 'global' }),
+    nonGlobalSelector: selectors.serializeHash(selectorHash { monitor: { ne: 'global' } }),
     sloMetric: sloMetric,
   };
 
@@ -80,13 +80,18 @@ local combinations(shortMetric, shortDuration, longMetric, longDuration, selecto
     },
   ];
 
-local burnRatePanel(title, combinations) =
+local burnRatePanel(
+  title,
+  combinations,
+  stableId,
+      ) =
   local basePanel = basic.percentageTimeseries(
     title=title,
     decimals=4,
     description='apdex burn rates: higher is better',
     query=combinations[0].query,
     legendFormat=combinations[0].legendFormat,
+    stableId=stableId,
   );
 
   std.foldl(
@@ -142,9 +147,14 @@ local burnRatePanel(title, combinations) =
     zindex: -2,
   });
 
-local burnRatePanelWithHelp(title, combinations, content) =
+local burnRatePanelWithHelp(
+  title,
+  combinations,
+  content,
+  stableId=null,
+      ) =
   [
-    burnRatePanel(title, combinations),
+    burnRatePanel(title, combinations, stableId),
     grafana.text.new(
       title='Help',
       mode='markdown',
@@ -159,21 +169,22 @@ local multiburnRateAlertsDashboard(
   sixHourBurnRateCombinations,
   componentLevel,
   selectorHash,
-  statusDescriptionPanel
+  statusDescriptionPanel,
       ) =
-  local dashboardInitial = basic.dashboard(
-    title,
-    tags=['alert-target', 'general'],
-  )
-                           .addTemplate(templates.type)
-                           .addTemplate(templates.stage)
-                           .addTemplate(
-    template.custom(
-      'proposed_slo',
-      'NaN,0.9,0.95,0.99,0.995,0.999,0.9995,0.9999',
-      'NaN',
+  local dashboardInitial =
+    basic.dashboard(
+      title,
+      tags=['alert-target', 'general'],
     )
-  );
+    .addTemplate(templates.type)
+    .addTemplate(templates.stage)
+    .addTemplate(
+      template.custom(
+        'proposed_slo',
+        'NaN,0.9,0.95,0.99,0.995,0.999,0.9995,0.9999',
+        'NaN',
+      )
+    );
 
   local dashboard = if componentLevel then
     dashboardInitial.addTemplate(templates.component)
@@ -215,7 +226,8 @@ local multiburnRateAlertsDashboard(
 
           The alert will fire when both of the green solid series cross the green dotted threshold, or
           both of the blue solid series cross the blue dotted threshold.
-        |||
+        |||,
+        stableId='multiwindow-multiburnrate',
       ),
       burnRatePanelWithHelp(
         title='Single window, 1h/5m burn-rates',
@@ -226,7 +238,7 @@ local multiburnRateAlertsDashboard(
           Removing the 6h/30m burn-rates, this shows the same data over the 1h/5m burn-rates.
 
           The alert will fire when the solid lines cross the dotted threshold.
-        |||
+        |||,
       ),
       burnRatePanelWithHelp(
         title='Single window, 6h/30m burn-rates',

@@ -18,7 +18,7 @@ groups:
         https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-stage={{ $labels.stage }}&var-queue={{ $labels.queue }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '13'
+      grafana_panel_id: '98088'
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         gitlab_background_jobs:execution:error:ratio_1h{environment="$environment", type="$type", stage="$stage",
@@ -64,7 +64,7 @@ groups:
         https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-stage={{ $labels.stage }}&var-queue={{ $labels.queue }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '12'
+      grafana_panel_id: '43432'
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         gitlab_background_jobs:execution:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
@@ -110,7 +110,7 @@ groups:
         https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-stage={{ $labels.stage }}&var-queue={{ $labels.queue }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '11'
+      grafana_panel_id: '28392'
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         gitlab_background_jobs:queue:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
@@ -154,7 +154,7 @@ groups:
         no Sidekiq servers are configured to dequeue the specific queue.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '16'
+      grafana_panel_id: 80616
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}
@@ -208,7 +208,7 @@ groups:
         Also, review https://ops.gitlab.net/gitlab-cookbooks/chef-repo/-/merge_requests/2948
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '15'
+      grafana_panel_id: 80616
       grafana_variables: environment,stage,queue
       promql_template_1: sidekiq_enqueued_jobs_total{environment="$environment", queue="$queue"}
       runbook: docs/sidekiq/service-sidekiq.md

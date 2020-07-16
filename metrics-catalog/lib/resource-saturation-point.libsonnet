@@ -1,5 +1,6 @@
 local selectors = import './selectors.libsonnet';
 local alerts = import 'alerts.libsonnet';
+local stableIds = import 'lib/stable-ids.libsonnet';
 local strings = import 'strings.libsonnet';
 
 // The severity labels that we allow on resources
@@ -195,7 +196,7 @@ local resourceSaturationPoint = function(options)
           ||| % formatConfig,
           runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
           grafana_dashboard_id: 'alerts-' + definition.grafana_dashboard_uid,
-          grafana_panel_id: '2',
+          grafana_panel_id: stableIds.hashStableId('saturation-' + componentName),
           grafana_variables: 'environment,type,stage',
           grafana_min_zoom_hours: '6',
           promql_query: definition.getQuery({
