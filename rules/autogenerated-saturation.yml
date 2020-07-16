@@ -121,7 +121,7 @@ groups:
         clamp_min(
           clamp_max(
             avg by (environment, tier, type, stage) (
-              avg_over_time(elasticsearch_os_cpu_percent{environment!="",type=~"logging|search"}[1m]) / 100
+              avg_over_time(elasticsearch_process_cpu_percent{environment!="",type=~"logging|search"}[1m]) / 100
             )
             ,
             1)
@@ -169,7 +169,7 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            avg_over_time(elasticsearch_os_cpu_percent{environment!="",type=~"logging|search"}[5m]) / 100
+            avg_over_time(elasticsearch_process_cpu_percent{environment!="",type=~"logging|search"}[5m]) / 100
             ,
             1)
         ,
@@ -1265,7 +1265,7 @@ groups:
           clamp_min(
             clamp_max(
               avg by (environment, tier, type, stage) (
-                avg_over_time(elasticsearch_os_cpu_percent{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m]) / 100
+                avg_over_time(elasticsearch_process_cpu_percent{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m]) / 100
               )
               ,
               1)
@@ -1403,7 +1403,7 @@ groups:
         max by(environment, tier, type, stage, name) (
           clamp_min(
             clamp_max(
-              avg_over_time(elasticsearch_os_cpu_percent{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m]) / 100
+              avg_over_time(elasticsearch_process_cpu_percent{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m]) / 100
               ,
               1)
           ,
