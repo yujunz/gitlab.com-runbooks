@@ -369,7 +369,7 @@ local pgbouncerSyncPool(serviceType, role) =
     resourceLabels: [],
     query: |||
       avg by (%(aggregationLabels)s) (
-        avg_over_time(elasticsearch_os_cpu_percent{%(selector)s}[%(rangeInterval)s]) / 100
+        avg_over_time(elasticsearch_process_cpu_percent{%(selector)s}[%(rangeInterval)s]) / 100
       )
     |||,
     slos: {
@@ -436,7 +436,7 @@ local pgbouncerSyncPool(serviceType, role) =
     resourceLabels: ['name'],
     burnRatePeriod: '5m',
     query: |||
-      avg_over_time(elasticsearch_os_cpu_percent{%(selector)s}[%(rangeInterval)s]) / 100
+      avg_over_time(elasticsearch_process_cpu_percent{%(selector)s}[%(rangeInterval)s]) / 100
     |||,
     slos: {
       soft: 0.80,
