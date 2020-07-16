@@ -11,13 +11,42 @@ local tablePanel = grafana.tablePanel;
 local timepickerlib = import 'grafonnet/timepicker.libsonnet';
 local templates = import 'templates.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
+local stableIds = import 'lib/stable-ids.libsonnet';
 
-local panelMethods = {
+local applyStableIdsToPanel(panel) =
+  if std.objectHasAll(panel, 'applyPanelId') then
+    panel.applyPanelId()
+  else
+    panel;
+
+local applyStableIdsToRow(row) =
+  row {
+    panels: std.map(function(panel) applyStableIdsToPanel(panel), row.panels),
+  };
+
+local applyStableIdsToDashboard(dashboard) =
+  dashboard {
+    rows: std.map(function(row) applyStableIdsToRow(row), dashboard.rows),
+    panels: std.map(function(panel) applyStableIdsToPanel(panel), dashboard.panels),
+  };
+
+local panelOverrides(stableId) = {
+  stableId:: stableId,
   addDataLink(datalink):: self + {
     options+: {
       dataLinks+: [datalink],
     },
   },
+  applyPanelId()::
+    local stableId = self.stableId;
+    local panelId = self.id;
+
+    self {
+      id: if stableId != null then
+        stableIds.hashStableId(stableId)
+      else
+        panelId,
+    },
 };
 
 {
@@ -68,7 +97,7 @@ local panelMethods = {
 
     dashboardWithEnvTemplate {
       trailer()::
-        self.addPanel(
+        local dashboardWithTrailerPanel = self.addPanel(
           text.new(
             title='Source',
             mode='markdown',
@@ -82,7 +111,9 @@ local panelMethods = {
             w: 24,
             h: 2,
           }
-        ),
+        );
+
+        applyStableIdsToDashboard(dashboardWithTrailerPanel),
     },
 
   graphPanel(
@@ -106,6 +137,7 @@ local panelMethods = {
     thresholds=[],
     points=false,
     pointradius=5,
+    stableId=null
   )::
     graphPanel.new(
       title=title,
@@ -128,7 +160,7 @@ local panelMethods = {
       thresholds=thresholds,
       points=points,
       pointradius=pointradius,
-    ) + panelMethods,
+    ) + panelOverrides(stableId),
 
   heatmap(
     title='Heatmap',
@@ -140,7 +172,8 @@ local panelMethods = {
     intervalFactor=3,
     yAxisLabel='',
     legend_show=true,
-    linewidth=2
+    linewidth=2,
+    stableId=null,
   )::
     heatmapPanel.new(
       title,
@@ -151,7 +184,7 @@ local panelMethods = {
       color_mode='opacity',
     )
     .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
-    + panelMethods,
+    + panelOverrides(stableId),
 
   singlestat(
     title='SingleStat',
@@ -176,6 +209,7 @@ local panelMethods = {
     legend_show=true,
     linewidth=2,
     valueName='current',
+    stableId=null,
   )::
     singlestatPanel.new(
       title,
@@ -190,7 +224,7 @@ local panelMethods = {
       valueName=valueName,
     )
     .addTarget(promQuery.target(query, instant)) +
-    panelMethods,
+    panelOverrides(stableId),
 
   table(
     title='Table',
@@ -203,6 +237,7 @@ local panelMethods = {
     instant=true,
     interval='1m',
     intervalFactor=3,
+    stableId=null,
   )::
     tablePanel.new(
       title,
@@ -214,7 +249,7 @@ local panelMethods = {
       columns=columns,
     )
     .addTarget(promQuery.target(query, instant=instant, format='table')) +
-    panelMethods,
+    panelOverrides(stableId),
 
   multiTimeseries(
     title='Multi timeseries',
@@ -231,6 +266,7 @@ local panelMethods = {
     max=null,
     decimals=0,
     thresholds=[],
+    stableId=null,
   )::
     local panel = self.graphPanel(
       title,
@@ -251,6 +287,7 @@ local panelMethods = {
       legend_alignAsTable=true,
       legend_hideEmpty=true,
       thresholds=thresholds,
+      stableId=stableId
     );
 
     local addPanelTarget(panel, query) =
@@ -287,6 +324,7 @@ local panelMethods = {
     decimals=0,
     max=null,
     thresholds=[],
+    stableId=null,
   )::
     self.multiTimeseries(
       queries=[{ query: query, legendFormat: legendFormat }],
@@ -303,6 +341,7 @@ local panelMethods = {
       max=max,
       decimals=decimals,
       thresholds=thresholds,
+      stableId=stableId,
     ),
 
   queueLengthTimeseries(
@@ -315,6 +354,7 @@ local panelMethods = {
     intervalFactor=3,
     yAxisLabel='Queue Length',
     linewidth=2,
+    stableId=null,
   )::
     self.graphPanel(
       title,
@@ -333,6 +373,7 @@ local panelMethods = {
       legend_avg=true,
       legend_alignAsTable=true,
       legend_hideEmpty=true,
+      stableId=stableId,
     )
     .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
     .resetYaxes()
@@ -362,6 +403,7 @@ local panelMethods = {
     max=null,
     decimals=0,
     thresholds=null,
+    stableId=null,
   )::
     local formatConfig = {
       query: query,
@@ -384,6 +426,7 @@ local panelMethods = {
       legend_alignAsTable=true,
       legend_hideEmpty=true,
       thresholds=thresholds,
+      stableId=stableId,
     )
     .addTarget(
       promQuery.target(
@@ -421,6 +464,7 @@ local panelMethods = {
     legend_show=true,
     min=0,
     max=1,
+    stableId=null,
   )::
     self.percentageTimeseries(
       title=title,
@@ -434,8 +478,8 @@ local panelMethods = {
       legend_show=legend_show,
       min=min,
       max=max,
-    ) +
-    panelMethods,
+      stableId=stableId,
+    ),
 
   apdexTimeseries(
     title='Apdex',
@@ -448,6 +492,7 @@ local panelMethods = {
     linewidth=2,
     min=null,
     legend_show=true,
+    stableId=null,
   )::
     local formatConfig = {
       query: query,
@@ -469,6 +514,7 @@ local panelMethods = {
       legend_avg=true,
       legend_alignAsTable=true,
       legend_hideEmpty=true,
+      stableId=stableId,
     )
     .addTarget(
       promQuery.target(
@@ -508,6 +554,7 @@ local panelMethods = {
     decimals=2,
     linewidth=2,
     min=0,
+    stableId=null,
   )::
     self.graphPanel(
       title,
@@ -526,6 +573,7 @@ local panelMethods = {
       legend_avg=true,
       legend_alignAsTable=true,
       legend_hideEmpty=true,
+      stableId=stableId,
     )
     .addTarget(promQuery.target(query, legendFormat=legendFormat, interval=interval, intervalFactor=intervalFactor))
     .resetYaxes()
@@ -552,6 +600,8 @@ local panelMethods = {
     intervalFactor=3,
     points=false,
     pointradius=3,
+    stableId=null,
+
   )::
     local formatConfig = {
       query: query,
@@ -575,6 +625,7 @@ local panelMethods = {
       legend_hideEmpty=true,
       points=points,
       pointradius=pointradius,
+      stableId=stableId,
     )
     .addTarget(
       promQuery.target(
@@ -606,7 +657,8 @@ local panelMethods = {
     legendFormat='{{ fqdn }}',
     receiveQuery=null,
     intervalFactor=3,
-    legend_show=true
+    legend_show=true,
+    stableId=null,
   )::
     self.graphPanel(
       title,
@@ -620,6 +672,7 @@ local panelMethods = {
       legend_values=false,
       legend_alignAsTable=false,
       legend_hideEmpty=true,
+      stableId=stableId,
     )
     .addSeriesOverride(seriesOverrides.networkReceive)
     .addTarget(
@@ -655,6 +708,7 @@ local panelMethods = {
     fieldTitle='',
     legendFormat='',
     links=[],
+    stableId=null,
   )::
     {
       datasource: '$PROMETHEUS_DS',
@@ -728,8 +782,7 @@ local panelMethods = {
         orientation: 'auto',
       },
     } +
-    panelMethods,
-
+    panelOverrides(stableId),
 
   // This is a useful hack for displaying a label value in a stat panel
   labelStat(
@@ -739,6 +792,7 @@ local panelMethods = {
     color,
     legendFormat,
     links=[],
+    stableId=null,
   )::
     {
       type: 'stat',
@@ -785,5 +839,5 @@ local panelMethods = {
         },
         orientation: 'vertical',
       },
-    },
+    } + panelOverrides(stableId),
 }

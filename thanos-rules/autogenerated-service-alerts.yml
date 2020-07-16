@@ -17,7 +17,7 @@ groups:
         https://dashboards.gitlab.net/d/general-service/service-platform-metrics?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '7'
+      grafana_panel_id: '8104'
       grafana_variables: environment,type,stage
       link1_title: Definition
       link1_url: https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-apdex.md
@@ -57,7 +57,7 @@ groups:
         https://dashboards.gitlab.net/d/general-service/service-platform-metrics?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '7'
+      grafana_panel_id: '8104'
       grafana_variables: environment,type,stage
       link1_title: Definition
       link1_url: https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-apdex.md
@@ -97,7 +97,7 @@ groups:
         https://dashboards.gitlab.net/d/general-service/service-platform-metrics?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '8'
+      grafana_panel_id: '98088'
       grafana_variables: environment,type,stage
       link1_title: Definition
       link1_url: >-
@@ -138,7 +138,7 @@ groups:
         https://dashboards.gitlab.net/d/general-service/service-platform-metrics?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '8'
+      grafana_panel_id: '98088'
       grafana_variables: environment,type,stage
       link1_title: Definition
       link1_url: >-
@@ -180,7 +180,7 @@ groups:
         https://dashboards.gitlab.net/d/general-service/service-platform-metrics?from=now-12h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
       grafana_min_zoom_hours: '12'
-      grafana_panel_id: '11'
+      grafana_panel_id: '73960'
       grafana_variables: environment,type,stage
       link1_title: Definition
       link1_url: https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-ops-rate.md
@@ -220,7 +220,7 @@ groups:
         https://dashboards.gitlab.net/d/general-service/service-platform-metrics?from=now-12h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
       grafana_min_zoom_hours: '12'
-      grafana_panel_id: '9'
+      grafana_panel_id: '73960'
       grafana_variables: environment,type,stage
       link1_title: Definition
       link1_url: https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-ops-rate.md
@@ -262,7 +262,7 @@ groups:
         https://dashboards.gitlab.net/d/general-service-stages/general-service-platform-metrics-stages?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-type={{ $labels.type }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '2'
+      grafana_panel_id: '8104'
       grafana_variables: environment,type
       link1_title: Definition
       link1_url: https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-apdex.md
@@ -323,7 +323,7 @@ groups:
         https://dashboards.gitlab.net/d/general-service-stages/general-service-platform-metrics-stages?from=now-6h/m&to=now-1m/m&var-environment={{
         $labels.environment }}&var-type={{ $labels.type }}
       grafana_min_zoom_hours: '6'
-      grafana_panel_id: '3'
+      grafana_panel_id: '98088'
       grafana_variables: environment,type
       link1_title: Definition
       link1_url: >-

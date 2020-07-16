@@ -1,4 +1,5 @@
 local alerts = import 'lib/alerts.libsonnet';
+local stableIds = import 'lib/stable-ids.libsonnet';
 local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 
 // For now, only include jobs that run 0.067 times per second, or 4 times a minute
@@ -71,7 +72,7 @@ local rules = {
           |||,
           runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
           grafana_dashboard_id: 'alerts-component_multiburn_apdex/alerts-component-multi-window-multi-burn-rate-apdex-out-of-slo',
-          grafana_panel_id: '5',
+          grafana_panel_id: stableIds.hashStableId('multiwindow-multiburnrate'),
           grafana_variables: 'environment,type,stage,component',
           grafana_min_zoom_hours: '6',
           promql_template_1: 'gitlab_component_apdex:ratio_1h{environment="$environment", type="$type", stage="$stage", component="$component"}',
@@ -141,7 +142,7 @@ local rules = {
         |||,
         runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
         grafana_dashboard_id: 'alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo',
-        grafana_panel_id: '5',
+        grafana_panel_id: stableIds.hashStableId('multiwindow-multiburnrate'),
         grafana_variables: 'environment,type,stage,component',
         grafana_min_zoom_hours: '6',
         link1_title: 'Definition',

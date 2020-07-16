@@ -1,6 +1,7 @@
 local IGNORED_GPRD_QUEUES = import './temp-ignored-gprd-queue-list.libsonnet';
 local alerts = import 'lib/alerts.libsonnet';
 local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
+local stableIds = import 'lib/stable-ids.libsonnet';
 
 // For the first iteration, all sidekiq workers will have the samne
 // error budget. In future, we may introduce a criticality attribute to
@@ -11,7 +12,7 @@ local monthlyErrorBudget = (1 - 0.99);  // 99% of sidekiq executions should succ
 // in the monitoring. This is to avoid low-volume, noisy alerts
 local minimumOperationRateForMonitoring = 4 / 60;
 
-local sidekiqSLOAlert(alertname, expr, grafanaPanelId, metricName, alertDescription) =
+local sidekiqSLOAlert(alertname, expr, grafanaPanelStableId, metricName, alertDescription) =
   alerts.processAlertRule({
     alert: alertname,
     expr: expr,
@@ -34,7 +35,7 @@ local sidekiqSLOAlert(alertname, expr, grafanaPanelId, metricName, alertDescript
       ||| % [alertDescription],
       runbook: 'docs/sidekiq/service-sidekiq.md',
       grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
-      grafana_panel_id: std.toString(grafanaPanelId),
+      grafana_panel_id: stableIds.hashStableId(grafanaPanelStableId),
       grafana_variables: 'environment,stage,queue',
       grafana_min_zoom_hours: '6',
       promql_template_1: '%s{environment="$environment", type="$type", stage="$stage", component="$component"}' % [metricName],
@@ -74,7 +75,7 @@ local generateAlerts() =
           gitlab_background_jobs:execution:ops:rate_6h > %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
-      grafanaPanelId=13,
+      grafanaPanelStableId='error-ratio',
       metricName='gitlab_background_jobs:execution:error:ratio_1h',
       alertDescription='an error rate outside of SLO'
     ),
@@ -99,7 +100,7 @@ local generateAlerts() =
           gitlab_background_jobs:execution:ops:rate_6h > %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
-      grafanaPanelId=12,
+      grafanaPanelStableId='execution-apdex',
       metricName='gitlab_background_jobs:execution:apdex:ratio_1h',
       alertDescription='a execution latency outside of SLO'
     ),
@@ -124,7 +125,7 @@ local generateAlerts() =
           gitlab_background_jobs:execution:ops:rate_6h > %(minimumOperationRateForMonitoring)g
         )
       ||| % formatConfig,
-      grafanaPanelId=11,
+      grafanaPanelStableId='queue-apdex',
       metricName='gitlab_background_jobs:queue:apdex:ratio_1h',
       alertDescription='a queue latency outside of SLO'
     ),
@@ -167,7 +168,7 @@ local generateAlerts() =
         |||,
         runbook: 'docs/sidekiq/service-sidekiq.md',
         grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
-        grafana_panel_id: '16',
+        grafana_panel_id: stableIds.hashStableId('queue-length'),
         grafana_variables: 'environment,stage,queue',
         grafana_min_zoom_hours: '6',
         promql_template_1: 'sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}',
@@ -215,7 +216,7 @@ local generateAlerts() =
         |||,
         runbook: 'docs/sidekiq/service-sidekiq.md',
         grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
-        grafana_panel_id: '15',
+        grafana_panel_id: stableIds.hashStableId('queue-length'),
         grafana_variables: 'environment,stage,queue',
         grafana_min_zoom_hours: '6',
         promql_template_1: 'sidekiq_enqueued_jobs_total{environment="$environment", queue="$queue"}',

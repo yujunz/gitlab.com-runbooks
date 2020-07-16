@@ -275,6 +275,7 @@ basic.dashboard(
   +
   layout.grid([
     basic.apdexTimeseries(
+      stableId='queue-apdex',
       title='Queue Apdex',
       description='Queue apdex monitors the percentage of jobs that are dequeued within their queue threshold. Higher is better. Different jobs have different thresholds.',
       query=|||
@@ -300,6 +301,7 @@ basic.dashboard(
       targetBlank: true,
     }),
     basic.apdexTimeseries(
+      stableId='execution-apdex',
       title='Execution Apdex',
       description='Execution apdex monitors the percentage of jobs that run within their execution (run-time) threshold. Higher is better. Different jobs have different thresholds.',
       query=|||
@@ -326,6 +328,7 @@ basic.dashboard(
     }),
 
     basic.timeseries(
+      stableId='request-rate',
       title='Execution Rate (RPS)',
       description='Jobs executed per second',
       query=|||
@@ -344,7 +347,8 @@ basic.dashboard(
     }),
 
     basic.percentageTimeseries(
-      'Error Ratio',
+      stableId='error-ratio',
+      title='Error Ratio',
       description='Percentage of jobs that fail with an error. Lower is better.',
       query=|||
         sum by (queue) (
@@ -373,6 +377,7 @@ basic.dashboard(
     enqueueCountTimeseries('Jobs Enqueued', aggregators='queue', legendFormat='{{ queue }}'),
     enqueueCountTimeseries('Jobs Enqueued per Service', aggregators='type, queue', legendFormat='{{ queue }} - {{ type }}'),
     basic.queueLengthTimeseries(
+      stableId='queue-length',
       title='Queue length',
       description='The number of unstarted jobs in a queue',
       query=|||
