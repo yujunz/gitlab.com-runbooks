@@ -2,18 +2,31 @@ local grafana = import 'grafonnet/grafana.libsonnet';
 local timepickerlib = import 'grafonnet/timepicker.libsonnet';
 local prometheus = grafana.prometheus;
 local promQuery = import 'prom_query.libsonnet';
-
+local layout = import 'layout.libsonnet';
+local basic = import 'basic.libsonnet';
 local annotation = grafana.annotation;
 local dashboard = grafana.dashboard;
 local graphPanel = grafana.graphPanel;
 local row = grafana.row;
 local singlestat = grafana.singlestat;
 
-local icons = {
-  gprd: '🚀',
-  'gprd-cny': '🐤',
-  gstg: '🏗',
-};
+local environments = [
+  {
+    id: 'gprd',
+    name: 'Production',
+    icon: '🚀',
+  },
+  {
+    id: 'gprd-cny',
+    name: 'Canary',
+    icon: '🐤',
+  },
+  {
+    id: 'gstg',
+    name: 'Staging',
+    icon: '🏗',
+  },
+];
 
 local annotations = [
   annotation.datasource(
@@ -67,9 +80,9 @@ local packageVersion(env, stage='main') =
     legendFormat='{{version}}',
   );
 
-local environmentPressurePanel(role) =
+local environmentPressurePanel(environment) =
   graphPanel.new(
-    '%s Auto-deploy pressure' % icons[role],
+    '%s Auto-deploy pressure' % [environment.icon],
     aliasColors={ Commits: 'semi-dark-purple' },
     decimals=0,
     labelY1='Commits',
@@ -78,14 +91,14 @@ local environmentPressurePanel(role) =
   )
   .addTarget(
     prometheus.target(
-      'delivery_auto_deploy_pressure{job="auto-deploy-pressure", role="%(role)s"}' % { role: role },
+      'delivery_auto_deploy_pressure{job="auto-deploy-pressure", role="%(role)s"}' % { role: environment.id },
       legendFormat='Commits',
     )
   );
 
-local environmentIssuesPanel(role) =
+local environmentIssuesPanel(environment) =
   graphPanel.new(
-    '%s New Sentry issues' % icons[role],
+    '%s New Sentry issues' % [environment.icon],
     aliasColors={ Issues: 'dark-orange' },
     decimals=0,
     labelY1='Issues',
@@ -94,7 +107,7 @@ local environmentIssuesPanel(role) =
   )
   .addTarget(
     prometheus.target(
-      'delivery_sentry_issues{job="sentry-issues", role="%(role)s"}' % { role: role },
+      'delivery_sentry_issues{job="sentry-issues", role="%(role)s"}' % { role: environment.id },
       legendFormat='Issues',
     )
   );
@@ -165,12 +178,11 @@ local bargaugePanel(
     type: 'bargauge',
   };
 
-grafana.dashboard.new(
+basic.dashboard(
   'Release Management',
   tags=['release'],
   editable=true,
   refresh='5m',
-  timezone='',
   timepicker=timepickerlib.new(refresh_intervals=['1m', '5m', '10m', '30m']),
 )
 .addAnnotations(annotations)
@@ -183,200 +195,128 @@ grafana.dashboard.new(
   row.new(title='Summary'),
   gridPos={ x: 0, y: 0, w: 24, h: 12 },
 )
-
-// gprd
-.addPanel(
-  singlestat.new(
-    '%s gprd' % icons.gprd,
-    description='Rails revision on Production.',
-    valueFontSize='100%',
-  )
-  .addTarget(railsVersion('gprd')),
-  gridPos={ x: 0, y: 0, w: 3, h: 3 },
-)
-.addPanel(
-  singlestat.new(
-    '%s gprd' % icons.gprd,
-    description='Package running on Production.',
-    valueFontSize='50%',
-  )
-  .addTarget(packageVersion('gprd')),
-  gridPos={ x: 3, y: 0, w: 4, h: 3 },
-)
-
-// gprd-cny
-.addPanel(
-  singlestat.new(
-    '%s gprd-cny' % icons['gprd-cny'],
-    description='Rails revision on Canary.',
-    valueFontSize='100%',
-  )
-  .addTarget(railsVersion('gprd', 'cny')),
-  gridPos={ x: 0, y: 4, w: 3, h: 3 },
-)
-.addPanel(
-  singlestat.new(
-    '%s gprd-cny' % icons['gprd-cny'],
-    description='Package running on Canary.',
-    valueFontSize='50%',
-  )
-  .addTarget(packageVersion('gprd', 'cny')),
-  gridPos={ x: 3, y: 4, w: 4, h: 3 },
-)
-
-// gstg
-.addPanel(
-  singlestat.new(
-    '%s gstg' % icons.gstg,
-    description='Rails revision on Staging.',
-    valueFontSize='100%',
-  )
-  .addTarget(railsVersion('gstg')),
-  gridPos={ x: 0, y: 7, w: 3, h: 3 },
-)
-.addPanel(
-  singlestat.new(
-    '%s gstg' % icons.gstg,
-    description='Package running on Staging.',
-    valueFontSize='50%',
-  )
-  .addTarget(packageVersion('gstg')),
-  gridPos={ x: 3, y: 7, w: 4, h: 3 },
-)
-
-// Auto-deploy pressure
-.addPanel(
-  statPanel(
-    'Auto-deploy pressure',
-    description='The number of commits in `master` not yet deployed to each environment.',
-    query='max(delivery_auto_deploy_pressure{role!=""}) by (role)',
-    legendFormat='{{role}}',
-    thresholds={
-      mode: 'absolute',
-      steps: [
-        { color: 'green', value: null },
-        { color: '#EAB839', value: 50 },
-        { color: '#EF843C', value: 100 },
-        { color: 'red', value: 150 },
-      ],
-    },
-    links=[
-      {
-        targetBlank: true,
-        title: 'Latest commits',
-        url: 'https://gitlab.com/gitlab-org/gitlab/commits/master',
-      },
-    ],
-  ),
-  gridPos={ x: 7, y: 0, w: 4, h: 9 },
-)
-
-// New Sentry issues
-.addPanel(
-  statPanel(
-    'New Sentry issues',
-    description='The number of new Sentry issues for each environment.',
-    query='max(delivery_sentry_issues{role!=""}) by (role)',
-    legendFormat='{{role}}',
-    thresholds={
-      mode: 'absolute',
-      steps: [
-        { color: 'green', value: null },
-        { color: '#EAB839', value: 50 },
-        { color: '#EF843C', value: 100 },
-        { color: 'red', value: 150 },
-      ],
-    },
-    links=[
-      {
-        targetBlank: true,
-        title: 'Sentry releases',
-        url: 'https://sentry.gitlab.net/gitlab/gitlabcom/releases/',
-      },
-    ],
-  ),
-  gridPos={ x: 11, y: 0, w: 4, h: 9 },
-)
-
-// Release pressure
-.addPanel(
-  bargaugePanel(
-    'Release pressure',
-    description='Number of `Pick into` merge requests for previous releases.',
-    query=|||
-      label_replace(
-        max(delivery_release_pressure{state="merged"}) by (state, version),
-        "version", "$1",
-        "version", "Pick into (.*)"
+.addPanels(
+  layout.splitColumnGrid([
+    // Column 1: rails versions
+    [
+      singlestat.new(
+        '%s %s' % [environment.icon, environment.id],
+        description='Rails revision on %s.' % [environment.name],
+        valueFontSize='100%',
       )
-    |||,
-    legendFormat='{{version}} ({{state}})',
-    thresholds={
-      mode: 'absolute',
-      steps: [
-        { color: 'green', value: null },
-        { color: '#EAB839', value: 5 },
-        { color: '#EF843C', value: 10 },
-        { color: 'red', value: 15 },
-      ],
-    },
-  ),
-  gridPos={ x: 15, y: 0, w: 5, h: 9 },
+      .addTarget(railsVersion(environment.id))
+      for environment in environments
+    ],
+    // Column 2: package versions
+    [
+      singlestat.new(
+        '%s %s' % [environment.icon, environment.id],
+        description='Package running on %s.' % [environment.name],
+        valueFontSize='50%',
+      )
+      .addTarget(packageVersion(environment.id))
+      for environment in environments
+    ],
+    // Column 3: auto-deploy pressure
+    [
+      // Auto-deploy pressure
+      statPanel(
+        'Auto-deploy pressure',
+        description='The number of commits in `master` not yet deployed to each environment.',
+        query='max(delivery_auto_deploy_pressure{role!=""}) by (role)',
+        legendFormat='{{role}}',
+        thresholds={
+          mode: 'absolute',
+          steps: [
+            { color: 'green', value: null },
+            { color: '#EAB839', value: 50 },
+            { color: '#EF843C', value: 100 },
+            { color: 'red', value: 150 },
+          ],
+        },
+        links=[
+          {
+            targetBlank: true,
+            title: 'Latest commits',
+            url: 'https://gitlab.com/gitlab-org/gitlab/commits/master',
+          },
+        ],
+      ),
+    ],
+    // Column 4: new sentry issues
+    [
+      // New Sentry issues
+      statPanel(
+        'New Sentry issues',
+        description='The number of new Sentry issues for each environment.',
+        query='max(delivery_sentry_issues{role!=""}) by (role)',
+        legendFormat='{{role}}',
+        thresholds={
+          mode: 'absolute',
+          steps: [
+            { color: 'green', value: null },
+            { color: '#EAB839', value: 50 },
+            { color: '#EF843C', value: 100 },
+            { color: 'red', value: 150 },
+          ],
+        },
+        links=[
+          {
+            targetBlank: true,
+            title: 'Sentry releases',
+            url: 'https://sentry.gitlab.net/gitlab/gitlabcom/releases/',
+          },
+        ],
+      ),
+    ],
+    // Column 5: release pressure
+    [
+      bargaugePanel(
+        'Release pressure',
+        description='Number of `Pick into` merge requests for previous releases.',
+        query=|||
+          label_replace(
+            max(delivery_release_pressure{state="merged"}) by (state, version),
+            "version", "$1",
+            "version", "Pick into (.*)"
+          )
+        |||,
+        legendFormat='{{version}} ({{state}})',
+        thresholds={
+          mode: 'absolute',
+          steps: [
+            { color: 'green', value: null },
+            { color: '#EAB839', value: 5 },
+            { color: '#EF843C', value: 10 },
+            { color: 'red', value: 15 },
+          ],
+        },
+      ),
+    ],
+  ], cellHeights=[3, 3, 3], startRow=1)
 )
-
-// ----------------------------------------------------------------------------
-// gprd row
-// ----------------------------------------------------------------------------
-
-.addPanel(
-  row.new(
-    title='%s gprd' % icons.gprd
-  ),
-  gridPos={ x: 0, y: 12, w: 24, h: 12 },
+.addPanels(
+  std.flattenArrays(
+    std.mapWithIndex(
+      function(index, environment)
+        local y = 1000 * (index + 1);
+        [
+          row.new(
+            title='%s %s' % [environment.icon, environment.id]
+          )
+          { gridPos: { x: 0, y: y, w: 24, h: 12 } },
+        ]
+        +
+        layout.grid(
+          [
+            environmentPressurePanel(environment),
+            environmentIssuesPanel(environment),
+          ],
+          cols=2,
+          startRow=y + 1
+        ),
+      environments
+    )
+  )
 )
-.addPanel(
-  environmentPressurePanel('gprd'),
-  gridPos={ x: 0, y: 12, w: 10, h: 12 },
-)
-.addPanel(
-  environmentIssuesPanel('gprd'),
-  gridPos={ x: 10, y: 12, w: 10, h: 12 },
-)
-
-// ----------------------------------------------------------------------------
-// gprd-cny row
-// ----------------------------------------------------------------------------
-
-.addPanel(
-  row.new(
-    title='%s gprd-cny' % icons['gprd-cny']
-  ),
-  gridPos={ x: 0, y: 24, w: 24, h: 12 },
-)
-.addPanel(
-  environmentPressurePanel('gprd-cny'),
-  gridPos={ x: 0, y: 24, w: 10, h: 12 },
-)
-.addPanel(
-  environmentIssuesPanel('gprd-cny'),
-  gridPos={ x: 10, y: 24, w: 10, h: 12 },
-)
-
-// ----------------------------------------------------------------------------
-// gstg row
-// ----------------------------------------------------------------------------
-
-.addPanel(
-  row.new(
-    title='%s gstg' % icons.gstg
-  ),
-  gridPos={ x: 0, y: 36, w: 24, h: 12 },
-)
-.addPanel(
-  environmentPressurePanel('gstg'),
-  gridPos={ x: 0, y: 36, w: 10, h: 12 },
-)
-.addPanel(
-  environmentIssuesPanel('gstg'),
-  gridPos={ x: 10, y: 36, w: 10, h: 12 },
-)
+.trailer()
