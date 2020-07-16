@@ -54,8 +54,8 @@ groups:
         This may be caused by an upstream load-balancer issue, DNS issue or authentication issues.
       runbook: "docs/git/workhorse-git-session-alerts.md"
       title: "The number of active Git HTTP sessions is unusually low"
-      grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
-      grafana_panel_id: "2"
+      grafana_dashboard_id: "git-main/git-overview"
+      grafana_panel_id: "2152" # stableId=workhorse-sessions
       grafana_variables: "environment,type,stage"
       grafana_min_zoom_hours: "12"
       promql_template_1: 'gitlab_workhorse_git_http_sessions_active:total{environment="$environment", stage="$stage"}'
@@ -90,8 +90,8 @@ groups:
         a bottleneck in a upstream load-balancer, or a slow backend Gitaly server.
       runbook: "docs/git/workhorse-git-session-alerts.md"
       title: "The number of active Git HTTP sessions is unusually high"
-      grafana_dashboard_id: "jIYYw9-ik/gitlab-workhorse-alerting"
-      grafana_panel_id: "2"
+      grafana_dashboard_id: "git-main/git-overview"
+      grafana_panel_id: "2152" # stableId=workhorse-sessions
       grafana_variables: "environment,type,stage"
       grafana_min_zoom_hours: "12"
       promql_template_1: 'gitlab_workhorse_git_http_sessions_active:total{environment="$environment", stage="$stage"}'
