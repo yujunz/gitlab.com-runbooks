@@ -10,6 +10,7 @@ SHELL_FILES = $(shell find . -type f \( -perm -u=x -o -name "*.sh" \) $(VERIFY_P
 YAML_FILES = $(shell find . \( -name "*.yml" -o -name "*.yaml" \) -type f $(VERIFY_PATH_SELECTOR) )
 
 AMTOOL = $(shell which amtool || echo "/alertmanager/amtool")
+AMTOOL_PATH=$(dir $(AMTOOL))
 JSONET_COMMAND = $(shell which jsonnetfmt || (which jsonnet && echo " fmt"))
 PROMTOOL_COMMAND = $(shell which promtool || echo "/prometheus/promtool")
 
@@ -54,6 +55,7 @@ alertmanager/alertmanager.yml: alertmanager/alertmanager.jsonnet
 
 test-alertmanager: alertmanager/alertmanager.yml
 	$(AMTOOL) check-config alertmanager/alertmanager.yml
+	PATH=$(AMTOOL_PATH):$(PATH) alertmanager/test-routing.sh alertmanager/alertmanager.yml
 
 .PHONY: test
 test:
