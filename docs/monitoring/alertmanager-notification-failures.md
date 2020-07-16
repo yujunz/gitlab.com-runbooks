@@ -38,6 +38,6 @@ For more information see https://api.slack.com/incoming-webhooks
 
 ## Manually review the currently open alerts
 
-* Open the alert-manager UI: https://alerts.gprd.gitlab.net/
+* Open the alert-manager UI: https://alerts.gitlab.net/
 * Review each alert to check if it's notification has failed and whether further action is required.
 
