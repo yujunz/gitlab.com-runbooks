@@ -14,16 +14,22 @@ local environments = [
   {
     id: 'gprd',
     name: 'Production',
+    role: 'gprd',
+    stage: 'main',
     icon: '🚀',
   },
   {
     id: 'gprd-cny',
     name: 'Canary',
+    role: 'gprd',
+    stage: 'cny',
     icon: '🐤',
   },
   {
     id: 'gstg',
     name: 'Staging',
+    role: 'gstg',
+    stage: 'main',
     icon: '🏗',
   },
 ];
@@ -52,7 +58,7 @@ local annotations = [
   ),
 ];
 
-local railsVersion(env, stage='main') =
+local railsVersion(environment) =
   prometheus.target(
     |||
       label_replace(
@@ -62,19 +68,19 @@ local railsVersion(env, stage='main') =
         "version", "$1",
         "version", "^([A-Fa-f0-9]{11}).*$"
       )
-    ||| % { env: env, stage: stage },
+    ||| % { env: environment.role, stage: environment.stage },
     instant=true,
     format='table',
     legendFormat='{{version}}',
   );
 
-local packageVersion(env, stage='main') =
+local packageVersion(environment) =
   prometheus.target(
     |||
       topk(1, count(
         omnibus_build_info{environment="%(env)s", stage="%(stage)s", tier="sv"}
       ) by (version))
-    ||| % { env: env, stage: stage },
+    ||| % { env: environment.role, stage: environment.stage },
     instant=true,
     format='table',
     legendFormat='{{version}}',
@@ -91,7 +97,7 @@ local environmentPressurePanel(environment) =
   )
   .addTarget(
     prometheus.target(
-      'delivery_auto_deploy_pressure{job="auto-deploy-pressure", role="%(role)s"}' % { role: environment.id },
+      'delivery_auto_deploy_pressure{job="auto-deploy-pressure", role="%(role)s"}' % { role: environment.role },
       legendFormat='Commits',
     )
   );
@@ -107,7 +113,7 @@ local environmentIssuesPanel(environment) =
   )
   .addTarget(
     prometheus.target(
-      'delivery_sentry_issues{job="sentry-issues", role="%(role)s"}' % { role: environment.id },
+      'delivery_sentry_issues{job="sentry-issues", role="%(role)s"}' % { role: environment.role },
       legendFormat='Issues',
     )
   );
@@ -173,7 +179,7 @@ local bargaugePanel(
       showUnfilled: true,
     },
     pluginVersion: '7.0.3',
-    targets: [promQuery.target(query, legendFormat=legendFormat)],
+    targets: [promQuery.target(query, legendFormat=legendFormat, instant=true)],
     title: title,
     type: 'bargauge',
   };
@@ -184,6 +190,8 @@ basic.dashboard(
   editable=true,
   refresh='5m',
   timepicker=timepickerlib.new(refresh_intervals=['1m', '5m', '10m', '30m']),
+  includeStandardEnvironmentAnnotations=false,
+  includeEnvironmentTemplate=false,
 )
 .addAnnotations(annotations)
 
@@ -204,7 +212,7 @@ basic.dashboard(
         description='Rails revision on %s.' % [environment.name],
         valueFontSize='100%',
       )
-      .addTarget(railsVersion(environment.id))
+      .addTarget(railsVersion(environment))
       for environment in environments
     ],
     // Column 2: package versions
@@ -214,7 +222,7 @@ basic.dashboard(
         description='Package running on %s.' % [environment.name],
         valueFontSize='50%',
       )
-      .addTarget(packageVersion(environment.id))
+      .addTarget(packageVersion(environment))
       for environment in environments
     ],
     // Column 3: auto-deploy pressure
