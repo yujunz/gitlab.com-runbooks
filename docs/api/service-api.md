@@ -29,6 +29,7 @@
 * [../ci-runners/tracing-app-db-queries.md](../ci-runners/tracing-app-db-queries.md)
 * [../cloudflare/logging.md](../cloudflare/logging.md)
 * [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
+* [../cloudflare/services-locations.md](../cloudflare/services-locations.md)
 * [../cloudflare/terraform.md](../cloudflare/terraform.md)
 * [../customers.gitlab.com/api-key-rotation.md](../customers.gitlab.com/api-key-rotation.md)
 * [../elastic/README.md](../elastic/README.md)

@@ -14,6 +14,7 @@
 ## Troubleshooting Pointers
 
 * [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
+* [../cloudflare/services-locations.md](../cloudflare/services-locations.md)
 * [../elastic/README.md](../elastic/README.md)
 * [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)
 * [../gitaly/gitaly-error-rate.md](../gitaly/gitaly-error-rate.md)
