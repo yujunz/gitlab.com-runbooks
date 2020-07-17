@@ -21,6 +21,7 @@
 * [prometheus-failed-compactions.md](prometheus-failed-compactions.md)
 * [sentry-is-down.md](sentry-is-down.md)
 * [../patroni/check_wraparound.md](../patroni/check_wraparound.md)
+* [../patroni/log_analysis.md](../patroni/log_analysis.md)
 * [../patroni/pg_repack.md](../patroni/pg_repack.md)
 * [../patroni/postgres-checkup.md](../patroni/postgres-checkup.md)
 * [../patroni/postgres.md](../patroni/postgres.md)
