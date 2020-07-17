@@ -144,7 +144,7 @@ gitlabhq_production=# \du gitlab
 To manage role specific limits, an `ALTER role xxx CONNECTION LIMIT nn` may be issued.
 
 
-For deeper, broad analysis of PostgreSQL's logs, [pgbadger](https://github.com/darold/pgbadger) is a tool that can be used for. Check the [pgbadger Runbook](https://gitlab.com/ongresportal/gitlab/runbooks/-/blob/master/docs/patroni/pgbadger_report.md) to see how to use it.
+For deeper, broad analysis of PostgreSQL's logs, [pgbadger](https://github.com/darold/pgbadger) is a tool that can be used for. Check the [pgbadger Runbook](docs/patroni/pgbadger_report.md) to see how to use it.
 
 
 
