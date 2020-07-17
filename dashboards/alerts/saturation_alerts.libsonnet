@@ -1,6 +1,5 @@
 local commonAnnotations = import 'common_annotations.libsonnet';
 local grafana = import 'grafonnet/grafana.libsonnet';
-local layout = import 'layout.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 local templates = import 'templates.libsonnet';
