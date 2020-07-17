@@ -14,6 +14,7 @@ Cloudflare provides a web application firewall (WAF), domain name system
 ## General Information
 * [Vendor Info](./vendor.md)
 * [Terraform Management](./cloudflare-terraform.md)
+* [Services Locations](./services-locations.md)
 
 ## Web Application Firewall (WAF)
 * [Service Information](../waf/service-waf.md)
