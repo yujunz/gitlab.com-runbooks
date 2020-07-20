@@ -7,6 +7,11 @@ local customQuery = metricsCatalog.customQuery;
 metricsCatalog.serviceDefinition({
   type: 'search',
   tier: 'inf',
+  /*
+   * Until this service starts getting more predictable traffic volumes
+   * disable anomaly detection for RPS
+   */
+  disableOpsRatePrediction: true,
   components: {
     elasticsearch_searching: {
       requestRate: derivMetric(
