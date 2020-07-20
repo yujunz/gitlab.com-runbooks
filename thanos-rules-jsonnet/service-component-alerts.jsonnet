@@ -2,9 +2,9 @@ local alerts = import 'lib/alerts.libsonnet';
 local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 local stableIds = import 'lib/stable-ids.libsonnet';
 
-// For now, only include jobs that run 0.067 times per second, or 4 times a minute
+// For now, only include jobs that run 0.01 times per second, or 6 times a minute
 // in the monitoring. This is to avoid low-volume, noisy alerts
-local minimumOperationRateForMonitoring = 4 / 60;
+local minimumOperationRateForMonitoring = 6 / 60;
 
 local formatConfig = multiburnFactors {
   minimumOperationRateForMonitoring: minimumOperationRateForMonitoring,
