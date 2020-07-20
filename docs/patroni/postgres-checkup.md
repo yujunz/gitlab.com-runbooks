@@ -61,9 +61,11 @@ This topic requires deep Postgres expertise. Reports in group F have Conclusions
 
 `F002 Autovacuum: Transaction ID Wraparound Check` is an important report showing the current situation with the "Transaction ID Wraparound" problem. The `Warning` column and Conclusions/Recommendations will show if there is any danger that requires a quick reaction. If it so ("capacity used" levels are >> 10%), a manual `VACUUM FREEZE` needs to be executed for specific tables ASAP, and careful analysis of autovacuum activity with proper tuning may also be need.
 
-`F004 Autovacuum: Heap Bloat (Estimated)` and `F005 Autovacuum: Btree Index Bloat (Estimated)` indicate how much table and index bloat (estimated!) is in the database. It is helpful to control the bloat and make decisions when to repack indexes and tables using pg_repack (see the Runbook on repacking: link TDB <!-- TODO put link here-->).
+`F004 Autovacuum: Heap Bloat (Estimated)` and `F005 Autovacuum: Btree Index Bloat (Estimated)` indicate how much table and index bloat (estimated!) is in the database. It is helpful to control the bloat and make decisions when to repack indexes and tables using pg_repack (see the Runbook on repacking: [Reducing table and index bloat using pg_repack](docs/patroni/pg_repack.md)).
 
 `F008 Autovacuum: Resource Usage` helps understand if autovacuum can use too many resources (CPU, disk IO).
+
+If you see recommendations to repack some database object, schedule using pg_repack to do it. The corresponding runbook: 
 
 ### Health of indexes
 

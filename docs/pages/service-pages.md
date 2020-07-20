@@ -21,6 +21,7 @@
 * [../monitoring/node_memory_alerts.md](../monitoring/node_memory_alerts.md)
 * [gitlab-pages.md](gitlab-pages.md)
 * [pages-letsencrypt.md](pages-letsencrypt.md)
+* [../patroni/pg_repack.md](../patroni/pg_repack.md)
 * [../uncategorized/chef-vault.md](../uncategorized/chef-vault.md)
 * [../uncategorized/chef.md](../uncategorized/chef.md)
 * [../uncategorized/deploycmd.md](../uncategorized/deploycmd.md)
