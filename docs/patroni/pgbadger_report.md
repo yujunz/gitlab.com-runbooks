@@ -1,5 +1,7 @@
 # pgbadger Runbook
 
+Here the link to the video of the [runbook simulation](https://youtu.be/yUwaWMUJyS4).
+
 ## Intro
 [pgbadger](https://github.com/darold/pgbadger) is a free  tool that can help to generate a fast interactive HTML report from PostgreSQL's logs, it is very useful when you want to analyze logs with a lot of info. 
 The report from pgbadger is about queries (it is always logged when the query time is greater than [log_min_duration_statement](https://postgresqlco.nf/en/doc/param/log_min_duration_statement/) parameter ), connections, vacuum, lock,  errors and others stuff
