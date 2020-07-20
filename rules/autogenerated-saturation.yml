@@ -903,14 +903,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Cgroup Memory Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Cgroup Memory Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Cgroup Memory Saturation per Node resource:
+        Details of the Cgroup Memory Utilization per Node resource:
         -------------------------------------------
-        Cgroup memory saturation per node.
+        Cgroup memory utilization per node.
 
         Some services, notably Gitaly, are configured to run within a cgroup with a memory limit lower than the
         memory limit for the node. This ensures that a traffic spike to Gitaly does not affect other services on the node.
@@ -957,14 +957,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Average Service CPU resource of the {{ $labels.type }} service ({{ $labels.stage }} stage),
-        component has a saturation exceeding SLO and is close to its capacity limit.
+        The Average Service CPU Utilization resource of the {{ $labels.type }} service ({{ $labels.stage
+        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Average Service CPU resource:
+        Details of the Average Service CPU Utilization resource:
         -------------------------------------------
-        This resource measures average CPU across an all cores in a service fleet.
+        This resource measures average CPU utilization across an all cores in a service fleet.
         If it is becoming saturated, it may indicate that the fleet needs
         horizontal or vertical scaling.
       grafana_dashboard_id: alerts-sat_cpu
@@ -1048,15 +1048,15 @@ groups:
     for: 25m
     annotations:
       title: >-
-        The Disk Sustained Read IOPS Saturation per Node resource of the {{ $labels.type }} service ({{
+        The Disk Sustained Read IOPS Utilization per Node resource of the {{ $labels.type }} service ({{
         $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
         limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Disk Sustained Read IOPS Saturation per Node resource:
+        Details of the Disk Sustained Read IOPS Utilization per Node resource:
         -------------------------------------------
-        Disk sustained read IOPS saturation per node.
+        Disk sustained read IOPS utilization per node.
       grafana_dashboard_id: alerts-sat_disk_sus_read_iops
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/alerts-sat_disk_sus_read_iops?from=now-6h/m&to=now-1m/m&var-environment={{
@@ -1093,15 +1093,15 @@ groups:
     for: 25m
     annotations:
       title: >-
-        The Disk Sustained Read Throughput Saturation per Node resource of the {{ $labels.type }} service
+        The Disk Sustained Read Throughput Utilization per Node resource of the {{ $labels.type }} service
         ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
         limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Disk Sustained Read Throughput Saturation per Node resource:
+        Details of the Disk Sustained Read Throughput Utilization per Node resource:
         -------------------------------------------
-        Disk sustained read throughput saturation per node.
+        Disk sustained read throughput utilization per node.
       grafana_dashboard_id: alerts-sat_disk_sus_read_throughput
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/alerts-sat_disk_sus_read_throughput?from=now-6h/m&to=now-1m/m&var-environment={{
@@ -1138,13 +1138,13 @@ groups:
     for: 25m
     annotations:
       title: >-
-        The Disk Sustained Write IOPS Saturation per Node resource of the {{ $labels.type }} service ({{
-        $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
+        The Disk Sustained Write IOPS Utilization per Node resource of the {{ $labels.type }} service
+        ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
         limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Disk Sustained Write IOPS Saturation per Node resource:
+        Details of the Disk Sustained Write IOPS Utilization per Node resource:
         -------------------------------------------
         Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
         maximum write IOPS value. This value can be exceeded for brief periods.
@@ -1190,13 +1190,13 @@ groups:
     for: 25m
     annotations:
       title: >-
-        The Disk Sustained Write Throughput Saturation per Node resource of the {{ $labels.type }} service
+        The Disk Sustained Write Throughput Utilization per Node resource of the {{ $labels.type }} service
         ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
         limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Disk Sustained Write Throughput Saturation per Node resource:
+        Details of the Disk Sustained Write Throughput Utilization per Node resource:
         -------------------------------------------
         Gitaly runs on Google Cloud's Persistent Disk product. This has a published sustained
         maximum write throughput value. This value can be exceeded for brief periods.
@@ -1242,14 +1242,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Average CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Average CPU Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Average CPU Saturation per Node resource:
+        Details of the Average CPU Utilization per Node resource:
         -------------------------------------------
-        Average CPU per Node.
+        Average CPU utilization per Node.
 
         This resource measures all CPU across a fleet. If it is becoming saturated, it may indicate that the fleet needs horizontal or
         vertical scaling. The metrics are coming from elasticsearch_exporter.
@@ -1381,12 +1381,12 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Average CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Average CPU Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Average CPU Saturation per Node resource:
+        Details of the Average CPU Utilization per Node resource:
         -------------------------------------------
         Average CPU per Node.
 
@@ -1483,7 +1483,7 @@ groups:
 
         Details of the Thread pool utilization resource:
         -------------------------------------------
-        Saturation of each thread pool on each node.
+        Utilization of each thread pool on each node.
 
         Descriptions of the threadpool types can be found at
         https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-threadpool.html.
@@ -1525,12 +1525,12 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Go Memory Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Go Memory Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Go Memory Saturation per Node resource:
+        Details of the Go Memory Utilization per Node resource:
         -------------------------------------------
         Go's memory allocation strategy can make it look like a Go process is saturating memory when measured using RSS, when in fact
         the process is not at risk of memory saturation. For this reason, we measure Go processes using the `go_memstat_alloc_bytes`
@@ -1670,15 +1670,15 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Open file descriptor saturation per instance resource of the {{ $labels.type }} service ({{
+        The Open file descriptor utilization per instance resource of the {{ $labels.type }} service ({{
         $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
         limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Open file descriptor saturation per instance resource:
+        Details of the Open file descriptor utilization per instance resource:
         -------------------------------------------
-        Open file descriptor saturation per instance.
+        Open file descriptor utilization per instance.
 
         Saturation on file descriptor limits may indicate a resource-descriptor leak in the application.
 
@@ -1728,14 +1728,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Active Primary DB Connection Saturation resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Active Primary DB Connection Utilization resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Active Primary DB Connection Saturation resource:
+        Details of the Active Primary DB Connection Utilization resource:
         -------------------------------------------
-        Active db connection saturation on the primary node.
+        Active db connection utilization on the primary node.
 
         Postgres is configured to use a maximum number of connections.
         When this resource is saturated, connections may queue.
@@ -1777,14 +1777,15 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Active Secondary DB Connection Saturation resource of the {{ $labels.type }} service ({{ $labels.stage
-        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
+        The Active Secondary DB Connection Utilization resource of the {{ $labels.type }} service ({{
+        $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
+        limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Active Secondary DB Connection Saturation resource:
+        Details of the Active Secondary DB Connection Utilization resource:
         -------------------------------------------
-        Active db connection saturation per replica node
+        Active db connection utilization per replica node
 
         Postgres is configured to use a maximum number of connections.
         When this resource is saturated, connections may queue.
@@ -1826,15 +1827,15 @@ groups:
     for: 10m
     annotations:
       title: >-
-        The Postgres Async (Sidekiq) primary Connection Pool Saturation per Node resource of the {{ $labels.type
+        The Postgres Async (Sidekiq) primary Connection Pool Utilization per Node resource of the {{ $labels.type
         }} service ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close
         to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Postgres Async (Sidekiq) primary Connection Pool Saturation per Node resource:
+        Details of the Postgres Async (Sidekiq) primary Connection Pool Utilization per Node resource:
         -------------------------------------------
-        pgbouncer async connection pool saturation per database node, for primary database connections.
+        pgbouncer async connection pool utilization per database node, for primary database connections.
 
         Sidekiq maintains it's own pgbouncer connection pool. When this resource is saturated,
         database operations may queue, leading to additional latency in background processing.
@@ -1888,7 +1889,7 @@ groups:
 
         Details of the PGBouncer Single Core per Node resource:
         -------------------------------------------
-        PGBouncer single core saturation per node.
+        PGBouncer single core CPU utilization per node.
 
         PGBouncer is a single threaded application. Under high volumes this resource may become saturated,
         and additional pgbouncer nodes may need to be provisioned.
@@ -1931,15 +1932,15 @@ groups:
     for: 10m
     annotations:
       title: >-
-        The Postgres Sync (Web/API/Git) primary Connection Pool Saturation per Node resource of the {{
+        The Postgres Sync (Web/API/Git) primary Connection Pool Utilization per Node resource of the {{
         $labels.type }} service ({{ $labels.stage }} stage), component has a saturation exceeding SLO
         and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Postgres Sync (Web/API/Git) primary Connection Pool Saturation per Node resource:
+        Details of the Postgres Sync (Web/API/Git) primary Connection Pool Utilization per Node resource:
         -------------------------------------------
-        pgbouncer sync connection pool saturation per database node, for primary database connections.
+        pgbouncer sync connection pool Saturation per database node, for primary database connections.
 
         Web/api/git applications use a separate connection pool to sidekiq.
 
@@ -1988,15 +1989,15 @@ groups:
     for: 10m
     annotations:
       title: >-
-        The Postgres Sync (Web/API/Git) replica Connection Pool Saturation per Node resource of the {{
+        The Postgres Sync (Web/API/Git) replica Connection Pool Utilization per Node resource of the {{
         $labels.type }} service ({{ $labels.stage }} stage), component has a saturation exceeding SLO
         and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Postgres Sync (Web/API/Git) replica Connection Pool Saturation per Node resource:
+        Details of the Postgres Sync (Web/API/Git) replica Connection Pool Utilization per Node resource:
         -------------------------------------------
-        pgbouncer sync connection pool saturation per database node, for replica database connections.
+        pgbouncer sync connection pool Saturation per database node, for replica database connections.
 
         Web/api/git applications use a separate connection pool to sidekiq.
 
@@ -2045,18 +2046,18 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Private Runners Saturation resource of the {{ $labels.type }} service ({{ $labels.stage }}
+        The Private Runners utilization resource of the {{ $labels.type }} service ({{ $labels.stage }}
         stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Private Runners Saturation resource:
+        Details of the Private Runners utilization resource:
         -------------------------------------------
-        Private runners saturation per instance.
+        Private runners utilization per instance.
 
         Each runner manager has a maximum number of runners that it can coordinate at any single moment.
 
-        When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+        When this metric is saturated, new CI jobs will queue. When this occurs we should consider adding more runner managers,
         or scaling the runner managers vertically and increasing their maximum runner capacity.
       grafana_dashboard_id: alerts-sat_private_runners
       grafana_dashboard_link: >-
@@ -2094,12 +2095,12 @@ groups:
     for: 15m
     annotations:
       title: >-
-        The Rails DB Connection Pool Saturation resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Rails DB Connection Pool Utilization resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Rails DB Connection Pool Saturation resource:
+        Details of the Rails DB Connection Pool Utilization resource:
         -------------------------------------------
         Rails uses connection pools for its database connections. As each
         node may have multiple connection pools, this is by node and by
@@ -2148,14 +2149,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Redis Client Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Redis Client Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Redis Client Saturation per Node resource:
+        Details of the Redis Client Utilization per Node resource:
         -------------------------------------------
-        Redis client saturation per node.
+        Redis client utilization per node.
 
         A redis server has a maximum number of clients that can connect. When this resource is saturated,
         new clients may fail to connect.
@@ -2197,14 +2198,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Redis Memory Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Redis Memory Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Redis Memory Saturation per Node resource:
+        Details of the Redis Memory Utilization per Node resource:
         -------------------------------------------
-        Redis memory saturation per node.
+        Redis memory utilization per node.
 
         As Redis memory saturates node memory, the likelyhood of OOM kills, possibly to the Redis process,
         become more likely.
@@ -2254,14 +2255,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Redis Primary CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Redis Primary CPU Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Redis Primary CPU Saturation per Node resource:
+        Details of the Redis Primary CPU Utilization per Node resource:
         -------------------------------------------
-        Redis Primary CPU Saturation per Node.
+        Redis Primary CPU Utilization per Node.
 
         Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
         When the primary Redis service is saturated, major slowdowns should be expected across the application, so avoid if at all
@@ -2306,14 +2307,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Redis Secondary CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Redis Secondary CPU Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Redis Secondary CPU Saturation per Node resource:
+        Details of the Redis Secondary CPU Utilization per Node resource:
         -------------------------------------------
-        Redis Secondary CPU Saturation per Node.
+        Redis Secondary CPU Utilization per Node.
 
         Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
         CPU saturation on a secondary is not as serious as critical as saturation on a primary, but could lead to
@@ -2357,14 +2358,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Average CPU per Shard resource of the {{ $labels.type }} service ({{ $labels.stage }} stage),
-        component has a saturation exceeding SLO and is close to its capacity limit.
+        The Average CPU Utilization per Shard resource of the {{ $labels.type }} service ({{ $labels.stage
+        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Average CPU per Shard resource:
+        Details of the Average CPU Utilization per Shard resource:
         -------------------------------------------
-        This resource measures average CPU across an all cores in a shard of a
+        This resource measures average CPU utilization across an all cores in a shard of a
         service fleet. If it is becoming saturated, it may indicate that the
         shard needs horizontal or vertical scaling.
       grafana_dashboard_id: alerts-sat_shard_cpu
@@ -2403,18 +2404,18 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Shared Runner Saturation resource of the {{ $labels.type }} service ({{ $labels.stage }} stage),
-        component has a saturation exceeding SLO and is close to its capacity limit.
+        The Shared Runner utilization resource of the {{ $labels.type }} service ({{ $labels.stage }}
+        stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Shared Runner Saturation resource:
+        Details of the Shared Runner utilization resource:
         -------------------------------------------
-        Shared runner saturation per instance.
+        Shared runner utilization per instance.
 
         Each runner manager has a maximum number of runners that it can coordinate at any single moment.
 
-        When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+        When this metric is saturated, new CI jobs will queue. When this occurs we should consider adding more runner managers,
         or scaling the runner managers vertically and increasing their maximum runner capacity.
       grafana_dashboard_id: alerts-sat_shared_runners
       grafana_dashboard_link: >-
@@ -2452,18 +2453,18 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Shared Runner GitLab Saturation resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Shared Runner GitLab Utilization resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Shared Runner GitLab Saturation resource:
+        Details of the Shared Runner GitLab Utilization resource:
         -------------------------------------------
-        Shared runners saturation per instance.
+        Shared runners utilization per instance.
 
         Each runner manager has a maximum number of runners that it can coordinate at any single moment.
 
-        When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+        When this metric is saturated, new CI jobs will queue. When this occurs we should consider adding more runner managers,
         or scaling the runner managers vertically and increasing their maximum runner capacity.
       grafana_dashboard_id: alerts-sat_shared_runners_gitlab
       grafana_dashboard_link: >-
@@ -2501,16 +2502,16 @@ groups:
     for: 10m
     annotations:
       title: >-
-        The Sidekiq Worker Saturation per shard resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Sidekiq Worker Utilization per shard resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Sidekiq Worker Saturation per shard resource:
+        Details of the Sidekiq Worker Utilization per shard resource:
         -------------------------------------------
-        Sidekiq worker saturation per shard.
+        Sidekiq worker utilization per shard.
 
-        This metric represents the percentage of available threads*workers that are utilized actively processing jobs.
+        This metric represents the percentage of available threads*workers that are actively processing jobs.
 
         When this metric is saturated, new Sidekiq jobs will queue. Depending on whether or not the jobs are latency sensitive,
         this could impact user experience.
@@ -2554,14 +2555,14 @@ groups:
     for: 5m
     annotations:
       title: >-
-        The Average CPU Saturation per Node resource of the {{ $labels.type }} service ({{ $labels.stage
+        The Average CPU Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
         }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Average CPU Saturation per Node resource:
+        Details of the Average CPU Utilization per Node resource:
         -------------------------------------------
-        Average CPU per Node.
+        Average CPU utilization per Node.
 
         If average CPU is satured, it may indicate that a fleet is in need to horizontal or vertical scaling. It may also indicate
         imbalances in load in a fleet.
