@@ -48,7 +48,7 @@ groups:
       )
       and
       (
-        gitlab_background_jobs:execution:ops:rate_6h > 0.06667
+        gitlab_background_jobs:execution:ops:rate_6h > 0.1
       )
   - alert: sidekiq_background_job_execution_apdex_ratio_burn_rate_slo_out_of_bounds
     for: 2m
@@ -94,7 +94,7 @@ groups:
       )
       and
       (
-        gitlab_background_jobs:execution:ops:rate_6h > 0.06667
+        gitlab_background_jobs:execution:ops:rate_6h > 0.1
       )
   - alert: sidekiq_background_job_queue_apdex_ratio_burn_rate_slo_out_of_bounds
     for: 2m
@@ -140,7 +140,7 @@ groups:
       )
       and
       (
-        gitlab_background_jobs:execution:ops:rate_6h > 0.06667
+        gitlab_background_jobs:execution:ops:rate_6h > 0.1
       )
   - alert: sidekiq_throttled_jobs_enqueued_without_dequeuing
     for: 2m

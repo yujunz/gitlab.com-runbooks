@@ -8,9 +8,9 @@ local stableIds = import 'lib/stable-ids.libsonnet';
 // allow jobs to have different error budgets based on criticality
 local monthlyErrorBudget = (1 - 0.99);  // 99% of sidekiq executions should succeed
 
-// For now, only include jobs that run 0.6 times per second, or 4 times a minute
+// For now, only include jobs that run 0.1 times per second, or 6 times a minute
 // in the monitoring. This is to avoid low-volume, noisy alerts
-local minimumOperationRateForMonitoring = 4 / 60;
+local minimumOperationRateForMonitoring = 6 / 60;
 
 local sidekiqSLOAlert(alertname, expr, grafanaPanelStableId, metricName, alertDescription) =
   {
