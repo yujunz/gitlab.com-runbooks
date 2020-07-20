@@ -8,11 +8,11 @@ local diskPerformanceSensitiveServices = ['patroni', 'gitaly', 'nfs'];
 
 local pgbouncerAsyncPool(serviceType, role) =
   resourceSaturationPoint({
-    title: 'Postgres Async (Sidekiq) %s Connection Pool Saturation per Node' % [role],
+    title: 'Postgres Async (Sidekiq) %s Connection Pool Utilization per Node' % [role],
     severity: 's4',
     appliesTo: [serviceType],
     description: |||
-      pgbouncer async connection pool saturation per database node, for %(role)s database connections.
+      pgbouncer async connection pool utilization per database node, for %(role)s database connections.
 
       Sidekiq maintains it's own pgbouncer connection pool. When this resource is saturated,
       database operations may queue, leading to additional latency in background processing.
@@ -41,11 +41,11 @@ local pgbouncerAsyncPool(serviceType, role) =
 
 local pgbouncerSyncPool(serviceType, role) =
   resourceSaturationPoint({
-    title: 'Postgres Sync (Web/API/Git) %s Connection Pool Saturation per Node' % [role],
+    title: 'Postgres Sync (Web/API/Git) %s Connection Pool Utilization per Node' % [role],
     severity: 's3',
     appliesTo: [serviceType],
     description: |||
-      pgbouncer sync connection pool saturation per database node, for %(role)s database connections.
+      pgbouncer sync connection pool Saturation per database node, for %(role)s database connections.
 
       Web/api/git applications use a separate connection pool to sidekiq.
 
@@ -76,11 +76,11 @@ local pgbouncerSyncPool(serviceType, role) =
 
 {
   pg_active_db_connections_primary: resourceSaturationPoint({
-    title: 'Active Primary DB Connection Saturation',
+    title: 'Active Primary DB Connection Utilization',
     severity: 's3',
     appliesTo: ['patroni'],
     description: |||
-      Active db connection saturation on the primary node.
+      Active db connection utilization on the primary node.
 
       Postgres is configured to use a maximum number of connections.
       When this resource is saturated, connections may queue.
@@ -101,11 +101,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   pg_active_db_connections_replica: resourceSaturationPoint({
-    title: 'Active Secondary DB Connection Saturation',
+    title: 'Active Secondary DB Connection Utilization',
     severity: 's3',
     appliesTo: ['patroni'],
     description: |||
-      Active db connection saturation per replica node
+      Active db connection utilization per replica node
 
       Postgres is configured to use a maximum number of connections.
       When this resource is saturated, connections may queue.
@@ -126,7 +126,7 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   rails_db_connection_pool: resourceSaturationPoint({
-    title: 'Rails DB Connection Pool Saturation',
+    title: 'Rails DB Connection Pool Utilization',
     severity: 's4',
     appliesTo: ['web', 'api', 'git', 'sidekiq'],
     description: |||
@@ -158,11 +158,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   cgroup_memory: resourceSaturationPoint({
-    title: 'Cgroup Memory Saturation per Node',
+    title: 'Cgroup Memory Utilization per Node',
     severity: 's4',
     appliesTo: ['gitaly', 'praefect'],
     description: |||
-      Cgroup memory saturation per node.
+      Cgroup memory utilization per node.
 
       Some services, notably Gitaly, are configured to run within a cgroup with a memory limit lower than the
       memory limit for the node. This ensures that a traffic spike to Gitaly does not affect other services on the node.
@@ -188,11 +188,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   cpu: resourceSaturationPoint({
-    title: 'Average Service CPU',
+    title: 'Average Service CPU Utilization',
     severity: 's3',
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
     description: |||
-      This resource measures average CPU across an all cores in a service fleet.
+      This resource measures average CPU utilization across an all cores in a service fleet.
       If it is becoming saturated, it may indicate that the fleet needs
       horizontal or vertical scaling.
     |||,
@@ -211,11 +211,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   shard_cpu: resourceSaturationPoint({
-    title: 'Average CPU per Shard',
+    title: 'Average CPU Utilization per Shard',
     severity: 's3',
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'], default: 'sidekiq' },
     description: |||
-      This resource measures average CPU across an all cores in a shard of a
+      This resource measures average CPU utilization across an all cores in a shard of a
       service fleet. If it is becoming saturated, it may indicate that the
       shard needs horizontal or vertical scaling.
     |||,
@@ -254,11 +254,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   disk_sustained_read_iops: resourceSaturationPoint({
-    title: 'Disk Sustained Read IOPS Saturation per Node',
+    title: 'Disk Sustained Read IOPS Utilization per Node',
     severity: 's3',
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
-      Disk sustained read IOPS saturation per node.
+      Disk sustained read IOPS utilization per node.
     |||,
     grafana_dashboard_uid: 'sat_disk_sus_read_iops',
     resourceLabels: ['fqdn', 'device'],
@@ -276,11 +276,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   disk_sustained_read_throughput: resourceSaturationPoint({
-    title: 'Disk Sustained Read Throughput Saturation per Node',
+    title: 'Disk Sustained Read Throughput Utilization per Node',
     severity: 's3',
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
-      Disk sustained read throughput saturation per node.
+      Disk sustained read throughput utilization per node.
     |||,
     grafana_dashboard_uid: 'sat_disk_sus_read_throughput',
     resourceLabels: ['fqdn', 'device'],
@@ -298,7 +298,7 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   disk_sustained_write_iops: resourceSaturationPoint({
-    title: 'Disk Sustained Write IOPS Saturation per Node',
+    title: 'Disk Sustained Write IOPS Utilization per Node',
     severity: 's3',
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
@@ -327,7 +327,7 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   disk_sustained_write_throughput: resourceSaturationPoint({
-    title: 'Disk Sustained Write Throughput Saturation per Node',
+    title: 'Disk Sustained Write Throughput Utilization per Node',
     severity: 's3',
     appliesTo: diskPerformanceSensitiveServices,
     description: |||
@@ -356,11 +356,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   elastic_cpu: resourceSaturationPoint({
-    title: 'Average CPU Saturation per Node',
+    title: 'Average CPU Utilization per Node',
     severity: 's4',
     appliesTo: ['logging', 'search'],
     description: |||
-      Average CPU per Node.
+      Average CPU utilization per Node.
 
       This resource measures all CPU across a fleet. If it is becoming saturated, it may indicate that the fleet needs horizontal or
       vertical scaling. The metrics are coming from elasticsearch_exporter.
@@ -423,7 +423,7 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   elastic_single_node_cpu: resourceSaturationPoint({
-    title: 'Average CPU Saturation per Node',
+    title: 'Average CPU Utilization per Node',
     severity: 's4',
     appliesTo: ['logging', 'search'],
     description: |||
@@ -475,7 +475,7 @@ local pgbouncerSyncPool(serviceType, role) =
     severity: 's4',
     appliesTo: ['logging', 'search'],
     description: |||
-      Saturation of each thread pool on each node.
+      Utilization of each thread pool on each node.
 
       Descriptions of the threadpool types can be found at
       https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-threadpool.html.
@@ -497,7 +497,7 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   go_memory: resourceSaturationPoint({
-    title: 'Go Memory Saturation per Node',
+    title: 'Go Memory Utilization per Node',
     severity: 's4',
     appliesTo: ['gitaly', 'web-pages', 'monitoring', 'web', 'praefect', 'registry', 'api'],
     description: |||
@@ -541,11 +541,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   open_fds: resourceSaturationPoint({
-    title: 'Open file descriptor saturation per instance',
+    title: 'Open file descriptor utilization per instance',
     severity: 's2',
     appliesTo: { allExcept: ['waf'] },
     description: |||
-      Open file descriptor saturation per instance.
+      Open file descriptor utilization per instance.
 
       Saturation on file descriptor limits may indicate a resource-descriptor leak in the application.
 
@@ -585,7 +585,7 @@ local pgbouncerSyncPool(serviceType, role) =
     severity: 's2',
     appliesTo: ['pgbouncer', 'patroni'],
     description: |||
-      PGBouncer single core saturation per node.
+      PGBouncer single core CPU utilization per node.
 
       PGBouncer is a single threaded application. Under high volumes this resource may become saturated,
       and additional pgbouncer nodes may need to be provisioned.
@@ -606,15 +606,15 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   private_runners: resourceSaturationPoint({
-    title: 'Private Runners Saturation',
+    title: 'Private Runners utilization',
     severity: 's4',
     appliesTo: ['ci-runners'],
     description: |||
-      Private runners saturation per instance.
+      Private runners utilization per instance.
 
       Each runner manager has a maximum number of runners that it can coordinate at any single moment.
 
-      When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+      When this metric is saturated, new CI jobs will queue. When this occurs we should consider adding more runner managers,
       or scaling the runner managers vertically and increasing their maximum runner capacity.
     |||,
     grafana_dashboard_uid: 'sat_private_runners',
@@ -636,11 +636,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   redis_clients: resourceSaturationPoint({
-    title: 'Redis Client Saturation per Node',
+    title: 'Redis Client Utilization per Node',
     severity: 's3',
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
-      Redis client saturation per node.
+      Redis client utilization per node.
 
       A redis server has a maximum number of clients that can connect. When this resource is saturated,
       new clients may fail to connect.
@@ -661,11 +661,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   redis_memory: resourceSaturationPoint({
-    title: 'Redis Memory Saturation per Node',
+    title: 'Redis Memory Utilization per Node',
     severity: 's2',
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
-      Redis memory saturation per node.
+      Redis memory utilization per node.
 
       As Redis memory saturates node memory, the likelyhood of OOM kills, possibly to the Redis process,
       become more likely.
@@ -693,15 +693,15 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   shared_runners: resourceSaturationPoint({
-    title: 'Shared Runner Saturation',
+    title: 'Shared Runner utilization',
     severity: 's4',
     appliesTo: ['ci-runners'],
     description: |||
-      Shared runner saturation per instance.
+      Shared runner utilization per instance.
 
       Each runner manager has a maximum number of runners that it can coordinate at any single moment.
 
-      When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+      When this metric is saturated, new CI jobs will queue. When this occurs we should consider adding more runner managers,
       or scaling the runner managers vertically and increasing their maximum runner capacity.
     |||,
     grafana_dashboard_uid: 'sat_shared_runners',
@@ -723,15 +723,15 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   shared_runners_gitlab: resourceSaturationPoint({
-    title: 'Shared Runner GitLab Saturation',
+    title: 'Shared Runner GitLab Utilization',
     severity: 's4',
     appliesTo: ['ci-runners'],
     description: |||
-      Shared runners saturation per instance.
+      Shared runners utilization per instance.
 
       Each runner manager has a maximum number of runners that it can coordinate at any single moment.
 
-      When this metric is exceeded, new CI jobs will queue. When this occurs we should consider adding more runner managers,
+      When this metric is saturated, new CI jobs will queue. When this occurs we should consider adding more runner managers,
       or scaling the runner managers vertically and increasing their maximum runner capacity.
     |||,
     grafana_dashboard_uid: 'sat_shared_runners_gitlab',
@@ -751,13 +751,13 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   sidekiq_shard_workers: resourceSaturationPoint({
-    title: 'Sidekiq Worker Saturation per shard',
+    title: 'Sidekiq Worker Utilization per shard',
     severity: 's4',
     appliesTo: ['sidekiq'],
     description: |||
-      Sidekiq worker saturation per shard.
+      Sidekiq worker utilization per shard.
 
-      This metric represents the percentage of available threads*workers that are utilized actively processing jobs.
+      This metric represents the percentage of available threads*workers that are actively processing jobs.
 
       When this metric is saturated, new Sidekiq jobs will queue. Depending on whether or not the jobs are latency sensitive,
       this could impact user experience.
@@ -785,11 +785,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   single_node_cpu: resourceSaturationPoint({
-    title: 'Average CPU Saturation per Node',
+    title: 'Average CPU Utilization per Node',
     severity: 's4',
     appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
     description: |||
-      Average CPU per Node.
+      Average CPU utilization per Node.
 
       If average CPU is satured, it may indicate that a fleet is in need to horizontal or vertical scaling. It may also indicate
       imbalances in load in a fleet.
@@ -833,11 +833,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   redis_primary_cpu: resourceSaturationPoint({
-    title: 'Redis Primary CPU Saturation per Node',
+    title: 'Redis Primary CPU Utilization per Node',
     severity: 's1',
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
-      Redis Primary CPU Saturation per Node.
+      Redis Primary CPU Utilization per Node.
 
       Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
       When the primary Redis service is saturated, major slowdowns should be expected across the application, so avoid if at all
@@ -861,11 +861,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   redis_secondary_cpu: resourceSaturationPoint({
-    title: 'Redis Secondary CPU Saturation per Node',
+    title: 'Redis Secondary CPU Utilization per Node',
     severity: 's4',
     appliesTo: ['redis', 'redis-sidekiq', 'redis-cache'],
     description: |||
-      Redis Secondary CPU Saturation per Node.
+      Redis Secondary CPU Utilization per Node.
 
       Redis is single-threaded. A single Redis server is only able to scale as far as a single CPU on a single host.
       CPU saturation on a secondary is not as serious as critical as saturation on a primary, but could lead to
@@ -892,7 +892,7 @@ local pgbouncerSyncPool(serviceType, role) =
   // taxonomy. These saturation metrics rely on this in order to work
   // See https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10249 for more details
   // pod_count: resourceSaturationPoint({
-  //   title: 'Pod Count Saturation',
+  //   title: 'Pod Count Utilization',
   //   description: |||
   //     This measures the HPA that manages our Deployments. If we are running low on
   //     ability to scale up by hitting our maximum HPA Pod allowance, we will have
