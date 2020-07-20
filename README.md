@@ -192,6 +192,7 @@ During an incident there are at least 2 roles, and one more optional
 * [Database backups restore testing](docs/patroni/postgresql-backups-wale-walg.md#database-backups-restore-testing)
 * [Rebuild a corrupt index](docs/patroni/postgresql.md#rebuild-a-corrupt-index)
 * [Checking PostgreSQL health with postgres-checkup](docs/patroni/postgres-checkup.md)
+* [Reducing table and index bloat using pg_repack](docs/patroni/pg_repack.md)
 
 ### Frontend Services
 
