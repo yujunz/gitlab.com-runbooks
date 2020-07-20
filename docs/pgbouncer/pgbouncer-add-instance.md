@@ -1,5 +1,7 @@
 # Add a new PgBouncer instance
 
+Here the link to the video of the [runbook simulation](https://youtu.be/343VuLGTJn0).
+
 Adding PgBouncer instances might be necessary for special tasks such as rolling
 upgrades, or in case we reach organic saturation (for more details regarding
 monitoring and troubleshooting of PgBouncer connections see [this
