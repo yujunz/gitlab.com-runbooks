@@ -150,35 +150,6 @@ groups:
       instance: '{{ $labels.instance }}'
       device: '{{ $labels.device }}'
       mountpoint: '{{ $labels.mountpoint }}'
-  - alert: LowDiskSpace
-    expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs|zfs)",job="node"} * 100 <= 10
-    for: 10m
-    labels:
-      severity: s3
-      alert_type: cause
-    annotations:
-      title: 'Less than 10% disk space left'
-      description: >
-        Consider sshing into the instance and removing old logs, clean
-        temp files, or remove old apt packages with `apt-get autoremove`
-      runbook: docs/monitoring/filesystem_alerts.md
-      value: '{{ $value | humanize }}%'
-      device: '{{ $labels.device }}%'
-      mount_point: '{{ $labels.mountpoint }}%'
-  - alert: ExtremelyLowDiskSpace
-    expr: instance:node_filesystem_avail:ratio{fstype=~"(ext.|xfs|zfs)",job="node"} * 100 <= 5
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: s2
-      alert_type: cause
-    annotations:
-      title: '5% disk space left'
-      description: "There's only 5% disk space left"
-      runbook: docs/monitoring/filesystem_alerts.md
-      value: '{{ $value | humanize }}%'
-      device: '{{ $labels.device }}%'
-      mount_point: '{{ $labels.mountpoint }}%'
   - alert: HighInodeUsage
     expr: node_filesystem_files_free{fstype=~"(ext.|xfs)",job="node"} / node_filesystem_files{fstype=~"(ext.|xfs)",job="node"}
       * 100 <= 20
