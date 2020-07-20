@@ -1,5 +1,7 @@
 # Removing a PgBouncer instance
 
+Here the link to the video of the [runbook simulation](https://youtu.be/BGheMAGOR48).
+
 Removing PgBouncer instances might be necessary for conserving costs or simplifying setups.
 You'll need to take into consideration what kind of PgBouncer instance node you want to remove:
 
