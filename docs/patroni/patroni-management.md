@@ -2,6 +2,8 @@
 
 ## About
 
+Here the link to the video of the [runbook simulation](https://youtu.be/QZO7ba_8_CA).
+
 [Patroni](https://github.com/zalando/patroni) is an open source project for providing automatic HA solution for PostgreSQL databases. It also has centralized configuration managment capabilities and it fully integrated with [Consul](https://www.consul.io/) to provide _consensus_, and dns services. Each patroni instance have a `consul` agent, who act as a proxy for the GitLab Consul fleet.
 
 Patroni binaries runs in the same host as the PostgreSQL database. In a sense, Patroni can be seen as a way of manage a PostgreSQL instance. Configuration and general operations of PostgreSQL instances is now achieved by using the corresponding Patroni command to do so.
