@@ -61,7 +61,7 @@ Upgrade:
 
 After the upgrade:
 
-* [ ] Update `managed-objects/$env/apm-*_template.json` to point to new APM version.
+* TBD
 
 ## Performing operations on the Elastic cluster ##
 
