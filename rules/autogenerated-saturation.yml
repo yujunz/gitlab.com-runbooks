@@ -40,6 +40,23 @@ groups:
       )
   - record: gitlab_component_saturation:ratio
     labels:
+      component: disk_inodes
+    expr: |
+      max by(environment, tier, type, stage) (
+        clamp_min(
+          clamp_max(
+            1 - (
+              node_filesystem_files_free{fstype=~"(ext.|xfs)", environment!="",type!="",type!~"waf|bastion"}
+              /
+              node_filesystem_files{fstype=~"(ext.|xfs)", environment!="",type!="",type!~"waf|bastion"}
+            )
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
       component: disk_space
     expr: |
       max by(environment, tier, type, stage) (
@@ -670,6 +687,14 @@ groups:
     expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
+      component: disk_inodes
+    expr: '0.75'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: disk_inodes
+    expr: '0.8'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
       component: disk_space
     expr: '0.85'
   - record: slo:max:hard:gitlab_component_saturation:ratio
@@ -1052,17 +1077,70 @@ groups:
       gitlab_component_saturation:ratio{component="cpu"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="cpu"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 5m
+    for: 15m
     annotations:
       title: >-
-        The Disk Utilization per Device per Node resource of the {{ $labels.type }} service ({{ $labels.stage
-        }} stage), component has a saturation exceeding SLO and is close to its capacity limit.
+        The Disk inode Utilization per Device per Node resource of the {{ $labels.type }} service ({{
+        $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
+        limit.
       description: |
         This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
-        Details of the Disk Utilization per Device per Node resource:
+        Details of the Disk inode Utilization per Device per Node resource:
         -------------------------------------------
-        Disk utilization per device per node.
+        Disk inode utilization per device per node.
+
+        If this is too high, its possible that a directory is filling up with
+        files. Consider logging in an checking temp directories for large numbers
+        of files
+      grafana_dashboard_id: alerts-sat_disk_inodes
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/alerts-sat_disk_inodes?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '24424'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, tier, type, stage, fqdn, device) (
+          clamp_min(
+            clamp_max(
+              1 - (
+                node_filesystem_files_free{fstype=~"(ext.|xfs)", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+                /
+                node_filesystem_files{fstype=~"(ext.|xfs)", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+              )
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_trigger_duration: 15m
+      alert_type: cause
+      bound: upper
+      burn_rate_period: 1m
+      metric: gitlab_component_saturation:ratio
+      pager: pagerduty
+      period: 15m
+      rules_domain: general
+      severity: s2
+    expr: |
+      gitlab_component_saturation:ratio{component="disk_inodes"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="disk_inodes"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 5m
+    annotations:
+      title: >-
+        The Disk Space Utilization per Device per Node resource of the {{ $labels.type }} service ({{
+        $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
+        limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the Disk Space Utilization per Device per Node resource:
+        -------------------------------------------
+        Disk space utilization per device per node.
       grafana_dashboard_id: alerts-sat_disk_space
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/alerts-sat_disk_space?from=now-6h/m&to=now-1m/m&var-environment={{
