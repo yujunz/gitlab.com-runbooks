@@ -258,6 +258,42 @@ groups:
       )
   - record: gitlab_component_saturation:ratio
     labels:
+      component: kube_persistent_volume_claim_disk_space
+      stage: main
+      tier: inf
+      type: kube
+    expr: |
+      max by(environment) (
+        clamp_min(
+          clamp_max(
+            kubelet_volume_stats_used_bytes
+            /
+            kubelet_volume_stats_capacity_bytes
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
+      component: kube_persistent_volume_claim_inodes
+      stage: main
+      tier: inf
+      type: kube
+    expr: |
+      max by(environment) (
+        clamp_min(
+          clamp_max(
+            kubelet_volume_stats_inodes_used
+            /
+            kubelet_volume_stats_inodes
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
       component: memory
     expr: |
       max by(environment, tier, type, stage) (
@@ -735,6 +771,22 @@ groups:
   - record: slo:max:hard:gitlab_component_saturation:ratio
     labels:
       component: kube_hpa_instances
+    expr: '0.9'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: kube_persistent_volume_claim_disk_space
+    expr: '0.85'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: kube_persistent_volume_claim_disk_space
+    expr: '0.9'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
+      component: kube_persistent_volume_claim_inodes
+    expr: '0.85'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: kube_persistent_volume_claim_inodes
     expr: '0.9'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
@@ -1624,6 +1676,98 @@ groups:
     expr: |
       gitlab_component_saturation:ratio{component="kube_hpa_instances"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="kube_hpa_instances"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 5m
+    annotations:
+      title: >-
+        The Kube Persistent Volume Claim inode Utilisation resource of the {{ $labels.type }} service
+        ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
+        limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the Kube Persistent Volume Claim inode Utilisation resource:
+        -------------------------------------------
+        disk space utilization on persistent volume claims.
+      grafana_dashboard_id: alerts-sat_kube_pvc_disk_space
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/alerts-sat_kube_pvc_disk_space?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '15240'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, persistentvolumeclaim) (
+          clamp_min(
+            clamp_max(
+              kubelet_volume_stats_used_bytes
+              /
+              kubelet_volume_stats_capacity_bytes
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_trigger_duration: 5m
+      alert_type: cause
+      bound: upper
+      burn_rate_period: 1m
+      metric: gitlab_component_saturation:ratio
+      pager: pagerduty
+      period: 5m
+      rules_domain: general
+      severity: s2
+    expr: |
+      gitlab_component_saturation:ratio{component="kube_persistent_volume_claim_disk_space"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="kube_persistent_volume_claim_disk_space"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 5m
+    annotations:
+      title: >-
+        The Kube Persistent Volume Claim inode Utilisation resource of the {{ $labels.type }} service
+        ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity
+        limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the Kube Persistent Volume Claim inode Utilisation resource:
+        -------------------------------------------
+        inode utilization on persistent volume claims.
+      grafana_dashboard_id: alerts-sat_kube_pvc_inodes
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/alerts-sat_kube_pvc_inodes?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '6952'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, persistentvolumeclaim) (
+          clamp_min(
+            clamp_max(
+              kubelet_volume_stats_inodes_used
+              /
+              kubelet_volume_stats_inodes
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_trigger_duration: 5m
+      alert_type: cause
+      bound: upper
+      burn_rate_period: 1m
+      metric: gitlab_component_saturation:ratio
+      pager: pagerduty
+      period: 5m
+      rules_domain: general
+      severity: s2
+    expr: |
+      gitlab_component_saturation:ratio{component="kube_persistent_volume_claim_inodes"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="kube_persistent_volume_claim_inodes"}
   - alert: component_saturation_slo_out_of_bounds
     for: 5m
     annotations:
