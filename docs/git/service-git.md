@@ -56,6 +56,7 @@
 * [../patroni/pg_repack.md](../patroni/pg_repack.md)
 * [../pgbouncer/pgbouncer-connections.md](../pgbouncer/pgbouncer-connections.md)
 * [../praefect/praefect-bypass.md](../praefect/praefect-bypass.md)
+* [../praefect/praefect-replication.md](../praefect/praefect-replication.md)
 * [../runner/update-gitlab-runner-on-managers.md](../runner/update-gitlab-runner-on-managers.md)
 * [../sidekiq/large-sidekiq-queue.md](../sidekiq/large-sidekiq-queue.md)
 * [../sidekiq/silent-project-exports.md](../sidekiq/silent-project-exports.md)
