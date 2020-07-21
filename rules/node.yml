@@ -150,23 +150,6 @@ groups:
       instance: '{{ $labels.instance }}'
       device: '{{ $labels.device }}'
       mountpoint: '{{ $labels.mountpoint }}'
-  - alert: HighInodeUsage
-    expr: node_filesystem_files_free{fstype=~"(ext.|xfs)",job="node"} / node_filesystem_files{fstype=~"(ext.|xfs)",job="node"}
-      * 100 <= 20
-    for: 15m
-    labels:
-      pager: pagerduty
-      severity: s1
-      alert_type: cause
-    annotations:
-      title: "High number of inode usage"
-      description: >
-        "Consider ssh'ing into the instance and removing files or clean
-        temp files"
-      runbook: docs/monitoring/filesystem_alerts_inodes.md
-      value: '{{ $value | printf "%.2f" }}%'
-      device: '{{ $labels.device }}%'
-      mount_point: '{{ $labels.mountpoint }}%'
 
 - name: Misc rules
   rules:
