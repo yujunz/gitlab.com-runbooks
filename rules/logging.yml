@@ -1,19 +1,6 @@
 groups:
 - name: logging.rules
   rules:
-    - alert: TooManyPubsubbeatWarnings
-      expr: rate(pubsubbeat_warnings_total[5m]) > 0.5
-      for: 5m
-      labels:
-        severity: s4
-        alert_type: cause
-      annotations:
-        title: Pubsubbeat is logging warnings
-        description: >
-          Warnings could be a result of failures in publishing logs.
-          Consider checking /var/log/pubsubbeat/current on the affected
-          host and see what's the cause of the warnings.
-
     - alert: TooManyPubsubbeatErrors
       expr: rate(pubsubbeat_errors_total[5m]) > 0.1
       for: 5m
