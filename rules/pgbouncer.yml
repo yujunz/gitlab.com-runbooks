@@ -6,7 +6,6 @@ groups:
     for: 10m
     labels:
       severity: s1
-      channel: database
       pager: pagerduty
       alert_type: cause
     annotations:
