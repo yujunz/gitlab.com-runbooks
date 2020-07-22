@@ -6,7 +6,7 @@ groups:
       predict_linear(ci_pending_builds{has_minutes="yes",shared_runners="yes"}[15m], 3600)) > 1000)
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -21,7 +21,7 @@ groups:
     expr: max(ci_pending_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runners="yes"}) by (namespace) > 1000
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -34,7 +34,7 @@ groups:
     expr: max(sum(ci_running_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runner="yes",runner=~"40786|40788|44028|44949|380986|380987"}) by (fqdn,namespace)) by (namespace) > 350
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -47,7 +47,7 @@ groups:
     expr: max(sum(ci_running_builds{has_minutes="yes",namespace!="",namespace!="9970",shared_runner="yes",runner=~"37397|37398|157328|157329|380989|380990"}) by (fqdn,namespace)) by (namespace) > 350
     for: 10m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -60,7 +60,7 @@ groups:
     expr: sum(gitlab_runner_jobs{job="shared-runners"}) == 0
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -73,7 +73,7 @@ groups:
     expr: (sum(gitlab_runner_jobs) by (job) / sum(gitlab_runner_concurrent) by (job)) > 0.85
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -85,7 +85,7 @@ groups:
     expr: (sum(gitlab_runner_jobs) by (job) / sum(gitlab_runner_concurrent) by (job)) > 0.95
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s3
       alert_type: cause
     annotations:
@@ -97,7 +97,7 @@ groups:
     expr: up{job=~"private-runners|shared-runners|shared-runners-gitlab-org|staging-shared-runners"} == 0
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s3
       alert_type: cause
     annotations:
@@ -112,7 +112,7 @@ groups:
     expr: sum(gitlab_runner_autoscaling_machine_states{executor="docker+machine", state="creating"}) / (sum(gitlab_runner_autoscaling_machine_states{executor="docker+machine", state="idle"}) + 1) > 100
     for: 1m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s3
       alert_type: cause
     annotations:
@@ -128,7 +128,7 @@ groups:
         on (component) slo:max:soft:gitlab_component_saturation:ratio{component="open_fds"}
     for: 10m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -141,7 +141,7 @@ groups:
     expr: up{job="ci-node",fqdn=~"prometheus-.*us-east1-(c|d).*"} == 0
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -155,7 +155,7 @@ groups:
       ) by (quota, region) > 85
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -172,7 +172,7 @@ groups:
       ) by (quota, region) > 95
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s3
       alert_type: cause
     annotations:
@@ -189,7 +189,7 @@ groups:
       sum(changes(ci_repeated_commands_builds{shared_runners="yes",has_minutes="yes",status="running"}[45m])) by (namespace) == 0
     for: 45m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -208,7 +208,7 @@ groups:
       ) < 0.8
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s3
       alert_type: cause
     annotations:
@@ -229,7 +229,7 @@ groups:
       ) >= 30
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s3
       alert_type: cause
     annotations:
@@ -244,7 +244,7 @@ groups:
     expr: (sum (rate(job_trace_archive_failed_total[5m])) by (job)) > 10
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s4
       alert_type: cause
     annotations:
@@ -260,7 +260,7 @@ groups:
     expr: (sidekiq_queue_size{environment=~"gprd",name=~"pipeline.*"} and on (fqdn) gitlab:redis_master) > 1000
     for: 5m
     labels:
-      channel: ci-cd
+      team: verify
       severity: s3
       alert_type: cause
     annotations:
