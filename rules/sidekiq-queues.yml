@@ -9,6 +9,7 @@ groups:
     for: 20m
     labels:
       severity: s4
+      channel: backend
       alert_type: cause
     annotations:
       description: There have been over 20k {{ $labels.name }} Sidekiq queued jobs for the last 20 minutes.

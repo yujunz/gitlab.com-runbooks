@@ -130,7 +130,7 @@ teams:
 - name: gitaly
   url: https://about.gitlab.com/handbook/engineering/dev-backend/gitaly/
   slack_channel: gitaly
-  slack_alerts_channel: gitaly-alerts
+  slack_low_severity_alerts_channel: gitaly-alerts
   engagement_policy:
   oncall_schedule:
 
@@ -195,14 +195,9 @@ teams:
   url: https://about.gitlab.com/handbook/engineering/ops-backend/verify/
   manager_slug: Elliot
   slack_channel: g_verify
-  slack_alerts_channel: alerts-ci-cd
   engagement_policy: # Link to doc that talks about engagement
                      # and escalation policy
   oncall_schedule:   # Link to pagerduty oncall schedule
-
-# From https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/344
-- name: gitlab-pages
-  slack_alerts_channel: gitlab-pages
 
 tiers:
 - name: sv

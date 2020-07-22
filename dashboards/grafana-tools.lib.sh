@@ -25,7 +25,8 @@ function prepare() {
     "./bundler.sh"
   fi
 
-  ../services/generate-json.sh
+  # Convert the service catalog yaml into a JSON file in a format thats consumable by jsonnet
+  ruby -rjson -ryaml -e "puts YAML.load(ARGF.read).to_json" ../services/service-catalog.yml >../services/service_catalog.json
 }
 
 function get_description() {

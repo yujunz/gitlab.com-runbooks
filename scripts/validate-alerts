@@ -9,9 +9,6 @@ class Validator
   def initialize
     @context = []
     @failures = []
-    @service_catalog = YAML.load_file(File.join(__dir__, "..", "services", "service-catalog.yml"))
-    puts @service_catalog
-    @service_catalog_teams = @service_catalog["teams"].collect { |team| [team["name"], team] }.to_h
   end
 
   private
@@ -55,27 +52,6 @@ class Validator
     annotations.each do |key, value|
       validation_error("All attribute values must be strings. labels.#{key} is a #{value.class}") unless value.is_a?(String)
     end
-
-    validation_error("channel annotations have been removed in favour of team labels, please use a team label instead") if annotations["channel"]
-  end
-
-  def validate_pager_severity_labels(rule, thanos_evaluation)
-    labels = rule["labels"]
-
-    if labels["pager"]
-      validation_error("rules contains an invalid `pager` label: #{labels['pager']}") unless %w[pagerduty issue].include?(labels["pager"])
-      validation_error("only severity s1 and s2 errors should page") unless (labels["severity"] == "s1") || (labels["severity"] == "s2")
-      validation_error("'pager: issue' alerts need a project label") if (labels["pager"] == "issue") && labels["project"].nil?
-    elsif (labels["severity"] == "s1") || (labels["severity"] == "s2")
-      validation_error("s1 and s2 alerts must be configured to send to pagerduty")
-    end
-  end
-
-  def validate_label_team(rule, thanos_evaluation)
-    labels = rule["labels"]
-    team = @service_catalog_teams[labels["team"]]
-
-    validation_error("Team labels should refer to valid teams in the service catalog. No #{labels['team']} team was found") unless team
   end
 
   # Ensures that the rule conforms to our labeling rules
@@ -86,7 +62,13 @@ class Validator
     validation_error("rules contains an invalid `severity` label: #{labels['severity']}") unless %w[s1 s2 s3 s4].include?(labels["severity"])
     validation_error("alerts must include an alert_type label. This label should either be 'cause' or 'symptom'. For more information on cause and symptom-based alerts, review http://landing.google.com/sre/sre-book/chapters/monitoring-distributed-systems/#symptoms-versus-causes-g0sEi4") unless %w[cause heartbeat symptom].include?(labels["alert_type"])
 
-    validate_pager_severity_labels(rule, thanos_evaluation)
+    if labels["pager"]
+      validation_error("rules contains an invalid `pager` label: #{labels['pager']}") unless %w[pagerduty issue].include?(labels["pager"])
+      validation_error("only severity s1 and s2 errors should page") unless (labels["severity"] == "s1") || (labels["severity"] == "s2")
+      validation_error("'pager: issue' alerts need a project label") if (labels["pager"] == "issue") && labels["project"].nil?
+    elsif (labels["severity"] == "s1") || (labels["severity"] == "s2")
+      validation_error("s1 and s2 alerts must be configured to send to pagerduty")
+    end
 
     # Check that all label values are strings since non-string values, while being technically valid,
     # will trip-up the Prometheus Operator, leading to downstream failures.
@@ -94,10 +76,6 @@ class Validator
     labels.each do |key, value|
       validation_error("All label values must be strings. labels.#{key} is a #{value.class}") unless value.is_a?(String)
     end
-
-    validation_error("channels have been removed in favour of teams, please use a team label instead") if labels["channel"]
-
-    validate_label_team(rule, thanos_evaluation) if labels["team"]
   end
 
   def validate_rule(rule, thanos_evaluation)

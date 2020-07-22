@@ -7,27 +7,14 @@ require 'yaml'
 # rubocop:disable Metrics/AbcSize
 def validate(service_catalog_path)
   service_catalog_yaml = YAML.load_file(service_catalog_path)
-  teams = service_catalog_yaml["teams"]
-  tiers = service_catalog_yaml["tiers"]
   services = service_catalog_yaml["services"]
 
-  raise "Service catalog must contain one or more teams" unless teams && !teams.empty?
-  raise "Service catalog must contain one or more tiers" unless tiers && !tiers.empty?
+  raise "Service catalog must contain one or more teams" unless service_catalog_yaml["teams"] && !service_catalog_yaml["teams"].empty?
+  raise "Service catalog must contain one or more tiers" unless service_catalog_yaml["tiers"] && !service_catalog_yaml["tiers"].empty?
+  raise "Service catalog must contain one or more services" unless services && !services.empty?
 
-  team_map = teams.each_with_object({}) { |team, map| map[team["name"]] = team; }
-  tier_map = tiers.each_with_object({}) { |tier, map| map[tier["name"]] = tier; }
-
-  teams.each do |team|
-    # name
-    team_name = team["name"]
-    raise "'#{team_name}' | team.name field must be string" unless team_name.is_a? String
-
-    slack_alerts_channel = team["slack_alerts_channel"]
-    if slack_alerts_channel
-      raise "'#{team_name}' | slack_alerts_channel must be a string" unless slack_alerts_channel.is_a? String
-      raise "'#{team_name}' | slack_alerts_channel must not start with a hash" if slack_alerts_channel.start_with?("#")
-    end
-  end
+  team_map = service_catalog_yaml["teams"].each_with_object({}) { |team, map| map[team["name"]] = team;  }
+  tier_map = service_catalog_yaml["tiers"].each_with_object({}) { |tier, map| map[tier["name"]] = tier;  }
 
   services.each do |service|
     # name
@@ -39,14 +26,12 @@ def validate(service_catalog_path)
     raise "'#{service_name}' | tier field must be string" unless service_tier.is_a? String
     raise "unknown tier '#{service['tier']}''" unless tier_map[service["tier"]]
 
-    # teams (non-mandatory)
+    # teams
     service_teams = service["teams"]
-    if service_teams
-      raise "'#{service_name}' | teams field must be list" unless service_teams.is_a? Array
+    raise "'#{service_name}' | teams field must be list" unless service_teams.is_a? Array
 
-      service_teams.each do |team|
-        raise "'#{service_name}' | unknown team: '#{team}''" unless team_map[team]
-      end
+    service_teams.each do |team|
+      raise "'#{service_name}' | unknown team: '#{team}''" unless team_map[team]
     end
 
     # label

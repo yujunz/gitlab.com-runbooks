@@ -10,9 +10,8 @@ fail() {
   exit 1
 }
 
-echo Running tests for displayed configuration
-amtool config routes show --config.file "$1" -o extended
-
+count=0
 jsonnet --string "${SCRIPT_DIR}/routing-tests.jsonnet" --ext-str configFile="$1" | while read -r line; do
-  sh -c "${line}"
+  count="$((count + 1))"
+  sh -c "${line}" || fail "Failed test #${count}: ${line}"
 done

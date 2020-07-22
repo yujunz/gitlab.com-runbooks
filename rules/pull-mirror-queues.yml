@@ -9,6 +9,7 @@ groups:
     for: 15m
     labels:
       severity: s4
+      channel: backend
       alert_type: symptom
     annotations:
       title: 'Large number of overdue pull mirror jobs'

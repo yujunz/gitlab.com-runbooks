@@ -10,7 +10,6 @@ groups:
       pager: pagerduty
       severity: s1
       alert_type: symptom
-      team: gitlab-pages
     annotations:
       title: GitLab pages is down for 1 minute
       description: GitLab pages is down for 1 minute! Consider !tweet 'GitLab pages
@@ -20,9 +19,9 @@ groups:
     expr: (1 - avg(up{job="gitlab-pages"})) * 100 > 20
     for: 5m
     labels:
+      channel: alerts
       severity: s4
       alert_type: cause
-      team: gitlab-pages
     annotations:
       title: GitLab pages servers are failing
       description: "{{ $value }}% of pages servers have been down for 5 minutes"
@@ -32,9 +31,9 @@ groups:
     expr: sum(rate(haproxy_server_http_responses_total{backend="pages_http",code="5xx"}[15m])) by (environment) / sum(rate(haproxy_server_http_responses_total{backend="pages_http"}[15m])) by (environment) * 100 > 1
     for: 5m
     labels:
+      channel: alerts
       severity: s4
       alert_type: cause
-      team: gitlab-pages
     annotations:
       title: GitLab pages servers are returning errors
       description: "{{ $value }}% of pages responses have been errors for 5 minutes"
@@ -44,9 +43,9 @@ groups:
     expr: gitlab_pages_domains_served_total / scalar(quantile(0.9, gitlab_pages_domains_served_total)) < 0.9 or gitlab_pages_domains_served_total < 1000
     for: 5m
     labels:
+      channel: alerts
       severity: s4
       alert_type: cause
-      team: gitlab-pages
     annotations:
       title: GitLab Pages server(s) have low number of hosted domains
       description: >
@@ -61,7 +60,6 @@ groups:
       pager: pagerduty
       severity: s1
       alert_type: cause
-      team: gitlab-pages
     annotations:
       title: GitLab Pages production front-end IP could've been changed
       description: A pages site (https://prod.pages-check.gitlab.net/) that points to Pages front-end IP
@@ -75,7 +73,6 @@ groups:
       pager: pagerduty
       severity: s1
       alert_type: cause
-      team: gitlab-pages
     annotations:
       title: GitLab Pages staging front-end IP could've been changed
       description: A pages site (https://staging.pages-check.gitlab.net/) that points to Pages front-end IP
