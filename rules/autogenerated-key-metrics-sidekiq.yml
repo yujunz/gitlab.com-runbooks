@@ -431,6 +431,11 @@ groups:
         or
         label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",urgency="low"}, "_c", "1", "", "")
       )
+  - record: gitlab_background_jobs:queue:ops:rate_1m
+    expr: |
+      sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
+        rate(sidekiq_enqueued_jobs_total{}[1m])
+      )
   - record: gitlab_background_jobs:execution:apdex:ratio_1m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
@@ -904,6 +909,11 @@ groups:
         or
         label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",urgency="low"}, "_c", "1", "", "")
       )
+  - record: gitlab_background_jobs:queue:ops:rate_5m
+    expr: |
+      sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
+        rate(sidekiq_enqueued_jobs_total{}[5m])
+      )
   - record: gitlab_background_jobs:execution:apdex:ratio_5m
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
@@ -1342,6 +1352,11 @@ groups:
         label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
         label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",urgency="low"}, "_c", "1", "", "")
+      )
+  - record: gitlab_background_jobs:queue:ops:rate_30m
+    expr: |
+      sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
+        rate(sidekiq_enqueued_jobs_total{}[30m])
       )
   - record: gitlab_background_jobs:execution:apdex:ratio_30m
     expr: |
@@ -1816,6 +1831,11 @@ groups:
         or
         label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",urgency="low"}, "_c", "1", "", "")
       )
+  - record: gitlab_background_jobs:queue:ops:rate_1h
+    expr: |
+      sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
+        rate(sidekiq_enqueued_jobs_total{}[1h])
+      )
   - record: gitlab_background_jobs:execution:apdex:ratio_1h
     expr: |
       sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
@@ -2254,6 +2274,11 @@ groups:
         label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="high"}, "_c", "0", "", "")
         or
         label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",urgency="low"}, "_c", "1", "", "")
+      )
+  - record: gitlab_background_jobs:queue:ops:rate_6h
+    expr: |
+      sum by (environment,tier,type,stage,shard,queue,feature_category,urgency) (
+        rate(sidekiq_enqueued_jobs_total{}[6h])
       )
   - record: gitlab_background_jobs:execution:apdex:ratio_6h
     expr: |

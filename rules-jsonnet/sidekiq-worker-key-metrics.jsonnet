@@ -130,54 +130,9 @@ local generateAlerts() =
       alertDescription='a queue latency outside of SLO'
     ),
     {
-      alert: 'sidekiq_throttled_jobs_enqueued_without_dequeuing',
-      expr: |||
-        (
-          sum by (environment, queue, feature_category) (rate(sidekiq_enqueued_jobs_total{urgency="throttled"}[10m] offset 10m)) > 0
-        )
-        unless
-        (
-          sum by (environment, queue, feature_category) (rate(sidekiq_jobs_completion_seconds_count{urgency="throttled"}[20m])) > 0
-          or
-          sum by (environment, queue, feature_category) (rate(sidekiq_jobs_failed_total{urgency="throttled"}[20m])) > 0
-          or
-          sum by (environment, queue, feature_category) (rate(sidekiq_jobs_retried_total{urgency="throttled"}[20m])) > 0
-          or
-          sum by (environment, queue, feature_category) (avg_over_time(sidekiq_running_jobs{urgency="throttled"}[20m])) > 0
-        )
-      |||,
-      'for': '2m',
-      labels: {
-        type: 'sidekiq',  // Hardcoded because `sidekiq_enqueued_jobs_total` `type` label depends on the sidekiq client `type`
-        tier: 'sv',  // Hardcoded becayse `sidekiq_enqueued_jobs_total` `tier` label depends on the sidekiq client `tier`
-        stage: 'main',
-        alert_type: 'cause',
-        rules_domain: 'general',
-        metric: 'sidekiq_enqueued_jobs_total',
-        severity: 's4',
-        period: '2m',
-      },
-      annotations: {
-        title: 'Sidekiq jobs are being enqueued without being dequeued',
-        description: |||
-          The `{{ $labels.queue }}` queue appears to have jobs being enqueued without
-          those jobs being executed.
-
-          This could be the result of a Sidekiq server configuration issue, where
-          no Sidekiq servers are configured to dequeue the specific queue.
-        |||,
-        runbook: 'docs/sidekiq/service-sidekiq.md',
-        grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
-        grafana_panel_id: stableIds.hashStableId('queue-length'),
-        grafana_variables: 'environment,stage,queue',
-        grafana_min_zoom_hours: '6',
-        promql_template_1: 'sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}',
-      },
-    },
-    {
       alert: 'ignored_sidekiq_queues_receiving_work',
       expr: |||
-        sum by (environment, queue, feature_category) (rate(sidekiq_enqueued_jobs_total{environment="gprd", queue=~"%s"}[5m])) > 0
+        sum by (environment, queue, feature_category) (gitlab_background_jobs:queue:ops:rate_5m{environment="gprd", queue=~"%s"}) > 0
       ||| % [std.join('|', IGNORED_GPRD_QUEUES)],
       'for': '2m',
       labels: {
@@ -186,7 +141,6 @@ local generateAlerts() =
         stage: 'main',
         alert_type: 'cause',
         rules_domain: 'general',
-        metric: 'sidekiq_enqueued_jobs_total',
         severity: 's1',
         pager: 'pagerduty',
         period: '2m',
