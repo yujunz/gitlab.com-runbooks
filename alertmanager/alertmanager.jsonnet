@@ -1,29 +1,18 @@
 // Generate Alertmanager configurations
-local secrets = std.extVar('secrets');
+local secrets = std.extVar('secrets_file');
+local serviceCatalog = import 'service_catalog.libsonnet';
+
 
 // Where the alertmanager templates are deployed.
 local templateDir = '/etc/alertmanager/templates';
 
 //
-// Reciver helpers and definitinos.
-
+// Receiver helpers and definitions.
 local slackChannels = [
   // Generic chanels.
-  { name: 'main_alerts_channel', channel: 'alerts' },
-  { name: 'pager_alerts_channel', channel: 'production' },
-
-  // Team channels.
-  { name: 'ci-cd_alerts_channel', channel: 'alerts-ci-cd' },
-  { name: 'ci-cd_low_priority_alerts_channel', channel: 'alerts-ci-cd' },
-  { name: 'database_alerts_channel', channel: 'database' },
-  { name: 'database_low_priority_alerts_channel', channel: 'database' },
-  { name: 'gitaly_alerts_channel', channel: 'g_gitaly' },
-  { name: 'gitaly_low_priority_alerts_channel', channel: 'gitaly-alerts' },
-  { name: 'observability_alerts_channel', channel: 'observability' },
-  { name: 'observability_low_priority_alerts_channel', channel: 'observability' },
-
-  // This is temporary while https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/4881 is ongoing
-  { name: 'slack_alerts_general', channel: 'alerts-gen-svc-test' },
+  { name: 'prod_alerts_slack_channel', channel: 'alerts' },
+  { name: 'production_slack_channel', channel: 'production' },
+  { name: 'nonprod_alerts_slack_channel', channel: 'alerts-nonprod' },
 ];
 
 local webhookChannels =
@@ -99,13 +88,10 @@ local WebhookReceiver(channel) = {
 //
 // Route helpers and definitions.
 
-// Make sure there is a TEAM_alerts_channel and TEAM_low_priority_alerts_channel in slackChannels above.
-local teams = [
-  'ci-cd',
-  'database',
-  'gitaly',
-  'observability',
-];
+# Returns a list of teams with valid `slack_alerts_channel` values
+local teamsWithAlertingSlackChannels() =
+  local allTeams = serviceCatalog.getTeams();
+  std.filter(function(team) std.objectHas(team, 'slack_alerts_channel') && team.slack_alerts_channel != "", allTeams);
 
 local defaultGroupBy = [
   'env',
@@ -115,189 +101,189 @@ local defaultGroupBy = [
   'stage',
 ];
 
-local SnitchRoute(channel) = {
-  match: {
-    alertname: 'SnitchHeartBeat',
-    env: channel.name,
-  },
-  receiver: 'dead_mans_snitch_' + channel.name,
-  group_wait: '1m',
-  group_interval: '5m',
-  repeat_interval: '5m',
-  continue: false,
+local Route(
+  receiver,
+  match=null,
+  match_re=null,
+  group_by=null,
+  group_wait=null,
+  group_interval=null,
+  repeat_interval=null,
+  continue=null,
+  routes=null,
+) = {
+  receiver: receiver,
+  [if match != null then "match"]: match,
+  [if match_re != null then "match_re"]: match_re,
+  [if group_by != null then "group_by"]: group_by,
+  [if group_wait != null then "group_wait"]: group_wait,
+  [if group_interval != null then "group_interval"]: group_interval,
+  [if repeat_interval != null then "repeat_interval"]: repeat_interval,
+  [if routes != null then "routes"]: routes,
+  [if continue != null then "continue"]: continue,
 };
 
-local TeamRoute(team) = {
-  continue: true,
-  group_by: [
-    'env',
-    'alertname',
-    'instance',
-    'job',
-    'stage',
-  ],
-  match: {
-    channel: team,
-  },
-  receiver: team + '_alerts_channel',
-  routes: [
-    {
-      continue: false,
-      match: {
-        severity: 'warn',
-      },
-      receiver: team + '_low_priority_alerts_channel',
-    },
-    {
-      continue: false,
-      match: {
-        severity: 'error',
-      },
-      receiver: team + '_alerts_channel',
-    },
-  ],
-};
+local RouteCase(
+  match=null,
+  match_re=null,
+  group_by=null,
+  group_wait=null,
+  group_interval=null,
+  repeat_interval=null,
+  continue=true,
+  defaultReceiver=null,
+  when=null,
+  ) =
+  Route(
+    receiver=defaultReceiver,
+    match=match,
+    match_re=match_re,
+    group_by=group_by,
+    group_wait=group_wait,
+    group_interval=group_interval,
+    repeat_interval=repeat_interval,
+    continue=continue,
+    routes=[
+      (
+        local c = { match: null, match_re: null } + case;
+        Route(
+          receiver=c.receiver,
+          match=c.match,
+          match_re=c.match_re,
+          group_by=null,
+          continue=false
+        )
+      )
+      for case in when
+    ],
+  );
 
-local slackBridge = {
-  continue: true,
-  group_by: defaultGroupBy,
-  match: {
-    rules_domain: 'general',
-  },
-  receiver: 'slack_bridge-nonprod',
-  routes: [
-    {
-      continue: true,
-      match: {
-        env: 'gprd',
-      },
-      receiver: 'slack_bridge-prod',
-    }
-  ]
-};
+local SnitchRoute(channel) =
+  local environment=channel.name;
 
-local slackAlertsGeneralNoPager = {
-  continue: false,
-  group_by: defaultGroupBy,
-  match: {
-    pager: '',
-    rules_domain: 'general',
-  },
-  receiver: 'slack_alerts_general',
-};
+  Route(
+    receiver='dead_mans_snitch_' + environment,
+    match={
+      alertname: 'SnitchHeartBeat',
+      env: environment,
+    },
+    group_by=null,
+    group_wait='1m',
+    group_interval='5m',
+    repeat_interval='5m',
+    continue=false
+  );
 
-local slackAlertsGeneralPager = {
-  continue: true,
-  group_by: defaultGroupBy,
-  match: {
-    pager: 'pagerduty',
-    rules_domain: 'general',
-  },
-  receiver: 'slack_alerts_general',
-};
+local receiverNameForTeamSlackChannel(team) =
+  'team_' + std.strReplace(team.name, "-", "_") +  '_alerts_channel';
 
+local routingTree = Route(
+  continue=null,
+  group_by=defaultGroupBy,
+  repeat_interval='8h',
+  receiver='prod_alerts_slack_channel',
+  routes=
+    [
+      /* SnitchRoutes do not continue */
+      SnitchRoute(channel)
+      for channel in secrets.snitchChannels
+    ] + [
+      /* pager=issue alerts do not continue */
+      Route(
+        receiver='issue:' + issueChannel.name,
+        match={
+          pager: 'issue',
+          env: 'gprd',
+          project: issueChannel.name,
+        },
+        continue=false,
+        group_wait='10m',
+        group_interval='1h',
+        repeat_interval='3d',
+      )
+      for issueChannel in secrets.issueChannels
+    ] + [
+      /* pager=pagerduty alerts do continue */
+      RouteCase(
+        match={ pager: 'pagerduty' },
+        continue=true,
+        when=[
+          { match: { env: 'gstg' }, receiver: 'non_prod_pagerduty' },
+          { match: { env: 'dr' }, receiver: 'non_prod_pagerduty' },
+          { match: { env: 'pre' }, receiver: 'non_prod_pagerduty' },
 
-local issueRoutes = {
-  continue: true,
-  match: {
-    pager: 'issue',
-  },
-  group_by: [
-    'env',
-    'alertname',
-    'stage',
-  ],
-  group_wait: '10m',
-  group_interval: '1h',
-  repeat_interval: '3d',
-  routes: [
-    {
-      match: {
-        project: i.name,
-      },
-      receiver: 'issue:' + i.name,
-    }
-    for i in secrets.issueChannels
-  ],
-};
-
-local pagerdutyRoutes = {
-  continue: false,
-  match: {
-    pager: 'pagerduty',
-  },
-  routes: [
-    {
-      continue: false,
-      match_re: {
-        env: 'gstg|dr|pre',
-      },
-      group_by: [
-        'env',
-        'alertname',
-        'stage',
-      ],
-      receiver: 'non_prod_pagerduty',
-    },
-    {
-      continue: false,
-      match: {
-        slo_alert: 'yes',
-        env: 'dr',
-      },
-      receiver: 'slo_dr',
-    },
-    {
-      continue: true,
-      match: {
-        slo_alert: 'yes',
-        env: 'gprd',
-        stage: 'cny',
-      },
-      receiver: 'slo_gprd_cny',
-    },
-    {
-      continue: true,
-      match: {
-        slo_alert: 'yes',
-        env: 'gprd',
-        stage: 'main',
-      },
-      receiver: 'slo_gprd_main',
-    },
-    {
-      continue: false,
-      group_by: defaultGroupBy,
-      match: {
-        slo_alert: 'yes',
-      },
-      receiver: 'pager_alerts_channel',
-    },
-    {
-      continue: false,
-      match: {
-        slo_alert: 'yes',
-      },
-      receiver: 'slo_non_prod',
-    },
-    {
-      continue: true,
-      group_by: ['env', 'alertname', 'stage'],
-      receiver: 'prod_pagerduty',
-    },
-    {
-      continue: true,
-      group_by: defaultGroupBy,
-      receiver: 'pager_alerts_channel',
-    },
-  ],
-};
-
-local catchallRoutes = {
-  continue: false,
-  group_by: defaultGroupBy,
-  receiver: 'main_alerts_channel',
-};
+          { match: { slo_alert: 'yes', env: 'gprd', stage: 'cny' }, receiver: 'slo_gprd_cny' },
+          { match: { slo_alert: 'yes', env: 'gprd', stage: 'main' }, receiver: 'slo_gprd_main' },
+          { match: { slo_alert: 'yes', env: 'gprd', stage: 'main' }, receiver: 'slo_gprd_main' },
+        ],
+        defaultReceiver='prod_pagerduty',
+      ),
+      /*
+       * Send ops/gprd slackline alerts to production slackline
+       * gstg slackline alerts go to staging slackline
+       * other slackline alerts are passed up
+       */
+      Route(
+        receiver='slack_bridge-prod',
+        match={ rules_domain: 'general', env: 'gprd' },
+        continue=true,
+        // rules_domain='general' should be preaggregated so no need for additional groupBy keys
+        group_by=['...']
+      ),
+      Route(
+        receiver='slack_bridge-prod',
+        match={ rules_domain: 'general', env: 'ops' },
+        continue=true,
+        // rules_domain='general' should be preaggregated so no need for additional groupBy keys
+        group_by=['...']
+      ),
+      Route(
+        receiver='slack_bridge-nonprod',
+        match={ rules_domain: 'general', env: 'gstg' },
+        continue=true,
+        // rules_domain='general' should be preaggregated so no need for additional groupBy keys
+        group_by=['...']
+      ),
+    ] + [
+      Route(
+        receiver=receiverNameForTeamSlackChannel(team),
+        continue=true,
+        match={
+          env: 'gprd', // For now we only send production channel alerts to teams
+          team: team.name,
+        },
+      )
+      for team in teamsWithAlertingSlackChannels()
+    ] + [
+      // Terminators go last
+      Route(
+        receiver='nonprod_alerts_slack_channel',
+        match={ env: 'pre' },
+        continue=false,
+      ),
+      Route(
+        receiver='nonprod_alerts_slack_channel',
+        match={ env: 'dr' },
+        continue=false,
+      ),
+      Route(
+        receiver='nonprod_alerts_slack_channel',
+        match={ env: 'gstg' },
+        continue=false,
+      ),
+      // Pager alerts should appear in the production channel
+      Route(
+        receiver='production_slack_channel',
+        match={ pager: 'pagerduty' },
+        continue=false,
+      ),
+      // All else to #alerts
+      Route(
+        receiver='prod_alerts_slack_channel',
+        continue=false,
+      )
+    ]
+);
 
 //
 // Generate the list of routes and receivers.
@@ -305,70 +291,22 @@ local catchallRoutes = {
 local receivers =
   [PagerDutyReceiver(c) for c in secrets.pagerDutyChannels] +
   [SlackReceiver(c) for c in slackChannels] +
+
+  // Generate receivers for each team that has a channel
+  [SlackReceiver({
+    name: receiverNameForTeamSlackChannel(team),
+    channel: team.slack_alerts_channel,
+  }) for team in  teamsWithAlertingSlackChannels()] +
   [WebhookReceiver(c) for c in webhookChannels];
-
-local generalAlertsRoutes = [
-  {
-    continue: true,
-    match: {
-      rules_domain: 'general',
-    },
-    group_by: defaultGroupBy,
-    receiver: 'slack_bridge-nonprod',
-    routes: [
-      {
-        continue: true,
-        match: {
-          env: 'gprd',
-        },
-        receiver: 'slack_bridge-prod',
-      },
-    ],
-  },
-  {
-    continue: false,
-    match: {
-      rules_domain: 'general',
-      pager: '',
-    },
-    group_by: defaultGroupBy,
-    receiver: 'slack_alerts_general',
-  },
-  {
-    continue: true,
-    match: {
-      rules_domain: 'general',
-      pager: 'pagerduty',
-    },
-    group_by: defaultGroupBy,
-    receiver: 'slack_alerts_general',
-  },
-];
-
-local routes =
-  [SnitchRoute(c) for c in secrets.snitchChannels] +
-  [slackBridge] +
-  [slackAlertsGeneralNoPager] +
-  [slackAlertsGeneralPager] +
-  [TeamRoute(t) for t in teams] +
-  [issueRoutes] +
-  [pagerdutyRoutes] +
-  [catchallRoutes];
 
 //
 // Generate the whole alertmanager config.
-
 local alertmanager = {
   global: {
     slack_api_url: secrets.slackAPIURL,
   },
   receivers: receivers,
-  route: {
-    repeat_interval: '8h',
-    receiver: 'main_alerts_channel',
-    group_by: defaultGroupBy,
-    routes: routes,
-  },
+  route: routingTree,
   templates: [
     templateDir + '/*.tmpl',
   ],

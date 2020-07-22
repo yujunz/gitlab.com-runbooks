@@ -51,7 +51,7 @@ generate:
 	./scripts/generate-gitlab-dashboards.sh
 
 alertmanager/alertmanager.yml: alertmanager/alertmanager.jsonnet
-	cd alertmanager && ./generate.sh
+	./alertmanager/generate.sh
 
 test-alertmanager: alertmanager/alertmanager.yml
 	$(AMTOOL) check-config alertmanager/alertmanager.yml
