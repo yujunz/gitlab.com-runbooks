@@ -17,6 +17,9 @@ local safeMap(fn, v) = if std.isArray(v) then std.map(fn, v) else [];
   getServiceLinks(name)::
     self.getLoggingLinks(name),
 
+  getTeams()::
+    serviceCatalog.teams,
+
   findServices(filterFunc)::
     std.filter(filterFunc, serviceCatalog.services),
 }
