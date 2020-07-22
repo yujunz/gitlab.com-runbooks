@@ -23,7 +23,7 @@ groups:
     expr: gitaly:grpc_server_handled_total:instance_error_rate1m > 5
     for: 5m
     labels:
-      team: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
       alert_type: cause
@@ -96,7 +96,7 @@ groups:
     expr: up{job="gitaly",tier="stor",type="gitaly"} == 0
     for: 1m
     labels:
-      team: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
       alert_type: cause
@@ -114,7 +114,7 @@ groups:
       ) > 1
     for: 60m
     labels:
-      team: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
       alert_type: cause
@@ -130,7 +130,7 @@ groups:
     expr: sum(gitaly_grpc:grpc_server_handled_total:rate1m{grpc_code="PermissionDenied"}) > 10
     for: 10s
     labels:
-      team: gitaly
+      channel: g_create_gitaly
       pager: pagerduty
       severity: s1
       alert_type: cause
@@ -152,7 +152,7 @@ groups:
       ) > 2
     for: 5m
     labels:
-      team: gitaly
+      channel: g_create_gitaly
       severity: s4
       alert_type: cause
     annotations:

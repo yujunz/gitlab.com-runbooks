@@ -159,6 +159,7 @@ groups:
     expr: changes(instance:up:count{environment=~"g?prd"}[5m]) >= 1
     for: 15m
     labels:
+      channel: production
       severity: s4
       alert_type: cause
     annotations:
@@ -169,6 +170,7 @@ groups:
     expr: instance:node_memory_available:ratio * 100 < 5 and rate(node_vmstat_pgmajfault[1m]) > 1000
     for: 15m
     labels:
+      channel: production
       severity: s4
       alert_type: cause
     annotations:
@@ -181,6 +183,7 @@ groups:
     expr: rate(syslog_rcu_sched_stalls_total[1m]) > 0 or rate(rcu_sched_stalls_total[1m]) > 0
     for: 10m
     labels:
+      channel: production
       severity: s4
       alert_type: cause
     annotations:

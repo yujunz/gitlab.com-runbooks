@@ -5,6 +5,7 @@ groups:
     expr: sidekiq_queue_size{name="process_commit"} > 5000
     for: 10m
     labels:
+      channel: production
       severity: s1
       pager: pagerduty
       alert_type: cause

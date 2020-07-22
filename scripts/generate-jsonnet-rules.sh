@@ -9,7 +9,7 @@ REPO_DIR=$(
 )
 
 # Convert the service catalog yaml into a JSON file in a format thats consumable by jsonnet
-"${REPO_DIR}/services/generate-json.sh"
+ruby -rjson -ryaml -e "puts YAML.load(ARGF.read).to_json" "${REPO_DIR}/services/service-catalog.yml" >"${REPO_DIR}/services/service_catalog.json"
 
 tmpdir=$(mktemp -d 2>/dev/null || mktemp -d -t 'generate-jsonnet-rules')
 trap 'rm -rf "${tmpdir}"' EXIT
