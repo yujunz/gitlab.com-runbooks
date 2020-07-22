@@ -36,23 +36,34 @@ local latencyHistogramQuery(percentile, bucketMetric, selector, aggregator, rang
     rangeInterval: rangeInterval,
   };
 
-local counterQuery(bucketMetric, selector, aggregator, rangeInterval, deltaFunction='rate') =
+local recordingRuleLatencyHistogramQuery(percentile, recordingRule, selector, aggregator) =
+  local aggregatorWithLe = joinSelectors([aggregator] + ['le']);
+  |||
+    histogram_quantile(%(percentile)g, sum by (%(aggregatorWithLe)s) (
+      %(recordingRule)s{%(selector)s}
+    ))
+  ||| % {
+    percentile: percentile,
+    aggregatorWithLe: aggregatorWithLe,
+    selector: selector,
+    recordingRule: recordingRule,
+  };
+
+local recordingRuleRateQuery(recordingRule, selector, aggregator) =
   |||
     sum by (%(aggregator)s) (
-      %(deltaFunction)s(%(bucketMetric)s{%(selector)s}[%(rangeInterval)s])
+      %(recordingRule)s{%(selector)s}
     )
   ||| % {
     aggregator: aggregator,
     selector: selector,
-    bucketMetric: bucketMetric,
-    rangeInterval: rangeInterval,
-    deltaFunction: deltaFunction,
+    recordingRule: recordingRule,
   };
 
 local queuelatencyTimeseries(title, aggregators, legendFormat) =
   basic.latencyTimeseries(
     title=title,
-    query=latencyHistogramQuery(0.95, 'sidekiq_jobs_queue_duration_seconds_bucket', selector, aggregators, '$__interval'),
+    query=recordingRuleLatencyHistogramQuery(0.95, 'sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m', selector, aggregators),
     legendFormat=legendFormat,
   );
 
@@ -60,28 +71,28 @@ local queuelatencyTimeseries(title, aggregators, legendFormat) =
 local latencyTimeseries(title, aggregators, legendFormat) =
   basic.latencyTimeseries(
     title=title,
-    query=latencyHistogramQuery(0.95, 'sidekiq_jobs_completion_seconds_bucket', selector, aggregators, '$__interval'),
+    query=recordingRuleLatencyHistogramQuery(0.95, 'sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m', selector, aggregators),
     legendFormat=legendFormat,
   );
 
 local enqueueCountTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
-    query=counterQuery('sidekiq_enqueued_jobs_total', 'environment="$environment", queue=~"$queue"', aggregators, '$__interval', deltaFunction='increase'),
+    query=recordingRuleRateQuery('gitlab_background_jobs:queue:ops:rate_5m', 'environment="$environment", queue=~"$queue"', aggregators),
     legendFormat=legendFormat,
   );
 
 local rpsTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
-    query=counterQuery('sidekiq_jobs_completion_seconds_count', selector, aggregators, '$__interval'),
+    query=recordingRuleRateQuery('gitlab_background_jobs:execution:ops:rate_5m', 'environment="$environment", queue=~"$queue"', aggregators),
     legendFormat=legendFormat,
   );
 
 local errorRateTimeseries(title, aggregators, legendFormat) =
   basic.timeseries(
     title=title,
-    query=counterQuery('sidekiq_jobs_failed_total', selector, aggregators, '$__interval', deltaFunction='increase'),
+    query=recordingRuleRateQuery('gitlab_background_jobs:execution:error:rate_5m', 'environment="$environment", queue=~"$queue"', aggregators),
     legendFormat=legendFormat,
   );
 
@@ -373,7 +384,7 @@ basic.dashboard(
     }),
   ], cols=4, rowHeight=8, startRow=101)
   +
-  rowGrid('Enqueuing (number of jobs enqueued)', [
+  rowGrid('Enqueuing (rate of jobs enqueuing)', [
     enqueueCountTimeseries('Jobs Enqueued', aggregators='queue', legendFormat='{{ queue }}'),
     enqueueCountTimeseries('Jobs Enqueued per Service', aggregators='type, queue', legendFormat='{{ queue }} - {{ type }}'),
     basic.queueLengthTimeseries(

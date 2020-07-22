@@ -142,49 +142,6 @@ groups:
       (
         gitlab_background_jobs:execution:ops:rate_6h > 0.1
       )
-  - alert: sidekiq_throttled_jobs_enqueued_without_dequeuing
-    for: 2m
-    annotations:
-      title: Sidekiq jobs are being enqueued without being dequeued
-      description: |
-        The `{{ $labels.queue }}` queue appears to have jobs being enqueued without
-        those jobs being executed.
-
-        This could be the result of a Sidekiq server configuration issue, where
-        no Sidekiq servers are configured to dequeue the specific queue.
-      grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
-      grafana_dashboard_link: >-
-        https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
-        $labels.environment }}&var-stage={{ $labels.stage }}&var-queue={{ $labels.queue }}
-      grafana_min_zoom_hours: '6'
-      grafana_panel_id: '80616'
-      grafana_variables: environment,stage,queue
-      promql_template_1: >-
-        sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}
-      runbook: docs/sidekiq/service-sidekiq.md
-    labels:
-      alert_type: cause
-      metric: sidekiq_enqueued_jobs_total
-      period: 2m
-      rules_domain: general
-      severity: s4
-      stage: main
-      tier: sv
-      type: sidekiq
-    expr: |
-      (
-        sum by (environment, queue, feature_category) (rate(sidekiq_enqueued_jobs_total{urgency="throttled"}[10m] offset 10m)) > 0
-      )
-      unless
-      (
-        sum by (environment, queue, feature_category) (rate(sidekiq_jobs_completion_seconds_count{urgency="throttled"}[20m])) > 0
-        or
-        sum by (environment, queue, feature_category) (rate(sidekiq_jobs_failed_total{urgency="throttled"}[20m])) > 0
-        or
-        sum by (environment, queue, feature_category) (rate(sidekiq_jobs_retried_total{urgency="throttled"}[20m])) > 0
-        or
-        sum by (environment, queue, feature_category) (avg_over_time(sidekiq_running_jobs{urgency="throttled"}[20m])) > 0
-      )
   - alert: ignored_sidekiq_queues_receiving_work
     for: 2m
     annotations:
@@ -220,7 +177,6 @@ groups:
       runbook: docs/sidekiq/service-sidekiq.md
     labels:
       alert_type: cause
-      metric: sidekiq_enqueued_jobs_total
       pager: pagerduty
       period: 2m
       rules_domain: general
@@ -229,6 +185,6 @@ groups:
       tier: sv
       type: sidekiq
     expr: >
-      sum by (environment, queue, feature_category) (rate(sidekiq_enqueued_jobs_total{environment="gprd",
-      queue=~"chaos:chaos_cpu_spin|chaos:chaos_db_spin|chaos:chaos_kill|chaos:chaos_leak_mem|chaos:chaos_sleep|cronjob:geo_container_repository_sync_dispatch|cronjob:geo_file_download_dispatch|cronjob:geo_metrics_update|cronjob:geo_migrated_local_files_clean_up|cronjob:geo_prune_event_log|cronjob:geo_repository_sync|cronjob:geo_repository_verification_primary_batch|cronjob:geo_repository_verification_secondary_scheduler|cronjob:geo_repository_verification_secondary_shard|cronjob:geo_scheduler_per_shard_scheduler|cronjob:geo_scheduler_primary_per_shard_scheduler|cronjob:geo_scheduler_secondary_per_shard_scheduler|cronjob:geo_secondary_registry_consistency|default|geo:geo_batch_project_registry|geo:geo_batch_project_registry_scheduler|geo:geo_container_repository_sync|geo:geo_design_repository_shard_sync|geo:geo_design_repository_sync|geo:geo_event|geo:geo_file_download|geo:geo_file_registry_removal|geo:geo_file_removal|geo:geo_hashed_storage_attachments_migration|geo:geo_hashed_storage_migration|geo:geo_project_sync|geo:geo_rename_repository|geo:geo_repositories_clean_up|geo:geo_repository_cleanup|geo:geo_repository_destroy|geo:geo_repository_shard_sync|geo:geo_repository_verification_primary_shard|geo:geo_repository_verification_primary_single|geo:geo_repository_verification_secondary_single|geo:geo_scheduler_primary_scheduler|geo:geo_scheduler_scheduler|geo:geo_scheduler_secondary_scheduler|geo:geo_secondary_repository_backfill|hashed_storage:hashed_storage_migrator|hashed_storage:hashed_storage_project_migrate|hashed_storage:hashed_storage_project_rollback|hashed_storage:hashed_storage_rollbacker|ldap_group_sync"}[5m]))
+      sum by (environment, queue, feature_category) (gitlab_background_jobs:queue:ops:rate_5m{environment="gprd",
+      queue=~"chaos:chaos_cpu_spin|chaos:chaos_db_spin|chaos:chaos_kill|chaos:chaos_leak_mem|chaos:chaos_sleep|cronjob:geo_container_repository_sync_dispatch|cronjob:geo_file_download_dispatch|cronjob:geo_metrics_update|cronjob:geo_migrated_local_files_clean_up|cronjob:geo_prune_event_log|cronjob:geo_repository_sync|cronjob:geo_repository_verification_primary_batch|cronjob:geo_repository_verification_secondary_scheduler|cronjob:geo_repository_verification_secondary_shard|cronjob:geo_scheduler_per_shard_scheduler|cronjob:geo_scheduler_primary_per_shard_scheduler|cronjob:geo_scheduler_secondary_per_shard_scheduler|cronjob:geo_secondary_registry_consistency|default|geo:geo_batch_project_registry|geo:geo_batch_project_registry_scheduler|geo:geo_container_repository_sync|geo:geo_design_repository_shard_sync|geo:geo_design_repository_sync|geo:geo_event|geo:geo_file_download|geo:geo_file_registry_removal|geo:geo_file_removal|geo:geo_hashed_storage_attachments_migration|geo:geo_hashed_storage_migration|geo:geo_project_sync|geo:geo_rename_repository|geo:geo_repositories_clean_up|geo:geo_repository_cleanup|geo:geo_repository_destroy|geo:geo_repository_shard_sync|geo:geo_repository_verification_primary_shard|geo:geo_repository_verification_primary_single|geo:geo_repository_verification_secondary_single|geo:geo_scheduler_primary_scheduler|geo:geo_scheduler_scheduler|geo:geo_scheduler_secondary_scheduler|geo:geo_secondary_repository_backfill|hashed_storage:hashed_storage_migrator|hashed_storage:hashed_storage_project_migrate|hashed_storage:hashed_storage_project_rollback|hashed_storage:hashed_storage_rollbacker|ldap_group_sync"})
       > 0

@@ -46,6 +46,11 @@ local combinedExecutionApdex = combined([
   ),
 ]);
 
+local queueRate = rateMetric(
+  counter='sidekiq_enqueued_jobs_total',
+  selector={},
+);
+
 local requestRate = rateMetric(
   counter='sidekiq_jobs_completion_seconds_bucket',
   selector={ le: '+Inf' },
@@ -69,6 +74,10 @@ local errorRate = rateMetric(
       {  // Key metric: Queueing apdex (weight score)
         record: 'gitlab_background_jobs:queue:apdex:weight:score_%s' % [rangeInterval],
         expr: combinedQueueApdex.apdexWeightQuery(aggregationLabels, {}, rangeInterval),
+      },
+      {  // Key metric: Queueing operations/second
+        record: 'gitlab_background_jobs:queue:ops:rate_%s' % [rangeInterval],
+        expr: queueRate.aggregatedRateQuery(aggregationLabels, {}, rangeInterval),
       },
       {  // Key metric: Execution apdex (ratio)
         record: 'gitlab_background_jobs:execution:apdex:ratio_%s' % [rangeInterval],
