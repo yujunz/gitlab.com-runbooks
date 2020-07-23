@@ -1,4 +1,4 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local redisCommon = import 'redis_common_graphs.libsonnet';
 local row = grafana.row;
 local serviceDashboard = import 'service_dashboard.libsonnet';

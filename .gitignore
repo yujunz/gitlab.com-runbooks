@@ -7,3 +7,4 @@ alertmanager/k8s_alertmanager.yaml
 .env.sh
 /services/service_catalog.json
 /vendor
+/dashboards/vendor

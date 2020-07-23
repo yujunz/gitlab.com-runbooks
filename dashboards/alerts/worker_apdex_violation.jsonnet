@@ -1,7 +1,7 @@
 local basic = import 'basic.libsonnet';
 local colors = import 'colors.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local layout = import 'layout.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local promQuery = import 'prom_query.libsonnet';

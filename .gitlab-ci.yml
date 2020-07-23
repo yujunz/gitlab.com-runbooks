@@ -45,7 +45,7 @@ workflow:
 
 .dashboards:
   before_script:
-    - dashboards/bundler.sh # Install jsonnet bundles
+    - ./scripts/bundler.sh # Install jsonnet bundles
     - dashboards/generate-mixins.sh # Generate dashboards from mixins
   only:
     variables:

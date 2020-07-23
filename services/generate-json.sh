@@ -11,7 +11,8 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 generate() {
   source=$1
   target=$2
-  if [[ ! -f "${target}" ]] || [[ "${source}" -nt "${target}" ]]; then
+
+  if [[ ! -f "${target}" ]] || [[ ! -s "${target}" ]] || [[ "${source}" -nt "${target}" ]]; then
     # Update the service catalog
     ruby -rjson -ryaml -e "puts YAML.load(ARGF.read).to_json" "${source}" >"${target}"
   fi

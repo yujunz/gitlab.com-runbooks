@@ -18,14 +18,11 @@ Example, the Container Registry is of service type `registry`.  Therefore,
 
 # Local Development
 
-* Install `jsonnet`, `jq` and `curl`
-  * On a Mac, `jsonnet` can be installed with `brew install jsonnet` (you'll
-    need at least v0.15.0)
-  * On Linux, you'll need to build the binary yourself, or use the docker image: `docker run --rm registry.gitlab.com/gitlab-com/runbooks/jsonnet:latest`
-* Install `jb` [jsonet bundler](https://github.com/jsonnet-bundler/jsonnet-bundler)
-  * `GO111MODULE="on" go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb`
+Follow the guidelines for setting up  your development environment with `asdf` and required plugins as per the guidelines in the [root README.MD](https://gitlab.com/gitlab-com/runbooks/-/blob/master/README.md#developing-in-this-repo) for this repository.
+
+* Ensure that you install `asdf` and plugins for `go-jsonnet` and `jsonnet-bundler`.
 * Update vendor dependencies
-  * `(cd dashboards && jb install)`
+  * `jb install`
 
 # Testing Your Changes
 

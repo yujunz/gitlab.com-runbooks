@@ -1,5 +1,5 @@
 local saturationAlerts = import 'alerts/saturation_alerts.libsonnet';
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local templates = import 'templates.libsonnet';

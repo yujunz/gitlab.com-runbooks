@@ -1,4 +1,4 @@
-local kubernetes = import 'kubernetes-mixin/mixin.libsonnet';
+local kubernetes = import 'github.com/kubernetes-monitoring/kubernetes-mixin/mixin.libsonnet';
 
 local mixin = kubernetes {
   _config+:: {

@@ -1,6 +1,6 @@
 local colors = import 'colors.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local templates = import 'templates.libsonnet';

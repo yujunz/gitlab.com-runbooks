@@ -1,4 +1,4 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local serviceDashboard = import 'service_dashboard.libsonnet';
 local row = grafana.row;
 local processExporter = import 'process_exporter.libsonnet';

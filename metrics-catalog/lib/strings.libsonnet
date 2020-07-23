@@ -1,4 +1,5 @@
-local removeBlankLines(str) = std.strReplace(str, '\n\n', '\n');
+local removeBlankLines(str) =
+  std.strReplace(str, '\n\n', '\n');
 
 local chomp(str) =
   if std.isString(str) then

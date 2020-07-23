@@ -10,9 +10,9 @@ if hash go 2>/dev/null; then
 fi
 
 if ! command -v jb >/dev/null; then
-  echo >&2 "jsonnet-bundler not installed. Please run 'go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb'"
+  echo >&2 "jsonnet-bundler not installed. Please follow the instructions in https://gitlab.com/gitlab-com/runbooks/-/blob/master/README.md#required-tooling to install asdf and jsonnet-bundler."
   exit 1
 fi
 
-cd "${SCRIPT_DIR}"
+cd "${SCRIPT_DIR}/.."
 jb install
