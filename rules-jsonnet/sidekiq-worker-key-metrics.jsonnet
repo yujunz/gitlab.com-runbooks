@@ -12,7 +12,7 @@ local monthlyErrorBudget = (1 - 0.99);  // 99% of sidekiq executions should succ
 // in the monitoring. This is to avoid low-volume, noisy alerts
 local minimumOperationRateForMonitoring = 6 / 60;
 
-local sidekiqSLOAlert(alertname, expr, grafanaPanelStableId, metricName, alertDescription) =
+local sidekiqSLOAlert(alertname, expr, grafanaPanelStableId, metricName, alertDescription, metricDescription) =
   {
     alert: alertname,
     expr: expr,
@@ -28,11 +28,7 @@ local sidekiqSLOAlert(alertname, expr, grafanaPanelStableId, metricName, alertDe
     },
     annotations: {
       title: 'The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has %s' % [alertDescription],
-      description: |||
-        The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has %s.
-
-        Currently the metric value is {{ $value | humanizePercentage }}.
-      ||| % [alertDescription],
+      description: 'Currently the %s is {{ $value | humanizePercentage }}.' % [metricDescription],
       runbook: 'docs/sidekiq/service-sidekiq.md',
       grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
       grafana_panel_id: stableIds.hashStableId(grafanaPanelStableId),
@@ -77,7 +73,8 @@ local generateAlerts() =
       ||| % formatConfig,
       grafanaPanelStableId='error-ratio',
       metricName='gitlab_background_jobs:execution:error:ratio_1h',
-      alertDescription='an error rate outside of SLO'
+      alertDescription='an error rate outside of SLO',
+      metricDescription='error rate'
     ),
     sidekiqSLOAlert(
       alertname='sidekiq_background_job_execution_apdex_ratio_burn_rate_slo_out_of_bounds',
@@ -102,7 +99,8 @@ local generateAlerts() =
       ||| % formatConfig,
       grafanaPanelStableId='execution-apdex',
       metricName='gitlab_background_jobs:execution:apdex:ratio_1h',
-      alertDescription='a execution latency outside of SLO'
+      alertDescription='a execution latency outside of SLO',
+      metricDescription='apdex score',
     ),
     sidekiqSLOAlert(
       alertname='sidekiq_background_job_queue_apdex_ratio_burn_rate_slo_out_of_bounds',
@@ -127,7 +125,8 @@ local generateAlerts() =
       ||| % formatConfig,
       grafanaPanelStableId='queue-apdex',
       metricName='gitlab_background_jobs:queue:apdex:ratio_1h',
-      alertDescription='a queue latency outside of SLO'
+      alertDescription='a queue latency outside of SLO',
+      metricDescription='apdex score',
     ),
     {
       alert: 'ignored_sidekiq_queues_receiving_work',

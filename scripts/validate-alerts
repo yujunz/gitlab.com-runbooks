@@ -10,7 +10,6 @@ class Validator
     @context = []
     @failures = []
     @service_catalog = YAML.load_file(File.join(__dir__, "..", "services", "service-catalog.yml"))
-    puts @service_catalog
     @service_catalog_teams = @service_catalog["teams"].collect { |team| [team["name"], team] }.to_h
   end
 
@@ -37,7 +36,11 @@ class Validator
     annotations = rule["annotations"]
     validation_fatal("rules must contain a `title` annotation") unless annotations["title"]
 
-    validation_warning("rules should contain a `description` annotation") unless annotations["description"]
+    if annotations["description"]
+      validation_error("Don't repeat yourself. Description contains a repeat of the title. Title is #{annotations['title']}") if annotations["description"].include? annotations["title"]
+    else
+      validation_warning("rules should contain a `description` annotation")
+    end
 
     if annotations["runbook"]
       runbook_relative_link = annotations["runbook"]

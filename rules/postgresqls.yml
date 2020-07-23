@@ -238,10 +238,11 @@ groups:
       severity: s1
       alert_type: cause
     annotations:
-      description: 'In environment {{$labels.environment}} there are {{$value}} different
+      description: >
+        In environment {{$labels.environment}} there are {{$value}} different
         upstream primaries: {{range query "pg_stat_wal_receiver_status{environment=''$labels.environment''}
         >= 0"}}"{{.labels.fqdn}}" thinks "{{.labels.upstream_host}}" is the primary;
-        {{end}} '
+        {{end}}
       runbook: docs/patroni/patroni-management.md
       title: Replicas have different upstream primary databases
   - alert: PostgreSQL_ServiceDown
@@ -252,8 +253,6 @@ groups:
       severity: s1
       alert_type: cause
     annotations:
-      description: >
-        {{$labels.fqdn}} postgres service appears down
       runbook: "docs/patroni/postgres.md"
       title: |
         {{$labels.fqdn}} postgres service appears down
@@ -264,8 +263,6 @@ groups:
       severity: s4
       alert_type: cause
     annotations:
-      description: >
-        {{$labels.fqdn}} postgres service appears to be restarted
       runbook: "docs/patroni/postgres.md"
       title: |
         {{$labels.fqdn}} postgres service appears to be restarted
@@ -317,7 +314,8 @@ groups:
       alert_type: cause
     annotations:
       message: "{{$labels.errmsg}}"
-      description: PGBouncer is logging errors. This may be due to a a server restart or an admin typing commands at the pgbouncer console
+      description: >
+        This may be due to a a server restart or an admin typing commands at the pgbouncer console
       runbook: docs/patroni/postgres.md#pgbouncer-errors
       title: PGBouncer is logging errors
   - alert: PostgreSQL_PGBouncer_maxclient_conn
@@ -377,6 +375,7 @@ groups:
       alert_type: cause
     annotations:
       description: >
-        Too many locks acquired on the database instance {{ $labels.fqdn }}.
+        Database instance {{ $labels.fqdn }}.
+
         If this alert happens frequently, we may need to increase the postgres setting max_locks_per_transaction.
       title: Too many locks acquired

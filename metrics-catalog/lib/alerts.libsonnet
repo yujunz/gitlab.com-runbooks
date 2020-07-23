@@ -1,3 +1,5 @@
+local strings = import 'strings.libsonnet';
+
 local getGrafanaLink(annotations) =
   local dashboardId = annotations.grafana_dashboard_id;
   local zoomHours = annotations.grafana_min_zoom_hours;
@@ -20,6 +22,20 @@ local ensureObjectHasStringValues(hash) =
     {}
   );
 
+local unwrapNewlinesForAnnotationKey(key, value) =
+  if key == 'title' || key == 'description' then
+    strings.unwrapText(value)
+  else
+    value;
+
+local unwrapNewlinesOnAnnotations(hash) =
+ std.foldl(
+    function(memo, key)
+      memo { [key]: unwrapNewlinesForAnnotationKey(key, hash[key]) },
+    std.objectFields(hash),
+    {}
+  );
+
 {
   processAlertRule(alertRule)::
     local annotations = alertRule.annotations +
@@ -32,7 +48,7 @@ local ensureObjectHasStringValues(hash) =
 
     // The Prometheus Operator doesn't like label values that are not strings
     alertRule {
-      annotations: ensureObjectHasStringValues(annotations),
+      annotations: ensureObjectHasStringValues(unwrapNewlinesOnAnnotations(annotations)),
       labels: ensureObjectHasStringValues(alertRule.labels),
     },
 }

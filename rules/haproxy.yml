@@ -168,7 +168,6 @@ groups:
       severity: s1
       alert_type: cause
     annotations:
-      description: HAProxy process high CPU usage on {{ $labels.fqdn }}
       runbook: docs/frontend/haproxy.md
       title: HAProxy process high CPU usage on {{ $labels.fqdn }}
   - alert: SSHMaxStartupsMaybeBreached
@@ -197,7 +196,7 @@ groups:
     annotations:
       title: Extraneous processes detected on haproxy front-end
       runbook: docs/frontend/haproxy.md
-      description: |
+      description: >
         We are seeing extraneous processes on {{$labels.fqdn}}. These processes can interfere with state
         changes and may cause issues with deployments. Normally on reload old HAProxy processes with active
         connections should only remain active for 5 minutes. See the runbook for how to remove the extraneous

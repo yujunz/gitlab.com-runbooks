@@ -10,8 +10,26 @@ local chomp(str) =
 local indent(str, spaces) =
   std.strReplace(removeBlankLines(chomp(str)), '\n', '\n' + std.repeat(' ', spaces));
 
+local unwrapText(str) =
+  local lines = std.split(str, '\n');
+  local linesTrimmed = std.map(function(l) std.rstripChars(l, ' \t'), lines);
+  local linesJoined = std.foldl(
+    function(memo, line)
+      local memoLast = std.length(memo) - 1;
+      local prevItem = memo[memoLast];
+      if line == "" || prevItem == "" then
+        memo + [line]
+      else
+        // Join onto previous line
+        memo[:memoLast] + [prevItem + " " + line],
+    linesTrimmed[1:],
+    linesTrimmed[:1]
+  );
+  std.join('\n', linesJoined);
+
 {
   removeBlankLines(str):: removeBlankLines(str),
   chomp(str):: chomp(str),
   indent(str, spaces):: indent(str, spaces),
+  unwrapText(str):: unwrapText(str)
 }

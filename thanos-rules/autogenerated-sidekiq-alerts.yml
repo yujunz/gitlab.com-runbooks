@@ -10,11 +10,9 @@ groups:
     annotations:
       title: Sidekiq jobs are being enqueued without being dequeued
       description: |
-        The `{{ $labels.queue }}` queue appears to have jobs being enqueued without
-        those jobs being executed.
+        The `{{ $labels.queue }}` queue appears to have jobs being enqueued without those jobs being executed.
 
-        This could be the result of a Sidekiq server configuration issue, where
-        no Sidekiq servers are configured to dequeue the specific queue.
+        This could be the result of a Sidekiq server configuration issue, where no Sidekiq servers are configured to dequeue the specific queue.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{

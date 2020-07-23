@@ -42,5 +42,25 @@ test.suite({
     actual: strings.indent("hello\nthere\nworld", 2),
     expect: "hello\n  there\n  world",
   },
+  testUnwrapTextEmpty: {
+    actual: strings.unwrapText(''),
+    expect: ''
+  },
+  testUnwrapSingleLine: {
+    actual: strings.unwrapText('hello'),
+    expect: 'hello'
+  },
+  testUnwrapText1: {
+    actual: strings.unwrapText(|||
+      This is some
+      text
 
+      This is a second paragraph.
+    |||),
+    expect: |||
+      This is some text
+
+      This is a second paragraph.
+    |||
+  },
 })

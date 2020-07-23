@@ -11,7 +11,6 @@ groups:
       environment: gstg
       alert_type: symptom
     annotations:
-      description: GitLab Camoproxy is not responding correctly for 2 minutes!
       runbook: docs/uncategorized/camoproxy.md
       title: GitLab Camoproxy is not responding correctly for 2 minutes
   - alert: Camoproxy down
@@ -23,7 +22,6 @@ groups:
       environment: gstg
       alert_type: symptom
     annotations:
-      description: GitLab Camoproxy is down for 2 minutes!
       runbook: docs/uncategorized/camoproxy.md
       title: GitLab Camoproxy is down for 2 minutes
   - alert: Camoproxy bad healthcheck
@@ -36,7 +34,6 @@ groups:
       environment: gprd
       alert_type: symptom
     annotations:
-      description: GitLab Camoproxy is not responding correctly for 2 minutes!
       runbook: docs/uncategorized/camoproxy.md
       title: GitLab Camoproxy is not responding correctly for 2 minutes
       alert_type: symptom
@@ -49,6 +46,5 @@ groups:
       environment: gprd
       alert_type: symptom
     annotations:
-      description: GitLab Camoproxy is down for 2 minutes!
       runbook: docs/uncategorized/camoproxy.md
       title: GitLab Camoproxy is down for 2 minutes

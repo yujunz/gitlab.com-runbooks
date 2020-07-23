@@ -190,7 +190,6 @@ local resourceSaturationPoint = function(options)
             This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
 
             Details of the %(title)s resource:
-            ----------------------------------------------
 
             %(description)s
           ||| % formatConfig,
