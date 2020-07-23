@@ -96,6 +96,8 @@ basic.dashboard(
     content=|||
       This dashboard shows the SLA trends for each of the _primary_ services in the GitLab fleet ("primary" services are those which are directly user-facing).
 
+      Read more details on our [SLA policy is defined in the handbook](https://about.gitlab.com/handbook/engineering/monitoring/).
+
       * For each service we measure two key metrics/SLIs (Service Level Indicators): error-rate and apdex score
       * For each service, for each SLI, we have an SLO target
         * For error-rate, the SLI should remain _below_ the SLO
