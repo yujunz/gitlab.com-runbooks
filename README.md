@@ -98,39 +98,10 @@ Remember to close out the incident when the issue is resolved.  Also, when possi
 
 # Production Incidents
 
+## [Reporting and incident](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#reporting-an-incident)
+
 ## Roles
-
-During an incident there are at least 2 roles, and one more optional
-
-* Production engineers will
-  * Open a war room on Zoom immediately to have high a bandwidth communication channel.
-  * Create a [Google Doc](https://docs.google.com) to gather the timeline of events.
-  * Publish this document using the _File_, _Publish to web..._ function.
-  * Make this document GitLab editable by clicking on the `Share` icon and selecting _Advanced_, _Change_, then _On - GitLab_.
-  * Tweet `GitLab.com is having a major outage, we're working on resolving it in a Google Doc LINK` with a link to this document to make the community aware.
-  * Redact the names to remove the blame. Only use team-member-1, -2, -3, etc.
-  * Document partial findings or guessing as we learn.
-  * Write a post mortem issue when the incident is solved, and label it with `outage`
-
-* The point person will
-  * Handle updating the @gitlabstatus account explaining what is going on in a simple yet reassuring way.
-  * Synchronize efforts across the production engineering team
-  * Pull other people in when consultation is needed.
-  * Declare a major outage when we are meeting the definition.
-  * Post `@channel, we have a major outage and need help creating a live streaming war room, refer to [runbooks-production-incident]` into the #general slack channel.
-  * Post `@channel, we have a major outage and need help reviewing public documents` into the #marketing slack channel.
-  * Post `@channel, we have a major outage and are working to solve it, you can find the public doc <here>` into the #devrel slack channel.
-  * Move the war room to a paid account so the meeting is not time limited.
-  * Coordinate with the security team and the communications manager and use the [breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) to determine if a breach of user data has occurred and notify any affected users.
-
-* The communications manager will
-  * Setup a not time limited Zoom war room and provide it to the point person to move all the production engineers there.
-  * Setup Youtube Live Streaming int the war room following [this Zoom guide](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live) (for this you will need to have access to the GitLab Youtube account, ask someone from People Ops to grant you so)
-
-* The Marketing representative will
-  * Review the Google Doc to provide proper context when needed.
-  * Include a note about how is this outage impacting customers in the document.
-  * Decide how to handle further communications when the outage is already handled.
+During an incident, we have [roles defined in the handbook]()
 
 ## General guidelines for production incidents.
 
@@ -138,46 +109,13 @@ During an incident there are at least 2 roles, and one more optional
 	* Are we losing data?
 	* Is GitLab.com not working or offline?
 	* Has the incident affected users for greater than 1 hour?
-* [Tweet](docs/uncategorized/tweeting-guidelines.md) in a reassuring but informative way to let the people know what's going on
-* Join the `#production` channel
-* Define a _point person_ or _incident owner_, this is the person that will gather all the data and coordinate the efforts.
-* For emergency incidents define [Roles](https://gitlab.com/gitlab-com/runbooks/blob/master/howto/manage-production-incidents.md)
-	* Point person
-        * in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the emergency.
-	* Communications manager
-	* Marketing representative.
-	* Start a war room using zoom
-	* Share the link in the #production channel
-	* Stream the zoom call live.  [Streaming a Webinar on YouTube Live – Zoom Help Center](https://support.zoom.us/hc/en-us/articles/115000350446-Streaming-a-Webinar-on-YouTube-Live)
-* For non-emergency incidents.
-	* Establish who is the point person on the incident.
-	    * in the `#production` channel: "@here I'm taking point" and pin the message for the duration of the incident.
-	* Start a war room using zoom if it will save time
-	* Share the link in the #production channel
-* Organize:
-  * If intervention is required (i.e. a non self-healing service)
-  * Create a Google Doc to gather the timeline of events.
-  * Publish this document using the File, Publish to web... function.
-  * Make this document GitLab editable by clicking on the Share icon and selecting Advanced, Change, then On - GitLab.
+* Join the `#incident management` channel
 * If the _point person_ needs someone to do something, give a direct command: _@someone: please run `this` command_
 * Be sure to be in sync - if you are going to reboot a service, say so: _I'm bouncing server X_
 * If you have conflicting information, **stop and think**, bounce ideas, escalate
 * Gather information when the incident is done - logs, samples of graphs, whatever could help figuring out what happened
-* Update the [Production Oncall Log](https://docs.google.com/document/d/1nWDqjzBwzYecn9Dcl4hy1s4MLng_uMq-8yGRMxtgK6M/edit#heading=h.nmt24c52ggf5)
-* If we lack monitoring or alerting Open an issue and label as `monitoring`, even if you close issue immediately. See [handbook](https://about.gitlab.com/handbook/infrastructure/)
-* Keep in mind [GitLab's data breach notification policy](https://about.gitlab.com/security/#data-breach-notification-policy) and work with the security team to determine if a user data breach has occurred and if notification needs to be provided.
-* Once the incident is resolved, [Tweet](docs/uncategorized/tweeting-guidelines.md)  an update and let users know the issue is resolved.
+* use `/security` if you have any security concerns and need to pull in the Security Incident Response team
 
-# References
-
-## Communication Guidelines
-* [When the lead is away](docs/uncategorized/lead-away.md)
-* [Tweeting Guidelines](docs/uncategorized/tweeting-guidelines.md)
-* [Production Incident Communication Strategy](howto/manage-production-incidents.md)
-* [Database Incidents](incidents/database.md)
-
-## CRITICAL
-* Spend one minute and create issue for outage, don't forget about `outage` label as specified in [handbook](https://about.gitlab.com/handbook/engineering/infrastructure/).
 
 ### PostgreSQL
 
