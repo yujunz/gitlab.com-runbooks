@@ -1,7 +1,7 @@
 local commonAnnotations = import 'common_annotations.libsonnet';
 local common = import 'container_common_graphs.libsonnet';
 local crCommon = import 'container_registry_graphs.libsonnet';
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local template = grafana.template;
 local templates = import 'templates.libsonnet';
 local dashboard = grafana.dashboard;

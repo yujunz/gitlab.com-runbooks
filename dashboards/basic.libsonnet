@@ -1,14 +1,14 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local graphPanel = grafana.graphPanel;
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local heatmapPanel = grafana.heatmapPanel;
 local row = grafana.row;
 local text = grafana.text;
 local seriesOverrides = import 'series_overrides.libsonnet';
 local singlestatPanel = grafana.singlestat;
 local tablePanel = grafana.tablePanel;
-local timepickerlib = import 'grafonnet/timepicker.libsonnet';
+local timepickerlib = import 'github.com/grafana/grafonnet-lib/grafonnet/timepicker.libsonnet';
 local templates = import 'templates.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
 local stableIds = import 'lib/stable-ids.libsonnet';

@@ -1,7 +1,7 @@
 local basic = import 'basic.libsonnet';
 local capacityPlanning = import 'capacity_planning.libsonnet';
 local colors = import 'colors.libsonnet';
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
 local layout = import 'layout.libsonnet';
 local nodeMetrics = import 'node_metrics.libsonnet';

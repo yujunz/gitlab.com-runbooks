@@ -20,9 +20,9 @@ function resolve_folder_id() {
 }
 
 function prepare() {
-  if [[ ! -d "vendor" ]]; then
-    echo >&2 "vendor directory not found, running bundler.sh to install dependencies..."
-    "./bundler.sh"
+  if [[ ! -d "../vendor" ]]; then
+    echo >&2 "../vendor directory not found, running scripts/bundler.sh to install dependencies..."
+    "../scripts/bundler.sh"
   fi
 
   ../services/generate-json.sh
@@ -124,5 +124,5 @@ prepare_dashboard_requests() {
 }
 
 function jsonnet_compile() {
-  jsonnet -J . -J ../metrics-catalog/ -J vendor -J ../services --ext-str "dashboardPath=${1}" "$@"
+  jsonnet -J . -J ../metrics-catalog/ -J ../vendor -J ../services --ext-str "dashboardPath=${1}" "$@"
 }

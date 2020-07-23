@@ -1,7 +1,7 @@
 local basic = import 'basic.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
 local common = import 'container_common_graphs.libsonnet';
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';
 local template = grafana.template;

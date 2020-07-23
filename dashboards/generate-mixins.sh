@@ -8,9 +8,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "${SCRIPT_DIR}"
 
-if [[ ! -d "vendor" ]]; then
-  echo >&2 "vendor directory not found, running bundler.sh to install dependencies..."
-  "${SCRIPT_DIR}/bundler.sh"
+VENDOR_DIR="${SCRIPT_DIR}/../vendor"
+
+if [[ ! -d "${VENDOR_DIR}" ]]; then
+  echo >&2 "${VENDOR_DIR} directory not found, running scripts/bundler.sh to install dependencies..."
+  "${SCRIPT_DIR}/../scripts/bundler.sh"
 fi
 
 # Install jsonnet dashboards
@@ -18,5 +20,5 @@ for mixin in *.mixin.libsonnet; do
   name="${mixin%.mixin.libsonnet}"
   rm -rf "$name"
   mkdir "$name"
-  jsonnet -J vendor -m "$name" "$mixin"
+  jsonnet -J "${VENDOR_DIR}" -m "$name" "$mixin"
 done

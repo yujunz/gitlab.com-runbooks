@@ -1,4 +1,4 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local dashboard = grafana.dashboard;
 local seriesOverrides = import 'series_overrides.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';

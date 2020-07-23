@@ -58,13 +58,36 @@ test-alertmanager: alertmanager/alertmanager.yml
 	PATH=$(AMTOOL_PATH):$(PATH) alertmanager/test-routing.sh alertmanager/alertmanager.yml
 
 .PHONY: test
-test:
+test: validate-service-mappings validate-prom-rules validate-kibana-urls validate-alerts validate-yaml jsonnet-bundle test-jsonnet
+
+.PHONY: validate-service-mappings
+validate-service-mappings:
 	./scripts/validate-service-mappings
+
+.PHONY: validate-prom-rules
+validate-prom-rules:
 	# TODO: Add rules/*/*.yml when valid rules are created.
 	$(PROMTOOL_COMMAND) check rules rules/*.yml thanos-rules/*.yml
 	# Prometheus config checks are stricter than rules checks, so use a fake config to check this too
 	$(PROMTOOL_COMMAND)  check config scripts/prometheus.yml
+
+.PHONY: validate-kibana-urls
+validate-kibana-urls:
 	./scripts/validate_kibana_urls
+
+.PHONY: validate-alerts
+validate-alerts:
 	./scripts/validate-alerts
+
+.PHONY:validate-yaml
+validate-yaml:
 	if ! $$(command -v yaml-lint); then echo "Please install yaml-lint with 'gem install -N yaml-lint'"; exit 1; fi
 	yaml-lint $(YAML_FILES)
+
+.PHONY: test-jsonnet
+test-jsonnet:
+	./scripts/jsonnet_test.sh
+
+.PHONY: jsonnet-bundle
+jsonnet-bundle:
+	./scripts/bundler.sh
