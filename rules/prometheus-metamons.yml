@@ -210,12 +210,16 @@ groups:
       runbook: docs/monitoring/prometheus-failed-wal-truncations.md
       title: 'Prometheus has failed wal truncations'
   - alert: PrometheusRuleEvalFailures
-    expr: increase(prometheus_rule_evaluation_failures_total[5m]) > 0
+    expr: >
+      sum by(environment, tier, type, shard, stage, rule_group) (
+        rate(prometheus_rule_evaluation_failures_total[5m])
+      ) > 0
+    for: 10m
     labels:
-      severity: s4
+      severity: s3
       alert_type: cause
     annotations:
-      description: '{{$labels.job}} at {{$labels.instance}} {{$labels.pod}} has failing rule evaluations.'
+      description: 'The {{$labels.rule_group}} rule group has failing rule evaluations.'
       runbook: docs/monitoring/prometheus-failing-rule-evaluations.md
       title: 'Prometheus has failing rule evaluations'
   - alert: PrometheusEmptyJobs
