@@ -94,16 +94,6 @@ groups:
       runbook: docs/monitoring/prometheus-notifications-backlog.md
       title: '{{$labels.job}} is backlogging on the notifications queue'
 
-  - alert: PrometheusErrorSendingAlerts
-    expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m]) > 0.01
-    for: 10m
-    labels:
-      severity: s4
-      alert_type: cause
-    annotations:
-      description: 'Prometheus {{$labels.pod}} {{$labels.fqdn}} is having errors sending alerts to Alertmanager {{$labels.alertmanager}}'
-      title: Errors while sending alerts from Prometheus
-
   - alert: PrometheusScrapingSlowly
     expr: |
       prometheus_target_interval_length_seconds{interval!~".*m.*",quantile="0.9"}

@@ -104,6 +104,30 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn'],
     },
 
+    // Prometheus Alert Manager Sender operations
+    prometheus_alert_sender: {
+      local prometheusAlertsSelector = productionEnvironmentsSelector {
+        job: 'prometheus',
+        type: 'monitoring',
+      },
+
+      staticLabels: {
+        environment: 'ops',
+      },
+
+      requestRate: rateMetric(
+        counter='prometheus_notifications_sent_total',
+        selector=prometheusAlertsSelector
+      ),
+
+      errorRate: rateMetric(
+        counter='prometheus_notifications_errors_total',
+        selector=prometheusAlertsSelector
+      ),
+
+      significantLabels: ['fqdn', 'alertmanager'],
+    },
+
     thanos_rule_alert_sender: {
       local thanosRuleAlertsSelector = productionEnvironmentsSelector {
         job: 'thanos',
