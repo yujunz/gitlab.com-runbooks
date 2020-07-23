@@ -19,7 +19,6 @@
 * [../gitaly/find-project-from-hashed-storage.md](../gitaly/find-project-from-hashed-storage.md)
 * [../gitaly/gitaly-permission-denied.md](../gitaly/gitaly-permission-denied.md)
 * [../gitaly/gitaly-unusual-activity.md](../gitaly/gitaly-unusual-activity.md)
-* [../gitaly/storage-rebalancing.md](../gitaly/storage-rebalancing.md)
 * [../logging/README.md](../logging/README.md)
 * [../pages/gitlab-pages.md](../pages/gitlab-pages.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)

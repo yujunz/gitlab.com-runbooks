@@ -13,7 +13,7 @@ groups:
         }}` stage), has an apdex-score burn rate outside of SLO
       description: 'Currently the apdex value is {{ $value | humanizePercentage }}.
 
-        '
+'
       grafana_dashboard_id: alerts-component_multiburn_apdex/alerts-component-multi-window-multi-burn-rate-apdex-out-of-slo
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/alerts-component_multiburn_apdex/alerts-component-multi-window-multi-burn-rate-apdex-out-of-slo?from=now-6h/m&to=now-1m/m&var-environment={{
