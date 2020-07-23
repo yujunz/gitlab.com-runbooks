@@ -11,6 +11,5 @@ groups:
       severity: s4
       alert_type: heartbeat
     annotations:
-      description: SnitchHeartBeat
       runbook: docs/monitoring/prometheus-snitch.md
       title: SnitchHeartBeat

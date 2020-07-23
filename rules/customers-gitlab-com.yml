@@ -11,7 +11,6 @@ groups:
       environment: gprd
       alert_type: symptom
     annotations:
-      description: customers.gitlab.com is not responding correctly for 2 minutes!
       title: customers.gitlab.com is not responding correctly for 2 minutes
   - alert: customers.gitlab.com down
     expr: probe_success{instance="https://customers.gitlab.com",job="blackbox"} == 0
@@ -22,5 +21,4 @@ groups:
       environment: gprd
       alert_type: symptom
     annotations:
-      description: customers.gitlab.com is down for 2 minutes!
       title: customers.gitlab.com is down for 2 minutes

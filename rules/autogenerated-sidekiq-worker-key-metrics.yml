@@ -9,10 +9,7 @@ groups:
     annotations:
       title: The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has an error rate outside of
         SLO
-      description: |
-        The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has an error rate outside of SLO.
-
-        Currently the metric value is {{ $value | humanizePercentage }}.
+      description: Currently the error rate is {{ $value | humanizePercentage }}.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
@@ -55,10 +52,7 @@ groups:
     annotations:
       title: The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has a execution latency outside
         of SLO
-      description: |
-        The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has a execution latency outside of SLO.
-
-        Currently the metric value is {{ $value | humanizePercentage }}.
+      description: Currently the apdex score is {{ $value | humanizePercentage }}.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
@@ -101,10 +95,7 @@ groups:
     annotations:
       title: The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has a queue latency outside
         of SLO
-      description: |
-        The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has a queue latency outside of SLO.
-
-        Currently the metric value is {{ $value | humanizePercentage }}.
+      description: Currently the apdex score is {{ $value | humanizePercentage }}.
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
@@ -147,23 +138,13 @@ groups:
     annotations:
       title: Sidekiq jobs are being enqueued to an ignored queue that will never be dequeued
       description: |
-        The `{{ $labels.queue }}` queue is receiving work, but this queue has been
-        explicitly ignored in the `gprd` environment, to help reduce load on
-        our redis-sidekiq cluster.
+        The `{{ $labels.queue }}` queue is receiving work, but this queue has been explicitly ignored in the `gprd` environment, to help reduce load on our redis-sidekiq cluster.
 
         This is a temporary measure.
 
-        It appears that the `{{ $labels.queue }}` queue is receiving work.
-        Since no sidekiq workers are listening to the queue, this work will be
-        ignored.
+        It appears that the `{{ $labels.queue }}` queue is receiving work. Since no sidekiq workers are listening to the queue, this work will be ignored.
 
-        Recommended course of action: Communicate with the team responsible for
-        the {{ $labels.feature_category }} feature category, and find out whether
-        the work to the queue is intentional. If it is, update the ignore list on
-        https://ops.gitlab.net/gitlab-cookbooks/chef-repo/-/blob/master/tools/sidekiq-config/sidekiq-queue-configurations.libsonnet
-        and the corresponding list used for this alert, in
-        https://gitlab.com/gitlab-com/runbooks/blob/master/rules-jsonnet/temp-ignored-gprd-queue-list.libsonnet
-        removing the ignored queue from both.
+        Recommended course of action: Communicate with the team responsible for the {{ $labels.feature_category }} feature category, and find out whether the work to the queue is intentional. If it is, update the ignore list on https://ops.gitlab.net/gitlab-cookbooks/chef-repo/-/blob/master/tools/sidekiq-config/sidekiq-queue-configurations.libsonnet and the corresponding list used for this alert, in https://gitlab.com/gitlab-com/runbooks/blob/master/rules-jsonnet/temp-ignored-gprd-queue-list.libsonnet removing the ignored queue from both.
 
         Also, review https://ops.gitlab.net/gitlab-cookbooks/chef-repo/-/merge_requests/2948
       grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail

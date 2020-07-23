@@ -66,8 +66,6 @@ local rules = {
         annotations: {
           title: 'The `{{ $labels.component }}` component of the `{{ $labels.type }}` service, (`{{ $labels.stage }}` stage), has an apdex-score burn rate outside of SLO',
           description: |||
-            The `{{ $labels.component }}` component of the `{{ $labels.type }}` service, (`{{ $labels.stage }}` stage), has an apdex-score burn rate outside of SLO.
-
             Currently the apdex value is {{ $value | humanizePercentage }}.
           |||,
           runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',

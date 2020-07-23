@@ -58,8 +58,6 @@ groups:
       severity: s1
       alert_type: cause
     annotations:
-      description: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
-        }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.
       runbook: docs/uncategorized/node_cpu.md
       title: CPU use percent is extremely high on {{ if $labels.fqdn }}{{ $labels.fqdn
         }}{{ else }}{{ $labels.instance }}{{ end }} for the past 2 hours.

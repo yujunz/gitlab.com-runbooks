@@ -10,10 +10,10 @@ groups:
       title: >-
         Operation rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service
         (`{{ $labels.stage }}` stage) is missing
-      description: |
-        The data used to generate the `gitlab_component_ops:rate` metrics are missing for the
-        `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
-        might indicate that our observability has been affected.
+      description: >
+        The data used to generate the `gitlab_component_ops:rate` metrics are missing for the `{{ $labels.component
+        }}` component of the `{{ $labels.type }}` service. This might indicate that our observability
+        has been affected.
       grafana_dashboard_id: alerts-component_opsrate_missing/alerts-component-request-rate-series-missing
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/alerts-component_opsrate_missing/alerts-component-request-rate-series-missing?from=now-24h/m&to=now-1m/m&var-environment={{
@@ -44,10 +44,10 @@ groups:
       title: >-
         Apdex for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service (`{{ $labels.stage
         }}` stage) is missing
-      description: |
-        The data used to generate the `gitlab_component_apdex:ratio` metrics are missing for the
-        `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
-        might indicate that our observability has been affected.
+      description: >
+        The data used to generate the `gitlab_component_apdex:ratio` metrics are missing for the `{{ $labels.component
+        }}` component of the `{{ $labels.type }}` service. This might indicate that our observability
+        has been affected.
       grafana_dashboard_id: alerts-component_opsrate_missing/alerts-component-request-rate-series-missing
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/alerts-component_opsrate_missing/alerts-component-request-rate-series-missing?from=now-24h/m&to=now-1m/m&var-environment={{
@@ -78,10 +78,10 @@ groups:
       title: >-
         Error rate data for the `{{ $labels.component }}` component of the `{{ $labels.type }}` service
         (`{{ $labels.stage }}` stage) is missing
-      description: |
-        The data used to generate the `gitlab_component_errors:rate` metrics are missing for the
-        `{{ $labels.component }}` component of the `{{ $labels.type }}` service. This
-        might indicate that our observability has been affected.
+      description: >
+        The data used to generate the `gitlab_component_errors:rate` metrics are missing for the `{{ $labels.component
+        }}` component of the `{{ $labels.type }}` service. This might indicate that our observability
+        has been affected.
       grafana_dashboard_id: alerts-component_error_missing/alerts-component-error-rate-series-missing
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/alerts-component_error_missing/alerts-component-error-rate-series-missing?from=now-24h/m&to=now-1m/m&var-environment={{

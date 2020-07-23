@@ -9,7 +9,6 @@ groups:
       alert_type: cause
       environment: gstg
     annotations:
-      description: ILM errors have been detected in the nonproduction logging cluster!
       runbook: docs/elastic/troubleshooting/README.md
       title: ILM errors have been detected in the nonproduction logging cluster!
   - alert: Elasticsearch ILM stopped in nonproduction
@@ -20,7 +19,6 @@ groups:
       alert_type: cause
       environment: gstg
     annotations:
-      description: ILM is no longer running in the nonproduction logging cluster!
       runbook: docs/elastic/troubleshooting/README.md
       title: ILM is no longer running in the nonproduction logging cluster!
   - alert: Elasticsearch ILM errors in production
@@ -31,7 +29,6 @@ groups:
       alert_type: cause
       environment: gprd
     annotations:
-      description: ILM errors have been detected in the logging cluster!
       runbook: docs/elastic/troubleshooting/README.md
       title: ILM errors have been detected in the logging cluster!
   - alert: Elasticsearch ILM stopped in production
@@ -42,7 +39,6 @@ groups:
       alert_type: cause
       environment: gprd
     annotations:
-      description: ILM is no longer running in the logging cluster!
       runbook: docs/elastic/troubleshooting/README.md
       title: ILM is no longer running in the logging cluster!
   - alert: Elasticsearch production logging cluster unhealthy
@@ -53,7 +49,6 @@ groups:
       alert_type: cause
       environment: gprd
     annotations:
-      description: Production logging cluster is unhealthy
       runbook: docs/elastic/troubleshooting/README.md
       title: Production logging cluster is unhealthy
   - alert: Elasticsearch ILM errors in monitoring cluster
@@ -64,7 +59,6 @@ groups:
       alert_type: cause
       environment: gprd
     annotations:
-      description: ILM errors have been detected in the monitoring cluster!
       runbook: docs/elastic/troubleshooting/README.md
       title: ILM errors have been detected in the monitoring cluster!
   - alert: Elasticsearch ILM stopped in monitoring cluster
@@ -75,7 +69,6 @@ groups:
       alert_type: cause
       environment: gprd
     annotations:
-      description: ILM is no longer running in the monitoring cluster!
       runbook: docs/elastic/troubleshooting/README.md
       title: ILM is no longer running in the monitoring cluster!
   - alert: Elasticsearch monitoring cluster unhealthy
@@ -86,7 +79,6 @@ groups:
       alert_type: cause
       environment: gprd
     annotations:
-      description: Monitoring cluster is unhealthy
       runbook: docs/elastic/troubleshooting/README.md
       title: Monitoring cluster is unhealthy
   - alert: Elasticsearch thread pool queue growing
@@ -96,7 +88,6 @@ groups:
       severity: s3
       alert_type: cause
     annotations:
-      description: Elasticsearch thread pool queue growing
       runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool queue growing
   - alert: Elasticsearch write thread pool queue growing
@@ -106,7 +97,6 @@ groups:
       severity: s3
       alert_type: cause
     annotations:
-      description: Elasticsearch thread pool queue growing
       runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool queue growing
   - alert: Elasticsearch thread pool rejections growing
@@ -116,7 +106,6 @@ groups:
       severity: s3
       alert_type: cause
     annotations:
-      description: Elasticsearch thread pool rejections growing
       runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool rejections growing
   - alert: Elasticsearch write thread pool rejections growing
@@ -126,7 +115,6 @@ groups:
       severity: s3
       alert_type: cause
     annotations:
-      description: Elasticsearch thread pool rejections growing
       runbook: docs/elastic/troubleshooting/README.md
       title: Elasticsearch thread pool rejections growing
   - alert: Elasticsearch is saturated and unable to process tasks real-time

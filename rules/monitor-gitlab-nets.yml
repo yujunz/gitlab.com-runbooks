@@ -9,6 +9,6 @@ groups:
       pager: pagerduty
       alert_type: cause
     annotations:
-      description: monitor.gitlab.net is down. nginx or/and grafana services are down.
+      description: nginx or/and grafana services are down on dashboards.gitlab.net
       runbook: docs/monitoring/monitor-gitlab-net-not-accessible.md
-      title: monitor.gitlab.net is down
+      title: dashboards.gitlab.net is down
