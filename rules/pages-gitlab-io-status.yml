@@ -28,18 +28,6 @@ groups:
       description: "{{ $value }}% of pages servers have been down for 5 minutes"
       environment: "{{ $labels.environment }}"
       runbook: docs/pages/gitlab-pages.md
-  - alert: GitLabPagesHighErrorRate
-    expr: sum(rate(haproxy_server_http_responses_total{backend="pages_http",code="5xx"}[15m])) by (environment) / sum(rate(haproxy_server_http_responses_total{backend="pages_http"}[15m])) by (environment) * 100 > 1
-    for: 5m
-    labels:
-      severity: s4
-      alert_type: cause
-      team: gitlab-pages
-    annotations:
-      title: GitLab pages servers are returning errors
-      description: "{{ $value }}% of pages responses have been errors for 5 minutes"
-      environment: "{{ $labels.environment }}"
-      runbook: docs/pages/gitlab-pages.md
   - alert: GitLabPagesLowDomains
     expr: gitlab_pages_domains_served_total / scalar(quantile(0.9, gitlab_pages_domains_served_total)) < 0.9 or gitlab_pages_domains_served_total < 1000
     for: 5m
