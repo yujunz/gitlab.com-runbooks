@@ -17,6 +17,7 @@
 * [praefect-database.md](praefect-database.md)
 * [praefect-error-rate.md](praefect-error-rate.md)
 * [praefect-file-storages.md](praefect-file-storages.md)
+* [praefect-replication.md](praefect-replication.md)
 * [praefect-startup.md](praefect-startup.md)
 <!-- END_MARKER -->
 
