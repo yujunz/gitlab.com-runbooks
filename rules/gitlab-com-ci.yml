@@ -199,27 +199,6 @@ groups:
         repeated commands for more than 45 minutes.
       runbook: docs/ci-runners/cicd/ci_constantnumberoflongrunningrepeatedjobs.md
 
-  - alert: CICDJobQueueDurationUnderperformant
-    expr: |
-      (
-        sum(increase(job_queue_duration_seconds_bucket{shared_runner="true", jobs_running_for_project="0", le="10"}[5m]))
-        /
-        sum(increase(job_queue_duration_seconds_count{shared_runner="true", jobs_running_for_project="0"}[5m]))
-      ) < 0.8
-    for: 5m
-    labels:
-      team: verify
-      severity: s3
-      alert_type: cause
-    annotations:
-      title: Job queue duration performance for '0 - 10s' is to low
-      description: >
-        The job queue duration performance for 10s bucket for projects with 0 running
-        jobs is lower than 80% for more than 5 minutes.
-
-        This should be considered as service degradation and the reason should be investigated.
-
-        This would exceed our future SLA on GitLab.com!
 
   - alert: CICDWorkhorseQueuingUnderperformant
     expr: |
