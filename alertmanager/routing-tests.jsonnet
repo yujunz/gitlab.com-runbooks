@@ -66,7 +66,7 @@ generateTests([
     receivers: [
       'non_prod_pagerduty',
       'slack_bridge-nonprod',
-      'nonprod_alerts_slack_channel'
+      'nonprod_alerts_slack_channel',
     ],
   },
   {
@@ -76,7 +76,7 @@ generateTests([
     },
     receivers: [
       'prod_pagerduty',
-      'production_slack_channel'
+      'production_slack_channel',
     ],
   },
 
@@ -138,7 +138,10 @@ generateTests([
       env: 'gprd',
     },
     receivers: [
-      'issue:gitlab.com/gitlab-com/gl-infra/infrastructure',
+      'prod_alerts_slack_channel',
+      // 'issue:gitlab.com/gitlab-com/gl-infra/infrastructure',
+      // Reenable when GitLab issue delivery is fixed
+      // https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2451#note_385151530
     ],
   },
   {
@@ -188,14 +191,14 @@ generateTests([
       rules_domain: 'general',
       team: 'gitaly',
       env: 'gprd',
-      slo_alert: "yes",
-      stage: "cny"
+      slo_alert: 'yes',
+      stage: 'cny',
     },
     receivers: [
-      'slo_gprd_cny', // Pagerduty
-      'slack_bridge-prod', // Slackline
-      'team_gitaly_alerts_channel', // Gitaly team alerts channel
-      'production_slack_channel' // production channel for pager alerts
+      'slo_gprd_cny',  // Pagerduty
+      'slack_bridge-prod',  // Slackline
+      'team_gitaly_alerts_channel',  // Gitaly team alerts channel
+      'production_slack_channel',  // production channel for pager alerts
     ],
   },
   {
@@ -205,12 +208,12 @@ generateTests([
       rules_domain: 'general',
       team: 'gitaly',
       env: 'pre',
-      slo_alert: "yes",
-      stage: "cny"
+      slo_alert: 'yes',
+      stage: 'cny',
     },
     receivers: [
       'non_prod_pagerduty',
-      'nonprod_alerts_slack_channel'
+      'nonprod_alerts_slack_channel',
     ],
   },
   {
@@ -223,7 +226,7 @@ generateTests([
     receivers: [
       'prod_pagerduty',
       'team_verify_alerts_channel',
-      'production_slack_channel'
+      'production_slack_channel',
     ],
   },
   {
@@ -236,7 +239,7 @@ generateTests([
     receivers: [
       'prod_pagerduty',
       'team_gitlab_pages_alerts_channel',
-      'production_slack_channel'
+      'production_slack_channel',
     ],
   },
   {
@@ -248,7 +251,7 @@ generateTests([
     },
     receivers: [
       'team_gitlab_pages_alerts_channel',
-      'prod_alerts_slack_channel'
+      'prod_alerts_slack_channel',
     ],
   },
 ])
