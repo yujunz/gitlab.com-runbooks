@@ -101,7 +101,7 @@ Remember to close out the incident when the issue is resolved.  Also, when possi
 ## [Reporting and incident](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#reporting-an-incident)
 
 ## Roles
-During an incident, we have [roles defined in the handbook]()
+During an incident, we have [roles defined in the handbook](https://about.gitlab.com/handbook/engineering/infrastructure/incident-management/#roles-and-responsibilities)
 
 ## General guidelines for production incidents.
 
