@@ -283,11 +283,7 @@ basic.dashboard(
         'Release pressure',
         description='Number of `Pick into` merge requests for previous releases.',
         query=|||
-          label_replace(
-            max(delivery_release_pressure{state="merged"}) by (state, version),
-            "version", "$1",
-            "version", "Pick into (.*)"
-          )
+          sum(delivery_release_pressure{state="merged"}) by (state, version)
         |||,
         legendFormat='{{version}} ({{state}})',
         thresholds={
