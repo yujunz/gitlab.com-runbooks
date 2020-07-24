@@ -76,8 +76,8 @@ local resolveRecordingRuleFor(metricName, requiredAggregationLabels, selector, d
     aggregationFunction='sum',
     aggregationLabels=[],
     rangeVectorFunction='rate',
-    metricName,
-    rangeInterval,
+    metricName=null,
+    rangeInterval='5m',
     selector={},
   )::
     // Currently only support sum/rate recording rules,

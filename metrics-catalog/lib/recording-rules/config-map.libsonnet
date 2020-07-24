@@ -1,6 +1,7 @@
 local sliRecordingRulesSet = (import 'sli-recording-rule-set.libsonnet').sliRecordingRulesSet;
 local componentMetricsRuleSet = (import 'component-metrics-rule-set.libsonnet').componentMetricsRuleSet;
 local componentMappingRuleSet = (import 'component-mapping-rule-set.libsonnet').componentMappingRuleSet;
+local componentNodeErrorRatioRuleSet = (import 'component-node-error-ratio-rule-set.libsonnet').componentNodeErrorRatioRuleSet;
 local serviceMappingRuleSet = (import 'service-mapping-rule-set.libsonnet').serviceMappingRuleSet;
 local serviceSLORuleSet = (import 'service-slo-rule-set.libsonnet').serviceSLORuleSet;
 local aggregatedComponentErrorRatioRuleSet = (import 'aggregated-component-error-ratio-rule-set.libsonnet').aggregatedComponentErrorRatioRuleSet;
@@ -69,16 +70,7 @@ local ruleSetIterator(ruleSets) = {
         ]),
 
         nodeLevelRules: ruleSetIterator([
-          // 1m node-level metrics
-          componentMetricsRuleSet(
-            burnRate=burnRate,
-            // TODO: consider renaming the 1m rates for consistency
-            apdexRatio='gitlab_component_node_apdex:ratio',
-            apdexWeight='gitlab_component_node_apdex:weight:score',
-            requestRate='gitlab_component_node_ops:rate',
-            errorRate='gitlab_component_node_errors:rate',
-            aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
-          ),
+          // No 1m metrics
         ]),
       },
       {
@@ -201,6 +193,14 @@ local ruleSetIterator(ruleSets) = {
         ]),
       },
     ],
+
+    componentErrorRatios: ruleSetIterator(std.flatMap(
+      function(suffix)
+        [
+          componentNodeErrorRatioRuleSet(suffix=suffix),
+        ],
+      std.filter(function(f) f != "", MULTI_BURN_RATE_SUFFIXES) // Exclude 1m burns
+    )),
 
     // Component mappings are static recording rules which help
     // determine whether a component is being monitored. This helps
