@@ -285,6 +285,20 @@ local routingTree = Route(
     ]
 );
 
+
+// Recursively walk a tree, adding all receiver names
+local findAllReceiversInRoutingTree(tree, currentReceiverNamesSet) =
+  local receiverNameSet = std.setUnion(currentReceiverNamesSet, [tree.receiver]);
+  if std.objectHas(tree, 'routes') then
+    std.foldl(function(memo, route) findAllReceiversInRoutingTree(route, memo), tree.routes, receiverNameSet)
+  else
+    receiverNameSet;
+
+// Trim unused receivers to avoid warning messages from alertmanager
+local pruneReceivers(receivers, routingTree) =
+  local allReceivers = findAllReceiversInRoutingTree(routingTree, []);
+  std.filter(function(r) std.setMember(r.name, allReceivers), receivers);
+
 //
 // Generate the list of routes and receivers.
 
@@ -305,7 +319,7 @@ local alertmanager = {
   global: {
     slack_api_url: secrets.slackAPIURL,
   },
-  receivers: receivers,
+  receivers: pruneReceivers(receivers, routingTree),
   route: routingTree,
   templates: [
     templateDir + '/*.tmpl',
