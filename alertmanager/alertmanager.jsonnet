@@ -5,7 +5,7 @@ local serviceCatalog = import 'service_catalog.libsonnet';
 // GitLab Issue Alert Delivery is disabled while we
 // investigate issues not being created
 // https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2451#note_385151530
-local enableGitLabIssueAlertDelivery = false;
+local deliveryGitLabIssueAlertsExclusivelyToIssues = false;
 
 // Where the alertmanager templates are deployed.
 local templateDir = '/etc/alertmanager/templates';
@@ -192,27 +192,22 @@ local routingTree = Route(
     SnitchRoute(channel)
     for channel in secrets.snitchChannels
   ] +
-  (
-    if enableGitLabIssueAlertDelivery then
-      [
-        /* pager=issue alerts do not continue */
-        Route(
-          receiver='issue:' + issueChannel.name,
-          match={
-            pager: 'issue',
-            env: 'gprd',
-            project: issueChannel.name,
-          },
-          continue=false,
-          group_wait='10m',
-          group_interval='1h',
-          repeat_interval='3d',
-        )
-        for issueChannel in secrets.issueChannels
-      ]
-    else
-      []
-  ) + [
+  [
+    /* pager=issue alerts do not continue */
+    Route(
+      receiver='issue:' + issueChannel.name,
+      match={
+        pager: 'issue',
+        env: 'gprd',
+        project: issueChannel.name,
+      },
+      continue=!deliveryGitLabIssueAlertsExclusivelyToIssues,
+      group_wait='10m',
+      group_interval='1h',
+      repeat_interval='3d',
+    )
+    for issueChannel in secrets.issueChannels
+  ] + [
     /* pager=pagerduty alerts do continue */
     RouteCase(
       match={ pager: 'pagerduty' },
