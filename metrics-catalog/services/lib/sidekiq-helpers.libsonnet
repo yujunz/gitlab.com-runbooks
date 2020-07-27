@@ -14,7 +14,7 @@ local shards = {
   'gitaly-throttled': { urgency: 'throttled' },
   'low-urgency-cpu-bound': { urgency: 'low' },
   'memory-bound': { urgency: 'throttled' },
-  'urgent-cpu-bound': { urgency: 'high', autoScaling: false },
+  'urgent-cpu-bound': { urgency: 'high' },
   'urgent-other': { urgency: 'high', autoScaling: false },
   catchall: { urgency: null /* no urgency attribute since multiple values are supported */ },
   elasticsearch: { urgency: 'throttled' },
