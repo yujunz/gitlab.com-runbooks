@@ -7,8 +7,9 @@
 
 # A little local setup:
 #
-#    export GITLAB_ADMIN_API_PRIVATE_TOKEN=CHANGEME
-#    mkdir -p scripts/logs
+#    export GITLAB_GSTG_ADMIN_API_PRIVATE_TOKEN=CHANGEME
+#    export GITLAB_GPRD_ADMIN_API_PRIVATE_TOKEN=CHANGEME
+#    mkdir -p scripts/logs scripts/storage_migrations
 #
 # Staging example:
 #
@@ -24,6 +25,7 @@
 #    bundle exec scripts/storage_rebalance.rb nfs-file35 nfs-file50 --verbose --dry-run=no --move-amount=10 --skip=9271929 | tee scripts/logs/nfs-file35.migration.$(date +%Y-%m-%d_%H%M).log
 #    bundle exec scripts/storage_rebalance.rb nfs-file53 nfs-file02 --wait=10800 --max-failures=1 --projects=19438807 --dry-run=yes | tee scripts/logs/nfs-file53.migration.$(date +%Y-%m-%d_%H%M).log
 #    bundle exec scripts/storage_rebalance.rb nfs-file25 nfs-file07 --move-amount=300 --wait=10800 --max-failures=10 --dry-run=yes | tee scripts/logs/nfs-file25.migration.$(date +%Y-%m-%d_%H%M).log
+#    bundle exec scripts/storage_rebalance.rb nfs-file47 nfs-file07 --move-amount=300 --wait=10800 --max-failures=4 --dry-run=yes | tee scripts/logs/nfs-file47.migration.$(date +%Y-%m-%d_%H%M).log
 #
 # Logs may be reviewed:
 #
@@ -69,7 +71,10 @@ module Storage
         dry_run: true,
         log_level: Logger::INFO,
         env: :production,
-        token_env_variable_name: 'GITLAB_ADMIN_API_PRIVATE_TOKEN',
+        token_env_variable_names: {
+          staging: 'GITLAB_GSTG_ADMIN_API_PRIVATE_TOKEN',
+          production: 'GITLAB_GPRD_ADMIN_API_PRIVATE_TOKEN'
+        },
         password_prompt: 'Enter Gitlab admin API private token: ',
         console_nodes: {
           staging: 'console-01-sv-gstg.c.gitlab-staging-1.internal',
@@ -79,8 +84,10 @@ module Storage
           staging: 'https://staging.gitlab.com/api/v4',
           production: 'https://gitlab.com/api/v4'
         },
+        projects_api_uri: 'projects',
+        projects_per_page: 100,
         projects_repository_api_uri: 'projects/%<project_id>s/repository',
-        projects_api_uri: 'projects/%<project_id>s',
+        projects_by_id_api_uri: 'projects/%<project_id>s',
         projects_repository_storage_move_api_uri: 'projects/%<project_id>s/' \
           'repository_storage_moves/%<repository_storage_move_id>s',
         projects_repository_storage_moves_api_uri: 'projects/%<project_id>s/repository_storage_moves',
@@ -194,7 +201,13 @@ module Storage
 
     def log_and_record_migration_error(error, project, options = {})
       options = DEFAULT_LOG_ERROR_OPTIONS.merge(options)
-      error_record = { project_id: project[:id], message: error.message }
+      if error.respond_to?(:response)
+        error_body = JSON.parse(error.response.body)
+        symbolize_keys_deep!(error_body)
+        error_message = error_body.fetch(:message, nil)
+      end
+      error_message ||= error.message if error.respond_to?(:message)
+      error_record = { project_id: project[:id], message: error_message }
       error_record[:disk_path] = project[:disk_path] if project.include?(:disk_path)
       log_migration_error(project, error_record) if options[:persist]
       migration_errors << error_record
@@ -217,12 +230,16 @@ module Storage
     def to_unescaped_json(data)
       return data unless data.respond_to?(:to_json)
 
-      data.to_json.gsub(%r[\\"], '"').gsub(%r[^"{], '{').gsub(%r[{"$], '}')
+      data.to_json.gsub(%r[\\"], '"').gsub(%r[^"{], '{').gsub(%r[}"$], '}')
     end
     # rubocop: enable Style/PercentLiteralDelimiters
     # rubocop: enable Style/RegexpLiteral
 
+    # This method reproduces a Net:HTTP request as a verbatim
+    # port to a curl command, executable on the command line,
+    # in order to make a given web-request portable.
     def debug_request(request)
+      env_variable_name = options[:token_env_variable_names][options[:env]]
       headers = get_request_headers(request)
       log.debug "[The following curl command is for external diagnostic purposes only:]"
       curl_command = "curl --verbose --silent --compressed ".dup
@@ -230,13 +247,13 @@ module Storage
       curl_command = curl_command.concat("'#{request.uri}'")
       header_arguments = headers.collect do |field, values|
         if PRIVATE_TOKEN_HEADER_PATTERN.match?(field)
-          "--header \"#{field}: ${#{options[:token_env_variable_name]}}\""
+          "--header \"#{field}: ${#{env_variable_name}}\""
         else
           "--header \"#{field}: #{values.join(',')}\""
         end
       end
       unless header_arguments.empty?
-        curl_command = curl_command.concat(" ")
+        curl_command = curl_command.concat(' ')
         curl_command = curl_command.concat(header_arguments.join(' '))
       end
       body = request.body
@@ -314,6 +331,14 @@ module Storage
       `#{command}`.strip
     end
 
+    def symbolize_keys_deep!(memo)
+      memo.keys.each do |key|
+        symbolized_key = key.respond_to?(:to_sym) ? key.to_sym : key
+        memo[symbolized_key] = memo.delete(key) # Preserve order even when key == symbolized_key
+        symbolize_keys_deep!(memo[symbolized_key]) if memo[symbolized_key].is_a?(Hash)
+      end
+    end
+
     def to_filesize(bytes)
       BYTES_CONVERSIONS.each_pair do |denomination, threshold|
         return "#{(bytes.to_f / (threshold / 1024)).round(2)} #{denomination}" if bytes < threshold
@@ -334,7 +359,7 @@ module Storage
 
     def set_api_token_or_else(&on_failure)
       prompt = options[:password_prompt]
-      env_variable_name = options[:token_env_variable_name]
+      env_variable_name = options[:token_env_variable_names][options[:env]]
       token = ENV.fetch(env_variable_name, nil)
       if token.nil? || token.empty?
         log.warn "No #{env_variable_name} variable set in environment"
@@ -408,7 +433,7 @@ module Storage
         iteration += 1
         bar_characters = progress_character * (iteration % columns)
         progress_log.info(format('%s%s', bar_characters, progress_character))
-        if (iteration % (columns - 1)).zero?
+        if (iteration % columns).zero?
           bar_characters = ''
           $stdout.write("\n")
         elsif log.level == Logger::DEBUG
@@ -446,8 +471,9 @@ module Storage
         define_projects_option
         define_json_option
         define_csv_option
-        define_skip_option
         define_move_amount_option
+        define_skip_option
+        define_per_page_option
         define_wait_option
         define_max_failures_option
         define_retry_known_failures_option
@@ -532,6 +558,16 @@ module Storage
         end
       end
 
+      def define_move_amount_option
+        description = "Gigabytes of repo data to move; default: #{@options[:move_amount]}, or " \
+          'largest single repo if 0'
+        @parser.on('-m', '--move-amount=<n>', Integer, description) do |move_amount|
+          abort 'Size too large' if move_amount > 16_000
+          # Convert given gigabytes to bytes
+          @options[:move_amount] = (move_amount * 1024 * 1024 * 1024)
+        end
+      end
+
       def define_skip_option
         description = 'Skip specific project(s)'
         @parser.on('--skip=<project_id,...>', Array, description) do |project_identifiers|
@@ -547,19 +583,11 @@ module Storage
         end
       end
 
-      def define_count_option
-        @parser.on('-N', '--count', 'How many projects are on current file server') do |count|
-          @options[:count] = true
-        end
-      end
-
-      def define_move_amount_option
-        description = "Gigabytes of repo data to move; default: #{@options[:move_amount]}, or " \
-          'largest single repo if 0'
-        @parser.on('-m', '--move-amount=<n>', Integer, description) do |move_amount|
-          abort 'Size too large' if move_amount > 16_000
-          # Convert given gigabytes to bytes
-          @options[:move_amount] = (move_amount * 1024 * 1024 * 1024)
+      def define_per_page_option
+        description = "Projects per page to request; default: #{@options[:projects_per_page]}"
+        @parser.on('--per-page=<n>', Integer, description) do |per_page|
+          abort 'Given projects per-page must be between 1 and 100' if per_page < 1 || per_page > 100
+          @options[:projects_per_page] = per_page
         end
       end
 
@@ -761,9 +789,11 @@ module Storage
         error = e
       end
 
+      headers = {}
+      response.each_header { |key, value| headers[key] = value.split(', ') }
       result, error = deserialize(response) if error.nil?
 
-      [result, error, status]
+      [result, error, status, headers]
     end
     # rubocop: enable Metrics/AbcSize
 
@@ -816,6 +846,7 @@ module Storage
       @gitlab_api_client = Storage::GitLabClient.new(@options)
       @migration_errors = []
       log.level = @options[:log_level]
+      @pagination_indices = {}
     end
 
     def log_migration(project)
@@ -838,18 +869,44 @@ module Storage
       migration_error_log.error log_artifact.to_json
     end
 
-    def get_project(project_id)
+    def fetch_project(project_id)
       return {} if project_id.nil? || project_id.to_s.empty?
 
-      url = format(get_api_url(:projects_api_uri), project_id: project_id)
-      project, error, status = gitlab_api_client.get(url, parameters: { statistics: true })
+      url = format(get_api_url(:projects_by_id_api_uri), project_id: project_id)
+      project, error, status, _headers = gitlab_api_client.get(
+        url, parameters: { statistics: true })
       raise error unless error.nil?
 
       raise "Invalid response status code: #{status}" unless [200].include?(status)
 
       raise "Failed to get project id: #{project_id}" if project.nil? || project.empty?
 
-      project.transform_keys(&:to_sym)
+      symbolize_keys_deep!(project)
+      project
+    end
+
+    # Execute remote script to fetch largest projects
+    def fetch_largest_projects(next_page = false)
+      source_shard = options[:source_shard]
+      url = get_api_url(:projects_api_uri)
+      parameters = {
+        order_by: 'repository_size',
+        statistics: true,
+        repository_storage: source_shard,
+        per_page: options[:projects_per_page]
+      }
+      parameters['page'] = @pagination_indices[__method__] if @pagination_indices.include?(__method__)
+      projects, error, status, headers = gitlab_api_client.get(url, parameters: parameters)
+      raise error unless error.nil?
+
+      @pagination_indices[__method__] = headers['x-next-page'].first
+
+      raise "Invalid response status code: #{status}" unless [200].include?(status)
+
+      raise "Unexpected response: #{projects}" if projects.nil? || projects.empty?
+
+      projects.each { |project| symbolize_keys_deep!(project) }
+      projects
     end
 
     def fetch_repository_storage_move(project, repository_storage_move)
@@ -857,39 +914,42 @@ module Storage
         get_api_url(:projects_repository_storage_move_api_uri),
         project_id: project[:id],
         repository_storage_move_id: repository_storage_move[:id])
-      result, error, status = gitlab_api_client.get(url)
+      move, error, status, _headers = gitlab_api_client.get(url)
       raise error unless error.nil?
 
       raise "Invalid response status code: #{status}" unless [200].include?(status)
 
-      raise "Unexpected response: #{result}" unless result.fetch('project', {}).fetch('id', nil) == project[:id]
+      raise "Unexpected response: #{move}" unless move.fetch('project', {}).fetch('id', nil) == project[:id]
 
-      result.transform_keys(&:to_sym)
+      symbolize_keys_deep!(move)
+      move
     end
 
     def fetch_repository_storage_moves(project)
       url = format(get_api_url(:projects_repository_storage_moves_api_uri), project_id: project[:id])
-      result, error, status = gitlab_api_client.get(url)
+      moves, error, status, _headers = gitlab_api_client.get(url)
       raise error unless error.nil?
 
       raise "Invalid response status code: #{status}" unless [200].include?(status)
 
-      raise "Unexpected response: #{result}" if result.nil?
+      raise "Unexpected response: #{moves}" if moves.nil?
 
-      result.each { |element| element.transform_keys(&:to_sym) }
-      result
+      moves.each { |element| symbolize_keys_deep!(element) }
+      moves
     end
 
     def create_repository_storage_move(project, destination)
       url = format(get_api_url(:projects_repository_storage_moves_api_uri), project_id: project[:id])
-      result, error, status = gitlab_api_client.post(url, body: { destination_storage_name: destination })
+      move, error, status, _headers = gitlab_api_client.post(
+        url, body: { destination_storage_name: destination })
       raise error unless error.nil?
 
       raise "Invalid response status code: #{status}" unless [200, 201].include?(status)
 
-      raise "Unexpected response: #{result}" unless result.fetch('project', {}).fetch('id', nil) == project[:id]
+      raise "Unexpected response: #{move}" unless move.fetch('project', {}).fetch('id', nil) == project[:id]
 
-      result.transform_keys(&:to_sym)
+      symbolize_keys_deep!(move)
+      move
     end
 
     def wait_for_repository_storage_move(project, repository_storage_move, opts = {})
@@ -945,11 +1005,13 @@ module Storage
     end
 
     def repository_replication_already_in_progress?(project)
+      log.debug "Checking for existing repository replications for project id #{project[:id]}"
       fetch_repository_storage_moves(project).any? do |move|
         options[:project_repository_move_states][:in_progress].include?(move[:state]&.to_sym)
       end
     end
 
+    # rubocop: disable Metrics/AbcSize
     def schedule_repository_replication(project)
       verify_source(project)
       if repository_replication_already_in_progress?(project)
@@ -960,10 +1022,14 @@ module Storage
       destination = options[:destination_shard] || project[:destination_repository_storage]
       log_separator
       log.info "Scheduling repository replication to #{destination} for project id: #{project[:id]}"
-      log.info "  Project name: #{project[:name]}"
+      log.info "  Project path: #{project[:path_with_namespace]}"
       log.info "  Current shard name: #{project[:repository_storage]}"
-      log.info "  Disk path: #{project[:disk_path]}"
-      log.info "  Repository size: #{project[:size]}"
+      log.info "  Disk path: #{project[:disk_path]}" if project.include?(:disk_path)
+      if project.include?(:statistics)
+        log.info "  Repository size: #{to_filesize(project[:statistics][:repository_size])}"
+      elsif project.include?(:size)
+        log.info "  Repository size: #{project[:size]}"
+      end
 
       if options[:dry_run]
         log.info "[Dry-run] Would have scheduled repository replication for project id: #{project[:id]}"
@@ -972,7 +1038,7 @@ module Storage
 
       repository_storage_move = create_repository_storage_move(project, destination)
       wait_for_repository_storage_move(project, repository_storage_move)
-      post_migration_project = project.merge(get_project(project[:id]))
+      post_migration_project = project.merge(fetch_project(project[:id]))
       if post_migration_project[:repository_storage] == destination
         log.info "Success moving project id: #{project[:id]}"
       else
@@ -981,15 +1047,16 @@ module Storage
       end
 
       log.info "Migrated project id: #{post_migration_project[:id]}"
-      log.debug "  Name: #{post_migration_project[:name]}"
-      log.debug "  Storage: #{post_migration_project[:repository_storage]}"
-      log.debug "  Path: #{post_migration_project[:disk_path]}"
+      log.debug "  Project path: #{post_migration_project[:path_with_namespace]}"
+      log.debug "  Current shard name: #{post_migration_project[:repository_storage]}"
+      log.debug "  Disk path: #{post_migration_project[:disk_path]}" if post_migration_project.include?(:disk_path)
       log_migration(project)
     end
+    # rubocop: enable Metrics/AbcSize
 
     def move_project(project)
       project_id = project[:id]
-      project_info = get_project(project_id)
+      project_info = fetch_project(project_id)
       project.update(project_info)
 
       schedule_repository_replication(project)
@@ -1004,9 +1071,22 @@ module Storage
     rescue ServiceFailure => e
       log.error "Service error migrating project id: #{project_id}"
       log_and_record_migration_error(e, project)
+    rescue Net::HTTPFatalError => e
+      log.error "Unexpected server error migrating project id: #{project_id}"
+      log_and_record_migration_error(e, project)
+    rescue Net::HTTPClientException => e
+      log.error "Unexpected client error migrating project id: #{project_id}"
+      log_and_record_migration_error(e, project)
     rescue StandardError => e
-      log.error "Unexpected error migrating project id #{project_id}: #{e}"
+      log.error "Unexpected error migrating project id #{project_id}: #{e} (#{e.class})"
       log_and_record_migration_error(e, project, include_backtrace: true, persist: false)
+    end
+
+    def get_repository_size(project)
+      size = project.fetch(:statistics, {}).fetch(:repository_size, nil)
+      raise "Absent field 'statistics.repository_size' for project id: #{project[:id]}" if size.nil?
+
+      size
     end
 
     def exclude_known_failures
@@ -1017,27 +1097,33 @@ module Storage
       options[:excluded_projects] |= failed_reprojectories
     end
 
-    # Execute remote script to select projects
-    def select_projects(hostname = console_node_hostname)
-      log.info "Selecting projects from #{hostname}"
-      exclude_known_failures unless options[:retry_known_failures]
-      fields = options.slice(:project_selector_script_path, :source_shard, :destination_shard)
-      command = format(options[:project_selector_command], **fields)
-      command = command.concat(" --staging") if options[:env] == :staging
-      command = command.concat(" --limit=#{options[:limit]}") if options[:limit].positive?
-      command = command.concat(" --skip=#{options[:excluded_projects].join(',')}") unless options[:excluded_projects].empty?
-      result = execute_remote_command(hostname, command)
-      return [] if result.nil? || result.empty?
+    def get_projects
+      projects = options.fetch(:projects, []).map { |project| fetch_project(project[:id]) }
+      if projects.empty?
+        exclude_known_failures unless options[:retry_known_failures]
+        next_page = false
+        # This loop is only here to ensure that if projects are excluded
+        # (typicaly because of previous known replication failures) from a
+        # returned page of projects, that a subsequent page is requested in
+        # the case that the current page is full of nothing but projects which
+        # are presumed to be doomed to fail their replication operation.
+        loop do
+          log.info format('Fetching %slargest projects', next_page ? 'next page of ' : '')
+          projects = fetch_largest_projects(next_page)
+          # When there are no more projects in the API result set:
+          break if projects.empty?
 
-      data = JSON.parse(result).transform_keys(&:to_sym)
-      data.fetch(:projects, []).map { |project| project.transform_keys(&:to_sym) }
-    end
+          projects.reject! { |project| options[:excluded_projects].include?(project[:id]) }
+          # When there are non-failed projects in the API result set:
+          break unless projects.empty?
 
-    def get_projects(given_projects = options[:projects])
-      given_projects = given_projects[0...options[:limit]] if options[:limit].positive?
-      return select_projects if given_projects.empty?
-
-      given_projects.map { |project| get_project(project[:id]) }
+          # When there are no non-failed projects in the API result set,
+          # get the next page.
+          next_page = true
+        end
+      end
+      projects = projects[0...options[:limit]] if options[:limit].positive?
+      projects
     end
 
     def paginate_projects(projects, &block)
@@ -1052,7 +1138,7 @@ module Storage
         next if project.empty?
 
         yield project
-        projects = select_projects if projects.empty?
+        projects = get_projects if projects.empty?
       end
     end
 
@@ -1063,14 +1149,16 @@ module Storage
       moved_projects_count = 0
       total_bytes_moved = 0
       projects = get_projects
+
       paginate_projects(projects) do |project|
+        repository_size_bytes = get_repository_size(project)
         move_project(project)
         if migration_errors.length >= options[:max_failures]
           log.error "Failed too many times"
           break
         end
         moved_projects_count += 1
-        total_bytes_moved += project.fetch(:repository_size_bytes, 0)
+        total_bytes_moved += repository_size_bytes
         break if limit.positive? && moved_projects_count >= limit
         break if min_amount.positive? && total_bytes_moved > min_amount
       end
