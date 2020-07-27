@@ -19,6 +19,7 @@
 * [praefect-file-storages.md](praefect-file-storages.md)
 * [praefect-replication.md](praefect-replication.md)
 * [praefect-startup.md](praefect-startup.md)
+* [../version/gitaly-version-mismatch.md](../version/gitaly-version-mismatch.md)
 <!-- END_MARKER -->
 
 ## How To...
