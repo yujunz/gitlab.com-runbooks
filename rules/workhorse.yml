@@ -43,11 +43,7 @@ groups:
     for: 5m
     labels:
       rules_domain: general
-      metric: gitlab_workhorse_git_http_sessions_active:total
       severity: s4
-      period: 5m
-      bound: lower
-      threshold_sigma: "4"
       alert_type: cause
     annotations:
       description: >
@@ -78,11 +74,7 @@ groups:
     for: 5m
     labels:
       rules_domain: general
-      metric: gitlab_workhorse_git_http_sessions_active:total
       severity: s4
-      period: 5m
-      bound: lower
-      threshold_sigma: "4"
       alert_type: cause
     annotations:
       description: >

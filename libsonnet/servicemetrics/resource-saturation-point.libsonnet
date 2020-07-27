@@ -1,5 +1,5 @@
-local selectors = import 'promql/selectors.libsonnet';
 local alerts = import 'alerts/alerts.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local stableIds = import 'stable-ids/stable-ids.libsonnet';
 local strings = import 'utils/strings.libsonnet';
 
@@ -158,7 +158,7 @@ local resourceSaturationPoint = function(options)
         labels: {
           component: componentName,
           horiz_scaling: if definition.horizontallyScalable then 'yes' else 'no',
-          severity: definition.severity
+          severity: definition.severity,
         },
         expr: '1',
       },
@@ -192,12 +192,7 @@ local resourceSaturationPoint = function(options)
         'for': triggerDuration,
         labels: {
           rules_domain: 'general',
-          metric: 'gitlab_component_saturation:ratio',
-          period: triggerDuration,
-          bound: 'upper',
           alert_type: 'cause',
-          alert_trigger_duration: triggerDuration,
-          burn_rate_period: definition.getBurnRatePeriod(),
         } + severityLabels,
         annotations: {
           title: 'The %(title)s resource of the {{ $labels.type }} service ({{ $labels.stage }} stage), component has a saturation exceeding SLO and is close to its capacity limit.' % formatConfig,

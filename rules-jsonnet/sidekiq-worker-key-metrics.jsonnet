@@ -20,11 +20,8 @@ local sidekiqSLOAlert(alertname, expr, grafanaPanelStableId, metricName, alertDe
     labels: {
       alert_type: 'symptom',
       rules_domain: 'general',
-      metric: metricName,
       severity: 's4',
       slo_alert: 'yes',
-      experimental: 'yes',
-      period: '2m',
     },
     annotations: {
       title: 'The `{{ $labels.queue }}` queue, `{{ $labels.stage }}` stage, has %s' % [alertDescription],
@@ -142,7 +139,6 @@ local generateAlerts() =
         rules_domain: 'general',
         severity: 's1',
         pager: 'pagerduty',
-        period: '2m',
       },
       annotations: {
         title: 'Sidekiq jobs are being enqueued to an ignored queue that will never be dequeued',

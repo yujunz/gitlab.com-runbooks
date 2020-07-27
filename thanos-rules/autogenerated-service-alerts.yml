@@ -29,11 +29,8 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: symptom
-      bound: lower
       deprecated: 'yes'
-      metric: gitlab_service_apdex:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
       slo_alert: 'yes'
@@ -72,11 +69,8 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: symptom
-      bound: lower
       deprecated: 'yes'
-      metric: gitlab_service_apdex:ratio
       pager: pagerduty
-      period: 15m
       rules_domain: general
       severity: s2
       slo_alert: 'yes'
@@ -114,11 +108,8 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: symptom
-      bound: upper
       deprecated: 'yes'
-      metric: gitlab_service_errors:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
       slo_alert: 'yes'
@@ -156,11 +147,8 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: symptom
-      bound: upper
       deprecated: 'yes'
-      metric: gitlab_service_errors:ratio
       pager: pagerduty
-      period: 15m
       rules_domain: general
       severity: s2
       slo_alert: 'yes'
@@ -200,12 +188,8 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: cause
-      bound: upper
-      metric: gitlab_service_ops:rate
-      period: 5m
       rules_domain: general
       severity: s4
-      threshold_sigma: '3'
     expr: |
       (
           (
@@ -243,12 +227,8 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: cause
-      bound: lower
-      metric: gitlab_service_ops:rate
-      period: 5m
       rules_domain: general
       severity: s4
-      threshold_sigma: '3'
     expr: |
       (
           (
@@ -288,12 +268,9 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: symptom
-      bound: lower
       canary_warning: 'yes'
       deprecated: 'yes'
-      metric: gitlab_service_apdex:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
       slo_alert: 'yes'
@@ -352,12 +329,9 @@ groups:
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
       alert_type: symptom
-      bound: upper
       canary_warning: 'yes'
       deprecated: 'yes'
-      metric: gitlab_service_errors:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
       slo_alert: 'yes'
