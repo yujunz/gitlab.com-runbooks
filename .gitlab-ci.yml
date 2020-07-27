@@ -116,6 +116,7 @@ deploy-rules-production:
 
 update-alert-manager:
   stage: alertmanager
+  environment: ops
   script:
     - make test-alertmanager
     - cd alertmanager
