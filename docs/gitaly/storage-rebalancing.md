@@ -106,31 +106,28 @@ the token as an environment variable in your shell session:
    ```bash
    bundle exec scripts/storage_rebalance.rb nfs-fileXX nfs-fileYY --move-amount=1000 --dry-run=yes | tee scripts/logs/nfs-fileXX.migration.$(date --utc +%Y-%m-%d_%H:%M).log
    ```
-   - Execute the migration script in a tmux session on the console server during low utilization time period.
-   ```bash
-   bundle exec scripts/storage_rebalance.rb nfs-fileXX nfs-fileYY --move-amount=1000 --dry-run=yes | tee scripts/logs/nfs-fileXX.migration.$(date --utc +%Y-%m-%d_%H:%M).log
-   ```
-   - **Note:** Repository replication errors are recorded, and their log artifacts may be reviewed:
-   ```bash
-   find scripts/storage_migrations -name failed*.log -exec cat {} \; | jq
-   ```
-   - The script will automatically skip such failed project repository
-   replications in subsequent invocations.  Additional projects may be skipped
-   using the `--skip` command line argument.
+1. Invoke the same command except with the `--dry-run=no` argument.
+
+**Note:** Repository replication errors are recorded, and their log artifacts may be reviewed:
+```bash
+find scripts/storage_migrations -name failed*.log -exec cat {} \; | jq
+```
+
+The script will automatically skip such failed project repository replications
+in subsequent invocations.  Additional projects may be skipped using the
+`--skip` command line argument.
 
 #### Failure modes
 
 Plenty of progress has been made recently to reduce failure cases. There are still a handful of ways that a repository can fail to replicate onto the file system of another shard.
 
 - **Checksum validation failure**
-  * This means that the collective refs of the replica do not match the collection refs of the original.
-  * No roll-back is required, because the error is raised by gitaly and interrupts the worker process.
-  * This means that recovering from this situation will likely only involve the deletion of the incomplete repository replica from the file system of the new shard, or, only a partial roll-back.
-  * It is highly unusual for an operation timeout error to lead to a situation where the database persists a state that a project's repository home is the new shard.
+  * This means that the collective refs of the replica do not match the collective refs of the original.
 - **Timeout**
   * This means that some process or `grpc` operation has taken too long, and did not complete within a pre-configured or programmatic parametric timeout.
-  * This means that recovering from this situation will likely only involve the deletion of the incomplete repository replica from the file system of the new shard, or, only a partial roll-back.
-  * It is highly unusual for an operation timeout error to lead to a situation where the database persists a state that a project's repository home is the new shard.
+
+In both of these situations, no roll-back is required, because the error is
+raised by gitaly and interrupts the worker process.
 
 ## Reviewing replicated repositories
 
