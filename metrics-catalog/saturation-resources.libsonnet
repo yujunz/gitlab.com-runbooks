@@ -1041,6 +1041,28 @@ local pgbouncerSyncPool(serviceType, role) =
     },
   }),
 
+  cloudsql_cpu: resourceSaturationPoint({
+    title: 'Average CPU Utilization',
+    severity: 's4',
+    appliesTo: ['monitoring'],
+    description: |||
+      Average CPU utilization.
+
+      See https://cloud.google.com/monitoring/api/metrics_gcp#gcp-cloudsql for
+      more details
+    |||,
+    grafana_dashboard_uid: 'sat_cloudsql_cpu',
+    resourceLabels: ['database_id'],
+    burnRatePeriod: '5m',
+    query: |||
+      avg_over_time(stackdriver_cloudsql_database_cloudsql_googleapis_com_database_cpu_utilization{%(selector)s}[%(rangeInterval)s])
+    |||,
+    slos: {
+      soft: 0.80,
+      hard: 0.90,
+    },
+  }),
+
   // Add some helpers. Note that these use :: to "hide" then:
   listApplicableServicesFor(type)::
     std.filter(function(k) self[k].appliesToService(type), std.objectFields(self)),
