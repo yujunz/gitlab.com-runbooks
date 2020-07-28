@@ -17,15 +17,15 @@ local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
 local selectors = import 'lib/selectors.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
 
-local combinations(shortMetric, shortDuration, longMetric, longDuration, selectorHash, apdexInverted, sloMetric, nonGlobalFallback) =
+local combinations(shortMetric, shortDuration, longMetric, longDuration, selectorHash, apdexInverted, sloMetric, nonGlobalFallback, thanosEvaluated=true) =
   local formatConfig = {
     shortMetric: shortMetric,
     shortDuration: shortDuration,
     longMetric: longMetric,
     longDuration: longDuration,
     longBurnFactor: multiburnFactors['burnrate_' + longDuration],
-    globalSelector: selectors.serializeHash(selectorHash { monitor: 'global' }),
-    nonGlobalSelector: selectors.serializeHash(selectorHash { monitor: { ne: 'global' } }),
+    globalSelector: selectors.serializeHash(selectorHash + (if thanosEvaluated then { monitor: 'global' } else {})),
+    nonGlobalSelector: selectors.serializeHash(selectorHash + (if thanosEvaluated then { monitor: { ne: 'global' } } else {})),
     sloMetric: sloMetric,
   };
 
@@ -170,6 +170,7 @@ local multiburnRateAlertsDashboard(
   componentLevel,
   selectorHash,
   statusDescriptionPanel,
+  nodeLevel=false,
       ) =
   local dashboardInitial =
     basic.dashboard(
@@ -186,12 +187,17 @@ local multiburnRateAlertsDashboard(
       )
     );
 
-  local dashboard = if componentLevel then
+  local dashboardWithComponentTemplate = if componentLevel then
     dashboardInitial.addTemplate(templates.component)
   else
     dashboardInitial;
 
-  dashboard.addPanels(
+  local dashboardWithNodeTemplate = if nodeLevel then
+    dashboardWithComponentTemplate.addTemplate(templates.fqdn('gitlab_component_node_ops:rate_5m{component="$component",environment="$environment",stage="$stage",type="$type"}', '', multi=false))
+  else
+    dashboardWithComponentTemplate;
+
+  dashboardWithNodeTemplate.addPanels(
     layout.columnGrid([
       (if statusDescriptionPanel != null then [statusDescriptionPanel] else [])
       +
@@ -277,6 +283,7 @@ local multiburnRateAlertsDashboard(
   };
 
 local componentSelectorHash = { environment: '$environment', env: '$environment', type: '$type', stage: '$stage', component: '$component' };
+local componentNodeSelectorHash = { environment: '$environment', monitor: { ne: 'global' }, type: '$type', stage: '$stage', component: '$component', fqdn: '$fqdn' };
 local serviceSelectorHash = { environment: '$environment', env: '$environment', type: '$type', stage: '$stage', monitor: 'global' };
 local apdexSLOMetric = 'slo:min:events:gitlab_service_apdex:ratio';
 local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
@@ -336,6 +343,68 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
     ),
     componentLevel=true,
     statusDescriptionPanel=statusDescription.componentErrorRateStatusDescriptionPanel(componentSelectorHash)
+  ),
+
+  // Apdex, for components on single nodes (currently only Gitaly)
+  component_node_multiburn_apdex: multiburnRateAlertsDashboard(
+    title='Component/Node Multi-window Multi-burn-rate Apdex Out of SLO',
+    selectorHash=componentNodeSelectorHash,
+    oneHourBurnRateCombinations=combinations(
+      shortMetric='gitlab_component_node_apdex:ratio_5m',
+      shortDuration='5m',
+      longMetric='gitlab_component_node_apdex:ratio_1h',
+      longDuration='1h',
+      selectorHash=componentNodeSelectorHash,
+      apdexInverted=true,
+      sloMetric=apdexSLOMetric,
+      nonGlobalFallback=true,
+      thanosEvaluated=false,
+    ),
+    sixHourBurnRateCombinations=combinations(
+      shortMetric='gitlab_component_node_apdex:ratio_30m',
+      shortDuration='30m',
+      longMetric='gitlab_component_node_apdex:ratio_6h',
+      longDuration='6h',
+      selectorHash=componentNodeSelectorHash,
+      apdexInverted=true,
+      sloMetric=apdexSLOMetric,
+      nonGlobalFallback=true,
+      thanosEvaluated=false,
+    ),
+    componentLevel=true,
+    statusDescriptionPanel=statusDescription.componentNodeApdexStatusDescriptionPanel(componentNodeSelectorHash)
+  ),
+
+
+  // Error Rates, for components on single nodes (currently only Gitaly)
+  component_node_multiburn_error: multiburnRateAlertsDashboard(
+    title='Component/Node Multi-window Multi-burn-rate Error Rate Out of SLO',
+    selectorHash=componentNodeSelectorHash,
+    oneHourBurnRateCombinations=combinations(
+      shortMetric='gitlab_component_node_errors:ratio_5m',
+      shortDuration='5m',
+      longMetric='gitlab_component_node_errors:ratio_1h',
+      longDuration='1h',
+      selectorHash=componentNodeSelectorHash,
+      apdexInverted=false,
+      sloMetric=errorSLOMetric,
+      nonGlobalFallback=false,
+      thanosEvaluated=false,
+    ),
+    sixHourBurnRateCombinations=combinations(
+      shortMetric='gitlab_component_node_errors:ratio_30m',
+      shortDuration='30m',
+      longMetric='gitlab_component_node_errors:ratio_6h',
+      longDuration='6h',
+      selectorHash=componentNodeSelectorHash,
+      apdexInverted=false,
+      sloMetric=errorSLOMetric,
+      nonGlobalFallback=false,
+      thanosEvaluated=false,
+    ),
+    componentLevel=true,
+    nodeLevel=true,
+    statusDescriptionPanel=statusDescription.componentNodeErrorRateStatusDescriptionPanel(componentNodeSelectorHash)
   ),
 
   // Apdex, for services

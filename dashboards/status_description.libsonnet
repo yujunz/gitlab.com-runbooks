@@ -222,4 +222,12 @@ local statusDescriptionPanel(legendFormat, query) =
     local query = errorRateStatusQuery(selectorHash, selectorHash.type, 'gitlab_service_errors');
     statusDescriptionPanel(legendFormat=selectorHash.type + ' | Errors', query=query),
 
+  componentNodeApdexStatusDescriptionPanel(selectorHash)::
+    local query = apdexStatusQuery(selectorHash, selectorHash.type, 'gitlab_component_node_apdex');
+    statusDescriptionPanel(legendFormat=selectorHash.component + '/' + selectorHash.fqdn + ' | Latency/Apdex', query=query),
+
+  componentNodeErrorRateStatusDescriptionPanel(selectorHash)::
+    local query = errorRateStatusQuery(selectorHash, selectorHash.type, 'gitlab_component_node_errors');
+    statusDescriptionPanel(legendFormat=selectorHash.component + '/' + selectorHash.fqdn + ' | Errors', query=query),
+
 }

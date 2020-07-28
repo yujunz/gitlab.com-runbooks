@@ -75,6 +75,11 @@ local formatConfigForSelectorHash(selectorHash) =
           )
         )
       ||| % formatConfigForSelectorHash(selectorHash) { range: range },
+
+    componentNodeApdexQuery(selectorHash, range)::
+      |||
+        gitlab_component_node_apdex:ratio_5m{%(selector)s}
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
 
   opsRate:: {
@@ -126,6 +131,11 @@ local formatConfigForSelectorHash(selectorHash) =
             gitlab_component_ops:rate_5m{%(selector)s}[%(range)s]
           )
         ) by (component)
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
+
+    componentNodeOpsRateQuery(selectorHash, range)::
+      |||
+        gitlab_component_node_ops:rate_5m{%(selector)s}
       ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
 
@@ -188,6 +198,11 @@ local formatConfigForSelectorHash(selectorHash) =
         sum(
           gitlab_component_ops:rate_5m{%(selector)s}
         ) by (component)
+      ||| % formatConfigForSelectorHash(selectorHash) {},
+
+    componentNodeErrorRateQuery(selectorHash)::
+      |||
+        gitlab_component_node_errors:rate_5m{%(selector)s}
       ||| % formatConfigForSelectorHash(selectorHash) {},
   },
 

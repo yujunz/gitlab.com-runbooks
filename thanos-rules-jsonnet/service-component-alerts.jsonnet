@@ -136,7 +136,7 @@ local rules = {
         title: 'The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage, has an error burn-rate exceeding SLO',
         description: |||
           The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage has an error burn-rate outside of SLO
-          The error-burn rate for this service is outside of SLO over multiple windows. Currently the error-rate is {{ $value | humanizePercentage }}%.
+          The error-burn rate for this service is outside of SLO over multiple windows. Currently the error-rate is {{ $value | humanizePercentage }}.
         |||,
         runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
         grafana_dashboard_id: 'alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo',

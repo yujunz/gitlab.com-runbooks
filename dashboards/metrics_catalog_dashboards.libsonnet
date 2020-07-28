@@ -23,6 +23,7 @@ local componentOverviewMatrixRow(
   component,
   startRow,
   environmentSelectorHash,
+  includeNodeLevelMonitoring=false
       ) =
   local componentSelectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: componentName };
   local columns =
@@ -58,7 +59,37 @@ local componentOverviewMatrixRow(
         []
     );
 
-  layout.splitColumnGrid(columns, [7, 1], startRow=startRow);
+  layout.splitColumnGrid(columns, [7, 1], startRow=startRow) +
+  (
+    if includeNodeLevelMonitoring then
+      layout.singleRow(
+        (
+          if component.hasApdex() then
+            [
+              keyMetrics.singleComponentNodeApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash)
+            ]
+          else []
+        )
+        +
+        (
+          if component.hasErrorRate() then
+            [
+              keyMetrics.singleComponentNodeErrorRates(serviceType, serviceStage, componentName, environmentSelectorHash),
+            ]
+          else []
+        )
+        +
+        (
+          if component.hasAggregatableRequestRate() then
+            [
+              keyMetrics.singleComponentNodeQPSPanel(serviceType, serviceStage, componentName, environmentSelectorHash),
+            ]
+          else []
+        ),
+        rowHeight=5, startRow=startRow+8
+      )
+    else []
+  );
 
 {
   componentLatencyPanel(
@@ -150,6 +181,7 @@ local componentOverviewMatrixRow(
     serviceStage,
     startRow,
     environmentSelectorHash=defaultEnvironmentSelector,
+    includeNodeLevelMonitoring=false,
   )::
     local service = metricsCatalog.getService(serviceType);
     [
@@ -157,14 +189,18 @@ local componentOverviewMatrixRow(
     ] +
     std.prune(
       std.flattenArrays(
-        std.mapWithIndex(function(i, c) componentOverviewMatrixRow(
-          serviceType,
-          serviceStage,
-          c,
-          service.components[c],
-          startRow=startRow + 1 + i * 10,
-          environmentSelectorHash=environmentSelectorHash
-        ), std.objectFields(service.components))
+        std.mapWithIndex(
+          function(i, componentName)
+            componentOverviewMatrixRow(
+              serviceType,
+              serviceStage,
+              componentName,
+              service.components[componentName],
+              startRow=startRow + 1 + i * 10,
+              environmentSelectorHash=environmentSelectorHash,
+              includeNodeLevelMonitoring=includeNodeLevelMonitoring
+            ), std.objectFields(service.components)
+        )
       )
     ),
 

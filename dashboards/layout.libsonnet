@@ -27,6 +27,11 @@ local generateDropOffsets(cellHeights, rowOffsets) =
       panels
     ),
 
+  // Layout all the panels in a single row
+  singleRow(panels, rowHeight=10, startRow=0)::
+    local cols = std.length(panels);
+    self.grid(panels, cols=cols, rowHeight=rowHeight, startRow=startRow),
+
   columnGrid(rowsOfPanels, columnWidths, rowHeight=10, startRow=0)::
     local columnOffsets = generateColumnOffsets(columnWidths);
 
