@@ -19,9 +19,15 @@ local slackChannels = [
   { name: 'nonprod_alerts_slack_channel', channel: 'alerts-nonprod' },
 ];
 
+local SnitchReceiver(channel) =
+  local env = channel.name;
+  local cluster = channel.cluster;
+  local receiver_name = if cluster == '' then env else env + '_' + cluster;
+  'dead_mans_snitch_' + receiver_name;
+
 local webhookChannels =
   [
-    { name: 'dead_mans_snitch_' + s.name, url: 'https://nosnch.in/' + s.apiKey, sendResolved: false }
+    { name: SnitchReceiver(s), url: 'https://nosnch.in/' + s.apiKey, sendResolved: false }
     for s in secrets.snitchChannels
   ] +
   [
@@ -163,13 +169,12 @@ local RouteCase(
   );
 
 local SnitchRoute(channel) =
-  local environment = channel.name;
-
   Route(
-    receiver='dead_mans_snitch_' + environment,
+    receiver=SnitchReceiver(channel),
     match={
       alertname: 'SnitchHeartBeat',
-      env: environment,
+      cluster: channel.cluster,
+      env: channel.name,
     },
     group_by=null,
     group_wait='1m',

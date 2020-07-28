@@ -18,11 +18,13 @@
   slackAPIURL: 'https://example.com/secret',
   // https://deadmanssnitch.com/
   snitchChannels: [
-    { name: 'ops', apiKey: 'secret' },
-    { name: 'gprd', apiKey: 'secret' },
-    { name: 'gstg', apiKey: 'secret' },
-    { name: 'pre', apiKey: 'secret' },
-    { name: 'testbed', apiKey: 'secret' },
+    { name: 'ops', apiKey: 'secret', cluster: '' },
+    { name: 'ops', apiKey: 'secret', cluster: 'ops-gitlab-gke' },
+    { name: 'gprd', apiKey: 'secret', cluster: '' },
+    { name: 'gprd', apiKey: 'secret', cluster: 'gprd-gitlab-gke' },
+    { name: 'gstg', apiKey: 'secret', cluster: '' },
+    { name: 'pre', apiKey: 'secret', cluster: '' },
+    { name: 'testbed', apiKey: 'secret', cluster: '' },
   ],
   // Generic webhook configs.
   webhookChannels: [
