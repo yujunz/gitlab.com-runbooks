@@ -202,7 +202,7 @@ local formatConfigForSelectorHash(selectorHash) =
 
     componentNodeErrorRateQuery(selectorHash)::
       |||
-        gitlab_component_node_errors:rate_5m{%(selector)s}
+        gitlab_component_node_errors:ratio_5m{%(selector)s}
       ||| % formatConfigForSelectorHash(selectorHash) {},
   },
 
