@@ -336,29 +336,13 @@ local alertmanager = {
   ],
 };
 
-// This will soon be removed in favour of managing the k8s secret object itself.
-local k8sAlertmanagerHelmValue = {
+local k8sAlertmanager = {
   alertmanager: {
     config: alertmanager,
   },
 };
 
-local k8sAlertmanagerSecret = {
-  apiVersion: 'v1',
-  kind: 'Secret',
-  metadata: {
-    name: 'alertmanager-config',
-    namespace: 'monitoring',
-  },
-  data: {
-    'alertmanager.yaml': std.base64(std.manifestYamlDoc(alertmanager)),
-    'gitlab.tmpl': std.base64(importstr 'templates/gitlab.tmpl'),
-    'slack.tmpl': std.base64(importstr 'templates/slack.tmpl'),
-  },
-};
-
 {
   'alertmanager.yml': std.manifestYamlDoc(alertmanager, indent_array_in_object=true),
-  'k8s_alertmanager.yaml': std.manifestYamlDoc(k8sAlertmanagerHelmValue, indent_array_in_object=true),
-  'k8s_alertmanager_secret.yaml': std.manifestYamlDoc(k8sAlertmanagerSecret, indent_array_in_object=true),
+  'k8s_alertmanager.yaml': std.manifestYamlDoc(k8sAlertmanager, indent_array_in_object=true),
 }
