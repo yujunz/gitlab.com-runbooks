@@ -372,6 +372,7 @@ local errorSLOMetric = 'slo:max:events:gitlab_service_errors:ratio';
       thanosEvaluated=false,
     ),
     componentLevel=true,
+    nodeLevel=true,
     statusDescriptionPanel=statusDescription.componentNodeApdexStatusDescriptionPanel(componentNodeSelectorHash)
   ),
 
