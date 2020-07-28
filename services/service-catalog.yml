@@ -1,106 +1,21 @@
 teams:
 
-- name: infrastructure-database
-  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: gerir
-  team_members:
-    - jose-finotto
-    - gerir
-  slack_channel: ongres-gitlab
+- name: sre_datastores
+  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/#datastores
+  slack_channel: sre_datastores
   engagement_policy:
   oncall_schedule: https://gitlab.pagerduty.com/services/PZ6SJXH
 
-- name: infrastructure-observability
-  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: asandoval
-  team_members:
-    - craigfurman
-    - ben-k
-    - amarbayar-amarsanaa
-    - iwiedler
-    - henri-philipps
-    - craig-barrett
-    - cindy-p
-  slack_channel: observability
+- name: sre_observability
+  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/#observability
+  slack_channel: sre_observability
   engagement_policy:
   oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
 
-- name: infrastructure-webapp
-  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: asandoval
-  team_members:
-    - alejandro-r
-    - msmiley
-    - cindy-p
-    - amarbayar-amarsanaa
-    - ahmad-s
-    - ben-k
-    - henri-philipps
-  slack_channel: production
-  engagement_policy: # Link to doc that talks about engagement
-                     # and escalation policy
-  oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
-
-- name: infrastructure-coreinfra
-  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: asandoval
-  team_members:
-    - nelsnelson
-    - craig-barrett
-    - hendrik-meyer
-    - graemegillies
-    - alex-h
-    - cameron-mcfarland
-    - craigmiskell
-  slack_channel: production
-  engagement_policy: # Link to doc that talks about engagement
-                     # and escalation policy
-  oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
-
-- name: infrastructure-git
-  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: dave-smith
-  team_members:
-    - nelsnelson
-    - henri-philipps
-    - ahmad-s
-    - alejandro-r
-    - craigmiskell
-    - devin-s
-    - hendrik-meyer
-  slack_channel: production
-  engagement_policy: # Link to doc that talks about engagement
-                     # and escalation policy
-  oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
-
-- name: infrastructure-caches-ci-queues
-  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: dave-smith
-  team_members:
-    - michal-w
-    - cameron-mcfarland
-    - alex-h
-    - msmiley
-    - iwiedler
-    - craigfurman
-    - graemegillies
-  slack_channel: production
-  engagement_policy: # Link to doc that talks about engagement
-                     # and escalation policy
-  oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
-
-- name: infrastructure-businessops
-  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/
-  manager_slug: dave-smith
-  team_members:
-    - cameron-mcfarland
-    - devin-s
-    - graemegillies
-    - alejandro-r
-    - michal-w
-  slack_channel: production
-  engagement_policy: # Link to doc that talks about engagement
-                     # and escalation policy
+- name: sre_coreinfra
+  url: https://about.gitlab.com/handbook/engineering/infrastructure/team/reliability/#core-infra
+  slack_channel: sre_coreinfra
+  engagement_policy:
   oncall_schedule: https://gitlab.pagerduty.com/schedules#P22HQSG
 
 - name: create
@@ -222,7 +137,7 @@ services:
     - gitter
     - manage
     - plan
-  infra_owner: infrastructure-webapp
+  infra_owner: sre_coreinfra
   label: Service:API
   business:
     requirement: |
@@ -309,9 +224,7 @@ services:
 
 - name: blackbox
   tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
+  infra_owner: sre_observability
   label: Service:Blackbox
   business:
     requirement: |
@@ -373,9 +286,7 @@ services:
 
 - name: camoproxy
   tier: sv
-  teams:
-    - infrastructure-coreinfra
-  infra_owner:
+  infra_owner: sre_coreinfra
   label: Service:Camoproxy
   business:
     requirement:
@@ -433,11 +344,7 @@ services:
 
 - name: console
   tier: sv
-  teams:
-    - infrastructure-coreinfra
-    - infrastructure-webapp
-    - infrastructure-caches-ci-queues
-  infra_owner: infrastructure-coreinfra
+  infra_owner: sre_coreinfra
   label: Service:Console
   business:
     requirement: |
@@ -514,9 +421,7 @@ services:
 
 - name: consul
   tier: inf
-  teams:
-    - infrastructure-coreinfra
-  infra_owner: infrastructure-coreinfra
+  infra_owner: sre_coreinfra
   label: Service:Consul
   business:
     requirement: |
@@ -645,7 +550,6 @@ services:
   tier: sv
   teams:
     - support
-    - infrastructure-businessops
   infra_owner: infrastructure-businessops
   label: forum.gitlab.com
   business:
@@ -706,9 +610,7 @@ services:
 
 - name: logging
   tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
+  infra_owner: sre_observability
   label: Service:Logging
   business:
     requirement: We are required to keep logs, both on legal terms as well as for debugging production issues
@@ -800,9 +702,7 @@ services:
 
 - name: search
   tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
+  infra_owner: sre_observability
   label: Service:Elasticsearch
   business:
     requirement: Repository index and search with Elasticsearch.
@@ -865,7 +765,7 @@ services:
     - gitter
     - manage
     - plan
-  infra_owner: infrastructure-webapp
+  infra_owner: sre_coreinfra
   label: Service:Web
   business:
     requirement: |
@@ -943,11 +843,7 @@ services:
 
 - name: frontend
   tier: lb
-  teams:
-    - infrastructure-coreinfra
-    - infrastructure-webapp
-    - infrastructure-git
-  infra_owner: infrastructure-coreinfra
+  infra_owner: sre_coreinfra
   label: Service:HAProxy
   business:
     requirement: |
@@ -1022,7 +918,7 @@ services:
     - gitter
     - manage
     - plan
-  infra_owner: infrastructure-git
+  infra_owner: sre_datastores
   label: Service:Git
   business:
     requirement: |
@@ -1105,8 +1001,7 @@ services:
   tier: stor
   teams:
     - gitaly
-    - infrastructure-git
-  infra_owner: infrastructure-git
+  infra_owner: sre_datastores
   label: Service:Gitaly
   business:
     requirement: |
@@ -1191,9 +1086,7 @@ services:
 
 - name: influxdb
   tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
+  infra_owner: sre_observability
   label: Service:Influxdb
   business:
     requirement: |
@@ -1332,7 +1225,7 @@ services:
     - gitter
     - manage
     - plan
-  infra_owner: infrastructure-coreinfra
+  infra_owner: sre_coreinfra
   label: Service:Mailroom
   business:
     requirement: It is needed to allow responding to issues/MR through email replies.
@@ -1390,9 +1283,8 @@ services:
 - name: pages
   tier: lb
   teams:
-    - infrastructure-webapp
     - release-management
-  infra_owner: infrastructure-webapp
+  infra_owner: sre_coreinfra
   label: Service:Pages
   business:
     requirement: |
@@ -1449,10 +1341,7 @@ services:
 
 - name: web-pages
   tier: sv
-  teams:
-    - infrastructure-webapp
-    - infrastructure-caches-ci-queues
-  infra_owner: infrastructure-webapp
+  infra_owner: sre_coreinfra
   label: Service:Pages
   business:
     requirement: |
@@ -1518,10 +1407,7 @@ services:
 
 - name: pgbouncer
   tier: db
-  teams:
-    - infrastructure-webapp
-    - infrastructure-database
-  infra_owner: infrastructure-database
+  infra_owner: sre_datastores
   label: Service:pgbouncer
   business:
     requirement:  We use PgBouncer as the connection pooler for PostgreSQL
@@ -1590,9 +1476,7 @@ services:
 
 - name: patroni
   tier: db
-  teams:
-    - infrastructure-database
-  infra_owner: infrastructure-database
+  infra_owner: sre_datastores
   label: Service:Postgres
   business:
     requirement:  We use Postgres as our backend database.
@@ -1678,9 +1562,7 @@ services:
 
 - name: postgres-dr-archive
   tier: db
-  teams:
-    - infrastructure-database
-  infra_owner: infrastructure-database
+  infra_owner: sre_datastores
   label: Service:PostgresArchive
   business:
     requirement: |
@@ -1767,9 +1649,7 @@ services:
 
 - name: postgres-dr-delayed
   tier: db
-  teams:
-    - infrastructure-database
-  infra_owner: infrastructure-database
+  infra_owner: sre_datastores
   label: Service:PostgresDelayed
   business:
     requirement: |
@@ -1850,10 +1730,7 @@ services:
 
 - name: psql-timings
   tier: inf
-  teams:
-    - infrastructure-database
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
+  infra_owner: sre_observability
   label: Service:PsqlTimings
   business:
     requirement: |
@@ -1917,9 +1794,7 @@ services:
 
 - name: monitoring
   tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
+  infra_owner: sre_observability
   label: Service:Prometheus
   business:
     requirement: |
@@ -2008,10 +1883,7 @@ services:
 
 - name: redis
   tier: db
-  teams:
-    - infrastructure-caches-ci-queues
-    - infrastructure-webapp
-  infra_owner: infrastructure-caches-ci-queues
+  infra_owner: sre_observability
   label: Service:Redis
   business:
     requirement: |
@@ -2077,9 +1949,7 @@ services:
 
 - name: redis-cache
   tier: db
-  teams:
-    - infrastructure-caches-ci-queues
-  infra_owner: infrastructure-caches-ci-queues
+  infra_owner: sre_observability
   label: Service:RedisCache
   business:
     requirement: |
@@ -2141,9 +2011,7 @@ services:
 
 - name: redis-cache-sentinel
   tier: db
-  teams:
-    - infrastructure-caches-ci-queues
-  infra_owner: infrastructure-caches-ci-queues
+  infra_owner: sre_observability
   label: Service:RedisCacheSentinel
   business:
     requirement: |
@@ -2205,9 +2073,7 @@ services:
 
 - name: redis-sidekiq
   tier: db
-  teams:
-    - infrastructure-caches-ci-queues
-  infra_owner: infrastructure-caches-ci-queues
+  infra_owner: sre_observability
   label: Service:RedisSidekiq
   business:
     requirement: |
@@ -2271,8 +2137,7 @@ services:
   tier: sv
   teams:
     - package
-    - infrastructure-caches-ci-queues
-  infra_owner: infrastructure-caches-ci-queues
+  infra_owner: sre_observability
   label: Service:Registry
   business:
     requirement: |
@@ -2339,14 +2204,12 @@ services:
 - name: nfs
   tier: stor
   teams:
-    - infrastructure-webapp
-    - infrastructure-caches-ci-queues
     - create
     - distribution
     - geo
     - manage
     - plan
-  infra_owner: infrastructure-coreinfra
+  infra_owner: sre_coreinfra
   label: Service:Share
   business:
     requirement: |
@@ -2413,7 +2276,7 @@ services:
     - gitter
     - manage
     - plan
-  infra_owner: infrastructure-caches-ci-queues
+  infra_owner: sre_observability
   label: Service:Sidekiq
   business:
     requirement: |
@@ -2496,8 +2359,7 @@ services:
   tier: sv
   teams:
     - verify
-    - infrastructure-caches-ci-queues
-  infra_owner: infrastructure-caches-ci-queues
+  infra_owner: sre_observability
   label: Service:Runner
   business:
     requirement: |
@@ -2565,8 +2427,6 @@ services:
 
 - name: license
   tier: sv
-  teams:
-    - infrastructure-businessops
   infra_owner: infrastructure-businessops
   label: Service:License
   business:
@@ -2635,8 +2495,6 @@ services:
 
 - name: version
   tier: sv
-  teams:
-    - infrastructure-businessops
   infra_owner: infrastructure-businessops
   label: Service:Version
   business:
@@ -2707,9 +2565,7 @@ services:
 
 - name: pubsub
   tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
+  infra_owner: sre_observability
   label: Service:PubSub
   business:
     requirement: |
@@ -2796,9 +2652,7 @@ services:
 
 - name: ci-runners
   tier: sv
-  teams:
-    - infrastructure-caches-ci-queues
-  infra_owner: infrastructure-caches-ci-queues
+  infra_owner: sre_observability
   label: Service:CI Runner
   business:
     requirement: |
@@ -2876,9 +2730,7 @@ services:
 
 - name: stackdriver
   tier: inf
-  teams:
-    - infrastructure-observability
-  infra_owner: infrastructure-observability
+  infra_owner: sre_observability
   label: Service:Stackdriver
   business:
     requirement: |
@@ -2938,9 +2790,7 @@ services:
 
 - name: waf
   tier: lb
-  teams:
-    - infrastructure-coreinfra
-  infra_owner: infrastructure-coreinfra
+  infra_owner: sre_coreinfra
   label: Service:WAF
   business:
     requirement: |

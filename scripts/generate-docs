@@ -38,18 +38,15 @@ def replace_header(file, header)
   IO.write(file, lines.join)
 end
 
-def generate_header(service, teams, tier)
+def generate_header(service, tier)
   service_name = service["name"]
   troubeshooting_docs = find_troubleshooting_docs(service_name)
   template = <<-MARKDOWN_EOF
 #{START_MARKER}
 #  <%= service["name"].capitalize %> Service
-
-* **Responsible Teams**:
-<%- teams.each do |team| -%>
-  * [<%= team["name"] %>](<%= team["url"] %>). **Slack Channel**: [\#<%= team["slack_channel"] %>](https://gitlab.slack.com/archives/<%= team["slack_channel"] %>)
-<%- end -%>
-* **General Triage Dashboard**: https://dashboards.gitlab.net/d/26q8nTzZz/service-platform-metrics?from=now-6h&to=now&var-prometheus_ds=Global&var-environment=gprd&var-type=<%= service_name %>&orgId=1
+<% if service&.dig("observability", "monitors", "primary_grafana_dashboard") -%>
+* [Service Overview](https://dashboards.gitlab.net/d/<%=service["observability"]["monitors"]["primary_grafana_dashboard"]%>)
+<% end -%>
 * **Alerts**: https://alerts.gitlab.net/#/alerts?filter=%7Btype%3D%22<%= service_name %>%22%2C%20tier%3D%22<%= service["tier"] %>%22%7D
 <% if service["label"] -%>
 * **Label**: gitlab-com/gl-infra/production~"<%= service["label"] %>"
@@ -78,7 +75,6 @@ def generate_header(service, teams, tier)
   MARKDOWN_EOF
 
   data = OpenStruct.new(
-    teams: teams,
     service: service,
     tier: tier,
     troubeshooting_docs: troubeshooting_docs
@@ -91,17 +87,15 @@ def generate_docs
   service_mapping_yaml = YAML.load_file(File.join(__dir__, "..", "services", "service-catalog.yml"))
   services = service_mapping_yaml["services"]
 
-  team_map = service_mapping_yaml["teams"].each_with_object({}) { |team, map| map[team["name"]] = team;  }
-  tier_map = service_mapping_yaml["tiers"].each_with_object({}) { |tier, map| map[tier["name"]] = tier;  }
+  tier_map = service_mapping_yaml["tiers"].each_with_object({}) { |tier, map| map[tier["name"]] = tier; }
   service_map = service_mapping_yaml["services"].each_with_object({}) { |service, map| map[service["name"]] = service; }
 
   services.each do |service|
     service_name = service["name"]
-    teams = service["teams"].map { |team| team_map[team] }
     tier = tier_map[service["tier"]]
 
     troubleshooting_doc = File.join(__dir__, "..", "docs", service_name.to_s, "service-#{service_name}.md")
-    details = generate_header(service, teams, tier)
+    details = generate_header(service, tier)
     if File.exist?(troubleshooting_doc)
       replace_header(troubleshooting_doc, details)
     else
