@@ -1,4 +1,4 @@
-local aggregations = import './aggregations.libsonnet';
+local aggregations = import 'promql/aggregations.libsonnet';
 
 {
   // A custom rate query allows arbitrary PromQL to be used as a rate query

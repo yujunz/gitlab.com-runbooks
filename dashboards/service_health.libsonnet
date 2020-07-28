@@ -1,6 +1,6 @@
 local colors = import 'colors.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
-local selectors = import 'lib/selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 
 local row = grafana.row;

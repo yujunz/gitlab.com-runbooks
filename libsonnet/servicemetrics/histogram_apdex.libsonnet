@@ -1,7 +1,7 @@
-local aggregations = import './aggregations.libsonnet';
-local selectors = import './selectors.libsonnet';
-local recordingRuleRegistry = import 'recording-rule-registry.libsonnet';
-local strings = import 'strings.libsonnet';
+local aggregations = import 'promql/aggregations.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
+local recordingRuleRegistry = import 'recording-rule-registry.libsonnet'; # TODO: fix circular dependency
+local strings = import 'utils/strings.libsonnet';
 
 // A general apdex query is:
 //

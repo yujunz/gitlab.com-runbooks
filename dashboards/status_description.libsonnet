@@ -1,5 +1,5 @@
-local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
-local selectors = import 'lib/selectors.libsonnet';
+local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 
 local descriptionMappings = [

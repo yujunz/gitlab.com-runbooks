@@ -11,7 +11,7 @@ local tablePanel = grafana.tablePanel;
 local timepickerlib = import 'github.com/grafana/grafonnet-lib/grafonnet/timepicker.libsonnet';
 local templates = import 'templates.libsonnet';
 local commonAnnotations = import 'common_annotations.libsonnet';
-local stableIds = import 'lib/stable-ids.libsonnet';
+local stableIds = import 'stable-ids/stable-ids.libsonnet';
 
 local applyStableIdsToPanel(panel) =
   if std.objectHasAll(panel, 'applyPanelId') then

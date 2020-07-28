@@ -15,7 +15,7 @@ local layout = import 'layout.libsonnet';
 local text = grafana.text;
 local issueSearch = import 'issue_search.libsonnet';
 local saturationResources = import './saturation-resources.libsonnet';
-local selectors = import './lib/selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
 {
   saturationPanel(title, description, component, linewidth=1, query=null, legendFormat=null, selector=null)::

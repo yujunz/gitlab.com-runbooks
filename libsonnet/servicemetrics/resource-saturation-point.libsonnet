@@ -1,7 +1,7 @@
-local selectors = import './selectors.libsonnet';
-local alerts = import 'alerts.libsonnet';
-local stableIds = import 'lib/stable-ids.libsonnet';
-local strings = import 'strings.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
+local alerts = import 'alerts/alerts.libsonnet';
+local stableIds = import 'stable-ids/stable-ids.libsonnet';
+local strings = import 'utils/strings.libsonnet';
 
 // The severity labels that we allow on resources
 local severities = std.set(['s1', 's2', 's3', 's4']);

@@ -1,5 +1,5 @@
-local aggregations = import './aggregations.libsonnet';
-local selectors = import './selectors.libsonnet';
+local aggregations = import 'promql/aggregations.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local metricsLabelRegistry = import 'metric-label-registry.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 

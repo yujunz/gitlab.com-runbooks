@@ -1,4 +1,4 @@
-local strings = import './strings.libsonnet';
+local strings = import 'utils/strings.libsonnet';
 
 // serializeItem supports 5 forms for the value:
 // 1: for string values: -> `label="value"`

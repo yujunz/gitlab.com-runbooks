@@ -1,4 +1,4 @@
-local strings = import 'strings.libsonnet';
+local strings = import 'utils/strings.libsonnet';
 
 local serialize(labels) =
   if std.isString(labels) then

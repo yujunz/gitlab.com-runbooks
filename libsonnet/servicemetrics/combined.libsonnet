@@ -1,6 +1,6 @@
-local aggregations = import './aggregations.libsonnet';
-local selectors = import './selectors.libsonnet';
-local strings = import 'strings.libsonnet';
+local aggregations = import 'promql/aggregations.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
+local strings = import 'utils/strings.libsonnet';
 
 // Merge two hashes of the form { key: set },
 local merge(h1, h2) =

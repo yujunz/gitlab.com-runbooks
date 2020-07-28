@@ -22,8 +22,8 @@ local saturationDetail = import 'saturation_detail.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local promQuery = import 'prom_query.libsonnet';
 local link = grafana.link;
-local elasticsearchLinks = import 'elasticsearch_links.libsonnet';
-local selectors = import './lib/selectors.libsonnet';
+local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
 local optimalUtilization = 0.33;
 local optimalMargin = 0.10;

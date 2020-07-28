@@ -13,7 +13,7 @@ local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
-local selectors = import 'lib/selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
 
 local defaultEnvironmentSelector = { environment: '$environment' };

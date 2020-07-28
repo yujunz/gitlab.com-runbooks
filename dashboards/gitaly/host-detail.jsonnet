@@ -20,7 +20,7 @@ local annotation = grafana.annotation;
 local serviceHealth = import 'service_health.libsonnet';
 local metricsCatalogDashboards = import 'metrics_catalog_dashboards.libsonnet';
 local gitalyCommon = import 'gitaly/gitaly_common.libsonnet';
-local selectors = import 'lib/selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local processExporter = import 'process_exporter.libsonnet';
 
 local selectorHash = {

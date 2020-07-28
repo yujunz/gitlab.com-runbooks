@@ -1,6 +1,6 @@
-local alerts = import 'lib/alerts.libsonnet';
-local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
-local stableIds = import 'lib/stable-ids.libsonnet';
+local alerts = import 'alerts/alerts.libsonnet';
+local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
+local stableIds = import 'stable-ids/stable-ids.libsonnet';
 
 // For now, only include components that run at least once a second
 // in the monitoring. This is to avoid low-volume, noisy alerts

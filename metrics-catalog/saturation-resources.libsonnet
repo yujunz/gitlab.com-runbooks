@@ -1,5 +1,7 @@
-local resourceSaturationPoint = (import './lib/resource-saturation-point.libsonnet').resourceSaturationPoint;
+local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local sidekiqHelpers = import './services/lib/sidekiq-helpers.libsonnet';
+
+local resourceSaturationPoint =  metricsCatalog.resourceSaturationPoint;
 
 // Disk utilisation metrics are currently reporting incorrectly for
 // HDD volumes, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10248

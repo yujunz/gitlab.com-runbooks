@@ -1,4 +1,4 @@
-local selectors = import './lib/selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
 // Generates apdex weight recording rules for a component definition
 local generateApdexWeightRules(ruleSet, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
