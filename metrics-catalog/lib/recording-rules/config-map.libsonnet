@@ -2,6 +2,7 @@ local sliRecordingRulesSet = (import 'sli-recording-rule-set.libsonnet').sliReco
 local componentMetricsRuleSet = (import 'component-metrics-rule-set.libsonnet').componentMetricsRuleSet;
 local componentMappingRuleSet = (import 'component-mapping-rule-set.libsonnet').componentMappingRuleSet;
 local componentNodeErrorRatioRuleSet = (import 'component-node-error-ratio-rule-set.libsonnet').componentNodeErrorRatioRuleSet;
+local componentNodeSLORuleSet = (import 'component-node-slo-rule-set.libsonnet').componentNodeSLORuleSet;
 local serviceMappingRuleSet = (import 'service-mapping-rule-set.libsonnet').serviceMappingRuleSet;
 local serviceSLORuleSet = (import 'service-slo-rule-set.libsonnet').serviceSLORuleSet;
 local aggregatedComponentErrorRatioRuleSet = (import 'aggregated-component-error-ratio-rule-set.libsonnet').aggregatedComponentErrorRatioRuleSet;
@@ -157,6 +158,8 @@ local ruleSetIterator(ruleSets) = {
           // 1h node-level metrics (no apdex for now)
           componentMetricsRuleSet(
             burnRate=burnRate,
+            apdexRatio='gitlab_component_node_apdex:ratio_1h',
+            apdexWeight='gitlab_component_node_apdex:weight:score_1h',
             requestRate='gitlab_component_node_ops:rate_1h',
             errorRate='gitlab_component_node_errors:rate_1h',
             aggregationLabels=NODE_LEVEL_AGGREGATION_LABELS,
@@ -199,7 +202,7 @@ local ruleSetIterator(ruleSets) = {
         [
           componentNodeErrorRatioRuleSet(suffix=suffix),
         ],
-      std.filter(function(f) f != "", MULTI_BURN_RATE_SUFFIXES) // Exclude 1m burns
+      std.filter(function(f) f != '', MULTI_BURN_RATE_SUFFIXES)  // Exclude 1m burns
     )),
 
     // Component mappings are static recording rules which help
@@ -207,6 +210,7 @@ local ruleSetIterator(ruleSets) = {
     // prevent spurious alerts when a component is decommissioned.
     componentMapping: ruleSetIterator([
       componentMappingRuleSet(),
+      componentNodeSLORuleSet(),
     ]),
 
     recordingRuleGroupsForService(serviceDefinition)::

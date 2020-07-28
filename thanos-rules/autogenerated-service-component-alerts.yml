@@ -76,7 +76,7 @@ groups:
       description: >
         The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage
         has an error burn-rate outside of SLO The error-burn rate for this service is outside of SLO over
-        multiple windows. Currently the error-rate is {{ $value | humanizePercentage }}%.
+        multiple windows. Currently the error-rate is {{ $value | humanizePercentage }}.
       grafana_dashboard_id: alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo
       grafana_dashboard_link: >-
         https://dashboards.gitlab.net/d/alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo?from=now-6h/m&to=now-1m/m&var-environment={{
