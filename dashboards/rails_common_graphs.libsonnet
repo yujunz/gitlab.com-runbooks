@@ -1,5 +1,5 @@
 local basic = import 'basic.libsonnet';
-local elasticsearchLinks = import 'elasticsearch_links.libsonnet';
+local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libsonnet';
 local layout = import 'layout.libsonnet';
 
 {

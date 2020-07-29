@@ -1,5 +1,5 @@
-local alerts = import 'lib/alerts.libsonnet';
-local stableIds = import 'lib/stable-ids.libsonnet';
+local alerts = import 'alerts/alerts.libsonnet';
+local stableIds = import 'stable-ids/stable-ids.libsonnet';
 
 local sidekiqThanosAlerts = [
   /**

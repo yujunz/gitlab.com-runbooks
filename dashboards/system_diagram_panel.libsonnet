@@ -1,4 +1,4 @@
-local dependencies = import './lib/dependencies.libsonnet';
+local dependencies = import './dependencies.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 local promQuery = import 'prom_query.libsonnet';

@@ -14,7 +14,7 @@ local row = grafana.row;
 local graphPanel = grafana.graphPanel;
 local row = grafana.row;
 local tablePanel = grafana.tablePanel;
-local selectors = import './lib/selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local saturationResources = import 'saturation-resources.libsonnet';
 
 local wrapSaturationQueryWithAlertDashboardJoin(query) =

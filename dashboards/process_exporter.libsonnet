@@ -1,4 +1,4 @@
-local selectors = import './lib/selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local basic = import 'basic.libsonnet';
 local layout = import 'layout.libsonnet';
 

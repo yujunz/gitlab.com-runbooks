@@ -1,7 +1,7 @@
 local IGNORED_GPRD_QUEUES = import './temp-ignored-gprd-queue-list.libsonnet';
-local alerts = import 'lib/alerts.libsonnet';
-local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
-local stableIds = import 'lib/stable-ids.libsonnet';
+local alerts = import 'alerts/alerts.libsonnet';
+local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
+local stableIds = import 'stable-ids/stable-ids.libsonnet';
 
 // For the first iteration, all sidekiq workers will have the samne
 // error budget. In future, we may introduce a criticality attribute to

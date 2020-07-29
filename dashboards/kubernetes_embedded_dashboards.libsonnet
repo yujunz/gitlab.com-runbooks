@@ -6,7 +6,7 @@ local graphPanel = grafana.graphPanel;
 local row = grafana.row;
 local seriesOverrides = import 'series_overrides.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
-local selectors = import 'lib/selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
 {
   kubernetesOverview(nodeSelectorHash, startRow=1)::

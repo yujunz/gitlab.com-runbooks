@@ -13,7 +13,7 @@ local promQuery = import 'prom_query.libsonnet';
 local sidekiqHelpers = import 'services/lib/sidekiq-helpers.libsonnet';
 local seriesOverrides = import 'series_overrides.libsonnet';
 local row = grafana.row;
-local elasticsearchLinks = import 'elasticsearch_links.libsonnet';
+local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libsonnet';
 local issueSearch = import 'issue_search.libsonnet';
 
 local selector = 'environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue"';

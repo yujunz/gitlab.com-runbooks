@@ -1,4 +1,4 @@
-local configMap = import './lib/recording-rules/config-map.libsonnet';
+local configMap = import 'recording-rule-config-map.libsonnet';
 local services = import './services/all.jsonnet';
 
 local outputPromYaml(groups) =

@@ -1,4 +1,4 @@
-local metricsCatalog = import '../lib/metrics.libsonnet';
+local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local rateMetric = metricsCatalog.rateMetric;
 local customApdex = metricsCatalog.customApdex;
 local combined = metricsCatalog.combined;

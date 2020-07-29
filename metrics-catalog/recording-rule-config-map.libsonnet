@@ -1,22 +1,10 @@
-local sliRecordingRulesSet = (import 'sli-recording-rule-set.libsonnet').sliRecordingRulesSet;
-local componentMetricsRuleSet = (import 'component-metrics-rule-set.libsonnet').componentMetricsRuleSet;
-local componentMappingRuleSet = (import 'component-mapping-rule-set.libsonnet').componentMappingRuleSet;
-local componentNodeErrorRatioRuleSet = (import 'component-node-error-ratio-rule-set.libsonnet').componentNodeErrorRatioRuleSet;
-local componentNodeSLORuleSet = (import 'component-node-slo-rule-set.libsonnet').componentNodeSLORuleSet;
-local serviceMappingRuleSet = (import 'service-mapping-rule-set.libsonnet').serviceMappingRuleSet;
-local serviceSLORuleSet = (import 'service-slo-rule-set.libsonnet').serviceSLORuleSet;
-local aggregatedComponentErrorRatioRuleSet = (import 'aggregated-component-error-ratio-rule-set.libsonnet').aggregatedComponentErrorRatioRuleSet;
-local aggregatedComponentApdexRatioRuleSet = (import 'aggregated-component-apdex-ratio-rule-set.libsonnet').aggregatedComponentApdexRatioRuleSet;
-local serviceErrorRatioRuleSet = (import 'service-error-ratio-rule-set.libsonnet').serviceErrorRatioRuleSet;
-local serviceNodeErrorRatioRuleSet = (import 'service-node-error-ratio-rule-set.libsonnet').serviceNodeErrorRatioRuleSet;
-local serviceApdexRatioRuleSet = (import 'service-apdex-ratio-rule-set.libsonnet').serviceApdexRatioRuleSet;
-local serviceNodeApdexRatioRuleSet = (import 'service-node-apdex-ratio-rule-set.libsonnet').serviceNodeApdexRatioRuleSet;
-local extraRecordingRuleSet = (import 'extra-recording-rule-set.libsonnet').extraRecordingRuleSet;
+local recordingRules = import 'recording-rules/recording-rules.libsonnet';
+local recordingRuleRegistry = import 'recording-rule-registry.libsonnet';
 
 local COMPONENT_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
 local NODE_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage', 'shard', 'fqdn'];
 
-local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
+local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
 
 local MULTI_BURN_RATE_SUFFIXES = [
   '',  // For historical reasons, no suffix implies 1m
@@ -56,8 +44,8 @@ local ruleSetIterator(ruleSets) = {
         evaluationInterval: '1m',
         rules: ruleSetIterator([
           // 1m burn rate intermediate recording rules. This should always be first
-          sliRecordingRulesSet(burnRate),
-          componentMetricsRuleSet(
+          recordingRules.sliRecordingRulesSet(burnRate, recordingRuleRegistry),
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             // TODO: consider renaming the 1m rates for consistency
             apdexRatio='gitlab_component_apdex:ratio',
@@ -67,7 +55,7 @@ local ruleSetIterator(ruleSets) = {
             aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
             substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
           ),
-          extraRecordingRuleSet(burnRate),
+          recordingRules.extraRecordingRuleSet(burnRate),
         ]),
 
         nodeLevelRules: ruleSetIterator([
@@ -80,8 +68,8 @@ local ruleSetIterator(ruleSets) = {
         evaluationInterval: '1m',  // 5m burn rate is part of fast burn rule, evaluate every minute
         rules: ruleSetIterator([
           // 5m burn rate intermediate recording rules. This should always be first
-          sliRecordingRulesSet(burnRate),
-          componentMetricsRuleSet(
+          recordingRules.sliRecordingRulesSet(burnRate, recordingRuleRegistry),
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             apdexRatio='gitlab_component_apdex:ratio_5m',
             apdexWeight='gitlab_component_apdex:weight:score_5m',
@@ -90,12 +78,12 @@ local ruleSetIterator(ruleSets) = {
             aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
             substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
           ),
-          extraRecordingRuleSet(burnRate),
+          recordingRules.extraRecordingRuleSet(burnRate),
         ]),
 
         nodeLevelRules: ruleSetIterator([
           // 5m node-level metrics
-          componentMetricsRuleSet(
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             apdexRatio='gitlab_component_node_apdex:ratio_5m',
             apdexWeight='gitlab_component_node_apdex:weight:score_5m',
@@ -112,8 +100,8 @@ local ruleSetIterator(ruleSets) = {
         evaluationInterval: '2m',  // 30m burn rate is part of slow burn rule, evaluate every 2 minutes
         rules: ruleSetIterator([
           // 30m burn rate intermediate recording rules. This should always be first
-          sliRecordingRulesSet(burnRate),
-          componentMetricsRuleSet(
+          recordingRules.sliRecordingRulesSet(burnRate, recordingRuleRegistry),
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             apdexRatio='gitlab_component_apdex:ratio_30m',
             apdexWeight='gitlab_component_apdex:weight:score_30m',
@@ -122,12 +110,12 @@ local ruleSetIterator(ruleSets) = {
             aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
             substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
           ),
-          extraRecordingRuleSet(burnRate='30m'),
+          recordingRules.extraRecordingRuleSet(burnRate='30m'),
         ]),
 
         nodeLevelRules: ruleSetIterator([
           // 30m node-level metrics, (no apdex)
-          componentMetricsRuleSet(
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             requestRate='gitlab_component_node_ops:rate_30m',
             errorRate='gitlab_component_node_errors:rate_30m',
@@ -141,8 +129,8 @@ local ruleSetIterator(ruleSets) = {
         evaluationInterval: '1m',  // 1h burn rate is part of fast burn rule, evaluate every minute
         rules: ruleSetIterator([
           // 1h burn rate intermediate recording rules. This should always be first
-          sliRecordingRulesSet(burnRate),
-          componentMetricsRuleSet(
+          recordingRules.sliRecordingRulesSet(burnRate, recordingRuleRegistry),
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             apdexRatio='gitlab_component_apdex:ratio_1h',
             apdexWeight='gitlab_component_apdex:weight:score_1h',
@@ -151,12 +139,12 @@ local ruleSetIterator(ruleSets) = {
             aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
             substituteWeightWithRecordingRule=false,  // Initially only use this for slow burns
           ),
-          extraRecordingRuleSet(burnRate),
+          recordingRules.extraRecordingRuleSet(burnRate),
         ]),
 
         nodeLevelRules: ruleSetIterator([
           // 1h node-level metrics (no apdex for now)
-          componentMetricsRuleSet(
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             apdexRatio='gitlab_component_node_apdex:ratio_1h',
             apdexWeight='gitlab_component_node_apdex:weight:score_1h',
@@ -172,8 +160,8 @@ local ruleSetIterator(ruleSets) = {
         evaluationInterval: '2m',  // 6h burn rate is part of slow burn rule, evaluate every 2 minutes
         rules: ruleSetIterator([
           // 6h burn rate intermediate recording rules. This should always be first
-          sliRecordingRulesSet(burnRate),
-          componentMetricsRuleSet(
+          recordingRules.sliRecordingRulesSet(burnRate, recordingRuleRegistry),
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             apdexRatio='gitlab_component_apdex:ratio_6h',
             apdexWeight='gitlab_component_apdex:weight:score_6h',
@@ -182,12 +170,12 @@ local ruleSetIterator(ruleSets) = {
             aggregationLabels=COMPONENT_LEVEL_AGGREGATION_LABELS,
             substituteWeightWithRecordingRule=substituteWeightWithRecordingRule,
           ),
-          extraRecordingRuleSet(burnRate),
+          recordingRules.extraRecordingRuleSet(burnRate),
         ]),
 
         nodeLevelRules: ruleSetIterator([
           // 6h node-level metrics (no apdex)
-          componentMetricsRuleSet(
+          recordingRules.componentMetricsRuleSet(
             burnRate=burnRate,
             requestRate='gitlab_component_node_ops:rate_6h',
             errorRate='gitlab_component_node_errors:rate_6h',
@@ -200,7 +188,7 @@ local ruleSetIterator(ruleSets) = {
     componentErrorRatios: ruleSetIterator(std.flatMap(
       function(suffix)
         [
-          componentNodeErrorRatioRuleSet(suffix=suffix),
+          recordingRules.componentNodeErrorRatioRuleSet(suffix=suffix),
         ],
       std.filter(function(f) f != '', MULTI_BURN_RATE_SUFFIXES)  // Exclude 1m burns
     )),
@@ -209,8 +197,8 @@ local ruleSetIterator(ruleSets) = {
     // determine whether a component is being monitored. This helps
     // prevent spurious alerts when a component is decommissioned.
     componentMapping: ruleSetIterator([
-      componentMappingRuleSet(),
-      componentNodeSLORuleSet(),
+      recordingRules.componentMappingRuleSet(),
+      recordingRules.componentNodeSLORuleSet(),
     ]),
 
     recordingRuleGroupsForService(serviceDefinition)::
@@ -243,7 +231,7 @@ local ruleSetIterator(ruleSets) = {
     // The service SLO rules map SLOs to static recording rules,
     // for use in alerting, dashboards, etc
     serviceSLOs: ruleSetIterator([
-      serviceSLORuleSet(),
+      recordingRules.serviceSLORuleSet(),
     ]),
 
     // Component-level apdex ratios, aggregated at the Thanos level, to
@@ -252,7 +240,7 @@ local ruleSetIterator(ruleSets) = {
     aggregatedComponentApdexRatios: ruleSetIterator(std.flatMap(
       function(suffix)
         [
-          aggregatedComponentApdexRatioRuleSet(suffix=suffix),
+          recordingRules.aggregatedComponentApdexRatioRuleSet(suffix=suffix),
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),
@@ -263,7 +251,7 @@ local ruleSetIterator(ruleSets) = {
     aggregatedComponentErrorRatios: ruleSetIterator(std.flatMap(
       function(suffix)
         [
-          aggregatedComponentErrorRatioRuleSet(suffix=suffix),
+          recordingRules.aggregatedComponentErrorRatioRuleSet(suffix=suffix),
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),
@@ -273,8 +261,8 @@ local ruleSetIterator(ruleSets) = {
     serviceErrorRatios: ruleSetIterator(std.flatMap(
       function(suffix)
         [
-          serviceErrorRatioRuleSet(suffix=suffix),
-          serviceNodeErrorRatioRuleSet(suffix=suffix),
+          recordingRules.serviceErrorRatioRuleSet(suffix=suffix),
+          recordingRules.serviceNodeErrorRatioRuleSet(suffix=suffix)
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),
@@ -287,20 +275,20 @@ local ruleSetIterator(ruleSets) = {
         [
           // 1m burn rates use 5m weight scores
           // All other burn rates use the same burn rate as the ratio
-          serviceApdexRatioRuleSet(suffix=suffix, weightScoreSuffix=(if suffix == '' then '_5m' else suffix)),
+          recordingRules.serviceApdexRatioRuleSet(suffix=suffix, weightScoreSuffix=(if suffix == '' then '_5m' else suffix)),
         ],
       MULTI_BURN_RATE_SUFFIXES
     ) + [
       // We are only recording node-level apdex scores for 1m and 5m burn rates for now
-      serviceNodeApdexRatioRuleSet(suffix='', weightScoreSuffix='_5m'),
-      serviceNodeApdexRatioRuleSet(suffix='_5m', weightScoreSuffix='_5m'),
+      recordingRules.serviceNodeApdexRatioRuleSet(suffix='', weightScoreSuffix='_5m'),
+      recordingRules.serviceNodeApdexRatioRuleSet(suffix='_5m', weightScoreSuffix='_5m'),
     ]),
 
     // Component mappings are static recording rules which help
     // determine whether a component is being monitored. This helps
     // prevent spurious alerts when a component is decommissioned.
     serviceMapping: ruleSetIterator([
-      serviceMappingRuleSet(),
+      recordingRules.serviceMappingRuleSet(),
     ]),
 
   },

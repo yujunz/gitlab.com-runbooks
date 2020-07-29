@@ -1,4 +1,4 @@
-local metricsCatalog = import '../../lib/metrics.libsonnet';
+local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local sidekiqHelpers = import './sidekiq-helpers.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;

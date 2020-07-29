@@ -14,7 +14,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 secrets_file="${ALERTMANAGER_SECRETS_FILE:-dummy-secrets.jsonnet}"
 
 # Generate the raw YAML.
-if ! jsonnet -J ../services -J . --ext-code-file "secrets_file=${secrets_file}" --multi . --string alertmanager.jsonnet; then
+if ! jsonnet -J ../services -J ../libsonnet -J . --ext-code-file "secrets_file=${secrets_file}" --multi . --string alertmanager.jsonnet; then
   echo "Failed to generate jsonnet yaml"
   exit 1
 fi

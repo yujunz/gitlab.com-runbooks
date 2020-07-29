@@ -1,6 +1,6 @@
-local aggregations = import './aggregations.libsonnet';
-local selectors = import './selectors.libsonnet';
-local strings = import './strings.libsonnet';
+local aggregations = import 'promql/aggregations.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
+local strings = import 'utils/strings.libsonnet';
 
 local generateQuery(rateQueryTemplate, selector, rangeInterval) =
   local s = if selector == '' then '__name__!=""' else selector;

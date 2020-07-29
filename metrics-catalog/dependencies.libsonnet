@@ -1,5 +1,5 @@
-local metricsCatalog = import '../metrics-catalog.libsonnet';
-local all = import '../services/all.jsonnet';
+local metricsCatalog = import 'metrics-catalog.libsonnet';
+local all = import './services/all.jsonnet';
 
 local listDownstreamServicesRecursive(service, foundServices) =
   if std.objectHas(service, 'serviceDependencies') then

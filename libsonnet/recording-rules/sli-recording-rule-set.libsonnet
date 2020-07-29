@@ -1,6 +1,5 @@
-local recordingRuleRegistry = import '../recording-rule-registry.libsonnet';
 
-local generateRecordingRulesForMetric(recordingRuleMetric, burnRate) =
+local generateRecordingRulesForMetric(recordingRuleMetric, burnRate, recordingRuleRegistry) =
   local expression = recordingRuleRegistry.recordingRuleExpressionFor(metricName=recordingRuleMetric, rangeInterval=burnRate);
   local recordingRuleName = recordingRuleRegistry.recordingRuleNameFor(metricName=recordingRuleMetric, rangeInterval=burnRate);
 
@@ -14,7 +13,8 @@ local generateRecordingRulesForMetric(recordingRuleMetric, burnRate) =
   // that are specified in the service catalog under the
   // `recordingRuleMetrics` attribute.
   sliRecordingRulesSet(
-    burnRate
+    burnRate,
+    recordingRuleRegistry,
   )::
     {
       burnRate: burnRate,
@@ -24,7 +24,7 @@ local generateRecordingRulesForMetric(recordingRuleMetric, burnRate) =
         local components = serviceDefinition.components;
         if std.objectHas(serviceDefinition, 'recordingRuleMetrics') then
           [
-            generateRecordingRulesForMetric(recordingRuleMetric, burnRate)
+            generateRecordingRulesForMetric(recordingRuleMetric, burnRate, recordingRuleRegistry)
             for recordingRuleMetric in serviceDefinition.recordingRuleMetrics
           ]
         else

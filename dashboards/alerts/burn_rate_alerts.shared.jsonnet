@@ -13,8 +13,8 @@ local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
 local seriesOverrides = import 'series_overrides.libsonnet';
-local multiburnFactors = import 'lib/multiburn_factors.libsonnet';
-local selectors = import 'lib/selectors.libsonnet';
+local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
 
 local combinations(shortMetric, shortDuration, longMetric, longDuration, selectorHash, apdexInverted, sloMetric, nonGlobalFallback, thanosEvaluated=true) =

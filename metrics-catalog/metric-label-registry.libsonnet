@@ -1,4 +1,4 @@
-local selectors = import './selectors.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 
 // Merge two hashes of the form { key: set },

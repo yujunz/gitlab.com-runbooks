@@ -1,4 +1,4 @@
-local strings = import 'strings.libsonnet';
+local strings = import 'utils/strings.libsonnet';
 
 local getGrafanaLink(annotations) =
   local dashboardId = annotations.grafana_dashboard_id;
