@@ -83,6 +83,11 @@
       },
       {
         "mode": "NULLABLE",
+        "name": "remote_ip",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
         "name": "shard",
         "type": "STRING"
       },
