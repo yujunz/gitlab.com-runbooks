@@ -19,7 +19,7 @@
       {
         "mode": "NULLABLE",
         "name": "duration_ms",
-        "type": "INTEGER"
+        "type": "FLOAT"
       },
       {
         "mode": "NULLABLE",
