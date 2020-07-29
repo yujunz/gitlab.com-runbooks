@@ -34,12 +34,12 @@ replication (see recovery.conf). As of writing,
   base_0000000900004B96000000DB 2020-07-07T16:43:26Z 0000000900004B96000000DB
    ```
 
+  The first column, "name", is what you'll want to copy for later.
+
   Take the newest backup, but make sure that the name really contains the
   highest segment number - the modification date might not be reliable in case
-  there are GCS life cycle policies involved...
-  The older the backup we take, the more WAL files need to be replayed later.
-
-   The first column, "name", is what you'll want to copy for later.
+  there are GCS life cycle policies involved. The older the backup we take, the
+  more WAL files need to be replayed later.
 
 * `rm -rf /var/opt/gitlab/postgresql/data/*`
 * move old data away:
@@ -136,8 +136,8 @@ the entire cluster following below steps:
     ```
 
 2. Backup config files and delete data directory. We need to backup config files
-   because we will use wal-e backups from production to restore the data
-   directory, however wal-e backups does not contain config files. We will have
+   because we will use wal-g backups from production to restore the data
+   directory, however wal-g backups does not contain config files. We will have
    to copy the backed up config files back to data directory after restore:
 
     ```sh
@@ -189,7 +189,15 @@ the entire cluster following below steps:
     ```sh
     ssh patroni-02-db-dr.c.gitlab-dr.internal
     sudo su - gitlab-psql
-    /usr/bin/envdir /etc/wal-e.d/env /opt/wal-e/bin/wal-e backup-fetch /var/opt/gitlab/postgresql/data LATEST
+    latest="$( \
+      /usr/bin/envdir /etc/wal-g.d/env /opt/wal-g/bin/wal-g backup-list \
+      | grep base \
+      | sort -nk1 \
+      | tail -1 \
+      | awk '{print $1}' \
+    )"
+
+    /usr/bin/envdir /etc/wal-g.d/env /opt/wal-g/bin/wal-g backup-fetch /var/opt/gitlab/postgresql/data $latest
     ```
 
 7. While the restore is in process, copy back the config files we took at step 2
