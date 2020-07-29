@@ -25,6 +25,7 @@
     { name: 'gstg', apiKey: 'secret', cluster: '' },
     { name: 'pre', apiKey: 'secret', cluster: '' },
     { name: 'testbed', apiKey: 'secret', cluster: '' },
+    { name: 'thanos-rule', apiKey: 'secret', cluster: '' },
   ],
   // Generic webhook configs.
   webhookChannels: [
