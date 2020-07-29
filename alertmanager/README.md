@@ -1,12 +1,12 @@
 # Alertmanager configuration
 
-Alertmanager configuration files are shared amongst ALL alertmanagers across
-all environments. In order to sync this configuration between any node
-via chef and any pod running in Kubernetes, this directory holds the necessary
-template file for the configuration, and allows CI to populate any secrets. We
-then push the generated yml file as an encrypted file to object storage. The
-chef recipe or helm managed kubernetes repo will pull down the file and populate
-it into the appropriate place.
+Alertmanager configuration files are shared amongst ALL alertmanagers across all
+environments. In order to sync this configuration between any node via chef and
+any pod running in Kubernetes, this directory holds the necessary template file
+for the configuration, and allows CI to populate any secrets. We then push the
+generated yml file as an encrypted file to object storage. The chef recipe or
+helm managed kubernetes repo will pull down the file and populate it into the
+appropriate place.
 
 The CI jobs for this are run on ops.gitlab.net where the variables are configured.
 See: https://ops.gitlab.net/gitlab-com/runbooks/-/settings/ci_cd
