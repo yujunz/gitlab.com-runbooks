@@ -231,11 +231,11 @@ local seriesOverrides = import 'series_overrides.libsonnet';
 
     ], cols=2, rowHeight=10, startRow=startRow),
 
-  data(serviceType, startRow)::
+  data(serviceType, startRow, hitRatio=false)::
     local formatConfig = {
       serviceType: serviceType,
     };
-    layout.grid([
+    local charts = [
       basic.saturationTimeseries(
         title='Memory Saturation',
         // TODO: After upgrading to Redis 4, we should include the rdb_last_cow_size in this value
@@ -330,8 +330,32 @@ local seriesOverrides = import 'series_overrides.libsonnet';
         ||| % formatConfig,
         legendFormat='{{ fqdn }}',
         intervalFactor=2,
-      ),
-    ], cols=2, rowHeight=10, startRow=startRow),
+      )
+    ] +
+    if hitRatio then
+     [
+       basic.timeseries(
+         title='Hit Ratio',
+         yAxisLabel='Hits',
+         format='percentunit',
+         query=|||
+           sum(redis:keyspace_hits:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
+           /
+           (
+           sum(redis:keyspace_hits:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
+           +
+           sum(redis:keyspace_misses:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
+           )
+         ||| % formatConfig,
+         legendFormat='{{ fqdn }}',
+         intervalFactor=2,
+       )
+     ]
+    else
+     []
+    ;
+
+    layout.grid(charts, cols=2, rowHeight=10, startRow=startRow),
 
   replication(serviceType, startRow)::
     local formatConfig = {
