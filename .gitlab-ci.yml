@@ -114,15 +114,11 @@ deploy-rules-production:
   extends: .deploy-rules
   stage: deploy-rules-production
 
-# TODO delete "update-alertmanager" and inline this abstract job into
-# "update-alertmanager:ops" after
-# https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles/-/merge_requests/136
-# is successfully rolled out, and
-# https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10546 is
-# complete. After this, no-one will be using the GCS+GKMS alertmanager config
-# files that were consumed by chef and helm.
-.update-alertmanager:
+update-alertmanager:
   stage: alertmanager
+  environment: ops
+  tags:
+    - release
   script:
     - make test-alertmanager
     - cd alertmanager
@@ -134,15 +130,6 @@ deploy-rules-production:
       - alertmanager/*
     variables:
       - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
-
-update-alertmanager:
-  extends: .update-alertmanager
-
-update-alertmanager:ops:
-  extends: .update-alertmanager
-  environment: ops
-  tags:
-    - release
 
 test:
   stage: test
