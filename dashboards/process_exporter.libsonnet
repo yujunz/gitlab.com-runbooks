@@ -58,11 +58,11 @@ local layout = import 'layout.libsonnet';
         linewidth=1
       ),
       basic.timeseries(
-        title=title + ': Memory Usage',
-        description='Memory usage for named process group',
+        title=title + ': RSS Memory Usage',
+        description='Resident Memory usage for named process group',
         query=|||
           sum by(%(aggregationLabels)s) (
-            namedprocess_namegroup_memory_bytes{%(selector)s}
+            namedprocess_namegroup_memory_bytes{memtype="resident", %(selector)s}
           )
         ||| % formatConfig,
         legendFormat=legendFormat,
