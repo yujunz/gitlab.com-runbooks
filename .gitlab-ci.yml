@@ -141,6 +141,8 @@ update-alertmanager:
 update-alertmanager:ops:
   extends: .update-alertmanager
   environment: ops
+  tags:
+    - release
 
 test:
   stage: test
