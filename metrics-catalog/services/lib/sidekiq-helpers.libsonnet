@@ -17,6 +17,7 @@ local shards = {
   'urgent-cpu-bound': { urgency: 'high' },
   'urgent-other': { urgency: 'high', autoScaling: false },
   catchall: { urgency: null /* no urgency attribute since multiple values are supported */ },
+  catchnfs: { urgency: null /* no urgency attribute since multiple values are supported */ },
   elasticsearch: { urgency: 'throttled' },
 };
 
