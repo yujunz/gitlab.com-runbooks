@@ -1,5 +1,5 @@
-local basic = import 'basic.libsonnet';
-local layout = import 'layout.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
 
 basic.dashboard(
   'Bitbucket Server Importer',

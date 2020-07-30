@@ -1,10 +1,10 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local dashboard = grafana.dashboard;
 
-local commonAnnotations = import 'common_annotations.libsonnet';
-local templates = import 'templates.libsonnet';
-local layout = import 'layout.libsonnet';
-local basic = import 'basic.libsonnet';
+local commonAnnotations = import 'grafana/common_annotations.libsonnet';
+local templates = import 'grafana/templates.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local heatmapPanel = grafana.heatmapPanel;
 local row = grafana.row;
 local text = grafana.text;

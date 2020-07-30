@@ -1,9 +1,9 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local timepickerlib = import 'github.com/grafana/grafonnet-lib/grafonnet/timepicker.libsonnet';
 local prometheus = grafana.prometheus;
-local promQuery = import 'prom_query.libsonnet';
-local layout = import 'layout.libsonnet';
-local basic = import 'basic.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local annotation = grafana.annotation;
 local dashboard = grafana.dashboard;
 local graphPanel = grafana.graphPanel;

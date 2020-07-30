@@ -5,6 +5,10 @@ local rateMetric = metricsCatalog.rateMetric;
 metricsCatalog.serviceDefinition({
   type: 'ci-runners',
   tier: 'runners',
+  contractualThresholds: {
+    apdexRatio: 0.95,
+    errorRatio: 0.05,
+  },
   monitoringThresholds: {
     apdexScore: 0.97,
     errorRatio: 0.995,  // 99.5% of ci-runner requests should succeed, over multiple window periods

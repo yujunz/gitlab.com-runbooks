@@ -1,16 +1,16 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
 local graphPanel = grafana.graphPanel;
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local heatmapPanel = grafana.heatmapPanel;
 local row = grafana.row;
 local text = grafana.text;
-local seriesOverrides = import 'series_overrides.libsonnet';
+local seriesOverrides = import 'grafana/series_overrides.libsonnet';
 local singlestatPanel = grafana.singlestat;
 local tablePanel = grafana.tablePanel;
 local timepickerlib = import 'github.com/grafana/grafonnet-lib/grafonnet/timepicker.libsonnet';
-local templates = import 'templates.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
+local templates = import 'grafana/templates.libsonnet';
+local commonAnnotations = import 'grafana/common_annotations.libsonnet';
 local stableIds = import 'stable-ids/stable-ids.libsonnet';
 
 local applyStableIdsToPanel(panel) =
@@ -601,7 +601,7 @@ local panelOverrides(stableId) = {
     points=false,
     pointradius=3,
     stableId=null,
-
+    legend_show=true,
   )::
     local formatConfig = {
       query: query,
@@ -614,7 +614,7 @@ local panelOverrides(stableId) = {
       fill=0,
       datasource='$PROMETHEUS_DS',
       decimals=2,
-      legend_show=true,
+      legend_show=legend_show,
       legend_values=true,
       legend_min=true,
       legend_max=true,
@@ -707,6 +707,7 @@ local panelOverrides(stableId) = {
     query=null,
     fieldTitle='',
     legendFormat='',
+    displayName=null,
     links=[],
     stableId=null,
   )::
@@ -715,8 +716,70 @@ local panelOverrides(stableId) = {
       targets: [promQuery.target(query, legendFormat=legendFormat, instant=true)],
       title: title,
       type: 'stat',
-      pluginVersion: '6.6.1',
+      pluginVersion: '7.0.3',
       options: {
+        reduceOptions: {
+          values: true,
+          calcs: [
+            'last',
+          ],
+          fields: '',
+        },
+        orientation: 'auto',
+        colorMode: 'background',
+        graphMode: 'none',
+        justifyMode: 'auto',
+      },
+      fieldConfig: {
+        defaults: {
+          custom: {},
+          unit: 'percentunit',
+          min: 0,
+          max: 1,
+          decimals: 2,
+          displayName: displayName,
+          thresholds: {
+            mode: 'absolute',
+            steps: [
+              {
+                color: 'red',
+                value: null,
+              },
+              {
+                color: 'light-red',
+                value: 0.95,
+              },
+              {
+                color: 'orange',
+                value: 0.99,
+              },
+              {
+                color: 'light-orange',
+                value: 0.995,
+              },
+              {
+                color: 'yellow',
+                value: 0.9994,
+              },
+              {
+                color: 'light-yellow',
+                value: 0.9995,
+              },
+              {
+                color: 'green',
+                value: 0.9998,
+              },
+            ],
+          },
+          mappings: [],
+          links: links,
+          color: {
+            mode: 'thresholds',
+          },
+        },
+        overrides: [],
+      },
+      XXoptions: {
         graphMode: 'none',
         colorMode: 'background',
         justifyMode: 'auto',
@@ -771,6 +834,7 @@ local panelOverrides(stableId) = {
             links: links,
           },
           overrides: [],
+          displayName: displayName,
           thresholds: [
             {
               color: 'green',

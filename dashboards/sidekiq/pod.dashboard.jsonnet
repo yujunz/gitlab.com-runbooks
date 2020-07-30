@@ -1,13 +1,13 @@
-local commonAnnotations = import 'common_annotations.libsonnet';
+local commonAnnotations = import 'grafana/common_annotations.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local k8sPodsCommon = import 'kubernetes_pods_common.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';
 local template = grafana.template;
-local templates = import 'templates.libsonnet';
+local templates = import 'grafana/templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
-local basic = import 'basic.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 
 basic.dashboard(
   'Pod Info',

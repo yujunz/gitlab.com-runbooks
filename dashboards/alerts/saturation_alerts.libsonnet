@@ -1,14 +1,14 @@
-local commonAnnotations = import 'common_annotations.libsonnet';
+local commonAnnotations = import 'grafana/common_annotations.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local saturationDetail = import 'saturation_detail.libsonnet';
-local templates = import 'templates.libsonnet';
+local templates = import 'grafana/templates.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
 local annotation = grafana.annotation;
-local basic = import 'basic.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local saturationResources = import './saturation-resources.libsonnet';
 local serviceHealth = import './service_health.libsonnet';
 

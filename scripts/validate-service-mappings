@@ -49,6 +49,10 @@ def validate(service_catalog_path)
       end
     end
 
+    # friendly_name
+    friendly_name = service["friendly_name"]
+    raise "'#{service_name}' | service.friendly_name field must be string" unless friendly_name.is_a? String
+
     # label
     service_label = service["label"]
     raise "'#{service_name}' | label field must be string" unless service_label.is_a? String

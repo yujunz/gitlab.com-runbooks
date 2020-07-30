@@ -1,6 +1,6 @@
-local basic = import 'basic.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libsonnet';
-local layout = import 'layout.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
 
 {
   railsPanels(serviceType, serviceStage, startRow)::

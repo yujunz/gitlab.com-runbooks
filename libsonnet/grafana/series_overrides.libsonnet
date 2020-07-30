@@ -1,4 +1,4 @@
-local colors = import 'colors.libsonnet';
+local colors = import 'grafana/colors.libsonnet';
 
 local capacityComponentColors = {
   redis_clients: '#73BF69',

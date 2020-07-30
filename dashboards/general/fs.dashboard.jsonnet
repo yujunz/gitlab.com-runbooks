@@ -1,10 +1,10 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 
-local basic = import 'basic.libsonnet';
-local layout = import 'layout.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
 local panels = import 'panels.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local templates = import 'templates.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
+local templates = import 'grafana/templates.libsonnet';
 
 //######################################
 // ARC                                 #
