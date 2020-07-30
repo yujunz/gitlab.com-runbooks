@@ -161,7 +161,7 @@ local overviewDashboard(
     .addPanels(
       if metricsCatalogServiceInfo.getProvisioning().kubernetes == true then
         // TODO: fix nasty regexp: requires https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10249
-        local kubeSelectorHash = { environment: '$environment', pod_name: { re: 'gitlab-%s.*' % [type] } };
+        local kubeSelectorHash = { environment: '$environment', pod: { re: 'gitlab-%s.*' % [type] } };
         [
           row.new(title='☸️ Kubernetes Overview', collapse=true)
           .addPanels(kubeEmbeddedDashboards.kubernetesOverview(kubeSelectorHash, startRow=1)) +

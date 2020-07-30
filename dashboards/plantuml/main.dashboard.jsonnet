@@ -28,8 +28,8 @@ basic.dashboard(
     basic.timeseries(
       title='Error messages',
       description='Stackdriver Errors',
-      query='sum(stackdriver_gke_container_logging_googleapis_com_log_entry_count{severity="ERROR", cluster_name="$cluster", namespace_id="plantuml"}) by (container_name) / 60',
-      legendFormat='{{ container_name }}',
+      query='sum(stackdriver_gke_container_logging_googleapis_com_log_entry_count{severity="ERROR", cluster_name="$cluster", namespace_id="plantuml"}) by (container) / 60',
+      legendFormat='{{ container }}',
       format='ops',
       interval='1m',
       intervalFactor=2,
@@ -40,8 +40,8 @@ basic.dashboard(
     basic.timeseries(
       title='Info messages',
       description='Stackdriver Errors',
-      query='sum(stackdriver_gke_container_logging_googleapis_com_log_entry_count{severity="INFO", cluster_name="$cluster", namespace_id="plantuml"}) by (container_name) / 60',
-      legendFormat='{{ container_name }}',
+      query='sum(stackdriver_gke_container_logging_googleapis_com_log_entry_count{severity="INFO", cluster_name="$cluster", namespace_id="plantuml"}) by (container) / 60',
+      legendFormat='{{ container }}',
       format='ops',
       interval='1m',
       intervalFactor=2,
