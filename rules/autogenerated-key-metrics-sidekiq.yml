@@ -99,6 +99,84 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score
     labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="10",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="10",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="300",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="60",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+      /
+      (
+        sum by (environment,stage) (
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1m{le="+Inf",shard="catchnfs"}
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_failed_total_rate1m{shard="catchnfs"}
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
       component: shard_database_throttled
       tier: sv
       type: sidekiq
@@ -577,6 +655,84 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+  - record: gitlab_component_apdex:ratio_5m
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="10",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="10",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="300",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="60",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+      /
+      (
+        sum by (environment,stage) (
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate5m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate5m{le="+Inf",shard="catchnfs"}
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_failed_total_rate5m{shard="catchnfs"}
+      )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
       component: shard_database_throttled
       tier: sv
       type: sidekiq
@@ -1041,6 +1197,70 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="+Inf",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+  - record: gitlab_component_apdex:ratio_30m
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="10",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="10",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="300",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate30m{le="60",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+      / on(environment,stage) group_left()
+      (
+        gitlab_component_apdex:weight:score_30m{component="shard_catchnfs",tier="sv",type="sidekiq"} > 0
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate30m{le="+Inf",shard="catchnfs"}
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_failed_total_rate30m{shard="catchnfs"}
+      )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
       component: shard_database_throttled
       tier: sv
       type: sidekiq
@@ -1496,6 +1716,84 @@ groups:
     expr: |
       sum by (environment,stage) (
         sli_aggregations:sidekiq_jobs_failed_total_rate1h{shard="catchall"}
+      )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+  - record: gitlab_component_apdex:ratio_1h
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="10",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="10",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="300",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="60",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+      /
+      (
+        sum by (environment,stage) (
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+          or
+          label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate1h{le="+Inf",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate1h{le="+Inf",shard="catchnfs"}
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_failed_total_rate1h{shard="catchnfs"}
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
@@ -1963,6 +2261,70 @@ groups:
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="+Inf",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+  - record: gitlab_component_apdex:ratio_6h
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="10",shard="catchnfs",urgency="high"}, "_c", "0", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="10",shard="catchnfs",urgency="high"}, "_c", "1", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchnfs",urgency="low"}, "_c", "2", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="catchnfs",urgency="low"}, "_c", "3", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchnfs",urgency="throttled"}, "_c", "4", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="300",shard="catchnfs",urgency=""}, "_c", "5", "", "")
+        or
+        label_replace(sli_aggregations:sidekiq_jobs_queue_duration_seconds_bucket_rate6h{le="60",shard="catchnfs",urgency=""}, "_c", "6", "", "")
+      )
+      / on(environment,stage) group_left()
+      (
+        gitlab_component_apdex:weight:score_6h{component="shard_catchnfs",tier="sv",type="sidekiq"} > 0
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_completion_seconds_bucket_rate6h{le="+Inf",shard="catchnfs"}
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: shard_catchnfs
+      tier: sv
+      type: sidekiq
+    expr: |
+      sum by (environment,stage) (
+        sli_aggregations:sidekiq_jobs_failed_total_rate6h{shard="catchnfs"}
+      )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
       component: shard_database_throttled
       tier: sv
       type: sidekiq
@@ -2330,6 +2692,13 @@ groups:
     labels:
       aggregate_rps: 'yes'
       component: shard_catchall
+      tier: sv
+      type: sidekiq
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'yes'
+      component: shard_catchnfs
       tier: sv
       type: sidekiq
     expr: '1'
