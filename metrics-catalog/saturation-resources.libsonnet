@@ -139,7 +139,7 @@ local pgbouncerSyncPool(serviceType, role) =
       application thread is using a database connection.
     |||,
     grafana_dashboard_uid: 'sat_rails_db_connection_pool',
-    resourceLabels: ['fqdn', 'host', 'port'],
+    resourceLabels: ['instance', 'host', 'port'],
     burnRatePeriod: '5m',
     query: |||
       (

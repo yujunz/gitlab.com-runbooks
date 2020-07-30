@@ -2374,7 +2374,7 @@ groups:
       grafana_panel_id: '2952'
       grafana_variables: environment,type,stage
       promql_query: |
-        max by(environment, tier, type, stage, fqdn, host, port) (
+        max by(environment, tier, type, stage, instance, host, port) (
           clamp_min(
             clamp_max(
               (
