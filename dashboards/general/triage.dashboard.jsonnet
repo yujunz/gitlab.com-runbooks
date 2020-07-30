@@ -1,17 +1,17 @@
 local capacityPlanning = import 'capacity_planning.libsonnet';
-local colors = import 'colors.libsonnet';
-local commonAnnotations = import 'common_annotations.libsonnet';
+local colors = import 'grafana/colors.libsonnet';
+local commonAnnotations = import 'grafana/common_annotations.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
-local templates = import 'templates.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
+local seriesOverrides = import 'grafana/series_overrides.libsonnet';
+local templates = import 'grafana/templates.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
 local graphPanel = grafana.graphPanel;
-local basic = import 'basic.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local sliPromQL = import 'sli_promql.libsonnet';
 
 local rowHeight = 8;

@@ -1,10 +1,10 @@
-local basic = import 'basic.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
-local layout = import 'layout.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
 local graphPanel = grafana.graphPanel;
 local row = grafana.row;
-local seriesOverrides = import 'series_overrides.libsonnet';
+local seriesOverrides = import 'grafana/series_overrides.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local selectors = import 'promql/selectors.libsonnet';
 

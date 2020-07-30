@@ -1,7 +1,7 @@
-local basic = import 'basic.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local keyMetrics = import 'key_metrics.libsonnet';
-local layout = import 'layout.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local row = grafana.row;

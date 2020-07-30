@@ -1,6 +1,6 @@
-local basic = import 'basic.libsonnet';
-local colors = import 'colors.libsonnet';
-local layout = import 'layout.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
+local colors = import 'grafana/colors.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
 
 {
   data(startRow)::

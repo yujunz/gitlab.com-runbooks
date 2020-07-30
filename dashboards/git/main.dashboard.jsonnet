@@ -3,8 +3,8 @@ local railsCommon = import 'rails_common_graphs.libsonnet';
 local workhorseCommon = import 'workhorse_common_graphs.libsonnet';
 local row = grafana.row;
 local serviceDashboard = import 'service_dashboard.libsonnet';
-local layout = import 'layout.libsonnet';
-local basic = import 'basic.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 
 serviceDashboard.overview('git', 'sv')
 .addPanel(

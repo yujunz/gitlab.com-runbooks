@@ -1,6 +1,6 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
-local layout = import 'layout.libsonnet';
-local basic = import 'basic.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 
 basic.dashboard(
   'Application Demand Indicators',

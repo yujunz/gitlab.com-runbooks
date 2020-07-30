@@ -1,7 +1,7 @@
-local basic = import 'basic.libsonnet';
-local layout = import 'layout.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
-local seriesOverrides = import 'series_overrides.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
+local seriesOverrides = import 'grafana/series_overrides.libsonnet';
 
 {
   clientPanels(serviceType, startRow)::

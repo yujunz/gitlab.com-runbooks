@@ -1,6 +1,6 @@
 local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
 local selectors = import 'promql/selectors.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
 
 local descriptionMappings = [
   /* 0 */

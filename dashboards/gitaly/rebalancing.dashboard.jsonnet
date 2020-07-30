@@ -1,10 +1,10 @@
-local basic = import 'basic.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
-local layout = import 'layout.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';
-local templates = import 'templates.libsonnet';
+local templates = import 'grafana/templates.libsonnet';
 local dashboard = grafana.dashboard;
 local graphPanel = grafana.graphPanel;
 local link = grafana.link;

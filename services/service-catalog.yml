@@ -128,6 +128,7 @@ tiers:
 
 services:
 - name: api
+  friendly_name: GitLab API
   tier: sv
   teams:
     - create
@@ -224,6 +225,7 @@ services:
 
 - name: blackbox
   tier: inf
+  friendly_name: Blackbox Exporters
   infra_owner: sre_observability
   label: Service:Blackbox
   business:
@@ -286,6 +288,7 @@ services:
 
 - name: camoproxy
   tier: sv
+  friendly_name: Camoproxy
   infra_owner: sre_coreinfra
   label: Service:Camoproxy
   business:
@@ -344,6 +347,7 @@ services:
 
 - name: console
   tier: sv
+  friendly_name: Console Access
   infra_owner: sre_coreinfra
   label: Service:Console
   business:
@@ -421,6 +425,7 @@ services:
 
 - name: consul
   tier: inf
+  friendly_name: Consul
   infra_owner: sre_coreinfra
   label: Service:Consul
   business:
@@ -489,6 +494,7 @@ services:
 
 - name: contributors
   tier: sv
+  friendly_name: contributors.gitlab.com
   teams:
     - verify # The service is maintained by Matija Čupić who is part of the Verify team
   infra_owner: infrastructure-businessops
@@ -548,6 +554,7 @@ services:
 
 - name: forum
   tier: sv
+  friendly_name: forum.gitlab.com
   teams:
     - support
   infra_owner: infrastructure-businessops
@@ -610,6 +617,7 @@ services:
 
 - name: logging
   tier: inf
+  friendly_name: Logging
   infra_owner: sre_observability
   label: Service:Logging
   business:
@@ -702,6 +710,7 @@ services:
 
 - name: search
   tier: inf
+  friendly_name: Global Search
   infra_owner: sre_observability
   label: Service:Elasticsearch
   business:
@@ -757,6 +766,7 @@ services:
 
 - name: web
   tier: sv
+  friendly_name: GitLab.com Web
   teams:
     - create
     - distribution
@@ -843,6 +853,7 @@ services:
 
 - name: frontend
   tier: lb
+  friendly_name: HAProxy Frontend
   infra_owner: sre_coreinfra
   label: Service:HAProxy
   business:
@@ -910,6 +921,7 @@ services:
 
 - name: git
   tier: sv
+  friendly_name: Git Access
   teams:
     - create
     - distribution
@@ -999,6 +1011,7 @@ services:
 
 - name: gitaly
   tier: stor
+  friendly_name: Gitaly
   teams:
     - gitaly
   infra_owner: sre_datastores
@@ -1086,6 +1099,7 @@ services:
 
 - name: influxdb
   tier: inf
+  friendly_name: InfluxDB (deprecated)
   infra_owner: sre_observability
   label: Service:Influxdb
   business:
@@ -1151,6 +1165,7 @@ services:
 
 - name: praefect
   tier: stor
+  friendly_name: Praefect
   teams:
     - gitaly
   infra_owner: reliability-engineering-dev--ops
@@ -1217,6 +1232,7 @@ services:
 
 - name: mailroom
   tier: sv
+  friendly_name: Mailroom Incoming Mail Service
   teams:
     - create
     - distribution
@@ -1282,6 +1298,7 @@ services:
 
 - name: pages
   tier: lb
+  friendly_name: HAProxy Pages Frontend
   teams:
     - release-management
   infra_owner: sre_coreinfra
@@ -1341,6 +1358,7 @@ services:
 
 - name: web-pages
   tier: sv
+  friendly_name: GitLab Pages
   infra_owner: sre_coreinfra
   label: Service:Pages
   business:
@@ -1354,6 +1372,7 @@ services:
       It allows hosting static websites on GitLab.com for free, which can be an incentive
       for new users to join and use GitLab.com.
     SLA:
+      overall_sla_weighting: 0 # Treated as a primary service, but with a zero weight for now
       availability:
       response_time:
   technical:
@@ -1407,6 +1426,7 @@ services:
 
 - name: pgbouncer
   tier: db
+  friendly_name: PGBouncer Primary Database Pool
   infra_owner: sre_datastores
   label: Service:pgbouncer
   business:
@@ -1476,6 +1496,7 @@ services:
 
 - name: patroni
   tier: db
+  friendly_name: Postgres (Patroni)
   infra_owner: sre_datastores
   label: Service:Postgres
   business:
@@ -1562,6 +1583,7 @@ services:
 
 - name: postgres-dr-archive
   tier: db
+  friendly_name: Postgres DR Archive
   infra_owner: sre_datastores
   label: Service:PostgresArchive
   business:
@@ -1649,6 +1671,7 @@ services:
 
 - name: postgres-dr-delayed
   tier: db
+  friendly_name: Postgres DR Delayed Replica
   infra_owner: sre_datastores
   label: Service:PostgresDelayed
   business:
@@ -1730,6 +1753,7 @@ services:
 
 - name: psql-timings
   tier: inf
+  friendly_name: PSQL Timings
   infra_owner: sre_observability
   label: Service:PsqlTimings
   business:
@@ -1794,6 +1818,7 @@ services:
 
 - name: monitoring
   tier: inf
+  friendly_name: Monitoring
   infra_owner: sre_observability
   label: Service:Prometheus
   business:
@@ -1883,6 +1908,7 @@ services:
 
 - name: redis
   tier: db
+  friendly_name: Persistent Redis
   infra_owner: sre_observability
   label: Service:Redis
   business:
@@ -1949,6 +1975,7 @@ services:
 
 - name: redis-cache
   tier: db
+  friendly_name: Redis Cache
   infra_owner: sre_observability
   label: Service:RedisCache
   business:
@@ -2011,6 +2038,7 @@ services:
 
 - name: redis-cache-sentinel
   tier: db
+  friendly_name: Redis Cache Sentinel
   infra_owner: sre_observability
   label: Service:RedisCacheSentinel
   business:
@@ -2073,6 +2101,7 @@ services:
 
 - name: redis-sidekiq
   tier: db
+  friendly_name: Redis Sidekiq
   infra_owner: sre_observability
   label: Service:RedisSidekiq
   business:
@@ -2135,6 +2164,7 @@ services:
 
 - name: registry
   tier: sv
+  friendly_name: Container Registry
   teams:
     - package
   infra_owner: sre_observability
@@ -2203,6 +2233,7 @@ services:
 
 - name: nfs
   tier: stor
+  friendly_name: NFS
   teams:
     - create
     - distribution
@@ -2268,6 +2299,7 @@ services:
 
 - name: sidekiq
   tier: sv
+  friendly_name: Sidekiq Background Jobs
   teams:
     - create
     - distribution
@@ -2357,6 +2389,7 @@ services:
 
 - name: runner
   tier: sv
+  friendly_name: Chatops Runner
   teams:
     - verify
   infra_owner: sre_observability
@@ -2427,6 +2460,7 @@ services:
 
 - name: license
   tier: sv
+  friendly_name: license.gitlab.com
   infra_owner: infrastructure-businessops
   label: Service:License
   business:
@@ -2495,6 +2529,7 @@ services:
 
 - name: version
   tier: sv
+  friendly_name: version.gitlab.com
   infra_owner: infrastructure-businessops
   label: Service:Version
   business:
@@ -2565,6 +2600,7 @@ services:
 
 - name: pubsub
   tier: inf
+  friendly_name: Pubsub for Logging
   infra_owner: sre_observability
   label: Service:PubSub
   business:
@@ -2652,6 +2688,7 @@ services:
 
 - name: ci-runners
   tier: sv
+  friendly_name: CI Runners
   infra_owner: sre_observability
   label: Service:CI Runner
   business:
@@ -2664,6 +2701,7 @@ services:
       account up to 2000 minutes, but more can be purchased by upgrading
       to a higher plan.
     SLA:
+      overall_sla_weighting: 0 # Treated as a primary service, but with a zero weight for now
       availability:
       response_time: p95 of 60 second job pick up latency
   technical:
@@ -2730,6 +2768,7 @@ services:
 
 - name: stackdriver
   tier: inf
+  friendly_name: Stackdriver Metrics
   infra_owner: sre_observability
   label: Service:Stackdriver
   business:
@@ -2790,6 +2829,7 @@ services:
 
 - name: waf
   tier: lb
+  friendly_name: Cloudflare Web Application Firewall
   infra_owner: sre_coreinfra
   label: Service:WAF
   business:

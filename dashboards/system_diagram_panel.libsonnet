@@ -1,9 +1,9 @@
 local dependencies = import './dependencies.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
-local promQuery = import 'prom_query.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
 local row = grafana.row;
-local layout = import 'layout.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
 local sliPromQL = import 'sli_promql.libsonnet';
 
 local MERMAID_DIAGRAM_TEMPLATE =

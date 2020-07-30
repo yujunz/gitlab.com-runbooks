@@ -1,8 +1,8 @@
-local basic = import 'basic.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
-local layout = import 'layout.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
 local graphPanel = grafana.graphPanel;
-local promQuery = import 'prom_query.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
 
 local generalGraphPanel(
   title,
