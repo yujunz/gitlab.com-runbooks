@@ -1,12 +1,8 @@
 # Alertmanager configuration
 
-Alertmanager configuration files are shared amongst ALL alertmanagers across all
-environments. In order to sync this configuration between any node via chef and
-any pod running in Kubernetes, this directory holds the necessary template file
-for the configuration, and allows CI to populate any secrets. We then push the
-generated yml file as an encrypted file to object storage. The chef recipe or
-helm managed kubernetes repo will pull down the file and populate it into the
-appropriate place.
+We manage our Alertmanager configuration here using jsonnet. The resultant
+Kubernetes secret object is uploaded, and is consumed by
+[the Prometheus operator deployment](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles/-/tree/master/releases/30-gitlab-monitoring).
 
 The CI jobs for this are run on ops.gitlab.net where the variables are configured.
 See: https://ops.gitlab.net/gitlab-com/runbooks/-/settings/ci_cd
@@ -39,5 +35,8 @@ Then remove the lines associated with authenticating and setting up gcloud in th
 * Generate the `alertmanager.yml` file.
   * `./generate.sh`
 * Validate the `alertmanager.yml` looks reaosnable.
-* Encrypt and upload the output file.
-  * `./update.sh`
+* The contents of this file are visible as a base64 encoded secret, in the
+  manifest k8s_alertmanager_secret.yaml.
+* When this secret is uploaded to a namespace containing a prometheus operator
+  and an Alertmanager CRD (which these days is only the ops GKE cluster's
+  monitoring namespace), Alertmanager's config will automatically be updated.
