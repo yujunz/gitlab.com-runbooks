@@ -4,7 +4,7 @@ groups:
       - alert: HighThrottleRate
         annotations:
           title: Container being throttled
-          description: '{{ $labels.container_name }} in {{ $labels.pod_name }} is being throttled over a rate of 1 second over the course of the last 30 minutes'
+          description: '{{ $labels.container }} in {{ $labels.pod }} is being throttled over a rate of 1 second over the course of the last 30 minutes'
           runbook: docs/uncategorized/kubernetes.md#highthrottlerate
         expr: |-
           rate(container_cpu_cfs_throttled_seconds_total[1m]) > 1

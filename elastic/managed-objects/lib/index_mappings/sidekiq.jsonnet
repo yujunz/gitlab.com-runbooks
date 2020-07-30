@@ -695,6 +695,15 @@
             },
           },
         },
+        container: {
+          type: 'text',
+          fields: {
+            keyword: {
+              type: 'keyword',
+              ignore_above: 256,
+            },
+          },
+        },
         host: {
           type: 'text',
           fields: {
@@ -781,6 +790,15 @@
           },
         },
         pod_name: {
+          type: 'text',
+          fields: {
+            keyword: {
+              type: 'keyword',
+              ignore_above: 256,
+            },
+          },
+        },
+        pod: {
           type: 'text',
           fields: {
             keyword: {
