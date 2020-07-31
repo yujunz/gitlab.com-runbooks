@@ -1231,6 +1231,13 @@ groups:
       horiz_scaling: 'yes'
       severity: s2
     expr: '1'
+- name: GitLab Component Saturation 1w Quantiles
+  interval: 5m
+  rules:
+  - record: gitlab_component_saturation:ratio_quantile95_1w
+    expr: quantile_over_time(0.95, gitlab_component_saturation:ratio[1w])
+  - record: gitlab_component_saturation:ratio_quantile99_1w
+    expr: quantile_over_time(0.99, gitlab_component_saturation:ratio[1w])
 - name: GitLab Saturation Alerts
   interval: 1m
   rules:
