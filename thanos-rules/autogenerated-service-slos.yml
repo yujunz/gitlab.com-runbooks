@@ -25,6 +25,16 @@ groups:
       tier: sv
       type: api
     expr: '0.001000'
+  - record: slo:min:deployment:gitlab_service_apdex:ratio
+    labels:
+      tier: sv
+      type: api
+    expr: '0.999000'
+  - record: slo:max:deployment:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: api
+    expr: '0.000100'
   - record: slo:min:events:gitlab_service_apdex:ratio
     labels:
       tier: sv
@@ -85,6 +95,16 @@ groups:
       tier: sv
       type: git
     expr: '0.000500'
+  - record: slo:min:deployment:gitlab_service_apdex:ratio
+    labels:
+      tier: sv
+      type: git
+    expr: '0.999500'
+  - record: slo:max:deployment:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: git
+    expr: '0.000100'
   - record: slo:min:events:gitlab_service_apdex:ratio
     labels:
       tier: stor
@@ -185,6 +205,16 @@ groups:
       tier: sv
       type: sidekiq
     expr: '0.005000'
+  - record: slo:min:deployment:gitlab_service_apdex:ratio
+    labels:
+      tier: sv
+      type: sidekiq
+    expr: '0.999000'
+  - record: slo:max:deployment:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: sidekiq
+    expr: '0.001000'
   - record: slo:max:events:gitlab_service_errors:ratio
     labels:
       tier: lb
@@ -230,6 +260,16 @@ groups:
       tier: sv
       type: web
     expr: '0.000100'
+  - record: slo:min:deployment:gitlab_service_apdex:ratio
+    labels:
+      tier: sv
+      type: web
+    expr: '0.999500'
+  - record: slo:max:deployment:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: web
+    expr: '0.000050'
   - record: gitlab_service:mapping:disable_ops_rate_prediction
     labels:
       tier: inf

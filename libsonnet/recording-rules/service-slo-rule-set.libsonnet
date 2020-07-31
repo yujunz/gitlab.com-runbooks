@@ -26,9 +26,24 @@ local minApdexMonitoringSLO(labels, expr) =
     expr: expr,
   };
 
+local maxErrorsDeploymentSLO(labels, expr) =
+  {
+    record: 'slo:max:deployment:gitlab_service_errors:ratio',
+    labels: labels,
+    expr: expr,
+  };
+
+local minApdexDeploymentSLO(labels, expr) =
+  {
+    record: 'slo:min:deployment:gitlab_service_apdex:ratio',
+    labels: labels,
+    expr: expr,
+  };
+
 local generateServiceSLORules(serviceDefinition) =
   local hasContractualThresholds = std.objectHas(serviceDefinition, 'contractualThresholds');
   local hasMonitoringThresholds = std.objectHas(serviceDefinition, 'monitoringThresholds');
+  local hasDeploymentThresholds = std.objectHas(serviceDefinition, 'deploymentThresholds');
 
   local triggerDurationLabels = if hasContractualThresholds && std.objectHas(serviceDefinition.contractualThresholds, 'alertTriggerDuration') then
     {
@@ -71,6 +86,22 @@ local generateServiceSLORules(serviceDefinition) =
       maxErrorsMonitoringSLO(
         labels=labels,
         expr='%f' % [1 - serviceDefinition.monitoringThresholds.errorRatio],
+      )
+    else null,
+
+    // Min apdex SLO (multiburn)
+    if hasDeploymentThresholds && std.objectHas(serviceDefinition.deploymentThresholds, 'apdexScore') then
+      minApdexDeploymentSLO(
+        labels=labels,
+        expr='%f' % [serviceDefinition.deploymentThresholds.apdexScore],
+      )
+    else null,
+
+    // Note: the max error rate is `1 - sla` (multiburn)
+    if hasDeploymentThresholds && std.objectHas(serviceDefinition.deploymentThresholds, 'errorRatio') then
+      maxErrorsDeploymentSLO(
+        labels=labels,
+        expr='%f' % [1 - serviceDefinition.deploymentThresholds.errorRatio],
       )
     else null,
   ]);
