@@ -994,6 +994,243 @@ groups:
     labels:
       component: single_node_puma_workers
     expr: '0.9'
+- name: GitLab Component Saturation Metadata
+  interval: 5m
+  rules:
+  - record: gitlab_component_saturation_info
+    labels:
+      component: cgroup_memory
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: cloudsql_cpu
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: cpu
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: disk_inodes
+      horiz_scaling: 'yes'
+      severity: s2
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: disk_space
+      horiz_scaling: 'yes'
+      severity: s2
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: disk_sustained_read_iops
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: disk_sustained_read_throughput
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: disk_sustained_write_iops
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: disk_sustained_write_throughput
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: elastic_cpu
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: elastic_disk_space
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: elastic_jvm_heap_memory
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: elastic_single_node_cpu
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: elastic_single_node_disk_space
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: elastic_thread_pools
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: go_memory
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: kube_hpa_instances
+      horiz_scaling: 'yes'
+      severity: s2
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: kube_persistent_volume_claim_disk_space
+      horiz_scaling: 'yes'
+      severity: s2
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: kube_persistent_volume_claim_inodes
+      horiz_scaling: 'yes'
+      severity: s2
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: memory
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: open_fds
+      horiz_scaling: 'yes'
+      severity: s2
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: pg_active_db_connections_primary
+      horiz_scaling: 'no'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: pg_active_db_connections_replica
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: pgbouncer_async_primary_pool
+      horiz_scaling: 'no'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: pgbouncer_single_core
+      horiz_scaling: 'yes'
+      severity: s2
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: pgbouncer_sync_primary_pool
+      horiz_scaling: 'no'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: pgbouncer_sync_replica_pool
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: private_runners
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: rails_db_connection_pool
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: redis_clients
+      horiz_scaling: 'no'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: redis_memory
+      horiz_scaling: 'no'
+      severity: s2
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: redis_primary_cpu
+      horiz_scaling: 'no'
+      severity: s1
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: redis_secondary_cpu
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: shard_cpu
+      horiz_scaling: 'yes'
+      severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: shared_runners
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: shared_runners_gitlab
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: sidekiq_shard_workers
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: single_node_cpu
+      horiz_scaling: 'yes'
+      severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: single_node_puma_workers
+      horiz_scaling: 'yes'
+      severity: s2
+    expr: '1'
 - name: GitLab Saturation Alerts
   interval: 1m
   rules:
