@@ -64,6 +64,7 @@ local union(sets) = std.foldl(function(memo, a) std.setUnion(std.set(a), memo), 
         'performance-enablement',
         'performance-verify',
         'performance-release',
+        'performance-secure',
       ],
 
       // bjk's dashboards
