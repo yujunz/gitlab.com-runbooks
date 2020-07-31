@@ -14,6 +14,14 @@ metricsCatalog.serviceDefinition({
     apdexScore: 0.9995,
     errorRatio: 0.9995,
   },
+  // Deployment thresholds are optional, and when they are specified, they are
+  // measured against the same multi-burn-rates as the monitoring indicators.
+  // When a service is in violation, deployments may be blocked or may be rolled
+  // back.
+  deploymentThresholds: {
+    apdexScore: 0.9995,
+    errorRatio: 0.9999,
+  },
   serviceDependencies: {
     gitaly: true,
     'redis-sidekiq': true,
