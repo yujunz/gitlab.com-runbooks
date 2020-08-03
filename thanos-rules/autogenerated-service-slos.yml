@@ -277,6 +277,11 @@ groups:
     expr: '1'
   - record: gitlab_service:mapping:disable_ops_rate_prediction
     labels:
+      tier: lb
+      type: pages
+    expr: '1'
+  - record: gitlab_service:mapping:disable_ops_rate_prediction
+    labels:
       tier: inf
       type: search
     expr: '1'
