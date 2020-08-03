@@ -33,18 +33,22 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn'],
     },
 
-    replicator: {
+    // The replicator_queue handles replication jobs from Praefect to secondaries
+    // the apdex measures the percentage of jobs that dequeue within the SLO
+    // See:
+    // * https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11027
+    // * https://gitlab.com/gitlab-org/gitaly/-/issues/2915
+    replicator_queue: {
       local baseSelector = { job: 'praefect' },
       apdex: histogramApdex(
-        histogram='gitaly_praefect_replication_latency_bucket',
+        histogram='gitaly_praefect_replication_delay_bucket',
         selector=baseSelector,
-        satisfiedThreshold=0.5,
-        toleratedThreshold=1
+        satisfiedThreshold=300
       ),
 
       requestRate: rateMetric(
-        counter='gitaly_praefect_replication_latency_count',
-        selector=baseSelector
+        counter='gitaly_praefect_replication_delay_bucket',
+        selector=baseSelector { le: "+Inf" }
       ),
 
       significantLabels: ['fqdn', 'type'],
