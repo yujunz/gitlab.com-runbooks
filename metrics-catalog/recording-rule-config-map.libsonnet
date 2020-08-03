@@ -291,5 +291,9 @@ local ruleSetIterator(ruleSets) = {
       recordingRules.serviceMappingRuleSet(),
     ]),
 
+
+    deploymentHealth: ruleSetIterator([
+      recordingRules.deploymentHealthRuleSet(),
+    ]),
   },
 }
