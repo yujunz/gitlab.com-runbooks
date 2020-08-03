@@ -9,6 +9,12 @@ metricsCatalog.serviceDefinition({
   monitoringThresholds: {
     errorRatio: 0.9999,
   },
+  /*
+   * No need to have operation rate alerting for both pages and web-pages
+   * so disabling it for this service, and keeping the anomaly detection
+   * at the web-pages level
+   */
+  disableOpsRatePrediction: true,
   components: {
     loadbalancer: {
       staticLabels: {
