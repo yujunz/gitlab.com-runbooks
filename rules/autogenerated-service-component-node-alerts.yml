@@ -37,36 +37,52 @@ groups:
     expr: |
       (
         (
+          gitlab_component_node_apdex:ratio_1h{}
+          < on(type,tier) group_left()
           (
-            gitlab_component_node_apdex:ratio_1h
-            < on(tier, type) group_left()
-            (1 - (14.4 * (1 - slo:min:events:gitlab_component_node_apdex:ratio)))
+            1 -
+            (
+              14.4 * (1 - avg by (type,tier) (slo:min:events:gitlab_component_node_apdex:ratio{}))
+            )
           )
-          and
+        )
+        and
+        (
+          gitlab_component_node_apdex:ratio_5m{}
+          < on(type,tier) group_left()
           (
-            gitlab_component_node_apdex:ratio_5m
-            < on(tier, type) group_left()
-            (1 - (14.4 * (1 - slo:min:events:gitlab_component_node_apdex:ratio)))
+            1 -
+            (
+              14.4 * (1 - avg by (type,tier) (slo:min:events:gitlab_component_node_apdex:ratio{}))
+            )
           )
         )
         or
         (
+          gitlab_component_node_apdex:ratio_6h{}
+          < on(type,tier) group_left()
           (
-            gitlab_component_node_apdex:ratio_6h
-            < on(tier, type) group_left()
-            (1 - (6 * (1 - slo:min:events:gitlab_component_node_apdex:ratio)))
+            1 -
+            (
+              6 * (1 - avg by (type,tier) (slo:min:events:gitlab_component_node_apdex:ratio{}))
+            )
           )
-          and
+        )
+        and
+        (
+          gitlab_component_node_apdex:ratio_30m{}
+          < on(type,tier) group_left()
           (
-            gitlab_component_node_apdex:ratio_30m
-            < on(tier, type) group_left()
-            (1 - (6 * (1 - slo:min:events:gitlab_component_node_apdex:ratio)))
+            1 -
+            (
+              6 * (1 - avg by (type,tier) (slo:min:events:gitlab_component_node_apdex:ratio{}))
+            )
           )
         )
       )
       and
       (
-        gitlab_component_node_ops:rate_1h >= 1
+        gitlab_component_node_ops:rate_1h{} >= 1
       )
   - alert: ServiceSLOErrorViolationSingleNode
     for: 10m
@@ -101,42 +117,46 @@ groups:
     expr: |
       (
         (
-          gitlab_component_node_errors:ratio_1h
-          > on(tier, type) group_left()
+          gitlab_component_node_errors:ratio_1h{}
+          > on(type,tier) group_left()
           (
             14.4 * (
-              avg(slo:max:events:gitlab_component_node_errors:ratio) by (tier, type)
+              avg by (type,tier) (slo:max:events:gitlab_component_node_errors:ratio{})
             )
           )
+        )
         and
-          gitlab_component_node_errors:ratio_5m
-          > on(tier, type) group_left()
+        (
+          gitlab_component_node_errors:ratio_5m{}
+          > on(type,tier) group_left()
           (
             14.4 * (
-              avg(slo:max:events:gitlab_component_node_errors:ratio) by (tier, type)
+              avg by (type,tier) (slo:max:events:gitlab_component_node_errors:ratio{})
             )
           )
         )
         or
         (
-          gitlab_component_node_errors:ratio_6h
-          > on(tier, type) group_left()
+          gitlab_component_node_errors:ratio_6h{}
+          > on(type,tier) group_left()
           (
             6 * (
-              avg(slo:max:events:gitlab_component_node_errors:ratio) by (tier, type)
+              avg by (type,tier) (slo:max:events:gitlab_component_node_errors:ratio{})
             )
           )
+        )
         and
-          gitlab_component_node_errors:ratio_30m
-          > on(tier, type) group_left()
+        (
+          gitlab_component_node_errors:ratio_30m{}
+          > on(type,tier) group_left()
           (
             6 * (
-              avg(slo:max:events:gitlab_component_node_errors:ratio) by (tier, type)
+              avg by (type,tier) (slo:max:events:gitlab_component_node_errors:ratio{})
             )
           )
         )
       )
       and
       (
-        gitlab_component_node_ops:rate_1h >= 1
+        gitlab_component_node_ops:rate_1h{} >= 1
       )
