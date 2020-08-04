@@ -18,6 +18,7 @@
   slackAPIURL: 'https://example.com/secret',
   // https://deadmanssnitch.com/
   snitchChannels: [
+    { name: 'ops', apiKey: 'secret', cluster: 'alertmanager-notifications' },
     { name: 'ops', apiKey: 'secret', cluster: '' },
     { name: 'ops', apiKey: 'secret', cluster: 'ops-gitlab-gke' },
     { name: 'gprd', apiKey: 'secret', cluster: '' },
