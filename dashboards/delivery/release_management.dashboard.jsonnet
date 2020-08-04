@@ -97,7 +97,7 @@ local environmentPressurePanel(environment) =
   )
   .addTarget(
     prometheus.target(
-      'delivery_auto_deploy_pressure{job="auto-deploy-pressure", role="%(role)s"}' % { role: environment.role },
+      'delivery_auto_deploy_pressure{job="auto-deploy-pressure", role="%(role)s"}' % { role: environment.id },
       legendFormat='Commits',
     )
   );
@@ -113,7 +113,7 @@ local environmentIssuesPanel(environment) =
   )
   .addTarget(
     prometheus.target(
-      'delivery_sentry_issues{job="sentry-issues", role="%(role)s"}' % { role: environment.role },
+      'delivery_sentry_issues{job="sentry-issues", role="%(role)s"}' % { role: environment.id },
       legendFormat='Issues',
     )
   );
