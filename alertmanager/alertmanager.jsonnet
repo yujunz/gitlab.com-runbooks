@@ -8,7 +8,7 @@ local serviceCatalog = import 'service_catalog.libsonnet';
 local deliveryGitLabIssueAlertsExclusivelyToIssues = false;
 
 // Where the alertmanager templates are deployed.
-local templateDir = '/etc/alertmanager';
+local templateDir = '/etc/alertmanager/config';
 
 //
 // Receiver helpers and definitions.
