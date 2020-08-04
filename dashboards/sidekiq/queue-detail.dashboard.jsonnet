@@ -107,49 +107,6 @@ local multiQuantileTimeseries(title, bucketMetric, aggregators) =
 
   basic.multiTimeseries(title=title, decimals=2, queries=queries, yAxisLabel='Duration', format='s');
 
-local statPanel(
-  title,
-  panelTitle,
-  color,
-  query,
-  legendFormat,
-      ) =
-  {
-    links: [],
-    options: {
-      graphMode: 'none',
-      colorMode: 'background',
-      justifyMode: 'auto',
-      fieldOptions: {
-        values: false,
-        calcs: [
-          'lastNotNull',
-        ],
-        defaults: {
-          thresholds: {
-            mode: 'absolute',
-            steps: [
-              {
-                color: color,
-                value: null,
-              },
-            ],
-          },
-          mappings: [],
-          title: title,
-          unit: 's',
-          decimals: 0,
-        },
-        overrides: [],
-      },
-      orientation: 'vertical',
-    },
-    pluginVersion: '6.6.1',
-    targets: [promQuery.target(query, legendFormat=legendFormat, instant=true)],
-    title: panelTitle,
-    type: 'stat',
-  };
-
 local elasticFilters = [
   elasticsearchLinks.matchFilter('json.queue.keyword', '$queue'),
   elasticsearchLinks.matchFilter('json.stage.keyword', '$stage'),
@@ -236,7 +193,7 @@ basic.dashboard(
       links: [],
     }]
   ] + [
-    statPanel(
+    basic.statPanel(
       'Max Queuing Duration SLO',
       'Max Queuing Duration SLO',
       'light-red',
@@ -251,8 +208,9 @@ basic.dashboard(
         urgentSLO: sidekiqHelpers.slos.urgent.queueingDurationSeconds,
       },
       '{{ queue }}',
+      unit='s',
     ),
-    statPanel(
+    basic.statPanel(
       'Max Execution Duration SLO',
       'Max Execution Duration SLO',
       'red',
@@ -268,8 +226,9 @@ basic.dashboard(
         urgentSLO: sidekiqHelpers.slos.urgent.executionDurationSeconds,
       },
       '{{ queue }}',
+      unit='s',
     ),
-    statPanel(
+    basic.statPanel(
       'Time until backlog is cleared',
       'Backlog',
       'blue',
@@ -279,6 +238,7 @@ basic.dashboard(
         (-deriv(sidekiq_queue_size{environment="$environment", name=~"$queue"}[5m]) and on(fqdn) (redis_connected_slaves != 0) > 0)
       |||,
       '{{ name }}',
+      unit='s',
     ),
   ], cols=8, rowHeight=4)
   +
