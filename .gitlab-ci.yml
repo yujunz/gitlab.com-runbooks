@@ -408,6 +408,11 @@ check_alerts:
   image: golang:1.14
   script:
     - cd alerts-checker
+    # TODO use go modules rather than fetching HEAD
+    # We are seeing errors related to
+    # github.com/prometheus/prometheus/promql/parser when we try to set up go
+    # modules. For now, let's get this working hackily.
+    - go get github.com/prometheus/prometheus/...
     - go run alerts-checker.go ../rules $THANOS_URL $IGNORED_ALERTS
   only:
     variables:
