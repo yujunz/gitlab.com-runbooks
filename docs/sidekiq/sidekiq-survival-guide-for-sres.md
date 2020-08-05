@@ -257,10 +257,17 @@ There are a bunch of other fields too, so go exploring, but the above are a real
 
 ## Memory killer
 
-Gitlab also has a memory killer middleware[^1]; after every job runs it checks the current RSS of the single Sidekiq
-worker, and if it's above a configurable limit, kills the process. Note that sidekiq-cluster sees this as a 'failure',
-and restarts itself (and all its other workers) entirely as a result. This is a safety-valve for run-away jobs eating
-all the RAM, but obviously needs careful tuning; we don't want to rely on this under normal circumstances.
+Gitlab also has two possible "excessive memory usage" killers, both optional.  One is implemented as middleware[^1];
+after every job runs it checks the current RSS of the single Sidekiq worker, and if that is above a configurable limit,
+terminates (SIGTERM) the process.  The Daemon implementation has a separate thread that periodically checks the process
+memory usage rather than at the end of any job.  It has a configurable soft limit that can be exceeded for a *short*
+period before it will self-terminate, and the simple hard limit which forces an immediate termination.  At this writing,
+our VM deployments use the legacy middleware implementation (although it has been mooted to move to the daemon implementation),
+and our Kubernetes deployments use neither, relying instead on the kubernetes memory limits.
+
+In either case, when a sidekiq process is killed sidekiq-cluster sees this as a 'failure', and restarts itself (and
+all its other workers) entirely as a result. This is a safety-valve for run-away jobs eating all the RAM, but obviously
+needs careful tuning; we don't want to rely on this under normal circumstances.
 
 ## Retries + Fails
 
@@ -289,6 +296,13 @@ details.
 Most of our jobs have a default retry of 3, defined in https://gitlab.com/gitlab-org/gitlab/-/blob/v13.1.0-ee/config/initializers_before_autoloader/002_sidekiq.rb#L15-16
 You can see jobs with non-default settings by searching `app/workers` and `ee/app/workers` in the gitlab codebase for
 `sidekiq_options retry:`
+
+Further, the [reliable fetcher](https://gitlab.com/gitlab-org/sidekiq-reliable-fetch) keeps a list of jobs (in redis)
+that are running, and periodically (once an hour by default) looks for any jobs for which the worker heartbeat has
+stopped, and if so, re-queues the jobs.  Critically, the cleanup job can and does run on *any* sidekiq node (whichever
+one manages to pick up the next lease on the locking key when the previous lease expires), as it's just looking
+at lists in redis.  So if you're looking for logs of the "Push", make sure you don't limit your search to a given
+shard, VM, or pod
 
 ## Restarts
 
