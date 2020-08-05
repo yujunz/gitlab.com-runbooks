@@ -1,0 +1,16 @@
+groups:
+- name: Praefect misc alerts
+  rules:
+  - alert: PraefectPerformedAFailover
+    expr: sum(changes(gitaly_praefect_primaries[1m])) by (virtual_storage) > 0
+    for: 1m
+    labels:
+      team: gitaly
+      pager: pagerduty
+      severity: s1
+      alert_type: cause
+    annotations:
+      description: Praefect has performed a failover for {{ $labels.virtual_storage }} virtual storage.
+        Follow the runbook to check for any data loss.
+      runbook: docs/praefect/praefect-failover.md
+      title: Praefect performed a failover for {{ $labels.virtual_storage }} virtual storage

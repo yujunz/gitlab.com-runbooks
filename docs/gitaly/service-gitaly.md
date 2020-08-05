@@ -33,6 +33,7 @@
 * [../logging/README.md](../logging/README.md)
 * [../praefect/praefect-bypass.md](../praefect/praefect-bypass.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
+* [../praefect/praefect-failover.md](../praefect/praefect-failover.md)
 * [../praefect/praefect-file-storages.md](../praefect/praefect-file-storages.md)
 * [../uncategorized/deleted-project-restore.md](../uncategorized/deleted-project-restore.md)
 * [../uncategorized/pingdom.md](../uncategorized/pingdom.md)
