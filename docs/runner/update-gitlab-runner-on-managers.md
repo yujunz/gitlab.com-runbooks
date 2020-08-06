@@ -8,6 +8,8 @@ This runbook describes procedure of upgrading GitLab Runner on our runner manage
 graph LR
     classDef default fill:#e0e0e0,stroke:#000
     r::base(gitlab-runner-base)
+    r::org-ci-base(org-ci-base)
+    r::org-ci-base-runner(org-ci-base-runner)
 
     r::gsrm(gitlab-runner-gsrm)
     r::gsrm-gce(gitlab-runner-gsrm-gce)
@@ -40,6 +42,9 @@ graph LR
     r::stg-srm-gce-us-east1-c(gitlab-runner-stg-srm-gce-us-east1-c)
     r::stg-srm-gce-us-east1-d(gitlab-runner-stg-srm-gce-us-east1-d)
 
+    r::gdsrm-us-east1-c(org-ci-base-runner-us-east1-c)
+    r::gdsrm-us-east1-b(org-ci-base-runner-us-east1-b)
+    r::gdsrm-us-east1-d(org-ci-base-runner-us-east1-d)
 
     n::gsrm3[gitlab-shared-runners-manager-3.gitlab.com]
     n::gsrm4[gitlab-shared-runners-manager-4.gitlab.com]
@@ -57,6 +62,11 @@ graph LR
 
     n::srm3::stg[shared-runners-manager-3.staging.gitlab.com]
     n::srm4::stg[shared-runners-manager-4.staging.gitlab.com]
+
+    n::gdsrm1[gitlab-docker-shared-runners-manager-01]
+    n::gdsrm2[gitlab-docker-shared-runners-manager-02]
+    n::gdsrm3[gitlab-docker-shared-runners-manager-03]
+    n::gdsrm4[gitlab-docker-shared-runners-manager-04]
 
     r::base --> r::gsrm
     r::gsrm --> r::gsrm-gce
@@ -104,6 +114,15 @@ graph LR
     r::srm-gce-us-east1-d --> r::stg-srm-gce-us-east1-d
     r::stg-srm-gce --> r::stg-srm-gce-us-east1-d
     r::stg-srm-gce-us-east1-d ==> n::srm3::stg
+
+    r::org-ci-base --> r::org-ci-base-runner
+    r::org-ci-base-runner --> r::gdsrm-us-east1-c
+    r::gdsrm-us-east1-c ==> n::gdsrm1
+    r::gdsrm-us-east1-c ==> n::gdsrm4
+    r::org-ci-base-runner --> r::gdsrm-us-east1-d
+    r::gdsrm-us-east1-d ==> n::gdsrm2
+    r::org-ci-base-runner --> r::gdsrm-us-east1-b
+    r::gdsrm-us-east1-b ==> n::gdsrm3
 ```
 
 ## Requirements
@@ -114,6 +133,18 @@ To upgrade runners on managers you need to:
 - have write access to chef.gitlab.com,
 - have configured knife environment,
 - have admin access to nodes (sudo access).
+- have bastion for `org-ci` runners set up.
+
+    <details>
+    <summary> Inside of your ~/.ssh/config </summary>
+
+    ```ini
+    # gitlab-org-ci boxes
+    Host *.gitlab-org-ci-0d24e2.internal
+    ProxyJump     lb-bastion.org-ci.gitlab.com
+    ```
+
+    </details>
 
 ## Procedure description
 
