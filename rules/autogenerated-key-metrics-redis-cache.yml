@@ -57,6 +57,40 @@ groups:
       sum by (environment) (
         rate(gitlab_cache_operation_duration_seconds_count{}[1m])
       )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_duration_seconds_bucket{le="+Inf",storage="cache"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      (
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.5",storage="cache"}[1m])
+        )
+        +
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.75",storage="cache"}[1m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="+Inf",storage="cache"}[1m])
+        ) > 0
+      )
   - record: gitlab_component_ops:rate
     labels:
       component: rails_redis_client
@@ -142,6 +176,40 @@ groups:
       sum by (environment) (
         rate(gitlab_cache_operation_duration_seconds_count{}[5m])
       )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_duration_seconds_bucket{le="+Inf",storage="cache"}[5m])
+      )
+  - record: gitlab_component_apdex:ratio_5m
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      (
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.5",storage="cache"}[5m])
+        )
+        +
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.75",storage="cache"}[5m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="+Inf",storage="cache"}[5m])
+        ) > 0
+      )
   - record: gitlab_component_ops:rate_5m
     labels:
       component: rails_redis_client
@@ -224,6 +292,38 @@ groups:
     expr: |
       sum by (environment) (
         rate(gitlab_cache_operation_duration_seconds_count{}[30m])
+      )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_duration_seconds_bucket{le="+Inf",storage="cache"}[30m])
+      )
+  - record: gitlab_component_apdex:ratio_30m
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      (
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.5",storage="cache"}[30m])
+        )
+        +
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.75",storage="cache"}[30m])
+        )
+      )
+      /
+      2
+      / on(environment) group_left()
+      (
+        gitlab_component_apdex:weight:score_30m{component="rails_redis_client",stage="main",tier="db",type="redis-cache"} > 0
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -310,6 +410,40 @@ groups:
       sum by (environment) (
         rate(gitlab_cache_operation_duration_seconds_count{}[1h])
       )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_duration_seconds_bucket{le="+Inf",storage="cache"}[1h])
+      )
+  - record: gitlab_component_apdex:ratio_1h
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      (
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.5",storage="cache"}[1h])
+        )
+        +
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.75",storage="cache"}[1h])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="+Inf",storage="cache"}[1h])
+        ) > 0
+      )
   - record: gitlab_component_ops:rate_1h
     labels:
       component: rails_redis_client
@@ -392,6 +526,38 @@ groups:
     expr: |
       sum by (environment) (
         rate(gitlab_cache_operation_duration_seconds_count{}[6h])
+      )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      sum by (environment) (
+        rate(gitlab_redis_client_requests_duration_seconds_bucket{le="+Inf",storage="cache"}[6h])
+      )
+  - record: gitlab_component_apdex:ratio_6h
+    labels:
+      component: rails_redis_client
+      stage: main
+      tier: db
+      type: redis-cache
+    expr: |
+      (
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.5",storage="cache"}[6h])
+        )
+        +
+        sum by (environment) (
+          rate(gitlab_redis_client_requests_duration_seconds_bucket{le="0.75",storage="cache"}[6h])
+        )
+      )
+      /
+      2
+      / on(environment) group_left()
+      (
+        gitlab_component_apdex:weight:score_6h{component="rails_redis_client",stage="main",tier="db",type="redis-cache"} > 0
       )
   - record: gitlab_component_ops:rate_6h
     labels:

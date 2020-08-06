@@ -16,14 +16,21 @@ metricsCatalog.serviceDefinition({
       },
       significantLabels: ['type'],
 
+      apdex: histogramApdex(
+        histogram='gitlab_redis_client_requests_duration_seconds_bucket',
+        selector={ storage: "queues" },
+        satisfiedThreshold=0.5,
+        toleratedThreshold=0.75,
+      ),
+
       requestRate: rateMetric(
         counter='gitlab_redis_client_requests_total',
-        selector='storage="queues"',
+        selector={ storage: "queues" },
       ),
 
       errorRate: rateMetric(
         counter='gitlab_redis_client_exceptions_total',
-        selector='storage="queues"',
+        selector={ storage: "queues" },
       ),
     },
 
