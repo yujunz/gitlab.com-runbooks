@@ -1,4 +1,5 @@
 local layout = import 'grafana/layout.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
@@ -6,7 +7,7 @@ local template = grafana.template;
 local annotation = grafana.annotation;
 local productCommon = import 'product_common.libsonnet';
 
-dashboard.new(
+basic.dashboard(
   title = "Performance - Enablement",
   time_from = "now-7d",
   tags = ["product performance"],
