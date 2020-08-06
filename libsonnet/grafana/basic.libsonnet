@@ -49,6 +49,41 @@ local panelOverrides(stableId) = {
     },
 };
 
+local getDefaultAvailabilityColorScale(invertColors) =
+  local tf = if invertColors then function(value) 1 - value else function(value) value;
+  local scale = [
+      {
+        color: 'red',
+        value: tf(0),
+      },
+      {
+        color: 'light-red',
+        value: tf(0.95),
+      },
+      {
+        color: 'orange',
+        value: tf(0.99),
+      },
+      {
+        color: 'light-orange',
+        value: tf(0.995),
+      },
+      {
+        color: 'yellow',
+        value: tf(0.9994),
+      },
+      {
+        color: 'light-yellow',
+        value: tf(0.9995),
+      },
+      {
+        color: 'green',
+        value: tf(0.9998),
+      },
+    ];
+
+  std.sort(scale, function(i) if i.value == null then 0 else i.value);
+
 {
   dashboard(
     title,
@@ -710,6 +745,8 @@ local panelOverrides(stableId) = {
     displayName=null,
     links=[],
     stableId=null,
+    decimals=2,
+    invertColors=false,
   )::
     {
       datasource: '$PROMETHEUS_DS',
@@ -736,40 +773,11 @@ local panelOverrides(stableId) = {
           unit: 'percentunit',
           min: 0,
           max: 1,
-          decimals: 2,
+          decimals: decimals,
           displayName: displayName,
           thresholds: {
             mode: 'absolute',
-            steps: [
-              {
-                color: 'red',
-                value: null,
-              },
-              {
-                color: 'light-red',
-                value: 0.95,
-              },
-              {
-                color: 'orange',
-                value: 0.99,
-              },
-              {
-                color: 'light-orange',
-                value: 0.995,
-              },
-              {
-                color: 'yellow',
-                value: 0.9994,
-              },
-              {
-                color: 'light-yellow',
-                value: 0.9995,
-              },
-              {
-                color: 'green',
-                value: 0.9998,
-              },
-            ],
+            steps: getDefaultAvailabilityColorScale(invertColors),
           },
           mappings: [],
           links: links,
@@ -904,4 +912,49 @@ local panelOverrides(stableId) = {
         orientation: 'vertical',
       },
     } + panelOverrides(stableId),
+
+  statPanel(
+    title,
+    panelTitle,
+    color,
+    query,
+    legendFormat,
+    unit='',
+    instant=true
+  )::
+    {
+      links: [],
+      options: {
+        graphMode: 'none',
+        colorMode: 'background',
+        justifyMode: 'auto',
+        fieldOptions: {
+          values: false,
+          calcs: [
+            'lastNotNull',
+          ],
+          defaults: {
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                {
+                  color: color,
+                  value: null,
+                },
+              ],
+            },
+            mappings: [],
+            title: title,
+            unit: unit,
+            decimals: 0,
+          },
+          overrides: [],
+        },
+        orientation: 'vertical',
+      },
+      pluginVersion: '6.6.1',
+      targets: [promQuery.target(query, legendFormat=legendFormat, instant=instant)],
+      title: panelTitle,
+      type: 'stat',
+    },
 }
