@@ -324,6 +324,21 @@ groups:
       )
   - record: gitlab_component_saturation:ratio
     labels:
+      component: nf_conntrack_entries
+    expr: |
+      max by(environment, tier, type, stage) (
+        clamp_min(
+          clamp_max(
+            max_over_time(node_nf_conntrack_entries{environment!="",type!="",type!~"waf"}[1m])
+            /
+            node_nf_conntrack_entries_limit{environment!="",type!="",type!~"waf"}
+            ,
+            1)
+        ,
+        0)
+      )
+  - record: gitlab_component_saturation:ratio
+    labels:
       component: open_fds
     expr: |
       max by(environment, tier, type, stage) (
@@ -839,6 +854,14 @@ groups:
     expr: '0.98'
   - record: slo:max:soft:gitlab_component_saturation:ratio
     labels:
+      component: nf_conntrack_entries
+    expr: '0.95'
+  - record: slo:max:hard:gitlab_component_saturation:ratio
+    labels:
+      component: nf_conntrack_entries
+    expr: '0.98'
+  - record: slo:max:soft:gitlab_component_saturation:ratio
+    labels:
       component: open_fds
     expr: '0.8'
   - record: slo:max:hard:gitlab_component_saturation:ratio
@@ -1113,6 +1136,12 @@ groups:
       component: memory
       horiz_scaling: 'yes'
       severity: s4
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: nf_conntrack_entries
+      horiz_scaling: 'yes'
+      severity: s3
     expr: '1'
   - record: gitlab_component_saturation_info
     labels:
@@ -2137,6 +2166,52 @@ groups:
     expr: |
       gitlab_component_saturation:ratio{component="memory"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="memory"}
+  - alert: component_saturation_slo_out_of_bounds
+    for: 5m
+    annotations:
+      title: >-
+        The conntrack Entries per Node resource of the {{ $labels.type }} service ({{ $labels.stage }}
+        stage), component has a saturation exceeding SLO and is close to its capacity limit.
+      description: |
+        This means that this resource is running close to capacity and is at risk of exceeding its current capacity limit.
+
+        Details of the conntrack Entries per Node resource:
+
+        Netfilter connection tracking table utilization per node.
+
+        When saturated, new connection attempts (incoming SYN packets) are dropped with no reply, leaving clients to slowly retry (and typically fail again) over the next several seconds.  When packets are being dropped due to this condition, kernel will log the event as: "nf_conntrack: table full, dropping packet".
+      grafana_dashboard_id: alerts-sat_conntrack
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/alerts-sat_conntrack?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-type={{ $labels.type }}&var-stage={{ $labels.stage }}
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '2856'
+      grafana_variables: environment,type,stage
+      promql_query: |
+        max by(environment, tier, type, stage, fqdn, instance) (
+          clamp_min(
+            clamp_max(
+              max_over_time(node_nf_conntrack_entries{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m])
+              /
+              node_nf_conntrack_entries_limit{environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}
+              ,
+              1)
+          ,
+          0)
+        )
+      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+    labels:
+      alert_trigger_duration: 5m
+      alert_type: cause
+      bound: upper
+      burn_rate_period: 1m
+      metric: gitlab_component_saturation:ratio
+      period: 5m
+      rules_domain: general
+      severity: s3
+    expr: |
+      gitlab_component_saturation:ratio{component="nf_conntrack_entries"} > on(component) group_left
+      slo:max:hard:gitlab_component_saturation:ratio{component="nf_conntrack_entries"}
   - alert: component_saturation_slo_out_of_bounds
     for: 5m
     annotations:
