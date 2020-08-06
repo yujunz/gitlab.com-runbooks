@@ -10,6 +10,7 @@
 ## Troubleshooting Pointers
 
 * [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
+* [../frontend/ban-netblocks-on-haproxy.md](../frontend/ban-netblocks-on-haproxy.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../gitaly/gitaly-unusual-activity.md](../gitaly/gitaly-unusual-activity.md)
 * [../logging/README.md](../logging/README.md)
