@@ -33,6 +33,7 @@ graph LR
     r::srm-gce-us-east1-d(gitlab-runner-srm-gce-us-east1-d)
     r::srm4(gitlab-runner-srm4)
     r::srm6(gitlab-runner-srm6)
+    r::srm7(gitlab-runner-srm7)
 
     r::stg-srm(gitlab-runner-stg-srm)
     r::stg-srm-gce(gitlab-runner-stg-srm-gce)
@@ -52,6 +53,7 @@ graph LR
     n::srm4[shared-runners-manager-4.gitlab.com]
     n::srm5[shared-runners-manager-5.gitlab.com]
     n::srm6[shared-runners-manager-6.gitlab.com]
+    n::srm7[shared-runners-manager-7.gitlab.com]
 
     n::srm3::stg[shared-runners-manager-3.staging.gitlab.com]
     n::srm4::stg[shared-runners-manager-4.staging.gitlab.com]
@@ -85,6 +87,8 @@ graph LR
     r::srm4 ==> n::srm4
     r::srm-gce-us-east1-c --> r::srm6
     r::srm6 ==> n::srm6
+    r::srm-gce-us-east1-c --> r::srm7
+    r::srm7 ==> n::srm7
     r::srm-gce --> r::srm-gce-us-east1-d
     r::srm-gce-us-east1-d --> r::srm3
     r::srm3 ==> n::srm3
