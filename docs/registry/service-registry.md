@@ -18,6 +18,7 @@
 * [../ci-runners/runners_cache_is_down.md](../ci-runners/runners_cache_is_down.md)
 * [../ci-runners/runners_registry_is_down.md](../ci-runners/runners_registry_is_down.md)
 * [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
+* [../frontend/ban-netblocks-on-haproxy.md](../frontend/ban-netblocks-on-haproxy.md)
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../logging/README.md](../logging/README.md)
 * [gitlab-registry.md](gitlab-registry.md)

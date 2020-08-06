@@ -8,14 +8,15 @@
 ## Background
 
 From time to time it may become necessary to block IP addresses or networks of IP addresses from accessing GitLab.
-We do this by managing those IP adresses in the file 
+We now generally use Cloudflare for that, but as of now GitLab Pages and registry are not
+behind Cloudflare. In this case we can still use the old way by managing those IP adresses in the file 
 [deny-403-ips.lst](https://gitlab.com/gitlab-com/security-tools/front-end-security/blob/master/deny-403-ips.lst) in the
 [security-tools/front-end](https://gitlab.com/gitlab-com/security-tools/front-end-security) repository. Updates to this file
 are distributed to the HA Proxy nodes on each chef run by the [gitlab-haproxy](https://gitlab.com/gitlab-cookbooks/gitlab-haproxy) cookbook.
 
 **Even if it's called `deny-403-ips.lst` - it will also block non-HTTP traffic!**
 
-**The gitlab.com repo is mirrored by the ops.gitlab.net instance and the `gitlab-haproxy` role is picking up changes from there!**
+**The gitlab.com repo is mirrored by the https://ops.gitlab.net/infrastructure/lib/front-end-security/ instance and the `gitlab-haproxy` role is picking up changes from there!**
 
 
 
@@ -37,7 +38,7 @@ Just like Santa Clause, you want to check your list twice before you sort the na
 
 How can we make this go faster?
 
-* Manually force the mirror sync in the [repo settings](https://ops.gitlab.net/gitlab-com/security-tools/front-end-security/settings/repository)
+* Manually force the mirror sync in the [repo settings](https://ops.gitlab.net/infrastructure/lib/front-end-security/settings/repository)
 * run chef client on the haproxy nodes:
 
 ```
