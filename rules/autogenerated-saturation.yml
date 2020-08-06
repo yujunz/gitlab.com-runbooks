@@ -1008,12 +1008,6 @@ groups:
     expr: '1'
   - record: gitlab_component_saturation_info
     labels:
-      component: cloudsql_cpu
-      horiz_scaling: 'yes'
-      severity: s4
-    expr: '1'
-  - record: gitlab_component_saturation_info
-    labels:
       component: cpu
       horiz_scaling: 'yes'
       severity: s3
@@ -1161,6 +1155,12 @@ groups:
       component: pgbouncer_sync_replica_pool
       horiz_scaling: 'yes'
       severity: s3
+    expr: '1'
+  - record: gitlab_component_saturation_info
+    labels:
+      component: praefect_cloudsql_cpu
+      horiz_scaling: 'yes'
+      severity: s4
     expr: '1'
   - record: gitlab_component_saturation_info
     labels:
