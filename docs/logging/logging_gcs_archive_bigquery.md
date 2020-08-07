@@ -55,7 +55,7 @@ differing styles.
 ![source data](./img/create_table_source.png)
 
 4. Unselect "Auto detect Schema and input parameters" if selected.
-5. Use one of our [predifined schemas](https://gitlab.com/gitlab-com/runbooks/blob/master/logging/logging_bigquery_schemas/) or do it manually adding records for fields, using `RECORD` type for nested fields and adding
+5. Use one of our [predifined schemas](https://gitlab.com/gitlab-com/runbooks/-/tree/master/docs/logging/logging_bigquery_schemas) or do it manually adding records for fields, using `RECORD` type for nested fields and adding
    subfields using the `+` on the parent record.  It should look something like this:
 
 ![record type](./img/bigquery_schema_record.png)
