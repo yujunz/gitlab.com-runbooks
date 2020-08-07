@@ -30,11 +30,11 @@ with no back-off so they end up being exhausted almost immediately.
 
 To compensate for this fact, we to run `reconcile` to replicate from an
 up-to-date node (replace the `virtual` value with the virtual storage in
-question and the `target` value with the up-to-date node):
-
+question, `reference` value with the up-to-date node and the `target`
+value with the outdated node):
 ```
 $ tmux # Next command can take some time to finish
-$ sudo -u git /opt/gitlab/embedded/bin/praefect -config /var/opt/gitlab/praefect/config.toml reconcile -f -virtual nfs-file22 -target file-04
+$ sudo -u git /opt/gitlab/embedded/bin/praefect -config /var/opt/gitlab/praefect/config.toml reconcile -f -virtual nfs-file22 -reference <up-to-date-storage> -target file-04
 ```
 
 This command traverses all repositories on the `target` replica, it will
