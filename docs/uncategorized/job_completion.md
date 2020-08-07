@@ -17,28 +17,45 @@ Three metrics are required:
 | `gitlab_job_max_age_seconds`            | This is the allowed age before the alert should fire, in seconds. |
 | `gitlab_job_start_timestamp_seconds`    | This is the unix time in seconds when the job starts.  |
 | `gitlab_job_success_timestamp_seconds`  | This is the unix time in seconds when the job completes succesfully. It should be set to 0 at job start. |
+| `gitlab_job_failed`                     | This is a boolean value of the job completion status. |
 
 The below code can be used within a bash script (after having exported the respective environment variables)
 
 `report_start.sh`:
 
 ```bash
-cat <<EOF | curl -iv --data-binary @- "http://${GATEWAY}:9091/metrics/job/deadman_checkin/tier/${TIER}/type/${TYPE}"
+cat <<PROM | curl -iv --data-binary @- "http://${PUSH_GATEWAY}:9091/metrics/job/${JOB}/tier/${TIER}/type/${TYPE}"
+# HELP gitlab_job_start_timestamp_seconds The start time of the job.
 # TYPE gitlab_job_start_timestamp_seconds gauge
 gitlab_job_start_timestamp_seconds{resource="${RESOURCE}"} $(date +%s)
+# HELP gitlab_job_success_timestamp_seconds The time the job succeeded.
 # TYPE gitlab_job_success_timestamp_seconds gauge
 gitlab_job_success_timestamp_seconds{resource="${RESOURCE}"} 0
+# HELP gitlab_job_max_age_seconds How long the job is allowed to run before marking it failed.
 # TYPE gitlab_job_max_age_seconds gauge
 gitlab_job_max_age_seconds{resource="${RESOURCE}"} ${MAX_AGE}
-EOF
+# HELP gitlab_job_failed Boolean status of the job.
+# TYPE gitlab_job_failed gauge
+gitlab_job_failed{resource="${RESOURCE}"} 0
+PROM
 ```
 
 `report_success.sh`:
 ```bash
-cat <<EOF | curl -iv --data-binary @- "http://${GATEWAY}:9091/metrics/job/deadman_checkin/tier/${TIER}/type/${TYPE}"
+cat <<PROM | curl -iv --data-binary @- "http://${PUSH_GATEWAY}:9091/metrics/job/${JOB}/tier/${TIER}/type/${TYPE}"
+# HELP gitlab_job_success_timestamp_seconds The time the job succeeded.
 # TYPE gitlab_job_success_timestamp_seconds gauge
 gitlab_job_success_timestamp_seconds{resource="${RESOURCE}"} $(date +%s)
-EOF
+PROM
+```
+
+`report_failed.sh`:
+```bash
+cat <<PROM | curl -iv --data-binary @- "http://${PUSH_GATEWAY}:9091/metrics/job/${JOB}/tier/${TIER}/type/${TYPE}"
+# HELP gitlab_job_failed Boolean status of the job.
+# TYPE gitlab_job_failed gauge
+gitlab_job_failed{resource="${RESOURCE}"} 1
+PROM
 ```
 
 | Variable | Description |
