@@ -14,6 +14,7 @@
 * [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
 * [../license/license-gitlab-com.md](../license/license-gitlab-com.md)
 * [../logging/README.md](../logging/README.md)
+* [alertmanager-notification-failures.md](alertmanager-notification-failures.md)
 * [alerts_gke.md](alerts_gke.md)
 * [alerts_manual.md](alerts_manual.md)
 * [monitoring-overview.md](monitoring-overview.md)
