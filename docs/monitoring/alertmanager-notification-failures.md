@@ -8,16 +8,11 @@ lost.
 ## Possible checks
 
 Check the AlertManager logs to find out why it could not send alerts.
-In the `gitlab-ops` project of Google Cloud, open the `Log Viewer` and use
-this query:
-```
-resource.type="k8s_container"
-resource.labels.project_id="gitlab-ops"
-resource.labels.location="us-east1"
-resource.labels.cluster_name="ops-gitlab-gke"
-resource.labels.namespace_name="monitoring"
-resource.labels.pod_name:"alertmanager-gitlab-monitoring-promethe-alertmanager-"
-```
+In the `gitlab-ops` project of Google Cloud, open the `Workloads` section under
+the `Kubernetes Engine` section of the web console. Select the Alertmanager
+workload, named `alertmanager-gitlab-monitoring-promethe-alertmanager`. Here
+you can see details for the Alertmanager pods and select `Container logs`
+to review the logs.
 
 The AlertManager pod is very quiet except for errors so it should be quickly
 obvious if it could not contact a service.
