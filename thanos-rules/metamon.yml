@@ -15,7 +15,7 @@ groups:
       title: SnitchHeartBeat
   - alert: SnitchHeartBeat
     # Fires as long as there are no notification failures on any alertmanager.
-    expr: sum(increase(alertmanager_notifications_failed_total[1h])) == bool 0 > 0
+    expr: sum(increase(alertmanager_notifications_failed_total{integration="pagerduty"}[1h])) == bool 0 > 0
     labels:
       # Fake env for routing to the correct snitch token.
       env: alertmanager-notifications
