@@ -27,7 +27,7 @@ integration it's probably a problem with the setup of that
 integration.
 
 For example if it's slack you can get the API key by looking for
-"api_url" in `/opt/prometheus/alertmanager/alertmanager.yml`
+"infra-automation app Slack API Token" in 1password.
 
 And you can test it with curl
 
