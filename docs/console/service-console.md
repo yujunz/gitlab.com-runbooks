@@ -27,6 +27,7 @@
 * [../license/license-gitlab-com.md](../license/license-gitlab-com.md)
 * [../logging/README.md](../logging/README.md)
 * [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
+* [../monitoring/alertmanager-notification-failures.md](../monitoring/alertmanager-notification-failures.md)
 * [../monitoring/alerts_gke.md](../monitoring/alerts_gke.md)
 * [../monitoring/filesystem_alerts.md](../monitoring/filesystem_alerts.md)
 * [../monitoring/sentry-is-down.md](../monitoring/sentry-is-down.md)
