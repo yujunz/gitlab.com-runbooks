@@ -7,9 +7,20 @@ lost.
 
 ## Possible checks
 
-Check the log at `/var/log/prometheus/alertmanager/current` on the
-machine where alertmanager is running (it should be the fqdn label on
-the alert).
+Check the AlertManager logs to find out why it could not send alerts.
+In the `gitlab-ops` project of Google Cloud, open the `Log Viewer` and use
+this query:
+```
+resource.type="k8s_container"
+resource.labels.project_id="gitlab-ops"
+resource.labels.location="us-east1"
+resource.labels.cluster_name="ops-gitlab-gke"
+resource.labels.namespace_name="monitoring"
+resource.labels.pod_name:"alertmanager-gitlab-monitoring-promethe-alertmanager-"
+```
+
+The AlertManager pod is very quiet except for errors so it should be quickly
+obvious if it could not contact a service.
 
 Note the "integration" label on the alert. If it's only one
 integration it's probably a problem with the setup of that
@@ -33,11 +44,13 @@ For more information see https://api.slack.com/incoming-webhooks
 ## Troubleshooting which integration is failing
 
 * In Prometheus, run this query: [`rate(alertmanager_notifications_failed_total[10m])`](https://prometheus.gprd.gitlab.net/graph?g0.range_input=1d&g0.expr=rate(alertmanager_notifications_failed_total%5B10m%5D)&g0.tab=0).
-* This will give you a breakdown of which integration is failing, and from which server.
-* Keep in mind that, if nothing has changed, the problem is likely to be on the remote side - for example, a Slack or Pagerduty issue.
+* This will give you a breakdown of which integration is failing, and from
+  which server.
+* Keep in mind that, if nothing has changed, the problem is likely to be on
+  the remote side - for example, a Slack or Pagerduty issue.
 
 ## Manually review the currently open alerts
 
 * Open the alert-manager UI: https://alerts.gitlab.net/
-* Review each alert to check if it's notification has failed and whether further action is required.
-
+* Review each alert to check if it's notification has failed and whether
+  further action is required.
