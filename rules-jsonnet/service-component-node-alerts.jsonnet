@@ -1,10 +1,11 @@
 local alerts = import 'alerts/alerts.libsonnet';
+local multiburnExpression = import 'mwmbr/expression.libsonnet';
 local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
 local stableIds = import 'stable-ids/stable-ids.libsonnet';
 
 // For now, only include components that run at least once a second
 // in the monitoring. This is to avoid low-volume, noisy alerts
-local minimumOperationRateForMonitoring = 1 /* rps */;
+local minimumOperationRateForMonitoring = 1/* rps */;
 
 // Most MWMBR alerts use a 2m period
 // Initially for this alert, use a long period to ensure that
@@ -23,41 +24,18 @@ local rules = {
     rules: [alerts.processAlertRule(
       {
         alert: 'ServiceSLOApdexViolationSingleNode',
-        expr: |||
-          (
-            (
-              (
-                gitlab_component_node_apdex:ratio_1h
-                < on(tier, type) group_left()
-                (1 - (%(burnrate_1h)g * (1 - slo:min:events:gitlab_component_node_apdex:ratio)))
-              )
-              and
-              (
-                gitlab_component_node_apdex:ratio_5m
-                < on(tier, type) group_left()
-                (1 - (%(burnrate_1h)g * (1 - slo:min:events:gitlab_component_node_apdex:ratio)))
-              )
-            )
-            or
-            (
-              (
-                gitlab_component_node_apdex:ratio_6h
-                < on(tier, type) group_left()
-                (1 - (%(burnrate_6h)g * (1 - slo:min:events:gitlab_component_node_apdex:ratio)))
-              )
-              and
-              (
-                gitlab_component_node_apdex:ratio_30m
-                < on(tier, type) group_left()
-                (1 - (%(burnrate_6h)g * (1 - slo:min:events:gitlab_component_node_apdex:ratio)))
-              )
-            )
-          )
-          and
-          (
-            gitlab_component_node_ops:rate_1h >= %(minimumOperationRateForMonitoring)g
-          )
-        ||| % formatConfig,
+        expr: multiburnExpression.multiburnRateApdexExpression(
+          metric1h='gitlab_component_node_apdex:ratio_1h',
+          metric5m='gitlab_component_node_apdex:ratio_5m',
+          metric30m='gitlab_component_node_apdex:ratio_30m',
+          metric6h='gitlab_component_node_apdex:ratio_6h',
+          metricSelectorHash={ },
+          sloMetric='slo:min:events:gitlab_component_node_apdex:ratio',
+          sloMetricSelectorHash={ },
+          sloMetricAggregationLabels=['type', 'tier'],
+          operationRateMetric='gitlab_component_node_ops:rate_1h',
+          minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
+        ),
         'for': alertWaitPeriod,
         labels: {
           alert_type: 'symptom',
@@ -78,7 +56,7 @@ local rules = {
 
             Recommended course of action: review ELK logs, check for possible user action or unusual activity.
           ||| % {
-            alertWaitPeriod: alertWaitPeriod
+            alertWaitPeriod: alertWaitPeriod,
           },
           runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
           grafana_dashboard_id: 'alerts-component_node_multiburn_apdex/alerts-component-node-multi-window-multi-burn-rate-apdex-out-of-slo',
@@ -90,49 +68,18 @@ local rules = {
       },
     ), alerts.processAlertRule({
       alert: 'ServiceSLOErrorViolationSingleNode',
-      expr: |||
-        (
-          (
-            gitlab_component_node_errors:ratio_1h
-            > on(tier, type) group_left()
-            (
-              %(burnrate_1h)g * (
-                avg(slo:max:events:gitlab_component_node_errors:ratio) by (tier, type)
-              )
-            )
-          and
-            gitlab_component_node_errors:ratio_5m
-            > on(tier, type) group_left()
-            (
-              %(burnrate_1h)g * (
-                avg(slo:max:events:gitlab_component_node_errors:ratio) by (tier, type)
-              )
-            )
-          )
-          or
-          (
-            gitlab_component_node_errors:ratio_6h
-            > on(tier, type) group_left()
-            (
-              %(burnrate_6h)g * (
-                avg(slo:max:events:gitlab_component_node_errors:ratio) by (tier, type)
-              )
-            )
-          and
-            gitlab_component_node_errors:ratio_30m
-            > on(tier, type) group_left()
-            (
-              %(burnrate_6h)g * (
-                avg(slo:max:events:gitlab_component_node_errors:ratio) by (tier, type)
-              )
-            )
-          )
-        )
-        and
-        (
-          gitlab_component_node_ops:rate_1h >= %(minimumOperationRateForMonitoring)g
-        )
-      ||| % formatConfig,
+      expr: multiburnExpression.multiburnRateErrorExpression(
+        metric1h='gitlab_component_node_errors:ratio_1h',
+        metric5m='gitlab_component_node_errors:ratio_5m',
+        metric30m='gitlab_component_node_errors:ratio_30m',
+        metric6h='gitlab_component_node_errors:ratio_6h',
+        metricSelectorHash={},
+        sloMetric='slo:max:events:gitlab_component_node_errors:ratio',
+        sloMetricSelectorHash={},
+        sloMetricAggregationLabels=['type', 'tier'],
+        operationRateMetric='gitlab_component_node_ops:rate_1h',
+        minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
+      ),
       'for': alertWaitPeriod,
       labels: {
         rules_domain: 'general',
@@ -153,7 +100,7 @@ local rules = {
 
           Recommended course of action: review ELK logs, check for possible user action or unusual activity.
         ||| % {
-          alertWaitPeriod: alertWaitPeriod
+          alertWaitPeriod: alertWaitPeriod,
         },
         runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
         grafana_dashboard_id: 'alerts-component_node_multiburn_error/alerts-component-node-multi-window-multi-burn-rate-error-rate-out-of-slo',

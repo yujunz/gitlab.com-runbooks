@@ -1,5 +1,6 @@
 local alerts = import 'alerts/alerts.libsonnet';
 local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
+local multiburnExpression = import 'mwmbr/expression.libsonnet';
 local stableIds = import 'stable-ids/stable-ids.libsonnet';
 
 // For now, only include components that run at least once a second
@@ -18,41 +19,20 @@ local rules = {
     rules: [alerts.processAlertRule(
       {
         alert: 'component_apdex_ratio_burn_rate_slo_out_of_bounds_lower',
-        expr: |||
-          (
-            (
-              (
-                gitlab_component_apdex:ratio_1h{monitor="global"}
-                < on(tier, type) group_left()
-                (1 - (%(burnrate_1h)g * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
-              )
-              and
-              (
-                gitlab_component_apdex:ratio_5m{monitor="global"}
-                < on(tier, type) group_left()
-                (1 - (%(burnrate_1h)g * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
-              )
-            )
-            or
-            (
-              (
-                gitlab_component_apdex:ratio_6h{monitor="global"}
-                < on(tier, type) group_left()
-                (1 - (%(burnrate_6h)g * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
-              )
-              and
-              (
-                gitlab_component_apdex:ratio_30m{monitor="global"}
-                < on(tier, type) group_left()
-                (1 - (%(burnrate_6h)g * (1 - slo:min:events:gitlab_service_apdex:ratio{monitor="global"})))
-              )
-            )
-          )
-          and ignoring(monitor)
-          (
-            gitlab_component_ops:rate_1h >= %(minimumOperationRateForMonitoring)g
-          )
-        ||| % formatConfig,
+        expr: multiburnExpression.multiburnRateApdexExpression(
+          metric1h='gitlab_component_apdex:ratio_1h',
+          metric5m='gitlab_component_apdex:ratio_5m',
+          metric30m='gitlab_component_apdex:ratio_30m',
+          metric6h='gitlab_component_apdex:ratio_6h',
+          metricSelectorHash={ monitor: 'global' },
+          sloMetric='slo:min:events:gitlab_service_apdex:ratio',
+          sloMetricSelectorHash={ monitor: 'global' },
+          sloMetricAggregationLabels=['type', 'tier'],
+          operationRateMetric='gitlab_component_ops:rate_1h',
+          operationRateAggregationLabels=['environment', 'env', 'tier', 'type', 'component', 'stage'],
+          operationRateSelectorHash={ monitor: { ne: "global" } },
+          minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
+        ),
         'for': '2m',
         labels: {
           alert_type: 'symptom',
@@ -78,49 +58,20 @@ local rules = {
       },
     ), alerts.processAlertRule({
       alert: 'component_error_ratio_burn_rate_slo_out_of_bounds_upper',
-      expr: |||
-        (
-          (
-            gitlab_component_errors:ratio_1h{monitor="global"}
-            > on(tier, type) group_left()
-            (
-              %(burnrate_1h)g * (
-                avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)
-              )
-            )
-          and
-            gitlab_component_errors:ratio_5m{monitor="global"}
-            > on(tier, type) group_left()
-            (
-              %(burnrate_1h)g * (
-                avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)
-              )
-            )
-          )
-          or
-          (
-            gitlab_component_errors:ratio_6h{monitor="global"}
-            > on(tier, type) group_left()
-            (
-              %(burnrate_6h)g * (
-                avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)
-              )
-            )
-          and
-            gitlab_component_errors:ratio_30m{monitor="global"}
-            > on(tier, type) group_left()
-            (
-              %(burnrate_6h)g * (
-                avg(slo:max:events:gitlab_service_errors:ratio{monitor="global"}) by (tier, type)
-              )
-            )
-          )
-        )
-        and ignoring(monitor)
-        (
-          gitlab_component_ops:rate_1h >= %(minimumOperationRateForMonitoring)g
-        )
-      ||| % formatConfig,
+      expr: multiburnExpression.multiburnRateErrorExpression(
+        metric1h='gitlab_component_errors:ratio_1h',
+        metric5m='gitlab_component_errors:ratio_5m',
+        metric30m='gitlab_component_errors:ratio_30m',
+        metric6h='gitlab_component_errors:ratio_6h',
+        metricSelectorHash={ monitor: 'global' },
+        sloMetric='slo:max:events:gitlab_service_errors:ratio',
+        sloMetricSelectorHash={ monitor: 'global' },
+        sloMetricAggregationLabels=['type', 'tier'],
+        operationRateMetric='gitlab_component_ops:rate_1h',
+        operationRateAggregationLabels=['environment', 'env', 'tier', 'type', 'component', 'stage'],
+        operationRateSelectorHash={ monitor: { ne: "global" } },
+        minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
+      ),
       'for': '2m',
       labels: {
         rules_domain: 'general',

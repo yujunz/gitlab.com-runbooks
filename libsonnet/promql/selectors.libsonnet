@@ -76,7 +76,9 @@ local serializeHashItem(label, value) =
   // * { type: "gitlab", job: { re: "redis.*"} }    type!~"gitlab",job=~"redis.*"
   // -------------------------------------------------------------------------------
   serializeHash(selectorHash)::
-    if std.isString(selectorHash) then
+    if selectorHash == null then
+      ""
+    else if std.isString(selectorHash) then
       strings.chomp(selectorHash)
     else
       (
