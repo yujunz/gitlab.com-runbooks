@@ -3119,7 +3119,7 @@ groups:
       gitlab_component_saturation:ratio{component="sidekiq_shard_workers"} > on(component) group_left
       slo:max:hard:gitlab_component_saturation:ratio{component="sidekiq_shard_workers"}
   - alert: component_saturation_slo_out_of_bounds
-    for: 5m
+    for: 10m
     annotations:
       title: >-
         The Average CPU Utilization per Node resource of the {{ $labels.type }} service ({{ $labels.stage
@@ -3151,12 +3151,12 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
+      alert_trigger_duration: 10m
       alert_type: cause
       bound: upper
       burn_rate_period: 5m
       metric: gitlab_component_saturation:ratio
-      period: 5m
+      period: 10m
       rules_domain: general
       severity: s4
     expr: |
