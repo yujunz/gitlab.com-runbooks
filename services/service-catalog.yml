@@ -1228,7 +1228,7 @@ services:
     monitors:
       sentry_slug: gitlab/praefect-production
       grafana_folder: SRXyrrSmk
-      primary_grafana_dashboard: "gitaly-main/praefect"
+      primary_grafana_dashboard: "praefect-main/praefect-overview"
 
 - name: mailroom
   tier: sv
