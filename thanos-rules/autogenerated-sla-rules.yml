@@ -29,3 +29,9 @@ groups:
       )
   - record: sla:gitlab:ratio
     expr: sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"}
+- name: SLA target
+  interval: 5m
+  partial_response_strategy: warn
+  rules:
+  - record: sla:gitlab:target
+    expr: '0.9995'
