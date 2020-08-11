@@ -160,7 +160,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"performance\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"performance\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -260,7 +260,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"accessibility\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"accessibility\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -360,7 +360,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"pwa\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"pwa\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -461,7 +461,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"seo\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"seo\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -561,7 +561,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"best-practices\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"best-practices\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -720,7 +720,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"performance\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"performance\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -823,7 +823,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"accessibility\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"accessibility\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -926,7 +926,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"pwa\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"pwa\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -1030,7 +1030,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"seo\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"seo\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -1133,7 +1133,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"best-practices\"} * 100",
+          "expr": "max(pagespeed_lighthouse_category_score{env=\"ops\", host=\"$host\",path=\"$path\",strategy=\"$strategy\",category=\"best-practices\"} * 100)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
