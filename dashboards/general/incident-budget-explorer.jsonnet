@@ -8,6 +8,7 @@ local row = grafana.row;
 local thresholds = import 'thresholds.libsonnet';
 local selectors = import 'promql/selectors.libsonnet';
 local metricsConfig = import 'metrics-config.libsonnet';
+local templates = import 'grafana/templates.libsonnet';
 
 // Preferred ordering of rows on the SLA dashboard
 local serviceOrdering = [
@@ -56,7 +57,7 @@ local serviceAvailabilityQuery(selectorHash, metricName, rangeInterval) =
   local defaultSelector = {
     env: { re: 'ops|$environment' },
     environment: '$environment',
-    stage: 'main',
+    stage: '$stage',
     monitor: { re: 'global|' },
   };
 
@@ -122,6 +123,7 @@ basic.dashboard(
   time_from='now-6h/m',
   time_to='now/m',
 )
+.addTemplate(templates.stage)
 .addPanel(
   row.new(title='Overall GitLab.com Availability Points Spent'),
   gridPos={
