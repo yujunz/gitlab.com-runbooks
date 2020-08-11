@@ -49,8 +49,8 @@ local panelOverrides(stableId) = {
     },
 };
 
-local getDefaultAvailabilityColorScale(invertColors) =
-  local tf = if invertColors then function(value) 1 - value else function(value) value;
+local getDefaultAvailabilityColorScale(invertColors, factor) =
+  local tf = if invertColors then function(value) (1 - value) * factor else function(value) value;
   local scale = [
       {
         color: 'red',
@@ -747,6 +747,7 @@ local getDefaultAvailabilityColorScale(invertColors) =
     stableId=null,
     decimals=2,
     invertColors=false,
+    unit='percentunit',
   )::
     {
       datasource: '$PROMETHEUS_DS',
@@ -770,14 +771,14 @@ local getDefaultAvailabilityColorScale(invertColors) =
       fieldConfig: {
         defaults: {
           custom: {},
-          unit: 'percentunit',
+          unit: unit,
           min: 0,
           max: 1,
           decimals: decimals,
           displayName: displayName,
           thresholds: {
             mode: 'absolute',
-            steps: getDefaultAvailabilityColorScale(invertColors),
+            steps: getDefaultAvailabilityColorScale(invertColors, if unit == 'percentunit' then 1 else 100),
           },
           mappings: [],
           links: links,
@@ -835,7 +836,7 @@ local getDefaultAvailabilityColorScale(invertColors) =
             max: 1,
             min: 0,
             title: fieldTitle,
-            unit: 'percentunit',
+            unit: unit,
             color: {
               mode: 'thresholds',
             },

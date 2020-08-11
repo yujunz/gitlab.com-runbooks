@@ -7,6 +7,7 @@ local serviceCatalog = import 'service_catalog.libsonnet';
 local row = grafana.row;
 local thresholds = import 'thresholds.libsonnet';
 local selectors = import 'promql/selectors.libsonnet';
+local metricsConfig = import 'metrics-config.libsonnet';
 
 // Preferred ordering of rows on the SLA dashboard
 local serviceOrdering = [
@@ -29,7 +30,7 @@ local overviewDashboardLinks(type) =
 
 local thresholdsValues = {
   thresholds: [
-    thresholds.errorLevel('lt', 0.995),
+    thresholds.errorLevel('lt', metricsConfig.slaTarget),
   ],
 };
 
@@ -78,15 +79,16 @@ local serviceRow(service) =
     basic.slaStats(
       title='',
       query=|||
-        (1 - %(budgetExpression)s) * ($__range_ms / (86400000 * 30.5))
+        (1 - %(budgetExpression)s) * ($__range_ms / (86400000 * 30.5)) * 100 * 100
       ||| % {
         budgetExpression: serviceAvailabilityQuery({ type: service.name }, 'slo_observation_status', '$__range')
       },
-      legendFormat=service.friendly_name + ' Monthly Availability Budget Consumed',
+      legendFormat=service.friendly_name + ': Availability Points Spent',
       displayName=service.friendly_name,
       links=links,
       invertColors=true,
-      decimals=5,
+      decimals=2,
+      unit='‱',
     ),
     basic.statPanel(
       'Weight',
@@ -121,7 +123,7 @@ basic.dashboard(
   time_to='now/m',
 )
 .addPanel(
-  row.new(title='Overall GitLab.com Monthly Budget Consumed'),
+  row.new(title='Overall GitLab.com Availability Points Spent'),
   gridPos={
     x: 0,
     y: 0,
@@ -132,14 +134,26 @@ basic.dashboard(
 .addPanels(
   layout.columnGrid([[
     basic.slaStats(
-      title='Total GitLab.com Monthly Budget Consumed',
+      title='Total GitLab.com Availability Points Spent',
       query=|||
-        (1 - %(budgetExpression)s) * ($__range_ms / (86400000 * 30.5))
+        (1 - %(budgetExpression)s) * ($__range_ms / (86400000 * 30.5)) * 100 * 100
       ||| % {
         budgetExpression: serviceAvailabilityQuery({ }, 'sla:gitlab:ratio', '$__range')
       },
       invertColors=true,
-      decimals=5,
+      decimals=2,
+      unit='‱',
+    ),
+    basic.slaStats(
+      title='Monthly Availability Points Budget',
+      query=|||
+        (1 - sla:gitlab:target{monitor="global"}) * 100 * 100
+      ||| % {
+        budgetExpression: serviceAvailabilityQuery({ }, 'sla:gitlab:ratio', '$__range')
+      },
+      invertColors=true,
+      decimals=0,
+      unit='‱',
     ),
     basic.slaTimeseries(
       title='Availability - gitlab.com',
@@ -152,7 +166,7 @@ basic.dashboard(
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('gitlab.com SLA'))
     + thresholdsValues,
-  ]], [8, 16], rowHeight=5, startRow=1)
+  ]], [4, 4, 16], rowHeight=5, startRow=1)
 )
 .addPanel(
   row.new(title='Primary Services'),
