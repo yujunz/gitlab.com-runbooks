@@ -83,12 +83,12 @@ local serviceRow(service) =
       ||| % {
         budgetExpression: serviceAvailabilityQuery({ type: service.name }, 'slo_observation_status', '$__range')
       },
-      legendFormat=service.friendly_name + ': Availability Points Spent',
+      legendFormat=service.friendly_name + ': Availability Basis Points Spent',
       displayName=service.friendly_name,
       links=links,
       invertColors=true,
       decimals=2,
-      unit='‱',
+      unit='',
     ),
     basic.statPanel(
       'Weight',
@@ -134,7 +134,7 @@ basic.dashboard(
 .addPanels(
   layout.columnGrid([[
     basic.slaStats(
-      title='Total GitLab.com Availability Points Spent',
+      title='Total GitLab.com Availability Basis Points Spent',
       query=|||
         (1 - %(budgetExpression)s) * ($__range_ms / (86400000 * 30.5)) * 100 * 100
       ||| % {
@@ -142,10 +142,10 @@ basic.dashboard(
       },
       invertColors=true,
       decimals=2,
-      unit='‱',
+      unit='',
     ),
     basic.slaStats(
-      title='Monthly Availability Points Budget',
+      title='Monthly Availability Basis Points Budget',
       query=|||
         (1 - sla:gitlab:target{monitor="global"}) * 100 * 100
       ||| % {
@@ -153,7 +153,7 @@ basic.dashboard(
       },
       invertColors=true,
       decimals=0,
-      unit='‱',
+      unit='',
     ),
     basic.slaTimeseries(
       title='Availability - gitlab.com',
