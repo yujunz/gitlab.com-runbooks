@@ -8,6 +8,7 @@ local row = grafana.row;
 local thresholds = import 'thresholds.libsonnet';
 local grafanaCalHeatmap = import 'grafana-cal-heatmap-panel/panel.libsonnet';
 local selectors = import 'promql/selectors.libsonnet';
+local metricsConfig = import 'metrics-config.libsonnet';
 
 // These charts have a very high interval factor, to create a wide trend line
 local INTERVAL_FACTOR = 50;
@@ -34,7 +35,7 @@ local overviewDashboardLinks(type) =
 
 local thresholdsValues = {
   thresholds: [
-    thresholds.errorLevel('lt', 0.995),
+    thresholds.errorLevel('lt', metricsConfig.slaTarget),
   ],
 };
 
