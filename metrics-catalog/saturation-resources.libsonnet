@@ -863,6 +863,7 @@ local pgbouncerSyncPool(serviceType, role) =
     slos: {
       soft: 0.90,
       hard: 0.95,
+      alertTriggerDuration: '10m',
     },
   }),
 
