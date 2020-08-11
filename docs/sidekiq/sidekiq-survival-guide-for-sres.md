@@ -183,7 +183,7 @@ Sidekiq is doing overall. Apdex is at the top which will likely have clear signa
 quickly to useful information scroll down to the `Sidekiq Queues` section. The aggregated queue length is *one*
 possible indicator of issues, although in certain cases we expect queuing (particularly elasticsearch indexing, during
 initial indexing operations), so you need to look at the graphs for queue length and latency per job to see if (as is
-usual) there's only a few jobs that are causing trouble. A little lower down, `Sidekiq Throughput per Job` can also be
+usual) there's only a few jobs that are causing trouble. A little lower down, `Sidekiq Execution`/`Sidekiq Throughput per Job` can also be
 useful to see if the current execution rate of jobs is unusual; this will inform whether any queuing is because there's
 more jobs than usual, or if processing has ceased (the former is much more likely, but you never know)
 
