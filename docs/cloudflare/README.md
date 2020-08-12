@@ -39,6 +39,19 @@ on the `gstg` and `gprd` environments to apply the rules. If you are running it 
 
 ### [How cf_audit works](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10993)
 
+The [cf_audit project](https://ops.gitlab.net/gitlab-com/gl-infra/cloudflare-audit-log) is designed to help us keep a "known good"
+dump of our Cloudflare configuration. This is only an audit tool and not used to update any configuration on its own.
+The script itself gets all of the configuration data for our Cloudflare zones and account from the API and outputs the data
+into the `reports/` directory of the project.
+
+There is a CI job that runs periodically to gather said data and commit it to the `cloudflare_import` branch. The `cloudflare_import`
+branch is considered the source of truth for the configuration. It then compares this information to the `known_good` branch to
+determine what (if anything) has changed. The `known_good` branch is considered to be the expected configuration. If a configuration
+has changed, the job will be marked as failed, prompting manual review of the changes.
+
+If you'd like to watch a more detailed video about its inner workings, you can view [this demonstration video](https://youtu.be/vTKyf-PS7Lo)
+which goes into much more detail.
+
 ### [How Page Rules work](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10989)
 
 ## General Information
