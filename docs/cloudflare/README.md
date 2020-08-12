@@ -25,6 +25,14 @@ Cloudflare provides a web application firewall (WAF), domain name system
 
 ### [Adding WAF Rules to the cf_allowlists](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10987)
 
+[cf_allowlist](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_allowlists) is a terraform module
+that we've written to write WAF rules allowing customers' or GitLab service IPs to bypass Cloudflare and any
+block that it may cause. The allowlist is handled in the `allowlist.json` of the linked module. To add an IP to it,
+simply update the file with the required information. A sample entry is provided in the README of the module.
+Once the change is merged to master, you will need to run `terraform`
+on the `gstg` and `gprd` environments to apply the rules. If you are running it locally, you may need to run
+`tf init -upgrade` to ensure you fetch the latest module with your updates.
+
 ### [Adding WAF Rules via the Web UI](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10988)
 
 ## Verifying WAF and Page Rules
