@@ -21,6 +21,10 @@ Make a comment in the issue with the following content to apply some required la
 /label ~change ~C2 ~S2 ~Database ~"Service::Postgres" ~"Service::Patroni" ~"requires commendted manager approval" ~"required production access" ~"section::ops" ~"security" ~"change::scheduled"
 ```
 
+If the operation is to commence immediately, use the `~"change::in-progress"`
+label instead of `~"change::scheduled"`.  This enables deployment automation
+to recognize the change issue as a blocker.
+
 ## Operator workstation setup
 
 In order to support commands like `bundle exec knife <action>` it is
