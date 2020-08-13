@@ -25,7 +25,6 @@ groups:
       runbook: docs/sidekiq/service-sidekiq.md
     labels:
       alert_type: cause
-      period: 30m
       rules_domain: general
       severity: s4
       stage: main
