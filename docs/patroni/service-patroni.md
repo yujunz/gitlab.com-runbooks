@@ -27,6 +27,7 @@
 * [postgresql-backups-wale-walg.md](postgresql-backups-wale-walg.md)
 * [postgresql-disk-space.md](postgresql-disk-space.md)
 * [postgresql-replica.md](postgresql-replica.md)
+* [postgresql-role-credential-rotation.md](postgresql-role-credential-rotation.md)
 * [postgresql.md](postgresql.md)
 * [rotating-rails-postgresql-password.md](rotating-rails-postgresql-password.md)
 * [scale-down-patroni.md](scale-down-patroni.md)
