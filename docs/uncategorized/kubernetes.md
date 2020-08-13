@@ -115,7 +115,7 @@ undue stress.
 
 ### GKENodeCountCritical
 
-We have reached the maximum configured amount of nodes allowed by a node pool.
+We have reached the maximum configured amount of nodes allowed by all node pools.
 We must make changes to the node pool configuration.  This is maintained in
 Terraform here: [ops.gitlab.net/.../gitlab-com-infrastructure/.../gprd/main.tf](https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/blob/e3f1f5edfe90d98f4e410bfc5cc79b265b5fa1f0/environments/gprd/main.tf#L1797)
 
@@ -126,6 +126,11 @@ configuration as defined by terraform.  It would be wise to open an issue an
 investigate node resource contention and determine if we should consider raising
 this limit or target a service which may be using more resources than considered
 normal.
+
+Observe our node pool counts to determine if a particular node pool is at it's
+maximum.  If so, we need to investigate the workloads running on this node pool
+to determine if we need to simply bump the maximum count for that node pool or
+shift workloads around to a differing node pool
 
 Trends for node scaling can be seen using this metric over the course of time:
 `count(stackdriver_gce_instance_compute_googleapis_com_instance_uptime{instance_name=~"gke-gprd.*"})`
