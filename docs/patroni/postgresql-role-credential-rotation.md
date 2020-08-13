@@ -29,6 +29,8 @@ clone of the `gitlab-com/runbooks` project and installed the required ruby
 dependencies:
 
 ```bash
+rbenv install
+ruby -S gem install bundler
 bundle install --path=vendor/bundle`
 ```
 
