@@ -25,7 +25,7 @@ Make a comment in the issue with the following content to apply some required la
 
 In order to support commands like `bundle exec knife <action>` it is
 expected that an operator will change directory to their local workstation
-clone of the `gitlab-com/runbooks` project and installed the required ruby
+clone of the `gitlab-com/runbooks` project and install the required ruby
 dependencies:
 
 ```bash
