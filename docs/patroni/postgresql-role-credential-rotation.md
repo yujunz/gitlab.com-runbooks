@@ -31,7 +31,7 @@ dependencies:
 ```bash
 rbenv install
 ruby -S gem install bundler
-bundle install --path=vendor/bundle`
+bundle install --path=vendor/bundle
 ```
 
 ## Procedure
