@@ -1,12 +1,12 @@
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local basic = import 'grafana/basic.libsonnet';
 local colors = import 'grafana/colors.libsonnet';
 local commonAnnotations = import 'grafana/common_annotations.libsonnet';
-local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
 local promQuery = import 'grafana/prom_query.libsonnet';
 local seriesOverrides = import 'grafana/series_overrides.libsonnet';
 local templates = import 'grafana/templates.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;
@@ -77,6 +77,22 @@ local selectors = import 'promql/selectors.libsonnet';
         legendFormat='aggregated {{ component }}',
       )
     )
+    .addTarget(  // 95th quantile for week
+      promQuery.target(
+        |||
+          gitlab_component_saturation:ratio_quantile95_1w{%(selector)s, component="%(component)s"}
+        ||| % formatConfig,
+        legendFormat='95th quantile for week {{ component }}',
+      )
+    )
+    .addTarget(  // 99th quantile for week
+      promQuery.target(
+        |||
+          gitlab_component_saturation:ratio_quantile99_1w{%(selector)s, component="%(component)s"}
+        ||| % formatConfig,
+        legendFormat='99th quantile for week {{ component }}',
+      )
+    )
     .addTarget(  // Soft SLO
       promQuery.target(
         |||
@@ -107,7 +123,33 @@ local selectors = import 'promql/selectors.libsonnet';
     )
     .addSeriesOverride(seriesOverrides.softSlo)
     .addSeriesOverride(seriesOverrides.hardSlo)
-    .addSeriesOverride(seriesOverrides.goldenMetric('/aggregated /', { linewidth: 2 },)),
+    .addSeriesOverride(seriesOverrides.goldenMetric('/aggregated /', { linewidth: 2 },))
+    .addSeriesOverride({
+      alias: '/^95th quantile for week/',
+      color: '#37872D',
+      dashes: true,
+      legend: true,
+      lines: true,
+      linewidth: 1,
+      dashLength: 4,
+      spaceLength: 10,
+      nullPointMode: 'connected',
+      zindex: -2,
+
+    })
+    .addSeriesOverride({
+      alias: '/^99th quantile for week/',
+      color: '#56A64B',
+      dashes: true,
+      legend: true,
+      lines: true,
+      linewidth: 2,
+      dashLength: 4,
+      spaceLength: 4,
+      nullPointMode: 'connected',
+      zindex: -2,
+    }),
+
 
   componentSaturationPanel(component, selectorHash)::
     local componentDetails = saturationResources[component];
