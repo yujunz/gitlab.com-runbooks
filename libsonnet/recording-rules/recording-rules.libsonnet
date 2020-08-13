@@ -14,4 +14,5 @@
   serviceApdexRatioRuleSet: (import 'service-apdex-ratio-rule-set.libsonnet').serviceApdexRatioRuleSet,
   serviceNodeApdexRatioRuleSet: (import 'service-node-apdex-ratio-rule-set.libsonnet').serviceNodeApdexRatioRuleSet,
   extraRecordingRuleSet: (import 'extra-recording-rule-set.libsonnet').extraRecordingRuleSet,
+  deploymentHealthRuleSet: (import 'deployment-health-rule-set.libsonnet').deploymentHealthRuleSet,
 }

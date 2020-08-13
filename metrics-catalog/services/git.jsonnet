@@ -20,7 +20,7 @@ metricsCatalog.serviceDefinition({
   // back.
   deploymentThresholds: {
     apdexScore: 0.9995,
-    errorRatio: 0.9999,
+    errorRatio: 0.9995,
   },
   serviceDependencies: {
     gitaly: true,

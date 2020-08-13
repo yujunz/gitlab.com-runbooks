@@ -22,8 +22,8 @@ metricsCatalog.serviceDefinition({
   // When a service is in violation, deployments may be blocked or may be rolled
   // back.
   deploymentThresholds: {
-    apdexScore: 0.999,
-    errorRatio: 0.999,
+    apdexScore: 0.995,
+    errorRatio: 0.995,
   },
   serviceDependencies: {
     gitaly: true,
