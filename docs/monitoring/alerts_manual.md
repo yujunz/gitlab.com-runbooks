@@ -112,15 +112,7 @@ Alerts raised by Prometheus, as defined by alert rules, are sent to alertmanager
 ## How to add new alerts (alert rules in Prometheus config)
 
 Create a new yml file under `/rules` in this repo, and submit a MR. Once the MR has been approved &
-merged, trigger a chef converge on the `[gstg|gprd|ops]-infra-alerts` roles.
-
-From local clone of `dev.gitlab.org:chef-repo`
-
-```
-bundle exec knife ssh 'roles:gstg-infra-alerts'
-bundle exec knife ssh 'roles:gprd-infra-alerts'
-bundle exec knife ssh 'roles:ops-infra-alerts'
-```
+merged it will automatically converge in Chef and be pushed to Kubernetes.
 
 In order to get rules deployed into Kubernetes, follow the above and watch the
 CI/CD pipeline on the ops instance.  The `./bin/create_kubernetes_rules` script
@@ -152,7 +144,7 @@ Silencing alerts is helpful to reduce the broken window effect, critical alarms 
 be actionable and if they aren't we should ideally change the alert or if it something temporary
 silence them.
 
-* Go to https://alerts.(gprd|gstg|ops).gitlab.net/#/silences and select "New Silence"
+* Go to https://alerts.gitlab.net/#/silences and select "New Silence"
 * Add matchers for the conditions to target the specific alert, for example:
 
 ```

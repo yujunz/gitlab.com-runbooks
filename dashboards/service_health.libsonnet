@@ -29,7 +29,7 @@ local activeAlertsPanel(selector, title='Active Alerts') =
         pattern: 'alertname',
         mappingType: 2,
         link: true,
-        linkUrl: 'https://alerts.${environment}.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%7D',
+        linkUrl: 'https://alerts.gitlab.net/#/alerts?filter=%7Balertname%3D%22${__cell}%22%2C%20env%3D%22${environment}%22%7D',
         linkTooltip: 'Open alertmanager',
       },
       {
