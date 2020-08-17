@@ -417,6 +417,8 @@ check_alerts:
   only:
     variables:
       - $PERFORM_ALERTS_CHECK
+  tags:
+    - release
 
 test_dashboards:
   extends: .dashboards
