@@ -13,7 +13,7 @@
 * [praefect-bypass.md](praefect-bypass.md)
 * [praefect-database.md](praefect-database.md)
 * [praefect-error-rate.md](praefect-error-rate.md)
-* [praefect-failover.md](praefect-failover.md)
+* [praefect-read-only.md](praefect-read-only.md)
 * [praefect-file-storages.md](praefect-file-storages.md)
 * [praefect-replication.md](praefect-replication.md)
 * [praefect-startup.md](praefect-startup.md)

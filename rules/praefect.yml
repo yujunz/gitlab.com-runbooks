@@ -1,16 +1,16 @@
 groups:
 - name: Praefect misc alerts
   rules:
-  - alert: PraefectPerformedAFailover
-    expr: sum(changes(gitaly_praefect_primaries[1m])) by (virtual_storage) > 0
+  - alert: ReadOnlyRepositories
+    expr: max without (fqdn, instance) (gitaly_praefect_read_only_repositories) > 0
     for: 1m
     labels:
       team: gitaly
       pager: pagerduty
       severity: s1
-      alert_type: cause
+      alert_type: symptom
     annotations:
-      description: Praefect has performed a failover for {{ $labels.virtual_storage }} virtual storage.
-        Follow the runbook to check for any data loss.
-      runbook: docs/praefect/praefect-failover.md
-      title: Praefect performed a failover for {{ $labels.virtual_storage }} virtual storage
+      title: Some repositories are in read-only mode.
+      description: Some repositories are in read-only mode on virtual storage '{{ $labels.virtual_storage }}' as
+        the primary does not have the latest changes. Praefect might have failed over to an outdated secondary.
+      runbook: docs/praefect/praefect-read-only.md
