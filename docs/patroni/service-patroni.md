@@ -17,6 +17,7 @@
 * [geo-patroni-cluster.md](geo-patroni-cluster.md)
 * [gitlab-com-wale-backups.md](gitlab-com-wale-backups.md)
 * [gitlab-com-walg-backups.md](gitlab-com-walg-backups.md)
+* [log_analysis.md](log_analysis.md)
 * [patroni-management.md](patroni-management.md)
 * [pg-ha.md](pg-ha.md)
 * [pg_repack.md](pg_repack.md)

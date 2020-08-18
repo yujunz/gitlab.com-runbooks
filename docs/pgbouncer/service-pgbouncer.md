@@ -13,6 +13,7 @@
 
 * [../frontend/gitlab-com-is-down.md](../frontend/gitlab-com-is-down.md)
 * [../logging/README.md](../logging/README.md)
+* [../patroni/log_analysis.md](../patroni/log_analysis.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
 * [../patroni/pg-ha.md](../patroni/pg-ha.md)
 * [../patroni/pg_repack.md](../patroni/pg_repack.md)
