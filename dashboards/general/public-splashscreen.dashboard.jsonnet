@@ -26,6 +26,46 @@ basic.dashboard(
   tags=['general']
 )
 .addPanel(
+  text.new(
+    mode='markdown',
+    content=|||
+      # GitLab Public Dashboards
+
+      Welcome to the GitLab public dashboard. GitLab [values transparency](https://about.gitlab.com/handbook/values/#transparency),
+      so we maintain a public copy of our internal dashboards.
+
+      Due to privacy reasons and more strict query limitations not all dashboards may work correctly.
+    |||
+  ),
+  gridPos={
+    x: 0,
+    y: 0,
+    w: 12,
+    h: 5,
+  }
+)
+.addPanel(
+  text.new(
+    mode='markdown',
+    content=|||
+      # Useful Links
+
+      * **[Platform Triage Dashboard](/d/general-triage/general-platform-triage?orgId=1)** technical overview for all services.
+      * **[Capacity Planning Dashboard](/d/general-capacity-planning/general-capacity-planning?orgId=1)** resources currently saturated, or at risk of becoming saturated.
+      * **[Service SLA Dashboard](/d/general-slas/general-slas?orgId=1)** service SLA tracking.
+      * **[Source repository for these dashboards](https://gitlab.com/gitlab-com/runbooks/tree/master/dashboards)** - interested in how we use [grafonnet-lib](https://github.com/grafana/grafonnet-lib)
+        to build our dashboards?
+
+    |||
+  ),
+  gridPos={
+    x: 12,
+    y: 0,
+    w: 12,
+    h: 5,
+  }
+)
+.addPanel(
   row.new(title='FRONTEND SERVICES'),
   gridPos={
     x: 0,
@@ -62,47 +102,5 @@ basic.dashboard(
     y: 2000,
     w: 24,
     h: 1,
-  }
-)
-.addPanel(
-  text.new(
-    title='Welcome',
-    mode='markdown',
-    content=|||
-      # GitLab Public Dashboards
-
-      Welcome to the GitLab public dashboard. GitLab [values transparency](https://about.gitlab.com/handbook/values/#transparency),
-      so we maintain a public copy of our internal dashboards.
-
-      Due to privacy reasons and more strict query limitations not all dashboards may work correctly.
-    |||
-  ),
-  gridPos={
-    x: 0,
-    y: 2001,
-    w: 18,
-    h: 12,
-  }
-)
-.addPanel(
-  text.new(
-    title='Welcome',
-    mode='markdown',
-    content=|||
-      # Useful Links
-
-      * **[Platform Triage Dashboard](/d/general-triage/general-platform-triage?orgId=1)** technical overview for all services.
-      * **[Capacity Planning Dashboard](/d/general-capacity-planning/general-capacity-planning?orgId=1)** resources currently saturated, or at risk of becoming saturated.
-      * **[Service SLA Dashboard](/d/general-slas/general-slas?orgId=1)** service SLA tracking.
-      * **[Source repository for these dashboards](https://gitlab.com/gitlab-com/runbooks/tree/master/dashboards)** - interested in how we use [grafonnet-lib](https://github.com/grafana/grafonnet-lib)
-        to build our dashboards?
-
-    |||
-  ),
-  gridPos={
-    x: 18,
-    y: 2001,
-    w: 6,
-    h: 12,
   }
 )
