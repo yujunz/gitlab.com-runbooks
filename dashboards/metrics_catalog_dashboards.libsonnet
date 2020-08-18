@@ -7,6 +7,7 @@ local thresholds = import 'thresholds.libsonnet';
 local row = grafana.row;
 local selectors = import 'promql/selectors.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 local defaultEnvironmentSelector = { environment: '$environment' };
 
@@ -54,6 +55,25 @@ local componentOverviewMatrixRow(
       if component.hasAggregatableRequestRate() then
         [[
           keyMetrics.singleComponentQPSPanel(serviceType, serviceStage, componentName, environmentSelectorHash),
+        ]]
+      else
+        []
+    )
+    +
+    (
+       if component.hasToolingLinks() then
+        [[
+          grafana.text.new(
+            title='Tooling Links',
+            mode='markdown',
+            content=|||
+              ### Observability Tools
+
+              %(links)s
+            ||| % {
+              links: toolingLinks.generateMarkdown(component.getToolingLinks())
+            },
+          ),
         ]]
       else
         []

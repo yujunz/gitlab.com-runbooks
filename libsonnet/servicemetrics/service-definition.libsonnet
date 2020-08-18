@@ -6,7 +6,7 @@ local serviceDefaults = {
   nodeLevelMonitoring: false,  // By default we do not use node-level monitoring
 };
 local componentDefaults = {
-  aggregateRequestRate: true // by default, requestRate is aggregated up to the service level
+  aggregateRequestRate: true,  // by default, requestRate is aggregated up to the service level
 };
 
 local validateHasField(object, field, message) =
@@ -29,6 +29,15 @@ local componentDefinition(component) =
     hasRequestRate():: true,  // requestRate is mandatory
     hasAggregatableRequestRate():: std.objectHasAll(component.requestRate, 'aggregatedRateQuery'),
     hasErrorRate():: std.objectHas(component, 'errorRate'),
+
+    hasToolingLinks()::
+      std.objectHasAll(component, 'toolingLinks'),
+
+    getToolingLinks()::
+      if self.hasToolingLinks() then
+        std.flatMap(function(toolingLinkDefinition) toolingLinkDefinition, self.toolingLinks)
+      else
+        [],
   };
 
 local validateAndApplyServiceDefaults(service) =
