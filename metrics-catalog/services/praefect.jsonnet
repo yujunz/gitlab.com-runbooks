@@ -2,6 +2,7 @@ local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local rateMetric = metricsCatalog.rateMetric;
 local histogramApdex = metricsCatalog.histogramApdex;
 local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'praefect',
@@ -31,6 +32,12 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.continuousProfiler(service='praefect'),
+        toolingLinks.sentry(slug='gitlab/praefect-production'),
+        toolingLinks.kibana(title="Praefect", index="praefect", stage="$stage", durationField="json.grpc.time_ms", slowQueryValue=1000),
+      ],
     },
 
     // The replicator_queue handles replication jobs from Praefect to secondaries

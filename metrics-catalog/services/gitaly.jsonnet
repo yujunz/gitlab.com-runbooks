@@ -3,6 +3,7 @@ local rateMetric = metricsCatalog.rateMetric;
 local customApdex = metricsCatalog.customApdex;
 local combined = metricsCatalog.combined;
 local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'gitaly',
@@ -44,6 +45,12 @@ metricsCatalog.serviceDefinition({
       ]),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.continuousProfiler(service='gitaly'),
+        toolingLinks.sentry(slug='gitlab/gitaly-production'),
+        toolingLinks.kibana(title="Gitaly", index="gitaly", stage="$stage", durationField="json.grpc.time_ms", slowQueryValue=1000),
+      ],
     },
 
     gitalyruby: {
@@ -77,6 +84,10 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.sentry(slug='gitlab/gitlabcom-gitaly-ruby'),
+      ],
     },
   },
 })

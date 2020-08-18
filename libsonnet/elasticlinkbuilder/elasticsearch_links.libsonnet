@@ -4,6 +4,8 @@ local indexes = {
   workhorse: 'AWM6itvP1NBBQZg_ElD1',
   rails: 'AW5F1e45qthdGjPJueGO',
   sidekiq: 'AWNABDRwNDuQHTm2tH6l',
+  gitaly: 'AW5F1OHTiGcMMNRn84Di',
+  praefect: 'AW98WAQvqthdGjPJ8jTY'
 };
 
 local kibanaEndpoint = 'https://log.gprd.gitlab.net/app/kibana';
@@ -12,6 +14,8 @@ local defaultColumns = {
   workhorse: ['json.method', 'json.remote_ip', 'json.status', 'json.uri', 'json.duration_ms'],
   rails: ['json.method', 'json.status', 'json.controller', 'json.action', 'json.path', 'json.duration_s'],
   sidekiq: ['json.class', 'json.queue', 'json.job_status', 'json.scheduling_latency_s', 'json.duration_s'],
+  gitaly: ['json.hostname', 'json.grpc.method', 'json.grpc.request.glProjectPath', 'json.grpc.code', 'json.grpc.time_ms'],
+  praefect: ['json.hostname', 'json.virtual_storage', 'json.grpc.method', 'json.relative_path', 'json.grpc.code', 'json.grpc.time_ms'],
 };
 
 local buildElasticDiscoverSearchQueryURL(index, filters) =
@@ -126,6 +130,18 @@ local buildElasticLinePercentileVizURL(index, filters, field) =
         },
       },
     },
+
+  // Builds an ElasticSearch range filter clause
+  rangeFilter(field, gteValue, lteValue)::
+    {
+      range: {
+        [field]: {
+          [if gteValue != null then "gte"]: gteValue,
+          [if lteValue != null then "lte"]: lteValue,
+        },
+      },
+    },
+
 
   // Given an index, and a set of filters, returns a URL to a Kibana discover module/search
   buildElasticDiscoverSearchQueryURL(index, filters)::

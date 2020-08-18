@@ -4,6 +4,7 @@ local rateMetric = metricsCatalog.rateMetric;
 local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
 local perWorkerRecordingRules = (import './lib/sidekiq-per-worker-recording-rules.libsonnet').perWorkerRecordingRules;
 local combined = metricsCatalog.combined;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 local highUrgencySelector = { urgency: 'high' };
 local lowUrgencySelector = { urgency: 'low' };
@@ -124,6 +125,11 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['feature_category', 'queue', 'urgency'],
+
+      toolingLinks: [
+        // Improve sentry link once https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/532 arrives
+        toolingLinks.sentry(slug='gitlab/gitlabcom'),
+      ],
     }
     for shard in sidekiqHelpers.shards.listAll()
   },
