@@ -5,7 +5,8 @@ IFS=$'\n\t'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if hash go 2>/dev/null; then
+# If jb isn't already in the path, but go is, try include it from the go bin path
+if (! command -v jb && command -v go) >/dev/null; then
   PATH="$(go env GOPATH)/bin:${PATH}"
 fi
 
