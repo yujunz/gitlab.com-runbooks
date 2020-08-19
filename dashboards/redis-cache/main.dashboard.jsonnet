@@ -34,7 +34,7 @@ serviceDashboard.overview('redis-cache', 'db')
     h: 1,
   }
 )
-.addPanels(redisCommon.data(serviceType='redis-cache', startRow=3001))
+.addPanels(redisCommon.data(serviceType='redis-cache', startRow=3001, hitRatio=true))
 .addPanel(
   row.new(title='Replication'),
   gridPos={
