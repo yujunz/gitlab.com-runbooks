@@ -7,3 +7,41 @@ groups:
       sum by (nfs_server) (
         rate(syslog_nfs_timeouts_total[1m])
       )
+- name: mtail metamon
+  rules:
+  - alert: mtail log errors
+    expr: sum by (environment, tier, type, stage, shard, instance) (rate(mtail_log_errors_total[5m])) > 0
+    for: 5m
+    labels:
+      alert_type: cause
+      severity: s4
+    annotations:
+      title: mtail is encountering IO errors on a log file
+      runbook: docs/uncategorized/mtail.md
+  - alert: mtail log watcher errors
+    expr: sum by (environment, tier, type, stage, shard, instance) (rate(mtail_log_watcher_errors_total[5m])) > 0
+    for: 5m
+    labels:
+      alert_type: cause
+      severity: s4
+    annotations:
+      title: mtail is encountering file watcher errors from fsnotify
+      runbook: docs/uncategorized/mtail.md
+  - alert: mtail prog load errors
+    expr: sum by (environment, tier, type, stage, shard, instance) (rate(mtail_prog_load_errors_total[5m])) > 0
+    for: 5m
+    labels:
+      alert_type: cause
+      severity: s4
+    annotations:
+      title: mtail is encountering errors loading a program
+      runbook: docs/uncategorized/mtail.md
+  - alert: mtail prog runtime errors
+    expr: sum by (environment, tier, type, stage, shard, instance) (rate(mtail_prog_runtime_errors_total[5m])) > 0
+    for: 5m
+    labels:
+      alert_type: cause
+      severity: s4
+    annotations:
+      title: mtail is encountering errors running a program
+      runbook: docs/uncategorized/mtail.md
