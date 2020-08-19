@@ -126,9 +126,21 @@ metricsCatalog.serviceDefinition({
 
       significantLabels: ['feature_category', 'queue', 'urgency'],
 
+      local slowRequestSeconds =
+        if shard.urgency == 'high' then
+          sidekiqHelpers.slos.urgent.executionDurationSeconds
+        else if shard.urgency == 'low' then
+          sidekiqHelpers.slos.lowUrgency.executionDurationSeconds
+        else if shard.urgency == 'throttled' then
+          sidekiqHelpers.slos.throttled.executionDurationSeconds
+        else
+          // Default to low urgency threshold
+          sidekiqHelpers.slos.lowUrgency.executionDurationSeconds,
+
       toolingLinks: [
         // Improve sentry link once https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/532 arrives
         toolingLinks.sentry(slug='gitlab/gitlabcom'),
+        toolingLinks.kibana(title=shard.name, index='sidekiq', type='sidekiq', shard=shard.name, slowRequestSeconds=slowRequestSeconds),
       ] + (
         if std.objectHas(shard, 'gkeDeployment') then
           [

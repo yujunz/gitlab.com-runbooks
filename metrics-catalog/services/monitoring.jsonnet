@@ -1,6 +1,7 @@
 local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 local productionEnvironmentsSelector = {
   environment: { re: 'gprd|ops|ci-prd' },
@@ -47,6 +48,10 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+      ],
     },
 
     thanos_store: {
@@ -79,6 +84,10 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+      ],
     },
 
     thanos_compactor: {
@@ -201,11 +210,15 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn', 'handler'],
+
+      toolingLinks: [
+        toolingLinks.kibana(title='Prometheus', index='monitoring'),
+      ],
     },
 
 
     // This component represents rule evaluations in
-    // Prometheus and Thanos ruler
+    // Prometheus and thanos ruler
     rule_evaluation: {
       local selector = productionEnvironmentsSelector { type: 'monitoring' },
 

@@ -37,7 +37,7 @@ metricsCatalog.serviceDefinition({
       toolingLinks: [
         toolingLinks.continuousProfiler(service='praefect'),
         toolingLinks.sentry(slug='gitlab/praefect-production'),
-        toolingLinks.kibana(title='Praefect', index='praefect', stage='$stage', durationField='json.grpc.time_ms', slowQueryValue=1000),
+        toolingLinks.kibana(title='Praefect', index='praefect', stage='$stage', slowRequestSeconds=1),
       ],
     },
 
