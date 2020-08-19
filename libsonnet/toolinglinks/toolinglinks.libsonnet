@@ -10,6 +10,7 @@ local generateMarkdown(toolingLinks) =
   std.join('', std.map(generateMarkdownLink, toolingLinks));
 
 {
+  cloudSQL: (import './cloud_sql.libsonnet').cloudSQL,
   continuousProfiler:: (import './continuous_profiler.libsonnet').continuousProfiler,
   sentry:: (import './sentry.libsonnet').sentry,
   bigquery:: (import './bigquery.libsonnet').bigquery,

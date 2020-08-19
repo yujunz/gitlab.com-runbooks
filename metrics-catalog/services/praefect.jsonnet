@@ -1,5 +1,6 @@
 local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local rateMetric = metricsCatalog.rateMetric;
+local gaugeMetric = metricsCatalog.gaugeMetric;
 local histogramApdex = metricsCatalog.histogramApdex;
 local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
@@ -36,7 +37,7 @@ metricsCatalog.serviceDefinition({
       toolingLinks: [
         toolingLinks.continuousProfiler(service='praefect'),
         toolingLinks.sentry(slug='gitlab/praefect-production'),
-        toolingLinks.kibana(title="Praefect", index="praefect", stage="$stage", durationField="json.grpc.time_ms", slowQueryValue=1000),
+        toolingLinks.kibana(title='Praefect', index='praefect', stage='$stage', durationField='json.grpc.time_ms', slowQueryValue=1000),
       ],
     },
 
@@ -55,10 +56,37 @@ metricsCatalog.serviceDefinition({
 
       requestRate: rateMetric(
         counter='gitaly_praefect_replication_delay_bucket',
-        selector=baseSelector { le: "+Inf" }
+        selector=baseSelector { le: '+Inf' }
       ),
 
       significantLabels: ['fqdn', 'type'],
+    },
+
+    praefect_cloudsql: {
+      local baseSelector = { job: 'stackdriver', database: 'praefect_production' },
+
+      staticLabels: {
+        tier: 'stor',
+        type: 'praefect',
+      },
+
+      requestRate: gaugeMetric(
+        gauge='stackdriver_cloudsql_database_cloudsql_googleapis_com_database_postgresql_transaction_count',
+        selector=baseSelector
+      ),
+
+      errorRate: gaugeMetric(
+        gauge='stackdriver_cloudsql_database_cloudsql_googleapis_com_database_postgresql_transaction_count',
+        selector=baseSelector {
+          transaction_type: 'rollback',
+        }
+      ),
+
+      significantLabels: [],
+      aggregateRequestRate: false,  // Don't include cloudsql in the aggregated RPS for the service
+      toolingLinks: [
+        toolingLinks.cloudSQL('praefect-db-9dfb'),
+      ],
     },
   },
 })
