@@ -129,7 +129,14 @@ metricsCatalog.serviceDefinition({
       toolingLinks: [
         // Improve sentry link once https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/532 arrives
         toolingLinks.sentry(slug='gitlab/gitlabcom'),
-      ],
+      ] + (
+        if std.objectHas(shard, 'gkeDeployment') then
+          [
+            toolingLinks.gkeDeployment(shard.gkeDeployment),
+          ]
+        else
+          []
+      ),
     }
     for shard in sidekiqHelpers.shards.listAll()
   },

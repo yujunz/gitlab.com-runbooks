@@ -10,15 +10,15 @@
 //
 // To avoid even more complication, this list should remain the SSOT for the runbooks project if at all possible!
 local shards = {
-  'database-throttled': { urgency: 'throttled' },
-  'gitaly-throttled': { urgency: 'throttled' },
-  'low-urgency-cpu-bound': { urgency: 'low' },
-  'memory-bound': { urgency: 'throttled' },
-  'urgent-cpu-bound': { urgency: 'high' },
-  'urgent-other': { urgency: 'high', autoScaling: false },
+  'database-throttled': { urgency: 'throttled', gkeDeployment: 'gitlab-sidekiq-database-throttled-v1' },
+  'gitaly-throttled': { urgency: 'throttled', gkeDeployment: 'gitlab-sidekiq-gitaly-throttled-v1' },
+  'low-urgency-cpu-bound': { urgency: 'low', gkeDeployment: 'gitlab-sidekiq-low-urgency-cpu-bound-v1' },
+  'memory-bound': { urgency: 'throttled', gkeDeployment: 'gitlab-sidekiq-memory-bound-v1' },
+  'urgent-cpu-bound': { urgency: 'high', gkeDeployment: 'gitlab-sidekiq-urgent-cpu-bound-v1' },
+  'urgent-other': { urgency: 'high', autoScaling: false, gkeDeployment: 'gitlab-sidekiq-urgent-other-v1' },
   catchall: { urgency: null /* no urgency attribute since multiple values are supported */ },
   catchnfs: { urgency: null /* no urgency attribute since multiple values are supported */ },
-  elasticsearch: { urgency: 'throttled' },
+  elasticsearch: { urgency: 'throttled', gkeDeployment: 'gitlab-sidekiq-elasticsearch-v1' },
 };
 
 // These values are used in several places, so best to DRY them up
