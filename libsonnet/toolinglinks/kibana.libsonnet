@@ -7,10 +7,13 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
     index,
     type=null,
     stage=null,
-    durationField=null,
-    slowQueryValue=null,
-    httpStatusCodeField=null,
+    tag=null,
+    shard=null,
+    slowRequestSeconds=null,
   )::
+    local supportsFailures = elasticsearchLinks.indexSupportsFailureQueries(index);
+    local supportsLatencies = elasticsearchLinks.indexSupportsLatencyQueries(index);
+
     local filters =
       (
         if type == null then
@@ -24,70 +27,82 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
           []
         else
           [elasticsearchLinks.matchFilter('json.stage', stage)]
+      )
+      +
+      (
+        if tag == null then
+          []
+        else
+          [elasticsearchLinks.matchFilter('json.tag', tag)]
+      )
+      +
+      (
+        if shard == null then
+          []
+        else
+          [elasticsearchLinks.matchFilter('json.shard', shard)]
       );
 
 
     [
       toolingLinkDefinition({
-        title: 'Kibana/Discover: ' + title + " logs",
+        title: 'Kibana/Discover: ' + title + ' logs',
         url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL(index, filters),
-      })
+      }),
     ]
     +
     (
-      if durationField != null && slowQueryValue != null then
+      if supportsLatencies && slowRequestSeconds != null then
         [
           toolingLinkDefinition({
-            title: 'Kibana/Discover: ' + title + " slow request logs",
-            url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL(index, filters + [
-              elasticsearchLinks.rangeFilter(durationField, slowQueryValue, null)
-            ]),
-          })
+            title: 'Kibana/Discover: ' + title + ' slow request logs',
+            url: elasticsearchLinks.buildElasticDiscoverSlowRequestSearchQueryURL(index, filters, slowRequestSeconds=slowRequestSeconds),
+          }),
         ]
       else []
     )
     +
     (
-      if httpStatusCodeField != null then
+      if supportsFailures then
         [
           toolingLinkDefinition({
-            title: 'Kibana/Discover: ' + title + " failed request logs",
-            url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL(index, filters + [
-              elasticsearchLinks.rangeFilter(httpStatusCodeField, 500, null)
-            ]),
-          })
+            title: 'Kibana/Discover: ' + title + ' failed request logs',
+            url: elasticsearchLinks.buildElasticDiscoverFailureSearchQueryURL(index, filters),
+          }),
         ]
-      else []
+      else
+        []
     )
     +
     [
       toolingLinkDefinition({
-        title: 'Kibana/Visualize: ' + title + " requests",
+        title: 'Kibana/Visualize: ' + title + ' requests',
         url: elasticsearchLinks.buildElasticLineCountVizURL(index, filters),
-      })
+      }),
+
     ]
     +
     (
-      if httpStatusCodeField != null then
+      if supportsFailures then
         [
           toolingLinkDefinition({
-            title: 'Kibana/Visualize: ' + title + " failed request",
-            url: elasticsearchLinks.buildElasticLineCountVizURL(index, filters + [
-              elasticsearchLinks.rangeFilter(httpStatusCodeField, 500, null)
-            ]),
-          })
+            title: 'Kibana/Visualize: ' + title + ' failed request',
+            url: elasticsearchLinks.buildElasticLineFailureCountVizURL(index, filters),
+          }),
         ]
-      else []
+      else
+        []
     )
     +
     (
-      if durationField != null then
+      if supportsLatencies then
         [
           toolingLinkDefinition({
-            title: 'Kibana/Visualize: ' + title + " request latencies",
-            url: elasticsearchLinks.buildElasticLinePercentileVizURL(index, filters, durationField),
-          })
+            title: 'Kibana/Visualize: ' + title + ' request latencies',
+            url: elasticsearchLinks.buildElasticLinePercentileVizURL(index, filters),
+          }),
         ]
-      else []
-    )
+      else
+        []
+    ),
 }

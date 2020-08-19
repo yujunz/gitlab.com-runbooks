@@ -65,7 +65,8 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.continuousProfiler(service='gitlab-pages'),
-        toolingLinks.sentry(slug='gitlab/gitlab-pages')
+        toolingLinks.sentry(slug='gitlab/gitlab-pages'),
+        toolingLinks.kibana(title='GitLab Pages', index='pages'),
       ],
     },
   },

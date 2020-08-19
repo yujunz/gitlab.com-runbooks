@@ -12,6 +12,7 @@ local generateMarkdown(toolingLinks) =
 {
   cloudSQL: (import './cloud_sql.libsonnet').cloudSQL,
   continuousProfiler:: (import './continuous_profiler.libsonnet').continuousProfiler,
+  elasticAPM:: (import './elastic_apm.libsonnet').elasticAPM,
   sentry:: (import './sentry.libsonnet').sentry,
   bigquery:: (import './bigquery.libsonnet').bigquery,
   kibana:: (import './kibana.libsonnet').kibana,

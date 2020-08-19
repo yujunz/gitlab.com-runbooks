@@ -2,6 +2,7 @@ local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local combined = metricsCatalog.combined;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'pgbouncer',
@@ -24,6 +25,10 @@ metricsCatalog.serviceDefinition({
       ]),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.kibana(title='pgbouncer', index='postgres_pgbouncer', type='pgbouncer', tag='postgres.pgbouncer'),
+      ],
     },
   },
 })
