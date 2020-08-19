@@ -50,5 +50,6 @@
 * [../uncategorized/gemnasium_is_down.md](../uncategorized/gemnasium_is_down.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
 * [../uncategorized/project-export.md](../uncategorized/project-export.md)
+* [../uncategorized/ruby-profiling.md](../uncategorized/ruby-profiling.md)
 * [../uncategorized/setup-oauth2-proxy-protected-application.md](../uncategorized/setup-oauth2-proxy-protected-application.md)
 <!-- END_MARKER -->

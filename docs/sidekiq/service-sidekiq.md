@@ -40,5 +40,6 @@
 * [../uncategorized/debug-failed-chef-provisioning.md](../uncategorized/debug-failed-chef-provisioning.md)
 * [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
+* [../uncategorized/ruby-profiling.md](../uncategorized/ruby-profiling.md)
 * [../uncategorized/tweeting-guidelines.md](../uncategorized/tweeting-guidelines.md)
 <!-- END_MARKER -->
