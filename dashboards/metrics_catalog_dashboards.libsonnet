@@ -1,7 +1,7 @@
-local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
-local keyMetrics = import 'key_metrics.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
+local keyMetrics = import 'key_metrics.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local row = grafana.row;
@@ -61,7 +61,7 @@ local componentOverviewMatrixRow(
     )
     +
     (
-       if component.hasToolingLinks() then
+      if component.hasToolingLinks() then
         [[
           grafana.text.new(
             title='Tooling Links',
@@ -71,7 +71,7 @@ local componentOverviewMatrixRow(
 
               %(links)s
             ||| % {
-              links: toolingLinks.generateMarkdown(component.getToolingLinks())
+              links: toolingLinks.generateMarkdown(component.getToolingLinks()),
             },
           ),
         ]]
@@ -86,7 +86,7 @@ local componentOverviewMatrixRow(
         (
           if component.hasApdex() then
             [
-              keyMetrics.singleComponentNodeApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash)
+              keyMetrics.singleComponentNodeApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash),
             ]
           else []
         )
@@ -106,7 +106,8 @@ local componentOverviewMatrixRow(
             ]
           else []
         ),
-        rowHeight=5, startRow=startRow+8
+        rowHeight=5,
+        startRow=startRow + 8
       )
     else []
   );
@@ -186,7 +187,7 @@ local componentOverviewMatrixRow(
 
     basic.timeseries(
       title=if title == null then 'Errors for ' + componentName else title,
-      query=component.errorRate.aggregatedIncreaseQuery(
+      query=component.errorRate.aggregatedRateQuery(
         aggregationLabels=aggregationLabels,
         selector=selector,
         rangeInterval='$__interval',

@@ -50,10 +50,12 @@ local serializeHashItem(label, value) =
   // Given selectors a,b creates a new selector that
   // is logically (a AND b)
   merge(a, b)::
-    if std.isString(a) then
-      self.join([a, self.serializeHash(b)])
-    else if std.isString(b) then
-      self.join([self.serializeHash(a), b])
+    if a == null then
+      b
+    else if b == null then
+      a
+    else if std.isString(a) || std.isString(b) then
+      self.join([self.serializeHash(a), self.serializeHash(b)])
     else
       a + b,
 
@@ -77,7 +79,7 @@ local serializeHashItem(label, value) =
   // -------------------------------------------------------------------------------
   serializeHash(selectorHash)::
     if selectorHash == null then
-      ""
+      ''
     else if std.isString(selectorHash) then
       strings.chomp(selectorHash)
     else
