@@ -51,6 +51,7 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.gkeDeployment(deployment='thanos-query', namespace='monitoring'),
       ],
     },
 
@@ -216,7 +217,6 @@ metricsCatalog.serviceDefinition({
       ],
     },
 
-
     // This component represents rule evaluations in
     // Prometheus and thanos ruler
     rule_evaluation: {
@@ -230,6 +230,31 @@ metricsCatalog.serviceDefinition({
       errorRate: rateMetric(
         counter='prometheus_rule_evaluation_failures_total',
         selector=selector
+      ),
+
+      significantLabels: ['fqdn'],
+    },
+
+    // Trickster is a prometheus caching layer that serves requests to our
+    // public Grafana instance
+    trickster: {
+      staticLabels: {
+        environment: 'ops',
+      },
+
+      apdex: histogramApdex(
+        histogram='trickster_frontend_requests_duration_seconds_bucket',
+        satisfiedThreshold=5,
+        toleratedThreshold=20
+      ),
+
+      requestRate: rateMetric(
+        counter='trickster_frontend_requests_total'
+      ),
+
+      errorRate: rateMetric(
+        counter='trickster_frontend_requests_total',
+        selector={ http_status: { re: '5.*' } }
       ),
 
       significantLabels: ['fqdn'],
