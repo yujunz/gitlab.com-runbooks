@@ -111,11 +111,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="5"}[1m])
+          rate(registry_storage_action_seconds_bucket{le="1"}[1m])
         )
         +
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="10"}[1m])
+          rate(registry_storage_action_seconds_bucket{le="2.5"}[1m])
         )
       )
       /
@@ -245,11 +245,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="5"}[5m])
+          rate(registry_storage_action_seconds_bucket{le="1"}[5m])
         )
         +
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="10"}[5m])
+          rate(registry_storage_action_seconds_bucket{le="2.5"}[5m])
         )
       )
       /
@@ -377,11 +377,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="5"}[30m])
+          rate(registry_storage_action_seconds_bucket{le="1"}[30m])
         )
         +
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="10"}[30m])
+          rate(registry_storage_action_seconds_bucket{le="2.5"}[30m])
         )
       )
       /
@@ -509,11 +509,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="5"}[1h])
+          rate(registry_storage_action_seconds_bucket{le="1"}[1h])
         )
         +
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="10"}[1h])
+          rate(registry_storage_action_seconds_bucket{le="2.5"}[1h])
         )
       )
       /
@@ -641,11 +641,11 @@ groups:
     expr: |
       (
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="5"}[6h])
+          rate(registry_storage_action_seconds_bucket{le="1"}[6h])
         )
         +
         sum by (environment,stage) (
-          rate(registry_storage_action_seconds_bucket{le="10"}[6h])
+          rate(registry_storage_action_seconds_bucket{le="2.5"}[6h])
         )
       )
       /

@@ -121,6 +121,16 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1000000,  // Redis uses us
   },
 
+  registry: {
+    timestamp: 'json.time',
+    indexId: '97ce8e90-63ad-11ea-8617-2347010d3aab',
+    defaultColumns: ['json.http.request.uri', 'json.http.response.duration', 'json.err.code', 'json.msg', 'json.http.response.status'],
+    failureFilter: statusCode('json.http.response.status'),
+    // Requires https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11136
+    // defaultLatencyField: 'json.duration_s',
+    // latencyFieldUnitMultiplier: 1,
+  },
+
   runners: {
     timestamp: 'json.time',
     indexId: 'AWgzayS3ENm-ja4G1a8d',
