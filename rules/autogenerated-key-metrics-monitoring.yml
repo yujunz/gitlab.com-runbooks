@@ -264,6 +264,60 @@ groups:
       sum by (stage) (
         rate(grpc_server_handled_total{environment=~"gprd|ops|ci-prd",grpc_code!="OK",grpc_service="thanos.Store",grpc_type="unary",job="thanos",type="monitoring"}[1m])
       )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_duration_seconds_bucket{le="+Inf"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      (
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="5"}[1m])
+        )
+        +
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="20"}[1m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{http_status=~"5.*"}[1m])
+      )
 - name: 'Component-Level SLIs: monitoring - 5m burn-rate'
   interval: 1m
   rules:
@@ -527,6 +581,60 @@ groups:
       sum by (stage) (
         rate(grpc_server_handled_total{environment=~"gprd|ops|ci-prd",grpc_code!="OK",grpc_service="thanos.Store",grpc_type="unary",job="thanos",type="monitoring"}[5m])
       )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_duration_seconds_bucket{le="+Inf"}[5m])
+      )
+  - record: gitlab_component_apdex:ratio_5m
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      (
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="5"}[5m])
+        )
+        +
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="20"}[5m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="+Inf"}[5m])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{http_status=~"5.*"}[5m])
+      )
 - name: 'Component-Level SLIs: monitoring - 30m burn-rate'
   interval: 2m
   rules:
@@ -783,6 +891,58 @@ groups:
     expr: |
       sum by (stage) (
         rate(grpc_server_handled_total{environment=~"gprd|ops|ci-prd",grpc_code!="OK",grpc_service="thanos.Store",grpc_type="unary",job="thanos",type="monitoring"}[30m])
+      )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_duration_seconds_bucket{le="+Inf"}[30m])
+      )
+  - record: gitlab_component_apdex:ratio_30m
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      (
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="5"}[30m])
+        )
+        +
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="20"}[30m])
+        )
+      )
+      /
+      2
+      / on(stage) group_left()
+      (
+        gitlab_component_apdex:weight:score_30m{component="trickster",environment="ops",tier="inf",type="monitoring"} > 0
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{http_status=~"5.*"}[30m])
       )
 - name: 'Component-Level SLIs: monitoring - 1h burn-rate'
   interval: 1m
@@ -1047,6 +1207,60 @@ groups:
       sum by (stage) (
         rate(grpc_server_handled_total{environment=~"gprd|ops|ci-prd",grpc_code!="OK",grpc_service="thanos.Store",grpc_type="unary",job="thanos",type="monitoring"}[1h])
       )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_duration_seconds_bucket{le="+Inf"}[1h])
+      )
+  - record: gitlab_component_apdex:ratio_1h
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      (
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="5"}[1h])
+        )
+        +
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="20"}[1h])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="+Inf"}[1h])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{http_status=~"5.*"}[1h])
+      )
 - name: 'Component-Level SLIs: monitoring - 6h burn-rate'
   interval: 2m
   rules:
@@ -1304,6 +1518,58 @@ groups:
       sum by (stage) (
         rate(grpc_server_handled_total{environment=~"gprd|ops|ci-prd",grpc_code!="OK",grpc_service="thanos.Store",grpc_type="unary",job="thanos",type="monitoring"}[6h])
       )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_duration_seconds_bucket{le="+Inf"}[6h])
+      )
+  - record: gitlab_component_apdex:ratio_6h
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      (
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="5"}[6h])
+        )
+        +
+        sum by (stage) (
+          rate(trickster_frontend_requests_duration_seconds_bucket{le="20"}[6h])
+        )
+      )
+      /
+      2
+      / on(stage) group_left()
+      (
+        gitlab_component_apdex:weight:score_6h{component="trickster",environment="ops",tier="inf",type="monitoring"} > 0
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: trickster
+      environment: ops
+      tier: inf
+      type: monitoring
+    expr: |
+      sum by (stage) (
+        rate(trickster_frontend_requests_total{http_status=~"5.*"}[6h])
+      )
 - name: 'Component mapping: monitoring'
   interval: 1m
   rules:
@@ -1360,6 +1626,13 @@ groups:
     labels:
       aggregate_rps: 'yes'
       component: thanos_store
+      tier: inf
+      type: monitoring
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'yes'
+      component: trickster
       tier: inf
       type: monitoring
     expr: '1'
