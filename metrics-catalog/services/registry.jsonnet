@@ -80,6 +80,8 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.gkeDeployment('gitlab-registry'),
+        // Add slowRequestSeconds=10 once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11136 is fixed
+        toolingLinks.kibana(title='Registry', index='registry', type='registry', stage='$stage'),
       ],
     },
 
@@ -87,8 +89,8 @@ metricsCatalog.serviceDefinition({
       apdex: histogramApdex(
         histogram='registry_storage_action_seconds_bucket',
         selector='',
-        satisfiedThreshold=5,
-        toleratedThreshold=10
+        satisfiedThreshold=1,
+        toleratedThreshold=2.5
       ),
 
       requestRate: rateMetric(
