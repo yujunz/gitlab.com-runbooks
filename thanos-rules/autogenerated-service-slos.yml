@@ -189,7 +189,7 @@ groups:
     labels:
       tier: sv
       type: registry
-    expr: '0.995000'
+    expr: '0.997000'
   - record: slo:max:events:gitlab_service_errors:ratio
     labels:
       tier: sv
