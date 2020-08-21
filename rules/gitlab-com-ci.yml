@@ -250,7 +250,10 @@ groups:
         Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&from=now-1h&to=now&orgId=1&panelId=85&fullscreen
 
   - alert: CICDJobsStuckInDockerPull
-    expr: (sum by (env) (gitlab_runner_jobs{executor_stage="docker_pulling_image"}) / sum by (env) ( gitlab_runner_jobs{executor_stage="docker_run", env="gprd"})) > 1
+expr: >
+  sum by (environment, tier, type, stage, shard) (gitlab_runner_jobs{executor_stage="docker_pulling_image"})
+  /
+  sum by (environment, tier, type, stage, shard) (gitlab_runner_jobs{executor_stage="docker_run"})
     for: 5m
     labels:
       team: verify
