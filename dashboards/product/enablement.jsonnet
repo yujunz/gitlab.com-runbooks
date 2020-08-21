@@ -9,7 +9,7 @@ local productCommon = import 'product_common.libsonnet';
 
 basic.dashboard(
   title = "Performance - Enablement",
-  time_from = "now-7d",
+  time_from = "now-30d",
   tags = ["product performance"],
 ).addLink(
   productCommon.productDashboardLink(),
