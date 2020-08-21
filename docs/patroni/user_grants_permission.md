@@ -92,7 +92,7 @@ You can use the clause `ALL PRIVILEGES`  to grant all permissions at once.
 GRANT ALL PRIVILEGES on new_schema.new_table to user1;
 
 ```
-If we want to grant permission on all the tables of a specific schema can use `ALL TABLES IN SCHEMA ` clause:
+If we want to grant permission on all the tables of a specific schema we can use `ALL TABLES IN SCHEMA ` clause:
 ```sql
 
 GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA new_schema TO user1;
