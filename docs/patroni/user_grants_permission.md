@@ -213,7 +213,7 @@ host    dbXXX         userXXX         XXX.XXX.XX.XXX/N_mask_byte     md5
 
 
 ## Propagated user to PGBouncer 
-PGBouncer also needs to be setup for authenticating users. In the simplest case, pgBouncer uses his own file for storing users and passwords (defaulted to `userlist.txt`). But pgBouncer can also query the database for authenticate the user being connected to pgBouncer. This can be done via the [auth_query] against postgres. In our case we are using the [auth_query](https://www.pgbouncer.org/config.html#auth_query) parameter, like in:
+PGBouncer also needs to be setup for authenticating users. In the simplest case, pgBouncer uses its own file for storing users and passwords (by default `userlist.txt`). But pgBouncer can also query the database to authenticate the user being connected to pgBouncer. In our case we are doing it via [auth_query](https://www.pgbouncer.org/config.html#auth_query) parameter, like in:
 
 ```
 auth_query = SELECT username, password FROM public.pg_shadow_lookup($1)
