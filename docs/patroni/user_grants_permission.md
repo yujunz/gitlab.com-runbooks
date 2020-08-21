@@ -253,7 +253,7 @@ pg_restore: [archiver (db)] could not execute query: ERROR:  role "gitlab" does 
 
 In order to avoid those errors, you must create all roles previously:
 
-- First, (in the "origin") export them with `pg_dumpall --roles-only > backup-roles.sql` . That will create an SQL file that you can feed up a new postgres instance,
+- First, (in the "origin") export them with `pg_dumpall --roles-only > backup-roles.sql` . That will create an SQL file that you can feed to a new postgres instance,
 - In the destination, create the roles with `psql < backup-roles.sql`
 
 
