@@ -160,7 +160,7 @@ $$
 ...
 ```
 
-Then every user with permision to execute `function_name()` will be granted with the _security definer_ permissions over objects that funcion migth access.
+This way the function is executed with the privileges of the user who created it, so other users can execute the function even if they don't have access to the underlying objects it might access.
 
 
 ## Default and implicit roles
