@@ -13,6 +13,11 @@
       },
       {
         "mode": "NULLABLE",
+        "name": "correlation_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
         "name": "duration",
         "type": "FLOAT"
       },
