@@ -7,6 +7,8 @@ local sloThresholdRecordingRules = std.flatMap(function(key) saturationResources
 local saturationMetadataRecordingRules = std.map(function(key) saturationResources[key].getMetadataRecordingRuleDefinition(key), saturationResourceNames);
 local saturationAlerts = std.flatMap(function(key) saturationResources[key].getSaturationAlerts(key), saturationResourceNames);
 
+local recordedQuantiles = [0.95, 0.99];
+
 {
   'saturation.yml':
     std.manifestYamlDoc({
@@ -27,16 +29,39 @@ local saturationAlerts = std.flatMap(function(key) saturationResources[key].getS
         rules: saturationMetadataRecordingRules,
       }, {
         // Alerts for saturation metrics being out of threshold
-        name: 'GitLab Component Saturation 1w Quantiles',
+        name: 'GitLab Component Saturation Statistics',
         interval: '5m',
-        rules: [{
-          record: 'gitlab_component_saturation:ratio_quantile%(quantile_percent)d_1w'% {
-            quantile_percent: quantile * 100
-          },
-          expr: 'quantile_over_time(%(quantile)g, gitlab_component_saturation:ratio[1w])' % {
-            quantile: quantile,
-          },
-        } for quantile in [0.95, 0.99]],
+        rules:
+          [
+            {
+              record: 'gitlab_component_saturation:ratio_quantile%(quantile_percent)d_1w' % {
+                quantile_percent: quantile * 100,
+              },
+              expr: 'quantile_over_time(%(quantile)g, gitlab_component_saturation:ratio[1w])' % {
+                quantile: quantile,
+              },
+            }
+            for quantile in recordedQuantiles
+          ]
+          +
+          [
+            {
+              record: 'gitlab_component_saturation:ratio_quantile%(quantile_percent)d_1h' % {
+                quantile_percent: quantile * 100,
+              },
+              expr: 'quantile_over_time(%(quantile)g, gitlab_component_saturation:ratio[1h])' % {
+                quantile: quantile,
+              },
+            }
+            for quantile in recordedQuantiles
+          ]
+          +
+          [
+            {
+              record: 'gitlab_component_saturation:ratio_avg_1h',
+              expr: 'avg_over_time(gitlab_component_saturation:ratio[1h])',
+            },
+          ],
       }, {
         name: 'GitLab Saturation Alerts',
         interval: '1m',
