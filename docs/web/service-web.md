@@ -17,7 +17,7 @@
 
 * [../cloudflare/README.md](../cloudflare/README.md)
 * [../cloudflare/managing-traffic.md](../cloudflare/managing-traffic.md)
-* [../cloudflare/page_rules_terraform.md](../cloudflare/page_rules_terraform.md)
+* [../cloudflare/managing-waf-rules.md](../cloudflare/managing-waf-rules.md)
 * [../cloudflare/services-locations.md](../cloudflare/services-locations.md)
 * [../cloudflare/troubleshooting.md](../cloudflare/troubleshooting.md)
 * [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)

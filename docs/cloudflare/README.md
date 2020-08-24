@@ -11,7 +11,7 @@ Cloudflare provides a web application firewall (WAF), domain name system
 
 ## [Workflow](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10993)
 
-## When to use a Page Rule vs WAF Rules vs cf_allowlists - ???
+## When to use a Page Rule vs WAF Rules vs cf_allowlists
 
 * Is it a redirect or changing a caching policy? Use page rules.
 * Is it a bulk allow of IP addresses for internal customers? Use cf_allowlists.
@@ -21,7 +21,7 @@ Cloudflare provides a web application firewall (WAF), domain name system
 
 ## Updating the WAF and Page Rules in Cloudflare
 
-### [Adding Page Rules Using Terraform](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10989)
+### Adding Page Rules Using Terraform
 The page rules are managed via Terraform. While changes can be made via the
 Cloudflare Web UI, that is not the preferred method to manage rules.
 
@@ -42,34 +42,56 @@ rule above it will need to be updated to depend on the new rule.
 This forces Terraform to apply the rules in a specific order, preserving their
 priority.
 
-### [Adding WAF Rules to the cf_allowlists](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10987)
+### Adding WAF Rules to the cf_allowlists
 
-[cf_allowlist](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_allowlists) is a terraform module
-that we've written to write WAF rules allowing customers' or GitLab service IPs to bypass Cloudflare and any
-block that it may cause. The allowlist is handled in the `allowlist.json` of the linked module. To add an IP to it,
-simply update the file with the required information. A sample entry is provided in the README of the module.
-Once the change is merged to master, you will need to run `terraform`
-on the `gstg` and `gprd` environments to apply the rules. If you are running it locally, you may need to run
-`tf init -upgrade` to ensure you fetch the latest module with your updates.
+With any modification to the WAF rules in Cloudflare, the first step is
+creating an issue in the [Firewall Issue Tracker](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall).
+Refer to the [managing traffic](managing-traffic.md) document to see how to
+create the proper issue type with proper labels and description.
+
+[cf_allowlist](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_allowlists)
+is a Terraform module that we've written to write WAF rules allowing customers'
+or GitLab service IPs to bypass Cloudflare and any block that it may cause. The
+allowlist is handled in the `allowlist.json` of the linked module. To add an IP
+to it, simply update the file with the required information. A sample entry is
+provided in the README of the module. Once the change is merged to master, you
+will need to run `terraform` on the `gstg` and `gprd` environments to apply the
+rules. If you are running it locally, you may need to run `tf init -upgrade` to
+ensure you fetch the latest module with your updates.
 
 ### [Adding WAF Rules via the Web UI](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10988)
 
+Any modification to the WAF rules in Cloudflare requires an issue in the
+[Firewall Issue Tracker](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall).
+Refer to the [managing traffic](managing-traffic.md) document to see how to
+create the proper issues type with proper labels and description.
+
+Making manual changes via the Cloudflare UI can be read about [here](https://developers.cloudflare.com/firewall/cf-dashboard/create-edit-delete-rules/).
+A good practice is to create a new rule, but save it as a draft. This will
+allow the rule to be turned on and off as part of a production change process.
+
 ## Verifying WAF and Page Rules
 
-### [How cf_audit works](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10993)
+### How cf_audit works
 
-The [cf_audit project](https://ops.gitlab.net/gitlab-com/gl-infra/cloudflare-audit-log) is designed to help us keep a "known good"
-dump of our Cloudflare configuration. This is only an audit tool and not used to update any configuration on its own.
-The script itself gets all of the configuration data for our Cloudflare zones and account from the API and outputs the data
-into the `reports/` directory of the project.
+The [cf_audit project](https://ops.gitlab.net/gitlab-com/gl-infra/cloudflare-audit-log)
+is designed to help us keep a "known good" dump of our Cloudflare configuration.
+This is only an audit tool and not used to update any configuration on its own.
+The script itself gets all of the configuration data for our Cloudflare zones
+and account from the API and outputs the data into the `reports/` directory of
+the project.
 
-There is a CI job that runs periodically to gather said data and commit it to the `cloudflare_import` branch. The `cloudflare_import`
-branch is considered the source of truth for the configuration. It then compares this information to the `known_good` branch to
-determine what (if anything) has changed. The `known_good` branch is considered to be the expected configuration. If a configuration
-has changed, the job will be marked as failed, prompting manual review of the changes.
+There is a CI job that runs periodically to gather said data and commit it to
+the `cloudflare_import` branch. The `cloudflare_import` branch is considered
+the source of truth for the configuration. It then compares this information to
+the `known_good` branch to determine what (if anything) has changed. The
+`known_good` branch is considered to be the expected configuration. If a
+configuration has changed, the job will be marked as failed, prompting manual
+review of the changes.
 
-If you'd like to watch a more detailed video about its inner workings, you can view [this demonstration video](https://youtu.be/vTKyf-PS7Lo)
-which goes into much more detail.
+If you'd like to watch a more detailed video about its inner workings, you can
+view [this demonstration video](https://youtu.be/vTKyf-PS7Lo) which goes into
+much more detail.
 
 ### [How Page Rules work](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10989)
 
