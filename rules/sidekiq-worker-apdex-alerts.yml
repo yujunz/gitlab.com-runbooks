@@ -15,11 +15,8 @@ groups:
         for: 10m
         labels:
           rules_domain: general
-          metric: gitlab_background_worker_queue_duration_apdex:ratio
           severity: s3
           slo_alert: 'yes'
-          period: 10m
-          bound: lower
           alert_type: symptom
         annotations:
           title: "The `{{ $labels.queue }}` Sidekiq queue (`{{ $labels.stage }}` stage) is not meeting its latency SLOs"

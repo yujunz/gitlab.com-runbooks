@@ -41,6 +41,7 @@ For more information see https://api.slack.com/incoming-webhooks
 * In Prometheus, run this query: [`rate(alertmanager_notifications_failed_total[10m])`](https://prometheus.gprd.gitlab.net/graph?g0.range_input=1d&g0.expr=rate(alertmanager_notifications_failed_total%5B10m%5D)&g0.tab=0).
 * This will give you a breakdown of which integration is failing, and from
   which server.
+* For the slackline, you can view [the `alertManagerBridge` cloud function](https://console.cloud.google.com/functions/details/us-central1/alertManagerBridge?project=gitlab-infra-automation), [its logs](https://console.cloud.google.com/logs?service=cloudfunctions.googleapis.com&key1=alertManagerBridge&key2=us-central1&project=gitlab-infra-automation), and [code](https://gitlab.com/gitlab-com/gl-infra/slackline).
 * Keep in mind that, if nothing has changed, the problem is likely to be on
   the remote side - for example, a Slack or Pagerduty issue.
 

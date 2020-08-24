@@ -4,6 +4,7 @@ local rateMetric = metricsCatalog.rateMetric;
 local sidekiqHelpers = import './lib/sidekiq-helpers.libsonnet';
 local perWorkerRecordingRules = (import './lib/sidekiq-per-worker-recording-rules.libsonnet').perWorkerRecordingRules;
 local combined = metricsCatalog.combined;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 local highUrgencySelector = { urgency: 'high' };
 local lowUrgencySelector = { urgency: 'low' };
@@ -22,8 +23,8 @@ metricsCatalog.serviceDefinition({
   // When a service is in violation, deployments may be blocked or may be rolled
   // back.
   deploymentThresholds: {
-    apdexScore: 0.999,
-    errorRatio: 0.999,
+    apdexScore: 0.995,
+    errorRatio: 0.995,
   },
   serviceDependencies: {
     gitaly: true,
@@ -124,6 +125,30 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['feature_category', 'queue', 'urgency'],
+
+      local slowRequestSeconds =
+        if shard.urgency == 'high' then
+          sidekiqHelpers.slos.urgent.executionDurationSeconds
+        else if shard.urgency == 'low' then
+          sidekiqHelpers.slos.lowUrgency.executionDurationSeconds
+        else if shard.urgency == 'throttled' then
+          sidekiqHelpers.slos.throttled.executionDurationSeconds
+        else
+          // Default to low urgency threshold
+          sidekiqHelpers.slos.lowUrgency.executionDurationSeconds,
+
+      toolingLinks: [
+        // Improve sentry link once https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/532 arrives
+        toolingLinks.sentry(slug='gitlab/gitlabcom'),
+        toolingLinks.kibana(title=shard.name, index='sidekiq', type='sidekiq', shard=shard.name, slowRequestSeconds=slowRequestSeconds),
+      ] + (
+        if std.objectHas(shard, 'gkeDeployment') then
+          [
+            toolingLinks.gkeDeployment(shard.gkeDeployment),
+          ]
+        else
+          []
+      ),
     }
     for shard in sidekiqHelpers.shards.listAll()
   },

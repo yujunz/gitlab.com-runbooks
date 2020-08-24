@@ -1,12 +1,13 @@
-local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
-local keyMetrics = import 'key_metrics.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
+local keyMetrics = import 'key_metrics.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
 local thresholds = import 'thresholds.libsonnet';
 local row = grafana.row;
 local selectors = import 'promql/selectors.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 local defaultEnvironmentSelector = { environment: '$environment' };
 
@@ -57,6 +58,25 @@ local componentOverviewMatrixRow(
         ]]
       else
         []
+    )
+    +
+    (
+      if component.hasToolingLinks() then
+        [[
+          grafana.text.new(
+            title='Tooling Links',
+            mode='markdown',
+            content=|||
+              ### Observability Tools
+
+              %(links)s
+            ||| % {
+              links: toolingLinks.generateMarkdown(component.getToolingLinks()),
+            },
+          ),
+        ]]
+      else
+        []
     );
 
   layout.splitColumnGrid(columns, [7, 1], startRow=startRow) +
@@ -66,7 +86,7 @@ local componentOverviewMatrixRow(
         (
           if component.hasApdex() then
             [
-              keyMetrics.singleComponentNodeApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash)
+              keyMetrics.singleComponentNodeApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash),
             ]
           else []
         )
@@ -86,7 +106,8 @@ local componentOverviewMatrixRow(
             ]
           else []
         ),
-        rowHeight=5, startRow=startRow+8
+        rowHeight=5,
+        startRow=startRow + 8
       )
     else []
   );
@@ -166,7 +187,7 @@ local componentOverviewMatrixRow(
 
     basic.timeseries(
       title=if title == null then 'Errors for ' + componentName else title,
-      query=component.errorRate.aggregatedIncreaseQuery(
+      query=component.errorRate.aggregatedRateQuery(
         aggregationLabels=aggregationLabels,
         selector=selector,
         rangeInterval='$__interval',

@@ -1,6 +1,7 @@
 local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'frontend',
@@ -38,6 +39,10 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.bigquery(title="Top main-stage http clients by number of requests, 10m", savedQuery='805818759045:d7be3397f3fe4ef8a6c3e2a302428af3'),
+      ],
     },
 
     cnyHttpServices: {
@@ -62,6 +67,10 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.bigquery(title="Top cny-stage http clients by number of requests, 10m", savedQuery='805818759045:052918f56c0f4d279182d605f02f8ca9'),
+      ],
     },
 
     sshServices: {
@@ -103,6 +112,10 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.bigquery(title="Top ssh clients by number of requests, 10m", savedQuery='805818759045:92fb07ddc77e4d059adaf56f00afc49a'),
+      ],
     },
   },
 })

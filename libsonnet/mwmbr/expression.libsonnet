@@ -225,4 +225,119 @@ local operationRateFilter(
       minimumOperationRateForMonitoring
     ),
 
+  errorHealthExpression(
+    metric1h,  // 1h burn rate metric
+    metric5m,  // 5m burn rate metric
+    metric30m,  // 30m burn rate metric
+    metric6h,  // 6h burn rate metric
+    metricSelectorHash,  // Selectors for the error rate metrics
+    sloMetric,  // SLO metric name
+    sloMetricSelectorHash,  // Selectors for the slo metric
+    sloMetricAggregationLabels,  // Labels to join the SLO metric to the error rate metrics with
+  )::
+    local term(metric, burnrate) =
+      errorRateTerm(
+        metric=metric,
+        metricSelectorHash=metricSelectorHash,
+        comparator="> bool",
+        burnrate=burnrate,
+        sloMetric=sloMetric,
+        sloMetricSelectorHash=sloMetricSelectorHash,
+        sloMetricAggregationLabels=sloMetricAggregationLabels,
+      );
+
+    local term_1h = term(metric1h, multiburn_factors.burnrate_1h);
+    local term_5m = term(metric5m, multiburn_factors.burnrate_1h);
+    local term_6h = term(metric6h, multiburn_factors.burnrate_6h);
+    local term_30m = term(metric30m, multiburn_factors.burnrate_6h);
+
+    // Prometheus doesn't have boolean AND/OR/NOT operators, only vector label matching versions of these operators.
+    // As a cheap trick workaround, we substitute * with `boolean and` and `clamp_max(.. + .., 1) for  `boolean or`.
+    // Why this works: Assuming x,y are both either 1 or 0.
+    // * `x AND y` is equivalent to `x * y`
+    // * `x OR y` is equivalent to `clamp_max(x + y, 1)`
+    // * `NOT x` is equivalent to `x == bool 0`
+    |||
+      clamp_max(
+        (
+          %(term_1h)s
+        )
+        *
+        (
+          %(term_5m)s
+        )
+        +
+        (
+          %(term_6h)s
+        )
+        *
+        (
+          %(term_30m)s
+        ),
+        1
+      ) == bool 0
+    ||| % {
+      term_1h: strings.indent(term_1h, 4),
+      term_5m: strings.indent(term_5m, 4),
+      term_6h: strings.indent(term_6h, 4),
+      term_30m: strings.indent(term_30m, 4)
+    },
+
+  apdexHealthExpression(
+    metric1h,  // 1h burn rate metric
+    metric5m,  // 5m burn rate metric
+    metric30m,  // 30m burn rate metric
+    metric6h,  // 6h burn rate metric
+    metricSelectorHash,  // Selectors for the error rate metrics
+    sloMetric,  // SLO metric name
+    sloMetricSelectorHash,  // Selectors for the slo metric
+    sloMetricAggregationLabels,  // Labels to join the SLO metric to the error rate metrics with
+  )::
+    local term(metric, burnrate) =
+      apdexRateTerm(
+        metric=metric,
+        metricSelectorHash=metricSelectorHash,
+        comparator="< bool",
+        burnrate=burnrate,
+        sloMetric=sloMetric,
+        sloMetricSelectorHash=sloMetricSelectorHash,
+        sloMetricAggregationLabels=sloMetricAggregationLabels,
+      );
+
+    local term_1h = term(metric1h, multiburn_factors.burnrate_1h);
+    local term_5m = term(metric5m, multiburn_factors.burnrate_1h);
+    local term_6h = term(metric6h, multiburn_factors.burnrate_6h);
+    local term_30m = term(metric30m, multiburn_factors.burnrate_6h);
+
+    // Prometheus doesn't have boolean AND/OR/NOT operators, only vector label matching versions of these operators.
+    // As a cheap trick workaround, we substitute * with `boolean and` and `clamp_max(.. + .., 1) for  `boolean or`.
+    // Why this works: Assuming x,y are both either 1 or 0.
+    // * `x AND y` is equivalent to `x * y`
+    // * `x OR y` is equivalent to `clamp_max(x + y, 1)`
+    // * `NOT x` is equivalent to `x == bool 0`
+    |||
+      clamp_max(
+        (
+          %(term_1h)s
+        )
+        *
+        (
+          %(term_5m)s
+        )
+        +
+        (
+          %(term_6h)s
+        )
+        *
+        (
+          %(term_30m)s
+        ),
+        1
+      ) == bool 0
+    ||| % {
+      term_1h: strings.indent(term_1h, 4),
+      term_5m: strings.indent(term_5m, 4),
+      term_6h: strings.indent(term_6h, 4),
+      term_30m: strings.indent(term_30m, 4)
+    }
 }

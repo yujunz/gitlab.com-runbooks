@@ -1,6 +1,7 @@
 local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 local productionEnvironmentsSelector = {
   environment: { re: 'gprd|ops|ci-prd' },
@@ -47,6 +48,11 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.gkeDeployment(deployment='thanos-query', namespace='monitoring'),
+      ],
     },
 
     thanos_store: {
@@ -79,6 +85,10 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+      ],
     },
 
     thanos_compactor: {
@@ -201,11 +211,14 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn', 'handler'],
+
+      toolingLinks: [
+        toolingLinks.kibana(title='Prometheus', index='monitoring'),
+      ],
     },
 
-
     // This component represents rule evaluations in
-    // Prometheus and Thanos ruler
+    // Prometheus and thanos ruler
     rule_evaluation: {
       local selector = productionEnvironmentsSelector { type: 'monitoring' },
 
@@ -217,6 +230,31 @@ metricsCatalog.serviceDefinition({
       errorRate: rateMetric(
         counter='prometheus_rule_evaluation_failures_total',
         selector=selector
+      ),
+
+      significantLabels: ['fqdn'],
+    },
+
+    // Trickster is a prometheus caching layer that serves requests to our
+    // public Grafana instance
+    trickster: {
+      staticLabels: {
+        environment: 'ops',
+      },
+
+      apdex: histogramApdex(
+        histogram='trickster_frontend_requests_duration_seconds_bucket',
+        satisfiedThreshold=5,
+        toleratedThreshold=20
+      ),
+
+      requestRate: rateMetric(
+        counter='trickster_frontend_requests_total'
+      ),
+
+      errorRate: rateMetric(
+        counter='trickster_frontend_requests_total',
+        selector={ http_status: { re: '5.*' } }
       ),
 
       significantLabels: ['fqdn'],

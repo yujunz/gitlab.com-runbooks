@@ -1,6 +1,7 @@
 local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'registry',
@@ -10,7 +11,7 @@ metricsCatalog.serviceDefinition({
     errorRatio: 0.005,
   },
   monitoringThresholds: {
-    apdexScore: 0.995,
+    apdexScore: 0.997,
     errorRatio: 0.9999,
   },
   serviceDependencies: {
@@ -76,14 +77,20 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['handler'],
+
+      toolingLinks: [
+        toolingLinks.gkeDeployment('gitlab-registry'),
+        // Add slowRequestSeconds=10 once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11136 is fixed
+        toolingLinks.kibana(title='Registry', index='registry', type='registry', stage='$stage'),
+      ],
     },
 
     storage: {
       apdex: histogramApdex(
         histogram='registry_storage_action_seconds_bucket',
         selector='',
-        satisfiedThreshold=5,
-        toleratedThreshold=10
+        satisfiedThreshold=1,
+        toleratedThreshold=2.5
       ),
 
       requestRate: rateMetric(

@@ -37,11 +37,9 @@ local rules = {
         labels: {
           alert_type: 'symptom',
           rules_domain: 'general',
-          metric: 'gitlab_component_apdex:ratio_1h',
           severity: 's2',
           pager: 'pagerduty',
           slo_alert: 'yes',
-          period: '2m',
         },
         annotations: {
           title: 'The `{{ $labels.component }}` component of the `{{ $labels.type }}` service, (`{{ $labels.stage }}` stage), has an apdex-score burn rate outside of SLO',
@@ -75,11 +73,8 @@ local rules = {
       'for': '2m',
       labels: {
         rules_domain: 'general',
-        metric: 'gitlab_component_errors:ratio_1h',
         severity: 's2',
         slo_alert: 'yes',
-        period: '2m',
-        bound: 'upper',
         alert_type: 'symptom',
         pager: 'pagerduty',
       },

@@ -1263,13 +1263,19 @@ groups:
       horiz_scaling: 'yes'
       severity: s2
     expr: '1'
-- name: GitLab Component Saturation 1w Quantiles
+- name: GitLab Component Saturation Statistics
   interval: 5m
   rules:
   - record: gitlab_component_saturation:ratio_quantile95_1w
     expr: quantile_over_time(0.95, gitlab_component_saturation:ratio[1w])
   - record: gitlab_component_saturation:ratio_quantile99_1w
     expr: quantile_over_time(0.99, gitlab_component_saturation:ratio[1w])
+  - record: gitlab_component_saturation:ratio_quantile95_1h
+    expr: quantile_over_time(0.95, gitlab_component_saturation:ratio[1h])
+  - record: gitlab_component_saturation:ratio_quantile99_1h
+    expr: quantile_over_time(0.99, gitlab_component_saturation:ratio[1h])
+  - record: gitlab_component_saturation:ratio_avg_1h
+    expr: avg_over_time(gitlab_component_saturation:ratio[1h])
 - name: GitLab Saturation Alerts
   interval: 1m
   rules:
@@ -1314,12 +1320,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -1358,12 +1359,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s3
     expr: |
@@ -1407,13 +1403,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 15m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 15m
       rules_domain: general
       severity: s2
     expr: |
@@ -1453,13 +1444,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
     expr: |
@@ -1499,12 +1485,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 25m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 20m
-      metric: gitlab_component_saturation:ratio
-      period: 25m
       rules_domain: general
       severity: s3
     expr: |
@@ -1544,12 +1525,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 25m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 20m
-      metric: gitlab_component_saturation:ratio
-      period: 25m
       rules_domain: general
       severity: s3
     expr: |
@@ -1593,12 +1569,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 25m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 20m
-      metric: gitlab_component_saturation:ratio
-      period: 25m
       rules_domain: general
       severity: s3
     expr: |
@@ -1642,12 +1613,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 25m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 20m
-      metric: gitlab_component_saturation:ratio
-      period: 25m
       rules_domain: general
       severity: s3
     expr: |
@@ -1688,12 +1654,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -1736,12 +1697,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s3
     expr: |
@@ -1780,12 +1736,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -1824,12 +1775,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -1874,12 +1820,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -1922,12 +1863,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -1970,12 +1906,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -2020,13 +1951,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 25m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 25m
       rules_domain: general
       severity: s2
     expr: |
@@ -2066,13 +1992,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
     expr: |
@@ -2112,13 +2033,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
     expr: |
@@ -2155,12 +2071,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -2201,12 +2112,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s3
     expr: |
@@ -2258,13 +2164,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
     expr: |
@@ -2307,12 +2208,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s3
     expr: |
@@ -2356,12 +2252,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s3
     expr: |
@@ -2410,12 +2301,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 10m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 10m
       rules_domain: general
       severity: s4
     expr: |
@@ -2458,13 +2344,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
     expr: |
@@ -2515,12 +2396,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 10m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 10m
       rules_domain: general
       severity: s3
     expr: |
@@ -2571,12 +2447,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 10m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 10m
       rules_domain: general
       severity: s3
     expr: |
@@ -2615,12 +2486,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -2663,12 +2529,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -2713,12 +2574,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 15m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 15m
       rules_domain: general
       severity: s4
     expr: |
@@ -2761,12 +2617,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s3
     expr: |
@@ -2815,13 +2666,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
     expr: |
@@ -2865,13 +2711,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s1
     expr: |
@@ -2915,12 +2756,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -2959,12 +2795,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s3
     expr: |
@@ -3007,12 +2838,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -3055,12 +2881,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
-      period: 5m
       rules_domain: general
       severity: s4
     expr: |
@@ -3107,12 +2928,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 10m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 10m
       rules_domain: general
       severity: s4
     expr: |
@@ -3151,12 +2967,7 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 10m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 5m
-      metric: gitlab_component_saturation:ratio
-      period: 10m
       rules_domain: general
       severity: s4
     expr: |
@@ -3199,13 +3010,8 @@ groups:
         )
       runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
     labels:
-      alert_trigger_duration: 5m
       alert_type: cause
-      bound: upper
-      burn_rate_period: 1m
-      metric: gitlab_component_saturation:ratio
       pager: pagerduty
-      period: 5m
       rules_domain: general
       severity: s2
     expr: |

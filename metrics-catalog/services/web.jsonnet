@@ -1,6 +1,7 @@
 local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'web',
@@ -18,8 +19,8 @@ metricsCatalog.serviceDefinition({
   // When a service is in violation, deployments may be blocked or may be rolled
   // back.
   deploymentThresholds: {
-    apdexScore: 0.9995,
-    errorRatio: 0.99995,
+    apdexScore: 0.999,
+    errorRatio: 0.9999,
   },
   serviceDependencies: {
     gitaly: true,
@@ -53,6 +54,12 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn', 'route'],
+
+      toolingLinks: [
+        toolingLinks.continuousProfiler(service='workhorse-web'),
+        toolingLinks.sentry(slug='gitlab/gitlab-workhorse-gitlabcom'),
+        toolingLinks.kibana(title='Workhorse', index='workhorse', type='web', stage='$stage', slowRequestSeconds=10),
+      ],
     },
 
     puma: {
@@ -75,6 +82,12 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn', 'method'],
+
+      toolingLinks: [
+        // Improve sentry link once https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/532 arrives
+        toolingLinks.sentry(slug='gitlab/gitlabcom'),
+        toolingLinks.kibana(title='Rails', index='rails', type='web', stage='$stage', slowRequestSeconds=10),
+      ],
     },
   },
 })

@@ -2,6 +2,7 @@ local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local combined = metricsCatalog.combined;
+local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'patroni',
@@ -58,6 +59,10 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.kibana(title='Postgres', index='postgres', type='patroni', tag='postgres.postgres_csv'),
+      ],
     },
 
     // Records the operations rate for the pgbouncer instances running on the patroni nodes
@@ -75,6 +80,10 @@ metricsCatalog.serviceDefinition({
       ]),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.kibana(title='pgbouncer', index='postgres_pgbouncer', type='patroni', tag='postgres.pgbouncer'),
+      ],
     },
   },
 })

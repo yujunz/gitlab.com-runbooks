@@ -17,10 +17,6 @@ groups:
     expr: rate(pg_xlog_position_bytes[5m])
   - record: postgres:pg_txid_per_second:rate5m
     expr: rate(pg_txid_current[5m])
-  - record: postgres:pg_replication_lag_bytes
-    expr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - ON(environment)
-      GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica
-      == 1)
   - record: postgres:databases
     expr: count(pg_exporter_scrapes_total) BY (environment)
   - record: postgres:pg_stat_seq_scans:rate2m

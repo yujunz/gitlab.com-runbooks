@@ -1,6 +1,16 @@
 groups:
 - name: postgresql.rules
   rules:
+  - record: postgres:pg_replication_lag_bytes
+    expr: >
+      label_replace(
+        (pg_xlog_position_bytes and pg_replication_is_replica == 0),
+        "primary", "$1", "instance", "(.*)"
+      )
+      - ignoring (fqdn,instance,primary) group_right (primary) (
+        pg_xlog_position_bytes and pg_replication_is_replica == 1
+      )
+
   - alert: PostgreSQL_WALEReplicationStopped
     expr: rate(pg_xlog_position_bytes{type=~"postgres-(archive|delayed)"}[1m]) == 0
     # Given that long running queries can't temporarily halt replication,
@@ -113,9 +123,7 @@ groups:
       runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag is over 9 hours on delayed replica (normal is 8 hours)
   - alert: PostgreSQL_ReplicationLagBytesTooLarge
-    expr: (pg_xlog_position_bytes and pg_replication_is_replica == 0) - ON(environment)
-      GROUP_RIGHT(instance) (pg_xlog_position_bytes and pg_replication_is_replica{type =~"postgres|patroni"}
-      == 1) > 1e+09
+    expr: postgres:pg_replication_lag_bytes > 1e+09
     for: 5m
     labels:
       pager: pagerduty
@@ -123,7 +131,7 @@ groups:
       alert_type: cause
     annotations:
       description: Replication lag on server {{$labels.instance}} is currently {{
-        $value | humanize1024}}B
+        $value | humanize1024}}B behind {{$labels.primary}}
       runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: Postgres Replication lag (in bytes) is high
   - alert: PostgreSQL_XLOGConsumptionTooHigh

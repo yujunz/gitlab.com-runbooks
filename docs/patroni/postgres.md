@@ -144,6 +144,8 @@ a few query plans of (now) badly behaving queries, then look at the tables these
 queries use. Once you have identified potential candidates, you can `ANALYZE`
 those tables. Alternative, you can run the following SQL query _on the primary_:
 
+(run inside `sudo gitlab-psql`)
+
 ```sql
 SELECT schemaname, relname, last_analyze, last_autoanalyze, last_vacuum, last_autovacuum
 FROM pg_stat_all_tables
@@ -161,6 +163,8 @@ A more drastic and easier approach is to simply re-analyze _all_ tables. This
 won't impact a running system, but this can take around 15 minutes to complete,
 depending on the table sizes. To perform this operation, run the following _on
 the primary_:
+
+(run inside `sudo gitlab-psql`)
 
 ```sql
 SET statement_timeout TO 0;
@@ -283,7 +287,7 @@ it may be necessary to identify the primary and log in directly.
 If the below query does not yield any results for a particular table,
 consider running `ANALYZE $table` to update statistics and try again.
 
-Example for table `ci_builds`:
+Example for table `ci_builds` (run inside `sudo gitlab-psql`):
 
 ```sql
 select n_live_tup, n_dead_tup, last_autoanalyze, last_analyze from
@@ -292,7 +296,9 @@ pg_stat_user_tables where relname='ci_builds';
 
 If the alert is for "replication slot with stale xmin" or "long-lived
 transaction" then check the above charts to see if it's already
-causing problems. Log into the relevant replica and run:
+causing problems. Log into the relevant replica and run
+
+(inside `sudo gitlab-psql`):
 
 ```sql
 SELECT now()-xact_start,pid,query,client_addr,application_name
@@ -341,6 +347,8 @@ particular for `idle` or `idle in transaction` sessions or sessions
 running very long-lived queries.
 
 e.g.:
+
+(run inside `sudo gitlab-psql`)
 
 ```SQL
 SELECT pid,

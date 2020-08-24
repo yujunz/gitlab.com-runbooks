@@ -17,6 +17,7 @@
 * [../gitaly/gitaly-unusual-activity.md](../gitaly/gitaly-unusual-activity.md)
 * [../logging/README.md](../logging/README.md)
 * [../pages/gitlab-pages.md](../pages/gitlab-pages.md)
+* [../patroni/postgresql-role-credential-rotation.md](../patroni/postgresql-role-credential-rotation.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [../runner/ci-runner-timeouts.md](../runner/ci-runner-timeouts.md)
 * [../runner/update-gitlab-runner-on-managers.md](../runner/update-gitlab-runner-on-managers.md)

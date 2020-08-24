@@ -149,11 +149,12 @@ groups:
   rules:
   - alert: GitalyNewVersionDeployed
     expr: |
-      sum by (version) (
-        gitlab_build_info{job="gitaly",type="gitaly"})
-          unless (
-            sum by (version) (gitlab_build_info{job="gitaly",type="gitaly"} offset 1h
-          )
+      sum by (environment,stage,version) (
+        gitlab_build_info{job="gitaly",type="gitaly"}
+      ) unless (
+        sum by (environment,stage,version) (
+          gitlab_build_info{job="gitaly",type="gitaly"} offset 1h
+        )
       ) > 2
     for: 5m
     labels:
@@ -164,3 +165,21 @@ groups:
       title: New Gitaly version is being deployed
       description: >
         Gitaly version {{ $labels.version }} is being deployed to {{ $labels.environment }} (stage {{ $labels.stage }}).
+  - alert: PraefectNewVersionDeployed
+    expr: |
+      sum by (environment,stage,version) (
+        gitlab_build_info{job="praefect",type="praefect"}
+      ) unless (
+        sum by (environment,stage,version) (
+          gitlab_build_info{job="praefect",type="praefect"} offset 1h
+        )
+      ) > 2
+    for: 5m
+    labels:
+      team: gitaly
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: New Praefect version is being deployed
+      description: >
+        Praefect version {{ $labels.version }} is being deployed to {{ $labels.environment }} (stage {{ $labels.stage }}).

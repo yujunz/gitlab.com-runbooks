@@ -6,6 +6,7 @@
   rateMetric:: (import './rate.libsonnet').rateMetric,
   derivMetric:: (import './rate.libsonnet').derivMetric,
   customRateQuery:: (import './custom_rate_query.libsonnet').customRateQuery,
+  gaugeMetric:: (import './gauge_metric.libsonnet').gaugeMetric,
 
   // Service definition
   serviceDefinition:: (import './service-definition.libsonnet').serviceDefinition,

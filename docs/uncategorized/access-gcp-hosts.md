@@ -47,5 +47,4 @@ Prometheus:
 
 Alerts:
 
-- gprd: https://alerts.gitlab.net/
-- gstg: https://alerts.gstg.gitlab.net/
+- https://alerts.gitlab.net/

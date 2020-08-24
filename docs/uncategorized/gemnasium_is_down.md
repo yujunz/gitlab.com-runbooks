@@ -1,5 +1,9 @@
 # Gemnasium is down
 
+[Gemnasium API service](https://gitlab.com/gitlab-org/security-products/gemnasium/)
+
+NOTE: This service is being [turned down](https://gitlab.com/gitlab-org/gitlab/-/issues/14692).
+
 ## Case 1: the HTTP service doesn't respond (not error 500)
 
 ### Symptoms

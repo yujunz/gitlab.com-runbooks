@@ -35,7 +35,6 @@ local sidekiqThanosAlerts = [
         alert_type: 'cause',
         rules_domain: 'general',
         severity: 's4',
-        period: '30m',
       },
       annotations: {
         title: 'Sidekiq jobs are being enqueued without being dequeued',

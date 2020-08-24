@@ -1,0 +1,272 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "insertId",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "add",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "as",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "author_id",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "author_name",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "change",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "correlation_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "created_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "custom_message",
+        "type": "STRING"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "author_name",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "custom_message",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "entity_path",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "target_details",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "target_id",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "target_type",
+            "type": "STRING"
+          }
+        ],
+        "mode": "NULLABLE",
+        "name": "details",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "entity_id",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "entity_path",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "entity_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "environment",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "expiry_from",
+        "type": "DATE"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "expiry_to",
+        "type": "DATE"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "fqdn",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "from",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "hostname",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ip_address",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "merge_access_levels",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "push_access_levels",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "remove",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "shard",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "stage",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "target_details",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "target_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "tier",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "to",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "update",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "with",
+        "type": "STRING"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "jsonPayload",
+    "type": "RECORD"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "resource_name",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "tag",
+        "type": "STRING"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "labels",
+    "type": "RECORD"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "logName",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "receiveTimestamp",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "instance_id",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "project_id",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "zone",
+            "type": "STRING"
+          }
+        ],
+        "mode": "NULLABLE",
+        "name": "labels",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "resource",
+    "type": "RECORD"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "severity",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "timestamp",
+    "type": "TIMESTAMP"
+  }
+]
