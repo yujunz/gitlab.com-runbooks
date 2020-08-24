@@ -59,7 +59,7 @@ will need to run `terraform` on the `gstg` and `gprd` environments to apply the
 rules. If you are running it locally, you may need to run `tf init -upgrade` to
 ensure you fetch the latest module with your updates.
 
-### [Adding WAF Rules via the Web UI](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10988)
+### Adding WAF Rules via the Web UI
 
 Any modification to the WAF rules in Cloudflare requires an issue in the
 [Firewall Issue Tracker](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall).
