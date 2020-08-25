@@ -251,9 +251,9 @@ groups:
 
   - alert: CICDJobsStuckInDockerPull
     expr: >
-      sum by (environment, tier, type, stage, shard) (gitlab_runner_jobs{executor_stage="docker_pulling_image"})
+      (sum by (environment, tier, type, stage, shard) (gitlab_runner_jobs{executor_stage="docker_pulling_image"})
       /
-      sum by (environment, tier, type, stage, shard) (gitlab_runner_jobs{executor_stage="docker_run"})
+      sum by (environment, tier, type, stage, shard) (gitlab_runner_jobs{executor_stage="docker_run"})) > 1
     for: 5m
     labels:
       team: verify
