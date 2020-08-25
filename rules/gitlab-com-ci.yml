@@ -248,3 +248,20 @@ groups:
         Sidekiq queues for CI/CD are growing and are over 1000 for
         more than last 5 minutes.
         Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&from=now-1h&to=now&orgId=1&panelId=85&fullscreen
+
+  - alert: CICDJobsStuckInDockerPull
+    expr: >
+      (sum by (environment, tier, type, stage, shard) (gitlab_runner_jobs{executor_stage="docker_pulling_image"})
+      /
+      sum by (environment, tier, type, stage, shard) (gitlab_runner_jobs{executor_stage="docker_run"})) > 1
+    for: 5m
+    labels:
+      team: verify
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: 'More CI Jobs are in state docker_pulling_image than state docker_run'
+      description: >
+        More CI Jobs are in state docker_pulling_image than are in state docker_run
+        for over 5 minutes. This could mean connectivity to docker hub is broken.
+        Plese check https://dashboards.gitlab.net/d/000000159/ci?refresh=5m&viewPanel=46&orgId=1&from=now-1h&to=now&fullscreen
