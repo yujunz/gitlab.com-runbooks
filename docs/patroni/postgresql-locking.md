@@ -1,4 +1,4 @@
-## About Locking
+## About Locking and cancelling/terminating queries
 
 Link to the video of the [runbook simulation](https://youtu.be/-mrKyJuTd5w).
 
@@ -158,11 +158,13 @@ Both functions will return `true` or `false`, meaning that operation was succesf
 
 The difference between each of those, is that `pg_cancel_backend()` sends a SIGINT (cancels only the current query, but let's the connection continue to execute queries - idle connections or connections in transaction can't be canceled) and `pg_terminate_backend()` sends a SIGTERM signal (terminating the backend process immediately, also terminating the whole connection). Since terminating any process with SIGTERM can lead to undesired results, you should always try `pg_cancel_backend()` first.
 
-As a last resort, in case pg_cancel_backend or pg_terminate_backend does not terminate the session, we could execute a kill <pid> from the session that is generating the block.
+Other options would entail restarting the local Patroni connection to the DB; this would help resetting Postgres TCP state if we believe Postgres is in trouble at the network layer.
+
+A final option, in case pg_cancel_backend or pg_terminate_backend does not terminate the session, would be to execute a kill <pid> from the session that is generating the lock. However this could case instability in the Postgres main process so we could instead think of restarting the Postgres process entirely, for example if the node were out of rotation.
 
 
-## How to check if queries are waiting for aquire locks from the logs
-If [log_lock_waits](https://postgresqlco.nf/en/doc/param/log_lock_waits/11/) is `on`, then every attempt to acquire a lock that has been waiting for more than [deadlock_timeout](https://postgresqlco.nf/en/doc/param/log_lock_waits/11/), a line will be printed to the logfile, siliar to:
+## How to check if queries are waiting to aquire locks from the logs
+If [log_lock_waits](https://postgresqlco.nf/en/doc/param/log_lock_waits/11/) is `on`, then every attempt to acquire a lock that has been waiting for more than [deadlock_timeout](https://postgresqlco.nf/en/doc/param/log_lock_waits/11/), a line will be printed to the logfile, similiar to:
 
 ```
 2020-06-26 06:42:37.472 GMT,"gitlab","gitlabhq_production",63330,"10.217.8.4:44814",5ef59793.f762,3,"UPDATE waiting",2020-06-26 06:37:07 GMT,190/102729680,3682318105,LOG,00000,"process 63330 still waiting for ShareLock on transaction 3682318234 after 500
@@ -180,7 +182,7 @@ Similary, locks that took more than to be acquired will also log a message:
 2020-06-26 07:06:02.604 GMT,"gitlab","gitlabhq_production",92156,"10.217.4.2:49126",5ef59e29.167fc,4,"UPDATE waiting",2020-06-26 07:05:13 GMT,174/111649671,3683276022,LOG,00000,"process 92156 acquired ExclusiveLock on tuple (25979017,1) of relation 33614 of database 16401 after 7463.314 ms",,,,,,"UPDATE ""notes"" SET ...",,,"puma: cluster worker 0: 25811 [gitlab-puma-worker] - 10.220.8.1"
 ```
 
-That can be tracked down to see if we are queries that waits for too long.
+That can be tracked down to see if there are queries that have been waiting for too long.
 
 ## Deadlocks
-A deadlock is a situation where two (or more) processes conflicts on their use of resources, each one needing to lock to resource being already locked by the other one, hence blocking each other. PostgreSQL comes with an deadlock detection routine that will kill one of the process involved, allowing the other(s) to proceed.
+A deadlock is a situation where two (or more) processes conflict on their use of resources, each one needing to lock to resource being already locked by the other one, hence blocking each other. PostgreSQL comes with an deadlock detection routine that will kill one of the process involved, allowing the other(s) to progress.
