@@ -25,31 +25,27 @@ You also can use the command:  [`CREATE USER`](https://www.postgresql.org/docs/1
 ### create user
 ```
   CREATE USER user1 WITH password 'pass1';
- ```
+```
 
 ### Create a group
 ```sql
 CREATE GROUP administrators SUPERUSER;
-
 ```
 
 ### And add users to that group
 ```sql
-
 ALTER GROUP administrators add user user1;
 ```
 
 
 ### create role
- ```
-  CREATE role readonly_role;
- ```
+```
+CREATE role readonly_role;
+```
 
 ### And give that role to a user
 ```sql
-
 GRANT readony_role to user1;
-
 ```
 
 To check the created Roles/Users in the database instance, you can use the [meta-commands](https://www.postgresql.org/docs/11/app-psql.html#APP-PSQL-META-COMMANDS) `\dg` or  `\du`
@@ -65,9 +61,6 @@ postgres=# \dg
  postgres        | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
  readonly_roles  | Cannot login                                               | {}
  user1           |                                                            | {}
-
-
-
 ```
 ## The most common rights for Roles/Users
 To define access privileges to roles/users, you must use the command [`GRANT`](https://www.postgresql.org/docs/11/sql-grant.html)
@@ -78,9 +71,11 @@ To define access privileges to roles/users, you must use the command [`GRANT`](h
 ```
 GRANT SELECT on new_schema.new_table to user1;
 ```
+
 ```
 GRANT INSERT on new_schema.new_table to user1;
 ```
+
 ```
 GRANT UPDATE, DELETE on new_schema.new_table to user1;
 ```
@@ -88,13 +83,11 @@ GRANT UPDATE, DELETE on new_schema.new_table to user1;
 You can use the clause `ALL PRIVILEGES`  to grant all permissions at once. 
 
 ```sql
-
 GRANT ALL PRIVILEGES on new_schema.new_table to user1;
-
 ```
+
 If we want to grant permission on all the tables of a specific schema we can use `ALL TABLES IN SCHEMA ` clause:
 ```sql
-
 GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA new_schema TO user1;
 ```
 
@@ -104,11 +97,12 @@ GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA new_schema TO user1;
 ```
 GRANT USAGE on SCHEMA new_schema to user1;
 ```
+
 **CREATE**: Permission of create objects
+
 ```
 GRANT CREATE on SCHEMA new_schema to user1;
 ```
-
 
 There are [another types](https://www.postgresql.org/docs/11/sql-grant.html) of object to granting permission, for example, SEQUENCE, FUNCTIONS, DOMAIN, etc
 
@@ -116,27 +110,23 @@ There are [another types](https://www.postgresql.org/docs/11/sql-grant.html) of 
 You also can grant permission from `role/user` to another `role/user`:
 
 ```
-
 postgres=# GRANT readonly_roles to user1 ;
 GRANT ROLE
 postgres=# \dg
-
                                       List of roles
     Role name    |                         Attributes                         | Member of 
 -----------------+------------------------------------------------------------+-----------
  postgres        | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
  readonly_roles  | Cannot login                                               | {}
  user1           |                                                            | {readonly_roles}
-
 --user1 will INHERIT permissions from readonly_roles
 grant SELECT on ALL tables in schema public to readonly_roles ;
-
 ```
+
 ## Verify the access of roles/users
 
 ```
 select grantor,grantee,table_schema||'.'||table_name as table, string_agg(privilege_type,',') as permissions ,string_agg( is_grantable,',') granteable from information_schema.table_privileges where table_schema<> 'pg_catalog' and table_schema<>'information_schema' and  grantee='readonly_roles'  group by 1,2,3 order by 3;
-
      grantor      |    grantee     |                         table                          | permissions | granteable 
 ------------------+----------------+--------------------------------------------------------+-------------+------------
  gitlab           | readonly_roles | public.abuse_reports                                   | SELECT      | NO
@@ -171,7 +161,6 @@ There is also an "implicit" group, called `PUBLIC` that refers to every role (in
 
 ```sql
 GRANT SELECT ON some_table to PUBLIC;
-
 ```
 
 
@@ -200,17 +189,13 @@ PostgreSQL manages client authorization using a configuration file called [`pg_h
 
 ```
 connect to PostgreSQL server: FATAL: no pg_hba.conf entry for host "XXX.XXX.XX.XXX", user "userXXX", database "dbXXX"...
-
 ```
 You must fix it adding a row for the user in the `pg_hba.conf` file, example:
 
 ```
 # TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
-
 host    dbXXX         userXXX         XXX.XXX.XX.XXX/N_mask_byte     md5
-
 ```
-
 
 ## Propagated user to PGBouncer 
 PGBouncer also needs to be setup for authenticating users. In the simplest case, pgBouncer uses its own file for storing users and passwords (by default `userlist.txt`). But pgBouncer can also query the database to authenticate the user being connected to pgBouncer. In our case we are doing it via [auth_query](https://www.pgbouncer.org/config.html#auth_query) parameter, like in:
@@ -232,8 +217,6 @@ BEGIN
     RETURN;
 END;
 $function$
-
-
 ```
 
 
@@ -244,11 +227,11 @@ A common mistakes when restoring a database with a backup using `pg_dump` progra
 ```
 pg_restore -f schema.backup -d new_database
 ```
+
 ```
 pg_restore: [archiver (db)] Error while PROCESSING TOC:
 pg_restore: [archiver (db)] Error from TOC entry 3969; 0 0 ACL public gitlab
 pg_restore: [archiver (db)] could not execute query: ERROR:  role "gitlab" does not exist
-
 ```
 
 In order to avoid those errors, you must create all roles previously:
