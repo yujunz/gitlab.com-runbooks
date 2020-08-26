@@ -10,6 +10,7 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
     tag=null,
     shard=null,
     slowRequestSeconds=null,
+    matches={},
   )::
     local supportsFailures = elasticsearchLinks.indexSupportsFailureQueries(index);
     local supportsLatencies = elasticsearchLinks.indexSupportsLatencyQueries(index);
@@ -41,8 +42,12 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
           []
         else
           [elasticsearchLinks.matchFilter('json.shard', shard)]
-      );
-
+      )
+      +
+      [
+        elasticsearchLinks.matchFilter(k, matches[k])
+        for k in std.objectFields(matches)
+      ];
 
     [
       toolingLinkDefinition({
