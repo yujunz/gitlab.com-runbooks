@@ -132,9 +132,10 @@ local indexCatalog = {
   },
 
   runners: {
-    timestamp: 'json.time',
+    timestamp: '@timestamp',
     indexId: 'AWgzayS3ENm-ja4G1a8d',
-    defaultColumns: ['json.operation', 'json.job', 'json.operation', 'json.repo_url', 'json.project'],
+    defaultColumns: ['json.operation', 'json.job', 'json.operation', 'json.repo_url', 'json.project', 'json.msg'],
+    failureFilter: [matchFilter('json.msg', 'failed')],
     defaultLatencyField: 'json.duration',
     latencyFieldUnitMultiplier: 1000000000,  // nanoseconds, ah yeah
   },
