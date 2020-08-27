@@ -56,7 +56,7 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn'],
 
       toolingLinks: [
-        toolingLinks.continuousProfiler(service='workhorse-web'),
+        toolingLinks.continuousProfiler(service='workhorse-api'),
         toolingLinks.sentry(slug='gitlab/gitlab-workhorse-gitlabcom'),
         toolingLinks.kibana(title='Workhorse', index='workhorse', type='api', stage='$stage', slowRequestSeconds=10),
       ],
