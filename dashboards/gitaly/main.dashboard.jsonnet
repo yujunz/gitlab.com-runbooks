@@ -123,4 +123,69 @@ serviceDashboard.overview('gitaly', 'stor')
 
   ], startRow=2001, cols=2)
 )
+.addPanel(
+  row.new(title='Blackbox exporter metrics'),
+  gridPos={
+    x: 0,
+    y: 3000,
+    w: 24,
+    h: 1,
+  }
+)
+.addPanels(
+  layout.grid([
+    basic.timeseries(
+      title='Gitaly first packet to total request time ratio (GET)',
+      query=|||
+        gitaly_blackbox_git_http_get_first_packet_seconds{%(selector)s}
+        /
+        gitaly_blackbox_git_http_get_total_time_seconds{%(selector)s}
+      ||| % { selector: selector },
+      legendFormat='{{ probe }}',
+      interval='1m',
+      linewidth=1,
+    ),
+    basic.timeseries(
+      title='Gitaly first packet to total request time ratio',
+      query=|||
+        (
+          gitaly_blackbox_git_http_post_first_pack_packet_seconds{%(selector)s}
+          +
+          gitaly_blackbox_git_http_get_first_packet_seconds{%(selector)s}
+        )
+        /
+        (
+          gitaly_blackbox_git_http_post_total_time_seconds{%(selector)s}
+          +
+          gitaly_blackbox_git_http_get_total_time_seconds{%(selector)s}
+        )
+      ||| % { selector: selector },
+      legendFormat='{{ probe }}',
+      interval='1m',
+      linewidth=1,
+    ),
+    basic.timeseries(
+      title='Gitaly wanted refs to total request time ratio',
+      query=|||
+        gitaly_blackbox_git_http_wanted_refs{%(selector)s}
+        /
+        gitaly_blackbox_git_http_get_total_time_seconds{%(selector)s}
+      ||| % { selector: selector },
+      legendFormat='{{ probe }}',
+      interval='1m',
+      linewidth=1,
+    ),
+    basic.timeseries(
+      title='Gitaly request total time to request total size ratio (POST)',
+      query=|||
+        gitaly_blackbox_git_http_post_total_time_seconds{%(selector)s}
+        /
+        gitaly_blackbox_git_http_post_pack_bytes{%(selector)s}
+      ||| % { selector: selector },
+      legendFormat='{{ probe }}',
+      interval='1m',
+      linewidth=1,
+    ),
+  ], startRow=3001)
+)
 .overviewTrailer()
