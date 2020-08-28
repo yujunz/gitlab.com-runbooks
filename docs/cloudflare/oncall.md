@@ -1,5 +1,7 @@
 # Cloudflare for the on-call
 
+[Cloudflare Status](https://www.cloudflarestatus.com/)
+
 ## Using Cloudflare to look for problems
 
 The firewall section of the Cloudflare web UI is a convenient way to filter
@@ -35,3 +37,8 @@ A page rule should be used for the following types of actions:
 Keep in mind that page rules can only match on request paths.
 
 - [Understanding and Configuring Cloudflare Page Rules](https://support.cloudflare.com/hc/en-us/articles/218411427-Understanding-and-Configuring-Cloudflare-Page-Rules-Page-Rules-Tutorial-)
+
+## Opening Cloudflare Support Issues
+
+In 1password, in the *Production* vault is an entry named *Cloudflare Contacts
+and Escalation*. This contains escelation and support instructions.
