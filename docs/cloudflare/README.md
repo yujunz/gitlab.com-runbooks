@@ -7,7 +7,7 @@ Cloudflare provides a web application firewall (WAF), domain name system
 - staging.gitlab.com
 - gitlab.net
 
-## [On-Call Reference](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10986)
+## [On-Call Reference](oncall.md)
 
 ## [Workflow](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10993)
 
