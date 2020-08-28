@@ -223,7 +223,7 @@ groups:
       runbook: "docs/patroni/postgres.md#tables-with-a-large-amount-of-dead-tuples"
       title: PostgreSQL dead tuples is too large
   - alert: PostgreSQL_SplitBrain
-    expr: count(pg_replication_is_replica == 0) BY (environment) != 1
+    expr: count(pg_replication_is_replica == 0) BY (environment,type) > bool 1
     for: 1m
     labels:
       pager: pagerduty
