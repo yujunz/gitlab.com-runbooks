@@ -1,0 +1,236 @@
+groups:
+# Generic blackbox probe alerts.
+- name: Blackbox Generic Probes
+  rules:
+  - alert: BlackboxProbeFailures
+    expr: avg_over_time(probe_success{job="blackbox"}[5m]) * 100 < 75
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      description: blackbox probe availability {{ $labels.instance }} is less than {{ $value | printf "%.2f" }}% for the last 5 minutes.
+      runbook: docs/blackbox/service-blackbox.md
+      title: Blackbox probes for {{ $labels.instance }} are failing.
+- name: SSL Certificates
+  rules:
+  - alert: SSLCertExpiresVerySoon
+    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 7 * 86400
+    for: 30m
+    labels:
+      severity: s2
+      alert_type: cause
+      pager: pagerduty
+      project: gitlab.com/gitlab-com/gl-infra/infrastructure
+    annotations:
+      description: Check SSL for specified nodes and consider reissuing certificate.
+      runbook: docs/frontend/ssl_cert.md
+      title: SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration
+        }}
+  - alert: SSLCertExpiresSoon
+    expr: probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 14 * 86400
+    for: 30m
+    labels:
+      severity: s2
+      alert_type: cause
+      pager: issue
+      project: gitlab.com/gitlab-com/gl-infra/production
+    annotations:
+      description: Check SSL for specified nodes and consider reissuing certificate.
+      runbook: docs/frontend/ssl_cert.md
+      title: SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration
+        }}
+# Customized blackbox probe alerts.
+- name: Blackbox ops.gitlab.net
+  rules:
+  - alert: OpsGitLabNetDown
+    expr: probe_http_status_code{instance="https://ops.gitlab.net/users/sign_in", job="blackbox"} != 200
+    for: 10m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      description: The ops GitLab instance is returning errors for more than 10 minutes.
+      title: ops.gitlab.net is returning errors for 10m
+- name: Blackbox GitLab Pages
+  rules:
+  - alert: GitlabPagesDown
+    expr: |
+      probe_http_status_code{instance="https://gitlab-examples.gitlab.io",job="blackbox"}
+      != 200
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+      team: gitlab-pages
+    annotations:
+      title: GitLab pages is down for 1 minute
+      description: Consider !tweet 'GitLab pages
+        are not responding, we are investigating the root cause.' if problem exists.
+      runbook: docs/pages/gitlab-pages.md
+  - alert: GitLabPagesProdFeIpPossibleChange
+    expr: probe_http_status_code{instance=~"https?://prod.pages-check.gitlab.net",job="blackbox"}
+      != 200
+    for: 1m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: cause
+      team: gitlab-pages
+    annotations:
+      title: GitLab Pages production front-end IP could've been changed
+      description: A pages site (https://prod.pages-check.gitlab.net/) that points to Pages front-end IP
+        directly has stopped working for a minute. This can make similar Pages sites stop working as well.
+        Consider reaching out to GCP support to try recovering the old IP if that is the case.
+  - alert: GitLabPagesStagingFeIpPossibleChange
+    expr: probe_http_status_code{instance=~"https?://staging.pages-check.gitlab.net",job="blackbox"}
+      != 200
+    for: 1m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: cause
+      team: gitlab-pages
+    annotations:
+      title: GitLab Pages staging front-end IP could've been changed
+      description: A pages site (https://staging.pages-check.gitlab.net/) that points to Pages front-end IP
+        directly has stopped working for a minute. If a change has been made to the LB configuration, make sure *they
+        are not* applied to production.
+- name: Blackbox customers.gitlab.com
+  rules:
+  - alert: customers.gitlab.com non-200 HTTP code
+    expr: probe_http_status_code{instance="https://customers.gitlab.com",job="blackbox"}
+      != 200
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: s1
+      environment: gprd
+      alert_type: symptom
+    annotations:
+      title: customers.gitlab.com is not responding correctly for 2 minutes
+- name: Blackbox user-content.gitlab-static.net
+  rules:
+  - alert: Camoproxy bad healthcheck
+    expr: probe_http_status_code{instance="https://user-content.staging.gitlab-static.net/healthcheck",job="blackbox"}
+      != 200
+    for: 2m
+    labels:
+      pager: pagerduty
+      severity: s1
+      environment: gstg
+      alert_type: symptom
+    annotations:
+      runbook: docs/uncategorized/camoproxy.md
+      title: GitLab Camoproxy is not responding correctly for 2 minutes
+  - alert: Camoproxy bad healthcheck
+    expr: probe_http_status_code{instance="https://user-content.gitlab-static.net/healthcheck",job="blackbox"}
+      != 200
+    for: 2m
+    labels:
+      pager: pagerduty
+      severity: s1
+      environment: gprd
+      alert_type: symptom
+    annotations:
+      runbook: docs/uncategorized/camoproxy.md
+      title: GitLab Camoproxy is not responding correctly for 2 minutes
+      alert_type: symptom
+- name: Blackbox dev.gitlab.org
+  rules:
+  - alert: DevGitLabOrgDown
+    expr: probe_http_status_code{instance="https://dev.gitlab.org", job="blackbox"} != 200
+    for: 10m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      description: The development site is returning status codes other than 200,
+        this usually means that a nightly deployment went wrong and took the site
+        down
+      runbook: docs/uncategorized/dev-environment.md
+      title: dev.gitlab.org is returning errors for 10m
+- name: Blackbox staging.gitlab.com
+  rules:
+  - alert: StagingGitlabComDown
+    expr: probe_http_status_code{instance="https://staging.gitlab.com",job="blackbox-tls-redirect"} != 302
+    for: 30m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      description: GitLab.com is down for more than 30 minutes!
+      runbook: docs/frontend/gitlab-com-is-down.md
+      title: staging.GitLab.com is down for 30 minutes
+  - alert: StagingGitlabComSignInDown
+    expr: probe_http_status_code{instance="https://staging.gitlab.com/users/sign_in",job="blackbox"} != 200
+    for: 30m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      description: GitLab.com is down for more than 30 minutes!
+      runbook: docs/frontend/gitlab-com-is-down.md
+      title: staging.GitLab.com is down for 30 minutes
+- name: Blackbox gitlab.com
+  rules:
+  - alert: GitlabComDown
+    expr: probe_http_status_code{instance="https://gitlab.com/users/sign_in",job="blackbox"} != 200
+    for: 2m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      description: GitLab.com is down for more than 2 minutes! Consider !tweet 'GitLab.com
+        is currently down, we are investigating the root cause, apologies for the
+        inconvenience' if there is problems.
+      runbook: docs/frontend/gitlab-com-is-down.md
+      title: GitLab.com is down for 2 minutes
+  - alert: GitlabComSignInDown
+    expr: probe_http_status_code{instance="https://gitlab.com/users/sign_in",job="blackbox"} != 200
+    for: 2m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      description: GitLab.com is down for more than 2 minutes! Consider !tweet 'GitLab.com
+        is currently down, we are investigating the root cause, apologies for the
+        inconvenience' if there is problems.
+      runbook: docs/frontend/gitlab-com-is-down.md
+      title: GitLab.com is down for 2 minutes
+- name: Blackbox registry.gitlab.com
+  rules:
+  - alert: RegistryDown
+    expr: probe_http_status_code{instance="https://registry.gitlab.com",job="blackbox"}
+      != 200
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      description: GitLab registry is down for 1 minute! Consider !tweet 'GitLab Registry
+        is not responding, we are investigating the root cause.' if problem exists.
+      runbook: docs/registry/gitlab-registry.md
+      title: GitLab Registry is down for 1 minute
+- name: Blackbox sentry.gitlab.net
+  rules:
+  - alert: SentryDown
+    expr: probe_http_status_code{instance="https://sentry.gitlab.net",job="blackbox"}
+      != 200
+    for: 5m
+    labels:
+      severity: s1
+      pager: pagerduty
+      alert_type: symptom
+    annotations:
+      description: GitLab sentry has been down for 1 minute!
+      runbook: docs/monitoring/sentry-is-down.md
+      title: sentry.gitlab.net is down
