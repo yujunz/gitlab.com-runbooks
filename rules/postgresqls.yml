@@ -223,20 +223,20 @@ groups:
       runbook: "docs/patroni/postgres.md#tables-with-a-large-amount-of-dead-tuples"
       title: PostgreSQL dead tuples is too large
   - alert: PostgreSQL_SplitBrain
-    expr: count(pg_replication_is_replica == 0) BY (environment,type) != 1
+    expr: count(pg_replication_is_replica == 0) BY (environment,type) > 1
     for: 1m
     labels:
       pager: pagerduty
       severity: s1
       alert_type: cause
     annotations:
-      description: 'The following {{$value}} databases are in read-write
+      description: 'The following {{$value}} {{$labels.type}} databases are in read-write
       (primary) mode: {{range query
-        "pg_replication_is_replica{environment=''$labels.environment''} ==
+        "pg_replication_is_replica{environment=''$labels.environment'',type=''$labels.type''} ==
         0.0"}} {{.labels.fqdn}} {{end}}'
       runbook: "docs/patroni/patroni-management.md"
       title: "Split Brain: too many postgres databases in environment {{$labels.environment}}
-        in read-write (primary) mode"
+        of type {{$labels.type}} in read-write (primary) mode"
   - alert: PostgreSQL_SplitBrain_Replicas
     expr: count(count(pg_stat_wal_receiver_status{type=~"postgres|patroni"} >= 0) BY (environment, upstream_host))
       BY (environment) > 1
