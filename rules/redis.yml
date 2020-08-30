@@ -173,3 +173,15 @@ groups:
       description: |
         There should be a single sentinel process per VM in the {{ $labels.type }} cluster.
         This likely means that sentinel has stopped on one of the {{ .Labels.type }} sentinel nodes.
+  - alert: RedisSlowlogPluginErrors
+    expr: rate(fluentd_redis_slowlog_errors[1m]) > 0
+    for: 15m
+    labels:
+      pager: pagerduty
+      severity: s2
+      alert_type: symptom
+    annotations:
+      title: The redis slowlog plugin in fluentd on {{ $labels.fqdn}} is experiencing errors connecting to redis
+      description: |
+        This plugin extracts slowlog events into our logging stream, which are useful for incident resolution.
+        Check the fluentd logs (/var/log/td-agent/td-agent.log) to determine the cause of the breakage.
