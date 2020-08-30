@@ -164,7 +164,7 @@ A final option, in case pg_cancel_backend or pg_terminate_backend does not termi
 
 
 ## How to check if queries are waiting to aquire locks from the logs
-If [log_lock_waits](https://postgresqlco.nf/en/doc/param/log_lock_waits/11/) is `on`, then every attempt to acquire a lock that has been waiting for more than [deadlock_timeout](https://postgresqlco.nf/en/doc/param/log_lock_waits/11/), a line will be printed to the logfile, similiar to:
+If [log_lock_waits](https://postgresqlco.nf/en/doc/param/log_lock_waits/11/) is `on`, then every attempt to acquire a lock that has been waiting for more than [deadlock_timeout](https://postgresqlco.nf/en/doc/param/log_lock_waits/11/), a line will be printed to the logfile, similar to:
 
 ```
 2020-06-26 06:42:37.472 GMT,"gitlab","gitlabhq_production",63330,"10.217.8.4:44814",5ef59793.f762,3,"UPDATE waiting",2020-06-26 06:37:07 GMT,190/102729680,3682318105,LOG,00000,"process 63330 still waiting for ShareLock on transaction 3682318234 after 500
