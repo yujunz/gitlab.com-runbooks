@@ -35,7 +35,12 @@ metricsCatalog.serviceDefinition({
   components: {
     loadbalancer: haproxyComponents.haproxyHTTPLoadBalancer(
       stageMappings={
-        main: { backends: ['api', 'api_rate_limit'], toolingLinks: [] },
+        main: {
+          backends: ['api', 'api_rate_limit'],
+          toolingLinks: [
+            toolingLinks.bigquery(title='Main-stage: top paths for 5xx errors', savedQuery='805818759045:342973e81d4a481d8055b43564d09728'),
+          ],
+        },
         cny: { backends: ['canary_api'], toolingLinks: [] },
       },
       selector={ type: 'frontend' },
