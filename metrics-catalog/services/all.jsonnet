@@ -1,3 +1,7 @@
+//
+// This library contains a list of all services in the application.
+// When adding a new library, add it here...
+//
 [
   import 'api.jsonnet',
   import 'camoproxy.jsonnet',

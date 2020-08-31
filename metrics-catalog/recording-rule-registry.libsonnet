@@ -1,10 +1,19 @@
-local aggregations = import 'promql/aggregations.libsonnet';
-local selectors = import 'promql/selectors.libsonnet';
+//
+// Recording Rule Registry
+//
+// This library deals with resolving expressions that can use recording rules.
+// Given a PromQL expression, and the recording rule registry (from `metric-label-registry.libsonnet`)
+// It will convert the expression into an equivalent expression that uses a recording rule,
+// if possible.
+//
 local metricsLabelRegistry = import 'metric-label-registry.libsonnet';
 local metricsCatalog = import 'metrics-catalog.libsonnet';
+local aggregations = import 'promql/aggregations.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
 local standardEnvironmentLabels = std.set(['environment', 'type', 'tier', 'stage', 'shard']);
 
+// TODO: move this to configuration
 local burnRates = std.set(['1m', '5m', '30m', '1h', '6h']);
 
 // Collect recordingRuleMetrics for all services

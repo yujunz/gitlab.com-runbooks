@@ -124,6 +124,9 @@ metricsCatalog.serviceDefinition({
         selector=shardSelector,
       ),
 
+      // Note: these labels will also be included in the
+      // intermediate recording rules specified in the
+      // `recordingRuleMetrics` stanza above
       significantLabels: ['feature_category', 'queue', 'urgency'],
 
       local slowRequestSeconds =

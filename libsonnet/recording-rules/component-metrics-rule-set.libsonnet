@@ -1,81 +1,62 @@
-local selectors = import 'promql/selectors.libsonnet';
-
 // Generates apdex weight recording rules for a component definition
-local generateApdexWeightRules(ruleSet, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
-  if ruleSet.recordingRuleNames.apdexWeight != null && componentDefinition.hasApdex() then
-    [{
-      record: ruleSet.recordingRuleNames.apdexWeight,
-      labels: recordingRuleStaticLabels,
-      expr: componentDefinition.apdex.apdexWeightQuery(aggregationLabels, selector={}, rangeInterval=ruleSet.burnRate),
-    }]
+local generateApdexWeightRules(burnRate, recordingRuleNames, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
+  if recordingRuleNames.apdexWeight != null then
+    componentDefinition.generateApdexWeightRecordingRules(
+      burnRate=burnRate,
+      recordingRuleName=recordingRuleNames.apdexWeight,
+      aggregationLabels=aggregationLabels,
+      recordingRuleStaticLabels=recordingRuleStaticLabels
+    )
   else
     [];
 
 // Generates a curryable function to apdex score recording rules for a component definition
 local generateApdexScoreRulesCurry(substituteWeightWithRecordingRule) =
-  function(ruleSet, aggregationLabels, componentDefinition, recordingRuleStaticLabels)
-    local weightRecordingRule = if substituteWeightWithRecordingRule then
-      '%(recordingRule)s{%(selector)s}' % {
-        recordingRule: ruleSet.recordingRuleNames.apdexWeight,
-        selector: selectors.serializeHash(recordingRuleStaticLabels),
-      }
-    else
-      null;
-
-    if ruleSet.recordingRuleNames.apdexRatio != null && componentDefinition.hasApdex() then
-      [{
-        record: ruleSet.recordingRuleNames.apdexRatio,
-        labels: recordingRuleStaticLabels,
-        expr: componentDefinition.apdex.apdexQuery(
-          aggregationLabels,
-          selector={},
-          rangeInterval=ruleSet.burnRate,
-          substituteWeightWithRecordingRule=weightRecordingRule,
-        ),
-      }]
+  function(burnRate, recordingRuleNames, aggregationLabels, componentDefinition, recordingRuleStaticLabels)
+    if recordingRuleNames.apdexRatio != null then
+      componentDefinition.generateApdexScoreRecordingRules(
+        burnRate=burnRate,
+        recordingRuleName=recordingRuleNames.apdexRatio,
+        aggregationLabels=aggregationLabels,
+        recordingRuleStaticLabels=recordingRuleStaticLabels,
+        substituteWeightWithRecordingRuleName=if substituteWeightWithRecordingRule then recordingRuleNames.apdexWeight else null
+      )
     else
       [];
 
-local generateRequestRateRules(ruleSet, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
-  // All components has a requestRate metric
-  if ruleSet.recordingRuleNames.requestRate != null then
-    [{
-      record: ruleSet.recordingRuleNames.requestRate,
-      labels: recordingRuleStaticLabels,
-      expr: componentDefinition.requestRate.aggregatedRateQuery(aggregationLabels, selector={}, rangeInterval=ruleSet.burnRate),
-    }]
+local generateRequestRateRules(burnRate, recordingRuleNames, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
+  // All components have a requestRate metric
+  if recordingRuleNames.requestRate != null then
+    componentDefinition.generateRequestRateRecordingRules(
+      burnRate=burnRate,
+      recordingRuleName=recordingRuleNames.requestRate,
+      aggregationLabels=aggregationLabels,
+      recordingRuleStaticLabels=recordingRuleStaticLabels
+    )
   else
     [];
 
-local generateErrorRateRules(ruleSet, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
-  if ruleSet.recordingRuleNames.errorRate != null && componentDefinition.hasErrorRate() then
-    [{
-      record: ruleSet.recordingRuleNames.errorRate,
-      labels: recordingRuleStaticLabels,
-      expr: componentDefinition.errorRate.aggregatedRateQuery(aggregationLabels, selector={}, rangeInterval=ruleSet.burnRate),
-    }]
+local generateErrorRateRules(burnRate, recordingRuleNames, aggregationLabels, componentDefinition, recordingRuleStaticLabels) =
+  if recordingRuleNames.errorRate != null then
+    componentDefinition.generateErrorRateRecordingRules(
+      burnRate=burnRate,
+      recordingRuleName=recordingRuleNames.errorRate,
+      aggregationLabels=aggregationLabels,
+      recordingRuleStaticLabels=recordingRuleStaticLabels
+    )
   else
     [];
 
 // Generates the recording rules given a component definition
-local generateRecordingRulesForComponent(ruleSet, serviceDefinition, componentName, componentDefinition, aggregationLabels, substituteWeightWithRecordingRule) =
-  local staticLabels =
-    if std.objectHas(componentDefinition, 'staticLabels') then
-      componentDefinition.staticLabels
-    else
-      {};
-
-  local labels = {
+local generateRecordingRulesForComponent(burnRate, recordingRuleNames, serviceDefinition, componentDefinition, aggregationLabels, substituteWeightWithRecordingRule) =
+  local recordingRuleStaticLabels = {
     tier: serviceDefinition.tier,
     type: serviceDefinition.type,
-    component: componentName,
-  } + staticLabels;
-
-  // Remove any fixed labels from the aggregation labels
-  local aggregationLabelsArray = std.filter(function(label) !std.objectHas(labels, label), aggregationLabels);
+    component: componentDefinition.name,
+  };
 
   std.flatMap(
-    function(generator) generator(ruleSet, aggregationLabelsArray, componentDefinition, labels),
+    function(generator) generator(burnRate=burnRate, recordingRuleNames=recordingRuleNames, aggregationLabels=aggregationLabels, componentDefinition=componentDefinition, recordingRuleStaticLabels=recordingRuleStaticLabels),
     [
       generateApdexWeightRules,
       generateApdexScoreRulesCurry(substituteWeightWithRecordingRule),
@@ -96,24 +77,28 @@ local generateRecordingRulesForComponent(ruleSet, serviceDefinition, componentNa
     aggregationLabels=[],
     substituteWeightWithRecordingRule=false,
   )::
-    {
-      burnRate: burnRate,
-      aggregationLabels: aggregationLabels,
-      recordingRuleNames: {
-        apdexRatio: apdexRatio,
-        apdexWeight: apdexWeight,
-        requestRate: requestRate,
-        errorRate: errorRate,
-      },
-      substituteWeightWithRecordingRule: substituteWeightWithRecordingRule,
+    local recordingRuleNames = {
+      apdexRatio: apdexRatio,
+      apdexWeight: apdexWeight,
+      requestRate: requestRate,
+      errorRate: errorRate,
+    };
 
+    {
       // Generates the recording rules given a service definition
       generateRecordingRulesForService(serviceDefinition)::
         local components = serviceDefinition.components;
 
         std.flatMap(
-          function(componentName) generateRecordingRulesForComponent(self, serviceDefinition, componentName, components[componentName], aggregationLabels, substituteWeightWithRecordingRule),
-          std.objectFields(components)
+          function(componentDefinition) generateRecordingRulesForComponent(
+            burnRate=burnRate,
+            recordingRuleNames=recordingRuleNames,
+            serviceDefinition=serviceDefinition,
+            componentDefinition=componentDefinition,
+            aggregationLabels=aggregationLabels,
+            substituteWeightWithRecordingRule=substituteWeightWithRecordingRule
+          ),
+          serviceDefinition.getComponentsList()
         ),
     },
 
