@@ -12,7 +12,7 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[1m])
+        rate(haproxy_backend_http_responses_total{backend="pages_http",type="pages"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -22,9 +22,27 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1m]), "_c", "0", "", "")
-        or
-        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1m]), "_c", "1", "", "")
+        rate(haproxy_backend_http_responses_total{backend="pages_http",code="5xx",type="pages"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend="pages_https",type="pages"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend="pages_https",type="pages"}[1m])
       )
   - record: gitlab_component_apdex:weight:score
     labels:
@@ -87,7 +105,7 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[5m])
+        rate(haproxy_backend_http_responses_total{backend="pages_http",type="pages"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -97,9 +115,27 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[5m]), "_c", "0", "", "")
-        or
-        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[5m]), "_c", "1", "", "")
+        rate(haproxy_backend_http_responses_total{backend="pages_http",code="5xx",type="pages"}[5m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend="pages_https",type="pages"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend="pages_https",type="pages"}[5m])
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
@@ -162,7 +198,7 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[30m])
+        rate(haproxy_backend_http_responses_total{backend="pages_http",type="pages"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -172,9 +208,27 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[30m]), "_c", "0", "", "")
-        or
-        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[30m]), "_c", "1", "", "")
+        rate(haproxy_backend_http_responses_total{backend="pages_http",code="5xx",type="pages"}[30m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend="pages_https",type="pages"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend="pages_https",type="pages"}[30m])
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
@@ -235,7 +289,7 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[1h])
+        rate(haproxy_backend_http_responses_total{backend="pages_http",type="pages"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -245,9 +299,27 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[1h]), "_c", "0", "", "")
-        or
-        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[1h]), "_c", "1", "", "")
+        rate(haproxy_backend_http_responses_total{backend="pages_http",code="5xx",type="pages"}[1h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend="pages_https",type="pages"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend="pages_https",type="pages"}[1h])
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
@@ -310,7 +382,7 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        rate(haproxy_server_sessions_total{type="pages", backend=~"pages_https|pages_http"}[6h])
+        rate(haproxy_backend_http_responses_total{backend="pages_http",type="pages"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -320,9 +392,27 @@ groups:
       type: web-pages
     expr: |
       sum by (environment) (
-        label_replace(rate(haproxy_backend_http_responses_total{type="pages",job="haproxy",code="5xx"}[6h]), "_c", "0", "", "")
-        or
-        label_replace(rate(haproxy_server_connection_errors_total{type="pages", job="haproxy"}[6h]), "_c", "1", "", "")
+        rate(haproxy_backend_http_responses_total{backend="pages_http",code="5xx",type="pages"}[6h])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend="pages_https",type="pages"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: loadbalancer_https
+      stage: main
+      tier: sv
+      type: web-pages
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend="pages_https",type="pages"}[6h])
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
@@ -377,8 +467,15 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
-      aggregate_rps: 'yes'
+      aggregate_rps: 'no'
       component: loadbalancer
+      tier: sv
+      type: web-pages
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'no'
+      component: loadbalancer_https
       tier: sv
       type: web-pages
     expr: '1'

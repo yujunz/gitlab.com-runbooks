@@ -14,6 +14,66 @@ groups:
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
       )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",type="frontend"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",type="frontend"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",code="5xx",type="frontend"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",code="5xx",type="frontend"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend=~"ssh|altssh",type="frontend"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend=~"ssh|altssh",type="frontend"}[1m])
+      )
   - record: gitlab_component_apdex:weight:score
     labels:
       component: puma
@@ -126,6 +186,66 @@ groups:
     expr: |
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",type="frontend"}[5m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",type="frontend"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",code="5xx",type="frontend"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",code="5xx",type="frontend"}[5m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend=~"ssh|altssh",type="frontend"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend=~"ssh|altssh",type="frontend"}[5m])
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
@@ -240,6 +360,66 @@ groups:
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
       )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",type="frontend"}[30m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",type="frontend"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",code="5xx",type="frontend"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",code="5xx",type="frontend"}[30m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend=~"ssh|altssh",type="frontend"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend=~"ssh|altssh",type="frontend"}[30m])
+      )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
       component: puma
@@ -348,6 +528,66 @@ groups:
     expr: |
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",type="frontend"}[1h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",type="frontend"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",code="5xx",type="frontend"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",code="5xx",type="frontend"}[1h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend=~"ssh|altssh",type="frontend"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend=~"ssh|altssh",type="frontend"}[1h])
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
@@ -462,6 +702,66 @@ groups:
       sum by (environment) (
         sum by (environment) (haproxy_backend_current_session_rate{backend=~"ssh|altssh"})
       )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",type="frontend"}[6h])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",type="frontend"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_https_git",code="5xx",type="frontend"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: loadbalancer
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend=~"https_git|websockets",code="5xx",type="frontend"}[6h])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_sessions_total{backend=~"ssh|altssh",type="frontend"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: loadbalancer_ssh
+      stage: main
+      tier: sv
+      type: git
+    expr: |
+      sum by (environment) (
+        rate(haproxy_server_connection_errors_total{backend=~"ssh|altssh",type="frontend"}[6h])
+      )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
       component: puma
@@ -565,6 +865,20 @@ groups:
     labels:
       aggregate_rps: 'yes'
       component: gitlab_shell
+      tier: sv
+      type: git
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'no'
+      component: loadbalancer
+      tier: sv
+      type: git
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'no'
+      component: loadbalancer_ssh
       tier: sv
       type: git
     expr: '1'

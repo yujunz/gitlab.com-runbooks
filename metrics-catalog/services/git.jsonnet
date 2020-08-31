@@ -3,6 +3,7 @@ local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local customRateQuery = metricsCatalog.customRateQuery;
 local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
+local haproxyComponents = import './lib/haproxy_components.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'git',
@@ -33,12 +34,29 @@ metricsCatalog.serviceDefinition({
     praefect: true,
   },
   components: {
+    loadbalancer: haproxyComponents.haproxyHTTPLoadBalancer(
+      stageMappings={
+        main: { backends: ['https_git', 'websockets'], toolingLinks: [] },
+        cny: { backends: ['canary_https_git'], toolingLinks: [] },  // What happens to cny websocket traffic?
+      },
+      selector={ type: 'frontend' },
+    ),
+
+    loadbalancer_ssh: haproxyComponents.haproxyL4LoadBalancer(
+      stageMappings={
+        main: { backends: ['ssh', 'altssh'], toolingLinks: [] },
+        // No canary SSH for now
+      },
+      selector={ type: 'frontend' },
+    ),
+
     workhorse: {
       local baseSelector = {
         job: 'gitlab-workhorse-git',
         type: 'git',
         route: [{ ne: '^/-/health$' }, { ne: '^/-/(readiness|liveness)$' }],
       },
+
       apdex: histogramApdex(
         histogram='gitlab_workhorse_http_request_duration_seconds_bucket',
         selector=baseSelector {

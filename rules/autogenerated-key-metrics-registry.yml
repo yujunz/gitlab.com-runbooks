@@ -7,12 +7,32 @@ groups:
   - record: gitlab_component_ops:rate
     labels:
       component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",type="registry"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: loadbalancer
       stage: main
       tier: sv
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[1m])
+        rate(haproxy_backend_http_responses_total{backend="registry",type="registry"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",code="5xx",type="registry"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -22,27 +42,7 @@ groups:
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[1m])
-      )
-  - record: gitlab_component_ops:rate
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[1m])
-      )
-  - record: gitlab_component_errors:rate
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[1m])
+        rate(haproxy_backend_http_responses_total{backend="registry",code="5xx",type="registry"}[1m])
       )
   - record: gitlab_component_apdex:weight:score
     labels:
@@ -141,12 +141,32 @@ groups:
   - record: gitlab_component_ops:rate_5m
     labels:
       component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",type="registry"}[5m])
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: loadbalancer
       stage: main
       tier: sv
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[5m])
+        rate(haproxy_backend_http_responses_total{backend="registry",type="registry"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",code="5xx",type="registry"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -156,27 +176,7 @@ groups:
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[5m])
-      )
-  - record: gitlab_component_ops:rate_5m
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[5m])
-      )
-  - record: gitlab_component_errors:rate_5m
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[5m])
+        rate(haproxy_backend_http_responses_total{backend="registry",code="5xx",type="registry"}[5m])
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
@@ -275,12 +275,32 @@ groups:
   - record: gitlab_component_ops:rate_30m
     labels:
       component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",type="registry"}[30m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: loadbalancer
       stage: main
       tier: sv
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[30m])
+        rate(haproxy_backend_http_responses_total{backend="registry",type="registry"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",code="5xx",type="registry"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -290,27 +310,7 @@ groups:
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[30m])
-      )
-  - record: gitlab_component_ops:rate_30m
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[30m])
-      )
-  - record: gitlab_component_errors:rate_30m
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[30m])
+        rate(haproxy_backend_http_responses_total{backend="registry",code="5xx",type="registry"}[30m])
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
@@ -405,12 +405,32 @@ groups:
   - record: gitlab_component_ops:rate_1h
     labels:
       component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",type="registry"}[1h])
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: loadbalancer
       stage: main
       tier: sv
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[1h])
+        rate(haproxy_backend_http_responses_total{backend="registry",type="registry"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",code="5xx",type="registry"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -420,27 +440,7 @@ groups:
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[1h])
-      )
-  - record: gitlab_component_ops:rate_1h
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[1h])
-      )
-  - record: gitlab_component_errors:rate_1h
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[1h])
+        rate(haproxy_backend_http_responses_total{backend="registry",code="5xx",type="registry"}[1h])
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
@@ -539,12 +539,32 @@ groups:
   - record: gitlab_component_ops:rate_6h
     labels:
       component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",type="registry"}[6h])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: loadbalancer
       stage: main
       tier: sv
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy"}[6h])
+        rate(haproxy_backend_http_responses_total{backend="registry",type="registry"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: loadbalancer
+      stage: cny
+      tier: sv
+      type: registry
+    expr: |
+      sum by (environment) (
+        rate(haproxy_backend_http_responses_total{backend="canary_registry",code="5xx",type="registry"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -554,27 +574,7 @@ groups:
       type: registry
     expr: |
       sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="registry",job="haproxy",code="5xx"}[6h])
-      )
-  - record: gitlab_component_ops:rate_6h
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy"}[6h])
-      )
-  - record: gitlab_component_errors:rate_6h
-    labels:
-      component: loadbalancer_cny
-      stage: cny
-      tier: sv
-      type: registry
-    expr: |
-      sum by (environment) (
-        rate(haproxy_backend_http_responses_total{backend="canary_registry",job="haproxy",code="5xx"}[6h])
+        rate(haproxy_backend_http_responses_total{backend="registry",code="5xx",type="registry"}[6h])
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
@@ -668,15 +668,8 @@ groups:
   rules:
   - record: gitlab_component_service:mapping
     labels:
-      aggregate_rps: 'yes'
+      aggregate_rps: 'no'
       component: loadbalancer
-      tier: sv
-      type: registry
-    expr: '1'
-  - record: gitlab_component_service:mapping
-    labels:
-      aggregate_rps: 'yes'
-      component: loadbalancer_cny
       tier: sv
       type: registry
     expr: '1'
