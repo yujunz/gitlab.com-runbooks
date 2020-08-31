@@ -47,6 +47,16 @@ local statusCode(field) =
   [rangeFilter(field, gteValue=500, lteValue=null)];
 
 local indexCatalog = {
+  // Improve these logs when https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11221 is addressed
+  camoproxy: {
+    timestamp: '@timestamp',
+    indexId: 'AWz5hIoSGphUgZwzAG7q',
+    defaultColumns: ['json.camoproxy_message', 'json.camoproxy_err'],
+    failureFilter: [existsFilter('json.camoproxy_err')],
+    //defaultLatencyField: 'json.grpc.time_ms',
+    //latencyFieldUnitMultiplier: 1000,
+  },
+
   gitaly: {
     timestamp: 'json.time',
     indexId: 'AW5F1OHTiGcMMNRn84Di',
