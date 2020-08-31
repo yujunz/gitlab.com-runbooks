@@ -2,6 +2,12 @@ local rison = import 'rison.libsonnet';
 
 local kibanaEndpoint = 'https://log.gprd.gitlab.net/app/kibana';
 
+local kueryFilter(field, value) =
+  {
+    language: 'kuery',
+    query: '%s:%s' % [field, value],
+  };
+
 // Builds an ElasticSearch match filter clause
 local matchFilter(field, value) =
   {
@@ -176,11 +182,12 @@ local indexCatalog = {
   },
 };
 
-local buildElasticDiscoverSearchQueryURL(index, filters) =
+local buildElasticDiscoverSearchQueryURL(index, filters, query='') =
   local applicationState = {
     columns: indexCatalog[index].defaultColumns,
     filters: filters,
     index: indexCatalog[index].indexId,
+    query: query,
   };
 
   kibanaEndpoint + '#/discover?_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
@@ -269,10 +276,11 @@ local buildElasticLinePercentileVizURL(index, filters, field) =
 {
   matchFilter:: matchFilter,
   rangeFilter:: rangeFilter,
+  kueryFilter:: kueryFilter,
 
   // Given an index, and a set of filters, returns a URL to a Kibana discover module/search
-  buildElasticDiscoverSearchQueryURL(index, filters)::
-    buildElasticDiscoverSearchQueryURL(index, filters),
+  buildElasticDiscoverSearchQueryURL(index, filters, query='')::
+    buildElasticDiscoverSearchQueryURL(index, filters, query),
 
   // Search for failed requests
   buildElasticDiscoverFailureSearchQueryURL(index, filters)::

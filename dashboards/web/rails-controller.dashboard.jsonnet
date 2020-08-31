@@ -2,6 +2,7 @@ local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
 local templates = import 'grafana/templates.libsonnet';
+local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libsonnet';
 
 local selector = 'environment="$environment", type="$type", stage="$stage", controller="$controller", action=~"$action"';
 local row = grafana.row;
@@ -11,6 +12,16 @@ local rowGrid(rowTitle, panels, startRow) =
     row.new(title=rowTitle) { gridPos: { x: 0, y: startRow, w: 24, h: 1 } },
   ] +
   layout.grid(panels, cols=std.length(panels), startRow=startRow + 1);
+
+local elasticsearchLogSearchDataLink = {
+  url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL(
+    'rails',
+    [elasticsearchLinks.matchFilter('json.controller.keyword', '$controller')],
+    elasticsearchLinks.kueryFilter('json.action.keyword', '${action:lucene}')
+  ),
+  title: 'ElasticSearch: Rails logs',
+  targetBlank: true,
+};
 
 basic.dashboard(
   'Rails Controller',
@@ -30,7 +41,7 @@ basic.dashboard(
       legendFormat="{{ action }}",
       format='ops',
       yAxisLabel='Requests per Second',
-    ),
+    ).addDataLink(elasticsearchLogSearchDataLink),
     basic.multiTimeseries(
       stableId='latency',
       title='Latency',
@@ -49,7 +60,7 @@ basic.dashboard(
         legendFormat: '{{ action }} - mean',
       }],
       format='s',
-    ),
+    ).addDataLink(elasticsearchLogSearchDataLink),
   ])
   +
   rowGrid('SQL', [
