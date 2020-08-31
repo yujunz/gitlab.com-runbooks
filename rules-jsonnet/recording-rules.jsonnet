@@ -1,5 +1,5 @@
-local configMap = import 'recording-rule-config-map.libsonnet';
 local services = import './services/all.jsonnet';
+local configMap = import 'recording-rule-config-map.libsonnet';
 
 local outputPromYaml(groups) =
   std.manifestYamlDoc({

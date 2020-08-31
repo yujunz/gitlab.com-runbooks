@@ -9,8 +9,11 @@
   gaugeMetric:: (import './gauge_metric.libsonnet').gaugeMetric,
 
   // Service definition
-  serviceDefinition:: (import './service-definition.libsonnet').serviceDefinition,
+  serviceDefinition:: (import './service_definition.libsonnet').serviceDefinition,
+  componentDefinition:: (import './component_definition.libsonnet').componentDefinition,
+
+  combinedComponentDefinition:: (import './combined_component_definition.libsonnet').combinedComponentDefinition,
 
   // Resource Saturation & Utilization definition
-  resourceSaturationPoint: (import './resource-saturation-point.libsonnet').resourceSaturationPoint,
+  resourceSaturationPoint: (import './resource_saturation_point.libsonnet').resourceSaturationPoint,
 }

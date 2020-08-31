@@ -1,5 +1,5 @@
+local recordingRuleRegistry = import './recording-rule-registry.libsonnet';
 local recordingRules = import 'recording-rules/recording-rules.libsonnet';
-local recordingRuleRegistry = import 'recording-rule-registry.libsonnet';
 
 local COMPONENT_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage'];
 local NODE_LEVEL_AGGREGATION_LABELS = ['environment', 'tier', 'type', 'stage', 'shard', 'fqdn'];
@@ -262,7 +262,7 @@ local ruleSetIterator(ruleSets) = {
       function(suffix)
         [
           recordingRules.serviceErrorRatioRuleSet(suffix=suffix),
-          recordingRules.serviceNodeErrorRatioRuleSet(suffix=suffix)
+          recordingRules.serviceNodeErrorRatioRuleSet(suffix=suffix),
         ],
       MULTI_BURN_RATE_SUFFIXES
     )),

@@ -303,19 +303,20 @@ local componentOverviewMatrixRow(
   autoDetailRows(serviceType, selectorHash, startRow)::
     local s = self;
     local service = metricsCatalog.getService(serviceType);
+    local components = service.getComponentsList();
+    local componentsFiltered = std.filter(function(c) c.supportsDetails(), components);
 
     layout.grid(
       std.mapWithIndex(
-        function(i, componentName)
-          local component = service.components[componentName];
+        function(i, component)
           local aggregationSets =
             [
               { title: 'Overall', aggregationLabels: '', legendFormat: 'overall' },
             ] +
             std.map(function(c) { title: 'per ' + c, aggregationLabels: c, legendFormat: '{{' + c + '}}' }, component.significantLabels);
 
-          s.componentDetailMatrix(serviceType, componentName, selectorHash, aggregationSets),
-        std.objectFields(service.components)
+          s.componentDetailMatrix(serviceType, component.name, selectorHash, aggregationSets),
+        componentsFiltered
       )
       , cols=1, startRow=startRow
     ),
