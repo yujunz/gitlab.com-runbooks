@@ -120,7 +120,7 @@ take a few hours, depending on how much time passed since the last base-backup.
 
 * make a backup copy of `recovery.conf`:
   * `cp -a /var/opt/gitlab/postgresql/data/recovery.conf $HOME/`
-* `chef-client-disable`
+* `chef-client-disable <comment or link to issue>`
 * `gitlab-ctl stop postgresql`
 * Clean up the current PGDATA: `rm -rf /var/opt/gitlab/postgresql/data/*`
 * Run backup-fetch __in a tmux__ as it will take hours:
