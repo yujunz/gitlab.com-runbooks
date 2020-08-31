@@ -1,6 +1,7 @@
 local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
+local haproxyComponents = import './lib/haproxy_components.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'camoproxy',
@@ -13,6 +14,13 @@ metricsCatalog.serviceDefinition({
     // If Camoproxy has any dependencies, we should add them here
   },
   components: {
+    loadbalancer: haproxyComponents.haproxyHTTPLoadBalancer(
+      stageMappings={
+        main: { backends: ['camoproxy'], toolingLinks: [] },
+      },
+      selector={ type: 'camoproxy' },
+    ),
+
     server: {
       apdex: histogramApdex(
         histogram='camo_response_duration_seconds_bucket',

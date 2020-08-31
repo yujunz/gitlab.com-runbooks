@@ -2,6 +2,7 @@ local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
+local haproxyComponents = import './lib/haproxy_components.libsonnet';
 
 metricsCatalog.serviceDefinition({
   type: 'registry',
@@ -22,41 +23,13 @@ metricsCatalog.serviceDefinition({
     vms: true,  // registry haproxy frontend still runs on vms
   },
   components: {
-    loadbalancer: {
-      staticLabels: {
-        stage: 'main',
+    loadbalancer: haproxyComponents.haproxyHTTPLoadBalancer(
+      stageMappings={
+        main: { backends: ['registry'], toolingLinks: [] },
+        cny: { backends: ['canary_registry'], toolingLinks: [] },
       },
-
-      requestRate: rateMetric(
-        counter='haproxy_backend_http_responses_total',
-        selector='backend="registry",job="haproxy"'
-      ),
-
-      errorRate: rateMetric(
-        counter='haproxy_backend_http_responses_total',
-        selector='backend="registry",job="haproxy",code="5xx"'
-      ),
-
-      significantLabels: [],
-    },
-
-    loadbalancer_cny: {
-      staticLabels: {
-        stage: 'cny',
-      },
-
-      requestRate: rateMetric(
-        counter='haproxy_backend_http_responses_total',
-        selector='backend="canary_registry",job="haproxy"'
-      ),
-
-      errorRate: rateMetric(
-        counter='haproxy_backend_http_responses_total',
-        selector='backend="canary_registry",job="haproxy",code="5xx"'
-      ),
-
-      significantLabels: [],
-    },
+      selector={ type: 'registry' },
+    ),
 
     server: {
       apdex: histogramApdex(
