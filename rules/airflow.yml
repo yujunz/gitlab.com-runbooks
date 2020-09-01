@@ -1,17 +1,15 @@
-groups:
-- name: Target is down
+- name: Airflow is down
   rules:
-    - alert: TargetsDown
+    - alert: AirflowDown
       expr: >
-        count by (job) (
-          avg_over_time(up[5m]) * 100 < 50
-        )
+        count(avg_over_time(up{job='airflow'}[5m]) * 100 < 50)
       for: 10m
       labels:
-        severity: s3
+        severity: s1
         alert_type: cause
+        team: data-engineering
       annotations:
-        title: Some prometheus job targets are down
+        title: Airflow is down
         description: >
-          Some targets for {{ $labels.job }} are down.
+          Airflow is down.
           See 'https://thanos-query.ops.gitlab.net/graph?g0.expr=up%7Benv%3D"{{ $externalLabels.env }}"%2Cjob%3D"{{ $labels.job }}"%7D%20%3D%3D%200'

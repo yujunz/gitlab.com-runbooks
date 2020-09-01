@@ -119,6 +119,12 @@ teams:
 - name: gitlab-pages
   slack_alerts_channel: gitlab-pages
 
+- name: data-engineering
+  url: https://about.gitlab.com/handbook/business-ops/data-team/platform/
+  slack_channel: data-engineering
+  slack_alerts_channel: analytics-pipelines
+  oncall_schedule: https://about.gitlab.com/handbook/business-ops/data-team/how-we-work/duties/
+
 tiers:
 - name: sv
 - name: lb
@@ -127,6 +133,15 @@ tiers:
 - name: inf
 
 services:
+- name: airflow
+  teams:
+    - data-engineering
+  business:
+    requirement: |
+      Required by data engineering team to orchestrate data extraction and transformation jobs.
+    customers:
+      - Internally used to provide up-to-date internal data
+    
 - name: api
   friendly_name: GitLab API
   tier: sv

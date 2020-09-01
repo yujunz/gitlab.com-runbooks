@@ -13,7 +13,7 @@ local templateDir = '/etc/alertmanager/config';
 //
 // Receiver helpers and definitions.
 local slackChannels = [
-  // Generic chanels.
+  // Generic channels.
   { name: 'prod_alerts_slack_channel', channel: 'alerts' },
   { name: 'production_slack_channel', channel: 'production' },
   { name: 'nonprod_alerts_slack_channel', channel: 'alerts-nonprod' },
