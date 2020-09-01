@@ -24,6 +24,26 @@ groups:
       )
   - record: gitlab_component_ops:rate
     labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_write_count{}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_num_errors{}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
       component: kibana_googlelb
       tier: inf
       type: logging
@@ -70,6 +90,26 @@ groups:
     expr: |
       sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[5m]), 0)
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_write_count{}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_num_errors{}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -122,6 +162,26 @@ groups:
       )
   - record: gitlab_component_ops:rate_30m
     labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_write_count{}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_num_errors{}[30m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
       component: kibana_googlelb
       tier: inf
       type: logging
@@ -168,6 +228,26 @@ groups:
     expr: |
       sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[1h]), 0)
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_write_count{}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_num_errors{}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -220,6 +300,26 @@ groups:
       )
   - record: gitlab_component_ops:rate_6h
     labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_write_count{}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: fluentd_log_output
+      stage: main
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment) (
+        rate(fluentd_output_status_num_errors{}[6h])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
       component: kibana_googlelb
       tier: inf
       type: logging
@@ -260,6 +360,13 @@ groups:
     labels:
       aggregate_rps: 'yes'
       component: elasticsearch_searching
+      tier: inf
+      type: logging
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'no'
+      component: fluentd_log_output
       tier: inf
       type: logging
     expr: '1'
