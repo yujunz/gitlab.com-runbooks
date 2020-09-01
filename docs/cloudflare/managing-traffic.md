@@ -28,6 +28,8 @@ is preferred as it will preserve API traffic from being affected.
 
 Blocks should be combined to limit the impact on customers sharing the same public IP as the abuser, whenever possible.
 
+Whatever it is. Create an issue [**in the Firewall tracker**](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall/-/issues) first and link it to the relevant issues. This firewall tracker is used to keep track of existing rules.
+
 ### Decision Matrix
 
 | Type of traffic pattern \ Type of Block | Temporary block on URI | Temporary block on other criteria | Temporary block on IP/CIDR | Permanent block on IP/CIDR |

@@ -11,11 +11,28 @@ Cloudflare provides a web application firewall (WAF), domain name system
 
 ## [Workflow](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10993)
 
-## When to use a Page Rule vs WAF Rules vs cf_allowlists
+## When to use a Page Rule vs WAF Rules vs [cf_allowlists]
 
-* Is it a redirect or changing a caching policy? Use page rules.
-* Is it a bulk allow of IP addresses for internal customers? Use cf_allowlists.
+Whatever it is. Create an issue [**in the Firewall tracker**](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall/-/issues) first and link it to the relevant issues. This firewall tracker is used to keep track of existing rules. This applies to all rules, regardless of how they are managed.
+
+Next decide whether:
+* Is it a redirect or changing a caching policy? Use page rules. Afterwards add an entry in the [`page_rules.json`](https://ops.gitlab.net/gitlab-com/gl-infra/cloudflare-audit-log/-/blob/cloudflare_import/page_rules.json) in the `cloudflare_import` and MR it as described [here](https://ops.gitlab.net/gitlab-com/gl-infra/cloudflare-audit-log#how-do-i-apply-a-cloudflare-change-then)
+* Is it a bulk allow of IP addresses for internal customers? Use [cf_allowlists].
 * Is it anything else? Use WAF Rules added via the firwall tracker and web UI.
+
+### Quick reference: WAF Rules:
+
+To make it easier to know where to put the rule priority-wise, categorize the type of rule and pick the priority range from below
+
+- 00000-14999: vulnerability hot-patch (block for everyone)
+- 15000-29999: offender blocks (bots, attackers, etc.)
+- 30000-44999: general WAF exceptions (bypass for everyone, except offenders)
+- 45000-49999: internal and customer allow lists  (managed via [cf_allowlists]. **Not to be used manually**)
+- 50000-64999: WAF exceptions or blocks for non-allowlisted users
+
+Then add the firewall tracker issue ID to the range. For example an attack, that is tracked in issue 1234 would get assigned priority `15000+1234` = `16234`.
+
+[cf_allowlists]: https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_allowlists
 
 ## [How we use Page Rules and WAF Rules to Counter Abuse and Attacks](https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10277)
 
@@ -42,14 +59,14 @@ rule above it will need to be updated to depend on the new rule.
 This forces Terraform to apply the rules in a specific order, preserving their
 priority.
 
-### Adding WAF Rules to the cf_allowlists
+### Adding WAF Rules to the [cf_allowlists]
 
 With any modification to the WAF rules in Cloudflare, the first step is
 creating an issue in the [Firewall Issue Tracker](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall).
 Refer to the [managing traffic](managing-traffic.md) document to see how to
 create the proper issue type with proper labels and description.
 
-[cf_allowlist](https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/cf_allowlists)
+[cf_allowlists]
 is a Terraform module that we've written to write WAF rules allowing customers'
 or GitLab service IPs to bypass Cloudflare and any block that it may cause. The
 allowlist is handled in the `allowlist.json` of the linked module. To add an IP
