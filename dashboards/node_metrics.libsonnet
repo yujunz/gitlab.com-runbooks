@@ -1,5 +1,5 @@
-local basic = import 'grafana/basic.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
 local promQuery = import 'grafana/prom_query.libsonnet';
 local graphPanel = grafana.graphPanel;
@@ -224,7 +224,27 @@ local thresholds = import 'thresholds.libsonnet';
         legend_show=false,
         linewidth=1
       ),
-
+      basic.timeseries(
+        title='CPU Scheduling Waiting',
+        description='CPU scheduling waiting on the run queue, as a percentage of time. Aggregated to worst CPU per node. Lower is better.',
+        query=
+        |||
+          max by (fqdn) (
+            rate(node_schedstat_waiting_seconds_total{%(nodeSelector)s}[5m])
+          )
+        ||| % formatConfig,
+        legendFormat='{{ fqdn }}',
+        format='percentunit',
+        interval='1m',
+        intervalFactor=1,
+        yAxisLabel='Total Time/s',
+        legend_show=false,
+        linewidth=1,
+        thresholds=[
+          thresholds.errorLevel('gt', 1),
+          thresholds.warningLevel('gt', 0.75),
+        ]
+      ),
     ] + [
       // Node-level load averages
       (
