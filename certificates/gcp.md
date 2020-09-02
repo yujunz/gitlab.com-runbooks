@@ -4,7 +4,71 @@ GCP provides [automatic SSL Certificates](https://cloud.google.com/load-balancin
 
 For legacy certs, or services behind a CDN, there is a manual procedure for updating them.
 
-### Replacement
+### Google-managed certificates
+
+GCP load balancers support automatic provisioning and renewal of free
+certificates backed by Let's Encrypt.
+
+#### Kubernetes
+
+Load balancers provisioned by GKE's ingress controller (ingress-gce) can be
+instructed to provision Google-managed certificates by creating a
+ManagedCertificate resource and binding it to an Ingress with an annotation. See
+[docs](https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs) for
+details.
+
+If migrating from a non-Google-managed certificate, you must ensure that both
+the new managed and old self-managed certificate continue to be served by the
+Load balancer's frontend to avoid downtime. This is done in 2 phases:
+
+1. Create a ManagedCertificate and bind it to an Ingress that already has
+   `Ingress.spec.tls` configured.
+1. In the GCP console, you should see a "PROVISIONING" managed cert, in addition
+   to the existing certificate.
+1. Eventually, the cert will finish provisioning, and some time later, the LB
+   will switch to serving the new cert with zero downtime. This can take up to
+   30 minutes.
+1. You can now remove `Ingress.spec.tls` in a subsequent deployment.
+
+See [migration docs](https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs#replace-ssl).
+
+Example:
+
+- Managed certificate provisioning in a Helm chart:
+  https://gitlab.com/gitlab-org/charts/plantuml/-/merge_requests/17
+- That same helm chart being used to provision a new managed cert, without
+  removing the custom one:
+  https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles/-/merge_requests/193
+- Finally, removing the custom certificate (`Ingress.spec.tls` is what is being
+  manipulated by Helm):
+  https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles/-/merge_requests/194
+
+#### Terraform
+
+Create a [`google_compute_managed_ssl_certificate`](https://www.terraform.io/docs/providers/google/r/compute_managed_ssl_certificate.html),
+and bind it to a [`google_compute_target_https_proxy`](https://www.terraform.io/docs/providers/google/r/compute_target_https_proxy.html)
+(or the analogous resource for TCP load balancing).
+
+When migrating from a self-managed cert to a managed one, you must not remove
+the old certificate from the
+`google_compute_target_https_proxy.ssl_certificates` array until the new
+certificate is done provisioning, and the LB has switched over to serving the
+new certificate. This can take up to 30 minutes.
+
+See [migration docs](https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs#replace-ssl).
+
+This will likely have to be orchestrated through our terraform modules. For an
+example of cutting over to a new managed cert with zero downtime without making
+successive, and possibly breaking, module changes, see the following manual
+interventions and MRs:
+
+- https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2238
+- https://ops.gitlab.net/gitlab-com/gitlab-com-infrastructure/-/merge_requests/1771
+- https://ops.gitlab.net/gitlab-com/gl-infra/terraform-modules/google/https-lb/-/merge_requests/7
+  (although note that this contains a small error that was fixed in a follow-on:
+  Google doesn't like trailing-dot FQDNs in this context).
+
+### Replacement of non-Google-managed certificates
 
 1. Obtain the new certificate from [SSMLate](https://sslmate.com/console/orders/).
    - *You will not be able to obtain a backup from via GCP!*
