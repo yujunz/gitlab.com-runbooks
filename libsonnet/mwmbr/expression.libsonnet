@@ -11,7 +11,7 @@ local errorRateTerm(
   sloMetric,
   sloMetricSelectorHash,
   sloMetricAggregationLabels,
-) =
+      ) =
   |||
     %(metric)s{%(metricSelector)s}
     %(comparator)s on(%(sloMetricAggregationLabels)s) group_left()
@@ -38,7 +38,7 @@ local apdexRateTerm(
   sloMetric,
   sloMetricSelectorHash,
   sloMetricAggregationLabels,
-) =
+      ) =
   |||
     %(metric)s{%(metricSelector)s}
     %(comparator)s on(%(sloMetricAggregationLabels)s) group_left()
@@ -64,7 +64,7 @@ local operationRateFilter(
   operationRateAggregationLabels,
   operationRateSelectorHash,
   minimumOperationRateForMonitoring
-) =
+      ) =
   if operationRateMetric == null then
     expression
   else
@@ -112,15 +112,15 @@ local operationRateFilter(
     sloMetricSelectorHash,  // Selectors for the slo metric
     sloMetricAggregationLabels,  // Labels to join the SLO metric to the error rate metrics with
     operationRateMetric=null,  // Optional: operation rate metric for minimum operation rate clause
-    operationRateAggregationLabels=null, // Labels to aggregate the operation rate on, if any
-    operationRateSelectorHash=null, // Selector for the operation rate metric
+    operationRateAggregationLabels=null,  // Labels to aggregate the operation rate on, if any
+    operationRateSelectorHash=null,  // Selector for the operation rate metric
     minimumOperationRateForMonitoring=null,  // minium operation rate vaue (in request-per-second)
   )::
     local term(metric, burnrate) =
       errorRateTerm(
         metric=metric,
         metricSelectorHash=metricSelectorHash,
-        comparator=">",
+        comparator='>',
         burnrate=burnrate,
         sloMetric=sloMetric,
         sloMetricSelectorHash=sloMetricSelectorHash,
@@ -152,7 +152,7 @@ local operationRateFilter(
       term_1h: strings.indent(term_1h, 2),
       term_5m: strings.indent(term_5m, 2),
       term_6h: strings.indent(term_6h, 2),
-      term_30m: strings.indent(term_30m, 2)
+      term_30m: strings.indent(term_30m, 2),
     };
 
     operationRateFilter(
@@ -174,15 +174,15 @@ local operationRateFilter(
     sloMetricSelectorHash,  // Selectors for the slo metric
     sloMetricAggregationLabels,  // Labels to join the SLO metric to the error rate metrics with
     operationRateMetric=null,  // Optional: operation rate metric for minimum operation rate clause
-    operationRateAggregationLabels=null, // Labels to aggregate the operation rate on, if any
-    operationRateSelectorHash=null, // Selector for the operation rate metric
+    operationRateAggregationLabels=null,  // Labels to aggregate the operation rate on, if any
+    operationRateSelectorHash=null,  // Selector for the operation rate metric
     minimumOperationRateForMonitoring=null,  // minium operation rate vaue (in request-per-second)
   )::
     local term(metric, burnrate) =
       apdexRateTerm(
         metric=metric,
         metricSelectorHash=metricSelectorHash,
-        comparator="<",
+        comparator='<',
         burnrate=burnrate,
         sloMetric=sloMetric,
         sloMetricSelectorHash=sloMetricSelectorHash,
@@ -214,7 +214,7 @@ local operationRateFilter(
       term_1h: strings.indent(term_1h, 2),
       term_5m: strings.indent(term_5m, 2),
       term_6h: strings.indent(term_6h, 2),
-      term_30m: strings.indent(term_30m, 2)
+      term_30m: strings.indent(term_30m, 2),
     };
 
     operationRateFilter(
@@ -239,7 +239,7 @@ local operationRateFilter(
       errorRateTerm(
         metric=metric,
         metricSelectorHash=metricSelectorHash,
-        comparator="> bool",
+        comparator='> bool',
         burnrate=burnrate,
         sloMetric=sloMetric,
         sloMetricSelectorHash=sloMetricSelectorHash,
@@ -280,7 +280,7 @@ local operationRateFilter(
       term_1h: strings.indent(term_1h, 4),
       term_5m: strings.indent(term_5m, 4),
       term_6h: strings.indent(term_6h, 4),
-      term_30m: strings.indent(term_30m, 4)
+      term_30m: strings.indent(term_30m, 4),
     },
 
   apdexHealthExpression(
@@ -297,7 +297,7 @@ local operationRateFilter(
       apdexRateTerm(
         metric=metric,
         metricSelectorHash=metricSelectorHash,
-        comparator="< bool",
+        comparator='< bool',
         burnrate=burnrate,
         sloMetric=sloMetric,
         sloMetricSelectorHash=sloMetricSelectorHash,
@@ -338,6 +338,6 @@ local operationRateFilter(
       term_1h: strings.indent(term_1h, 4),
       term_5m: strings.indent(term_5m, 4),
       term_6h: strings.indent(term_6h, 4),
-      term_30m: strings.indent(term_30m, 4)
-    }
+      term_30m: strings.indent(term_30m, 4),
+    },
 }

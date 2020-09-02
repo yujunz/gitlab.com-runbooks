@@ -1,6 +1,6 @@
 local aggregations = import 'promql/aggregations.libsonnet';
 local selectors = import 'promql/selectors.libsonnet';
-local recordingRuleRegistry = import 'recording-rule-registry.libsonnet'; # TODO: fix circular dependency
+local recordingRuleRegistry = import 'recording-rule-registry.libsonnet';  // TODO: fix circular dependency
 local strings = import 'utils/strings.libsonnet';
 
 local generateInstanceFilterQuery(instanceFilter) =

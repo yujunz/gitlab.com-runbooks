@@ -1,6 +1,6 @@
-local selectors = import 'promql/selectors.libsonnet';
 local basic = import 'grafana/basic.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
 {
   namedGroup(title, selectorHash, aggregationLabels=['fqdn'], startRow=1)::

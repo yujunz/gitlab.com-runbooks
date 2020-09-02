@@ -82,7 +82,7 @@ local serviceRow(service) =
       query=|||
         (1 - %(budgetExpression)s) * ($__range_ms / (86400000 * 30.5)) * 100 * 100
       ||| % {
-        budgetExpression: serviceAvailabilityQuery({ type: service.name }, 'slo_observation_status', '$__range')
+        budgetExpression: serviceAvailabilityQuery({ type: service.name }, 'slo_observation_status', '$__range'),
       },
       legendFormat=service.friendly_name + ': Availability Basis Points Spent',
       displayName=service.friendly_name,
@@ -95,7 +95,7 @@ local serviceRow(service) =
       'Weight',
       '',
       'black',
-      "" + service.business.SLA.overall_sla_weighting,
+      '' + service.business.SLA.overall_sla_weighting,
       'Overall Weight',
       instant=false
     ),
@@ -140,7 +140,7 @@ basic.dashboard(
       query=|||
         (1 - %(budgetExpression)s) * ($__range_ms / (86400000 * 30.5)) * 100 * 100
       ||| % {
-        budgetExpression: serviceAvailabilityQuery({ }, 'sla:gitlab:ratio', '$__range')
+        budgetExpression: serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '$__range'),
       },
       invertColors=true,
       decimals=2,
@@ -151,7 +151,7 @@ basic.dashboard(
       query=|||
         (1 - sla:gitlab:target{monitor="global"}) * 100 * 100
       ||| % {
-        budgetExpression: serviceAvailabilityQuery({ }, 'sla:gitlab:ratio', '$__range')
+        budgetExpression: serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '$__range'),
       },
       invertColors=true,
       decimals=0,
@@ -161,7 +161,7 @@ basic.dashboard(
       title='Availability - gitlab.com',
       description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
-      query=serviceAvailabilityQuery({ }, 'sla:gitlab:ratio', '$__interval'),
+      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '$__interval'),
       legendFormat='gitlab.com SLA',
       interval='1m',
       legend_show=false

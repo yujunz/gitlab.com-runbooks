@@ -1,4 +1,3 @@
-
 {
   sliRecordingRulesSet: (import 'sli-recording-rule-set.libsonnet').sliRecordingRulesSet,
   componentMetricsRuleSet: (import 'component-metrics-rule-set.libsonnet').componentMetricsRuleSet,

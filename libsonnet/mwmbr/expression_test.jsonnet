@@ -1,5 +1,5 @@
-local test = import "github.com/yugui/jsonnetunit/jsonnetunit/test.libsonnet";
 local expression = import './expression.libsonnet';
+local test = import 'github.com/yugui/jsonnetunit/jsonnetunit/test.libsonnet';
 
 test.suite({
   testErrorBurnWithoutMinimumRate: {
@@ -53,7 +53,7 @@ test.suite({
           )
         )
       )
-    |||
+    |||,
   },
 
   testErrorBurnWithMinimumRate: {
@@ -115,7 +115,7 @@ test.suite({
       (
         operation:rate_1h{} >= 1
       )
-    |||
+    |||,
   },
 
   testApdexBurnWithoutMinimumRate: {
@@ -173,7 +173,7 @@ test.suite({
           )
         )
       )
-    |||
+    |||,
   },
 
   testApdexBurnWithMinimumRate: {
@@ -239,7 +239,7 @@ test.suite({
       (
         operation:rate_1h{} >= 1
       )
-    |||
+    |||,
   },
 
   testApdexBurnWithMinimumRateAndAggregation: {
@@ -254,7 +254,7 @@ test.suite({
       sloMetricAggregationLabels=['type', 'tier'],
       operationRateMetric='operation:rate_1h',
       operationRateAggregationLabels=['x', 'y', 'z'],
-      operationRateSelectorHash={ x: "1" },
+      operationRateSelectorHash={ x: '1' },
       minimumOperationRateForMonitoring=1
     ),
     expect: |||
@@ -307,6 +307,6 @@ test.suite({
       (
         sum by(x,y,z) (operation:rate_1h{x="1"}) >= 1
       )
-    |||
+    |||,
   },
 })

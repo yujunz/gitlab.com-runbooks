@@ -1,7 +1,7 @@
-local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local sidekiqHelpers = import './services/lib/sidekiq-helpers.libsonnet';
+local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 
-local resourceSaturationPoint =  metricsCatalog.resourceSaturationPoint;
+local resourceSaturationPoint = metricsCatalog.resourceSaturationPoint;
 
 // Disk utilisation metrics are currently reporting incorrectly for
 // HDD volumes, see https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10248
@@ -12,7 +12,7 @@ local pgbouncerAsyncPool(serviceType, role) =
   resourceSaturationPoint({
     title: 'Postgres Async (Sidekiq) %s Connection Pool Utilization per Node' % [role],
     severity: 's4',
-    horizontallyScalable: role == 'replica', // Replicas can be scaled horizontally, primary cannot
+    horizontallyScalable: role == 'replica',  // Replicas can be scaled horizontally, primary cannot
     appliesTo: [serviceType],
     description: |||
       pgbouncer async connection pool utilization per database node, for %(role)s database connections.
@@ -46,7 +46,7 @@ local pgbouncerSyncPool(serviceType, role) =
   resourceSaturationPoint({
     title: 'Postgres Sync (Web/API/Git) %s Connection Pool Utilization per Node' % [role],
     severity: 's3',
-    horizontallyScalable: role == 'replica', // Replicas can be scaled horizontally, primary cannot
+    horizontallyScalable: role == 'replica',  // Replicas can be scaled horizontally, primary cannot
     appliesTo: [serviceType],
     description: |||
       pgbouncer sync connection pool Saturation per database node, for %(role)s database connections.
@@ -82,7 +82,7 @@ local pgbouncerSyncPool(serviceType, role) =
   pg_active_db_connections_primary: resourceSaturationPoint({
     title: 'Active Primary DB Connection Utilization',
     severity: 's3',
-    horizontallyScalable: false, // Connections to the primary are not horizontally scalable
+    horizontallyScalable: false,  // Connections to the primary are not horizontally scalable
     appliesTo: ['patroni'],
     description: |||
       Active db connection utilization on the primary node.
@@ -108,7 +108,7 @@ local pgbouncerSyncPool(serviceType, role) =
   pg_active_db_connections_replica: resourceSaturationPoint({
     title: 'Active Secondary DB Connection Utilization',
     severity: 's3',
-    horizontallyScalable: true, // Connections to the replicas are horizontally scalable
+    horizontallyScalable: true,  // Connections to the replicas are horizontally scalable
     appliesTo: ['patroni'],
     description: |||
       Active db connection utilization per replica node
@@ -134,7 +134,7 @@ local pgbouncerSyncPool(serviceType, role) =
   rails_db_connection_pool: resourceSaturationPoint({
     title: 'Rails DB Connection Pool Utilization',
     severity: 's4',
-    horizontallyScalable: true, // Add more replicas for achieve greater scalability
+    horizontallyScalable: true,  // Add more replicas for achieve greater scalability
     appliesTo: ['web', 'api', 'git', 'sidekiq'],
     description: |||
       Rails uses connection pools for its database connections. As each
@@ -635,7 +635,7 @@ local pgbouncerSyncPool(serviceType, role) =
   pgbouncer_single_core: resourceSaturationPoint({
     title: 'PGBouncer Single Core per Node',
     severity: 's2',
-    horizontallyScalable: true, // Add more pgbouncer processes (for patroni) or nodes (for pgbouncer)
+    horizontallyScalable: true,  // Add more pgbouncer processes (for patroni) or nodes (for pgbouncer)
     appliesTo: ['pgbouncer', 'patroni'],
     description: |||
       PGBouncer single core CPU utilization per node.
@@ -952,10 +952,10 @@ local pgbouncerSyncPool(serviceType, role) =
     },
   }),
 
-  # conntrack saturation may have been the cause of
-  # https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2381
-  # see https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2381#note_376917724
-  # for more details
+  // conntrack saturation may have been the cause of
+  // https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2381
+  // see https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2381#note_376917724
+  // for more details
   nf_conntrack_entries: resourceSaturationPoint({
     title: 'conntrack Entries per Node',
     severity: 's3',
@@ -967,7 +967,7 @@ local pgbouncerSyncPool(serviceType, role) =
       When saturated, new connection attempts (incoming SYN packets) are dropped with no reply, leaving clients to slowly retry (and typically fail again) over the next several seconds.  When packets are being dropped due to this condition, kernel will log the event as: "nf_conntrack: table full, dropping packet".
     |||,
     grafana_dashboard_uid: 'sat_conntrack',
-    resourceLabels: ['fqdn', 'instance'], // Use both labels until https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10299 arrives
+    resourceLabels: ['fqdn', 'instance'],  // Use both labels until https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10299 arrives
     query: |||
       max_over_time(node_nf_conntrack_entries{%(selector)s}[%(rangeInterval)s])
       /

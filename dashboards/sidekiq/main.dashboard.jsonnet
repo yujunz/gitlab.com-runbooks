@@ -1,6 +1,6 @@
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local basic = import 'grafana/basic.libsonnet';
 local colors = import 'grafana/colors.libsonnet';
-local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
 local railsCommon = import 'rails_common_graphs.libsonnet';
 local dashboard = grafana.dashboard;
@@ -71,93 +71,93 @@ serviceDashboard.overview('sidekiq', 'sv')
   row.new(title='Sidekiq Queues (Global Search)', collapse=true)
   .addPanels(
     layout.grid([
-    basic.multiTimeseries(
-      title='Global search incremental indexing queue length',
-      description='The number of records waiting to be synced to Elasticsearch for Global Search. These are picked up in batches every minute. Lower is better but the batching every minute means it will not usually stay at 0. Steady growth over a sustained period of time indicates that ElasticIndexBulkCronWorker is not keeping up.',
-      queries=[
-        {
-          query: |||
-            quantile(0.10, global_search_bulk_cron_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p10'
-        },
-        {
-          query: |||
-            quantile(0.50, global_search_bulk_cron_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p50'
-        },
-        {
-          query: |||
-            quantile(0.90, global_search_bulk_cron_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p90'
-        },
-      ],
-      format='short',
-      interval='1m',
-      linewidth=1,
-      intervalFactor=3,
-      yAxisLabel='Queue Length',
-    ),
-    basic.multiTimeseries(
-      title='Global search initial indexing queue length',
-      description='The number of records waiting to be synced to Elasticsearch for Global Search during initial project backfill. These jobs are created when projects are imported or when Elasticsearch is enabled for a group in order to backfill all project data to the index. These are picked up in batches every minute. Lower is better but the batching every minute means it will not usually stay at 0. Sudden spikes are expected if a large group is enabled for Elasticsearch but sustained steady growth over a long period of time may indicate that ElasticIndexInitialBulkCronWorker is not keeping up.',
-      queries=[
-        {
-          query: |||
-            quantile(0.10, global_search_bulk_cron_initial_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p10'
-        },
-        {
-          query: |||
-            quantile(0.50, global_search_bulk_cron_initial_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p50'
-        },
-        {
-          query: |||
-            quantile(0.90, global_search_bulk_cron_initial_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p90'
-        },
-      ],
-      format='short',
-      interval='1m',
-      linewidth=1,
-      intervalFactor=3,
-      yAxisLabel='Queue Length',
-    ),
-    basic.multiTimeseries(
-      title='Global search awaiting indexing queue length',
-      description='The number of records waiting to be synced to Elasticsearch for Global Search while indexing is paused.',
-      queries=[
-        {
-          query: |||
-            quantile(0.10, global_search_awaiting_indexing_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p10'
-        },
-        {
-          query: |||
-            quantile(0.50, global_search_awaiting_indexing_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p50'
-        },
-        {
-          query: |||
-            quantile(0.90, global_search_awaiting_indexing_queue_size{environment="$environment"})
-          |||,
-          legendFormat: 'p90'
-        },
-      ],
-      format='short',
-      interval='1m',
-      linewidth=1,
-      intervalFactor=3,
-      yAxisLabel='Queue Length',
-    ),
+      basic.multiTimeseries(
+        title='Global search incremental indexing queue length',
+        description='The number of records waiting to be synced to Elasticsearch for Global Search. These are picked up in batches every minute. Lower is better but the batching every minute means it will not usually stay at 0. Steady growth over a sustained period of time indicates that ElasticIndexBulkCronWorker is not keeping up.',
+        queries=[
+          {
+            query: |||
+              quantile(0.10, global_search_bulk_cron_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p10',
+          },
+          {
+            query: |||
+              quantile(0.50, global_search_bulk_cron_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p50',
+          },
+          {
+            query: |||
+              quantile(0.90, global_search_bulk_cron_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p90',
+          },
+        ],
+        format='short',
+        interval='1m',
+        linewidth=1,
+        intervalFactor=3,
+        yAxisLabel='Queue Length',
+      ),
+      basic.multiTimeseries(
+        title='Global search initial indexing queue length',
+        description='The number of records waiting to be synced to Elasticsearch for Global Search during initial project backfill. These jobs are created when projects are imported or when Elasticsearch is enabled for a group in order to backfill all project data to the index. These are picked up in batches every minute. Lower is better but the batching every minute means it will not usually stay at 0. Sudden spikes are expected if a large group is enabled for Elasticsearch but sustained steady growth over a long period of time may indicate that ElasticIndexInitialBulkCronWorker is not keeping up.',
+        queries=[
+          {
+            query: |||
+              quantile(0.10, global_search_bulk_cron_initial_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p10',
+          },
+          {
+            query: |||
+              quantile(0.50, global_search_bulk_cron_initial_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p50',
+          },
+          {
+            query: |||
+              quantile(0.90, global_search_bulk_cron_initial_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p90',
+          },
+        ],
+        format='short',
+        interval='1m',
+        linewidth=1,
+        intervalFactor=3,
+        yAxisLabel='Queue Length',
+      ),
+      basic.multiTimeseries(
+        title='Global search awaiting indexing queue length',
+        description='The number of records waiting to be synced to Elasticsearch for Global Search while indexing is paused.',
+        queries=[
+          {
+            query: |||
+              quantile(0.10, global_search_awaiting_indexing_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p10',
+          },
+          {
+            query: |||
+              quantile(0.50, global_search_awaiting_indexing_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p50',
+          },
+          {
+            query: |||
+              quantile(0.90, global_search_awaiting_indexing_queue_size{environment="$environment"})
+            |||,
+            legendFormat: 'p90',
+          },
+        ],
+        format='short',
+        interval='1m',
+        linewidth=1,
+        intervalFactor=3,
+        yAxisLabel='Queue Length',
+      ),
     ], cols=2, rowHeight=10, startRow=1501),
   ),
   gridPos={

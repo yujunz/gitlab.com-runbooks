@@ -29,7 +29,7 @@ local unwrapNewlinesForAnnotationKey(key, value) =
     value;
 
 local unwrapNewlinesOnAnnotations(hash) =
- std.foldl(
+  std.foldl(
     function(memo, key)
       memo { [key]: unwrapNewlinesForAnnotationKey(key, hash[key]) },
     std.objectFields(hash),

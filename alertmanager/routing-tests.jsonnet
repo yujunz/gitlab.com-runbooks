@@ -139,7 +139,7 @@ generateTests([
     },
     receivers: [
       'issue:gitlab.com/gitlab-com/gl-infra/infrastructure',
-      'prod_alerts_slack_channel'
+      'prod_alerts_slack_channel',
       // Remove the slack destination once deliveryGitLabIssueAlertsExclusivelyToIssues is reenabled
       // after https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2451#note_385151530 is
       // fixed

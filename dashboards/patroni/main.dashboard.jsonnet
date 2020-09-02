@@ -1,8 +1,8 @@
-local basic = import 'grafana/basic.libsonnet';
 local capacityPlanning = import 'capacity_planning.libsonnet';
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local colors = import 'grafana/colors.libsonnet';
 local commonAnnotations = import 'grafana/common_annotations.libsonnet';
-local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local pgbouncerCommonGraphs = import 'pgbouncer_common_graphs.libsonnet';
 local row = grafana.row;
 local processExporter = import 'process_exporter.libsonnet';

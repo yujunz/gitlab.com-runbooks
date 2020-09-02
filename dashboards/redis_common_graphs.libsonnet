@@ -236,123 +236,123 @@ local seriesOverrides = import 'grafana/series_overrides.libsonnet';
       serviceType: serviceType,
     };
     local charts = [
-      basic.saturationTimeseries(
-        title='Memory Saturation',
-        // TODO: After upgrading to Redis 4, we should include the rdb_last_cow_size in this value
-        // so that we include the RDB snapshot utilization in our memory usage
-        // See https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3785#note_234689504
-        description='Redis holds all data in memory. Avoid memory saturation in Redis at all cost ',
-        query=|||
-          max(
-            label_replace(redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s"}, "memtype", "rss","","")
-            or
-            label_replace(redis_memory_used_bytes{environment="$environment", type="%(serviceType)s"}, "memtype", "used","","")
-          ) by (type, tier, stage, environment, fqdn)
-          / on(fqdn) group_left
-          node_memory_MemTotal_bytes{environment="$environment", type="%(serviceType)s"}
-        ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
-        interval='30s',
-        intervalFactor=1,
-      )
-      .addSeriesOverride(seriesOverrides.degradationSlo)
-      .addSeriesOverride(seriesOverrides.outageSlo)
-      .addTarget(
-        promQuery.target(
-          |||
-            max(slo:max:soft:gitlab_component_saturation:ratio{component="redis_memory", environment="$environment"})
-          ||| % formatConfig,
-          interval='5m',
-          legendFormat='Degradation SLO',
-        ),
-      )
-      .addTarget(
-        promQuery.target(
-          |||
-            max(slo:max:hard:gitlab_component_saturation:ratio{component="redis_memory", environment="$environment"})
-          ||| % formatConfig,
-          interval='5m',
-          legendFormat='Outage SLO',
-        ),
-      ),
-      basic.timeseries(
-        title='Memory Used',
-        format='bytes',
-        query=|||
-          max_over_time(redis_memory_used_bytes{environment="$environment", type="%(serviceType)s"}[$__interval])
-        ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
-        intervalFactor=2,
-      ),
-      basic.timeseries(
-        title='Memory Used Rate of Change',
-        yAxisLabel='Bytes/sec',
-        format='Bps',
-        query=|||
-          sum(rate(redis_memory_used_bytes{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
-        ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
-        intervalFactor=2,
-      ),
-      basic.timeseries(
-        title='Redis RSS Usage',
-        description='Depending on the memory allocator used, Redis may not return memory to the operating system at the same rate that applications release keys. RSS indicates the operating systems perspective of Redis memory usage. So, even if usage is low, if RSS is high, the OOM killer may terminate the Redis process',
-        format='bytes',
-        query=|||
-          max_over_time(redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s"}[$__interval])
-        ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
-        intervalFactor=2,
-      ),
-      basic.timeseries(
-        title='Memory Fragmentation',
-        description='The fragmentation ratio in Redis should ideally be around 1.0 and generally below 1.5. The higher the value, the more wasted memory.',
-        query=|||
-          redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s"} / redis_memory_used_bytes{environment="$environment", type="%(serviceType)s"}
-        ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
-        intervalFactor=2,
-      ),
-      basic.timeseries(
-        title='Expired Keys',
-        yAxisLabel='Keys',
-        query=|||
-          sum(rate(redis_expired_keys_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
-        ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
-        intervalFactor=2,
-      ),
-      basic.timeseries(
-        title='Keys Rate of Change',
-        yAxisLabel='Keys/sec',
-        query=|||
-          sum(rate(redis_db_keys{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
-        ||| % formatConfig,
-        legendFormat='{{ fqdn }}',
-        intervalFactor=2,
-      )
-    ] +
-    if hitRatio then
-     [
-       basic.timeseries(
-         title='Hit Ratio',
-         yAxisLabel='Hits',
-         format='percentunit',
-         query=|||
-           sum(redis:keyspace_hits:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
-           /
-           (
-           sum(redis:keyspace_hits:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
-           +
-           sum(redis:keyspace_misses:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
-           )
-         ||| % formatConfig,
-         legendFormat='{{ fqdn }}',
-         intervalFactor=2,
-       )
-     ]
-    else
-     []
+                     basic.saturationTimeseries(
+                       title='Memory Saturation',
+                       // TODO: After upgrading to Redis 4, we should include the rdb_last_cow_size in this value
+                       // so that we include the RDB snapshot utilization in our memory usage
+                       // See https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3785#note_234689504
+                       description='Redis holds all data in memory. Avoid memory saturation in Redis at all cost ',
+                       query=|||
+                         max(
+                           label_replace(redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s"}, "memtype", "rss","","")
+                           or
+                           label_replace(redis_memory_used_bytes{environment="$environment", type="%(serviceType)s"}, "memtype", "used","","")
+                         ) by (type, tier, stage, environment, fqdn)
+                         / on(fqdn) group_left
+                         node_memory_MemTotal_bytes{environment="$environment", type="%(serviceType)s"}
+                       ||| % formatConfig,
+                       legendFormat='{{ fqdn }}',
+                       interval='30s',
+                       intervalFactor=1,
+                     )
+                     .addSeriesOverride(seriesOverrides.degradationSlo)
+                     .addSeriesOverride(seriesOverrides.outageSlo)
+                     .addTarget(
+                       promQuery.target(
+                         |||
+                           max(slo:max:soft:gitlab_component_saturation:ratio{component="redis_memory", environment="$environment"})
+                         ||| % formatConfig,
+                         interval='5m',
+                         legendFormat='Degradation SLO',
+                       ),
+                     )
+                     .addTarget(
+                       promQuery.target(
+                         |||
+                           max(slo:max:hard:gitlab_component_saturation:ratio{component="redis_memory", environment="$environment"})
+                         ||| % formatConfig,
+                         interval='5m',
+                         legendFormat='Outage SLO',
+                       ),
+                     ),
+                     basic.timeseries(
+                       title='Memory Used',
+                       format='bytes',
+                       query=|||
+                         max_over_time(redis_memory_used_bytes{environment="$environment", type="%(serviceType)s"}[$__interval])
+                       ||| % formatConfig,
+                       legendFormat='{{ fqdn }}',
+                       intervalFactor=2,
+                     ),
+                     basic.timeseries(
+                       title='Memory Used Rate of Change',
+                       yAxisLabel='Bytes/sec',
+                       format='Bps',
+                       query=|||
+                         sum(rate(redis_memory_used_bytes{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
+                       ||| % formatConfig,
+                       legendFormat='{{ fqdn }}',
+                       intervalFactor=2,
+                     ),
+                     basic.timeseries(
+                       title='Redis RSS Usage',
+                       description='Depending on the memory allocator used, Redis may not return memory to the operating system at the same rate that applications release keys. RSS indicates the operating systems perspective of Redis memory usage. So, even if usage is low, if RSS is high, the OOM killer may terminate the Redis process',
+                       format='bytes',
+                       query=|||
+                         max_over_time(redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s"}[$__interval])
+                       ||| % formatConfig,
+                       legendFormat='{{ fqdn }}',
+                       intervalFactor=2,
+                     ),
+                     basic.timeseries(
+                       title='Memory Fragmentation',
+                       description='The fragmentation ratio in Redis should ideally be around 1.0 and generally below 1.5. The higher the value, the more wasted memory.',
+                       query=|||
+                         redis_memory_used_rss_bytes{environment="$environment", type="%(serviceType)s"} / redis_memory_used_bytes{environment="$environment", type="%(serviceType)s"}
+                       ||| % formatConfig,
+                       legendFormat='{{ fqdn }}',
+                       intervalFactor=2,
+                     ),
+                     basic.timeseries(
+                       title='Expired Keys',
+                       yAxisLabel='Keys',
+                       query=|||
+                         sum(rate(redis_expired_keys_total{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
+                       ||| % formatConfig,
+                       legendFormat='{{ fqdn }}',
+                       intervalFactor=2,
+                     ),
+                     basic.timeseries(
+                       title='Keys Rate of Change',
+                       yAxisLabel='Keys/sec',
+                       query=|||
+                         sum(rate(redis_db_keys{environment="$environment", type="%(serviceType)s"}[$__interval])) by (fqdn)
+                       ||| % formatConfig,
+                       legendFormat='{{ fqdn }}',
+                       intervalFactor=2,
+                     ),
+                   ] +
+                   if hitRatio then
+                     [
+                       basic.timeseries(
+                         title='Hit Ratio',
+                         yAxisLabel='Hits',
+                         format='percentunit',
+                         query=|||
+                           sum(redis:keyspace_hits:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
+                           /
+                           (
+                           sum(redis:keyspace_hits:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
+                           +
+                           sum(redis:keyspace_misses:irate1m{environment="$environment", type="%(serviceType)s"} and on (instance) redis_instance_info{role="master"})
+                           )
+                         ||| % formatConfig,
+                         legendFormat='{{ fqdn }}',
+                         intervalFactor=2,
+                       ),
+                     ]
+                   else
+                     []
     ;
 
     layout.grid(charts, cols=2, rowHeight=10, startRow=startRow),

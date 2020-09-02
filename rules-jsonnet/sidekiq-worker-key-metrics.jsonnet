@@ -178,7 +178,7 @@ local rules = {
     name: 'Sidekiq Per Worker Alerting',
     interval: '1m',
     rules:
-      std.map(alerts.processAlertRule, generateAlerts())
+      std.map(alerts.processAlertRule, generateAlerts()),
   }],
 };
 

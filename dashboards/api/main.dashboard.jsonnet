@@ -1,6 +1,6 @@
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local basic = import 'grafana/basic.libsonnet';
 local colors = import 'grafana/colors.libsonnet';
-local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local railsCommon = import 'rails_common_graphs.libsonnet';
 local workhorseCommon = import 'workhorse_common_graphs.libsonnet';
 local dashboard = grafana.dashboard;
