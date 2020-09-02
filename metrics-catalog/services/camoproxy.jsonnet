@@ -9,7 +9,7 @@ metricsCatalog.serviceDefinition({
   tier: 'sv',
   monitoringThresholds: {
     apdexScore: 0.999,
-    errorRatio: 0.999,
+    errorRatio: 0.995,
   },
   serviceDependencies: {
     // If Camoproxy has any dependencies, we should add them here
