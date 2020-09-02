@@ -134,15 +134,61 @@ tiers:
 
 services:
 - name: airflow
+  friendly_name: airflow
   tier: sv
   teams:
     - data-analytics
+  label: airflow.gitlabdata.com
   business:
     requirement: |
       Required by data engineering team to orchestrate data extraction and transformation jobs.
     customers:
       - Internally used to provide up-to-date internal data
-    
+    business_value: |
+      Allows data analytics team to orchestrate and execute data extraction and transformation jobs.
+    SLA:
+      availability:
+      response_time:
+  technical:
+    chef_roles:
+    configurations:
+    dependencies:
+    project:
+      - https://gitlab.com/gitlab-data/analytics
+    criticality: 1
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+      security:
+    logging:
+      - name: locally
+    scalability:
+      bound:
+      note:
+      scalable:
+    security:
+      data_classification:
+      security_incidents:
+      security_reviewed:
+  infrastructure:
+    provider: gcp
+    architecture: https://about.gitlab.com/handbook/business-ops/data-team/platform/infrastructure/#airflow
+    provisioning: manual
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+
+
 - name: api
   friendly_name: GitLab API
   tier: sv
@@ -156,7 +202,7 @@ services:
     - plan
   infra_owner: sre_coreinfra
   label: Service:API
-  business:
+  business: 
     requirement: |
       API is required to allow developing tools (i.e. bots) that makes use of GitLab.com data,
       otherwise the only way to develop such tools is to parse and/or interact with HTML pages,
