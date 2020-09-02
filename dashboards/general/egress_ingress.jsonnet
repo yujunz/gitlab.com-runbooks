@@ -1,8 +1,8 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local timepickerlib = import 'github.com/grafana/grafonnet-lib/grafonnet/timepicker.libsonnet';
-local promQuery = import 'grafana/prom_query.libsonnet';
-local layout = import 'grafana/layout.libsonnet';
 local basic = import 'grafana/basic.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
 local row = grafana.row;
 local templates = import 'grafana/templates.libsonnet';
 local graphPanel = grafana.graphPanel;
@@ -39,18 +39,19 @@ local generalGraphPanel(
   legend_rightSide=true,
 );
 
-local networkPanel(title,
-    filter,
-    tx_metric="node_network_transmit_bytes_total",
-    rcv_metric="node_network_receive_bytes_total"
-  ) =
+local networkPanel(
+  title,
+  filter,
+  tx_metric='node_network_transmit_bytes_total',
+  rcv_metric='node_network_receive_bytes_total'
+      ) =
 
   generalGraphPanel(title)
   .addTarget(
-    promQuery.target('sum(increase(%(metric)s{device!=\"lo\", %(filter)s, env=\"$environment\"}[1d]))' % { metric: tx_metric, filter: filter }, legendFormat="egress")
+    promQuery.target('sum(increase(%(metric)s{device!="lo", %(filter)s, env="$environment"}[1d]))' % { metric: tx_metric, filter: filter }, legendFormat='egress')
   )
   .addTarget(
-    promQuery.target('sum(increase(%(metric)s{device!=\"lo\", %(filter)s, env=\"$environment\"}[1d])) * -1' % { metric: rcv_metric, filter: filter }, legendFormat="ingress")
+    promQuery.target('sum(increase(%(metric)s{device!="lo", %(filter)s, env="$environment"}[1d])) * -1' % { metric: rcv_metric, filter: filter }, legendFormat='ingress')
   )
   .resetYaxes()
   .addYaxis(
@@ -65,10 +66,10 @@ local networkPanel(title,
 local osPanel(title) =
   generalGraphPanel(title)
   .addTarget(
-    promQuery.target('sum by (bucket_name) (stackdriver_gcs_bucket_storage_googleapis_com_network_sent_bytes_count{env=\"$environment\"}) * 1440', legendFormat="egress {{ bucket_name }}", interval="1d")
+    promQuery.target('sum by (bucket_name) (stackdriver_gcs_bucket_storage_googleapis_com_network_sent_bytes_count{env="$environment"}) * 1440', legendFormat='egress {{ bucket_name }}', interval='1d')
   )
   .addTarget(
-    promQuery.target('sum by (bucket_name) (stackdriver_gcs_bucket_storage_googleapis_com_network_received_bytes_count{env=\"$environment\"}) * 1440 * -1', legendFormat="ingress {{ bucket_name }}", interval="1d")
+    promQuery.target('sum by (bucket_name) (stackdriver_gcs_bucket_storage_googleapis_com_network_received_bytes_count{env="$environment"}) * 1440 * -1', legendFormat='ingress {{ bucket_name }}', interval='1d')
   )
   .resetYaxes()
   .addYaxis(
@@ -186,50 +187,50 @@ basic.dashboard(
 .addPanels(
   layout.grid([
     networkPanel(
-    'HTTPs Git Data Transfer / 24h',
-    'backend=~".*https_git$"', 
-    'haproxy_backend_bytes_out_total',
-    'haproxy_backend_bytes_in_total',
+      'HTTPs Git Data Transfer / 24h',
+      'backend=~".*https_git$"',
+      'haproxy_backend_bytes_out_total',
+      'haproxy_backend_bytes_in_total',
     ),
     networkPanel(
-    'Registry Data Transfer / 24h',
-    'backend=~".*registry$"', 
-    'haproxy_backend_bytes_out_total',
-    'haproxy_backend_bytes_in_total',
+      'Registry Data Transfer / 24h',
+      'backend=~".*registry$"',
+      'haproxy_backend_bytes_out_total',
+      'haproxy_backend_bytes_in_total',
     ),
     networkPanel(
-    'API Data Transfer / 24h',
-    'backend=~".*api$"', 
-    'haproxy_backend_bytes_out_total',
-    'haproxy_backend_bytes_in_total',
+      'API Data Transfer / 24h',
+      'backend=~".*api$"',
+      'haproxy_backend_bytes_out_total',
+      'haproxy_backend_bytes_in_total',
     ),
     networkPanel(
-    'Web Data Transfer / 24h',
-    'backend=~".*web$"', 
-    'haproxy_backend_bytes_out_total',
-    'haproxy_backend_bytes_in_total',
+      'Web Data Transfer / 24h',
+      'backend=~".*web$"',
+      'haproxy_backend_bytes_out_total',
+      'haproxy_backend_bytes_in_total',
     ),
   ], cols=4, rowHeight=7, startRow=2)
 )
 .addPanels(
   layout.grid([
     networkPanel(
-    'Pages Data Transfer / 24h',
-    'backend=~".*pages_https?$"', 
-    'haproxy_backend_bytes_out_total',
-    'haproxy_backend_bytes_in_total',
+      'Pages Data Transfer / 24h',
+      'backend=~".*pages_https?$"',
+      'haproxy_backend_bytes_out_total',
+      'haproxy_backend_bytes_in_total',
     ),
     networkPanel(
-    'WebSockets Data Transfer / 24h',
-    'backend=~".*websockets$"', 
-    'haproxy_backend_bytes_out_total',
-    'haproxy_backend_bytes_in_total',
+      'WebSockets Data Transfer / 24h',
+      'backend=~".*websockets$"',
+      'haproxy_backend_bytes_out_total',
+      'haproxy_backend_bytes_in_total',
     ),
     networkPanel(
-    'SSH Data Transfer / 24h',
-    'backend=~".*ssh$"', 
-    'haproxy_backend_bytes_out_total',
-    'haproxy_backend_bytes_in_total',
+      'SSH Data Transfer / 24h',
+      'backend=~".*ssh$"',
+      'haproxy_backend_bytes_out_total',
+      'haproxy_backend_bytes_in_total',
     ),
 
   ], cols=3, rowHeight=7, startRow=3)
@@ -285,4 +286,3 @@ basic.dashboard(
     osPanel('Object Storage by Bucket data transfer / 24h'),
   ], cols=1, rowHeight=7, startRow=8)
 )
-

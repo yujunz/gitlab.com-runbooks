@@ -41,7 +41,7 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn'],
 
       toolingLinks: [
-        toolingLinks.bigquery(title="Top main-stage http clients by number of requests, 10m", savedQuery='805818759045:d7be3397f3fe4ef8a6c3e2a302428af3'),
+        toolingLinks.bigquery(title='Top main-stage http clients by number of requests, 10m', savedQuery='805818759045:d7be3397f3fe4ef8a6c3e2a302428af3'),
       ],
     },
 
@@ -69,7 +69,7 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn'],
 
       toolingLinks: [
-        toolingLinks.bigquery(title="Top cny-stage http clients by number of requests, 10m", savedQuery='805818759045:052918f56c0f4d279182d605f02f8ca9'),
+        toolingLinks.bigquery(title='Top cny-stage http clients by number of requests, 10m', savedQuery='805818759045:052918f56c0f4d279182d605f02f8ca9'),
       ],
     },
 
@@ -114,7 +114,7 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn'],
 
       toolingLinks: [
-        toolingLinks.bigquery(title="Top ssh clients by number of requests, 10m", savedQuery='805818759045:92fb07ddc77e4d059adaf56f00afc49a'),
+        toolingLinks.bigquery(title='Top ssh clients by number of requests, 10m', savedQuery='805818759045:92fb07ddc77e4d059adaf56f00afc49a'),
       ],
     },
   },

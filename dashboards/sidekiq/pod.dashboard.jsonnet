@@ -1,5 +1,5 @@
-local commonAnnotations = import 'grafana/common_annotations.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
+local commonAnnotations = import 'grafana/common_annotations.libsonnet';
 local k8sPodsCommon = import 'kubernetes_pods_common.libsonnet';
 local platformLinks = import 'platform_links.libsonnet';
 local serviceCatalog = import 'service_catalog.libsonnet';

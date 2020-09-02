@@ -41,27 +41,27 @@ local gitalyApdexIgnoredMethodsRegexp = std.join('|', gitalyApdexIgnoredMethods)
   // on one threshold with OperationService requests on a slower threshold
   grpcServiceApdex(baseSelector)::
     combined([
-    // Services excluding the Operation Service
-    histogramApdex(
-      histogram='grpc_server_handling_seconds_bucket',
-      selector=baseSelector {
-        grpc_type: 'unary',
-        grpc_service: { ne: 'gitaly.OperationService' },
-        grpc_method: { nre: gitalyApdexIgnoredMethodsRegexp },
-      },
-      satisfiedThreshold=0.5,
-      toleratedThreshold=1
-    ),
-    // OperationService is relatively very slow compared to other
-    // Gitaly services
-    histogramApdex(
-      histogram='grpc_server_handling_seconds_bucket',
-      selector=baseSelector {
-        grpc_type: 'unary',
-        grpc_service: 'gitaly.OperationService'
-      },
-      satisfiedThreshold=10,
-      toleratedThreshold=30
-    )
-  ])
+      // Services excluding the Operation Service
+      histogramApdex(
+        histogram='grpc_server_handling_seconds_bucket',
+        selector=baseSelector {
+          grpc_type: 'unary',
+          grpc_service: { ne: 'gitaly.OperationService' },
+          grpc_method: { nre: gitalyApdexIgnoredMethodsRegexp },
+        },
+        satisfiedThreshold=0.5,
+        toleratedThreshold=1
+      ),
+      // OperationService is relatively very slow compared to other
+      // Gitaly services
+      histogramApdex(
+        histogram='grpc_server_handling_seconds_bucket',
+        selector=baseSelector {
+          grpc_type: 'unary',
+          grpc_service: 'gitaly.OperationService',
+        },
+        satisfiedThreshold=10,
+        toleratedThreshold=30
+      ),
+    ]),
 }

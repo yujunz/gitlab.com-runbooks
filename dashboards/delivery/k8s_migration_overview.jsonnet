@@ -1,8 +1,8 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local timepickerlib = import 'github.com/grafana/grafonnet-lib/grafonnet/timepicker.libsonnet';
-local promQuery = import 'grafana/prom_query.libsonnet';
-local layout = import 'grafana/layout.libsonnet';
 local basic = import 'grafana/basic.libsonnet';
+local layout = import 'grafana/layout.libsonnet';
+local promQuery = import 'grafana/prom_query.libsonnet';
 local row = grafana.row;
 local templates = import 'grafana/templates.libsonnet';
 local graphPanel = grafana.graphPanel;
@@ -16,7 +16,7 @@ local services = [
   'sidekiq-urgent-other',
   'sidekiq-database-throttled',
   'sidekiq-gitaly-throttled',
-  'sidekiq-urgent-cpu-bound'
+  'sidekiq-urgent-cpu-bound',
 ];
 
 local generalGraphPanel(
@@ -54,71 +54,71 @@ local generalGraphPanel(
 
 
 local serviceRow(service) =
-    [
+  [
 
-      // replicas
-      generalGraphPanel(
-        '%(service)s: Replicas' % { service: service },
+    // replicas
+    generalGraphPanel(
+      '%(service)s: Replicas' % { service: service },
+    )
+    .addTarget(
+      promQuery.target(
+        'sum(kube_replicaset_spec_replicas{replicaset=~"^gitlab-%(service)s.*", cluster="$environment-gitlab-gke"})' % { service: service },
       )
-      .addTarget(
-        promQuery.target(
-          'sum(kube_replicaset_spec_replicas{replicaset=~"^gitlab-%(service)s.*", cluster="$environment-gitlab-gke"})' % { service: service },
-        )
-      )
-      .resetYaxes()
-      .addYaxis(
-        format='none',
-        label='replicas',
-      )
-      .addYaxis(
-        format='short',
-        max=1,
-        min=0,
-        show=false,
-      ),
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='none',
+      label='replicas',
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 
-      // cpu
-      generalGraphPanel(
-        '%(service)s: CPUs' % { service: service },
+    // cpu
+    generalGraphPanel(
+      '%(service)s: CPUs' % { service: service },
+    )
+    .addTarget(
+      promQuery.target(
+        'sum(rate(container_cpu_usage_seconds_total{env=~"$environment", pod=~"gitlab-%(service)s.*"}[1m]))' % { service: service },
       )
-      .addTarget(
-        promQuery.target(
-          'sum(rate(container_cpu_usage_seconds_total{env=~"$environment", pod=~"gitlab-%(service)s.*"}[1m]))' % { service: service },
-        )
-      )
-      .resetYaxes()
-      .addYaxis(
-        format='none',
-        label='cpus',
-      )
-      .addYaxis(
-        format='short',
-        max=1,
-        min=0,
-        show=false,
-      ),
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='none',
+      label='cpus',
+    )
+    .addYaxis(
+      format='short',
+      max=1,
+      min=0,
+      show=false,
+    ),
 
-      // memory
-      generalGraphPanel(
-        '%(service)s: Memory' % { service: service },
+    // memory
+    generalGraphPanel(
+      '%(service)s: Memory' % { service: service },
+    )
+    .addTarget(
+      promQuery.target(
+        'sum(container_memory_working_set_bytes{env=~"gprd", node=~"^.*$", id!="", container!="POD", pod=~"^gitlab-%(service)s.*$", container!=""})' % { service: service },
       )
-      .addTarget(
-        promQuery.target(
-          'sum(container_memory_working_set_bytes{env=~"gprd", node=~"^.*$", id!="", container!="POD", pod=~"^gitlab-%(service)s.*$", container!=""})' % { service: service },
-        )
-      )
-      .resetYaxes()
-      .addYaxis(
-        format='bytes',
-        label='memory',
-      )
-      .addYaxis(
-        format='bytes',
-        max=1,
-        min=0,
-        show=false,
-      ),
-    ];
+    )
+    .resetYaxes()
+    .addYaxis(
+      format='bytes',
+      label='memory',
+    )
+    .addYaxis(
+      format='bytes',
+      max=1,
+      min=0,
+      show=false,
+    ),
+  ];
 
 local serviceRows = std.map(serviceRow, services);
 
@@ -147,7 +147,7 @@ local statPanel(
         mappings: [],
         min: 0,
         thresholds: thresholds,
-        unit: unit, 
+        unit: unit,
       },
     },
     links: links,
@@ -184,8 +184,8 @@ local savingsStatPanel(
           thresholds: {
             mode: 'absolute',
             steps: [
-              { color: 'orange', value: 0, },
-              { color: 'green', value: 10, },
+              { color: 'orange', value: 0 },
+              { color: 'green', value: 10 },
             ],
           },
           mappings: [],
@@ -266,7 +266,7 @@ basic.dashboard(
         query='avg(instance:node_cpu_utilization:ratio{tier="sv",type!~"web-pages|praefect|camoproxy"})',
         gaugeMaxValue=1,
         gaugeShow=true,
-      )
+      ),
     ],
     [
       // Memory total
@@ -284,7 +284,7 @@ basic.dashboard(
         query='avg(instance:node_memory_utilization:ratio{tier="sv",type!~"web-pages|praefect|camoproxy", env="$environment"})',
         gaugeMaxValue=1,
         gaugeShow=true,
-      )
+      ),
     ],
 
   ], cellHeights=[2, 2, 2], startRow=1)
@@ -317,7 +317,7 @@ basic.dashboard(
         query='avg(instance:node_cpu_utilization:ratio{cluster!="", env="$environment"})',
         gaugeMaxValue=1,
         gaugeShow=true,
-      )
+      ),
     ],
     [
       // Memory total
@@ -335,7 +335,7 @@ basic.dashboard(
         query='avg(instance:node_memory_utilization:ratio{cluster!="", env="$environment"})',
         gaugeMaxValue=1,
         gaugeShow=true,
-      )
+      ),
     ],
 
 
@@ -348,10 +348,8 @@ basic.dashboard(
 
 .addPanel(
   row.new(title='☸️Pods: replicas, CPUs and Memory in use by Service'),
-  gridPos={ x:0, y:3, w:24, h:1 }
+  gridPos={ x: 0, y: 3, w: 24, h: 1 }
 )
 .addPanels(
   layout.columnGrid(serviceRows, [8, 8, 8], rowHeight=5, startRow=3)
 )
-
-

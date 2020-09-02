@@ -1,11 +1,11 @@
 local alerts = import 'alerts/alerts.libsonnet';
-local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
 local multiburnExpression = import 'mwmbr/expression.libsonnet';
+local multiburnFactors = import 'mwmbr/multiburn_factors.libsonnet';
 local stableIds = import 'stable-ids/stable-ids.libsonnet';
 
 // For now, only include components that run at least once a second
 // in the monitoring. This is to avoid low-volume, noisy alerts
-local minimumOperationRateForMonitoring = 1 /* rps */;
+local minimumOperationRateForMonitoring = 1/* rps */;
 
 local formatConfig = multiburnFactors {
   minimumOperationRateForMonitoring: minimumOperationRateForMonitoring,
@@ -30,7 +30,7 @@ local rules = {
           sloMetricAggregationLabels=['type', 'tier'],
           operationRateMetric='gitlab_component_ops:rate_1h',
           operationRateAggregationLabels=['environment', 'env', 'tier', 'type', 'component', 'stage'],
-          operationRateSelectorHash={ monitor: { ne: "global" } },
+          operationRateSelectorHash={ monitor: { ne: 'global' } },
           minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
         ),
         'for': '2m',
@@ -67,7 +67,7 @@ local rules = {
         sloMetricAggregationLabels=['type', 'tier'],
         operationRateMetric='gitlab_component_ops:rate_1h',
         operationRateAggregationLabels=['environment', 'env', 'tier', 'type', 'component', 'stage'],
-        operationRateSelectorHash={ monitor: { ne: "global" } },
+        operationRateSelectorHash={ monitor: { ne: 'global' } },
         minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
       ),
       'for': '2m',

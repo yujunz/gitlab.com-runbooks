@@ -36,14 +36,14 @@ local mwmbrExpression = import 'mwmbr/expression.libsonnet';
               or
               label_replace(gitlab_deployment_health:service:errors{monitor="global"}, "sli_type", "errors", "", "")
             )
-          |||
+          |||,
         }, {
           record: 'gitlab_deployment_health:stage',
           expr: |||
             min by (environment, env, stage) (
               gitlab_deployment_health:service{monitor="global"}
             )
-          |||
+          |||,
         }],
     },
 

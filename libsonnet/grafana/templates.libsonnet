@@ -125,7 +125,8 @@ local template = grafana.template;
   fqdn(
     query,
     current='',
-    multi=false)::
+    multi=false
+  )::
     template.new(
       'fqdn',
       '$PROMETHEUS_DS',

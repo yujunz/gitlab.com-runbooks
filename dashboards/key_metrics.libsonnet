@@ -1,13 +1,13 @@
+local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local basic = import 'grafana/basic.libsonnet';
 local colors = import 'grafana/colors.libsonnet';
 local commonAnnotations = import 'grafana/common_annotations.libsonnet';
-local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
 local promQuery = import 'grafana/prom_query.libsonnet';
 local seriesOverrides = import 'grafana/series_overrides.libsonnet';
-local sliPromQL = import 'sli_promql.libsonnet';
 local templates = import 'grafana/templates.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
+local sliPromQL = import 'sli_promql.libsonnet';
 local dashboard = grafana.dashboard;
 local row = grafana.row;
 local template = grafana.template;

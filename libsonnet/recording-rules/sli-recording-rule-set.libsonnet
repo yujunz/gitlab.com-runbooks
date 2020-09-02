@@ -1,4 +1,3 @@
-
 local generateRecordingRulesForMetric(recordingRuleMetric, burnRate, recordingRuleRegistry) =
   local expression = recordingRuleRegistry.recordingRuleExpressionFor(metricName=recordingRuleMetric, rangeInterval=burnRate);
   local recordingRuleName = recordingRuleRegistry.recordingRuleNameFor(metricName=recordingRuleMetric, rangeInterval=burnRate);

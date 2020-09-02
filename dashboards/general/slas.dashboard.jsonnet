@@ -132,11 +132,11 @@ basic.dashboard(
   layout.columnGrid([[
     basic.slaStats(
       title='GitLab.com Availability',
-      query=serviceAvailabilityQuery({ }, 'sla:gitlab:ratio', '$__range'),
+      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '$__range'),
     ),
     grafanaCalHeatmap.heatmapCalendarPanel(
       'Calendar',
-      query=serviceAvailabilityQuery({ }, 'sla:gitlab:ratio', '1d'),
+      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '1d'),
       legendFormat='',
       datasource='$PROMETHEUS_DS',
     ),
@@ -144,7 +144,7 @@ basic.dashboard(
       title='Overall SLA over time period - gitlab.com',
       description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
-      query=serviceAvailabilityQuery({ }, 'sla:gitlab:ratio', '1d'),
+      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '1d'),
       legendFormat='gitlab.com SLA',
       interval=INTERVAL,
       points=true,

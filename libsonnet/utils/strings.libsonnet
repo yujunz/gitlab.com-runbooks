@@ -17,11 +17,11 @@ local unwrapText(str) =
     function(memo, line)
       local memoLast = std.length(memo) - 1;
       local prevItem = memo[memoLast];
-      if line == "" || prevItem == "" then
+      if line == '' || prevItem == '' then
         memo + [line]
       else
         // Join onto previous line
-        memo[:memoLast] + [prevItem + " " + line],
+        memo[:memoLast] + [prevItem + ' ' + line],
     linesTrimmed[1:],
     linesTrimmed[:1]
   );
@@ -31,5 +31,5 @@ local unwrapText(str) =
   removeBlankLines(str):: removeBlankLines(str),
   chomp(str):: chomp(str),
   indent(str, spaces):: indent(str, spaces),
-  unwrapText(str):: unwrapText(str)
+  unwrapText(str):: unwrapText(str),
 }

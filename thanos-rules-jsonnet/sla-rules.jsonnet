@@ -1,5 +1,5 @@
-local serviceCatalog = import 'service_catalog.libsonnet';
 local metricsConfig = import 'metrics-config.libsonnet';
+local serviceCatalog = import 'service_catalog.libsonnet';
 
 local keyServices = serviceCatalog.findServices(function(service)
   std.objectHas(service.business.SLA, 'overall_sla_weighting') && service.business.SLA.overall_sla_weighting > 0);
@@ -65,7 +65,7 @@ local rules = {
     rules: [{
       record: 'sla:gitlab:target',
       expr: '%g' % [metricsConfig.slaTarget],
-    }]
+    }],
   }],
 };
 

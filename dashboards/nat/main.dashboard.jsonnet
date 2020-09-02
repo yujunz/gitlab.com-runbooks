@@ -2,9 +2,9 @@ local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libso
 
 local basic = import 'grafana/basic.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
-local panels = import 'panels.libsonnet';
 local promQuery = import 'grafana/prom_query.libsonnet';
 local templates = import 'grafana/templates.libsonnet';
+local panels = import 'panels.libsonnet';
 
 local gatewayNameTemplate = grafana.template.new(
   'gateway',

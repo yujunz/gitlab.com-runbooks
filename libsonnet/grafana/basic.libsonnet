@@ -52,35 +52,35 @@ local panelOverrides(stableId) = {
 local getDefaultAvailabilityColorScale(invertColors, factor) =
   local tf = if invertColors then function(value) (1 - value) * factor else function(value) value;
   local scale = [
-      {
-        color: 'red',
-        value: tf(0),
-      },
-      {
-        color: 'light-red',
-        value: tf(0.95),
-      },
-      {
-        color: 'orange',
-        value: tf(0.99),
-      },
-      {
-        color: 'light-orange',
-        value: tf(0.995),
-      },
-      {
-        color: 'yellow',
-        value: tf(0.9994),
-      },
-      {
-        color: 'light-yellow',
-        value: tf(0.9995),
-      },
-      {
-        color: 'green',
-        value: tf(0.9998),
-      },
-    ];
+    {
+      color: 'red',
+      value: tf(0),
+    },
+    {
+      color: 'light-red',
+      value: tf(0.95),
+    },
+    {
+      color: 'orange',
+      value: tf(0.99),
+    },
+    {
+      color: 'light-orange',
+      value: tf(0.995),
+    },
+    {
+      color: 'yellow',
+      value: tf(0.9994),
+    },
+    {
+      color: 'light-yellow',
+      value: tf(0.9995),
+    },
+    {
+      color: 'green',
+      value: tf(0.9998),
+    },
+  ];
 
   std.sort(scale, function(i) if i.value == null then 0 else i.value);
 
