@@ -2,6 +2,7 @@ local metricsCatalog = import 'servicemetrics/metrics.libsonnet';
 local histogramApdex = metricsCatalog.histogramApdex;
 local rateMetric = metricsCatalog.rateMetric;
 local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
+local googleLoadBalancerComponents = import './lib/google_load_balancer_components.libsonnet';
 
 local productionEnvironmentsSelector = {
   environment: { re: 'gprd|ops|ci-prd' },
@@ -182,6 +183,13 @@ metricsCatalog.serviceDefinition({
 
       significantLabels: ['fqdn'],
     },
+
+    // This component represents the Google Load Balancer in front
+    // of the public Grafana instance at dashboards.gitlab.com
+    public_grafana_googlelb: googleLoadBalancerComponents.googleLoadBalancer(
+      loadBalancerName='ops-dashboards-com',
+      projectId='gitlab-ops',
+    ),
 
     prometheus: {
       local prometheusSelector = productionEnvironmentsSelector {

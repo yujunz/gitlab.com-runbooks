@@ -24,6 +24,24 @@ groups:
       )
   - record: gitlab_component_ops:rate
     labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",target_proxy_name="ops-prod-proxy"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",response_code_class="500",target_proxy_name="ops-prod-proxy"}[1m])
+      )
+  - record: gitlab_component_ops:rate
+    labels:
       component: stackdriver
       stage: main
       tier: inf
@@ -52,6 +70,24 @@ groups:
     expr: |
       sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[5m]), 0)
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",target_proxy_name="ops-prod-proxy"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",response_code_class="500",target_proxy_name="ops-prod-proxy"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -86,6 +122,24 @@ groups:
       )
   - record: gitlab_component_ops:rate_30m
     labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",target_proxy_name="ops-prod-proxy"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",response_code_class="500",target_proxy_name="ops-prod-proxy"}[30m])
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
       component: stackdriver
       stage: main
       tier: inf
@@ -114,6 +168,24 @@ groups:
     expr: |
       sum by (environment,stage) (
         clamp_min(deriv(elasticsearch_indices_search_query_total{type="logging"}[1h]), 0)
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",target_proxy_name="ops-prod-proxy"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",response_code_class="500",target_proxy_name="ops-prod-proxy"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -148,6 +220,24 @@ groups:
       )
   - record: gitlab_component_ops:rate_6h
     labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",target_proxy_name="ops-prod-proxy"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: kibana_googlelb
+      tier: inf
+      type: logging
+    expr: |
+      sum by (environment,stage) (
+        rate(stackdriver_https_lb_rule_loadbalancing_googleapis_com_https_request_count{project_id="gitlab-ops",response_code_class="500",target_proxy_name="ops-prod-proxy"}[6h])
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
       component: stackdriver
       stage: main
       tier: inf
@@ -170,6 +260,13 @@ groups:
     labels:
       aggregate_rps: 'yes'
       component: elasticsearch_searching
+      tier: inf
+      type: logging
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'yes'
+      component: kibana_googlelb
       tier: inf
       type: logging
     expr: '1'
