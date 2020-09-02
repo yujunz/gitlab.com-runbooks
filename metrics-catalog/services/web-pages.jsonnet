@@ -14,7 +14,7 @@ metricsCatalog.serviceDefinition({
   },
   monitoringThresholds: {
     apdexScore: 0.995,
-    errorRatio: 0.9999,
+    errorRatio: 0.9995,
   },
   components: {
     loadbalancer: haproxyComponents.haproxyHTTPLoadBalancer(
