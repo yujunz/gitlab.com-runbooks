@@ -134,6 +134,7 @@ tiers:
 
 services:
 - name: airflow
+  tier: sv
   teams:
     - data-analytics
   business:
