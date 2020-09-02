@@ -2,12 +2,16 @@ local toolingLinkDefinition = (import './tooling_link_definition.libsonnet').too
 
 {
   sentry(slug)::
+    local formatConfig = {
+      slug: slug,
+    };
+
     [
+      // Note: once https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/532 arrives
+      // we will be to put together a smart exception search.
       toolingLinkDefinition({
-        title: 'Sentry Exceptions',
-        url: 'https://sentry.gitlab.net/%(slug)s' % {
-          slug: slug,
-        },
+        title: 'Sentry Releases: %(slug)s' % formatConfig,
+        url: 'https://sentry.gitlab.net/%(slug)s/releases/' % formatConfig,
       }),
     ],
 }
