@@ -119,7 +119,7 @@ teams:
 - name: gitlab-pages
   slack_alerts_channel: gitlab-pages
 
-- name: data-engineering
+- name: data-analytics
   url: https://about.gitlab.com/handbook/business-ops/data-team/platform/
   slack_channel: data-engineering
   slack_alerts_channel: data-prom-alerts
@@ -135,7 +135,7 @@ tiers:
 services:
 - name: airflow
   teams:
-    - data-engineering
+    - data-analytics
   business:
     requirement: |
       Required by data engineering team to orchestrate data extraction and transformation jobs.

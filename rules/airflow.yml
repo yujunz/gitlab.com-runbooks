@@ -7,7 +7,7 @@
       labels:
         severity: s1
         alert_type: cause
-        team: data-engineering
+        team: data-analytics
       annotations:
         title: Airflow is down
         description: >
