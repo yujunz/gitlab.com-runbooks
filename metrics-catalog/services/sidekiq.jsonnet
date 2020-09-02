@@ -147,7 +147,7 @@ metricsCatalog.serviceDefinition({
       ] + (
         if std.objectHas(shard, 'gkeDeployment') then
           [
-            toolingLinks.gkeDeployment(shard.gkeDeployment),
+            toolingLinks.gkeDeployment(shard.gkeDeployment, type='sidekiq', shard=shard.name, containerName='sidekiq'),
           ]
         else
           []

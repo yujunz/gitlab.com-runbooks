@@ -52,7 +52,7 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
-        toolingLinks.gkeDeployment(deployment='thanos-query', namespace='monitoring'),
+        toolingLinks.gkeDeployment(deployment='thanos-query', namespace='monitoring', containerName='thanos-query'),
       ],
     },
 

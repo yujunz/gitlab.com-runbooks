@@ -1,4 +1,5 @@
 local toolingLinkDefinition = (import './tooling_link_definition.libsonnet').toolingLinkDefinition;
+local stackdriverLogs = import './stackdriver_logs.libsonnet';
 
 {
   cloudSQL(
@@ -13,5 +14,14 @@ local toolingLinkDefinition = (import './tooling_link_definition.libsonnet').too
           project: project,
         },
       }),
+      stackdriverLogs.stackdriverLogsEntry(
+        title='Stackdriver Logs: Cloud SQL %s' % [instanceId],
+        queryHash={
+          'resource.type': 'cloudsql_database',
+          'resource.labels.database_id': project + ':' + instanceId,
+          'resource.labels.project_id': project,
+        },
+        project=project
+      ),
     ],
 }
