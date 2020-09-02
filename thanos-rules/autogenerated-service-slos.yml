@@ -115,6 +115,11 @@ groups:
       tier: stor
       type: gitaly
     expr: '0.000500'
+  - record: slo:max:events:gitlab_service_errors:ratio
+    labels:
+      tier: inf
+      type: logging
+    expr: '0.001000'
   - record: slo:min:events:gitlab_service_apdex:ratio
     labels:
       tier: inf

@@ -18,5 +18,6 @@ local generateMarkdown(toolingLinks) =
   bigquery:: (import './bigquery.libsonnet').bigquery,
   kibana:: (import './kibana.libsonnet').kibana,
   gkeDeployment:: (import './gke_deployment.libsonnet').gkeDeployment,
+  googleLoadBalancer: (import './google_load_balancer.libsonnet').googleLoadBalancer,
   generateMarkdown:: generateMarkdown,
 }
