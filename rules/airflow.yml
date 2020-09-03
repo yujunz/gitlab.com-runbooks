@@ -5,7 +5,6 @@
         count(avg_over_time(up{job='airflow'}[5m]) * 100 < 50)
       for: 10m
       labels:
-        severity: s1
         alert_type: cause
         team: data-analytics
       annotations:
