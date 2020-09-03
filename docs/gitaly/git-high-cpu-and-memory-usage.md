@@ -198,7 +198,13 @@ In more detail:
     * [CPU usage](https://dashboards.gitlab.net/d/bd2Kl9Imk/host-stats-old-prometheus?viewPanel=8&var-node=file-31-stor-gprd.c.gitlab-production.internal) rises steadily, potentially reaching 100%.  User-mode CPU time is the main mode that increases.
     * [Memory usage](https://dashboards.gitlab.net/d/bd2Kl9Imk/host-stats-old-prometheus?viewPanel=39&var-node=file-31-stor-gprd.c.gitlab-production.internal) steadily transitions from mostly `Cached` (file-backed pages) to mostly `AnonPages` (anonymous non-file-backed pages, typically processes' heap space).
 
+### Kibana visualizations
 
+* [Gitaly - sum of time spent serving requests, split by method](https://log.gprd.gitlab.net/app/kibana#/visualize/edit/8cbc0d10-edfb-11ea-81e5-155ba78758d4)
+  * You can narrow this further down by adding a filter for a specific host, e.g. `json.fqdn` is `file-02-stor-gprd.c.gitlab-production.internal`
+  * If the culprit is `PostUploadPack` method, you should see it stand out here
+* [Gitaly - sum of time spent serving requests, split by project](https://log.gprd.gitlab.net/app/kibana#/visualize/edit/50fdf910-edfa-11ea-81e5-155ba78758d4)
+  * You can narrow this visualization further down by adding filters for a specific host and a specific method. This will show you which project is most likely causing the problem.
 
 
 
