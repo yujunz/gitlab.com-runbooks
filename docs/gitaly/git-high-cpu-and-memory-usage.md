@@ -134,6 +134,11 @@ Try to avoid running repack manually, but if you have to do so, prefer to use th
 
 If you use the default `git` (which is `/usr/bin/git`), it will use slightly different gitconfig settings.  Not a big deal currently, but a good thing to keep in mind.
 
+#### Run the housekeeping job on the project
+
+1. Login to Gitlab using an admin account
+2. Go to the page of the project for which you want to run the repack (the page might be slow or unresponsive since Gitaly is probably overloaded at this point)
+3. Go to the project settings on the left hand side and trigger the housekeeping job: Settings -> General -> Advanced -> [Run Housekeeping]
 
 #### Tune how this repo handles large objects
 
