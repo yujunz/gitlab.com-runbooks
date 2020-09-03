@@ -53,5 +53,24 @@ metricsCatalog.serviceDefinition({
 
       significantLabels: ['log', 'severity'],
     },
+
+    // This component tracks fluentd log output
+    // across the entire fleet
+    fluentd_log_output: {
+      staticLabels: {
+        stage: 'main',
+      },
+
+      requestRate: rateMetric(
+        counter='fluentd_output_status_write_count',
+      ),
+
+      errorRate: rateMetric(
+        counter='fluentd_output_status_num_errors'
+      ),
+
+      significantLabels: ['tag', 'type'],
+      aggregateRequestRate: false,
+    },
   },
 })
