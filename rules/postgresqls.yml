@@ -14,8 +14,8 @@ groups:
   - alert: PostgreSQL_WALEReplicationStopped
     expr: rate(pg_xlog_position_bytes{type=~"postgres-(archive|delayed)"}[1m]) == 0
     # Given that long running queries can't temporarily halt replication,
-    # we're setting the "for" value to the value of statement_timeout.
-    for: 15m
+    # we're setting the "for" value to the value of statement_timeout + a small margin
+    for: 125m
     labels:
       pager: pagerduty
       severity: s1
