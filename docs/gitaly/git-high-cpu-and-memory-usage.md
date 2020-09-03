@@ -1,16 +1,14 @@
-## Problem
+## Problem: git processes spawned by Gitaly may consume significant CPU and memory
 
-Multiple git processes spawned by Gitaly consuming significant CPU and memory
-
-Gitaly routinely spawns `git` child processes to perform work on individual repos.
+Gitaly routinely spawns `git` child processes to perform tasks on individual repos.
 
 These processes are usually short-lived.  However, in some cases, they can be
 both long-lived and resource-intensive.
 
 The most common observed pattern for this is when many `git pack-objects` processes
-are consuming up to 1 whole CPU and a large amount of resident anonymous memory.
+are each consuming up to 1 whole CPU and a large amount (> 1 GB) of resident anonymous memory.
 
-This runbook walks through an example of this.
+This runbook walks through an example of that scenario.
 See also [this incident](https://gitlab.com/gitlab-com/gl-infra/production/-/issues/2600)
 as another example walk-through of this behavior.
 
@@ -21,17 +19,23 @@ The walk-through gives more context, but for quick reference in a pinch:
 
 ### Diagnostic commands
 
-List "git pack-objects" processes that are children of "git upload-pack" (rather than "git repack").
+Find `git pack-objects` processes that are children of `git upload-pack` (rather than `git repack`).
+Each of these processes corresponds to one git client running `git fetch` or `git clone`.  Killing them will gracefully abort the client and will not harm the repo.
+
+Notes:
+* This step defines a bash alias `find_git_pack_pids` to use as a macro function in several later steps.  If your shell is not Bash, please adjust accordingly.
+* Because the list of PIDs may change quickly, it is helpful to have a dynamic function to find the currently running matching PIDs.
+* If you prefer to work with a static list of PIDs, you can substitute `$( echo <PID> ... )` instead of running the `find_git_pack_pids` bash alias.
 
 ```shell
-$ pgrep -f 'git .*upload-pack' | tr '\n' ',' | perl -pe 's/,$//' | xargs -i pgrep --parent {} -a -f 'git .*pack-objects .*--stdout'
-$ PACK_PIDS=$( pgrep -f 'git .*upload-pack' | tr '\n' ',' | perl -pe 's/,$//' | xargs -i pgrep --parent {} -f 'git .*pack-objects .*--stdout' )
+$ alias find_git_pack_pids=$"pgrep -f 'git .*upload-pack' | tr '\n' ',' | perl -pe 's/,$//' | xargs -i pgrep --parent {} -f 'git .*pack-objects .*--stdout'"
+$ find_git_pack_pids | xargs -r ps uwf | cat
 ```
 
 Which git repo directory are most of these git-pack-objects processes using?
 
 ```shell
-$ for PACK_PID in $PACK_PIDS ; do sudo ls -l /proc/$PACK_PID/cwd | perl -pe 's/.* -> //' ; done | sort | uniq -c | sort -rn
+$ find_git_pack_pids | xargs -i sudo ls -l /proc/{}/cwd | perl -pe 's/.* -> //' | sort | uniq -c | sort -rn
 ```
 
 Show the GitLab correlation_id for these "git pack-objects" processes.
@@ -39,15 +43,15 @@ Show the GitLab correlation_id for these "git pack-objects" processes.
 Note: The Kibana indexes for Gitaly and Workhorse may not have log events for these correlation_ids until these processes exit.
 
 ```shell
-$ for PACK_PID in $PACK_PIDS ; do sudo ls -l /proc/$PACK_PID/cwd | perl -pe 's/.* -> //' ; done | sort | uniq -c | sort -rn
+$ find_git_pack_pids | xargs -i sudo cat /proc/{}/environ | tr '\0' '\n' | grep 'CORRELATION_ID'
 ```
 
 What is the GitLab project path for a git repo?
 You can use this in Kibana queries or to browse to the project as an admin of gitlab.com.
 
 ```shell
-$ TARGET_DIR='/var/opt/gitlab/git-data/repositories/@hashed/71/40/71408c63d137df0bf79664aa4371ecd00a6682a3e52e08c976487e52ea6b3dad.git'
-$ sudo grep 'fullpath' $TARGET_DIR/config
+$ TARGET_GIT_DIR='/var/opt/gitlab/git-data/repositories/@hashed/71/40/71408c63d137df0bf79664aa4371ecd00a6682a3e52e08c976487e52ea6b3dad.git'
+$ sudo grep 'fullpath' $TARGET_GIT_DIR/config
 ```
 
 Capture a 30-second "perf" CPU profile for the whole host.
@@ -64,6 +68,24 @@ $ sudo perf script --header > $( hostname -s ).perf-script.txt
 $ git clone --quiet https://github.com/brendangregg/FlameGraph.git ~/FlameGraph
 $ PATH="$HOME/FlameGraph:$PATH"
 $ cat $( hostname -s ).perf-script.txt | stackcollapse-perf.pl --kernel | flamegraph.pl --hash --colors=perl > $( hostname -s ).flamegraph.svg
+```
+
+Or to capture a 30-second "perf" CPU profile of only the `git pack-objects` PIDs, replace the 1st step of the above commands with:
+
+```shell
+$ find_git_pack_pids | tr '\n' ',' | perl -pe 's/,$//' | xargs -i sudo perf record -g --freq 99 --pid {} -- sleep 30
+```
+
+How many objects are in this git repo?
+
+```shell
+sudo git -C "$TARGET_GIT_DIR" cat-file --batch-all-objects --batch-check='%(objecttype)' | sort | uniq -c
+```
+
+How many large objects in this git repo are over 100 MB?
+
+```shell
+sudo git -C "$TARGET_GIT_DIR" cat-file --batch-all-objects --batch-check='%(objectname) %(objecttype) %(objectsize)' | awk '$3 >= 100*1024^2' | sort -k3 -n -r | wc -l
 ```
 
 
@@ -88,8 +110,8 @@ Its only argument is the absolute path to a git repo.
 [kill_git_pack_objects_processes_for_repo_path.sh](../../scripts/kill_git_pack_objects_processes_for_repo_path.sh)
 
 ```shell
-$ TARGET_DIR='/var/opt/gitlab/git-data/repositories/@hashed/71/40/71408c63d137df0bf79664aa4371ecd00a6682a3e52e08c976487e52ea6b3dad.git'
-$ ./kill_git_pack_objects_processes_for_repo_path.sh "$TARGET_DIR"
+$ TARGET_GIT_DIR='/var/opt/gitlab/git-data/repositories/@hashed/71/40/71408c63d137df0bf79664aa4371ecd00a6682a3e52e08c976487e52ea6b3dad.git'
+$ ./kill_git_pack_objects_processes_for_repo_path.sh "$TARGET_GIT_DIR"
 ```
 
 
