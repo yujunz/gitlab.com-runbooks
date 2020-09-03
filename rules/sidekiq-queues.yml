@@ -48,20 +48,3 @@ groups:
       runbook: docs/sidekiq/large-sidekiq-queue.md
       grafana_dashboard_id: sidekiq-main/sidekiq-overview
       title: Large amount of Sidekiq Queued jobs
-  - alert: SidekiqQueueNoLongerBeingProcessed
-    expr: >
-      (sum by(environment, queue) (gitlab_background_jobs:queue:ops:rate_6h) > 0.001)
-      unless
-      (sum by(environment, queue) (gitlab_background_jobs:execution:ops:rate_6h)  > 0)
-    for: 20m
-    labels:
-      severity: s1
-      pager: pagerduty
-      alert_type: cause
-    annotations:
-      title: A Sidekiq queue is no longer being processed.
-      description: >
-        Sidekiq queue {{ $labels.queue }} in shard {{ $labels.shard }} is no
-        longer being processed.
-      runbook: docs/sidekiq/sidekiq-queue-not-being-processed.md
-      grafana_dashboard_id: sidekiq-main/sidekiq-overview
