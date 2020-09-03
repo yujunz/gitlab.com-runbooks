@@ -1,8 +1,8 @@
-local basic = import 'grafana/basic.libsonnet';
+local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libsonnet';
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
+local basic = import 'grafana/basic.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
 local templates = import 'grafana/templates.libsonnet';
-local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libsonnet';
 
 local selector = 'environment="$environment", type="$type", stage="$stage", controller="$controller", action=~"$action"';
 local row = grafana.row;
@@ -38,7 +38,7 @@ basic.dashboard(
       stableId='request-rate',
       title='Request Rate',
       query='avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{%s}[$__interval])' % selector,
-      legendFormat="{{ action }}",
+      legendFormat='{{ action }}',
       format='ops',
       yAxisLabel='Requests per Second',
     ).addDataLink(elasticsearchLogSearchDataLink),
