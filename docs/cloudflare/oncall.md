@@ -26,6 +26,8 @@ A firewall rule should be used for the following types of actions:
 
 Firewall rules can match against many types of request attributes.
 
+The rule **must adhere to the description format of Cloudflare rules** described in [managing traffic](managing-traffic.md)
+
 - [Manage firewall rules in the Cloudflare UI](https://developers.cloudflare.com/firewall/cf-dashboard)
 
 ### Adding page rules

@@ -2,9 +2,11 @@
 
 ## General
 
+ - **Temporary rules are subject to automatic expiration!** See `Automated expiry on temporary rules` down below.
  - GitLab Pages and the GitLab registry are not yet fronted by Cloudflare, so these blocks would not affect them.
- - Automation mentioned in this documentation is *not* created yet. (https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9711#note_323835098)
-   - This also means, that automated expiry does not yet work.
+ - Automation mentioned in this documentation is *partially* created. (https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9711#note_323835098)
+   - Automated expiry is working
+   - Chatops tooling to create a rule is not implemented
  - Blocks should not be a permanent solution. IP addresses get rotated on an ISP level, so we should strive to block them only as long as required to mitigate an attack or block abusive behaviour.
 
 ## The goal of the [Firewall issue tracker](https://gitlab.com/gitlab-com/gl-infra/cloudflare-firewall)
@@ -88,7 +90,7 @@ This includes rules added in Terraform for internal an customer allowlists.
 
 ### Labels
 
-In order to keep the promise of a searchable database, we are using labels to categorize each rule.
+In order to keep the promise of a searchable database, we are using labels to categorize each rule. These labels will be applied by automation, except for manual actions such as `rule-origin` labels.
 
 Each issue should be labeled with with either of these labels:
 
@@ -154,8 +156,8 @@ In order for automation to do its job, it is required to have a standardized for
  - The firewall issue ID should be used to link any relevant production incidents or other issues to it.
  - The RFC3339 date can be retrieved via the GNU date util `date --rfc-3339=seconds --utc`. It should be UTC.
  - The longevity of a rule is to be indicated by either `temporary` or `long-term`.
-   - `temporary` rules are subject for processing by automation.
-   - If required a different minimum validity can be set and a maximum time can be specified.
+   - `temporary` rules are subject for processing **and automatic expiration** by automation.
+   - If required a different minimum validity can be set and a maximum time can be specified. The default minimum is 24 hours.
    - This is done by suffixing `=<minimum validity in hours>[,<maximum validity in hours>]`
    - To specify a maximum validity without overriding the minimum, set the minimum to 0.
  - A description may be provided to add further detail, but may be omitted.
@@ -199,18 +201,17 @@ The intent of this supplemental automation is to have a "set it and forget it" m
 
 ##### Keeping up-2-date
 
-Every 3 hours a CI job will fetch a list of active rules from Cloudflare and parse them according to the format above. A `temporary` rule will be processed as following:
+Every time the Audit logs runs, it will fetch a list of active rules from Cloudflare and parse them according to the format above. A `temporary` rule will be processed as following:
 
-If the minimum rule lifetime time of 48h has passed its first job is to check, if the traffic processed by the rule is below the threshold for the last 12h. (7200 requests, 10 requests/minute over 12h).  
+If the minimum rule lifetime time of 48h (or the configured value) has passed its first job is to check, if the traffic processed by the rule is at 0 requests for the last 24h.   
 If that is the case, the rule is removed and the associated issue is labeled with `firewall-action::expired` and closed.
-  - One exception to this: If the issue is labeled `firewall-action::other` it will not be re-labeled, nor closed!
 If that is not the case, the rule will be left in-place and checked again on the next run.
 
 When a maximum lifetime was specified and that has passed, the rule will be regarded as expired regardless of traffic state.
 
 `long-term` rules will not be auto-expired, but are subject to processing and require, that a valid issue exists.
 
-If a rule was manually modified, for example to include a user-agent after the fact, any new applicable `firewall-type` labels will be applied. No labels will be removed.
+If a rule was manually modified, for example to include a user-agent after the fact, any new applicable `rule-filter` or `bypass-action` labels will be applied.
 
 Any rule which is not parsable, will be logged as an error.
 
