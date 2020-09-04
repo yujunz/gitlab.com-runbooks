@@ -61,9 +61,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1m]), "_c", "0", "", "")
-        or
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1m]), "_c", "1", "", "")
+        rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1m])
       )
   - record: gitlab_component_apdex:ratio
     labels:
@@ -71,31 +69,21 @@ groups:
       tier: stor
       type: gitaly
     expr: |
-      sum by (environment,stage) (
-        label_replace((
+      (
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="0.5"}[1m])
-          + ignoring(le)
+        )
+        +
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="1"}[1m])
         )
-        /
-        2
-        , "_c", "0", "", "")
-        or
-        label_replace((
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[1m])
-          + ignoring(le)
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[1m])
-        )
-        /
-        2
-        , "_c", "1", "", "")
       )
+      /
+      2
       /
       (
         sum by (environment,stage) (
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1m]), "_c", "0", "", "")
-          or
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1m]), "_c", "1", "", "")
+          rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1m])
         ) > 0
       )
   - record: gitlab_component_ops:rate
@@ -105,7 +93,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[1m])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -114,9 +102,61 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[1m]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[1m]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[1m]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[1m]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1m])
+      )
+  - record: gitlab_component_apdex:ratio
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[1m])
+        )
+        +
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[1m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1m])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[1m])
+      )
+  - record: gitlab_component_errors:rate
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[1m]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[1m]), "_c", "1", "", "")
       )
 - name: 'Component-Level SLIs: gitaly - 5m burn-rate'
   interval: 1m
@@ -178,9 +218,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m]), "_c", "0", "", "")
-        or
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m]), "_c", "1", "", "")
+        rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m])
       )
   - record: gitlab_component_apdex:ratio_5m
     labels:
@@ -188,31 +226,21 @@ groups:
       tier: stor
       type: gitaly
     expr: |
-      sum by (environment,stage) (
-        label_replace((
+      (
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="0.5"}[5m])
-          + ignoring(le)
+        )
+        +
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="1"}[5m])
         )
-        /
-        2
-        , "_c", "0", "", "")
-        or
-        label_replace((
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[5m])
-          + ignoring(le)
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[5m])
-        )
-        /
-        2
-        , "_c", "1", "", "")
       )
+      /
+      2
       /
       (
         sum by (environment,stage) (
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m]), "_c", "0", "", "")
-          or
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m]), "_c", "1", "", "")
+          rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_ops:rate_5m
@@ -222,7 +250,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[5m])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -231,9 +259,61 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[5m]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[5m]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[5m]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[5m]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score_5m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m])
+      )
+  - record: gitlab_component_apdex:ratio_5m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[5m])
+        )
+        +
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[5m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate_5m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[5m])
+      )
+  - record: gitlab_component_errors:rate_5m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[5m]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[5m]), "_c", "1", "", "")
       )
   - record: gitlab_component_node_apdex:weight:score_5m
     labels:
@@ -292,9 +372,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m]), "_c", "0", "", "")
-        or
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m]), "_c", "1", "", "")
+        rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m])
       )
   - record: gitlab_component_node_apdex:ratio_5m
     labels:
@@ -302,31 +380,21 @@ groups:
       tier: stor
       type: gitaly
     expr: |
-      sum by (environment,stage,shard,fqdn) (
-        label_replace((
+      (
+        sum by (environment,stage,shard,fqdn) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="0.5"}[5m])
-          + ignoring(le)
+        )
+        +
+        sum by (environment,stage,shard,fqdn) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="1"}[5m])
         )
-        /
-        2
-        , "_c", "0", "", "")
-        or
-        label_replace((
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[5m])
-          + ignoring(le)
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[5m])
-        )
-        /
-        2
-        , "_c", "1", "", "")
       )
+      /
+      2
       /
       (
         sum by (environment,stage,shard,fqdn) (
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m]), "_c", "0", "", "")
-          or
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m]), "_c", "1", "", "")
+          rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m])
         ) > 0
       )
   - record: gitlab_component_node_ops:rate_5m
@@ -336,7 +404,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[5m])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[5m])
       )
   - record: gitlab_component_node_errors:rate_5m
     labels:
@@ -345,9 +413,61 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[5m]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[5m]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[5m]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[5m]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_node_apdex:weight:score_5m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m])
+      )
+  - record: gitlab_component_node_apdex:ratio_5m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment,stage,shard,fqdn) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[5m])
+        )
+        +
+        sum by (environment,stage,shard,fqdn) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[5m])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment,stage,shard,fqdn) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[5m])
+        ) > 0
+      )
+  - record: gitlab_component_node_ops:rate_5m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[5m])
+      )
+  - record: gitlab_component_node_errors:rate_5m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[5m]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[5m]), "_c", "1", "", "")
       )
 - name: 'Component-Level SLIs: gitaly - 30m burn-rate'
   interval: 2m
@@ -407,9 +527,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[30m]), "_c", "0", "", "")
-        or
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[30m]), "_c", "1", "", "")
+        rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[30m])
       )
   - record: gitlab_component_apdex:ratio_30m
     labels:
@@ -417,25 +535,17 @@ groups:
       tier: stor
       type: gitaly
     expr: |
-      sum by (environment,stage) (
-        label_replace((
+      (
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="0.5"}[30m])
-          + ignoring(le)
+        )
+        +
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="1"}[30m])
         )
-        /
-        2
-        , "_c", "0", "", "")
-        or
-        label_replace((
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[30m])
-          + ignoring(le)
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[30m])
-        )
-        /
-        2
-        , "_c", "1", "", "")
       )
+      /
+      2
       / on(environment,stage) group_left()
       (
         gitlab_component_apdex:weight:score_30m{component="goserver",tier="stor",type="gitaly"} > 0
@@ -447,7 +557,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[30m])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -456,9 +566,59 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[30m]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[30m]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[30m]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[30m]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score_30m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[30m])
+      )
+  - record: gitlab_component_apdex:ratio_30m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[30m])
+        )
+        +
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[30m])
+        )
+      )
+      /
+      2
+      / on(environment,stage) group_left()
+      (
+        gitlab_component_apdex:weight:score_30m{component="goserver_op_service",tier="stor",type="gitaly"} > 0
+      )
+  - record: gitlab_component_ops:rate_30m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[30m])
+      )
+  - record: gitlab_component_errors:rate_30m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[30m]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[30m]), "_c", "1", "", "")
       )
   - record: gitlab_component_node_ops:rate_30m
     labels:
@@ -485,7 +645,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[30m])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[30m])
       )
   - record: gitlab_component_node_errors:rate_30m
     labels:
@@ -494,9 +654,29 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[30m]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[30m]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[30m]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[30m]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_node_ops:rate_30m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[30m])
+      )
+  - record: gitlab_component_node_errors:rate_30m
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[30m]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[30m]), "_c", "1", "", "")
       )
 - name: 'Component-Level SLIs: gitaly - 1h burn-rate'
   interval: 1m
@@ -558,9 +738,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h]), "_c", "0", "", "")
-        or
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h]), "_c", "1", "", "")
+        rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h])
       )
   - record: gitlab_component_apdex:ratio_1h
     labels:
@@ -568,31 +746,21 @@ groups:
       tier: stor
       type: gitaly
     expr: |
-      sum by (environment,stage) (
-        label_replace((
+      (
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="0.5"}[1h])
-          + ignoring(le)
+        )
+        +
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="1"}[1h])
         )
-        /
-        2
-        , "_c", "0", "", "")
-        or
-        label_replace((
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[1h])
-          + ignoring(le)
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[1h])
-        )
-        /
-        2
-        , "_c", "1", "", "")
       )
+      /
+      2
       /
       (
         sum by (environment,stage) (
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h]), "_c", "0", "", "")
-          or
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h]), "_c", "1", "", "")
+          rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_ops:rate_1h
@@ -602,7 +770,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[1h])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -611,9 +779,61 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[1h]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[1h]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[1h]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[1h]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score_1h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h])
+      )
+  - record: gitlab_component_apdex:ratio_1h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[1h])
+        )
+        +
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[1h])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h])
+        ) > 0
+      )
+  - record: gitlab_component_ops:rate_1h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[1h])
+      )
+  - record: gitlab_component_errors:rate_1h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[1h]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[1h]), "_c", "1", "", "")
       )
   - record: gitlab_component_node_apdex:weight:score_1h
     labels:
@@ -672,9 +892,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h]), "_c", "0", "", "")
-        or
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h]), "_c", "1", "", "")
+        rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h])
       )
   - record: gitlab_component_node_apdex:ratio_1h
     labels:
@@ -682,31 +900,21 @@ groups:
       tier: stor
       type: gitaly
     expr: |
-      sum by (environment,stage,shard,fqdn) (
-        label_replace((
+      (
+        sum by (environment,stage,shard,fqdn) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="0.5"}[1h])
-          + ignoring(le)
+        )
+        +
+        sum by (environment,stage,shard,fqdn) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="1"}[1h])
         )
-        /
-        2
-        , "_c", "0", "", "")
-        or
-        label_replace((
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[1h])
-          + ignoring(le)
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[1h])
-        )
-        /
-        2
-        , "_c", "1", "", "")
       )
+      /
+      2
       /
       (
         sum by (environment,stage,shard,fqdn) (
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h]), "_c", "0", "", "")
-          or
-          label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h]), "_c", "1", "", "")
+          rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h])
         ) > 0
       )
   - record: gitlab_component_node_ops:rate_1h
@@ -716,7 +924,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[1h])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[1h])
       )
   - record: gitlab_component_node_errors:rate_1h
     labels:
@@ -725,9 +933,61 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[1h]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[1h]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[1h]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[1h]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_node_apdex:weight:score_1h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h])
+      )
+  - record: gitlab_component_node_apdex:ratio_1h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment,stage,shard,fqdn) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[1h])
+        )
+        +
+        sum by (environment,stage,shard,fqdn) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[1h])
+        )
+      )
+      /
+      2
+      /
+      (
+        sum by (environment,stage,shard,fqdn) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[1h])
+        ) > 0
+      )
+  - record: gitlab_component_node_ops:rate_1h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[1h])
+      )
+  - record: gitlab_component_node_errors:rate_1h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[1h]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[1h]), "_c", "1", "", "")
       )
 - name: 'Component-Level SLIs: gitaly - 6h burn-rate'
   interval: 2m
@@ -787,9 +1047,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[6h]), "_c", "0", "", "")
-        or
-        label_replace(rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[6h]), "_c", "1", "", "")
+        rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[6h])
       )
   - record: gitlab_component_apdex:ratio_6h
     labels:
@@ -797,25 +1055,17 @@ groups:
       tier: stor
       type: gitaly
     expr: |
-      sum by (environment,stage) (
-        label_replace((
+      (
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="0.5"}[6h])
-          + ignoring(le)
+        )
+        +
+        sum by (environment,stage) (
           rate(grpc_server_handling_seconds_bucket{grpc_method!~"CalculateChecksum|CommitLanguages|CreateFork|CreateRepositoryFromURL|FetchInternalRemote|FetchIntoObjectPool|FetchRemote|FetchSourceBranch|FindRemoteRepository|FindRemoteRootRef|Fsck|GarbageCollect|PostReceiveHook|PreReceiveHook|RepackFull|RepackIncremental|ReplicateRepository|UpdateHook",grpc_service!="gitaly.OperationService",grpc_type="unary",job="gitaly",le="1"}[6h])
         )
-        /
-        2
-        , "_c", "0", "", "")
-        or
-        label_replace((
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[6h])
-          + ignoring(le)
-          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[6h])
-        )
-        /
-        2
-        , "_c", "1", "", "")
       )
+      /
+      2
       / on(environment,stage) group_left()
       (
         gitlab_component_apdex:weight:score_6h{component="goserver",tier="stor",type="gitaly"} > 0
@@ -827,7 +1077,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[6h])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -836,9 +1086,59 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[6h]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[6h]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[6h]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[6h]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_apdex:weight:score_6h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="+Inf"}[6h])
+      )
+  - record: gitlab_component_apdex:ratio_6h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      (
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="10"}[6h])
+        )
+        +
+        sum by (environment,stage) (
+          rate(grpc_server_handling_seconds_bucket{grpc_service="gitaly.OperationService",grpc_type="unary",job="gitaly",le="30"}[6h])
+        )
+      )
+      /
+      2
+      / on(environment,stage) group_left()
+      (
+        gitlab_component_apdex:weight:score_6h{component="goserver_op_service",tier="stor",type="gitaly"} > 0
+      )
+  - record: gitlab_component_ops:rate_6h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[6h])
+      )
+  - record: gitlab_component_errors:rate_6h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[6h]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[6h]), "_c", "1", "", "")
       )
   - record: gitlab_component_node_ops:rate_6h
     labels:
@@ -865,7 +1165,7 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        rate(gitaly_service_client_requests_total{job="gitaly"}[6h])
+        rate(gitaly_service_client_requests_total{grpc_service!="gitaly.OperationService",job="gitaly"}[6h])
       )
   - record: gitlab_component_node_errors:rate_6h
     labels:
@@ -874,9 +1174,29 @@ groups:
       type: gitaly
     expr: |
       sum by (environment,stage,shard,fqdn) (
-        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",job="gitaly"}[6h]), "_c", "0", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[6h]), "_c", "0", "", "")
         or
-        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",job="gitaly"}[6h]), "_c", "1", "", "")
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service!="gitaly.OperationService",job="gitaly"}[6h]), "_c", "1", "", "")
+      )
+  - record: gitlab_component_node_ops:rate_6h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        rate(gitaly_service_client_requests_total{grpc_service="gitaly.OperationService",job="gitaly"}[6h])
+      )
+  - record: gitlab_component_node_errors:rate_6h
+    labels:
+      component: goserver_op_service
+      tier: stor
+      type: gitaly
+    expr: |
+      sum by (environment,stage,shard,fqdn) (
+        label_replace(rate(gitaly_service_client_requests_total{grpc_code!~"OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[6h]), "_c", "0", "", "")
+        or
+        label_replace(rate(gitaly_service_client_requests_total{deadline_type!="limited",grpc_code="DeadlineExceeded",grpc_service="gitaly.OperationService",job="gitaly"}[6h]), "_c", "1", "", "")
       )
 - name: 'Component mapping: gitaly'
   interval: 1m
@@ -892,6 +1212,13 @@ groups:
     labels:
       aggregate_rps: 'yes'
       component: goserver
+      tier: stor
+      type: gitaly
+    expr: '1'
+  - record: gitlab_component_service:mapping
+    labels:
+      aggregate_rps: 'yes'
+      component: goserver_op_service
       tier: stor
       type: gitaly
     expr: '1'
