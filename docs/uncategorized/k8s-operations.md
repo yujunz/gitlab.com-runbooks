@@ -7,7 +7,13 @@ for GitLab.com. For managing individual services see the
 _Note: Before starting an oncall shift, be usre you follow these setup
 instructions_
 
-## Console Server setup for the oncall
+## Kubernetes API Access
+
+We use private GKE clusters, with the control plane only accessible from within
+the cluster's VPC. There are 2 that we currently use for access: console hosts,
+and ssh tunnels.
+
+### Console Server setup for the oncall
 
 Configuration changes are handled through GitLab CI so most of what we do does
 not require interacting with the cluster directly. Management of our staging and production clusters is
@@ -56,6 +62,31 @@ script or any of the components necessary.  These servers provide the sole means
 of troubleshooting a misbehaving cluster or application.  Any changes that
 involve the use of `helm` or `k-ctl` MUST be done via the repo and CI/CD.
 :warning:**
+
+### Use local tools via ssh tunnels
+
+It's possible to access the Kubernetes API server via an ssh tunnel to any GCP
+node with network access to the VPC containing the cluster (including via
+peering). However, **this should only be used for read access**. Changes to
+configuration should be done via CI pipelines, or via a console host in
+exceptional circumstances. You should seek peer review for these changes, just
+as you would for code review on automated changes.
+
+[`sshuttle`](https://github.com/sshuttle/sshuttle) automates the process of
+setting up an ssh tunnel _and_ modifying your local route table to forward
+traffic to the configured CIDR.
+
+First time setup:
+
+1. `gcloud --project=gitlab-production container clusters get-credentials gprd-gitlab-gke --region us-east1`
+1. Optionally rename your context to something less unwiedly: `kubectl config rename-context gke_gitlab-production_us-east1_gprd-gitlab-gke gprd`
+
+To access the API:
+
+1. Find the API IP for the desired context in `~/.kube/config`
+1. Open the tunnel (example using staging's current IP): `sshuttle -r console-01-sv-gstg.c.gitlab-staging-1.internal '34.73.144.43/32'`
+1. Set your kubectl context to the right target, e.g. `kctx gprd`
+1. Test it out: `kubectl get nodes`
 
 ## Workstation setup
 
