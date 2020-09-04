@@ -22,6 +22,8 @@ Next decide whether:
 
 ### Quick reference: WAF Rules:
 
+**Temporary rules are subject to automatic expiration!** See [managing traffic](managing-traffic.md) for details.
+
 To make it easier to know where to put the rule priority-wise, categorize the type of rule and pick the priority range from below
 
 - 00000-14999: vulnerability hot-patch (block for everyone)
