@@ -178,7 +178,8 @@ ANALYZE VERBOSE;
 We have several alerts that detect replication problems:
 
 * Alert that replication is stopped
-* Alert that replication lag is over 2min
+* Alert that replication lag is over 2min (over 120m on archive and delayed
+  replica)
 * Alert that replication lag is over 200MB
 
 As well there are a few alerts that are intended to detect problems that could *lead* to replication problems:
@@ -188,11 +189,16 @@ As well there are a few alerts that are intended to detect problems that could *
 
 ### Possible checks
 
-* Monitoring
+* [replication lag in Thanos](https://thanos-query.ops.gitlab.net/graph?g0.range_input=2h&g0.max_source_resolution=0s&g0.expr=pg_replication_lag%7Benv%3D%22gprd%22%2C%20type%3D%22patroni%22%7D%20AND%20pg_replication_is_replica%20%3D%3D%201&g0.tab=0)
 
 * Also check for bloat (see the section "Tables with a large amount of
   dead tuples" below). Replication lag can cause bloat on the primary
   due to "vacuum feedback" which we have enabled.
+
+* If a replica is falling behind, the primary might keep WAL files around that
+  are needed to catch up. This can lead to running out of disk space pretty
+  fast! If things don't resolve, remove the replication slot on the primary (see
+  [below](#replication-slots)) 
 
 ### Resolution
 
@@ -200,26 +206,30 @@ Look into whether there's a particularly heavy migration running which
 may be generating very large WAL traffic that the replication can't
 keep up with.
 
-Not yet on the dashboards but you can look at
-`rate(pg_xlog_position_bytes[1m]) ` compared with `pg_replication_lag`
-to see if the replication lag is correlated with unusually high WAL
-generation and what time it started.
+Not yet on the dashboards but you can look at `rate(pg_xlog_position_bytes[1m])
+` compared with `pg_replication_lag` to see if the replication lag is correlated
+with unusually high WAL generation and what time it started:
+[Thanos](https://thanos-query.ops.gitlab.net/graph?g0.range_input=2h&g0.max_source_resolution=0s&g0.expr=pg_replication_lag%7Benv%3D%22gprd%22%2C%20type%3D%22patroni%22%7D%20AND%20pg_replication_is_replica%20%3D%3D%201&g0.tab=0&g1.range_input=1h&g1.max_source_resolution=0s&g1.expr=rate(pg_xlog_position_bytes%7Benv%3D%22gprd%22%2C%20type%3D%22patroni%22%7D%5B1m%5D)&g1.tab=0)
 
-Another cause of replication lag to investigate is a long-running
-query on the replica which conflicts with a vacuum operation from the
-primary. This should not be common because we don't generally run many
-long-running queries on gitlab.com and we have vacuum feedback
-enabled.
+Another cause of replication lag to investigate is a long-running query on the
+replica which conflicts with a vacuum operation from the primary. This should
+not be common because we don't generally run many long-running queries on
+gitlab.com and we have vacuum feedback enabled.
+
+[get_slow_queries.sh](../uncategorized/db_scripts/get_slow_queries.sh)
 
 Just wait, replication self recovers :wine_glass:
+
+If it takes too long, kill the blocking query:
+[terminate_slow_queries.sh](../uncategorized/db_scripts/terminate_slow_queries.sh)
 
 ## Replication Slots
 
 ### Symptoms
 
-An unused replication slot in a primary will cause the primary to keep
-around a large and growing amount of WAL (XLOG). This can eventually
-cause low disk space free alerts and even an outage.
+An unused replication slot in a primary will cause the primary to keep around a
+large and growing amount of WAL (XLOG) in `pg_wal/`. This can eventually cause
+low disk space free alerts and even an outage.
 
 ### Possible checks
 
@@ -228,10 +238,10 @@ cause low disk space free alerts and even an outage.
 
 ### Resolution
 
-Verify that the slot is indeed not needed any more. Note that after
-dropping the slot Postgres will be free to delete the WAL data that
-replica would have needed to resume replication. If it turns out to be
-needed that replica will likely have to be recreated from scratch.
+Verify that the slot is indeed not needed any more. Note that after dropping the
+slot Postgres will be free to delete the WAL data that replica would have needed
+to resume replication. If it turns out to be needed that replica will likely
+have to be resynced using wal-e/wal-g or recreated from scratch.
 
 Drop the replication slot with `SELECT pg_drop_replication_slot('slot_name');`
 

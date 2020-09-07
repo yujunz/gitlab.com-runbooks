@@ -24,7 +24,6 @@
 * [../patroni/log_analysis.md](../patroni/log_analysis.md)
 * [../patroni/pg_repack.md](../patroni/pg_repack.md)
 * [../patroni/postgres-checkup.md](../patroni/postgres-checkup.md)
-* [../patroni/postgres.md](../patroni/postgres.md)
 * [../patroni/postgresql-locking.md](../patroni/postgresql-locking.md)
 * [../patroni/postgresql-query-load-evaluation.md](../patroni/postgresql-query-load-evaluation.md)
 * [../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md](../pgbouncer/patroni-consul-postgres-pgbouncer-interactions.md)
