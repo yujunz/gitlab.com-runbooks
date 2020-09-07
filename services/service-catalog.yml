@@ -582,7 +582,7 @@ services:
     documents:
       design:
       architecture:
-      readiness_review:
+      readiness_review: https://gitlab.com/gitlab-com/gl-infra/readiness/-/issues/8
       service:
         - https://github.com/discourse/discourse_docker
       security:
