@@ -78,17 +78,20 @@ General principles: runbooks should be
 #### Suggested Runbook Layout
 
 Runbooks are most often used to mitigate issues / react to alerts. Therefore
-runbooks for alerts should be simply structured by describing symptom, cause and
-solution:
+runbooks should ve a "Troubleshooting" section simply structured by describing
+symptom, cause and solution and a "Maintenance" section for other general
+maintenance tasks:
 
 ```
 [[_TOC_]]
 
-# Symptom: CPU saturated
+# Troubleshooting
+
+## Symptom: CPU saturated
 
 You got a CPU saturation alert...
 
-## Cause A: User is doing too many request
+### Cause A: User is doing too many request
 
 A user is making too many requests.
 
@@ -99,7 +102,7 @@ Identifyable by:
 * List of log searches
 * ...
 
-### Solution
+#### Solution
 
 Block the user:
 
@@ -108,7 +111,7 @@ Block the user:
 * block
 * the user
 
-## Cause B: DDOS Attack
+### Cause B: DDOS Attack
 
 Identifyable by:
 
@@ -117,9 +120,20 @@ Identifyable by:
 * List of log searches
 * ...
 
-### Solution
+#### Solution
 
 <Cloudflare DDOS runbook link>
+
+# Maintenance
+
+## Execute a failover
+
+[...]
+
+## Restore from backup
+
+[...]
+
 
 ```
 
