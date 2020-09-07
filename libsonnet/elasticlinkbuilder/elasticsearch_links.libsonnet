@@ -2,12 +2,6 @@ local rison = import 'rison.libsonnet';
 
 local kibanaEndpoint = 'https://log.gprd.gitlab.net/app/kibana';
 
-local kueryFilter(field, value) =
-  {
-    language: 'kuery',
-    query: '%s:%s' % [field, value],
-  };
-
 // Builds an ElasticSearch match filter clause
 local matchFilter(field, value) =
   {
@@ -182,21 +176,28 @@ local indexCatalog = {
   },
 };
 
-local buildElasticDiscoverSearchQueryURL(index, filters, query='') =
+local buildElasticDiscoverSearchQueryURL(index, filters, luceneQueries=[]) =
   local applicationState = {
     columns: indexCatalog[index].defaultColumns,
     filters: filters,
     index: indexCatalog[index].indexId,
-    query: query,
+    query: {
+      language: 'kuery',
+      query: std.join(' AND ', luceneQueries),
+    },
   };
 
   kibanaEndpoint + '#/discover?_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
 
-local buildElasticLineCountVizURL(index, filters) =
+local buildElasticLineCountVizURL(index, filters, luceneQueries=[]) =
   local ic = indexCatalog[index];
 
   local applicationState = {
     filters: filters,
+    query: {
+      language: 'kuery',
+      query: std.join(' AND ', luceneQueries),
+    },
     vis: {
       aggs: [
         {
@@ -231,11 +232,15 @@ local buildElasticLineCountVizURL(index, filters) =
 
   kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
 
-local buildElasticLinePercentileVizURL(index, filters, field) =
+local buildElasticLinePercentileVizURL(index, filters, luceneQueries=[], field) =
   local ic = indexCatalog[index];
 
   local applicationState = {
     filters: filters,
+    query: {
+      language: 'kuery',
+      query: std.join(' AND ', luceneQueries),
+    },
     vis: {
       aggs: [
         {
@@ -276,21 +281,21 @@ local buildElasticLinePercentileVizURL(index, filters, field) =
 {
   matchFilter:: matchFilter,
   rangeFilter:: rangeFilter,
-  kueryFilter:: kueryFilter,
 
   // Given an index, and a set of filters, returns a URL to a Kibana discover module/search
-  buildElasticDiscoverSearchQueryURL(index, filters, query='')::
-    buildElasticDiscoverSearchQueryURL(index, filters, query),
+  buildElasticDiscoverSearchQueryURL(index, filters, luceneQueries=[])::
+    buildElasticDiscoverSearchQueryURL(index, filters, luceneQueries),
 
   // Search for failed requests
-  buildElasticDiscoverFailureSearchQueryURL(index, filters)::
+  buildElasticDiscoverFailureSearchQueryURL(index, filters, luceneQueries=[])::
     buildElasticDiscoverSearchQueryURL(
       index,
-      filters + indexCatalog[index].failureFilter
+      filters + indexCatalog[index].failureFilter,
+      luceneQueries
     ),
 
   // Search for requests taking longer than the specified number of seconds
-  buildElasticDiscoverSlowRequestSearchQueryURL(index, filters, slowRequestSeconds)::
+  buildElasticDiscoverSlowRequestSearchQueryURL(index, filters, luceneQueries=[], slowRequestSeconds)::
     local ic = indexCatalog[index];
     buildElasticDiscoverSearchQueryURL(
       index,
@@ -298,22 +303,23 @@ local buildElasticLinePercentileVizURL(index, filters, field) =
     ),
 
   // Given an index, and a set of filters, returns a URL to a Kibana count visualization
-  buildElasticLineCountVizURL(index, filters)::
-    buildElasticLineCountVizURL(index, filters),
+  buildElasticLineCountVizURL(index, filters, luceneQueries=[])::
+    buildElasticLineCountVizURL(index, filters, luceneQueries),
 
-  buildElasticLineFailureCountVizURL(index, filters)::
+  buildElasticLineFailureCountVizURL(index, filters, luceneQueries=[])::
     buildElasticLineCountVizURL(
       index,
-      filters + indexCatalog[index].failureFilter
+      filters + indexCatalog[index].failureFilter,
+      luceneQueries
     ),
 
   // Given an index, and a set of filters, returns a URL to a Kibana percentile visualization
-  buildElasticLinePercentileVizURL(index, filters, field=null)::
+  buildElasticLinePercentileVizURL(index, filters, luceneQueries=[], field=null)::
     local fieldWithDefault = if field == null then
       indexCatalog[index].defaultLatencyField
     else
       field;
-    buildElasticLinePercentileVizURL(index, filters, fieldWithDefault),
+    buildElasticLinePercentileVizURL(index, filters, luceneQueries, fieldWithDefault),
 
   // Returns true iff the named index supports failure queries
   indexSupportsFailureQueries(index)::

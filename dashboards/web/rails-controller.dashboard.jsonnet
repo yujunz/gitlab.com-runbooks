@@ -17,7 +17,7 @@ local elasticsearchLogSearchDataLink = {
   url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL(
     'rails',
     [elasticsearchLinks.matchFilter('json.controller.keyword', '$controller')],
-    elasticsearchLinks.kueryFilter('json.action.keyword', '${action:lucene}')
+    ['json.action.keyword:${action:lucene}']
   ),
   title: 'ElasticSearch: Rails logs',
   targetBlank: true,
