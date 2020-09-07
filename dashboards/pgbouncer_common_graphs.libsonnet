@@ -261,7 +261,7 @@ local saturationQuery(aggregationLabels, nodeSelector, poolSelector) =
         query=|||
           sum(
             rate(
-              namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", %(nodeSelector)s}[1m]
+              namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", %(nodeSelector)s}[5m]
             )
           ) by (groupname, fqdn, type, tier, stage, environment)
         ||| % formatConfig,

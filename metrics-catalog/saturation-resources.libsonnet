@@ -645,10 +645,11 @@ local pgbouncerSyncPool(serviceType, role) =
     |||,
     grafana_dashboard_uid: 'sat_pgbouncer_single_core',
     resourceLabels: ['fqdn', 'groupname'],
+    burnRatePeriod: '5m',
     query: |||
       sum without(cpu, mode) (
         rate(
-          namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", %(selector)s}[1m]
+          namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", %(selector)s}[%(rangeInterval)s]
         )
       )
     |||,

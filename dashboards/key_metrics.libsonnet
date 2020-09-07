@@ -41,6 +41,154 @@ local generalGraphPanel(
   .addSeriesOverride(seriesOverrides.outageSlo)
   .addSeriesOverride(seriesOverrides.slo);
 
+local genericApdexPanel(
+  title,
+  description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
+  compact=false,
+  stableId=null,
+  primaryQueryExpr,
+  legendFormat,
+  linewidth=null,
+  environmentSelectorHash,
+  serviceType,
+  sort='increasing',
+  legend_show=null,
+      ) =
+  generalGraphPanel(
+    title,
+    description=description,
+    sort=sort,
+    legend_show=if legend_show == null then !compact else legend_show,
+    linewidth=if linewidth == null then if compact then 1 else 2 else linewidth,
+    stableId=stableId,
+  )
+  .addTarget(  // Primary metric (worst case)
+    promQuery.target(
+      primaryQueryExpr,
+      legendFormat=legendFormat,
+    )
+  )
+  .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
+    promQuery.target(
+      sliPromQL.apdex.serviceApdexDegradationSLOQuery(environmentSelectorHash, serviceType),
+      interval='5m',
+      legendFormat='6h Degradation SLO',
+    ),
+  )
+  .addTarget(  // Double apdex SLO is Outage-level SLO
+    promQuery.target(
+      sliPromQL.apdex.serviceApdexOutageSLOQuery(environmentSelectorHash, serviceType),
+      interval='5m',
+      legendFormat='1h Outage SLO',
+    ),
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    max=1,
+    label=if compact then '' else 'Apdex %',
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
+local genericErrorPanel(
+  title,
+  description='Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better',
+  compact=false,
+  stableId=null,
+  primaryQueryExpr,
+  legendFormat,
+  linewidth=null,
+  environmentSelectorHash,
+  serviceType,
+  sort='decreasing',
+  legend_show=null,
+      ) =
+  generalGraphPanel(
+    title,
+    description=description,
+    sort=sort,
+    legend_show=if legend_show == null then !compact else legend_show,
+    linewidth=if linewidth == null then if compact then 1 else 2 else linewidth,
+    stableId=stableId,
+  )
+  .addTarget(
+    promQuery.target(
+      primaryQueryExpr,
+      legendFormat=legendFormat,
+    )
+  )
+  .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
+    promQuery.target(
+      sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery(environmentSelectorHash, serviceType),
+      interval='5m',
+      legendFormat='6h Degradation SLO',
+    ),
+  )
+  .addTarget(  // Outage level SLO
+    promQuery.target(
+      sliPromQL.errorRate.serviceErrorRateOutageSLOQuery(environmentSelectorHash, serviceType),
+      interval='5m',
+      legendFormat='1h Outage SLO',
+    ),
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='percentunit',
+    min=0,
+    label=if compact then '' else '% Requests in Error',
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
+local genericQPSPanel(
+  title,
+  description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
+  compact=false,
+  stableId=null,
+  primaryQueryExpr,
+  legendFormat,
+  linewidth=null,
+  environmentSelectorHash,
+  serviceType,
+  sort='decreasing',
+  legend_show=null,
+      ) =
+  generalGraphPanel(
+    title,
+    description=description,
+    sort=sort,
+    legend_show=if legend_show == null then !compact else legend_show,
+    linewidth=if linewidth == null then if compact then 1 else 2 else linewidth,
+    stableId=stableId,
+  )
+  .addTarget(  // Primary metric
+    promQuery.target(
+      primaryQueryExpr,
+      legendFormat=legendFormat,
+    )
+  )
+  .resetYaxes()
+  .addYaxis(
+    format='short',
+    min=0,
+    label=if compact then '' else 'Operations per Second',
+  )
+  .addYaxis(
+    format='short',
+    max=1,
+    min=0,
+    show=false,
+  );
+
 {
   apdexPanel(
     serviceType,
@@ -49,22 +197,20 @@ local generalGraphPanel(
     compact=false,
     description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
     stableId=null,
+    sort='increasing',
+
   )::
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
-    generalGraphPanel(
+    genericApdexPanel(
       'Latency: Apdex',
       description=description,
-      sort=0,
-      legend_show=!compact,
-      linewidth=if compact then 1 else 2,
+      compact=compact,
       stableId=stableId,
-    )
-    .addTarget(  // Primary metric (worst case)
-      promQuery.target(
-        sliPromQL.apdex.serviceApdexQuery(selectorHash, '$__interval', worstCase=true),
-        legendFormat='{{ type }} service',
-      )
+      primaryQueryExpr=sliPromQL.apdex.serviceApdexQuery(selectorHash, '$__interval', worstCase=true),
+      legendFormat='{{ type }} service',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
     )
     .addTarget(  // Primary metric (avg case)
       promQuery.target(
@@ -72,37 +218,11 @@ local generalGraphPanel(
         legendFormat='{{ type }} service (avg)',
       )
     )
-    .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
-      promQuery.target(
-        sliPromQL.apdex.serviceApdexDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='6h Degradation SLO',
-      ),
-    )
-    .addTarget(  // Double apdex SLO is Outage-level SLO
-      promQuery.target(
-        sliPromQL.apdex.serviceApdexOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='1h Outage SLO',
-      ),
-    )
     .addTarget(  // Last week
       promQuery.target(
         sliPromQL.apdex.serviceApdexQueryWithOffset(selectorHash, '1w'),
         legendFormat='last week',
       )
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      max=1,
-      label=if compact then '' else 'Apdex %',
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/'))
     .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillBelowTo: serviceType + ' service' }))
@@ -120,48 +240,18 @@ local generalGraphPanel(
   )::
     local formatConfig = {
       serviceType: serviceType,
-      serviceStage: serviceStage,
       component: component,
     };
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: component };
 
-    generalGraphPanel(
+    genericApdexPanel(
       '%(component)s Apdex' % formatConfig,
-      description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
-      linewidth=2
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.apdex.componentApdexQuery(selectorHash, '$__interval'),
-        legendFormat='{{ component }} apdex',
-      )
-    )
-    .addTarget(
-      promQuery.target(
-        sliPromQL.apdex.serviceApdexOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='1h Outage SLO',
-      ),
-    )
-    .addTarget(
-      promQuery.target(
-        sliPromQL.apdex.serviceApdexDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='6h Degradation SLO',
-      ),
+      primaryQueryExpr=sliPromQL.apdex.componentApdexQuery(selectorHash, '$__interval'),
+      legendFormat='{{ component }} apdex',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* apdex$/'))
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      max=1,
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
-    )
     .addDataLink({
       url: '/d/alerts-component_multiburn_apdex?${__url_time_range}&${__all_variables}&var-type=%(type)s&var-component=%(component)s' % {
         type: serviceType,
@@ -173,54 +263,24 @@ local generalGraphPanel(
 
   singleComponentNodeApdexPanel(
     serviceType,
-    serviceStage,
     component,
+    selectorHash,
     environmentSelectorHash=defaultEnvironmentSelector,
   )::
     local formatConfig = {
       serviceType: serviceType,
-      serviceStage: serviceStage,
       component: component,
     };
-    local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: component };
 
-    generalGraphPanel(
+    genericApdexPanel(
       '🖥 Per-Node %(component)s Apdex' % formatConfig,
-      description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
-      linewidth=1,
+      primaryQueryExpr=sliPromQL.apdex.componentNodeApdexQuery(selectorHash, '$__interval'),
+      legendFormat='{{ fqdn }} {{ component }} apdex',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
       sort='increasing',
       legend_show=false,
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.apdex.componentNodeApdexQuery(selectorHash, '$__interval'),
-        legendFormat='{{ fqdn }} {{ component }} apdex',
-      )
-    )
-    .addTarget(
-      promQuery.target(
-        sliPromQL.apdex.serviceApdexOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='1h Outage SLO',
-      ),
-    )
-    .addTarget(
-      promQuery.target(
-        sliPromQL.apdex.serviceApdexDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='6h Degradation SLO',
-      ),
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      max=1,
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
+      linewidth=1,
     )
     .addDataLink({
       url: '/d/alerts-component_node_multiburn_apdex?${__url_time_range}&${__all_variables}&var-type=%(type)s&var-fqdn=${__series.labels.fqdn}' % { type: serviceType },
@@ -233,42 +293,31 @@ local generalGraphPanel(
     serviceStage,
     environmentSelectorHash=defaultEnvironmentSelector,
   )::
-    local formatConfig = {
-      serviceType: serviceType,
-      serviceStage: serviceStage,
-    };
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
-    generalGraphPanel(
+    genericApdexPanel(
       'Component Latency: Apdex',
-      description='Apdex is a measure of requests that complete within a tolerable period of time for the service. Higher is better.',
       linewidth=1,
-      sort='increasing',
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.apdex.componentApdexQuery(selectorHash, '$__interval'),
-        legendFormat='{{ component }} component',
-      )
-    )
-    .addTarget(  // Min apdex score SLO for gitlab_service_errors:ratio metric
-      promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='SLO',
-      ),
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      max=1,
-      label='Apdex %',
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
+      primaryQueryExpr=sliPromQL.apdex.componentApdexQuery(selectorHash, '$__interval'),
+      legendFormat='{{ component }} component',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
+    ),
+
+  /**
+   * Returns a graph for a node-level aggregated apdex score
+   */
+  serviceNodeApdexPanel(
+    serviceType,
+    selectorHash,
+    environmentSelectorHash=defaultEnvironmentSelector,
+  )::
+    genericApdexPanel(
+      'Node Latency: Apdex',
+      primaryQueryExpr=sliPromQL.apdex.serviceNodeApdexQuery(selectorHash, '$__interval'),
+      legendFormat='{{ fqdn }}',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
     ),
 
   errorRatesPanel(
@@ -281,39 +330,20 @@ local generalGraphPanel(
   )::
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
-    generalGraphPanel(
+    genericErrorPanel(
       'Error Ratios',
-      description='Error rates are a measure of unhandled service exceptions within a minute period. Client errors are excluded when possible. Lower is better',
-      sort=0,
-      legend_show=!compact,
-      linewidth=if compact then 1 else 2,
+      compact=compact,
       stableId=stableId,
-    )
-    .addTarget(  // Primary metric (max)
-      promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateQuery(selectorHash, '$__interval', worstCase=true),
-        legendFormat='{{ type }} service',
-      )
+      primaryQueryExpr=sliPromQL.errorRate.serviceErrorRateQuery(selectorHash, '$__interval', worstCase=true),
+      legendFormat='{{ type }} service',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
     )
     .addTarget(  // Primary metric (avg)
       promQuery.target(
         sliPromQL.errorRate.serviceErrorRateQuery(selectorHash, '$__interval', worstCase=false),
         legendFormat='{{ type }} service (avg)',
       )
-    )
-    .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
-      promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='6h Degradation SLO',
-      ),
-    )
-    .addTarget(  // Outage level SLO
-      promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='1h Outage SLO',
-      ),
     )
     .addTarget(  // Last week
       promQuery.target(
@@ -322,18 +352,6 @@ local generalGraphPanel(
       ) + {
         [if !includeLastWeek then 'hide']: true,
       }
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      min=0,
-      label=if compact then '' else '% Requests in Error',
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/', { fillBelowTo: serviceType + ' service (avg)' }))
     .addSeriesOverride(seriesOverrides.averageCaseSeries('/ service \\(avg\\)$/', { fillGradient: 10 }))
@@ -351,49 +369,19 @@ local generalGraphPanel(
   )::
     local formatConfig = {
       serviceType: serviceType,
-      serviceStage: serviceStage,
       component: componentName,
     };
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: componentName };
 
-    generalGraphPanel(
+    genericErrorPanel(
       '%(component)s Component Error Rates' % formatConfig,
-      description='Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better',
       linewidth=1,
-      sort='decreasing',
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.errorRate.componentErrorRateQuery(selectorHash),
-        legendFormat='{{ component }} error rate',
-      )
-    )
-    .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
-      promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='6h Degradation SLO',
-      ),
-    )
-    .addTarget(  // Outage level SLO
-      promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='1h Outage SLO',
-      ),
+      primaryQueryExpr=sliPromQL.errorRate.componentErrorRateQuery(selectorHash),
+      legendFormat='{{ component }} error rate',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* error rate$/'))
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      min=0,
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
-    )
     .addDataLink({
       url: '/d/alerts-component_multiburn_error?${__url_time_range}&${__all_variables}&var-type=%(type)s&var-component=%(component)s' % {
         type: serviceType,
@@ -405,61 +393,29 @@ local generalGraphPanel(
 
   singleComponentNodeErrorRates(
     serviceType,
-    serviceStage,
     componentName,
+    selectorHash,
     environmentSelectorHash=defaultEnvironmentSelector,
   )::
     local formatConfig = {
       serviceType: serviceType,
-      serviceStage: serviceStage,
       component: componentName,
     };
-    local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: componentName };
 
-    generalGraphPanel(
+    genericErrorPanel(
       '🖥 Per-Node %(component)s Component Error Rates' % formatConfig,
-      description='Error rates are a measure of unhandled service exceptions per second. Client errors are excluded when possible. Lower is better',
       linewidth=1,
       legend_show=false,
-      sort='decreasing',
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.errorRate.componentNodeErrorRateQuery(selectorHash),
-        legendFormat='{{ fqdn }} {{ component }} error rate',
-      )
-    )
-    .addTarget(  // Maximum error rate SLO for gitlab_service_errors:ratio metric
-      promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateDegradationSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='6h Degradation SLO',
-      ),
-    )
-    .addTarget(  // Outage level SLO
-      promQuery.target(
-        sliPromQL.errorRate.serviceErrorRateOutageSLOQuery(environmentSelectorHash, serviceType, serviceStage),
-        interval='5m',
-        legendFormat='1h Outage SLO',
-      ),
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='percentunit',
-      min=0,
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
+      primaryQueryExpr=sliPromQL.errorRate.componentNodeErrorRateQuery(selectorHash),
+      legendFormat='{{ fqdn }} {{ component }} error rate',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
     )
     .addDataLink({
       url: '/d/alerts-component_node_multiburn_error?${__url_time_range}&${__all_variables}&var-type=%(type)s&var-fqdn=${__series.labels.fqdn}' % { type: serviceType },
       title: 'Component/Node Error Multi-Burn Analysis',
       targetBlank: true,
     }),
-
 
   componentErrorRates(
     serviceType,
@@ -508,6 +464,23 @@ local generalGraphPanel(
       show=false,
     ),
 
+  /**
+   * Returns a graph for a node-level error ratios
+   */
+  serviceNodeErrorRatePanel(
+    serviceType,
+    selectorHash,
+    environmentSelectorHash=defaultEnvironmentSelector,
+  )::
+    genericErrorPanel(
+      'Node Error Ratio',
+      primaryQueryExpr=sliPromQL.errorRate.serviceNodeErrorRateQuery(selectorHash),
+      legendFormat='{{ fqdn }} error rate',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
+    ),
+
+
   qpsPanel(
     serviceType,
     serviceStage,
@@ -517,19 +490,14 @@ local generalGraphPanel(
   )::
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
-    generalGraphPanel(
+    genericQPSPanel(
       'RPS - Service Requests per Second',
-      description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
-      sort=0,
-      legend_show=!compact,
-      linewidth=if compact then 1 else 2,
+      compact=compact,
       stableId=stableId,
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.opsRate.serviceOpsRateQuery(selectorHash, '$__interval'),
-        legendFormat='{{ type }} service',
-      )
+      primaryQueryExpr=sliPromQL.opsRate.serviceOpsRateQuery(selectorHash, '$__interval'),
+      legendFormat='{{ type }} service',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
     )
     .addTarget(  // Last week
       promQuery.target(
@@ -549,18 +517,6 @@ local generalGraphPanel(
         legendFormat='lower normal',
       ),
     )
-    .resetYaxes()
-    .addYaxis(
-      format='short',
-      min=0,
-      label=if compact then '' else 'Operations per Second',
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
-    )
     .addSeriesOverride(seriesOverrides.goldenMetric('/ service$/')),
 
   singleComponentQPSPanel(
@@ -571,71 +527,38 @@ local generalGraphPanel(
   )::
     local formatConfig = {
       serviceType: serviceType,
-      serviceStage: serviceStage,
       component: componentName,
     };
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: componentName };
 
-    generalGraphPanel(
+    genericQPSPanel(
       '%(component)s Component RPS - Requests per Second' % formatConfig,
-      description='The operation rate is the sum total of all requests being handle for this component within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
+      primaryQueryExpr=sliPromQL.opsRate.componentOpsRateQuery(selectorHash, '$__interval'),
+      legendFormat='{{ component }} RPS',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
       linewidth=1
     )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.opsRate.componentOpsRateQuery(selectorHash, '$__interval'),
-        legendFormat='{{ component }} RPS',
-      )
-    )
-    .addSeriesOverride(seriesOverrides.goldenMetric('/.* RPS$/'))
-    .resetYaxes()
-    .addYaxis(
-      format='reqps',
-      min=0,
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
-    ),
+    .addSeriesOverride(seriesOverrides.goldenMetric('/.* RPS$/')),
 
   singleComponentNodeQPSPanel(
     serviceType,
-    serviceStage,
     componentName,
+    selectorHash,
     environmentSelectorHash=defaultEnvironmentSelector,
   )::
     local formatConfig = {
       serviceType: serviceType,
-      serviceStage: serviceStage,
       component: componentName,
     };
-    local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: componentName };
 
-    generalGraphPanel(
+    genericQPSPanel(
       '🖥 Per-Node %(component)s Component RPS - Requests per Second' % formatConfig,
-      description='The operation rate is the sum total of all requests being handle for this component within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
+      primaryQueryExpr=sliPromQL.opsRate.componentNodeOpsRateQuery(selectorHash, '$__interval'),
+      legendFormat='{{ fqdn }} {{ component }} RPS',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
       linewidth=1,
-      legend_show=false,
-      sort='decreasing',
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.opsRate.componentNodeOpsRateQuery(selectorHash, '$__interval'),
-        legendFormat='{{ fqdn }} {{ component }} RPS',
-      )
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='reqps',
-      min=0,
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
     ),
 
   componentQpsPanel(
@@ -643,34 +566,28 @@ local generalGraphPanel(
     serviceStage,
     environmentSelectorHash=defaultEnvironmentSelector,
   )::
-    local formatConfig = {
-      serviceType: serviceType,
-      serviceStage: serviceStage,
-    };
     local selectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage };
 
-    generalGraphPanel(
+    genericQPSPanel(
       'Component RPS - Requests per Second',
-      description='The operation rate is the sum total of all requests being handle for all components within this service. Note that a single user request can lead to requests to multiple components. Higher is busier.',
+      primaryQueryExpr=sliPromQL.opsRate.componentOpsRateQuery(selectorHash, '$__interval'),
+      legendFormat='{{ component }} component',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
       linewidth=1,
-      sort='decreasing',
-    )
-    .addTarget(  // Primary metric
-      promQuery.target(
-        sliPromQL.opsRate.componentOpsRateQuery(selectorHash, '$__interval'),
-        legendFormat='{{ component }} component',
-      )
-    )
-    .resetYaxes()
-    .addYaxis(
-      format='reqps',
-      label='Requests per Second',
-    )
-    .addYaxis(
-      format='short',
-      max=1,
-      min=0,
-      show=false,
+    ),
+
+  serviceNodeQpsPanel(
+    serviceType,
+    selectorHash,
+    environmentSelectorHash=defaultEnvironmentSelector,
+  )::
+    genericQPSPanel(
+      'Node RPS - Requests per Second',
+      primaryQueryExpr=sliPromQL.opsRate.serviceNodeOpsRateQuery(selectorHash, '$__interval'),
+      legendFormat='{{ fqdn }}',
+      environmentSelectorHash=environmentSelectorHash,
+      serviceType=serviceType,
     ),
 
   saturationPanel(

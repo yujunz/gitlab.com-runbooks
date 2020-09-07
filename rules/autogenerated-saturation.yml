@@ -425,7 +425,7 @@ groups:
           clamp_max(
             sum without(cpu, mode) (
               rate(
-                namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", environment!="",type=~"pgbouncer|patroni"}[1m]
+                namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", environment!="",type=~"pgbouncer|patroni"}[5m]
               )
             )
             ,
@@ -2334,7 +2334,7 @@ groups:
             clamp_max(
               sum without(cpu, mode) (
                 rate(
-                  namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[1m]
+                  namedprocess_namegroup_cpu_seconds_total{groupname=~"pgbouncer.*", environment="{{ $labels.environment }}",stage="{{ $labels.stage }}",type="{{ $labels.type }}"}[5m]
                 )
               )
               ,
