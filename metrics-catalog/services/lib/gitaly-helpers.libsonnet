@@ -37,31 +37,17 @@ local gitalyApdexIgnoredMethodsRegexp = std.join('|', gitalyApdexIgnoredMethods)
   gitalyApdexIgnoredMethodsRegexp:: gitalyApdexIgnoredMethodsRegexp,
 
   // This calculates the apdex score for a Gitaly-like (Gitaly/Praefect)
-  // GRPC service. It combines two values, unary values excluding the OperationService
-  // on one threshold with OperationService requests on a slower threshold
+  // GRPC service. Since this is an SLI only, not all operations are included,
+  // only unary ones, and even then known slow operations are excluded from
+  // the apdex calculation
   grpcServiceApdex(baseSelector)::
-    combined([
-      // Services excluding the Operation Service
-      histogramApdex(
-        histogram='grpc_server_handling_seconds_bucket',
-        selector=baseSelector {
-          grpc_type: 'unary',
-          grpc_service: { ne: 'gitaly.OperationService' },
-          grpc_method: { nre: gitalyApdexIgnoredMethodsRegexp },
-        },
-        satisfiedThreshold=0.5,
-        toleratedThreshold=1
-      ),
-      // OperationService is relatively very slow compared to other
-      // Gitaly services
-      histogramApdex(
-        histogram='grpc_server_handling_seconds_bucket',
-        selector=baseSelector {
-          grpc_type: 'unary',
-          grpc_service: 'gitaly.OperationService',
-        },
-        satisfiedThreshold=10,
-        toleratedThreshold=30
-      ),
-    ]),
+    histogramApdex(
+      histogram='grpc_server_handling_seconds_bucket',
+      selector=baseSelector {
+        grpc_type: 'unary',
+        grpc_method: { nre: gitalyApdexIgnoredMethodsRegexp },
+      },
+      satisfiedThreshold=0.5,
+      toleratedThreshold=1
+    ),
 }

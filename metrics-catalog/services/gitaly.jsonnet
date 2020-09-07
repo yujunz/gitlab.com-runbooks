@@ -4,6 +4,24 @@ local customApdex = metricsCatalog.customApdex;
 local combined = metricsCatalog.combined;
 local gitalyHelpers = import './lib/gitaly-helpers.libsonnet';
 local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
+local histogramApdex = metricsCatalog.histogramApdex;
+
+local gitalyGRPCErrorRate(baseSelector) =
+  combined([
+    rateMetric(
+      counter='gitaly_service_client_requests_total',
+      selector=baseSelector {
+        grpc_code: { nre: 'OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded' },
+      }
+    ),
+    rateMetric(
+      counter='gitaly_service_client_requests_total',
+      selector=baseSelector {
+        grpc_code: 'DeadlineExceeded',
+        deadline_type: { ne: 'limited' },
+      }
+    ),
+  ]);
 
 metricsCatalog.serviceDefinition({
   type: 'gitaly',
@@ -20,7 +38,10 @@ metricsCatalog.serviceDefinition({
   },
   components: {
     goserver: {
-      local baseSelector = { job: 'gitaly' },
+      local baseSelector = {
+        job: 'gitaly',
+        grpc_service: { ne: 'gitaly.OperationService' },
+      },
       apdex: gitalyHelpers.grpcServiceApdex(baseSelector),
 
       requestRate: rateMetric(
@@ -28,28 +49,43 @@ metricsCatalog.serviceDefinition({
         selector=baseSelector
       ),
 
-      errorRate: combined([
-        rateMetric(
-          counter='gitaly_service_client_requests_total',
-          selector=baseSelector {
-            grpc_code: { nre: 'OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|DeadlineExceeded' },
-          }
-        ),
-        rateMetric(
-          counter='gitaly_service_client_requests_total',
-          selector=baseSelector {
-            grpc_code: 'DeadlineExceeded',
-            deadline_type: { ne: 'limited' },
-          }
-        ),
-      ]),
+      errorRate: gitalyGRPCErrorRate(baseSelector),
 
       significantLabels: ['fqdn'],
 
       toolingLinks: [
         toolingLinks.continuousProfiler(service='gitaly'),
         toolingLinks.sentry(slug='gitlab/gitaly-production'),
-        toolingLinks.kibana(title='Gitaly', index='gitaly', stage='$stage', slowRequestSeconds=60),
+        toolingLinks.kibana(title='Gitaly', index='gitaly', stage='$stage', slowRequestSeconds=1),
+      ],
+    },
+
+    // Gitaly's OperationService communicates with external hooks
+    // and therefore has different latency characteristics
+    // Since it can also fail in other ways (due to upstream issues on hooks)
+    // its useful to treat these methods as a separate component
+    goserver_op_service: {
+      local baseSelector = { job: 'gitaly', grpc_service: 'gitaly.OperationService' },
+      apdex: histogramApdex(
+        histogram='grpc_server_handling_seconds_bucket',
+        selector=baseSelector {
+          grpc_type: 'unary',
+        },
+        satisfiedThreshold=10,
+        toleratedThreshold=30
+      ),
+
+      requestRate: rateMetric(
+        counter='gitaly_service_client_requests_total',
+        selector=baseSelector
+      ),
+
+      errorRate: gitalyGRPCErrorRate(baseSelector),
+
+      significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.kibana(title='Gitaly OperationService', index='gitaly', stage='$stage', slowRequestSeconds=30, matches={ 'json.grpc.service': 'gitaly.OperationService' }),
       ],
     },
 
