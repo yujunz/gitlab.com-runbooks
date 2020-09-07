@@ -42,3 +42,31 @@ groups:
           gitlab_background_jobs:execution:ops:rate_1h{urgency="throttled"}
         ) > 0
       )
+  - alert: SidekiqQueueNoLongerBeingProcessed
+    for: 20m
+    annotations:
+      title: A Sidekiq queue is no longer being processed.
+      description: 'Sidekiq queue {{ $labels.queue }} in shard {{ $labels.shard }} is no longer being
+        processed.
+
+        '
+      grafana_dashboard_id: sidekiq-queue-detail/sidekiq-queue-detail
+      grafana_dashboard_link: >-
+        https://dashboards.gitlab.net/d/sidekiq-queue-detail/sidekiq-queue-detail?from=now-6h/m&to=now-1m/m&var-environment={{
+        $labels.environment }}&var-stage={{ $labels.stage }}&var-queue={{ $labels.queue }}
+      grafana_min_zoom_hours: '6'
+      grafana_panel_id: '73960'
+      grafana_variables: environment,stage,queue
+      promql_template_1: gitlab_background_jobs:execution:ops:rate_6h{environment="$environment", queue="$queue"}
+      runbook: docs/sidekiq/sidekiq-queue-not-being-processed.md
+    labels:
+      alert_type: cause
+      rules_domain: general
+      severity: s3
+      stage: main
+      tier: sv
+      type: sidekiq
+    expr: |
+      (sum by(environment, queue) (gitlab_background_jobs:queue:ops:rate_6h) > 0.001)
+      unless
+      (sum by(environment, queue) (gitlab_background_jobs:execution:ops:rate_6h)  > 0)
