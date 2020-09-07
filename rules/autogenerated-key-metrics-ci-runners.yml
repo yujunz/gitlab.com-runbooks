@@ -53,7 +53,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_jobs_total{job="shared-runners"}[1m])
+        rate(gitlab_runner_jobs_total{job="runners-manager",shard="shared"}[1m])
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -62,7 +62,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[1m])
+        rate(gitlab_runner_failed_jobs_total{failure_reason="runner_system_failure",job="runners-manager",shard="shared"}[1m])
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -134,7 +134,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_jobs_total{job="shared-runners"}[5m])
+        rate(gitlab_runner_jobs_total{job="runners-manager",shard="shared"}[5m])
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -143,7 +143,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[5m])
+        rate(gitlab_runner_failed_jobs_total{failure_reason="runner_system_failure",job="runners-manager",shard="shared"}[5m])
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -213,7 +213,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_jobs_total{job="shared-runners"}[30m])
+        rate(gitlab_runner_jobs_total{job="runners-manager",shard="shared"}[30m])
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -222,7 +222,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[30m])
+        rate(gitlab_runner_failed_jobs_total{failure_reason="runner_system_failure",job="runners-manager",shard="shared"}[30m])
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -294,7 +294,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_jobs_total{job="shared-runners"}[1h])
+        rate(gitlab_runner_jobs_total{job="runners-manager",shard="shared"}[1h])
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -303,7 +303,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[1h])
+        rate(gitlab_runner_failed_jobs_total{failure_reason="runner_system_failure",job="runners-manager",shard="shared"}[1h])
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -373,7 +373,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_jobs_total{job="shared-runners"}[6h])
+        rate(gitlab_runner_jobs_total{job="runners-manager",shard="shared"}[6h])
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -382,7 +382,7 @@ groups:
       type: ci-runners
     expr: |
       sum by (environment,stage) (
-        rate(gitlab_runner_failed_jobs_total{job="shared-runners", failure_reason="runner_system_failure"}[6h])
+        rate(gitlab_runner_failed_jobs_total{failure_reason="runner_system_failure",job="runners-manager",shard="shared"}[6h])
       )
   - record: gitlab_component_ops:rate_6h
     labels:

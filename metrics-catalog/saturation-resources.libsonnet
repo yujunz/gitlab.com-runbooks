@@ -679,9 +679,11 @@ local pgbouncerSyncPool(serviceType, role) =
       stage: 'main',
     },
     query: |||
-      sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[%(rangeInterval)s]))
+      sum without(executor_stage, exported_stage, state) (
+        max_over_time(gitlab_runner_jobs{job="runners-manager",shard="private"}[%(rangeInterval)s])
+      )
       /
-      gitlab_runner_limit{job="private-runners"} > 0
+      gitlab_runner_limit{job="runners-manager",shard="private"} > 0
     |||,
     slos: {
       soft: 0.85,
@@ -769,9 +771,11 @@ local pgbouncerSyncPool(serviceType, role) =
       stage: 'main',
     },
     query: |||
-      sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[%(rangeInterval)s]))
+      sum without(executor_stage, exported_stage, state) (
+        max_over_time(gitlab_runner_jobs{job="runners-manager",shard="shared"}[%(rangeInterval)s])
+      )
       /
-      gitlab_runner_limit{job="shared-runners"} > 0
+      gitlab_runner_limit{job="runners-manager",shard="shared"} > 0
     |||,
     slos: {
       soft: 0.90,
@@ -798,9 +802,11 @@ local pgbouncerSyncPool(serviceType, role) =
     // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/8456
     // is completed
     query: |||
-      sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[%(rangeInterval)s]))
+      sum without(executor_stage, exported_stage, state) (
+        max_over_time(gitlab_runner_jobs{job="runners-manager",shard="shared-gitlab-org"}[%(rangeInterval)s])
+      )
       /
-      gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0
+      gitlab_runner_limit{job="runners-manager",shard="shared-gitlab-org"} > 0
     |||,
     slos: {
       soft: 0.90,

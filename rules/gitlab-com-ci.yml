@@ -94,7 +94,7 @@ groups:
         abusive usage of Runners. Check https://dashboards.gitlab.net/dashboard/db/ci'
 
   - alert: CICDRunnersManagerDown
-    expr: up{job=~"private-runners|shared-runners|shared-runners-gitlab-org|staging-shared-runners"} == 0
+    expr: up{job="runners-manager"} == 0
     for: 5m
     labels:
       team: verify
@@ -121,21 +121,6 @@ groups:
         times greater than machines idle rate. This may by a symptom of problems with
         the auto-scaling provider. Check http://dashboards.gitlab.net/dashboard/db/ci.'
       runbook: docs/ci-runners/cicd/ci_graphs.md#runners-manager-auto-scaling
-
-  - alert: CICDTooManyUsedFDs
-    expr: >
-      gitlab_component_saturation:ratio{component="open_fds",job=~"(omnibus-runners|private-runners|shared-runners|shared-runners-(gitlab-org|high-cpu))"} >
-        on (component) slo:max:soft:gitlab_component_saturation:ratio{component="open_fds"}
-    for: 10m
-    labels:
-      team: verify
-      severity: s4
-      alert_type: cause
-    annotations:
-      title: Number of used file descriptors on {{ $labels.instance }} is too high
-      description: '{{ $labels.instance }} is using more than 80% of available FDs
-        since 10 minutes. This may affect Runner''s stability. Please look at https://dashboards.gitlab.net/dashboard/db/ci
-        for more data.'
 
   - alert: CICDPrometheusDown
     expr: up{job="ci-node",fqdn=~"prometheus-.*us-east1-(c|d).*"} == 0
