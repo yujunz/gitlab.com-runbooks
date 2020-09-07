@@ -1,7 +1,11 @@
 {
   "order": 3,
   "index_patterns": [
-    "apm-*"
+    "apm-*-error-*",
+    "apm-*-metric-*",
+    "apm-*-profile-*",
+    "apm-*-span-*",
+    "apm-*-transaction-*"
   ],
   "settings": {
     "index": {
