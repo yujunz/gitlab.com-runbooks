@@ -14,6 +14,7 @@
 * [praefect-database.md](praefect-database.md)
 * [praefect-error-rate.md](praefect-error-rate.md)
 * [praefect-file-storages.md](praefect-file-storages.md)
+* [praefect-read-only.md](praefect-read-only.md)
 * [praefect-replication.md](praefect-replication.md)
 * [praefect-startup.md](praefect-startup.md)
 * [../version/gitaly-version-mismatch.md](../version/gitaly-version-mismatch.md)

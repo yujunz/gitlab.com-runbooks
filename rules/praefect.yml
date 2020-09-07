@@ -1,0 +1,16 @@
+groups:
+- name: Praefect misc alerts
+  rules:
+  - alert: ReadOnlyRepositories
+    expr: max without (fqdn, instance) (gitaly_praefect_read_only_repositories) > 0
+    for: 1m
+    labels:
+      team: gitaly
+      pager: pagerduty
+      severity: s1
+      alert_type: symptom
+    annotations:
+      title: Some repositories are in read-only mode.
+      description: Some repositories are in read-only mode on virtual storage '{{ $labels.virtual_storage }}' as
+        the primary does not have the latest changes. Praefect might have failed over to an outdated secondary.
+      runbook: docs/praefect/praefect-read-only.md
