@@ -165,6 +165,7 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      readiness_review:
       service:
         - https://docs.gitlab.com/ce/api/
         - https://docs.gitlab.com/ee/api/
@@ -249,6 +250,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://github.com/prometheus/blackbox_exporter/blob/master/README.md
       security:
@@ -311,6 +313,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
       security:
     dependencies:
@@ -375,6 +378,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
       security:
     dependencies:
@@ -452,6 +456,7 @@ services:
     documents:
       design:
       architecture: https://www.consul.io/docs/internals/architecture.html
+      readiness_review:
       service:
         - https://github.com/hashicorp/consul/blob/master/README.md
       security: https://www.consul.io/docs/internals/security.html
@@ -515,6 +520,7 @@ services:
     documents:
       design: https://github.com/rails/rails-contributors/blob/master/doc/design.md
       architecture:
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-com/gitlab-contributors/blob/master/README.md
       security:
@@ -576,6 +582,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://github.com/discourse/discourse_docker
       security:
@@ -635,6 +642,7 @@ services:
     documents:
       design: https://gitlab.com/gitlab-com/www-gitlab-com/-/merge_requests/23545
       architecture: https://gitlab.com/gitlab-com/runbooks/raw/master/img/logging-infr.png
+      readiness_review: https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/es-logging-cluster/index.md
       service:
         - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
         - https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/es-logging-cluster/index.md
@@ -730,6 +738,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service: []
       security:
     dependencies:
@@ -798,6 +807,7 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      readiness_review:
       service:
         - https://docs.gitlab.com/ce/
         - https://docs.gitlab.com/ee/
@@ -877,6 +887,7 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
+      readiness_review:
       service:
         - https://cbonte.github.io/haproxy-dconv/1.7/intro.html
       security:
@@ -952,6 +963,7 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
+      readiness_review:
       service:
         - https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
       security:
@@ -1038,6 +1050,7 @@ services:
     documents:
       design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/DESIGN.md
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-org/gitaly/blob/master/README.md
       security:
@@ -1124,6 +1137,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://github.com/influxdata/influxdb/blob/master/README.md
       security: https://docs.influxdata.com/influxdb/v1.7/administration/security/
@@ -1188,6 +1202,7 @@ services:
     documents:
       design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/design_ha.md
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-org/gitaly/blob/master/README.md
       security:
@@ -1260,6 +1275,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review: https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/mailroom/overview.md
       service:
         - https://github.com/tpitale/mail_room/blob/master/README.md
       security:
@@ -1321,6 +1337,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
       security:
     dependencies:
@@ -1338,7 +1355,6 @@ services:
     logging:
       - name: Stackdriver Logs
         permalink: https://console.cloud.google.com/logs/viewer?project=gitlab-production&advancedFilter=resource.type%3D%22gce_instance%22%0Alabels.tag%3D%22haproxy%22%0Alabels.%22compute.googleapis.com%2Fresource_name%22:%22fe-pages%22
-
   infrastructure:
     provider: gcp
     architecture:
@@ -1383,6 +1399,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-org/gitlab-pages/blob/master/README.md
       security:
@@ -1447,6 +1464,7 @@ services:
     documents:
       design:
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+      readiness_review:
       service:
         - https://pgbouncer.github.io/features.html
       security:
@@ -1521,6 +1539,7 @@ services:
     documents:
       design:
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+      readiness_review:
       service:
         - https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
@@ -1613,6 +1632,7 @@ services:
     documents:
       design:
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+      readiness_review:
       service:
         - https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
@@ -1697,6 +1717,7 @@ services:
     documents:
       design:
       architecture:  https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#database-architecture
+      readiness_review:
       service:
         - https://www.postgresql.org/docs/9.6/index.html
       security: https://www.postgresql.org/support/security/
@@ -1777,6 +1798,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-org/gitlab-ce/blob/master/config/initializers/rspec_profiling.rb
         - https://github.com/foraker/rspec_profiling
@@ -1843,6 +1865,7 @@ services:
     documents:
       design:
       architecture: https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md#architecture-overview
+      readiness_review:
       service:
         - https://github.com/prometheus/prometheus/blob/7632e976c0617f6206565541c6d91c02c6e12ed5/README.md
       security:
@@ -1929,6 +1952,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://redis.io/documentation
         - https://docs.gitlab.com/omnibus/settings/redis.html
@@ -1996,6 +2020,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://redis.io/documentation
         - https://docs.gitlab.com/omnibus/settings/redis.html
@@ -2059,6 +2084,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://redis.io/topics/sentinel
         - https://docs.gitlab.com/omnibus/settings/redis.html#redis-sentinel
@@ -2122,6 +2148,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://redis.io/documentation
         - https://docs.gitlab.com/omnibus/settings/redis.html
@@ -2190,6 +2217,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review: https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/registry-gke/overview.md
       service:
         - https://github.com/docker/distribution/blob/364d2e4a5bed94e9393dd88232ea3be29ca8f27a/README.md
       security:
@@ -2262,6 +2290,7 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#storage-architecture
+      readiness_review:
       service:
       security:
     dependencies:
@@ -2334,6 +2363,7 @@ services:
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#service-architecture
+      readiness_review: https://gitlab.com/gitlab-com/gl-infra/readiness/-/blob/master/sidekiq/index.md
       service:
         - https://github.com/mperham/sidekiq/blob/master/README.md
       security:
@@ -2415,6 +2445,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
       security: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/security/index.md
@@ -2481,6 +2512,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-com/license-gitlab-com/blob/master/README.md
       security:
@@ -2550,6 +2582,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-com/version-gitlab-com/blob/master/README.md
       security:
@@ -2628,6 +2661,7 @@ services:
         Services publish their logs to corresponding PubSub topics using fluentd. There is a separate VM for each topic in each environment. Each VM runs a Pubsubbeat process which is subscribed to a topic and uploads messages it receives to ELK.
       architecture: |
         Pub/Sub is a messaging service available on GCP which is similar to RabbitMQ or Kafka. It can be used for many things such as event-driven programming or managing distributed systems. We use it for forwarding logs to ELK. Different components and systems publish their logs to a Pub/Sub topic using fluentd. Pubsubbeat (Elastic Beat capable of subscribing to Pub/Sub topics) forwards them to ELK. For more information about how Pub/Sub is used for collecting logs see: https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
+      readiness_review:
       service:
       security:
     dependencies:
@@ -2712,6 +2746,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
         - https://gitlab.com/gitlab-org/gitlab-runner/blob/master/README.md
       security: https://gitlab.com/gitlab-org/gitlab-runner/blob/master/docs/security/index.md
@@ -2791,6 +2826,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review:
       service:
       security:
     dependencies:
@@ -2849,6 +2885,7 @@ services:
     documents:
       design:
       architecture:
+      readiness_review: https://gitlab.com/gitlab-com/gl-infra/readiness/-/tree/master/cloudflare
       service:
       security:
     dependencies:
