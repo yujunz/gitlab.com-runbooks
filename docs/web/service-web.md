@@ -26,6 +26,7 @@
 * [../frontend/haproxy.md](../frontend/haproxy.md)
 * [../git/deploy-gitlab-rb-change.md](../git/deploy-gitlab-rb-change.md)
 * [../git/gitlab-hosted-codesandbox.md](../git/gitlab-hosted-codesandbox.md)
+* [../gitaly/git-high-cpu-and-memory-usage.md](../gitaly/git-high-cpu-and-memory-usage.md)
 * [../gitaly/gitaly-down.md](../gitaly/gitaly-down.md)
 * [../gitaly/gitaly-latency.md](../gitaly/gitaly-latency.md)
 * [../gitaly/gitaly-profiling.md](../gitaly/gitaly-profiling.md)
