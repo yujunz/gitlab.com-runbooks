@@ -107,13 +107,11 @@ local multiQuantileTimeseries(title, bucketMetric, aggregators) =
 
   basic.multiTimeseries(title=title, decimals=2, queries=queries, yAxisLabel='Duration', format='s');
 
-local elasticFilters = [
-  elasticsearchLinks.matchFilter('json.queue.keyword', '$queue'),
-  elasticsearchLinks.matchFilter('json.stage.keyword', '$stage'),
-];
+local elasticFilters = [elasticsearchLinks.matchFilter('json.stage.keyword', '$stage')];
+local elasticQueries = ['json.queue.keyword:${queue:lucene}'];
 
 local elasticsearchLogSearchDataLink = {
-  url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL('sidekiq', elasticFilters),
+  url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL('sidekiq', elasticFilters, elasticQueries),
   title: 'ElasticSearch: Sidekiq logs',
   targetBlank: true,
 };
@@ -267,7 +265,7 @@ basic.dashboard(
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* queue apdex$/'))
     .addDataLink(elasticsearchLogSearchDataLink)
     .addDataLink({
-      url: elasticsearchLinks.buildElasticLinePercentileVizURL('sidekiq', elasticFilters, 'json.scheduling_latency_s'),
+      url: elasticsearchLinks.buildElasticLinePercentileVizURL('sidekiq', elasticFilters, elasticQueries, 'json.scheduling_latency_s'),
       title: 'ElasticSearch: queue latency visualization',
       targetBlank: true,
     }),
@@ -293,7 +291,7 @@ basic.dashboard(
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* execution apdex$/'))
     .addDataLink(elasticsearchLogSearchDataLink)
     .addDataLink({
-      url: elasticsearchLinks.buildElasticLinePercentileVizURL('sidekiq', elasticFilters, 'json.duration_s'),
+      url: elasticsearchLinks.buildElasticLinePercentileVizURL('sidekiq', elasticFilters, elasticQueries, 'json.duration_s'),
       title: 'ElasticSearch: execution latency visualization',
       targetBlank: true,
     }),
@@ -312,7 +310,7 @@ basic.dashboard(
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* rps$/'))
     .addDataLink(elasticsearchLogSearchDataLink)
     .addDataLink({
-      url: elasticsearchLinks.buildElasticLineCountVizURL('sidekiq', elasticFilters),
+      url: elasticsearchLinks.buildElasticLineCountVizURL('sidekiq', elasticFilters, elasticQueries),
       title: 'ElasticSearch: RPS visualization',
       targetBlank: true,
     }),
@@ -338,7 +336,11 @@ basic.dashboard(
     .addSeriesOverride(seriesOverrides.goldenMetric('/.* error ratio$/'))
     .addDataLink(elasticsearchLogSearchDataLink)
     .addDataLink({
-      url: elasticsearchLinks.buildElasticLineCountVizURL('sidekiq', elasticFilters + [elasticsearchLinks.matchFilter('json.job_status', 'fail')]),
+      url: elasticsearchLinks.buildElasticLineCountVizURL(
+        'sidekiq',
+        elasticFilters + [elasticsearchLinks.matchFilter('json.job_status', 'fail')],
+        elasticQueries
+      ),
       title: 'ElasticSearch: errors visualization',
       targetBlank: true,
     }),
