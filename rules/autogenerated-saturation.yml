@@ -503,9 +503,11 @@ groups:
       max by(environment) (
         clamp_min(
           clamp_max(
-            sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[1m]))
+            sum without(executor_stage, exported_stage, state) (
+              max_over_time(gitlab_runner_jobs{job="runners-manager",shard="private"}[1m])
+            )
             /
-            gitlab_runner_limit{job="private-runners"} > 0
+            gitlab_runner_limit{job="runners-manager",shard="private"} > 0
             ,
             1)
         ,
@@ -627,9 +629,11 @@ groups:
       max by(environment) (
         clamp_min(
           clamp_max(
-            sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[1m]))
+            sum without(executor_stage, exported_stage, state) (
+              max_over_time(gitlab_runner_jobs{job="runners-manager",shard="shared"}[1m])
+            )
             /
-            gitlab_runner_limit{job="shared-runners"} > 0
+            gitlab_runner_limit{job="runners-manager",shard="shared"} > 0
             ,
             1)
         ,
@@ -642,9 +646,11 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[1m]))
+            sum without(executor_stage, exported_stage, state) (
+              max_over_time(gitlab_runner_jobs{job="runners-manager",shard="shared-gitlab-org"}[1m])
+            )
             /
-            gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0
+            gitlab_runner_limit{job="runners-manager",shard="shared-gitlab-org"} > 0
             ,
             1)
         ,
@@ -2519,9 +2525,11 @@ groups:
         max by(environment, instance) (
           clamp_min(
             clamp_max(
-              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="private-runners"}[1m]))
+              sum without(executor_stage, exported_stage, state) (
+                max_over_time(gitlab_runner_jobs{job="runners-manager",shard="private"}[1m])
+              )
               /
-              gitlab_runner_limit{job="private-runners"} > 0
+              gitlab_runner_limit{job="runners-manager",shard="private"} > 0
               ,
               1)
           ,
@@ -2828,9 +2836,11 @@ groups:
         max by(environment, instance) (
           clamp_min(
             clamp_max(
-              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners"}[1m]))
+              sum without(executor_stage, exported_stage, state) (
+                max_over_time(gitlab_runner_jobs{job="runners-manager",shard="shared"}[1m])
+              )
               /
-              gitlab_runner_limit{job="shared-runners"} > 0
+              gitlab_runner_limit{job="runners-manager",shard="shared"} > 0
               ,
               1)
           ,
@@ -2871,9 +2881,11 @@ groups:
         max by(environment, tier, type, stage, instance) (
           clamp_min(
             clamp_max(
-              sum without(executor_stage, exported_stage, state) (max_over_time(gitlab_runner_jobs{job="shared-runners-gitlab-org"}[1m]))
+              sum without(executor_stage, exported_stage, state) (
+                max_over_time(gitlab_runner_jobs{job="runners-manager",shard="shared-gitlab-org"}[1m])
+              )
               /
-              gitlab_runner_limit{job="shared-runners-gitlab-org"} > 0
+              gitlab_runner_limit{job="runners-manager",shard="shared-gitlab-org"} > 0
               ,
               1)
           ,
