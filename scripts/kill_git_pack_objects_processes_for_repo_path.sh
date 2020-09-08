@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 TARGET_GIT_DIR=$1
 [[ -z "$TARGET_GIT_DIR" ]] && echo "Usage: $0 [git_dir]" && exit 1
