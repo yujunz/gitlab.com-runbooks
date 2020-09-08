@@ -1,5 +1,5 @@
 groups:
-- name: Airflow is down
+- name: airflow.rules
   rules:
     - alert: AirflowDown
       expr: >
@@ -7,6 +7,7 @@ groups:
       for: 10m
       labels:
         alert_type: cause
+        severity: s4
         team: data-analytics
       annotations:
         title: Airflow is down
