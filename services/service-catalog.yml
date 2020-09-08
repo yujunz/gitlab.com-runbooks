@@ -147,7 +147,7 @@ services:
     - plan
   infra_owner: sre_coreinfra
   label: Service:API
-  business: 
+  business:
     requirement: |
       API is required to allow developing tools (i.e. bots) that makes use of GitLab.com data,
       otherwise the only way to develop such tools is to parse and/or interact with HTML pages,
