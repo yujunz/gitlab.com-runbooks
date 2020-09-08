@@ -12,5 +12,5 @@ groups:
       annotations:
         title: Airflow is down
         description: >
-          Airflow is down.
+          Prometheus has failed to get metrics from Airflow for about 10 minutes.
           See 'https://thanos-query.ops.gitlab.net/graph?g0.expr=up%7Benv%3D"{{ $externalLabels.env }}"%2Cjob%3D"{{ $labels.job }}"%7D%20%3D%3D%200'
