@@ -54,6 +54,7 @@
 * [../uncategorized/k8s-gitlab.md](../uncategorized/k8s-gitlab.md)
 * [../uncategorized/k8s-operations.md](../uncategorized/k8s-operations.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
+* [../uncategorized/namespace-restore.md](../uncategorized/namespace-restore.md)
 * [../uncategorized/pingdom.md](../uncategorized/pingdom.md)
 * [../uncategorized/ruby-profiling.md](../uncategorized/ruby-profiling.md)
 * [../uncategorized/shared-configurations.md](../uncategorized/shared-configurations.md)

@@ -72,6 +72,7 @@
 * [../uncategorized/kubernetes.md](../uncategorized/kubernetes.md)
 * [../uncategorized/manage-cog.md](../uncategorized/manage-cog.md)
 * [../uncategorized/missing_repos.md](../uncategorized/missing_repos.md)
+* [../uncategorized/namespace-restore.md](../uncategorized/namespace-restore.md)
 * [../uncategorized/node_cpu.md](../uncategorized/node_cpu.md)
 * [../uncategorized/project-export.md](../uncategorized/project-export.md)
 * [../uncategorized/reindex-package-in-packagecloud.md](../uncategorized/reindex-package-in-packagecloud.md)

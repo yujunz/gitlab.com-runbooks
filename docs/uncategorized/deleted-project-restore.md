@@ -5,6 +5,8 @@ projects.
 
 It is strongly suggested to read through this entire document before proceeding.
 
+There is an alternate runbook for a different method of [restoring namespaces](namespace-restore.md), but the one in this document should be preferred.
+
 ## Background
 
 There are two sources of data that we will be restoring: the project metadata
