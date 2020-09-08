@@ -24,6 +24,7 @@
 * [../uncategorized/chef-guidelines.md](../uncategorized/chef-guidelines.md)
 * [../uncategorized/deleted-project-restore.md](../uncategorized/deleted-project-restore.md)
 * [../uncategorized/manage-pacemaker.md](../uncategorized/manage-pacemaker.md)
+* [../uncategorized/namespace-restore.md](../uncategorized/namespace-restore.md)
 * [../uncategorized/node_cpu.md](../uncategorized/node_cpu.md)
 * [../uncategorized/packagecloud-infrastructure.md](../uncategorized/packagecloud-infrastructure.md)
 * [../uncategorized/staging-environment.md](../uncategorized/staging-environment.md)

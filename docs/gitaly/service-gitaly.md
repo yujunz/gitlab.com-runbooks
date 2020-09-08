@@ -35,6 +35,7 @@
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [../praefect/praefect-file-storages.md](../praefect/praefect-file-storages.md)
 * [../uncategorized/deleted-project-restore.md](../uncategorized/deleted-project-restore.md)
+* [../uncategorized/namespace-restore.md](../uncategorized/namespace-restore.md)
 * [../uncategorized/pingdom.md](../uncategorized/pingdom.md)
 * [../uncategorized/project-export.md](../uncategorized/project-export.md)
 * [../uncategorized/upload-file-to-gcs-using-signed-url.md](../uncategorized/upload-file-to-gcs-using-signed-url.md)

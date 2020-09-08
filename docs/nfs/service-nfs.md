@@ -22,5 +22,6 @@
 * [../uncategorized/chef-guidelines.md](../uncategorized/chef-guidelines.md)
 * [../uncategorized/deleted-project-restore.md](../uncategorized/deleted-project-restore.md)
 * [../uncategorized/missing_repos.md](../uncategorized/missing_repos.md)
+* [../uncategorized/namespace-restore.md](../uncategorized/namespace-restore.md)
 * [../uncategorized/stale-file-handles.md](../uncategorized/stale-file-handles.md)
 <!-- END_MARKER -->
