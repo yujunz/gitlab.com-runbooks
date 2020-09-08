@@ -133,7 +133,6 @@ tiers:
 - name: inf
 
 services:
-
 - name: api
   friendly_name: GitLab API
   tier: sv
