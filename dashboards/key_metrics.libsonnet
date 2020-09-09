@@ -16,7 +16,7 @@ local annotation = grafana.annotation;
 local selectors = import 'promql/selectors.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
 
-local defaultEnvironmentSelector = { environment: '$environment' };
+local defaultEnvironmentSelector = { environment: '$environment', env: '$environment' };
 
 local generalGraphPanel(
   title,

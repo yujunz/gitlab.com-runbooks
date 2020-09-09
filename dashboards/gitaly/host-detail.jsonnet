@@ -69,6 +69,7 @@ local gitalySpawnTimeoutsPerNode(selector) =
 
 local environmentSelectorHash = {
   environment: '$environment',
+  env: '$environment',
 };
 
 local selectorHash = {

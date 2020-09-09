@@ -9,7 +9,7 @@ local selectors = import 'promql/selectors.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
 local toolingLinks = import 'toolinglinks/toolinglinks.libsonnet';
 
-local defaultEnvironmentSelector = { environment: '$environment' };
+local defaultEnvironmentSelector = { environment: '$environment', env: '$environment' };
 
 local getLatencyPercentileForService(service) =
   if std.objectHas(service, 'contractualThresholds') && std.objectHas(service.contractualThresholds, 'apdexRatio') then

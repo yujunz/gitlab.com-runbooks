@@ -25,15 +25,11 @@ local formatConfigForSelectorHash(selectorHash) =
         /* Min apdex case */
         |||
           min by (type) (min_over_time(gitlab_service_apdex:ratio_5m{%(globalSelector)s}[%(range)s]))
-          or
-          min by (type) (min_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
         ||| % formatConfigForSelectorHash(selectorHash) { range: range }
       else
         /* Avg apdex case */
         |||
           avg by (type) (avg_over_time(gitlab_service_apdex:ratio_5m{%(globalSelector)s}[%(range)s]))
-          or
-          avg by (type) (avg_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
         ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
     /**
@@ -45,9 +41,7 @@ local formatConfigForSelectorHash(selectorHash) =
      */
     serviceApdexDegradationSLOQuery(environmentSelectorHash, type)::
       |||
-        (1 - %(burnrate_6h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="%(type)s"})))
-        or
-        avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"})
+        (1 - %(burnrate_6h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="%(type)s", monitor="global"})))
       ||| % {
         type: type,
         burnrate_6h: multiburnFactors.burnrate_6h,
@@ -57,8 +51,6 @@ local formatConfigForSelectorHash(selectorHash) =
     serviceApdexOutageSLOQuery(environmentSelectorHash, type)::
       |||
         (1 - %(burnrate_1h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="%(type)s"})))
-        or
-        (2 * avg(slo:min:gitlab_service_apdex:ratio{type="%(type)s"}) - 1)
       ||| % {
         type: type,
         burnrate_1h: multiburnFactors.burnrate_1h,
@@ -67,8 +59,6 @@ local formatConfigForSelectorHash(selectorHash) =
     serviceApdexQueryWithOffset(selectorHash, offset)::
       |||
         min by (type) (gitlab_service_apdex:ratio_5m{%(globalSelector)s} offset %(offset)s)
-        or
-        min by (type) (gitlab_service_apdex:ratio{%(globalSelector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
     // Fallback to non-aggregated, non-global query for backwards
@@ -119,12 +109,6 @@ local formatConfigForSelectorHash(selectorHash) =
           gitlab_service_ops:rate_5m{%(globalSelector)s} offset %(offset)s
           or
           gitlab_service_ops:rate{%(globalSelector)s} offset %(offset)s
-        )
-        or
-        sum by (type) (
-          gitlab_service_ops:rate_5m{%(selector)s} offset %(offset)s
-          or
-          gitlab_service_ops:rate{%(selector)s} offset %(offset)s
         )
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
@@ -197,9 +181,7 @@ local formatConfigForSelectorHash(selectorHash) =
     // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
     serviceErrorRateDegradationSLOQuery(environmentSelectorHash, type)::
       |||
-        (%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="%(type)s"}))
-        or
-        avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"})
+        (%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="%(type)s", monitor="global"}))
       ||| % {
         type: type,
         burnrate_6h: multiburnFactors.burnrate_6h,
@@ -208,9 +190,7 @@ local formatConfigForSelectorHash(selectorHash) =
     // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
     serviceErrorRateOutageSLOQuery(environmentSelectorHash, type)::
       |||
-        (%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="%(type)s"}))
-        or
-        (2 * avg(slo:max:gitlab_service_errors:ratio{type="%(type)s"}))
+        (%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="%(type)s", monitor="global"}))
       ||| % {
         type: type,
         burnrate_1h: multiburnFactors.burnrate_1h,
@@ -219,8 +199,6 @@ local formatConfigForSelectorHash(selectorHash) =
     serviceErrorRateQueryWithOffset(selectorHash, offset)::
       |||
         max by (type) (gitlab_service_errors:ratio_5m{%(globalSelector)s} offset %(offset)s)
-        or
-        sum by (type) (gitlab_service_errors:ratio_5m{%(selector)s} offset %(offset)s)
       ||| % formatConfigForSelectorHash(selectorHash) { offset: offset },
 
     componentErrorRateQuery(selectorHash)::
