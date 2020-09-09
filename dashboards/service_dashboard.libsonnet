@@ -25,7 +25,7 @@ local systemDiagramPanel = import 'system_diagram_panel.libsonnet';
 local kubeEmbeddedDashboards = import 'kubernetes_embedded_dashboards.libsonnet';
 local statusDescription = import 'status_description.libsonnet';
 
-local defaultEnvironmentSelector = { environment: '$environment' };
+local defaultEnvironmentSelector = { environment: '$environment', env: '$environment' };
 
 local listComponentThresholds(service) =
   std.prune([
