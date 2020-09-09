@@ -2919,3 +2919,60 @@ services:
     monitors:
       primary_grafana_dashboard: "waf-main"
       sentry_slug:
+
+- name: vault
+  tier: inf
+  friendly_name: Infrastructure Vault
+  infra_owner: sre_coreinfra
+  label: Service:Vault
+  business:
+    requirement: |
+      Provide a centralised storage of secrets for Gitlab.com infrastructure
+    customers:
+      - Gitlab Infrastructure and Development Teams
+    business_value: |
+      Allow the Gitlab Infrastructure and Development teams to have a central
+      system to be the authoriative source of secrets for use within Gitlab.com
+    SLA:
+      availability:
+      response_time:
+  technical:
+    project:
+    criticality: 3
+    slx:
+    documents:
+      design:
+      architecture:
+      service:
+      security:
+    dependencies:
+    configurations:
+    chef_roles:
+    scalability:
+      bound:
+      scalable:
+    security:
+      security_reviewed:
+      data_classification:
+      security_incidents:
+    logging:
+      - name:
+        permalink:
+  infrastructure:
+    provider: gcp
+    architecture: gke
+    provisioning: kubernetes
+    accesses:
+      - account_name:
+        access_type:
+        reviewed:
+  operations:
+    maintenance:
+    runbooks:
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/vault/vault.md
+    playbooks:
+    error_budget:
+  observability:
+    monitors:
+      primary_grafana_dashboard:
+      sentry_slug:

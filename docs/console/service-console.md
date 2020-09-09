@@ -81,5 +81,6 @@
 * [../uncategorized/staging-environment.md](../uncategorized/staging-environment.md)
 * [../uncategorized/uploads.md](../uncategorized/uploads.md)
 * [../uncategorized/workers-high-load.md](../uncategorized/workers-high-load.md)
+* [../vault/vault.md](../vault/vault.md)
 * [../version/version-gitlab-com.md](../version/version-gitlab-com.md)
 <!-- END_MARKER -->
