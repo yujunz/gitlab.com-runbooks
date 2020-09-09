@@ -119,6 +119,12 @@ teams:
 - name: gitlab-pages
   slack_alerts_channel: gitlab-pages
 
+- name: data-analytics
+  url: https://about.gitlab.com/handbook/business-ops/data-team/platform/
+  slack_channel: data-engineering
+  slack_alerts_channel: data-prom-alerts
+  oncall_schedule: https://about.gitlab.com/handbook/business-ops/data-team/how-we-work/duties/
+
 tiers:
 - name: sv
 - name: lb
