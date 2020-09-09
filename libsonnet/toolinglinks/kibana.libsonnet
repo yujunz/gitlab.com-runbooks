@@ -51,7 +51,7 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
 
     [
       toolingLinkDefinition({
-        title: 'Kibana/Discover: ' + title + ' logs',
+        title: '📖 Kibana: ' + title + ' logs',
         url: elasticsearchLinks.buildElasticDiscoverSearchQueryURL(index, filters),
       }),
     ]
@@ -60,7 +60,7 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
       if supportsLatencies && slowRequestSeconds != null then
         [
           toolingLinkDefinition({
-            title: 'Kibana/Discover: ' + title + ' slow request logs',
+            title: '📖 Kibana: ' + title + ' slow request logs',
             url: elasticsearchLinks.buildElasticDiscoverSlowRequestSearchQueryURL(index, filters, slowRequestSeconds=slowRequestSeconds),
           }),
         ]
@@ -71,7 +71,7 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
       if supportsFailures then
         [
           toolingLinkDefinition({
-            title: 'Kibana/Discover: ' + title + ' failed request logs',
+            title: '📖 Kibana: ' + title + ' failed request logs',
             url: elasticsearchLinks.buildElasticDiscoverFailureSearchQueryURL(index, filters),
           }),
         ]
@@ -81,7 +81,7 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
     +
     [
       toolingLinkDefinition({
-        title: 'Kibana/Visualize: ' + title + ' requests',
+        title: '📈 Kibana: ' + title + ' requests',
         url: elasticsearchLinks.buildElasticLineCountVizURL(index, filters),
       }),
 
@@ -91,7 +91,7 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
       if supportsFailures then
         [
           toolingLinkDefinition({
-            title: 'Kibana/Visualize: ' + title + ' failed request',
+            title: '📈 Kibana: ' + title + ' failed requests',
             url: elasticsearchLinks.buildElasticLineFailureCountVizURL(index, filters),
           }),
         ]
@@ -103,8 +103,20 @@ local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libson
       if supportsLatencies then
         [
           toolingLinkDefinition({
-            title: 'Kibana/Visualize: ' + title + ' request latencies',
-            url: elasticsearchLinks.buildElasticLinePercentileVizURL(index, filters),
+            title: '📈 Kibana: ' + title + ' sum latency aggregated',
+            url: elasticsearchLinks.buildElasticLineTotalDurationVizURL(index, filters, splitSeries=true),
+          }),
+          toolingLinkDefinition({
+            title: '📈 Kibana: ' + title + ' sum latency aggregated (split)',
+            url: elasticsearchLinks.buildElasticLineTotalDurationVizURL(index, filters, splitSeries=true),
+          }),
+          toolingLinkDefinition({
+            title: '📈 Kibana: ' + title + ' percentile latency aggregated',
+            url: elasticsearchLinks.buildElasticLinePercentileVizURL(index, filters, splitSeries=false),
+          }),
+          toolingLinkDefinition({
+            title: '📈 Kibana: ' + title + ' percentile latency aggregated (split)',
+            url: elasticsearchLinks.buildElasticLinePercentileVizURL(index, filters, splitSeries=true),
           }),
         ]
       else
