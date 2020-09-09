@@ -9,21 +9,37 @@ test.suite({
 
   testString: {
     actual: rison.encode({ name: 'value' }),
-    expect: "('name':'value')",
+    expect: '(name:value)',
+  },
+
+  testEmptyString: {
+    actual: rison.encode({ name: '' }),
+    expect: "(name:'')",
   },
 
   testNumber: {
     actual: rison.encode({ name: 1 }),
-    expect: "('name':1)",
+    expect: '(name:1)',
   },
 
   testHash: {
     actual: rison.encode({ name: { first: 'A', last: 'Z' } }),
-    expect: "('name':('first':'A','last':'Z'))",
+    expect: '(name:(first:A,last:Z))',
   },
 
   testArray: {
     actual: rison.encode({ name: [{ first: 'A' }] }),
-    expect: "('name':!(('first':'A')))",
+    expect: '(name:!((first:A)))',
   },
+
+  testUnsafeKey: {
+    actual: rison.encode({ 'X 1': 5 }),
+    expect: "('X+1':5)",
+  },
+
+  testUnsafeValue: {
+    actual: rison.encode({ name: [{ first: 'A or B' }] }),
+    expect: "(name:!((first:'A+or+B')))",
+  },
+
 })

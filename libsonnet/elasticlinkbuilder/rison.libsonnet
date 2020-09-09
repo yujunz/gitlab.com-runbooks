@@ -1,5 +1,20 @@
-local encodeKey(key) =
-  "'" + key + "'";
+local charIsSafe(char) =
+  char >= 'a' && char <= 'z' || char >= 'A' && char <= 'Z' || char == '.' || char == '_';
+
+local stringIsSafe(string) =
+  std.foldl(function(memo, char) memo && charIsSafe(char), std.stringChars(string), true);
+
+local encodeSpaces(string) =
+  std.strReplace(string, ' ', '+');
+
+// TODO: handle encoding of "'" chars better
+local encodeString(string) =
+  if string == '' then
+    "''"
+  else if stringIsSafe(string) then
+    string
+  else
+    "'" + std.strReplace(string, ' ', '+') + "'";
 
 local encodeArray(array, encodeUnknown) =
   local items = [
@@ -16,14 +31,10 @@ local encodeNumber(number) =
 
 local encodeObject(object, encodeUnknown) =
   local keypairs = [
-    encodeKey(k) + ':' + encodeUnknown(object[k])
+    encodeString(k) + ':' + encodeUnknown(object[k])
     for k in std.objectFields(object)
   ];
   '(' + std.join(',', keypairs) + ')';
-
-// TODO: handle encoding of "'" chars better
-local encodeString(string) =
-  "'" + string + "'";
 
 local encodeUnknown(object) =
   if std.isArray(object) then
