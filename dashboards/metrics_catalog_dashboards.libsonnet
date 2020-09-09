@@ -23,8 +23,7 @@ local componentOverviewMatrixRow(
   componentName,
   component,
   startRow,
-  environmentSelectorHash,
-  includeNodeLevelMonitoring=false
+  environmentSelectorHash
       ) =
   local componentSelectorHash = environmentSelectorHash { type: serviceType, stage: serviceStage, component: componentName };
   local columns =
@@ -79,37 +78,61 @@ local componentOverviewMatrixRow(
         []
     );
 
-  layout.splitColumnGrid(columns, [7, 1], startRow=startRow) +
-  (
-    if includeNodeLevelMonitoring then
-      layout.singleRow(
-        (
-          if component.hasApdex() then
-            [
-              keyMetrics.singleComponentNodeApdexPanel(serviceType, serviceStage, componentName, environmentSelectorHash),
-            ]
-          else []
-        )
-        +
-        (
-          if component.hasErrorRate() then
-            [
-              keyMetrics.singleComponentNodeErrorRates(serviceType, serviceStage, componentName, environmentSelectorHash),
-            ]
-          else []
-        )
-        +
-        (
-          if component.hasAggregatableRequestRate() then
-            [
-              keyMetrics.singleComponentNodeQPSPanel(serviceType, serviceStage, componentName, environmentSelectorHash),
-            ]
-          else []
-        ),
-        rowHeight=5,
-        startRow=startRow + 8
-      )
-    else []
+  layout.splitColumnGrid(columns, [7, 1], startRow=startRow);
+
+local componentNodeOverviewMatrixRow(
+  serviceType,
+  component,
+  selectorHash,
+  startRow,
+  environmentSelectorHash
+      ) =
+  layout.singleRow(
+    (
+      if component.hasApdex() then
+        [
+          keyMetrics.singleComponentNodeApdexPanel(serviceType, component.name, selectorHash, environmentSelectorHash),
+        ]
+      else []
+    )
+    +
+    (
+      if component.hasErrorRate() then
+        [
+          keyMetrics.singleComponentNodeErrorRates(serviceType, component.name, selectorHash, environmentSelectorHash),
+        ]
+      else []
+    )
+    +
+    (
+      if component.hasAggregatableRequestRate() then
+        [
+          keyMetrics.singleComponentNodeQPSPanel(serviceType, component.name, selectorHash, environmentSelectorHash),
+        ]
+      else []
+    )
+    +
+    (
+      if component.hasToolingLinks() then
+        [
+          grafana.text.new(
+            title='Tooling Links',
+            mode='markdown',
+            content=|||
+              ### Observability Tools
+
+              Note: links will not have specific node-level filters applied.
+
+              %(links)s
+            ||| % {
+              links: toolingLinks.generateMarkdown(component.getToolingLinks()),
+            },
+          ),
+        ]
+      else
+        []
+    ),
+    startRow=startRow + 8
   );
 
 {
@@ -202,7 +225,6 @@ local componentOverviewMatrixRow(
     serviceStage,
     startRow,
     environmentSelectorHash=defaultEnvironmentSelector,
-    includeNodeLevelMonitoring=false,
   )::
     local service = metricsCatalog.getService(serviceType);
     [
@@ -219,7 +241,35 @@ local componentOverviewMatrixRow(
               service.components[componentName],
               startRow=startRow + 1 + i * 10,
               environmentSelectorHash=environmentSelectorHash,
-              includeNodeLevelMonitoring=includeNodeLevelMonitoring
+            ), std.objectFields(service.components)
+        )
+      )
+    ),
+
+  // Generates a grid of dashboards for a given service
+  // using the provided selectorHash (used to select fqdns)
+  //
+  // environmentSelectorHash is used for environment-specific selectors, specifically the SLOs
+  componentNodeOverviewMatrix(
+    serviceType,
+    selectorHash,
+    startRow,
+    environmentSelectorHash=defaultEnvironmentSelector,
+  )::
+    local service = metricsCatalog.getService(serviceType);
+    [
+      row.new(title='🔬 Component/Node Level Indicators', collapse=false) { gridPos: { x: 0, y: startRow, w: 24, h: 1 } },
+    ] +
+    std.prune(
+      std.flattenArrays(
+        std.mapWithIndex(
+          function(i, componentName)
+            componentNodeOverviewMatrixRow(
+              serviceType=serviceType,
+              component=service.components[componentName],
+              selectorHash=selectorHash { component: componentName },
+              startRow=startRow + 1 + i * 10,
+              environmentSelectorHash=environmentSelectorHash,
             ), std.objectFields(service.components)
         )
       )

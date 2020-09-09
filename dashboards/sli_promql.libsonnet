@@ -12,6 +12,14 @@ local formatConfigForSelectorHash(selectorHash) =
 
 {
   apdex:: {
+    /**
+     * Returns a promql query for the given service apdex SLI
+     *
+     * @param selectorHash a hash selector for the service.
+     * @param range a range vector duration (ie, 5m or $__interval)
+     * @param worstCase whether to use `min` instead of `avg` for aggregation
+     * @return a string representation of the PromQL query
+     */
     serviceApdexQuery(selectorHash, range, worstCase=true)::
       if worstCase then
         /* Min apdex case */
@@ -28,8 +36,14 @@ local formatConfigForSelectorHash(selectorHash) =
           avg by (type) (avg_over_time(gitlab_service_apdex:ratio{%(globalSelector)s}[%(range)s]))
         ||| % formatConfigForSelectorHash(selectorHash) { range: range },
 
-    // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
-    serviceApdexDegradationSLOQuery(environmentSelectorHash, type, stage)::
+    /**
+     * Returns a promql query a 6h error budget SLO
+     *
+     * TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
+     *
+     * @return a string representation of the PromQL query
+     */
+    serviceApdexDegradationSLOQuery(environmentSelectorHash, type)::
       |||
         (1 - %(burnrate_6h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="%(type)s"})))
         or
@@ -40,7 +54,7 @@ local formatConfigForSelectorHash(selectorHash) =
       },
 
     // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
-    serviceApdexOutageSLOQuery(environmentSelectorHash, type, stage)::
+    serviceApdexOutageSLOQuery(environmentSelectorHash, type)::
       |||
         (1 - %(burnrate_1h)g * (1 - avg(slo:min:events:gitlab_service_apdex:ratio{type="%(type)s"})))
         or
@@ -79,6 +93,14 @@ local formatConfigForSelectorHash(selectorHash) =
     componentNodeApdexQuery(selectorHash, range)::
       |||
         gitlab_component_node_apdex:ratio_5m{%(selector)s}
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
+
+    /**
+     * Returns a node-level aggregation of the apdex score for a given service, for the given selector
+     */
+    serviceNodeApdexQuery(selectorHash, range)::
+      |||
+        gitlab_service_node_apdex:ratio_5m{%(globalSelector)s}
       ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
 
@@ -137,6 +159,18 @@ local formatConfigForSelectorHash(selectorHash) =
       |||
         gitlab_component_node_ops:rate_5m{%(selector)s}
       ||| % formatConfigForSelectorHash(selectorHash) { range: range },
+
+    /**
+     * Returns a node-level aggregation of the operation rate for a given service, for the given selector
+     *
+     * TODO: switch to a recording rule
+     */
+    serviceNodeOpsRateQuery(selectorHash, range)::
+      |||
+        sum by (environment, env, tier, type, stage, fqdn) (
+          gitlab_component_node_ops:rate_5m{%(selector)s}
+        )
+      ||| % formatConfigForSelectorHash(selectorHash) { range: range },
   },
 
   errorRate:: {
@@ -161,7 +195,7 @@ local formatConfigForSelectorHash(selectorHash) =
         ||| % formatConfigForSelectorHash(selectorHash) { range: range, clampMax: clampMax },
 
     // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
-    serviceErrorRateDegradationSLOQuery(environmentSelectorHash, type, stage)::
+    serviceErrorRateDegradationSLOQuery(environmentSelectorHash, type)::
       |||
         (%(burnrate_6h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="%(type)s"}))
         or
@@ -172,7 +206,7 @@ local formatConfigForSelectorHash(selectorHash) =
       },
 
     // TODO: remove deprecated slo:max:gitlab_service_errors:ratio value after 2021-01-01
-    serviceErrorRateOutageSLOQuery(environmentSelectorHash, type, stage)::
+    serviceErrorRateOutageSLOQuery(environmentSelectorHash, type)::
       |||
         (%(burnrate_1h)g * avg(slo:max:events:gitlab_service_errors:ratio{type="%(type)s"}))
         or
@@ -203,6 +237,14 @@ local formatConfigForSelectorHash(selectorHash) =
     componentNodeErrorRateQuery(selectorHash)::
       |||
         gitlab_component_node_errors:ratio_5m{%(selector)s}
+      ||| % formatConfigForSelectorHash(selectorHash) {},
+
+    /**
+     * Returns a node-level aggregation of the service error rate for the given selector
+     */
+    serviceNodeErrorRateQuery(selectorHash)::
+      |||
+        gitlab_service_node_errors:ratio_5m{%(globalSelector)s}
       ||| % formatConfigForSelectorHash(selectorHash) {},
   },
 

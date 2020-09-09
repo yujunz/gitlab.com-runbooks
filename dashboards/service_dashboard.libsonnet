@@ -139,7 +139,6 @@ local overviewDashboard(
         stage,
         startRow=20,
         environmentSelectorHash=environmentSelectorHash,
-        includeNodeLevelMonitoring=metricsCatalogServiceInfo.nodeLevelMonitoring,
       )
     )
     .addPanels(
