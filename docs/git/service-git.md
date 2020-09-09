@@ -70,5 +70,6 @@
 * [../uncategorized/upload-file-to-gcs-using-signed-url.md](../uncategorized/upload-file-to-gcs-using-signed-url.md)
 * [../uncategorized/workers-high-load.md](../uncategorized/workers-high-load.md)
 * [../uncategorized/yubikey.md](../uncategorized/yubikey.md)
+* [../vault/vault.md](../vault/vault.md)
 * [../version/gitaly-version-mismatch.md](../version/gitaly-version-mismatch.md)
 <!-- END_MARKER -->
