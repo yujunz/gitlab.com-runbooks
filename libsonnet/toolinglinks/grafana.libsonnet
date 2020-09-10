@@ -7,13 +7,14 @@ local toolingLinkDefinition = (import './tooling_link_definition.libsonnet').too
       for key in std.objectFields(vars)
     ];
 
-    [
-      toolingLinkDefinition({
-        title: 'Grafana: ' + title,
-        url: '/d/%(dashboardUid)s?%(vars)s' % {
-          dashboardUid: dashboardUid,
-          vars: std.join('&', varsMapped),
-        },
-      }),
-    ],
+    function(options)
+      [
+        toolingLinkDefinition({
+          title: 'Grafana: ' + title,
+          url: '/d/%(dashboardUid)s?%(vars)s' % {
+            dashboardUid: dashboardUid,
+            vars: std.join('&', varsMapped),
+          },
+        }),
+      ],
 }

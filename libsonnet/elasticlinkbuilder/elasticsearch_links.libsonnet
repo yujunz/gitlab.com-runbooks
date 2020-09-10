@@ -46,9 +46,22 @@ local mustNot(filter) =
 local statusCode(field) =
   [rangeFilter(field, gteValue=500, lteValue=null)];
 
+local indexDefaults = {
+  prometheusLabelMappings: {},
+};
+
+// These are default prometheus label mappings, for mapping
+// between prometheus labels and their equivalent ELK fields
+// We know that these fields exist on most of our structured logs
+// so we can safely map from the given labels to the fields in all cases
+local defaultPrometheusLabelMappings = {
+  type: 'json.type',
+  stage: 'json.stage',
+};
+
 local indexCatalog = {
   // Improve these logs when https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11221 is addressed
-  camoproxy: {
+  camoproxy: indexDefaults {
     timestamp: '@timestamp',
     indexId: 'AWz5hIoSGphUgZwzAG7q',
     defaultColumns: ['json.hostname', 'json.camoproxy_message', 'json.camoproxy_err'],
@@ -58,17 +71,20 @@ local indexCatalog = {
     //latencyFieldUnitMultiplier: 1000,
   },
 
-  gitaly: {
+  gitaly: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AW5F1OHTiGcMMNRn84Di',
     defaultColumns: ['json.hostname', 'json.grpc.method', 'json.grpc.request.glProjectPath', 'json.grpc.code', 'json.grpc.time_ms'],
     defaultSeriesSplitField: 'json.grpc.method.keyword',
     failureFilter: [mustNot(matchFilter('json.grpc.code', 'OK')), existsFilter('json.grpc.code')],
     defaultLatencyField: 'json.grpc.time_ms',
+    prometheusLabelMappings: {
+      fqdn: 'json.fqdn',
+    },
     latencyFieldUnitMultiplier: 1000,
   },
 
-  monitoring: {
+  monitoring: indexDefaults {
     timestamp: '@timestamp',
     indexId: 'AW5ZoH2ddtvLTaJbch2P',
     defaultColumns: ['json.hostname', 'json.msg', 'json.level'],
@@ -76,7 +92,7 @@ local indexCatalog = {
     failureFilter: [matchFilter('json.level', 'error')],
   },
 
-  pages: {
+  pages: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AWRaEscWMdvjVyaYlI-L',
     defaultColumns: ['json.hostname', 'json.pages_domain', 'json.host', 'json.pages_host', 'json.path', 'json.remote_ip', 'json.duration_ms'],
@@ -86,7 +102,7 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1000,
   },
 
-  postgres: {
+  postgres: indexDefaults {
     timestamp: '@timestamp',
     indexId: 'AWM6iZV51NBBQZg_DR-U',
     defaultColumns: ['json.hostname', 'json.application_name', 'json.error_severity', 'json.message', 'json.session_start_time', 'json.sql_state_code', 'json.duration_ms'],
@@ -95,14 +111,14 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1000,
   },
 
-  postgres_pgbouncer: {
+  postgres_pgbouncer: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AWM6iZV51NBBQZg_DR-U',
     defaultColumns: ['json.hostname', 'json.pg_message'],
     defaultSeriesSplitField: 'json.hostname.keyword',
   },
 
-  praefect: {
+  praefect: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AW98WAQvqthdGjPJ8jTY',
     defaultColumns: ['json.hostname', 'json.virtual_storage', 'json.grpc.method', 'json.relative_path', 'json.grpc.code', 'json.grpc.time_ms'],
@@ -112,7 +128,7 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1000,
   },
 
-  rails: {
+  rails: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AW5F1e45qthdGjPJueGO',
     defaultColumns: ['json.method', 'json.status', 'json.controller', 'json.action', 'json.path', 'json.duration_s'],
@@ -122,7 +138,7 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1,
   },
 
-  rails_api: {
+  rails_api: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AW5F1e45qthdGjPJueGO',
     defaultColumns: ['json.method', 'json.status', 'json.route', 'json.path', 'json.duration_s'],
@@ -132,7 +148,7 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1,
   },
 
-  redis: {
+  redis: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AWSQX_Vf93rHTYrsexmk',
     defaultColumns: ['json.hostname', 'json.redis_message'],
@@ -141,7 +157,7 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1000000,  // Redis uses us
   },
 
-  registry: {
+  registry: indexDefaults {
     timestamp: 'json.time',
     indexId: '97ce8e90-63ad-11ea-8617-2347010d3aab',
     defaultColumns: ['json.http.request.uri', 'json.http.response.duration', 'json.err.code', 'json.msg', 'json.http.response.status', 'json.http.request.remoteaddr', 'json.http.request.method'],
@@ -152,7 +168,7 @@ local indexCatalog = {
     // latencyFieldUnitMultiplier: 1,
   },
 
-  runners: {
+  runners: indexDefaults {
     timestamp: '@timestamp',
     indexId: 'AWgzayS3ENm-ja4G1a8d',
     defaultColumns: ['json.operation', 'json.job', 'json.operation', 'json.repo_url', 'json.project', 'json.msg'],
@@ -162,7 +178,7 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1000000000,  // nanoseconds, ah yeah
   },
 
-  shell: {
+  shell: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AWORyp9K1NBBQZg_dXA9',
     defaultColumns: ['json.command', 'json.msg', 'json.level', 'json.gl_project_path', 'json.error'],
@@ -170,7 +186,7 @@ local indexCatalog = {
     failureFilter: [matchFilter('json.level', 'error')],
   },
 
-  sidekiq: {
+  sidekiq: indexDefaults {
     timestamp: 'json.time',
     indexId: 'AWNABDRwNDuQHTm2tH6l',
     defaultColumns: ['json.class', 'json.queue', 'json.meta.project', 'json.job_status', 'json.scheduling_latency_s', 'json.duration_s'],
@@ -180,9 +196,9 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1,
   },
 
-  workhorse: {
+  workhorse: indexDefaults {
     timestamp: 'json.time',
-    indexId: 'AWM6itvP1NBBQZg_ElD1',
+    indexId: 'a4f5b470-edde-11ea-81e5-155ba78758d4',
     defaultColumns: ['json.method', 'json.remote_ip', 'json.status', 'json.uri', 'json.duration_ms'],
     defaultSeriesSplitField: 'json.remote_ip.keyword',
     failureFilter: statusCode('json.status'),
@@ -526,5 +542,26 @@ local buildElasticLinePercentileVizURL(index, filters, luceneQueries=[], latency
   indexSupportsLatencyQueries(index)::
     std.objectHas(indexCatalog[index], 'defaultLatencyField'),
 
+  /**
+   * Best-effort converter for a prometheus selector hash,
+   * to convert it into a ES matcher.
+   * Returns an array of zero or more matchers.
+   *
+   * TODO: for now, only supports equal matches, improve this
+   */
+  getMatchersForPrometheusSelectorHash(index, selectorHash)::
+    local prometheusLabelMappings = defaultPrometheusLabelMappings + indexCatalog[index].prometheusLabelMappings;
 
+    std.flatMap(
+      function(label)
+        if std.objectHas(prometheusLabelMappings, label) then
+          // A mapping from this prometheus label to a ES field exists
+          if std.isString(selectorHash[label]) then  // TODO: improve this by expanding this to include eq, ne etc
+            [matchFilter(prometheusLabelMappings[label], selectorHash[label])]
+          else
+            []
+        else
+          [],
+      std.objectFields(selectorHash)
+    ),
 }

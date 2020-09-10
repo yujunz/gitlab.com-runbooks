@@ -56,7 +56,7 @@ metricsCatalog.serviceDefinition({
       toolingLinks: [
         toolingLinks.continuousProfiler(service='gitaly'),
         toolingLinks.sentry(slug='gitlab/gitaly-production'),
-        toolingLinks.kibana(title='Gitaly', index='gitaly', stage='$stage', slowRequestSeconds=1),
+        toolingLinks.kibana(title='Gitaly', index='gitaly', slowRequestSeconds=1),
       ],
     },
 
@@ -85,7 +85,7 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn'],
 
       toolingLinks: [
-        toolingLinks.kibana(title='Gitaly OperationService', index='gitaly', stage='$stage', slowRequestSeconds=30, matches={ 'json.grpc.service': 'gitaly.OperationService' }),
+        toolingLinks.kibana(title='Gitaly OperationService', index='gitaly', slowRequestSeconds=30, matches={ 'json.grpc.service': 'gitaly.OperationService' }),
       ],
     },
 

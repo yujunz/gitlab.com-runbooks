@@ -9,7 +9,7 @@ test.suite({
   },
   testGenerateMarkdownSingle: {
     actual: toolinglinks.generateMarkdown([
-      { url: 'https://gitlab.com', title: 'GitLab.com' },
+      function(options) [{ url: 'https://gitlab.com', title: 'GitLab.com' }],
     ]),
     expect: |||
       * [GitLab.com](https://gitlab.com)
@@ -17,8 +17,8 @@ test.suite({
   },
   testGenerateMarkdownMultiple: {
     actual: toolinglinks.generateMarkdown([
-      { url: 'https://gitlab.com', title: 'GitLab.com' },
-      { url: 'https://dev.gitlab.org', title: 'dev.GitLab.com' },
+      function(options) [{ url: 'https://gitlab.com', title: 'GitLab.com' }],
+      function(options) [{ url: 'https://dev.gitlab.org', title: 'dev.GitLab.com' }],
     ]),
     expect: |||
       * [GitLab.com](https://gitlab.com)

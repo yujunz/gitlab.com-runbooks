@@ -54,7 +54,7 @@ metricsCatalog.serviceDefinition({
       toolingLinks: [
         toolingLinks.gkeDeployment('gitlab-registry', type='registry', containerName='registry'),
         // Add slowRequestSeconds=10 once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11136 is fixed
-        toolingLinks.kibana(title='Registry', index='registry', type='registry', stage='$stage'),
+        toolingLinks.kibana(title='Registry', index='registry', type='registry'),
       ],
     },
 

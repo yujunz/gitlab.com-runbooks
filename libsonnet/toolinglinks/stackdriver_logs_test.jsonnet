@@ -6,7 +6,7 @@ test.suite({
     actual: stackdriverLogs.stackdriverLogsEntry(
       title='simple',
       queryHash={ a: 'b', c: 1 },
-    ),
+    )(options={}),
     expect: {
       title: 'simple',
       url: 'https://console.cloud.google.com/logs/query;query=a%3D%22b%22%0Ac%3D1;timeRange=PT30M?project=gitlab-production',

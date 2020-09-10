@@ -49,12 +49,13 @@ local serializeQueryHash(hash) =
     project='gitlab-production',
     timeRange='PT30M',
   )::
-    toolingLinkDefinition({
-      title: title,
-      url: 'https://console.cloud.google.com/logs/query;query=%(query)s;timeRange=%(timeRange)s?project=%(project)s' % {
-        project: project,
-        timeRange: timeRange,
-        query: url.escapeString(serializeQueryHash(queryHash)),
-      },
-    }),
+    function(options)
+      toolingLinkDefinition({
+        title: title,
+        url: 'https://console.cloud.google.com/logs/query;query=%(query)s;timeRange=%(timeRange)s?project=%(project)s' % {
+          project: project,
+          timeRange: timeRange,
+          query: url.escapeString(serializeQueryHash(queryHash)),
+        },
+      }),
 }

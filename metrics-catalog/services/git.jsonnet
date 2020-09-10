@@ -87,7 +87,7 @@ metricsCatalog.serviceDefinition({
       toolingLinks: [
         toolingLinks.continuousProfiler(service='workhorse-git'),
         toolingLinks.sentry(slug='gitlab/gitlab-workhorse-gitlabcom'),
-        toolingLinks.kibana(title='Workhorse', index='workhorse', type='git', stage='$stage', slowRequestSeconds=10),
+        toolingLinks.kibana(title='Workhorse', index='workhorse', type='git', slowRequestSeconds=10),
       ],
     },
 
@@ -115,7 +115,7 @@ metricsCatalog.serviceDefinition({
       toolingLinks: [
         // Improve sentry link once https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/532 arrives
         toolingLinks.sentry(slug='gitlab/gitlabcom'),
-        toolingLinks.kibana(title='Rails', index='rails', type='git', stage='$stage', slowRequestSeconds=10),
+        toolingLinks.kibana(title='Rails', index='rails', type='git', slowRequestSeconds=10),
       ],
     },
 
