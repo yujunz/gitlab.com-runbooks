@@ -1,13 +1,22 @@
-local generateMarkdownLink(toolingLinkDefinition) =
-  |||
-    * [%(title)s](%(url)s)
-  ||| % {
-    title: toolingLinkDefinition.title,
-    url: toolingLinkDefinition.url,
-  };
+local generateMarkdownLink(toolingLinkDefinition, options) =
+  local toolingLinks = toolingLinkDefinition(options);
 
-local generateMarkdown(toolingLinks) =
-  std.join('', std.map(generateMarkdownLink, toolingLinks));
+  [
+    |||
+      * [%(title)s](%(url)s)
+    ||| % {
+      title: tl.title,
+      url: tl.url,
+    }
+
+    for tl in toolingLinks
+  ];
+
+local generateMarkdown(toolingLinks, options={}) =
+  local optionsWithDefaults = {
+    prometheusSelectorHash: {},
+  } + options;
+  std.join('', std.flatMap(function(toolingLinkDefinition) generateMarkdownLink(toolingLinkDefinition, options), toolingLinks));
 
 {
   cloudSQL: (import './cloud_sql.libsonnet').cloudSQL,

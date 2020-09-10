@@ -1143,6 +1143,11 @@ local pgbouncerSyncPool(serviceType, role) =
   }),
 
   // Add some helpers. Note that these use :: to "hide" then:
+
+  /**
+   * Given a service (identified by `type`) returns a list of resources that
+   * are monitored for that type
+   */
   listApplicableServicesFor(type)::
     std.filter(function(k) self[k].appliesToService(type), std.objectFields(self)),
 

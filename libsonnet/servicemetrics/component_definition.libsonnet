@@ -45,7 +45,7 @@ local componentDefinition(componentName, component) =
 
     getToolingLinks()::
       if self.hasToolingLinks() then
-        std.flatMap(function(toolingLinkDefinition) toolingLinkDefinition, self.toolingLinks)
+        self.toolingLinks
       else
         [],
 

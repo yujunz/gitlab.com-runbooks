@@ -2,12 +2,13 @@ local toolingLinkDefinition = (import './tooling_link_definition.libsonnet').too
 
 {
   elasticAPM(service)::
-    [
-      toolingLinkDefinition({
-        title: 'Elastic APM: ' + service,
-        url: 'https://log.gprd.gitlab.net/app/apm#/services/%(service)s/transactions' % {
-          service: service,
-        },
-      }),
-    ],
+    function(options)
+      [
+        toolingLinkDefinition({
+          title: 'Elastic APM: ' + service,
+          url: 'https://log.gprd.gitlab.net/app/apm#/services/%(service)s/transactions' % {
+            service: service,
+          },
+        }),
+      ],
 }

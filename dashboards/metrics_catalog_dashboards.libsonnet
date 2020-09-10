@@ -61,6 +61,10 @@ local componentOverviewMatrixRow(
     +
     (
       if component.hasToolingLinks() then
+        // We pass the selector hash to the tooling links they may
+        // be used to customize the links
+        local toolingOptions = { prometheusSelectorHash: componentSelectorHash };
+
         [[
           grafana.text.new(
             title='Tooling Links',
@@ -70,7 +74,7 @@ local componentOverviewMatrixRow(
 
               %(links)s
             ||| % {
-              links: toolingLinks.generateMarkdown(component.getToolingLinks()),
+              links: toolingLinks.generateMarkdown(component.getToolingLinks(), toolingOptions),
             },
           ),
         ]]
@@ -114,6 +118,10 @@ local componentNodeOverviewMatrixRow(
     +
     (
       if component.hasToolingLinks() then
+        // We pass the selector hash to the tooling links they may
+        // be used to customize the links
+        local toolingOptions = { prometheusSelectorHash: selectorHash };
+
         [
           grafana.text.new(
             title='Tooling Links',
@@ -121,11 +129,11 @@ local componentNodeOverviewMatrixRow(
             content=|||
               ### Observability Tools
 
-              Note: links will not have specific node-level filters applied.
+              Note: some links may not have specific node-level filters applied.
 
               %(links)s
             ||| % {
-              links: toolingLinks.generateMarkdown(component.getToolingLinks()),
+              links: toolingLinks.generateMarkdown(component.getToolingLinks(), toolingOptions),
             },
           ),
         ]
