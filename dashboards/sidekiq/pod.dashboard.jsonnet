@@ -14,6 +14,7 @@ basic.dashboard(
   tags=['sidekiq'],
 )
 .addTemplate(templates.gkeCluster)
+.addTemplate(templates.stage)
 .addTemplate(templates.namespaceGitlab)
 .addTemplate(templates.Node)
 .addTemplate(
