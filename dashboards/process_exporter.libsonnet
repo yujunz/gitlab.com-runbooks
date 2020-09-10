@@ -44,6 +44,20 @@ local selectors = import 'promql/selectors.libsonnet';
         linewidth=1
       ),
       basic.timeseries(
+        title=title + ': Number of Processes',
+        description='Number of processes in the process group',
+        query=|||
+          sum by(%(aggregationLabels)s) (
+            avg_over_time(namedprocess_namegroup_num_procs{%(selector)s}[$__interval])
+          )
+        ||| % formatConfig,
+        legendFormat=legendFormat,
+        interval='1m',
+        intervalFactor=1,
+        legend_show=false,
+        linewidth=1
+      ),
+      basic.timeseries(
         title=title + ': Number of Threads',
         description='Number of threads in the process group',
         query=|||
