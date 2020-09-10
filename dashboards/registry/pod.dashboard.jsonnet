@@ -15,7 +15,6 @@ basic.dashboard(
 .addTemplate(templates.stage)
 .addTemplate(templates.namespaceGitlab)
 .addTemplate(templates.Node)
-.addTemplate(templates.stage)
 .addTemplate(
   template.custom(
     'Deployment',
