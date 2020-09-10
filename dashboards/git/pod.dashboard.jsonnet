@@ -14,13 +14,14 @@ basic.dashboard(
   tags=['git'],
 )
 .addTemplate(templates.gkeCluster)
+.addTemplate(templates.stage)
 .addTemplate(templates.namespaceGitlab)
 .addTemplate(templates.Node)
 .addTemplate(
   template.custom(
     'Deployment',
-    'gitlab-webservice,',
-    'gitlab-webservice',
+    'gitlab-(cny-)?webservice,',
+    'gitlab-(cny-)?webservice',
     hide='variable',
   )
 )

@@ -12,13 +12,14 @@ basic.dashboard(
   tags=['container registry', 'docker', 'registry'],
 )
 .addTemplate(templates.gkeCluster)
+.addTemplate(templates.stage)
 .addTemplate(templates.namespaceGitlab)
 .addTemplate(templates.Node)
 .addTemplate(
   template.custom(
     'Deployment',
-    'gitlab-registry,',
-    'gitlab-registry',
+    'gitlab-(cny-)?registry,',
+    'gitlab-(cny-)?registry',
     hide='variable',
   )
 )

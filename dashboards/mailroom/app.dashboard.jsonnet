@@ -13,6 +13,7 @@ basic.dashboard(
   tags=['mailroom'],
 )
 .addTemplate(templates.gkeCluster)
+.addTemplate(templates.stage)
 .addTemplate(templates.namespaceGitlab)
 .addTemplate(
   template.custom(

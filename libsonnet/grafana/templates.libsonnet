@@ -19,10 +19,13 @@ local template = grafana.template;
       refresh='load',
     ),
   namespaceGitlab::
-    template.custom(
+    template.new(
       'namespace',
-      'gitlab,',
-      'gitlab',
+      '$PROMETHEUS_DS',
+      'label_values(registry_build_info{stage="$stage"}, namespace)',
+      current='gitlab',
+      refresh='load',
+      sort=1,
       hide='variable',
     ),
   ds::
