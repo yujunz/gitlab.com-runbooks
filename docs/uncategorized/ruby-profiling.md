@@ -119,4 +119,20 @@ of the Ruby process.
 
 One thing worth noting is that it profiles all stacks, not just on-CPU ones. It
 is more effective at diagnosing wall clock time spent by threads than time spent
-on CPU.
+on CPU. For CPU profiling, you'll want to use stackprof.
+
+It is available on all rails and gitaly hosts.
+
+To profile all puma processes for 30 seconds (the default sample rate is 100hz):
+
+```
+sudo rbspy record -p $(pgrep -n -f 'puma ') --subprocesses --duration 30
+```
+
+To profile a single puma worker:
+
+```
+sudo rbspy record -p $(pgrep -n -f 'puma:') --duration 30
+```
+
+This will write a flamegraph to `~/.cache/rbspy`. You can then `scp` it to your local machine for your viewing pleasure.
