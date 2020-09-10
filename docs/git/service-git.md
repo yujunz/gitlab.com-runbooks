@@ -31,6 +31,7 @@
 * [purge-git-data.md](purge-git-data.md)
 * [workhorse-git-session-alerts.md](workhorse-git-session-alerts.md)
 * [../gitaly/find-project-from-hashed-storage.md](../gitaly/find-project-from-hashed-storage.md)
+* [../gitaly/git-high-cpu-and-memory-usage.md](../gitaly/git-high-cpu-and-memory-usage.md)
 * [../gitaly/gitaly-debugging-tool.md](../gitaly/gitaly-debugging-tool.md)
 * [../gitaly/gitaly-down.md](../gitaly/gitaly-down.md)
 * [../gitaly/gitaly-latency.md](../gitaly/gitaly-latency.md)
