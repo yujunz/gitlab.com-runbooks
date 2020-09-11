@@ -200,6 +200,16 @@ groups:
       tier: sv
       type: registry
     expr: '0.000100'
+  - record: slo:min:deployment:gitlab_service_apdex:ratio
+    labels:
+      tier: sv
+      type: registry
+    expr: '0.992900'
+  - record: slo:max:deployment:gitlab_service_errors:ratio
+    labels:
+      tier: sv
+      type: registry
+    expr: '0.030000'
   - record: slo:min:events:gitlab_service_apdex:ratio
     labels:
       tier: sv
