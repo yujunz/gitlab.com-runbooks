@@ -8,7 +8,7 @@ local annotation = grafana.annotation;
 local productCommon = import 'product_common.libsonnet';
 
 basic.dashboard(
-  title='Performance - Plan',
+  title='Performance - Package',
   time_from='now-30d',
   tags=['product performance'],
 ).addLink(
