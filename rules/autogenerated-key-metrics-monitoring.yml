@@ -173,11 +173,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="1",type="monitoring"}[1m])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[1m])
         )
         +
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="6",type="monitoring"}[1m])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[1m])
         )
       )
       /
@@ -508,11 +508,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="1",type="monitoring"}[5m])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[5m])
         )
         +
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="6",type="monitoring"}[5m])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[5m])
         )
       )
       /
@@ -841,11 +841,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="1",type="monitoring"}[30m])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[30m])
         )
         +
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="6",type="monitoring"}[30m])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[30m])
         )
       )
       /
@@ -1170,11 +1170,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="1",type="monitoring"}[1h])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[1h])
         )
         +
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="6",type="monitoring"}[1h])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[1h])
         )
       )
       /
@@ -1503,11 +1503,11 @@ groups:
     expr: |
       (
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="1",type="monitoring"}[6h])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[6h])
         )
         +
         sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="6",type="monitoring"}[6h])
+          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[6h])
         )
       )
       /
