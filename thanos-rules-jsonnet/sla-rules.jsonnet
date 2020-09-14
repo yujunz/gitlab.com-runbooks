@@ -56,6 +56,9 @@ local rules = {
       ||| % [getWeightQuery(keyServiceWeights)],
     }, {
       record: 'sla:gitlab:ratio',
+      labels: {
+        sla_type: 'weighted_v1',
+      },
       expr: 'sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"}',
     }],
   }, {
