@@ -34,8 +34,7 @@ metricsCatalog.serviceDefinition({
       apdex: histogramApdex(
         histogram='http_request_duration_seconds_bucket',
         selector=thanosQuerySelector,
-        satisfiedThreshold=3,
-        toleratedThreshold=30
+        satisfiedThreshold=30
       ),
 
       requestRate: rateMetric(
