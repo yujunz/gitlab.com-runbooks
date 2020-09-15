@@ -199,7 +199,7 @@ local pgbouncerSyncPool(serviceType, role) =
     title: 'Average Service CPU Utilization',
     severity: 's3',
     horizontallyScalable: true,
-    appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
+    appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node', 'security' /* ops-only security scanning service */] },
     description: |||
       This resource measures average CPU utilization across an all cores in a service fleet.
       If it is becoming saturated, it may indicate that the fleet needs
@@ -223,7 +223,7 @@ local pgbouncerSyncPool(serviceType, role) =
     title: 'Average CPU Utilization per Shard',
     severity: 's3',
     horizontallyScalable: true,
-    appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'], default: 'sidekiq' },
+    appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node', 'security' /* ops-only security scanning service */], default: 'sidekiq' },
     description: |||
       This resource measures average CPU utilization across an all cores in a shard of a
       service fleet. If it is becoming saturated, it may indicate that the
@@ -854,7 +854,7 @@ local pgbouncerSyncPool(serviceType, role) =
     title: 'Average CPU Utilization per Node',
     severity: 's4',
     horizontallyScalable: true,
-    appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node'] },
+    appliesTo: { allExcept: ['waf', 'console-node', 'deploy-node', 'security' /* ops-only security scanning service */] },
     description: |||
       Average CPU utilization per Node.
 

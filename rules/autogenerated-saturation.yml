@@ -31,7 +31,7 @@ groups:
         clamp_min(
           clamp_max(
             1 - avg by (environment, tier, type, stage) (
-              rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node"}[5m])
+              rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node|security"}[5m])
             )
             ,
             1)
@@ -612,7 +612,7 @@ groups:
         clamp_min(
           clamp_max(
             1 - avg by (environment, tier, type, stage, shard) (
-              rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node"}[5m])
+              rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node|security"}[5m])
             )
             ,
             1)
@@ -682,7 +682,7 @@ groups:
       max by(environment, tier, type, stage) (
         clamp_min(
           clamp_max(
-            avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node"}[5m]))
+            avg without(cpu, mode) (1 - rate(node_cpu_seconds_total{mode="idle", environment!="",type!="",type!~"waf|console-node|deploy-node|security"}[5m]))
             ,
             1)
         ,
