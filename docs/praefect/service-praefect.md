@@ -17,6 +17,7 @@
 * [praefect-read-only.md](praefect-read-only.md)
 * [praefect-replication.md](praefect-replication.md)
 * [praefect-startup.md](praefect-startup.md)
+* [../uncategorized/apdex-alerts-guide.md](../uncategorized/apdex-alerts-guide.md)
 * [../version/gitaly-version-mismatch.md](../version/gitaly-version-mismatch.md)
 <!-- END_MARKER -->
 

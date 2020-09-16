@@ -30,6 +30,7 @@
 * [../release.gitlab.net/README.md](../release.gitlab.net/README.md)
 * [../runner/update-gitlab-runner-on-managers.md](../runner/update-gitlab-runner-on-managers.md)
 * [../uncategorized/about-gitlab-com.md](../uncategorized/about-gitlab-com.md)
+* [../uncategorized/apdex-alerts-guide.md](../uncategorized/apdex-alerts-guide.md)
 * [../uncategorized/aptly.md](../uncategorized/aptly.md)
 * [../uncategorized/chef-documentation.md](../uncategorized/chef-documentation.md)
 * [../uncategorized/chef-guidelines.md](../uncategorized/chef-guidelines.md)
