@@ -53,6 +53,36 @@ local sidekiqThanosAlerts = [
       promql_template_1: 'sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}',
     },
   },
+  {
+    alert: 'SidekiqQueueNoLongerBeingProcessed',
+    expr: |||
+      (sum by(environment, queue) (gitlab_background_jobs:queue:ops:rate_6h) > 0.001)
+      unless
+      (sum by(environment, queue) (gitlab_background_jobs:execution:ops:rate_6h)  > 0)
+    |||,
+    'for': '20m',
+    labels: {
+      type: 'sidekiq',
+      tier: 'sv',
+      stage: 'main',
+      alert_type: 'cause',
+      rules_domain: 'general',
+      severity: 's3',
+    },
+    annotations: {
+      title: 'A Sidekiq queue is no longer being processed.',
+      description: |||
+        Sidekiq queue {{ $labels.queue }} in shard {{ $labels.shard }} is no
+        longer being processed.
+      |||,
+      runbook: 'docs/sidekiq/sidekiq-queue-not-being-processed.md',
+      grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
+      grafana_panel_id: stableIds.hashStableId('request-rate'),
+      grafana_variables: 'environment,stage,queue',
+      grafana_min_zoom_hours: '6',
+      promql_template_1: 'gitlab_background_jobs:execution:ops:rate_6h{environment="$environment", queue="$queue"}',
+    },
+  },
 ];
 
 
