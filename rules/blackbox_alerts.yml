@@ -3,7 +3,7 @@ groups:
 - name: Blackbox Generic Probes
   rules:
   - alert: BlackboxProbeFailures
-    expr: avg_over_time(probe_success{job="blackbox", instance!~"(https://ops.gitlab.net/users/sign_in|https://dev.gitlab.org|https://pre.gitlab.com)"}[5m]) * 100 < 75
+    expr: avg_over_time(probe_success{job="blackbox", instance!~"(https://ops.gitlab.net/users/sign_in|https://dev.gitlab.org.*|https://pre.gitlab.com)"}[5m]) * 100 < 75
     labels:
       pager: pagerduty
       severity: s1
