@@ -78,6 +78,33 @@ local serviceAvailabilityQuery(selectorHash, metricName, rangeInterval) =
     rangeInterval: rangeInterval,
   };
 
+// NB: this query takes into account values recorded in Prometheus prior to
+// https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
+// Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
+// This is encoded in the `defaultSelector`
+local serviceAvailabilityMillisecondsQuery(selectorHash, metricName) =
+  local defaultSelector = {
+    env: { re: 'ops|$environment' },
+    environment: '$environment',
+    stage: 'main',
+    monitor: { re: 'global|' },
+  };
+
+  |||
+    (
+      1 -
+      avg(
+        clamp_max(
+          avg_over_time(%(metricName)s{%(selector)s}[$__range]),
+          1
+        )
+      )
+    ) * $__range_ms
+  ||| % {
+    selector: selectors.serializeHash(defaultSelector + selectorHash),
+    metricName: metricName,
+  };
+
 local serviceRow(service) =
   local links = overviewDashboardLinks(service.name);
   [
@@ -93,6 +120,15 @@ local serviceRow(service) =
       query=serviceAvailabilityQuery({ type: service.name }, 'slo_observation_status', '1d'),
       legendFormat='',
       datasource='$PROMETHEUS_DS',
+    ),
+    basic.slaStats(
+      title='',
+      query=serviceAvailabilityMillisecondsQuery({ type: service.name }, 'slo_observation_status'),
+      legendFormat='{{ type }}',
+      displayName='Budget Spent',
+      links=links,
+      decimals=1,
+      unit='ms',
     ),
     basic.slaTimeseries(
       title='%s: SLA Trends ' % [service.friendly_name],
@@ -140,6 +176,14 @@ basic.dashboard(
       legendFormat='',
       datasource='$PROMETHEUS_DS',
     ),
+    basic.slaStats(
+      title='',
+      query=serviceAvailabilityMillisecondsQuery({}, 'sla:gitlab:ratio'),
+      legendFormat='',
+      displayName='Budget Spent',
+      decimals=1,
+      unit='ms',
+    ),
     basic.slaTimeseries(
       title='Overall SLA over time period - gitlab.com',
       description='Rolling average SLO adherence across all primary services. Higher is better.',
@@ -152,7 +196,7 @@ basic.dashboard(
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('gitlab.com SLA'))
     + thresholdsValues,
-  ]], [4, 4, 16], rowHeight=5, startRow=1)
+  ]], [4, 4, 4, 12], rowHeight=5, startRow=1)
 )
 .addPanel(
   row.new(title='Primary Services'),
@@ -164,7 +208,7 @@ basic.dashboard(
   }
 )
 .addPanels(
-  layout.columnGrid(primaryServiceRows, [4, 4, 16], rowHeight=5, startRow=2101)
+  layout.columnGrid(primaryServiceRows, [4, 4, 4, 12], rowHeight=5, startRow=2101)
 )
 .addPanels(
   layout.grid([
