@@ -13,7 +13,7 @@ what a user's account would look like for access.
 |--------------------|----------------------|-------------------|
 | db-console         | DB secondary console | <user>-db         |
 | db-console-primary | DB primary console   | <user>-db-primary |
-| db-console-archive | DB archive instance  | <user>-db-primary |
+| db-console-archive | DB archive instance  | <user>-db-archive |
 | db-console-geo     | DB geo console       | <user>-db-geo     |
 | rails-console      | Rails console        | <user>-rails      |
 
