@@ -313,10 +313,10 @@ module Storage
 
     def load_latest_inventory
       inventory_files = Dir.new(inventory_dir_path).children
-      return if inventory_files.empty?
+      return [] if inventory_files.empty?
 
       latest_inventory_file_path = File.join(inventory_dir_path, inventory_files.max)
-      return unless File.exist?(latest_inventory_file_path)
+      return [] unless File.exist?(latest_inventory_file_path)
 
       IO.readlines(latest_inventory_file_path, chomp: true)
     end
