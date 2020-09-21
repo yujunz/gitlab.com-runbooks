@@ -89,6 +89,21 @@ groups:
       promql_template_1: 'gitlab_workhorse_git_http_sessions_active:total{environment="$environment", stage="$stage"}'
       promql_template_2: 'avg_over_time(gitlab_workhorse_git_http_sessions_active{environment="$environment", type="git", tier="sv", stage="$stage"}[1m])'
 
+  # too many image scaler processes are being triggered
+  - alert: gitlab_workhorse_image_scaler_max_procs_exceeded_5m
+    expr: rate(gitlab_workhorse_image_resize_concurrency_limit_exceeds_total[5m]) > 0
+    for: 5m
+    labels:
+      rules_domain: general
+      severity: s4
+      alert_type: cause
+    annotations:
+      title: Too many image scaler processes are being requested to run
+      description: >
+        The number of image scaling requests is tripping the threshold for the maximum number of
+        of concurrent scaler processes available to service those requests.
+      runbook: docs/web/workhorse-image-scaler-alerts.md
+
 - name: Workhorse Histograms
   interval: 1m
   rules:
