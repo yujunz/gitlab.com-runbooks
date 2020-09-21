@@ -292,27 +292,11 @@
           },
         },
         replication_job_target: {
-          properties: {
-            address: {
-              type: 'text',
-              fields: {
-                keyword: {
-                  type: 'keyword',
-                  ignore_above: 256,
-                },
-              },
-            },
-            primary: {
-              type: 'boolean',
-            },
-            storage: {
-              type: 'text',
-              fields: {
-                keyword: {
-                  type: 'keyword',
-                  ignore_above: 256,
-                },
-              },
+          type: 'text',
+          fields: {
+            keyword: {
+              type: 'keyword',
+              ignore_above: 256,
             },
           },
         },
