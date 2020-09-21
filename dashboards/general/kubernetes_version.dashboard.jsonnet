@@ -4,10 +4,11 @@ local promQuery = import 'grafana/prom_query.libsonnet';
 local templates = import 'grafana/templates.libsonnet';
 local dashboard = grafana.dashboard;
 local template = grafana.template;
+local graphPanel = grafana.graphPanel;
 local tablePanel = grafana.tablePanel;
 local basic = import 'grafana/basic.libsonnet';
 
-local masterVersionPanel =
+local masterVersionTablePanel =
   tablePanel.new(
     'Master Version',
     datasource='$PROMETHEUS_DS',
@@ -34,7 +35,20 @@ local masterVersionPanel =
     )
   );
 
-local nodeVersionsPanel =
+local masterVersionPanel =
+  graphPanel.new(
+    'Master Version Over Time',
+    datasource='$PROMETHEUS_DS',
+  )
+  .addTarget(  // Master Version over time
+    promQuery.target(
+      |||
+        count (kubernetes_build_info{environment="$environment", job="apiserver"}) by (gitVersion)
+      |||,
+    )
+  );
+
+local nodeVersionsTablePanel =
   tablePanel.new(
     'Node Versions',
     datasource='$PROMETHEUS_DS',
@@ -61,10 +75,24 @@ local nodeVersionsPanel =
     )
   );
 
+local nodeVersionsPanel =
+  graphPanel.new(
+    'Node Versions Over Time',
+    datasource='$PROMETHEUS_DS',
+  )
+  .addTarget(  // Node Versions over time
+    promQuery.target(
+      |||
+        count (kube_node_info{environment="$environment"}) by (cluster, node, kubelet_version)
+      |||,
+    )
+  );
+
 basic.dashboard(
   'Kubernetes Version Matrix',
   tags=['general', 'kubernetes'],
 )
-.addTemplate(templates.stage)
-.addPanel(masterVersionPanel, gridPos={ x: 0, y: 0, w: 24, h: 3 })
-.addPanel(nodeVersionsPanel, gridPos={ x: 0, y: 1, w: 24, h: 18 })
+.addPanel(masterVersionTablePanel, gridPos={ x: 0, y: 0, w: 24, h: 3 })
+.addPanel(masterVersionPanel, gridPos={ x: 0, y: 1, w: 24, h: 10 })
+.addPanel(nodeVersionsTablePanel, gridPos={ x: 0, y: 2, w: 24, h: 18 })
+.addPanel(nodeVersionsPanel, gridPos={ x: 0, y: 3, w: 24, h: 10 })
