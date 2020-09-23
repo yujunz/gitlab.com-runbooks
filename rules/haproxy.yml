@@ -71,36 +71,6 @@ groups:
         turning it off and on again?
       runbook: docs/frontend/haproxy.md
       title: High Error Rate on Front End Web
-  - alert: High4xxApiRateLimit
-    expr: |
-      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend="api_rate_limit",code="4xx",tier="lb"}) by (environment)
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{tier="lb"}) by (environment)
-      > 0.1
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: s1
-      alert_type: cause
-    annotations:
-      description: We are seeing an increase of 4xx errors on the load balancing api
-        rate limiting backend, more than 10% of http requests for at least 5 minutes.
-      runbook: docs/frontend/haproxy.md
-      title: High 4xx Error Rate on Front End Web on backend api_rate_limit
-  - alert: High4xxRateLimit
-    expr: |
-      sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",code="4xx",tier="lb"}) by (environment)
-      / sum(backend_code:haproxy_server_http_responses_total:irate1m{backend!="registry",tier="lb"}) by (environment)
-      > 0.25
-    for: 5m
-    labels:
-      pager: pagerduty
-      severity: s1
-      alert_type: cause
-    annotations:
-      description: We are seeing an increase of 4xx errors on the load balancing across
-        all backends, more than 25% of http requests for at least 5 minutes.
-      runbook: docs/frontend/haproxy.md
-      title: High 4xx Error Rate on Front End Web
   - alert: IncreasedErrorRateHTTPSGit
     expr: sum(backend_code:haproxy_server_http_responses_total:irate1m{code="5xx",tier="lb",backend="https_git"}) by (environment) > 20
     for: 15s
