@@ -26,6 +26,40 @@ metricsCatalog.serviceDefinition({
       local thanosQuerySelector = productionEnvironmentsSelector {
         job: 'thanos',
         type: 'monitoring',
+        shard: 'default',
+      },
+      staticLabels: {
+        environment: 'ops',
+      },
+
+      apdex: histogramApdex(
+        histogram='http_request_duration_seconds_bucket',
+        selector=thanosQuerySelector,
+        satisfiedThreshold=30,
+      ),
+
+      requestRate: rateMetric(
+        counter='http_requests_total',
+        selector=thanosQuerySelector
+      ),
+
+      errorRate: rateMetric(
+        counter='http_requests_total',
+        selector=thanosQuerySelector { code: { re: '^5.*' } }
+      ),
+
+      significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+      ],
+    },
+
+    public_dashboards_thanos_query: {
+      local thanosQuerySelector = productionEnvironmentsSelector {
+        job: 'thanos',
+        type: 'monitoring',
+        shard: 'public-dashboards',
       },
       staticLabels: {
         environment: 'ops',
