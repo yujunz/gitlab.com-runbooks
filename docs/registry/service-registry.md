@@ -28,4 +28,5 @@
 * [../uncategorized/k8s-operations.md](../uncategorized/k8s-operations.md)
 * [../uncategorized/kubernetes.md](../uncategorized/kubernetes.md)
 * [../uncategorized/tweeting-guidelines.md](../uncategorized/tweeting-guidelines.md)
+* [../vault/vault.md](../vault/vault.md)
 <!-- END_MARKER -->
