@@ -233,7 +233,7 @@
     "type": "RECORD"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "timestamp",
     "type": "TIMESTAMP"
   }
