@@ -27,11 +27,6 @@ local elasticsearchLogSearchDataLink(type) = {
 
 {
   dashboard(type, defaultController, defaultAction)::
-    local controllerTemplate = if type == 'api' then
-      templates.constant('controller', defaultController)
-    else
-      templates.railsController(defaultController);
-
     local selector = 'environment="$environment", type="%s", stage="$stage", controller="$controller", action=~"$action"' % type;
 
     basic.dashboard(
@@ -41,7 +36,7 @@ local elasticsearchLogSearchDataLink(type) = {
     )
     .addTemplate(templates.constant('type', type))
     .addTemplate(templates.stage)
-    .addTemplate(controllerTemplate)
+    .addTemplate(templates.railsController(defaultController))
     .addTemplate(templates.railsControllerAction(defaultAction))
     .addPanels(
       layout.grid([
