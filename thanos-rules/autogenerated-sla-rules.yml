@@ -30,7 +30,11 @@ groups:
   - record: sla:gitlab:ratio
     labels:
       sla_type: weighted_v1
-    expr: sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"}
+    expr: |
+      clamp_max(
+        sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"},
+        1
+      )
 - name: SLA target
   interval: 5m
   partial_response_strategy: warn

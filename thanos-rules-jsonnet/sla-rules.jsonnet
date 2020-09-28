@@ -59,7 +59,17 @@ local rules = {
       labels: {
         sla_type: 'weighted_v1',
       },
-      expr: 'sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"}',
+      // Adding a clamp here is a safety precaution. In normal circumstances this should
+      // never exceed one. However in incidents such as show,
+      // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11457
+      // there are failure modes where this may occur.
+      // Having the clamp_max guard clause can help contain the blast radius.
+      expr: |||
+        clamp_max(
+          sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"},
+          1
+        )
+      |||,
     }],
   }, {
     name: 'SLA target',
