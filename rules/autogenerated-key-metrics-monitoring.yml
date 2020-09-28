@@ -171,17 +171,9 @@ groups:
       tier: inf
       type: monitoring
     expr: |
-      (
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[1m])
-        )
-        +
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[1m])
-        )
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[1m])
       )
-      /
-      2
       /
       (
         sum by (stage) (
@@ -506,17 +498,9 @@ groups:
       tier: inf
       type: monitoring
     expr: |
-      (
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[5m])
-        )
-        +
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[5m])
-        )
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[5m])
       )
-      /
-      2
       /
       (
         sum by (stage) (
@@ -839,17 +823,9 @@ groups:
       tier: inf
       type: monitoring
     expr: |
-      (
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[30m])
-        )
-        +
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[30m])
-        )
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[30m])
       )
-      /
-      2
       / on(stage) group_left()
       (
         gitlab_component_apdex:weight:score_30m{component="thanos_query",environment="ops",tier="inf",type="monitoring"} > 0
@@ -1168,17 +1144,9 @@ groups:
       tier: inf
       type: monitoring
     expr: |
-      (
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[1h])
-        )
-        +
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[1h])
-        )
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[1h])
       )
-      /
-      2
       /
       (
         sum by (stage) (
@@ -1501,17 +1469,9 @@ groups:
       tier: inf
       type: monitoring
     expr: |
-      (
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="3",type="monitoring"}[6h])
-        )
-        +
-        sum by (stage) (
-          rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[6h])
-        )
+      sum by (stage) (
+        rate(http_request_duration_seconds_bucket{environment=~"gprd|ops|ci-prd",job="thanos",le="30",type="monitoring"}[6h])
       )
-      /
-      2
       / on(stage) group_left()
       (
         gitlab_component_apdex:weight:score_6h{component="thanos_query",environment="ops",tier="inf",type="monitoring"} > 0
