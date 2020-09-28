@@ -17,6 +17,7 @@
 * [../patroni/postgresql-backups-wale-walg.md](../patroni/postgresql-backups-wale-walg.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [pubsub-queing.md](pubsub-queing.md)
+* [../redis/redis-survival-guide-for-sres.md](../redis/redis-survival-guide-for-sres.md)
 * [../registry/gitlab-registry.md](../registry/gitlab-registry.md)
 * [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 * [../uncategorized/camoproxy.md](../uncategorized/camoproxy.md)

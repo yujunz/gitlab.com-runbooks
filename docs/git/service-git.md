@@ -51,6 +51,7 @@
 * [../praefect/praefect-bypass.md](../praefect/praefect-bypass.md)
 * [../praefect/praefect-read-only.md](../praefect/praefect-read-only.md)
 * [../praefect/praefect-replication.md](../praefect/praefect-replication.md)
+* [../redis/redis-survival-guide-for-sres.md](../redis/redis-survival-guide-for-sres.md)
 * [../runner/update-gitlab-runner-on-managers.md](../runner/update-gitlab-runner-on-managers.md)
 * [../sidekiq/large-sidekiq-queue.md](../sidekiq/large-sidekiq-queue.md)
 * [../sidekiq/silent-project-exports.md](../sidekiq/silent-project-exports.md)

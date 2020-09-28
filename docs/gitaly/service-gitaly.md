@@ -35,6 +35,7 @@
 * [../praefect/praefect-bypass.md](../praefect/praefect-bypass.md)
 * [../praefect/praefect-error-rate.md](../praefect/praefect-error-rate.md)
 * [../praefect/praefect-file-storages.md](../praefect/praefect-file-storages.md)
+* [../redis/redis-survival-guide-for-sres.md](../redis/redis-survival-guide-for-sres.md)
 * [../uncategorized/apdex-alerts-guide.md](../uncategorized/apdex-alerts-guide.md)
 * [../uncategorized/deleted-project-restore.md](../uncategorized/deleted-project-restore.md)
 * [../uncategorized/namespace-restore.md](../uncategorized/namespace-restore.md)

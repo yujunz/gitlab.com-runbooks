@@ -8,4 +8,7 @@
 
 * [system](https://log.gprd.gitlab.net/goto/0b28cb1d20663b4359f8bc05995a22ad)
 
+## Troubleshooting Pointers
+
+* [../redis/redis-survival-guide-for-sres.md](../redis/redis-survival-guide-for-sres.md)
 <!-- END_MARKER -->
