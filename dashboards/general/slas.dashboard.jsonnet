@@ -53,6 +53,41 @@ local keyServiceSorter(service) =
   else
     l[0];
 
+local systemAvailabilityQuery(selectorHash, rangeInterval) =
+  local defaultSelector = {
+    env: { re: 'ops|$environment' },
+    environment: '$environment',
+    stage: 'main',
+    monitor: { re: 'global|' },
+  };
+  /**
+   TODO: after 2021-01-01 consider using the recording rule that we have for this:
+
+   ```
+    avg_over_time(sla:gitlab:ratio{%(selector)s}[%(rangeInterval)s)
+   ```
+
+   Unfortunately we cannot use this at present and need to rely on subqueries instead due to
+   the bug found in https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11457.
+   This was fixed on 2020-09-28, so any SLA data forward of that date can use the recording rule.
+
+   In the mean time, we'll use the (much slower to evaluate) subquery expression
+   */
+  |||
+    avg_over_time(
+      (
+        (
+          sla:gitlab:score{%(selector)s}
+          /
+          sla:gitlab:weights{%(selector)s}
+        ) <= 1
+      )[%(rangeInterval)s:1m]
+    )
+  ||| % {
+    selector: selectors.serializeHash(defaultSelector + selectorHash),
+    rangeInterval: rangeInterval,
+  };
+
 // NB: this query takes into account values recorded in Prometheus prior to
 // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
 // Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
@@ -132,11 +167,11 @@ basic.dashboard(
   layout.columnGrid([[
     basic.slaStats(
       title='GitLab.com Availability',
-      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '$__range'),
+      query=systemAvailabilityQuery({}, '$__range'),
     ),
     grafanaCalHeatmap.heatmapCalendarPanel(
       'Calendar',
-      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '1d'),
+      query=systemAvailabilityQuery({}, '1d'),
       legendFormat='',
       datasource='$PROMETHEUS_DS',
     ),
@@ -144,7 +179,7 @@ basic.dashboard(
       title='Overall SLA over time period - gitlab.com',
       description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
-      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '1d'),
+      query=systemAvailabilityQuery({}, '1d'),
       legendFormat='gitlab.com SLA',
       interval=INTERVAL,
       points=true,
