@@ -60,7 +60,6 @@ local PagerDutyReceiver(channel) = {
       service_key: channel.serviceKey,
       description: '{{ template "slack.title" . }}',
       client: 'GitLab Alertmanager',
-      client_url: '{{ template "slack.link" . }}',
       details: {
         note: '{{ template "slack.text" . }}',
       },
