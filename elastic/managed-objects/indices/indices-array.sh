@@ -4,6 +4,7 @@ declare -a indices
 
 export indices=(
   camoproxy
+  chef
   consul
   gitaly
   gke
