@@ -123,6 +123,10 @@ local elasticsearchLogSearchDataLink(type) = {
         ),
       ], startRow=301)
       +
+      rowGrid('Elasticsearch', [
+        basic.multiQuantileTimeseries('Elasticsearch Time', selector, '{{ action }}', bucketMetric='http_elasticsearch_requests_duration_seconds_bucket', aggregators='controller, action'),
+      ], startRow=401)
+      +
       layout.grid([])
     )
     .trailer(),
