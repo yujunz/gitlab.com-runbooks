@@ -46,6 +46,7 @@ basic.dashboard(
       productCommon.pageDetail('Snippets - Markdown', 'Editor_Snippets_Markdown', 'https://gitlab.com/snippets/1985940'),
       productCommon.pageDetail('Snippets - Multi-file', 'Editor_Snippets_Multifile', 'https://gitlab.com/snippets/2020132'),
       productCommon.pageDetail('WebIDE - about.gitlab.com', 'Editor_WebIDE_about_repo', 'https://gitlab.com/-/ide/project/gitlab-com/www-gitlab-com/edit/master/-/'),
+      productCommon.pageDetail('WebIDE - Team page', 'Editor_WebIDE_team_page', 'https://gitlab.com/-/ide/project/gitlab-com/www-gitlab-com/edit/master/-/data/team.yml'),
       productCommon.pageDetail('Single File Editor - Team.yml', 'Editor_SingleFile_team_page', 'https://gitlab.com/gitlab-com/www-gitlab-com/-/edit/master/data/team.yml'),
     ],
     startRow=2001,
