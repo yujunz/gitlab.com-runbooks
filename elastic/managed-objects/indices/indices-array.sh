@@ -8,6 +8,7 @@ export indices=(
   consul
   gitaly
   gke
+  jaeger
   mailroom
   monitoring
   pages
