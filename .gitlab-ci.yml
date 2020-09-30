@@ -375,6 +375,9 @@ test_dashboards:
   stage: test
   script:
     - dashboards/upload.sh -D
+  only:
+    changes:
+      - ./dashboards/*
 
 deploy_dashboards:
   extends: .dashboards
