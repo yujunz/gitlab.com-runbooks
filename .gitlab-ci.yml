@@ -143,56 +143,6 @@ ensure_generated_content_up_to_date:
     - git diff --exit-code || (echo "Please run 'make generate'" && exit 1)
 
 
-# log.gitlab.net
-################################################################################
-update_elastic_log_dashboards:
-  stage: deploy
-  script:
-  - ./elastic/managed-objects/log/dashboards/update-dashboards.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log/dashboards/*
-    variables:
-      - $ES_LOG_URL
-
-update_elastic_log_searches:
-  stage: deploy
-  script:
-  - ./elastic/managed-objects/log/searches/update-searches.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log/searches/*
-    variables:
-      - $ES_LOG_URL
-
-update_elastic_log_watches:
-  stage: deploy
-  script:
-  - ./elastic/managed-objects/log/watches/update-watches.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log/watches/*
-    variables:
-      - $ES_LOG_URL
-
-update_elastic_log_visualizations:
-  stage: deploy
-  script:
-  - ./elastic/managed-objects/log/visualizations/update-visualizations.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log/visualizations/*
-    variables:
-      - $ES_LOG_URL
-
 # log.gprd.gitlab.net
 ################################################################################
 update_elastic_log_gprd_ilm:
