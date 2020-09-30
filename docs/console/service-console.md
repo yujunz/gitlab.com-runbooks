@@ -30,6 +30,7 @@
 * [../monitoring/alertmanager-notification-failures.md](../monitoring/alertmanager-notification-failures.md)
 * [../monitoring/alerts_gke.md](../monitoring/alerts_gke.md)
 * [../monitoring/filesystem_alerts.md](../monitoring/filesystem_alerts.md)
+* [../monitoring/prometheus-pod-crashlooping.md](../monitoring/prometheus-pod-crashlooping.md)
 * [../monitoring/sentry-is-down.md](../monitoring/sentry-is-down.md)
 * [../pages/pages-letsencrypt.md](../pages/pages-letsencrypt.md)
 * [../patroni/patroni-management.md](../patroni/patroni-management.md)
