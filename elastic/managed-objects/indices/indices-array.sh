@@ -21,5 +21,6 @@ export indices=(
   shell
   sidekiq
   system
+  vault
   workhorse
 )
