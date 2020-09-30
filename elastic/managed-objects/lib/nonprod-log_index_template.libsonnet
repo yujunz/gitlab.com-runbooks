@@ -27,7 +27,7 @@ local settings = import 'settings_nonprod.libsonnet';
     env,
   ):: {
     index_patterns: ['pubsub-%s-inf-%s-*' % [index, env]],
-    mappings: mappings[index],
+    mappings: if std.objectHas(mappings, index) then mappings[index] else {},
     settings: settings.setting(index, env),
   },
 }
