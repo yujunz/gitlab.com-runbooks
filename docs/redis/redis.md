@@ -38,6 +38,7 @@
         - [keyspace analysis](#keyspace-analysis)
       - [Please remember to delete the `pcap` file immediately after performing the analysis](#please-remember-to-delete-the-pcap-file-immediately-after-performing-the-analysis)
     - [CPU profiling](#cpu-profiling)
+    - [Accessing Redis via the Rails console](#accessing-redis-via-the-rails-console)
     - [packetbeat](#packetbeat)
     - [Profiling the application](#profiling-the-application)
 - [Failover and Recovery procedures](#failover-and-recovery-procedures)
@@ -459,6 +460,23 @@ Those stack traces can then be downloaded and analyzed with [flamescope](https:/
 $ scp $host:/var/log/perf-\*/stacks.\*.gz .
 $ cat stacks.$host.$time.gz | gunzip - | ~/code/FlameGraph/stackcollapse-perf.pl | ~/code/FlameGraph/flamegraph.pl > flamegraph.svg
 ```
+
+### Accessing Redis via the Rails console
+
+Sometimes you may wish to query a production Redis server from a Rails
+console. Either because you don't have sufficient access to run
+`redis-cli`, or because you are running a query that is easier
+expressed in Ruby than with `redis-cli`.
+
+You probably want to use a Redis secondary to do this. This is how you
+instantiate a Ruby Redis client for a secondary:
+
+```ruby
+redis = Redis.new(Gitlab::Redis::SharedState.params.merge(role: :slave))
+```
+
+Substitute `Cache` or `Queues` to get a client for the cache or
+sidekiq Redis instances, respectively.
 
 ### packetbeat
 
