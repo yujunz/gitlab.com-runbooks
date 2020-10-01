@@ -5,7 +5,6 @@ groups:
     expr: up{job="gitlab-nginx"} == 0
     for: 5m
     labels:
-      team: gitaly
       pager: pagerduty
       severity: s1
       alert_type: cause
