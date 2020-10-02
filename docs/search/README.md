@@ -39,20 +39,20 @@
 * [../uncategorized/uploads.md](../uncategorized/uploads.md)
 <!-- END_MARKER -->
 
-# Summary
+<!-- ## Summary -->
 
-# Architecture
+<!-- ## Architecture -->
 
-# Performance
+<!-- ## Performance -->
 
-# Scalability
+<!-- ## Scalability -->
 
-# Availability
+<!-- ## Availability -->
 
-# Durability
+<!-- ## Durability -->
 
-# Security/Compliance
+<!-- ## Security/Compliance -->
 
-# Monitoring/Alerting
+<!-- ## Monitoring/Alerting -->
 
-# Links to further Documentation
+<!-- ## Links to further Documentation -->

@@ -116,3 +116,21 @@ been removed.
 
 The healthcheck now is a simple TCP check to the pgbouncer port.  This causes
 pgbouncer logs about connections to 'nodb' by 'nouser'; do not be alarmed by these.
+
+<!-- ## Summary -->
+
+<!-- ## Architecture -->
+
+<!-- ## Performance -->
+
+<!-- ## Scalability -->
+
+<!-- ## Availability -->
+
+<!-- ## Durability -->
+
+<!-- ## Security/Compliance -->
+
+<!-- ## Monitoring/Alerting -->
+
+<!-- ## Links to further Documentation -->

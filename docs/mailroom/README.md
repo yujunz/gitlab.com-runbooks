@@ -123,3 +123,21 @@ imap.login("incoming@gitlab.com", "REDACTED")
 imap.uid_search("DELETED").length # Informational, shows how many messages are deleted but not expunged
 imap.expunge()
 ```
+
+<!-- ## Summary -->
+
+<!-- ## Architecture -->
+
+<!-- ## Performance -->
+
+<!-- ## Scalability -->
+
+<!-- ## Availability -->
+
+<!-- ## Durability -->
+
+<!-- ## Security/Compliance -->
+
+<!-- ## Monitoring/Alerting -->
+
+<!-- ## Links to further Documentation -->

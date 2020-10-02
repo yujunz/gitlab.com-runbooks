@@ -382,3 +382,21 @@ re-create them.
         * Edit the relevant roles in the chef repo to apply the new recipe to VMs managed with that role, for example: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/2367/diffs
         * follow the chef roll out process
 
+
+<!-- ## Summary -->
+
+<!-- ## Architecture -->
+
+<!-- ## Performance -->
+
+<!-- ## Scalability -->
+
+<!-- ## Availability -->
+
+<!-- ## Durability -->
+
+<!-- ## Security/Compliance -->
+
+<!-- ## Monitoring/Alerting -->
+
+<!-- ## Links to further Documentation -->

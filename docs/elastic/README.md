@@ -147,20 +147,21 @@ Since we cannot use our Alertmanager, Elasticsearch Watches have to be used for 
 
 Blackbox probes cannot provide us with sufficient granularity of state reporting.
 
-# Summary
 
-# Architecture
+<!-- ## Summary -->
 
-# Performance
+<!-- ## Architecture -->
 
-# Scalability
+<!-- ## Performance -->
 
-# Availability
+<!-- ## Scalability -->
 
-# Durability
+<!-- ## Availability -->
 
-# Security/Compliance
+<!-- ## Durability -->
 
-# Monitoring/Alerting
+<!-- ## Security/Compliance -->
 
-# Links to further Documentation
+<!-- ## Monitoring/Alerting -->
+
+<!-- ## Links to further Documentation -->

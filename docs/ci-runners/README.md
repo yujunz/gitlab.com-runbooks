@@ -103,3 +103,21 @@ These subnets are created under the `windows-ci` network.
 | bastion-windows-ci | 10.3.1.0/24 | bastion network                   |
 | runner-windows-ci  | 10.3.0.0/24 | Runner network for ansible/packer |
 
+
+<!-- ## Summary -->
+
+<!-- ## Architecture -->
+
+<!-- ## Performance -->
+
+<!-- ## Scalability -->
+
+<!-- ## Availability -->
+
+<!-- ## Durability -->
+
+<!-- ## Security/Compliance -->
+
+<!-- ## Monitoring/Alerting -->
+
+<!-- ## Links to further Documentation -->

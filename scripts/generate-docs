@@ -88,9 +88,7 @@ end
 def generate_docs
   service_mapping_yaml = YAML.load_file(File.join(__dir__, "..", "services", "service-catalog.yml"))
   services = service_mapping_yaml["services"]
-
   tier_map = service_mapping_yaml["tiers"].each_with_object({}) { |tier, map| map[tier["name"]] = tier; }
-  service_map = service_mapping_yaml["services"].each_with_object({}) { |service, map| map[service["name"]] = service; }
 
   services.each do |service|
     service_name = service["name"]
@@ -101,13 +99,36 @@ def generate_docs
     if File.exist?(troubleshooting_doc)
       replace_header(troubleshooting_doc, details)
     else
-      File.write(troubleshooting_doc, details)
+      toc = <<-EOF
+
+<!-- ## Summary -->
+
+<!-- ## Architecture -->
+
+<!-- ## Performance -->
+
+<!-- ## Scalability -->
+
+<!-- ## Availability -->
+
+<!-- ## Durability -->
+
+<!-- ## Security/Compliance -->
+
+<!-- ## Monitoring/Alerting -->
+
+<!-- ## Links to further Documentation -->
+EOF
+
+      File.write(troubleshooting_doc, details + toc)
     end
   end
 
   # hp: we can't savely remove READMEs, as we have some dirs which are not maching
   # service-catalog entries... And also, each service is supposed to have a README.md
   # from now on.
+  #
+  # service_map = service_mapping_yaml["services"].each_with_object({}) { |service, map| map[service["name"]] = service; }
   #
   # Dir.glob(File.join(__dir__, "..", "docs", "*", "README.md")).each do |file|
   #   referred_service_name = File.dirname(file).split('/').last

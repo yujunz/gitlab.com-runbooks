@@ -77,20 +77,21 @@
 * [../version/gitaly-version-mismatch.md](../version/gitaly-version-mismatch.md)
 <!-- END_MARKER -->
 
-# Summary
 
-# Architecture
+<!-- ## Summary -->
 
-# Performance
+<!-- ## Architecture -->
 
-# Scalability
+<!-- ## Performance -->
 
-# Availability
+<!-- ## Scalability -->
 
-# Durability
+<!-- ## Availability -->
 
-# Security/Compliance
+<!-- ## Durability -->
 
-# Monitoring/Alerting
+<!-- ## Security/Compliance -->
 
-# Links to further Documentation
+<!-- ## Monitoring/Alerting -->
+
+<!-- ## Links to further Documentation -->
