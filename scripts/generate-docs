@@ -17,7 +17,7 @@ def find_troubleshooting_docs(service_name)
     while line = stdout.gets
       file_name = Pathname.new(line.chomp)
       relative = file_name.relative_path_from(dest_path)
-      docs.push(relative) unless line.include? "service-"
+      docs.push(relative) unless line.include? "README.md"
     end
   end
 
@@ -43,6 +43,8 @@ def generate_header(service, tier)
   troubeshooting_docs = find_troubleshooting_docs(service_name)
   template = <<-MARKDOWN_EOF
 #{START_MARKER}
+[[_TOC_]]
+
 #  <%= service["name"].capitalize %> Service
 <% if service&.dig("observability", "monitors", "primary_grafana_dashboard") -%>
 * [Service Overview](https://dashboards.gitlab.net/d/<%=service["observability"]["monitors"]["primary_grafana_dashboard"]%>)
@@ -86,27 +88,52 @@ end
 def generate_docs
   service_mapping_yaml = YAML.load_file(File.join(__dir__, "..", "services", "service-catalog.yml"))
   services = service_mapping_yaml["services"]
-
   tier_map = service_mapping_yaml["tiers"].each_with_object({}) { |tier, map| map[tier["name"]] = tier; }
-  service_map = service_mapping_yaml["services"].each_with_object({}) { |service, map| map[service["name"]] = service; }
 
   services.each do |service|
     service_name = service["name"]
     tier = tier_map[service["tier"]]
 
-    troubleshooting_doc = File.join(__dir__, "..", "docs", service_name.to_s, "service-#{service_name}.md")
+    troubleshooting_doc = File.join(__dir__, "..", "docs", service_name.to_s, "README.md")
     details = generate_header(service, tier)
     if File.exist?(troubleshooting_doc)
       replace_header(troubleshooting_doc, details)
     else
-      File.write(troubleshooting_doc, details)
+      toc = <<-TOC_EOF
+
+<!-- ## Summary -->
+
+<!-- ## Architecture -->
+
+<!-- ## Performance -->
+
+<!-- ## Scalability -->
+
+<!-- ## Availability -->
+
+<!-- ## Durability -->
+
+<!-- ## Security/Compliance -->
+
+<!-- ## Monitoring/Alerting -->
+
+<!-- ## Links to further Documentation -->
+      TOC_EOF
+
+      File.write(troubleshooting_doc, details + toc)
     end
   end
 
-  Dir.glob(File.join(__dir__, "..", "docs", "*", "service-*.md")).each do |file|
-    referred_service_name = File.basename(file, ".md").sub("service-", "")
-    File.delete(file) unless service_map[referred_service_name]
-  end
+  # hp: we can't savely remove READMEs, as we have some dirs which are not maching
+  # service-catalog entries... And also, each service is supposed to have a README.md
+  # from now on.
+  #
+  # service_map = service_mapping_yaml["services"].each_with_object({}) { |service, map| map[service["name"]] = service; }
+  #
+  # Dir.glob(File.join(__dir__, "..", "docs", "*", "README.md")).each do |file|
+  #   referred_service_name = File.dirname(file).split('/').last
+  #   File.delete(file) unless service_map[referred_service_name]
+  # end
 end
 
 begin

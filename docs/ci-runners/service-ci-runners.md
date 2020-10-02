@@ -1,15 +1,3 @@
-<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->
-#  Ci-runners Service
-* [Service Overview](https://dashboards.gitlab.net/d/ci-runners-main/ci-runners-overview)
-* **Alerts**: https://alerts.gitlab.net/#/alerts?filter=%7Btype%3D%22ci-runners%22%2C%20tier%3D%22sv%22%7D
-* **Label**: gitlab-com/gl-infra/production~"Service:CI Runner"
-
-## Logging
-
-* [shared runners](https://log.gprd.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a)
-
-<!-- END_MARKER -->
-
 ## Purpose of the service
 
 CI Runners are used by customers to run CI jobs for any project hosted on GitLab.com.
@@ -148,3 +136,4 @@ Contact the Abuse Team via Slack (`@abuse-team`), and ask them to run `Scrubber`
 
 Quick reference:
 * [Scrubber runbook](https://gitlab.com/gitlab-com/gl-security/abuse-team/abuse/wikis/Runbook/Mitigation-Tool-%28Scrubber%29)
+
