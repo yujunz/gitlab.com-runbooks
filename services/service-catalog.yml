@@ -1994,7 +1994,7 @@ services:
   operations:
     maintenance:
     runbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/service-redis.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/README.md
     playbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/redis-new-cluster-replication.md
     error_budget:
@@ -2061,7 +2061,7 @@ services:
     maintenance:
     runbooks:
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/service-redis.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/README.md
     error_budget:
   observability:
     monitors:
@@ -2125,7 +2125,7 @@ services:
     maintenance:
     runbooks:
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/service-redis.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/README.md
     error_budget:
   observability:
     monitors:
@@ -2189,7 +2189,7 @@ services:
     maintenance:
     runbooks:
     playbooks:
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/service-redis.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/redis/README.md
     error_budget:
   observability:
     monitors:
@@ -2795,7 +2795,7 @@ services:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_pending_builds.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_too_many_archiving_trace_failures.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/cicd/ci_workhorse-queuing.md
-      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/service-ci-runners.md
+      - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/README.md
     playbooks:
       - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/ci-runners/create-runners-manager-node.md
       - https://gitlab.com/gitlab-com/runbooks/blob/master/docs/runner/update-gitlab-runner-on-managers.md

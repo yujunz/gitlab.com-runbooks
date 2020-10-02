@@ -20,7 +20,7 @@ groups:
       promql_template_1: >-
         gitlab_background_jobs:execution:error:ratio_1h{environment="$environment", type="$type", stage="$stage",
         component="$component"}
-      runbook: docs/sidekiq/service-sidekiq.md
+      runbook: docs/sidekiq/README.md
     labels:
       alert_type: symptom
       rules_domain: general
@@ -60,7 +60,7 @@ groups:
       promql_template_1: >-
         gitlab_background_jobs:execution:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
         component="$component"}
-      runbook: docs/sidekiq/service-sidekiq.md
+      runbook: docs/sidekiq/README.md
     labels:
       alert_type: symptom
       rules_domain: general
@@ -100,7 +100,7 @@ groups:
       promql_template_1: >-
         gitlab_background_jobs:queue:apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
         component="$component"}
-      runbook: docs/sidekiq/service-sidekiq.md
+      runbook: docs/sidekiq/README.md
     labels:
       alert_type: symptom
       rules_domain: general
@@ -146,7 +146,7 @@ groups:
       grafana_panel_id: '80616'
       grafana_variables: environment,stage,queue
       promql_template_1: sidekiq_enqueued_jobs_total{environment="$environment", queue="$queue"}
-      runbook: docs/sidekiq/service-sidekiq.md
+      runbook: docs/sidekiq/README.md
     labels:
       alert_type: cause
       pager: pagerduty

@@ -22,7 +22,7 @@ groups:
       grafana_variables: environment,stage,queue
       promql_template_1: >-
         sidekiq_enqueued_jobs_total{environment="$environment", type="$type", stage="$stage", component="$component"}
-      runbook: docs/sidekiq/service-sidekiq.md
+      runbook: docs/sidekiq/README.md
     labels:
       alert_type: cause
       rules_domain: general

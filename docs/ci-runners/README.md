@@ -1,3 +1,20 @@
+<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->
+[[_TOC_]]
+
+#  Ci-runners Service
+* [Service Overview](https://dashboards.gitlab.net/d/ci-runners-main/ci-runners-overview)
+* **Alerts**: https://alerts.gitlab.net/#/alerts?filter=%7Btype%3D%22ci-runners%22%2C%20tier%3D%22sv%22%7D
+* **Label**: gitlab-com/gl-infra/production~"Service:CI Runner"
+
+## Logging
+
+* [shared runners](https://log.gprd.gitlab.net/goto/b9aed2474a7ffe194a10d4445a02893a)
+
+## Troubleshooting Pointers
+
+* [service-ci-runners.md](service-ci-runners.md)
+<!-- END_MARKER -->
+
 # CI Runner Overview
 
 We have several different kind of runners. Below is a brief overview of each.
@@ -85,3 +102,4 @@ These subnets are created under the `windows-ci` network.
 | executor-subnet    | 10.2.0.0/16 | Ephemeral runner machines         |
 | bastion-windows-ci | 10.3.1.0/24 | bastion network                   |
 | runner-windows-ci  | 10.3.0.0/24 | Runner network for ansible/packer |
+

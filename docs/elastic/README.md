@@ -146,3 +146,21 @@ Apart from monitoring using x-pack metrics + watches, we are also using a blackb
 Since we cannot use our Alertmanager, Elasticsearch Watches have to be used for alerting. They will be configured on the Elastic cluster used for storing monitoring indices.
 
 Blackbox probes cannot provide us with sufficient granularity of state reporting.
+
+# Summary
+
+# Architecture
+
+# Performance
+
+# Scalability
+
+# Availability
+
+# Durability
+
+# Security/Compliance
+
+# Monitoring/Alerting
+
+# Links to further Documentation

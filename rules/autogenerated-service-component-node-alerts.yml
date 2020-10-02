@@ -28,7 +28,7 @@ groups:
       promql_template_1: >-
         gitlab_component_node_apdex:ratio_1h{environment="$environment", type="$type", stage="$stage",
         component="$component", fqdn="$fqdn"}
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: symptom
       rules_domain: general
@@ -108,7 +108,7 @@ groups:
       promql_template_1: >-
         gitlab_component_node_errors:ratio_5m{environment="$environment", type="$type", stage="$stage",
         component="$component", fqdn="$fqdn"}
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: symptom
       rules_domain: general

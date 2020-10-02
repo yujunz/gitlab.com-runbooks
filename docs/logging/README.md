@@ -1,48 +1,44 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+<!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->
+[[_TOC_]]
 
-- [Quick start](#quick-start)
-    - [URLs](#urls)
-    - [Retention](#retention)
-    - [What are we logging?](#what-are-we-logging)
-    - [Historical notes](#historical-notes)
-- [How-to guides](#how-to-guides)
-    - [Searching logs](#searching-logs)
-        - [Searching in Elastic](#searching-in-elastic)
-            - [production (gitlab.com)](#production-gitlabcom)
-            - [dev (dev.gitlab.org), staging (staging.gitlab.com), dr, ops (ops.gitlab.com), preprod (pre.gitlab.com)](#dev-devgitlaborg-staging-staginggitlabcom-dr-ops-opsgitlabcom-preprod-pregitlabcom)
-        - [Searching in StackDriver](#searching-in-stackdriver)
-        - [Searching in object storage (GCS)](#searching-in-object-storage-gcs)
-- [Concepts](#concepts)
-    - [Logging infrastructure overview](#logging-infrastructure-overview)
-    - [Fluentd](#fluentd)
-    - [StackDriver](#stackdriver)
-    - [Cloud Pub/Sub](#cloud-pubsub)
-    - [Pubsubbeat VMs](#pubsubbeat-vms)
-    - [Elastic](#elastic)
-    - [Index Lifecycle Management (ILM)](#index-lifecycle-management-ilm)
-    - [Monitoring](#monitoring)
-    - [BigQuery](#bigquery)
-    - [GCS (long-term storage)](#gcs-long-term-storage)
-- [FAQ](#faq)
-    - [Why are we using StackDriver and GCS in addition to ElasticSearch?](#why-are-we-using-stackdriver-and-gcs-in-addition-to-elasticsearch)
-    - [Why are we using pubsub queues instead of sending logs from fluentd directly to Elastic?](#why-are-we-using-pubsub-queues-instead-of-sending-logs-from-fluentd-directly-to-elastic)
-    - [How do I find the right logs for my service?](#how-do-i-find-the-right-logs-for-my-service)
-    - [A user sees an error on GitLab.com, how do I find logs for that user?](#a-user-sees-an-error-on-gitlabcom-how-do-i-find-logs-for-that-user)
-    - [Why do we have these annoying json. prefixes?](#why-do-we-have-these-annoying-json-prefixes)
-    - [What if I need to query logs older than the ones present in Elastic?](#what-if-i-need-to-query-logs-older-than-the-ones-present-in-elastic)
-    - [What if I need to query logs older than 30 days?](#what-if-i-need-to-query-logs-older-than-30-days)
-- [Configuration](#configuration)
-    - [Cookbooks](#cookbooks)
-    - [logs parsers](#logs-parsers)
-        - [Elastic mappings](#elastic-mappings)
-    - [Role configuration](#role-configuration)
-    - [Terraform](#terraform)
-    - [Adding a new logfile](#adding-a-new-logfile)
+#  Logging Service
+* **Alerts**: https://alerts.gitlab.net/#/alerts?filter=%7Btype%3D%22logging%22%2C%20tier%3D%22inf%22%7D
+* **Label**: gitlab-com/gl-infra/production~"Service:Logging"
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## Logging
 
+* [Kibana](https://log.gprd.gitlab.net/app/kibana)
+* [Stackdriver](https://console.cloud.google.com/logs/viewer?project=gitlab-production)
+* [elastic stack monitoring](https://00a4ef3362214c44a044feaa539b4686.us-central1.gcp.cloud.es.io:9243/app/monitoring#/home?_g=(cluster_uuid:RM2uqM76TnWT3JL5n5NzCw))
+
+## Troubleshooting Pointers
+
+* [../cloudflare/logging.md](../cloudflare/logging.md)
+* [../elastic/elastic-cloud.md](../elastic/elastic-cloud.md)
+* [../elastic/elasticsearch-integration-in-gitlab.md](../elastic/elasticsearch-integration-in-gitlab.md)
+* [../elastic/kibana.md](../elastic/kibana.md)
+* [../frontend/ssh-maxstartups-breach.md](../frontend/ssh-maxstartups-breach.md)
+* [../git/purge-git-data.md](../git/purge-git-data.md)
+* [../license/license-gitlab-com.md](../license/license-gitlab-com.md)
+* [logging_gcs_archive_bigquery.md](logging_gcs_archive_bigquery.md)
+* [../pages/gitlab-pages.md](../pages/gitlab-pages.md)
+* [../pages/pages-letsencrypt.md](../pages/pages-letsencrypt.md)
+* [../patroni/log_analysis.md](../patroni/log_analysis.md)
+* [../patroni/postgres-checkup.md](../patroni/postgres-checkup.md)
+* [../patroni/postgres.md](../patroni/postgres.md)
+* [../patroni/postgresql-backups-wale-walg.md](../patroni/postgresql-backups-wale-walg.md)
+* [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
+* [../pubsub/pubsub-queing.md](../pubsub/pubsub-queing.md)
+* [../uncategorized/access-azure-test-subscription.md](../uncategorized/access-azure-test-subscription.md)
+* [../uncategorized/access-gcp-hosts.md](../uncategorized/access-gcp-hosts.md)
+* [../uncategorized/camoproxy.md](../uncategorized/camoproxy.md)
+* [../uncategorized/k8s-gitlab.md](../uncategorized/k8s-gitlab.md)
+* [../uncategorized/k8s-operations.md](../uncategorized/k8s-operations.md)
+* [../uncategorized/kubernetes.md](../uncategorized/kubernetes.md)
+* [../uncategorized/upgrade-docker-machine.md](../uncategorized/upgrade-docker-machine.md)
+* [../version/version-gitlab-com.md](../version/version-gitlab-com.md)
+* [../web/static-repository-objects-caching.md](../web/static-repository-objects-caching.md)
+<!-- END_MARKER -->
 
 # Quick start #
 
@@ -385,3 +381,4 @@ re-create them.
         * Add a new recipe in the `gitlab_fluentd` cookbook for your log file, for example: https://gitlab.com/gitlab-cookbooks/gitlab_fluentd/merge_requests/99/diffs
         * Edit the relevant roles in the chef repo to apply the new recipe to VMs managed with that role, for example: https://ops.gitlab.net/gitlab-cookbooks/chef-repo/merge_requests/2367/diffs
         * follow the chef roll out process
+
