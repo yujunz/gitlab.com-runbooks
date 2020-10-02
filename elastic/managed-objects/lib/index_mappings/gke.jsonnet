@@ -1,5 +1,4 @@
 {
-  dynamic: false,
   properties: {
     '@timestamp': {
       type: 'date',
