@@ -203,7 +203,7 @@ local resourceSaturationPoint = function(options)
 
             %(description)s
           ||| % formatConfig,
-          runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+          runbook: 'docs/{{ $labels.type }}/README.md',
           grafana_dashboard_id: 'alerts-' + definition.grafana_dashboard_uid,
           grafana_panel_id: stableIds.hashStableId('saturation-' + componentName),
           grafana_variables: 'environment,type,stage',
