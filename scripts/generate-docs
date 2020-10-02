@@ -99,7 +99,7 @@ def generate_docs
     if File.exist?(troubleshooting_doc)
       replace_header(troubleshooting_doc, details)
     else
-      toc = <<-EOF
+      toc = <<-TOC_EOF
 
 <!-- ## Summary -->
 
@@ -118,7 +118,7 @@ def generate_docs
 <!-- ## Monitoring/Alerting -->
 
 <!-- ## Links to further Documentation -->
-EOF
+      TOC_EOF
 
       File.write(troubleshooting_doc, details + toc)
     end
