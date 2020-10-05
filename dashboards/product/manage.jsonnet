@@ -21,7 +21,7 @@ basic.dashboard(
   grafana.text.new(
     title='Overview',
     mode='markdown',
-    content='### Synthetic tests of GitLab.com pages for the Manage group.\n\nFor more information, please see: https://gitlab.com/gitlab-org/gitlab/-/issues/221018\n\n\n\n',
+    content='### Synthetic tests of GitLab.com pages for the Manage group.\n\nFor more information, please see: https://about.gitlab.com/handbook/product/product-processes/#page-load-performance-metrics\n\n\n\n',
   ), gridPos={ h: 3, w: 24, x: 0, y: 0 }
 ).addPanel(
   row.new(title='Analytics'), gridPos={ x: 0, y: 1000, w: 24, h: 1 }
