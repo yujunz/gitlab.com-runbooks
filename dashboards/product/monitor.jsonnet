@@ -21,7 +21,7 @@ basic.dashboard(
   grafana.text.new(
     title='Overview',
     mode='markdown',
-    content="### Synthetic tests of GitLab.com pages for the Monitor group.\n\nFor more information, please see: https://gitlab.com/gitlab-org/gitlab/-/issues/221018. NOTE - these may be 403'ing, and thus unreliable!",
+    content="### Synthetic tests of GitLab.com pages for the Monitor group.\n\nFor more information, please see: https://about.gitlab.com/handbook/product/product-processes/#page-load-performance-metrics. NOTE - these may be 403'ing, and thus unreliable!",
   ), gridPos={ h: 3, w: 24, x: 0, y: 0 }
 ).addPanel(
   row.new(title='Monitor'), gridPos={ x: 0, y: 1000, w: 24, h: 1 }
