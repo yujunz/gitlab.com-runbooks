@@ -64,6 +64,8 @@ metricsCatalog.serviceDefinition({
             ne: '^/([^/]+/){1,}[^/]+/-/jobs/[0-9]+/terminal.ws\\\\z',
           }, {
             ne: '^/([^/]+/){1,}[^/]+/-/environments/[0-9]+/terminal.ws\\\\z',
+          }, {
+            ne: '^/-/cable\\\\z',  // Exclude Websocket connections from apdex score
           }],
         },
         satisfiedThreshold=30,
