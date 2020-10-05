@@ -36,15 +36,24 @@ metricsCatalog.serviceDefinition({
   components: {
     loadbalancer: haproxyComponents.haproxyHTTPLoadBalancer(
       stageMappings={
-        main: { backends: ['https_git', 'websockets'], toolingLinks: [] },
-        cny: { backends: ['canary_https_git'], toolingLinks: [] },  // What happens to cny websocket traffic?
+        main: { backends: ['https_git', 'websockets'], toolingLinks: [
+          toolingLinks.bigquery(title='Top http clients by number of requests, main stage, 10m', savedQuery='805818759045:704c6bdf00a743d195d344306bf207ee'),
+        ] },
+        cny: { backends: ['canary_https_git'], toolingLinks: [
+          toolingLinks.bigquery(title='Top http clients by number of requests, cny stage, 10m', savedQuery='805818759045:dea839bd669e41b5bc264c510294bb9f'),
+        ] },  // What happens to cny websocket traffic?
       },
       selector={ type: 'frontend' },
     ),
 
     loadbalancer_ssh: haproxyComponents.haproxyL4LoadBalancer(
       stageMappings={
-        main: { backends: ['ssh', 'altssh'], toolingLinks: [] },
+        main: {
+          backends: ['ssh', 'altssh'],
+          toolingLinks: [
+            toolingLinks.bigquery(title='Top ssh clients by number of requests, 10m', savedQuery='805818759045:8a185b18fafe4081bf9fbdb5354844f9'),
+          ],
+        },
         // No canary SSH for now
       },
       selector={ type: 'frontend' },
