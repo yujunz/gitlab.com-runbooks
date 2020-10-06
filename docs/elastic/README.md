@@ -1,23 +1,6 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+**Table of Contents**
 
-- [Quick start](#quick-start)
-    - [Elastic related resources](#elastic-related-resources)
-    - [Historical notes](#historical-notes)
-- [How-to guides](#how-to-guides)
-    - [Performing operations on the Elastic cluster](#performing-operations-on-the-elastic-cluster)
-    - [Estimating Log Volume and Cluster Size](#estimating-log-volume-and-cluster-size)
-        - [What is going to Stackdriver?](#what-is-going-to-stackdriver)
-        - [What is the Volume of our PubSub topics?](#what-is-the-volume-of-our-pubsub-topics)
-        - [How much elastic storage are we using per day?](#how-much-elastic-storage-are-we-using-per-day)
-- [Concepts](#concepts)
-    - [Elastic learning materials](#elastic-learning-materials)
-    - [Design Document (Elastic at Gitlab)](#design-document-elastic-at-gitlab)
-    - [Monitoring](#monitoring)
-    - [Alerting](#alerting)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+[[_TOC_]]
 
 # Quick start
 

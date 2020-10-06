@@ -43,6 +43,9 @@ def generate_header(service, tier)
   troubeshooting_docs = find_troubleshooting_docs(service_name)
   template = <<-MARKDOWN_EOF
 #{START_MARKER}
+
+**Table of Contents**
+
 [[_TOC_]]
 
 #  <%= service["name"].capitalize %> Service
