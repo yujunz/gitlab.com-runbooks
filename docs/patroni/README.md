@@ -1,4 +1,7 @@
 <!-- MARKER: do not edit this section directly. Edit services/service-catalog.yml then run scripts/generate-docs -->
+
+**Table of Contents**
+
 [[_TOC_]]
 
 #  Patroni Service
