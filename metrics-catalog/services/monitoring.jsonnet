@@ -214,6 +214,13 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.googleLoadBalancer(
+          instanceId='ops-dashboards',
+          project='gitlab-ops',
+        ),
+      ],
     },
 
     // This component represents the Google Load Balancer in front
