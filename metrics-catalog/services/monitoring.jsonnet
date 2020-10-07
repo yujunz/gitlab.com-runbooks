@@ -52,6 +52,7 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Query', index='monitoring', tag='monitoring.systemd.thanos-query'),
       ],
     },
 
@@ -121,6 +122,7 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Store', index='monitoring', tag='monitoring.systemd.thanos-store'),
       ],
     },
 
@@ -145,6 +147,11 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Compact', index='monitoring', tag='monitoring.systemd.thanos-compact'),
+      ],
     },
 
     // Prometheus Alert Manager Sender operations
@@ -192,6 +199,11 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Rule', index='monitoring', tag='monitoring.systemd.thanos-rule'),
+      ],
     },
 
     grafana: {
