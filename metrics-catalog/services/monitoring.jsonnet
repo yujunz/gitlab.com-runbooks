@@ -52,7 +52,7 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
-        toolingLinks.kibana(title='Thanos Query', index='monitoring', tag='monitoring.systemd.thanos-query'),
+        toolingLinks.kibana(title='Thanos Query', index='monitoring_ops', tag='monitoring.systemd.thanos-query'),
       ],
     },
 
@@ -86,6 +86,7 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Query', index='monitoring_ops', tag='monitoring.systemd.thanos-query'),
       ],
     },
 
@@ -122,7 +123,8 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
-        toolingLinks.kibana(title='Thanos Store', index='monitoring', tag='monitoring.systemd.thanos-store'),
+        toolingLinks.kibana(title='Thanos Store (gprd)', index='monitoring_gprd', tag='monitoring.systemd.thanos-store'),
+        toolingLinks.kibana(title='Thanos Store (ops)', index='monitoring_ops', tag='monitoring.systemd.thanos-store'),
       ],
     },
 
@@ -150,7 +152,8 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
-        toolingLinks.kibana(title='Thanos Compact', index='monitoring', tag='monitoring.systemd.thanos-compact'),
+        toolingLinks.kibana(title='Thanos Compact (gprd)', index='monitoring_gprd', tag='monitoring.systemd.thanos-compact'),
+        toolingLinks.kibana(title='Thanos Compact (ops)', index='monitoring_ops', tag='monitoring.systemd.thanos-compact'),
       ],
     },
 
@@ -202,7 +205,7 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
-        toolingLinks.kibana(title='Thanos Rule', index='monitoring', tag='monitoring.systemd.thanos-rule'),
+        toolingLinks.kibana(title='Thanos Rule', index='monitoring_ops', tag='monitoring.systemd.thanos-rule'),
       ],
     },
 
@@ -272,7 +275,8 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn', 'handler'],
 
       toolingLinks: [
-        toolingLinks.kibana(title='Prometheus', index='monitoring'),
+        toolingLinks.kibana(title='Prometheus (gprd)', index='monitoring_gprd', tag='monitoring.prometheus'),
+        toolingLinks.kibana(title='Prometheus (ops)', index='monitoring_ops', tag='monitoring.prometheus'),
       ],
     },
 
