@@ -1,4 +1,5 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
+local processExporter = import 'process_exporter.libsonnet';
 local railsCommon = import 'rails_common_graphs.libsonnet';
 local workhorseCommon = import 'workhorse_common_graphs.libsonnet';
 local row = grafana.row;
@@ -42,4 +43,25 @@ serviceDashboard.overview('git', 'sv')
   }
 )
 .addPanels(railsCommon.railsPanels(serviceType='git', serviceStage='$stage', startRow=3001))
+.addPanel(
+  row.new(title='sshd processes', collapse=true)
+  .addPanels(
+    processExporter.namedGroup(
+      'sshd',
+      {
+        environment: '$environment',
+        groupname: 'sshd',
+        type: 'git',
+        stage: '$stage',
+      },
+      startRow=1
+    )
+  ),
+  gridPos={
+    x: 0,
+    y: 5000,
+    w: 24,
+    h: 1,
+  },
+)
 .overviewTrailer()
