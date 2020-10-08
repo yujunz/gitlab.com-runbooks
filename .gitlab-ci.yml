@@ -379,7 +379,10 @@ test_dashboards:
     - dashboards/upload.sh -D
   only:
     changes:
-      - ./dashboards/*
+      - ./dashboards/**
+      - ./metrics-catalog/**
+      - ./libsonnet/**
+      - ./service-catalog/**
 
 deploy_dashboards:
   extends: .dashboards
