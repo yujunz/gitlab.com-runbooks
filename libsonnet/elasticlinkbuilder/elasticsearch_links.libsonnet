@@ -384,7 +384,7 @@ local buildElasticLineTotalDurationVizURL(index, filters, luceneQueries=[], late
     },
   };
 
-  indexCatalog[index].indexCatalog[index].kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
+  indexCatalog[index].kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
 
 local buildElasticLinePercentileVizURL(index, filters, luceneQueries=[], latencyField, splitSeries=false) =
   local ic = indexCatalog[index];
