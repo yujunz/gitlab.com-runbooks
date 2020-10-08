@@ -154,7 +154,7 @@ deploy-rules-gprd:
 deploy-rules-gprd-us-east1-b:
   environment: gprd-us-east1-b
   extends: .deploy-rules
-  stage: deploy-rules
+  stage: deploy-rules-production
   variables:
     CLUSTER: gprd-us-east1-b
     REGION: us-east1-b
@@ -162,7 +162,7 @@ deploy-rules-gprd-us-east1-b:
 deploy-rules-gprd-us-east1-c:
   environment: gprd-us-east1-c
   extends: .deploy-rules
-  stage: deploy-rules
+  stage: deploy-rules-production
   variables:
     CLUSTER: gprd-us-east1-c
     REGION: us-east1-c
@@ -170,7 +170,7 @@ deploy-rules-gprd-us-east1-c:
 deploy-rules-gprd-us-east1-d:
   environment: gprd-us-east1-d
   extends: .deploy-rules
-  stage: deploy-rules
+  stage: deploy-rules-production
   variables:
     CLUSTER: gprd-us-east1-d
     REGION: us-east1-d
