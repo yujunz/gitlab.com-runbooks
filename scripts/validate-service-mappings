@@ -87,10 +87,6 @@ def validate(service_catalog_path)
     project = service["technical"]["project"]
     raise "'#{service_name}' | project field must be list" unless project.is_a?(Array) || project.nil?
 
-    # criticality
-    criticality = service["technical"]["criticality"]
-    raise "'#{service_name}' | criticality field must be integer" unless criticality.is_a? Integer
-
     # slx
     slx = service["technical"]["slx"]
     raise "'#{service_name}' | slx field must be string" unless slx.is_a?(String) || slx.nil?
@@ -225,7 +221,6 @@ def validate(service_catalog_path)
       end
     end
 
-    raise "service '#{service_name}' requires a criticality attribute" unless service["technical"]["criticality"]
     raise "service '#{service_name}' requires at least one logging configuration" unless service["technical"]["logging"] && !service["technical"]["logging"].empty?
   end
 end
