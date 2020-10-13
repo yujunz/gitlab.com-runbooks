@@ -166,7 +166,6 @@ services:
     project:
       - https://gitlab.com/gitlab-org/gitlab-ce
       - https://gitlab.com/gitlab-org/gitlab-ee
-    criticality: 1
     slx:
     documents:
       design:
@@ -251,7 +250,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-cookbooks/gitlab-exporters
-    criticality: 3
     slx:
     documents:
       design:
@@ -314,7 +312,6 @@ services:
     project:
       - https://github.com/cactus/go-camo
       - https://gitlab.com/gitlab-cookbooks/gitlab-camoproxy
-    criticality: 1
     slx:
     documents:
       design:
@@ -379,7 +376,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-cookbooks/gitlab_users
-    criticality: 4
     slx:
     documents:
       design:
@@ -457,7 +453,6 @@ services:
   technical:
     project:
       - https://github.com/hashicorp/consul
-    criticality: 3
     slx:
     documents:
       design:
@@ -521,7 +516,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-com/gitlab-contributors
-    criticality: 4
     slx:
     documents:
       design: https://github.com/rails/rails-contributors/blob/master/doc/design.md
@@ -583,7 +577,6 @@ services:
       response_time:
   technical:
     project:
-    criticality: 4
     slx:
     documents:
       design:
@@ -643,7 +636,6 @@ services:
       response_time: "Elastic Support SLA: L1 - 4 business hours, L2 - 1 business day, L3 - 2 business days"
   technical:
     project:
-    criticality: 2
     slx:
     documents:
       design: https://gitlab.com/gitlab-com/www-gitlab-com/-/merge_requests/23545
@@ -739,7 +731,6 @@ services:
       response_time:
   technical:
     project:
-    criticality: 2
     slx:
     documents:
       design:
@@ -808,7 +799,6 @@ services:
     project:
       - https://gitlab.com/gitlab-org/gitlab-ce
       - https://gitlab.com/gitlab-org/gitlab-ee
-    criticality: 1
     slx:
     documents:
       design:
@@ -888,7 +878,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-cookbooks/gitlab-haproxy
-    criticality: 1
     slx:
     documents:
       design:
@@ -965,7 +954,6 @@ services:
     project:
       - https://gitlab.com/gitlab-org/gitlab-shell # SSH
       - https://gitlab.com/gitlab-org/gitlab-workhorse # HTTP
-    criticality: 3
     documents:
       design:
       architecture: https://about.gitlab.com/handbook/engineering/infrastructure/production-architecture/#infra-current-archi-diagram
@@ -1051,7 +1039,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-org/gitaly
-    criticality: 2
     slx:
     documents:
       design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/DESIGN.md
@@ -1138,7 +1125,6 @@ services:
   technical:
     project:
       - https://github.com/influxdata/influxdb
-    criticality: 3
     slx:
     documents:
       design:
@@ -1203,7 +1189,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-org/gitaly
-    criticality: 2
     slx:
     documents:
       design: https://gitlab.com/gitlab-org/gitaly/blob/master/doc/design_ha.md
@@ -1276,7 +1261,6 @@ services:
   technical:
     project:
       - https://github.com/tpitale/mail_room
-    criticality: 3
     slx:
     documents:
       design:
@@ -1338,7 +1322,6 @@ services:
       response_time:
   technical:
     project:
-    criticality: 3
     slx:
     documents:
       design:
@@ -1400,7 +1383,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-org/gitlab-pages
-    criticality: 3
     slx:
     documents:
       design:
@@ -1465,7 +1447,6 @@ services:
   technical:
     project:
       - https://github.com/pgbouncer/pgbouncer
-    criticality:  1
     slx:
     documents:
       design:
@@ -1540,7 +1521,6 @@ services:
   technical:
     project:
       - https://github.com/postgres/postgres
-    criticality:       1
     slx:
     documents:
       design:
@@ -1633,7 +1613,6 @@ services:
   technical:
     project:
       - https://github.com/postgres/postgres
-    criticality: 3
     slx:
     documents:
       design:
@@ -1718,7 +1697,6 @@ services:
   technical:
     project:
       - https://github.com/postgres/postgres
-    criticality: 3
     slx:
     documents:
       design:
@@ -1799,7 +1777,6 @@ services:
       response_time:
   technical:
     project:
-    criticality: 4
     slx:
     documents:
       design:
@@ -1866,7 +1843,6 @@ services:
   technical:
     project:
       - https://github.com/prometheus/prometheus
-    criticality: 3
     slx:
     documents:
       design:
@@ -1953,7 +1929,6 @@ services:
   technical:
     project:
       - https://github.com/antirez/redis/
-    criticality: 1
     slx:
     documents:
       design:
@@ -2021,7 +1996,6 @@ services:
   technical:
     project:
       - https://github.com/antirez/redis/
-    criticality: 1
     slx:
     documents:
       design:
@@ -2078,14 +2052,13 @@ services:
     customers:
       - GitLab.com customers
     business_value: |
-      Redis is a criticality 1 service for us. Therefore, the business value Sentinel provides is huge in the sense that not only does it ensure we have resilient service but also saves us a lot of work and resources (such as monitoring, automatical failover and discovery).
+      Redis is a critical service for us. Therefore, the business value Sentinel provides is huge in the sense that not only does it ensure we have resilient service but also saves us a lot of work and resources (such as monitoring, automatical failover and discovery).
     SLA:
       availability:
       response_time:
   technical:
     project:
       - https://github.com/antirez/redis/
-    criticality: 1
     slx:
     documents:
       design:
@@ -2149,7 +2122,6 @@ services:
   technical:
     project:
       - https://github.com/antirez/redis/
-    criticality: 1
     slx:
     documents:
       design:
@@ -2218,7 +2190,6 @@ services:
   technical:
     project:
       - https://github.com/docker/distribution
-    criticality: 2
     slx:
     documents:
       design:
@@ -2291,7 +2262,6 @@ services:
       response_time:
   technical:
     project:
-    criticality: 1
     slx:
     documents:
       design:
@@ -2364,7 +2334,6 @@ services:
     project:
       - https://gitlab.com/gitlab-org/gitlab-ce
       - https://gitlab.com/gitlab-org/gitlab-ee
-    criticality: 3
     slx:
     documents:
       design:
@@ -2446,7 +2415,6 @@ services:
     project:
       - https://gitlab.com/gitlab-org/gitlab-runner
       - https://gitlab.com/gitlab-com/chatops
-    criticality: 3
     slx:
     documents:
       design:
@@ -2513,7 +2481,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-com/license-gitlab-com
-    criticality: 3
     slx:
     documents:
       design:
@@ -2583,7 +2550,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-com/version-gitlab-com
-    criticality: 4
     slx:
     documents:
       design:
@@ -2660,7 +2626,6 @@ services:
       - https://gitlab.com/gitlab-com/runbooks/tree/master/rules/pubsub.yml
       - https://gitlab.com/gitlab-com/runbooks/tree/master/rules/gitaly.yml
       - https://gitlab.com/gitlab-com/runbooks/blob/master/howto/logging.md
-    criticality: 3
     slx:
     documents:
       design: |
@@ -2747,7 +2712,6 @@ services:
   technical:
     project:
       - https://gitlab.com/gitlab-org/gitlab-runner
-    criticality: 2
     slx:
     documents:
       design:
@@ -2827,7 +2791,6 @@ services:
       response_time:
   technical:
     project:
-    criticality: 3
     slx:
     documents:
       design:
@@ -2886,7 +2849,6 @@ services:
       response_time:
   technical:
     project:
-    criticality: 3
     slx:
     documents:
       design:
@@ -2944,7 +2906,6 @@ services:
       response_time:
   technical:
     project:
-    criticality: 3
     slx:
     documents:
       design:
