@@ -29,8 +29,8 @@ local rules = {
           sloMetricSelectorHash={ monitor: 'global' },
           sloMetricAggregationLabels=['type', 'tier'],
           operationRateMetric='gitlab_component_ops:rate_1h',
-          operationRateAggregationLabels=['environment', 'env', 'tier', 'type', 'component', 'stage'],
-          operationRateSelectorHash={ monitor: { ne: 'global' } },
+          operationRateAggregationLabels=['env', 'environment', 'tier', 'type', 'stage', 'component'],
+          operationRateSelectorHash={ monitor: { eq: 'global' } },
           minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
         ),
         'for': '2m',
@@ -66,8 +66,8 @@ local rules = {
         sloMetricSelectorHash={ monitor: 'global' },
         sloMetricAggregationLabels=['type', 'tier'],
         operationRateMetric='gitlab_component_ops:rate_1h',
-        operationRateAggregationLabels=['environment', 'env', 'tier', 'type', 'component', 'stage'],
-        operationRateSelectorHash={ monitor: { ne: 'global' } },
+        operationRateAggregationLabels=['env', 'environment', 'tier', 'type', 'stage', 'component'],
+        operationRateSelectorHash={ monitor: { eq: 'global' } },
         minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
       ),
       'for': '2m',
