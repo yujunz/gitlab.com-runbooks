@@ -63,7 +63,7 @@ metricsCatalog.serviceDefinition({
       local baseSelector = {
         job: 'gitlab-workhorse-git',
         type: 'git',
-        route: [{ ne: '^/-/health$' }, { ne: '^/-/(readiness|liveness)$' }],
+        route: [{ ne: '^/-/health$' }, { ne: '^/-/(readiness|liveness)$' }, { ne: '^/api/' }],
       },
 
       apdex: histogramApdex(
@@ -101,6 +101,49 @@ metricsCatalog.serviceDefinition({
         toolingLinks.kibana(title='Workhorse', index='workhorse', type='git', slowRequestSeconds=10),
       ],
     },
+
+    /**
+     * The API route on Workhorse is used exclusively for auth requests from
+     * GitLab shell. As such, it has much more performant latency requirements
+     * that other Git/Workhorse traffic
+     */
+    workhorse_auth_api: {
+      local baseSelector = {
+        job: 'gitlab-workhorse-git',
+        type: 'git',
+        route: '^/api/',
+      },
+
+      apdex: histogramApdex(
+        histogram='gitlab_workhorse_http_request_duration_seconds_bucket',
+        selector=baseSelector,
+        // Note: 10s is far too slow for an auth request. This threshold should be much lower
+        // TODO: reduce this threshold to 1s
+        satisfiedThreshold=10
+      ),
+
+      requestRate: rateMetric(
+        counter='gitlab_workhorse_http_requests_total',
+        selector=baseSelector
+      ),
+
+      errorRate: rateMetric(
+        counter='gitlab_workhorse_http_requests_total',
+        selector=baseSelector {
+          code: { re: '^5.*' },
+        }
+      ),
+
+      significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.continuousProfiler(service='workhorse-git'),
+        toolingLinks.sentry(slug='gitlab/gitlab-workhorse-gitlabcom'),
+        // TODO: filter kibana query on route once https://gitlab.com/gitlab-org/gitlab-workhorse/-/merge_requests/624 arrives
+        toolingLinks.kibana(title='Workhorse', index='workhorse', type='git', slowRequestSeconds=10),
+      ],
+    },
+
 
     puma: {
       local baseSelector = { job: 'gitlab-rails', type: 'git' },
