@@ -70,7 +70,7 @@ groups:
       type: praefect
     expr: |
       sum by (environment,stage) (
-        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[1m])
+        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|Canceled)$",job="praefect"}[1m])
       )
   - record: gitlab_component_apdex:weight:score
     labels:
@@ -174,7 +174,7 @@ groups:
       type: praefect
     expr: |
       sum by (environment,stage) (
-        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[5m])
+        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|Canceled)$",job="praefect"}[5m])
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
@@ -276,7 +276,7 @@ groups:
       type: praefect
     expr: |
       sum by (environment,stage) (
-        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[30m])
+        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|Canceled)$",job="praefect"}[30m])
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
@@ -378,7 +378,7 @@ groups:
       type: praefect
     expr: |
       sum by (environment,stage) (
-        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[1h])
+        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|Canceled)$",job="praefect"}[1h])
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
@@ -480,7 +480,7 @@ groups:
       type: praefect
     expr: |
       sum by (environment,stage) (
-        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition)$",job="praefect"}[6h])
+        rate(grpc_server_handled_total{grpc_code!~"^(OK|NotFound|Unauthenticated|AlreadyExists|FailedPrecondition|Canceled)$",job="praefect"}[6h])
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:
