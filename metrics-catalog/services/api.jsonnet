@@ -86,12 +86,12 @@ metricsCatalog.serviceDefinition({
       ),
 
       requestRate: rateMetric(
-        counter='http_request_duration_seconds_count',
-        selector=baseSelector
+        counter='http_requests_total',
+        selector=baseSelector,
       ),
 
       errorRate: rateMetric(
-        counter='http_request_duration_seconds_count',
+        counter='http_requests_total',
         selector=baseSelector { status: { re: '5..' } }
       ),
 
