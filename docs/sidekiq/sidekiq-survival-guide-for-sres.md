@@ -73,7 +73,7 @@ https://docs.gitlab.com/ee/development/sidekiq_style_guide.html#sidekiq-compatib
 In GitLab in general, there are two ways that Sidekiq can run: legacy/traditional mode, and
 sidekiq-cluster. As at this writing (mid-2020) the legacy mode is being removed from omnibus deployments and
 sidekiq-cluster is becoming the default. While the gitlab Sidekiq docker image used on Kubernetes runs only a single
-traditional mode Sidekiq process (see [Kubernetes](#Kubernetes)) our Sidekiq VMs have been using sidekiq-cluster on VMs
+traditional mode Sidekiq process (see [Kubernetes](#kubernetes)) our Sidekiq VMs have been using sidekiq-cluster on VMs
 for years now.
 
 Sidekiq-cluster runs multiple (traditional gem) Sidekiq processes, with a configurable concurrency (thread count) for
@@ -95,7 +95,7 @@ different types of Sidekiq VMs), and difficult to reason about, particularly dur
 our per-queue configuration but Sidekiq VMs were not actually busy. So in early 2020 we rolled out, and now exclusively
 use, the `experimental-sidekiq-selector`
 (https://docs.gitlab.com/ee/administration/operations/extra_sidekiq_processes.html#using-sidekiq-cluster-by-default-experimental).
-This uses the [execution characteristics](#Job Characteristics) of jobs to select which jobs to run on a given set of
+This uses the [execution characteristics](#job-characteristics) of jobs to select which jobs to run on a given set of
 nodes, allowing for a more effective allocation of resources with more predictable and reliable effects.  We choose
 the threading concurrency per Sidekiq worker carefully here. For example, nodes that will be processing jobs with long
 running external I/O (e.g. webhooks) can run with a high concurrency, as most of the time the Sidekiq thread will be
