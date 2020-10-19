@@ -21,6 +21,7 @@
 * [../gitaly/storage-sharding.md](../gitaly/storage-sharding.md)
 * [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
 * [../monitoring/filesystem_alerts_inodes.md](../monitoring/filesystem_alerts_inodes.md)
+* [../monitoring/thanos-compact.md](../monitoring/thanos-compact.md)
 * [../monitoring/update-prometheus-and-exporters.md](../monitoring/update-prometheus-and-exporters.md)
 * [../packaging/manage-package-signing-keys.md](../packaging/manage-package-signing-keys.md)
 * [../patroni/geo-patroni-cluster.md](../patroni/geo-patroni-cluster.md)
