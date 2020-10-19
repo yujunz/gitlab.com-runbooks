@@ -24,6 +24,7 @@
 * [prometheus-failed-compactions.md](prometheus-failed-compactions.md)
 * [prometheus-pod-crashlooping.md](prometheus-pod-crashlooping.md)
 * [sentry-is-down.md](sentry-is-down.md)
+* [thanos-compact.md](thanos-compact.md)
 * [../patroni/check_wraparound.md](../patroni/check_wraparound.md)
 * [../patroni/log_analysis.md](../patroni/log_analysis.md)
 * [../patroni/pg_repack.md](../patroni/pg_repack.md)
