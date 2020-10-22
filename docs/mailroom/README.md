@@ -13,9 +13,6 @@
 
 * [system](https://log.gprd.gitlab.net/goto/0ce3bf67abafcfc0f81f3d6e7a066912)
 
-## Troubleshooting Pointers
-
-* [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)
 <!-- END_MARKER -->
 
 ## Operations

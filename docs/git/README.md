@@ -67,7 +67,7 @@
 * [../uncategorized/dev-environment.md](../uncategorized/dev-environment.md)
 * [../uncategorized/geo-recover-repo-from-azure.md](../uncategorized/geo-recover-repo-from-azure.md)
 * [../uncategorized/granting-rails-or-db-access.md](../uncategorized/granting-rails-or-db-access.md)
-* [../uncategorized/k8s-operations.md](../uncategorized/k8s-operations.md)
+* [../uncategorized/k8s-oncall-setup.md](../uncategorized/k8s-oncall-setup.md)
 * [../uncategorized/manage-workers.md](../uncategorized/manage-workers.md)
 * [../uncategorized/missing_repos.md](../uncategorized/missing_repos.md)
 * [../uncategorized/namespace-restore.md](../uncategorized/namespace-restore.md)
