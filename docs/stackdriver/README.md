@@ -21,7 +21,6 @@
 * [../logging/logging_gcs_archive_bigquery.md](../logging/logging_gcs_archive_bigquery.md)
 * [../pgbouncer/pgbouncer-saturation.md](../pgbouncer/pgbouncer-saturation.md)
 * [../pubsub/pubsub-queing.md](../pubsub/pubsub-queing.md)
-* [../uncategorized/k8s-gitlab.md](../uncategorized/k8s-gitlab.md)
 * [../uncategorized/kubernetes.md](../uncategorized/kubernetes.md)
 * [../uncategorized/node-reboots.md](../uncategorized/node-reboots.md)
 * [../version/version-gitlab-com.md](../version/version-gitlab-com.md)

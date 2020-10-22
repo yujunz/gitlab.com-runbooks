@@ -24,7 +24,6 @@
 * [../registry/gitlab-registry.md](../registry/gitlab-registry.md)
 * [../sidekiq/sidekiq-survival-guide-for-sres.md](../sidekiq/sidekiq-survival-guide-for-sres.md)
 * [../uncategorized/camoproxy.md](../uncategorized/camoproxy.md)
-* [../uncategorized/k8s-gitlab.md](../uncategorized/k8s-gitlab.md)
 <!-- END_MARKER -->
 
 

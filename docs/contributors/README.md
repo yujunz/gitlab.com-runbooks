@@ -14,7 +14,7 @@
 
 ## Troubleshooting Pointers
 
-* [../uncategorized/k8s-gitlab-operations.md](../uncategorized/k8s-gitlab-operations.md)
+* [../uncategorized/k8s-operations.md](../uncategorized/k8s-operations.md)
 <!-- END_MARKER -->
 
 
