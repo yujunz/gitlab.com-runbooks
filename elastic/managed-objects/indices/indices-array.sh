@@ -8,6 +8,8 @@ export indices=(
   consul
   gitaly
   gke
+  gke-audit
+  gke-systemd
   jaeger
   mailroom
   monitoring
