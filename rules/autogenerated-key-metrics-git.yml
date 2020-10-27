@@ -113,7 +113,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",type="git"}[1m])
+        sli_aggregations:http_requests_total_rate1m{job="gitlab-rails",type="git"}
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -122,7 +122,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",status=~"5..",type="git"}[1m])
+        sli_aggregations:http_requests_total_rate1m{job="gitlab-rails",status=~"5..",type="git"}
       )
   - record: gitlab_component_apdex:weight:score
     labels:
@@ -328,7 +328,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",type="git"}[5m])
+        sli_aggregations:http_requests_total_rate5m{job="gitlab-rails",type="git"}
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -337,7 +337,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",status=~"5..",type="git"}[5m])
+        sli_aggregations:http_requests_total_rate5m{job="gitlab-rails",status=~"5..",type="git"}
       )
   - record: gitlab_component_apdex:weight:score_5m
     labels:
@@ -541,7 +541,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",type="git"}[30m])
+        sli_aggregations:http_requests_total_rate30m{job="gitlab-rails",type="git"}
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -550,7 +550,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",status=~"5..",type="git"}[30m])
+        sli_aggregations:http_requests_total_rate30m{job="gitlab-rails",status=~"5..",type="git"}
       )
   - record: gitlab_component_apdex:weight:score_30m
     labels:
@@ -752,7 +752,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",type="git"}[1h])
+        sli_aggregations:http_requests_total_rate1h{job="gitlab-rails",type="git"}
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -761,7 +761,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",status=~"5..",type="git"}[1h])
+        sli_aggregations:http_requests_total_rate1h{job="gitlab-rails",status=~"5..",type="git"}
       )
   - record: gitlab_component_apdex:weight:score_1h
     labels:
@@ -965,7 +965,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",type="git"}[6h])
+        sli_aggregations:http_requests_total_rate6h{job="gitlab-rails",type="git"}
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -974,7 +974,7 @@ groups:
       type: git
     expr: |
       sum by (environment,stage) (
-        rate(http_requests_total{job="gitlab-rails",status=~"5..",type="git"}[6h])
+        sli_aggregations:http_requests_total_rate6h{job="gitlab-rails",status=~"5..",type="git"}
       )
   - record: gitlab_component_apdex:weight:score_6h
     labels:

@@ -132,7 +132,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[1m])
+        sli_aggregations:http_requests_total_rate1m{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -142,7 +142,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[1m])
+        sli_aggregations:http_requests_total_rate1m{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -234,7 +234,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[1m])
+        sli_aggregations:http_requests_total_rate1m{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_errors:rate
     labels:
@@ -244,7 +244,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[1m])
+        sli_aggregations:http_requests_total_rate1m{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_ops:rate
     labels:
@@ -505,7 +505,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[5m])
+        sli_aggregations:http_requests_total_rate5m{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -515,7 +515,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[5m])
+        sli_aggregations:http_requests_total_rate5m{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -607,7 +607,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[5m])
+        sli_aggregations:http_requests_total_rate5m{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_errors:rate_5m
     labels:
@@ -617,7 +617,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[5m])
+        sli_aggregations:http_requests_total_rate5m{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_ops:rate_5m
     labels:
@@ -874,7 +874,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[30m])
+        sli_aggregations:http_requests_total_rate30m{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -884,7 +884,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[30m])
+        sli_aggregations:http_requests_total_rate30m{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -974,7 +974,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[30m])
+        sli_aggregations:http_requests_total_rate30m{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_errors:rate_30m
     labels:
@@ -984,7 +984,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[30m])
+        sli_aggregations:http_requests_total_rate30m{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_ops:rate_30m
     labels:
@@ -1241,7 +1241,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[1h])
+        sli_aggregations:http_requests_total_rate1h{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -1251,7 +1251,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[1h])
+        sli_aggregations:http_requests_total_rate1h{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -1343,7 +1343,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[1h])
+        sli_aggregations:http_requests_total_rate1h{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_errors:rate_1h
     labels:
@@ -1353,7 +1353,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[1h])
+        sli_aggregations:http_requests_total_rate1h{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_ops:rate_1h
     labels:
@@ -1610,7 +1610,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[6h])
+        sli_aggregations:http_requests_total_rate6h{environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -1620,7 +1620,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}[6h])
+        sli_aggregations:http_requests_total_rate6h{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="public-dashboards",type="monitoring"}
       )
   - record: gitlab_component_ops:rate_6h
     labels:
@@ -1710,7 +1710,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[6h])
+        sli_aggregations:http_requests_total_rate6h{environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_errors:rate_6h
     labels:
@@ -1720,7 +1720,7 @@ groups:
       type: monitoring
     expr: |
       sum by (stage) (
-        rate(http_requests_total{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}[6h])
+        sli_aggregations:http_requests_total_rate6h{code=~"^5.*",environment=~"gprd|ops|ci-prd",job="thanos",shard="default",type="monitoring"}
       )
   - record: gitlab_component_ops:rate_6h
     labels:
