@@ -5,8 +5,8 @@ exporting via UI fails for some reason.
 
 <!-- vim-markdown-toc GitLab -->
 
-* [From where to run the restore](#from-where-to-run-the-restore)
-* [Restore a project via rails-console](#restore-a-project-via-rails-console)
+* [From where to run the export](#from-where-to-run-the-export)
+* [Export a project via rails-console](#export-a-project-via-rails-console)
   * [No download link and no download email](#no-download-link-and-no-download-email)
   * [GCE credentials missing](#gce-credentials-missing)
   * [Statement timeouts](#statement-timeouts)
@@ -15,7 +15,7 @@ exporting via UI fails for some reason.
 
 <!-- vim-markdown-toc -->
 
-# From where to run the restore
+# From where to run the export
 
 Manual project exports should work from the console node. The root disk space
 was increased to 200GB recently, leaving more than 150GB free space for project
@@ -43,7 +43,7 @@ storage = p.repository_storage
 path = p.disk_path
 ```
 
-# Restore a project via rails-console
+# Export a project via rails-console
 
 * ssh to the console node (or the file-node found above, if console doesn't work).
 * sudo gitlab-rails console
