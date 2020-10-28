@@ -67,12 +67,12 @@ The zonal clusters must be accessed through the console servers, but they are be
 - [ ] Get the credentials for the zonal clusters
 
 ```
-gcloud container clusters get-credentials gstg-us-east1-b --region us-east1 --project gitlab-staging-1
-gcloud container clusters get-credentials gstg-us-east1-c --region us-east1 --project gitlab-staging-1
-gcloud container clusters get-credentials gstg-us-east1-d --region us-east1 --project gitlab-staging-1
-gcloud container clusters get-credentials gprd-us-east1-b --region us-east1 --project gitlab-production
-gcloud container clusters get-credentials gprd-us-east1-c --region us-east1 --project gitlab-production
-gcloud container clusters get-credentials gprd-us-east1-d --region us-east1 --project gitlab-production
+gcloud container clusters get-credentials gstg-us-east1-b --region us-east1-b --project gitlab-staging-1
+gcloud container clusters get-credentials gstg-us-east1-c --region us-east1-c --project gitlab-staging-1
+gcloud container clusters get-credentials gstg-us-east1-d --region us-east1-d --project gitlab-staging-1
+gcloud container clusters get-credentials gprd-us-east1-b --region us-east1-b --project gitlab-production
+gcloud container clusters get-credentials gprd-us-east1-c --region us-east1-c --project gitlab-production
+gcloud container clusters get-credentials gprd-us-east1-d --region us-east1-d --project gitlab-production
 ```
 
 - [ ] Create sshuttle wrappers for initiating tunneled connections
