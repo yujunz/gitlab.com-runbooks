@@ -13,6 +13,11 @@ local setting(index, env) = if std.member(HIGH_THROUHGPUT, index) then {
         limit: 10000,
       },
     },
+    routing: {
+      allocation: {
+        total_shards_per_node: 2,
+      },
+    },
     search: {
       idle: {
         after: '30s',
@@ -20,7 +25,7 @@ local setting(index, env) = if std.member(HIGH_THROUHGPUT, index) then {
     },
     refresh_interval: '10s',
   },
-  // number_of_shards: 1,
+  number_of_shards: 2,
   // number_of_replicas: 1,
 }
 else if std.member(MEDIUM_THROUGHPUT, index) then {

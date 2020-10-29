@@ -5,6 +5,7 @@ stages:
   - alertmanager
   - deploy-rules
   - deploy-rules-production
+  - scheduled
 
 default:
   image: "${CI_REGISTRY_IMAGE}:latest"
@@ -311,6 +312,18 @@ update_elastic_nonprod-log_cluster_settings:
       - elastic/managed-objects/nonprod-log/cluster-settings/*
     variables:
       - $ES_NONPROD_URL
+
+update_elastic_nonprod-log_hot_index_shards_per_node:
+  stage: scheduled
+  script:
+  - ./elastic/scheduled/hot_index_shards_per_node.sh
+  only:
+    refs:
+      - schedules
+    variables:
+      - $JOB_SCHEDULE_ELASTIC_NONPROD
+  variables:
+    ELASTICSEARCH_URL: $ES_NONPROD_URL
 
 # security-dev-20200423
 ################################################################################
