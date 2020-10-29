@@ -5,6 +5,7 @@ stages:
   - alertmanager
   - deploy-rules
   - deploy-rules-production
+  - scheduled
 
 default:
   image: "${CI_REGISTRY_IMAGE}:latest"
