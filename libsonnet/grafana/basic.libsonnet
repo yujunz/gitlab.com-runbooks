@@ -12,6 +12,7 @@ local timepickerlib = import 'github.com/grafana/grafonnet-lib/grafonnet/timepic
 local templates = import 'grafana/templates.libsonnet';
 local commonAnnotations = import 'grafana/common_annotations.libsonnet';
 local stableIds = import 'stable-ids/stable-ids.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
 local applyStableIdsToPanel(panel) =
   if std.objectHasAll(panel, 'applyPanelId') then
@@ -84,20 +85,15 @@ local getDefaultAvailabilityColorScale(invertColors, factor) =
 
   std.sort(scale, function(i) if i.value == null then 0 else i.value);
 
-local joinSelectors(selectors) =
-  local nonEmptySelectors = std.filter(function(x) std.length(x) > 0, selectors);
-  std.join(', ', nonEmptySelectors);
-
 local latencyHistogramQuery(percentile, bucketMetric, selector, aggregator, rangeInterval) =
-  local aggregatorWithLe = joinSelectors([aggregator] + ['le']);
   |||
-    histogram_quantile(%(percentile)g, sum by (%(aggregatorWithLe)s) (
+    histogram_quantile(%(percentile)g, sum by (%(aggregator)s, le) (
       rate(%(bucketMetric)s{%(selector)s}[%(rangeInterval)s])
     ))
   ||| % {
     percentile: percentile,
-    aggregatorWithLe: aggregatorWithLe,
-    selector: selector,
+    aggregator: aggregator,
+    selector: selectors.serializeHash(selector),
     bucketMetric: bucketMetric,
     rangeInterval: rangeInterval,
   };

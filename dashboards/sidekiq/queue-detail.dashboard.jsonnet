@@ -15,23 +15,24 @@ local seriesOverrides = import 'grafana/series_overrides.libsonnet';
 local row = grafana.row;
 local elasticsearchLinks = import 'elasticlinkbuilder/elasticsearch_links.libsonnet';
 local issueSearch = import 'issue_search.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
-local selector = 'environment="$environment", type="sidekiq", stage="$stage", queue=~"$queue"';
-
-local joinSelectors(selectors) =
-  local nonEmptySelectors = std.filter(function(x) std.length(x) > 0, selectors);
-  std.join(', ', nonEmptySelectors);
+local selector = {
+  environment: '$environment',
+  type: 'sidekiq',
+  stage: '$stage',
+  queue: { re: '$queue' },
+};
 
 local recordingRuleLatencyHistogramQuery(percentile, recordingRule, selector, aggregator) =
-  local aggregatorWithLe = joinSelectors([aggregator] + ['le']);
   |||
-    histogram_quantile(%(percentile)g, sum by (%(aggregatorWithLe)s) (
+    histogram_quantile(%(percentile)g, sum by (%(aggregator)s, le) (
       %(recordingRule)s{%(selector)s}
     ))
   ||| % {
     percentile: percentile,
-    aggregatorWithLe: aggregatorWithLe,
-    selector: selector,
+    aggregator: aggregator,
+    selector: selectors.serializeHash(selector),
     recordingRule: recordingRule,
   };
 
@@ -42,7 +43,7 @@ local recordingRuleRateQuery(recordingRule, selector, aggregator) =
     )
   ||| % {
     aggregator: aggregator,
-    selector: selector,
+    selector: selectors.serializeHash(selector),
     recordingRule: recordingRule,
   };
 
