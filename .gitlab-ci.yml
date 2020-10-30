@@ -294,7 +294,7 @@ update_elastic_log_gprd_hot_index_shards_per_node:
     variables:
       - $JOB_SCHEDULE_ELASTIC_PROD
   variables:
-    ELASTICSEARCH_URL: $ES_PROD_URL
+    ELASTICSEARCH_URL: $ES_LOG_GPRD_URL
 
 # nonprod-log.gitlab.net
 ################################################################################
