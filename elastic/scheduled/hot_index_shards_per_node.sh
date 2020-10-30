@@ -58,7 +58,7 @@ echo '{}' |
 while IFS= read -r index; do
   echo "applying ${index}"
   if [[ "$dry_run" -eq 0 ]]; then
-    curl -q -XPUT "$ELASTICSEARCH_URL/${index}/_settings" -H 'Content-Type: application/json' -d "$(cat "${TMPDIR}/settings.txt")"
+    curl -s -XPUT "$ELASTICSEARCH_URL/${index}/_settings" -H 'Content-Type: application/json' -d "$(cat "${TMPDIR}/settings.txt")"
     echo
   fi
 done <"${TMPDIR}/target_indices.txt"
