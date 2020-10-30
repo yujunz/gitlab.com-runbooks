@@ -84,6 +84,24 @@ local getDefaultAvailabilityColorScale(invertColors, factor) =
 
   std.sort(scale, function(i) if i.value == null then 0 else i.value);
 
+local joinSelectors(selectors) =
+  local nonEmptySelectors = std.filter(function(x) std.length(x) > 0, selectors);
+  std.join(', ', nonEmptySelectors);
+
+local latencyHistogramQuery(percentile, bucketMetric, selector, aggregator, rangeInterval) =
+  local aggregatorWithLe = joinSelectors([aggregator] + ['le']);
+  |||
+    histogram_quantile(%(percentile)g, sum by (%(aggregatorWithLe)s) (
+      rate(%(bucketMetric)s{%(selector)s}[%(rangeInterval)s])
+    ))
+  ||| % {
+    percentile: percentile,
+    aggregatorWithLe: aggregatorWithLe,
+    selector: selector,
+    bucketMetric: bucketMetric,
+    rangeInterval: rangeInterval,
+  };
+
 {
   dashboard(
     title,
@@ -684,6 +702,23 @@ local getDefaultAvailabilityColorScale(invertColors, factor) =
       min=0,
       show=false,
     ),
+
+  multiQuantileTimeseries(
+    title,
+    selector,
+    legendFormat,
+    bucketMetric,
+    aggregators,
+  )::
+    local queries = std.map(
+      function(p) {
+        query: latencyHistogramQuery(p / 100, bucketMetric, selector, aggregators, '$__interval'),
+        legendFormat: '%s p%s' % [legendFormat, p],
+      },
+      [50, 90, 95, 99]
+    );
+
+    self.multiTimeseries(title=title, decimals=2, queries=queries, yAxisLabel='Duration', format='s'),
 
   networkTrafficGraph(
     title='Node Network Utilization',
