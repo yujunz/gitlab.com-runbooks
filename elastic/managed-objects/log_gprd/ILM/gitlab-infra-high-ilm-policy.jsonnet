@@ -5,7 +5,7 @@
         actions: {
           rollover: {
             max_age: '7d',
-            max_size: '160gb',  // we want each shards to have 20GB at rollover
+            max_size: '120gb',  // we want each shards to have 15GB at rollover
           },
           set_priority: {
             priority: 100,
