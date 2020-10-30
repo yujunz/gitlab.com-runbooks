@@ -3,6 +3,7 @@ local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libso
 local basic = import 'grafana/basic.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
 local templates = import 'grafana/templates.libsonnet';
+local selectors = import 'promql/selectors.libsonnet';
 
 local row = grafana.row;
 
@@ -27,7 +28,15 @@ local elasticsearchLogSearchDataLink(type) = {
 
 {
   dashboard(type, defaultController, defaultAction)::
-    local selector = 'environment="$environment", type="%s", stage="$stage", controller="$controller", action=~"$action"' % type;
+    local selector = {
+      environment: '$environment',
+      type: type,
+      stage: '$stage',
+      controller: '$controller',
+      action: { re: '$action' },
+    };
+
+    local selectorString = selectors.serializeHash(selector);
 
     basic.dashboard(
       'Rails Controller',
@@ -43,7 +52,7 @@ local elasticsearchLogSearchDataLink(type) = {
         basic.timeseries(
           stableId='request-rate',
           title='Request Rate',
-          query='avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{%s}[$__interval])' % selector,
+          query='avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{%s}[$__interval])' % selectorString,
           legendFormat='{{ action }}',
           format='ops',
           yAxisLabel='Requests per Second',
@@ -52,17 +61,17 @@ local elasticsearchLogSearchDataLink(type) = {
           stableId='latency',
           title='Latency',
           queries=[{
-            query: 'avg_over_time(controller_action:gitlab_transaction_duration_seconds:p99{%s}[$__interval])' % selector,
+            query: 'avg_over_time(controller_action:gitlab_transaction_duration_seconds:p99{%s}[$__interval])' % selectorString,
             legendFormat: '{{ action }} - p99',
           }, {
-            query: 'avg_over_time(controller_action:gitlab_transaction_duration_seconds:p95{%s}[$__interval])' % selector,
+            query: 'avg_over_time(controller_action:gitlab_transaction_duration_seconds:p95{%s}[$__interval])' % selectorString,
             legendFormat: '{{ action }} - p95',
           }, {
             query: |||
               avg_over_time(controller_action:gitlab_transaction_duration_seconds_sum:rate1m{%(selector)s}[$__interval])
               /
               avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{%(selector)s}[$__interval])
-            ||| % { selector: selector },
+            ||| % { selector: selectorString },
             legendFormat: '{{ action }} - mean',
           }],
           format='s',
@@ -79,7 +88,7 @@ local elasticsearchLogSearchDataLink(type) = {
             )
             /
             avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{%(selector)s}[$__interval])
-          ||| % { selector: selector },
+          ||| % { selector: selectorString },
           legendFormat='{{ action }}',
         ),
         basic.timeseries(
@@ -89,7 +98,7 @@ local elasticsearchLogSearchDataLink(type) = {
             avg_over_time(controller_action:gitlab_sql_duration_seconds_sum:rate1m{%(selector)s}[$__interval])
             /
             avg_over_time(controller_action:gitlab_transaction_duration_seconds_count:rate1m{%(selector)s}[$__interval])
-          ||| % { selector: selector },
+          ||| % { selector: selectorString },
           legendFormat='{{ action }}',
           format='s'
         ),
@@ -104,7 +113,7 @@ local elasticsearchLogSearchDataLink(type) = {
             sum without (fqdn,instance) (
             rate(gitlab_sql_duration_seconds_count{%(selector)s}[$__interval])
             )
-          ||| % { selector: selector },
+          ||| % { selector: selectorString },
           legendFormat='{{ action }}',
           format='s'
         ),
@@ -118,7 +127,7 @@ local elasticsearchLogSearchDataLink(type) = {
             sum without (fqdn, instance) (
             rate(gitlab_cache_operations_total{%(selector)s}[$__interval])
             )
-          ||| % { selector: selector },
+          ||| % { selector: selectorString },
           legendFormat='{{ operation }}',
         ),
       ], startRow=301)
