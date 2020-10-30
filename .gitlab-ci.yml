@@ -284,6 +284,18 @@ update_elastic_log_gprd_cluster_settings:
   except:
     - schedules
 
+update_elastic_log_gprd_hot_index_shards_per_node:
+  stage: scheduled
+  script:
+  - ./elastic/scheduled/hot_index_shards_per_node.sh
+  only:
+    refs:
+      - schedules
+    variables:
+      - $JOB_SCHEDULE_ELASTIC_PROD
+  variables:
+    ELASTICSEARCH_URL: $ES_PROD_URL
+
 # nonprod-log.gitlab.net
 ################################################################################
 update_elastic_nonprod-log_watches:
