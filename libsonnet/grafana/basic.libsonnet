@@ -704,18 +704,19 @@ local latencyHistogramQuery(percentile, bucketMetric, selector, aggregator, rang
     ),
 
   multiQuantileTimeseries(
-    title,
-    selector,
-    legendFormat,
-    bucketMetric,
-    aggregators,
+    title='Quantile latencies',
+    selector='',
+    legendFormat='latency',
+    bucketMetric='',
+    aggregators='',
+    percentiles=[50, 90, 95, 99],
   )::
     local queries = std.map(
       function(p) {
         query: latencyHistogramQuery(p / 100, bucketMetric, selector, aggregators, '$__interval'),
         legendFormat: '%s p%s' % [legendFormat, p],
       },
-      [50, 90, 95, 99]
+      percentiles
     );
 
     self.multiTimeseries(title=title, decimals=2, queries=queries, yAxisLabel='Duration', format='s'),
