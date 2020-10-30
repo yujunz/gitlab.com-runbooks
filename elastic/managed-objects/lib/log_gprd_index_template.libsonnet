@@ -2,6 +2,8 @@ local mappings = {
   camoproxy: import './index_mappings/camoproxy.jsonnet',
   consul: import './index_mappings/consul.jsonnet',
   gitaly: import './index_mappings/gitaly.jsonnet',
+  'gke-audit': import './index_mappings/gke-audit.jsonnet',
+  'gke-systemd': import './index_mappings/gke-systemd.jsonnet',
   gke: import './index_mappings/gke.jsonnet',
   mailroom: import './index_mappings/mailroom.jsonnet',
   monitoring: import './index_mappings/monitoring.jsonnet',
