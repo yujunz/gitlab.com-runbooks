@@ -25,7 +25,7 @@ local setting(index, env) = if std.member(HIGH_THROUHGPUT, index) then {
     },
     refresh_interval: '10s',
   },
-  number_of_shards: 6,
+  number_of_shards: 8,
   // number_of_replicas: 1,
 }
 else if std.member(MEDIUM_THROUGHPUT, index) then {
