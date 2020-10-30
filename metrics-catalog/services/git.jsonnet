@@ -33,9 +33,6 @@ metricsCatalog.serviceDefinition({
     pgbouncer: true,
     praefect: true,
   },
-  recordingRuleMetrics: [
-    'http_requests_total',
-  ],
   components: {
     loadbalancer: haproxyComponents.haproxyHTTPLoadBalancer(
       stageMappings={

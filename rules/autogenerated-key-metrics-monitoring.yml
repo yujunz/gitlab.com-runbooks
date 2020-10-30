@@ -4,11 +4,6 @@ groups:
 - name: 'Component-Level SLIs: monitoring - 1m burn-rate'
   interval: 1m
   rules:
-  - record: sli_aggregations:http_requests_total_rate1m
-    expr: |
-      sum by (code,environment,feature_category,fqdn,job,method,shard,stage,status,tier,type) (
-        rate(http_requests_total[1m])
-      )
   - record: gitlab_component_ops:rate
     labels:
       component: grafana
@@ -382,11 +377,6 @@ groups:
 - name: 'Component-Level SLIs: monitoring - 5m burn-rate'
   interval: 1m
   rules:
-  - record: sli_aggregations:http_requests_total_rate5m
-    expr: |
-      sum by (code,environment,feature_category,fqdn,job,method,shard,stage,status,tier,type) (
-        rate(http_requests_total[5m])
-      )
   - record: gitlab_component_ops:rate_5m
     labels:
       component: grafana
@@ -760,11 +750,6 @@ groups:
 - name: 'Component-Level SLIs: monitoring - 30m burn-rate'
   interval: 2m
   rules:
-  - record: sli_aggregations:http_requests_total_rate30m
-    expr: |
-      sum by (code,environment,feature_category,fqdn,job,method,shard,stage,status,tier,type) (
-        rate(http_requests_total[30m])
-      )
   - record: gitlab_component_ops:rate_30m
     labels:
       component: grafana
@@ -1128,11 +1113,6 @@ groups:
 - name: 'Component-Level SLIs: monitoring - 1h burn-rate'
   interval: 1m
   rules:
-  - record: sli_aggregations:http_requests_total_rate1h
-    expr: |
-      sum by (code,environment,feature_category,fqdn,job,method,shard,stage,status,tier,type) (
-        rate(http_requests_total[1h])
-      )
   - record: gitlab_component_ops:rate_1h
     labels:
       component: grafana
@@ -1506,11 +1486,6 @@ groups:
 - name: 'Component-Level SLIs: monitoring - 6h burn-rate'
   interval: 2m
   rules:
-  - record: sli_aggregations:http_requests_total_rate6h
-    expr: |
-      sum by (code,environment,feature_category,fqdn,job,method,shard,stage,status,tier,type) (
-        rate(http_requests_total[6h])
-      )
   - record: gitlab_component_ops:rate_6h
     labels:
       component: grafana
