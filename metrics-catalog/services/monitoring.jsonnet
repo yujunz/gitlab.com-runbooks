@@ -21,12 +21,6 @@ metricsCatalog.serviceDefinition({
    * disable ops-rate anomaly detection on this service.
    */
   disableOpsRatePrediction: true,
-  // This doesn't strictly _need_ a recording rule, but we'll use the
-  // rule for this metric anyway because it's used by the web service,
-  // so we put it here for clarity
-  recordingRuleMetrics: [
-    'http_requests_total',
-  ],
   components: {
     thanos_query: {
       local thanosQuerySelector = productionEnvironmentsSelector {
