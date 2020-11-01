@@ -206,6 +206,9 @@ update-alertmanager:
       - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
   except:
     - schedules
+  variables:
+    CLUSTER: ops-gitlab-gke
+    REGION: us-east1
 
 test:
   stage: test
