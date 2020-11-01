@@ -216,6 +216,7 @@ local routingTree = Route(
     RouteCase(
       match={ pager: 'pagerduty' },
       continue=true,
+      repeat_interval='2h',
       when=[
         { match: { env: 'gstg' }, receiver: 'non_prod_pagerduty' },
         { match: { env: 'dr' }, receiver: 'non_prod_pagerduty' },
