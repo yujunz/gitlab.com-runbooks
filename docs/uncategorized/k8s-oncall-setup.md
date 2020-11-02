@@ -3,6 +3,18 @@
 _Note: Before starting an on-call shift, be sure you follow these setup
 instructions_
 
+## Install helm and plugins locally
+
+There are two projects for deploying helm to the pre/gtsg/gprd Kubernetes clusters:
+
+* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com
+* https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-helmfiles
+
+In both of these projects there is a `.tool-versions` file that should be used with `asdf` to install the correct versions of helm and helmfile.
+
+- [ ] Install helm and helmfile
+- [ ] Install helm plugins by running the script https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/common/-/blob/master/bin/install-helm-plugins.sh
+
 ## Kubernetes API Access
 
 We use private GKE clusters, with the control plane only accessible from within the cluster's VPC.
@@ -109,27 +121,7 @@ kubectl get pods -n gitlab
 
 **Note**: Optionally you rename your context to something less unwiedly: `kubectl config rename-context gke_gitlab-production_us-east1_gprd-gitlab-gke gprd`
 
-## Workstation setup
-
-* [ ] Clone `git@gitlab.com:gitlab-com/gl-infra/k8s-workloads/gitlab-com`
-* [ ] `cd` into the cloned repo
-* [ ] execute `./bin/k-ctl -t`
-
-This will validate you have all required components installed necessary to interact with this repo.  Follow the links provided to complete the necessary installs of missing components.  Note that if you have a preferred method of installing this tools, it's perfectly fine to utilize your preferred method.  `k-ctl` doesn't care how items are installed, only that they are accessible in your `$PATH`.
-
-* [ ] Get the credentials for the pre-prod cluster:
-
-```
-gcloud container clusters get-credentials pre-gitlab-gke --region us-east1 --project gitlab-pre
-```
-
-* [ ] Validate k-ctl works as desired
-
-```
-./bin/k-ctl -e pre list
-```
-
-You should see a successful output of the helm objects as well as custom Kubernetes objects managed by the `gitlab-com` repository.
+### SSH Access to pods
 
 * [ ] Initiate an SSH connection to one of the production nodes, this requires a fairly recent version of gsuite
 
@@ -149,4 +141,34 @@ docker exec -u root -it <container> /bin/bash
 ```
 gcloud compute --project "gitlab-production" ssh <node name>
 toolbox
+```
+## Workstation setup for k-ctl
+
+* [ ] Get the credentials for the pre-prod cluster:
+
+```
+gcloud container clusters get-credentials pre-gitlab-gke --region us-east1 --project gitlab-pre
+```
+
+* [ ] Setup local environment for `k-ctl`
+
+These steps walk through running `k-ctl` against the preprod cluster but can also be used to connect to any of the staging or production clusters using sshuttle above.
+It is probably very unlikely you will need to make a configuration change to the clusters outside of CI, follow these instructions for the rare case this is necessary.
+`k-ctl` is a shell wrapper used by the [k8s-workloads/gitlab-com](https://gitlab.com/gitlab-com/gl-infra/k8s-workloads/gitlab-com) over `helmfile`.
+
+```
+git clone git@gitlab.com:gitlab-com/gl-infra/k8s-workloads/gitlab-com
+cd gitlab-com
+export CLUSTER=pre-gitlab-gke
+export REGION=us-east1
+./bin/k-ctl -e pre list
+```
+
+You should see a successful output of the helm objects as well as custom Kubernetes objects managed by the `gitlab-com` repository.
+
+* [ ] Make a change to the preprod configuration and execute a dry-run
+```
+vi releases/gitlab/values/pre.yaml.gotmpl
+# Make a change
+./bin/k-ctl -e pre -D apply
 ```
