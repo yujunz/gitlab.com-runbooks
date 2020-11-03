@@ -137,9 +137,12 @@ function ES7_ILM_exec_jsonnet_and_upload_json() {
 
 function ES7_index-template_exec_jsonnet_and_upload_json() {
   json=$(execute_jsonnet -e "local generic_index_template = import '$1'; generic_index_template.get('$2', '$3')")
+  json_file="/tmp/es_tmp_$(date +"%Y%m%d-%H%M%S").json"
+  echo "${json}" >"$json_file"
   url="_template/gitlab_pubsub_$2_inf_$3_template"
   echo "${url}"
-  es_client "${url}" -X PUT --data-binary "${json}"
+  es_client "${url}" -X PUT --data "@$json_file"
+  rm "$json_file"
 }
 
 function ES7_set_cluster_settings() {

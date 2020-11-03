@@ -5,8 +5,8 @@ exporting via UI fails for some reason.
 
 <!-- vim-markdown-toc GitLab -->
 
-* [From where to run the restore](#from-where-to-run-the-restore)
-* [Restore a project via rails-console](#restore-a-project-via-rails-console)
+* [From where to run the export](#from-where-to-run-the-export)
+* [Export a project via rails-console](#export-a-project-via-rails-console)
   * [No download link and no download email](#no-download-link-and-no-download-email)
   * [GCE credentials missing](#gce-credentials-missing)
   * [Statement timeouts](#statement-timeouts)
@@ -15,7 +15,7 @@ exporting via UI fails for some reason.
 
 <!-- vim-markdown-toc -->
 
-# From where to run the restore
+# From where to run the export
 
 Manual project exports should work from the console node. The root disk space
 was increased to 200GB recently, leaving more than 150GB free space for project
@@ -43,7 +43,7 @@ storage = p.repository_storage
 path = p.disk_path
 ```
 
-# Restore a project via rails-console
+# Export a project via rails-console
 
 * ssh to the console node (or the file-node found above, if console doesn't work).
 * sudo gitlab-rails console
@@ -105,6 +105,40 @@ That can happen because of some non-optimized queries in the current Exporter
 code (e.g. https://gitlab.com/gitlab-org/gitlab/-/issues/212355#note_364049215).
 This needs to get fixed in code probably. Try to get help from the Import team
 (#g_manage_import).
+
+## SendTimeoutError
+
+On at least one occasion the export + archive worked fine, but the upload to
+GCS failed with:
+```
+Sending upload query command to https://www.googleapis.com/upload/storage/v1/b/gitlab-gprd-uploads/o?upload_id=REDACTED&upload_protocol=resumable
+Upload status active
+Sending upload command to https://www.googleapis.com/upload/storage/v1/b/gitlab-gprd-uploads/o?upload_id=REDACTED&upload_protocol=resumable
+Error - #<HTTPClient::SendTimeoutError: execution expired>
+```
+8 times, 4 times each with 2 different values for `REDACTED`.  Given the
+archive is written to disk, tar/gzipped, then uploaded, we can bypass the
+final upload step, and use `gsutil` and a manual cleanup instead.
+
+WARNING: This use private methods, and is only known to be valid as at this writing
+in late Sept 2020, and requires manual cleanup.
+You should check the code at app/services/projects/import_export/export_service.rb
+and lib/gitlab/import_export/saver.rb to see if this is still valid.  If so, instead
+of calling e.execute, run:
+
+```
+e.send :save_exporters
+saver = Gitlab::ImportExport::Saver.new(exportable:p, shared:p.import_export_shared)
+saver.send :compress_and_save
+saver.send :archive_file
+```
+
+This is roughly what `e.execute` does but without the upload, and then prints the path
+to the file that it created.  You are now responsible for copying that archive
+somewhere, e.g. as described above in [#no-download-link-and-no-download-email] and you
+*MUST* also delete both it and the temporary export directory that was created alongside
+the archive, otherwise the root disk on the console server will gradually fill up as
+people do this.
 
 # Debugging
 

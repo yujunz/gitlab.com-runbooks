@@ -78,4 +78,48 @@ $ vault operator raft list-peers
 ```
 
 ## Backing up and restoring Vault
-To be completed once https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/10129 has been completed.
+Vault backups are taken once a day at 00:30 Kubernetes Cluster local time (typically UTC). They are created by a Kubernetes
+[CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) that runs inside the GKE cluster that runs
+Vault. It uses [vault operator raft snapshot save](https://www.vaultproject.io/docs/commands/operator/raft#snapshot-save)
+to create an encrypted copy of all Vault data, and then uploads to it to a GCS bucket inside the Google project for the
+Vault installation. The name of the bucket is as follows
+
+* vault.gitlab.net => gs://gitlab-vault-backups/
+* vault-nonprod.gitlab.net => gs://gitlab-vault-nonprod-backups/
+
+### Restoring Vault from a backup into an existing functional installation
+The easiest way to restore a Vault installation from a backup, is to run a temporary pod with all the utilities you need
+to restore the Vault snapshot back into the installation. Note that doing this restores everything entirely back to the state
+it was at the backup, removing all new data since the backup was taken.
+
+* First identify the Vault backup you wish to restore
+```
+gsutil ls gs://gitlab-vault-nonprod-backups/
+```
+Take note of the full path to the backup
+
+* Run a Kubernetes pod on the gke cluster in question, this will most likely need to be done on a console node with
+access to the GKE cluster in question
+```
+gcloud --project gitlab-vault-nonprod container clusters get-credentials vault-gitlab-gke --region us-east1
+kubectl run --generator=run-pod/v1 --rm -it -n vault --image registry.gitlab.com/gitlab-com/gl-infra/ci-images/vault-ci:latest vault-restore-backup --env VAULT_ADDR=http://vault-active.vault.svc.cluster.local:8200 --serviceaccount=vault-backup
+# Once the prompt is available, run the following
+gsutil cp $FULL_PATH_TO_BACKUP .
+vault login
+# Enter in the root token from 1password for the Vault instance
+vault operator raft snapshot restore $LOCAL_PATH_TO_BACKUP
+# Now we exit so the pod goes away
+exit
+```
+
+### Restoring Vault from a backup into an empty installation
+:warning: As we use GKMS auto-unseal for our Vault, you need to make sure the GKMS key that was originally used with the Vault backup is still available.
+As this is controlled by Google, they are responsible for maintaing it's backup and availability. They also make it very difficult for us to delete
+completely :warning:
+
+* Spin up the new Vault installation, likely using the same terraform configuration as the lost cluster
+* Follow the post install steps at https://ops.gitlab.net/infrastructure/workloads/vault/-/blob/master/README.md#post-install-steps in order to make
+sure the installation is unsealed. Note down the new root token (even though we won't even use it). You will use it when running `vault login` in the
+restoration steps
+* Follow the steps above to restore the backup. Remember when using `vault login` to use the new root token generated. Once the backup is restored, you
+can switch back to the token from the old backup.

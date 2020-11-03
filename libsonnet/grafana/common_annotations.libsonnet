@@ -18,6 +18,14 @@ local annotation = grafana.annotation;
       builtIn=1,
       iconColor='#FFEE52',
     ),
+  deploymentsForK8sWorkloads::
+    annotation.datasource(
+      'k8s-workloads',
+      '-- Grafana --',
+      tags=['k8s-workloads'],
+      builtIn=1,
+      iconColor='#316CE6',
+    ),
   featureFlags::
     annotation.datasource(
       'feature-flags',

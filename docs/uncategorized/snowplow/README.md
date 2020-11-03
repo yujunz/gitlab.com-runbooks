@@ -44,6 +44,14 @@ is used for individual collector nodes to check health against port 8000.
 1. First, make sure the collectors are working ok by looking over the steps
   above. It's possible that if nothing is getting collected, nothing is being
   written out.
+1. In the [CloudWatch SnowPlow dashboard](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=SnowPlow)
+  dashboard, look at the **Stream Records Age** graph to see if a Kenesis
+  stream is backing up. This graph shows the milliseconds that records are
+  left in the streams and it should be zero most of the time. If there are
+  lots of records backing up, the encrichers may not be picking up work, or
+  Firehose is not writing records to S3. Reference the pipeline diagram above
+  to help determine which broken part might cause a stream to have long lived
+  records in the stream.
 1. Verify there are enricher nodes running. You can check the
   **SnowPlowEnricher** auto scaling group to see if they are.
 1. There is no current automated method to see if the enricher processes are

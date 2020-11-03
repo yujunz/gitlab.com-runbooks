@@ -27,7 +27,7 @@ groups:
       runbook: docs/patroni/postgres.md#replication-is-lagging-or-has-stopped
       title: WAL-E replication has stopped
   - alert: PostgreSQL_CommitRateTooLow
-    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type =~"postgres|patroni", environment!="gstg"}[1m])
+    expr: rate(pg_stat_database_xact_commit{datname="gitlabhq_production", type =~"postgres|patroni", environment!="gstg", shard="default"}[1m])
       < 1000
     for: 5m
     labels:

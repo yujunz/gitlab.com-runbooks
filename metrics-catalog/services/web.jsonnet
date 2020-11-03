@@ -32,6 +32,9 @@ metricsCatalog.serviceDefinition({
     pgbouncer: true,
     praefect: true,
   },
+  recordingRuleMetrics: [
+    'http_requests_total',
+  ],
   components: {
     loadbalancer: haproxyComponents.haproxyHTTPLoadBalancer(
       stageMappings={
@@ -81,16 +84,16 @@ metricsCatalog.serviceDefinition({
       ),
 
       requestRate: rateMetric(
-        counter='http_request_duration_seconds_count',
+        counter='http_requests_total',
         selector=baseSelector,
       ),
 
       errorRate: rateMetric(
-        counter='http_request_duration_seconds_count',
+        counter='http_requests_total',
         selector=baseSelector { status: { re: '5..' } }
       ),
 
-      significantLabels: ['fqdn', 'method'],
+      significantLabels: ['fqdn', 'method', 'feature_category'],
 
       toolingLinks: [
         // Improve sentry link once https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/532 arrives

@@ -1324,7 +1324,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1363,7 +1363,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1407,7 +1407,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -1448,7 +1448,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -1489,7 +1489,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1529,7 +1529,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1573,7 +1573,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1617,7 +1617,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1658,7 +1658,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1701,7 +1701,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1740,7 +1740,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1779,7 +1779,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1824,7 +1824,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1867,7 +1867,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1910,7 +1910,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -1955,7 +1955,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -1996,7 +1996,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -2037,7 +2037,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -2075,7 +2075,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2116,7 +2116,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2168,7 +2168,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -2212,7 +2212,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2256,7 +2256,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2305,7 +2305,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2348,7 +2348,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -2400,7 +2400,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2451,7 +2451,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2490,7 +2490,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2535,7 +2535,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2555,6 +2555,8 @@ groups:
         Details of the Rails DB Connection Pool Utilization resource:
 
         Rails uses connection pools for its database connections. As each node may have multiple connection pools, this is by node and by database host.
+
+        Read more about this resource in our [documentation](https://docs.gitlab.com/ee/development/database/client_side_connection_pool.html#client-side-connection-pool).
 
         If this resource is saturated, it may indicate that our connection pools are not correctly sized, perhaps because an unexpected application thread is using a database connection.
       grafana_dashboard_id: alerts-sat_rails_db_connection_pool
@@ -2580,7 +2582,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2623,7 +2625,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2672,7 +2674,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -2717,7 +2719,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty
@@ -2762,7 +2764,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2801,7 +2803,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2846,7 +2848,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2891,7 +2893,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2938,7 +2940,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -2977,7 +2979,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       rules_domain: general
@@ -3020,7 +3022,7 @@ groups:
           ,
           0)
         )
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: cause
       pager: pagerduty

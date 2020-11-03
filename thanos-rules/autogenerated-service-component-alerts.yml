@@ -24,7 +24,7 @@ groups:
       grafana_variables: environment,type,stage,component
       promql_template_1: >-
         gitlab_component_apdex:ratio_1h{environment="$environment", type="$type", stage="$stage", component="$component"}
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: symptom
       pager: pagerduty
@@ -77,9 +77,9 @@ groups:
           )
         )
       )
-      and on(environment,env,tier,type,component,stage)
+      and on(env,environment,tier,type,stage,component)
       (
-        sum by(environment,env,tier,type,component,stage) (gitlab_component_ops:rate_1h{monitor!="global"}) >= 1
+        sum by(env,environment,tier,type,stage,component) (gitlab_component_ops:rate_1h{monitor="global"}) >= 1
       )
   - alert: component_error_ratio_burn_rate_slo_out_of_bounds_upper
     for: 2m
@@ -104,7 +104,7 @@ groups:
         https://gitlab.com/gitlab-com/runbooks/blob/master/docs/uncategorized/definition-service-error-rate.md
       promql_template_1: >-
         gitlab_component_errors:ratio_5m{environment="$environment", type="$type", stage="$stage", component="$component"}
-      runbook: docs/{{ $labels.type }}/service-{{ $labels.type }}.md
+      runbook: docs/{{ $labels.type }}/README.md
     labels:
       alert_type: symptom
       pager: pagerduty
@@ -153,7 +153,7 @@ groups:
           )
         )
       )
-      and on(environment,env,tier,type,component,stage)
+      and on(env,environment,tier,type,stage,component)
       (
-        sum by(environment,env,tier,type,component,stage) (gitlab_component_ops:rate_1h{monitor!="global"}) >= 1
+        sum by(env,environment,tier,type,stage,component) (gitlab_component_ops:rate_1h{monitor="global"}) >= 1
       )

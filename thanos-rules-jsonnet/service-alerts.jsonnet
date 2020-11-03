@@ -38,7 +38,7 @@ local rules = [
         The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is not meeting its latency SLOs
         The service is taking longer to respond to requests than usual. This could be caused by user abuse, application changes in upstream services that lead to higher request rates or slower requested, or slowdown in downstream services. Check operation rates in upstream and downstream services, error rates and check ELK for abuse.
       |||,
-      runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+      runbook: 'docs/{{ $labels.type }}/README.md',
       title: 'The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has a apdex score (latency) below SLO',
       grafana_dashboard_id: 'general-service/service-platform-metrics',
       grafana_panel_id: stableIds.hashStableId('apdex-ratio'),
@@ -83,7 +83,7 @@ local rules = [
         The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is not meeting its latency SLOs
         The service is taking longer to respond to requests than usual. This could be caused by user abuse, application changes in upstream services that lead to higher request rates or slower requested, or slowdown in downstream services. Check operation rates in upstream and downstream services, error rates and check ELK for abuse.
       |||,
-      runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+      runbook: 'docs/{{ $labels.type }}/README.md',
       title: 'The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has a apdex score (latency) below SLO',
       grafana_dashboard_id: 'general-service/service-platform-metrics',
       grafana_panel_id: stableIds.hashStableId('apdex-ratio'),
@@ -132,7 +132,7 @@ local rules = [
         The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio higher than SLOs
         A high proportion of requests to the `{{ $labels.type }}` service are resulting in errors. This ratio is higher than the defined SLO for the service.
       |||,
-      runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+      runbook: 'docs/{{ $labels.type }}/README.md',
       title: 'The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio exceeding SLO',
       grafana_dashboard_id: 'general-service/service-platform-metrics',
       grafana_panel_id: stableIds.hashStableId('error-ratio'),
@@ -177,7 +177,7 @@ local rules = [
         The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio higher than SLOs
         A high proportion of requests to the `{{ $labels.type }}` service are resulting in errors. This ratio is higher than the defined SLO for the service.
       |||,
-      runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+      runbook: 'docs/{{ $labels.type }}/README.md',
       title: 'The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) has an error-ratio exceeding SLO',
       grafana_dashboard_id: 'general-service/service-platform-metrics',
       grafana_panel_id: stableIds.hashStableId('error-ratio'),
@@ -222,7 +222,7 @@ local rules = [
         The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving more requests than normal.
         This is often caused by user generated traffic, sometimes abuse. It can also be cause by application changes that lead to higher operations rates or from retries in the event of errors. Check the abuse reporting watches in Elastic, ELK for possible abuse, error rates (possibly on upstream services) for root cause.
       |||,
-      runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+      runbook: 'docs/{{ $labels.type }}/README.md',
       title: 'Anomaly detection: The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving more requests than normal',
       grafana_dashboard_id: 'general-service/service-platform-metrics',
       grafana_panel_id: stableIds.hashStableId('request-rate'),
@@ -263,7 +263,7 @@ local rules = [
         The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving fewer requests than normal.
         This is often caused by a failure in an upstream service - for example, an upstream load balancer rejected all incoming traffic. In many cases, this is as serious or more serious than a traffic spike. Check upstream services for errors that may be leading to traffic flow issues in downstream services.
       |||,
-      runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+      runbook: 'docs/{{ $labels.type }}/README.md',
       title: 'Anomaly detection: The `{{ $labels.type }}` service (`{{ $labels.stage }}` stage) is receiving fewer requests than normal',
       grafana_dashboard_id: 'general-service/service-platform-metrics',
       grafana_panel_id: stableIds.hashStableId('request-rate'),
@@ -336,7 +336,7 @@ local rules = [
         Consider investigating further. If there is no evidence of another cause, please consider stopping the deployment process while the problem is investigated.
         This could indicate that the canary deployment is not functioning correctly. Please consider stopping the deployment process while the problem is investigated.
       |||,
-      runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+      runbook: 'docs/{{ $labels.type }}/README.md',
       title: 'Bad canary? The `cny` stage of  the `{{ $labels.type }}` service has a apdex score (latency) below SLO, but the main stage does not.',
       grafana_dashboard_id: 'general-service-stages/general-service-platform-metrics-stages',
       grafana_panel_id: stableIds.hashStableId('apdex-ratio'),
@@ -395,7 +395,7 @@ local rules = [
         While there are other reasons, such as high traffic to the canary stage, experiencing a high error rate in `cny`, without any corresponding errors in `main` stage could indicate a malfunctioning canary deploy.
         Consider investigating further. If there is no evidence of another cause, please consider stopping the deployment process while the problem is investigated.
       |||,
-      runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+      runbook: 'docs/{{ $labels.type }}/README.md',
       title: 'Bad canary? The `cny` stage of  the `{{ $labels.type }}` service has an error-ratio exceeding SLO, but the main stage does not.',
       grafana_dashboard_id: 'general-service-stages/general-service-platform-metrics-stages',
       grafana_panel_id: stableIds.hashStableId('error-ratio'),

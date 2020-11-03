@@ -1,0 +1,240 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "insertId",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "correlation_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "domain",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "duration_ms",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "environment",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "error",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "fqdn",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "gitlab_server",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "host",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "hostname",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "level",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "method",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "msg",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "pages_domain",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "pages_host",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "pages_https",
+        "type": "BOOLEAN"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "pages_project_id",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "path",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "proto",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "redirect_uri",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "referrer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "remote_addr",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "remote_ip",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "shard",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "stage",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "state",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "status",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "system",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "tier",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "unmatched_line",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "user_agent",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "written_bytes",
+        "type": "INTEGER"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "jsonPayload",
+    "type": "RECORD"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "compute_googleapis_com_resource_name",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "tag",
+        "type": "STRING"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "labels",
+    "type": "RECORD"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "logName",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "receiveTimestamp",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "instance_id",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "project_id",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "zone",
+            "type": "STRING"
+          }
+        ],
+        "mode": "NULLABLE",
+        "name": "labels",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "resource",
+    "type": "RECORD"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "timestamp",
+    "type": "TIMESTAMP"
+  }
+]

@@ -60,7 +60,6 @@ local PagerDutyReceiver(channel) = {
       service_key: channel.serviceKey,
       description: '{{ template "slack.title" . }}',
       client: 'GitLab Alertmanager',
-      client_url: '{{ template "slack.link" . }}',
       details: {
         note: '{{ template "slack.text" . }}',
       },
@@ -217,6 +216,8 @@ local routingTree = Route(
     RouteCase(
       match={ pager: 'pagerduty' },
       continue=true,
+      /* must be less than the 6h auto-resolve in PagerDuty */
+      repeat_interval='2h',
       when=[
         { match: { env: 'gstg' }, receiver: 'non_prod_pagerduty' },
         { match: { env: 'dr' }, receiver: 'non_prod_pagerduty' },

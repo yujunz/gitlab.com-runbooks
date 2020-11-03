@@ -19,18 +19,22 @@ groups:
   - record: sla:gitlab:weights
     expr: |
       sum by (environment, env, stage) (
-        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="api", monitor="global"}, 1), 1)) * 5
+        max without(slo) (clamp_max(clamp_min(avg_over_time(slo_observation_status{type="api", monitor="global"}[5m]), 1), 1)) * 5
         or
-        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="git", monitor="global"}, 1), 1)) * 5
+        max without(slo) (clamp_max(clamp_min(avg_over_time(slo_observation_status{type="git", monitor="global"}[5m]), 1), 1)) * 5
         or
-        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="registry", monitor="global"}, 1), 1)) * 1
+        max without(slo) (clamp_max(clamp_min(avg_over_time(slo_observation_status{type="registry", monitor="global"}[5m]), 1), 1)) * 1
         or
-        max without(slo) (clamp_max(clamp_min(slo_observation_status{type="web", monitor="global"}, 1), 1)) * 5
+        max without(slo) (clamp_max(clamp_min(avg_over_time(slo_observation_status{type="web", monitor="global"}[5m]), 1), 1)) * 5
       )
   - record: sla:gitlab:ratio
     labels:
-      sla_type: weighted_v1
-    expr: sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"}
+      sla_type: weighted_v1.1
+    expr: |
+      clamp_max(
+        sla:gitlab:score{monitor="global"} / sla:gitlab:weights{monitor="global"},
+        1
+      )
 - name: SLA target
   interval: 5m
   partial_response_strategy: warn

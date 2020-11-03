@@ -45,7 +45,7 @@ local sidekiqThanosAlerts = [
         This could be the result of a Sidekiq server configuration issue, where
         no Sidekiq servers are configured to dequeue the specific queue.
       |||,
-      runbook: 'docs/sidekiq/service-sidekiq.md',
+      runbook: 'docs/sidekiq/README.md',
       grafana_dashboard_id: 'sidekiq-queue-detail/sidekiq-queue-detail',
       grafana_panel_id: stableIds.hashStableId('queue-length'),
       grafana_variables: 'environment,stage,queue',

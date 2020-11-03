@@ -17,6 +17,7 @@ local mappings = {
   shell: import './index_mappings/shell.jsonnet',
   sidekiq: import './index_mappings/sidekiq.jsonnet',
   system: import './index_mappings/system.jsonnet',
+  vault: import './index_mappings/vault.jsonnet',
   workhorse: import './index_mappings/workhorse.jsonnet',
 };
 local settings = import 'settings_nonprod.libsonnet';
@@ -27,7 +28,7 @@ local settings = import 'settings_nonprod.libsonnet';
     env,
   ):: {
     index_patterns: ['pubsub-%s-inf-%s-*' % [index, env]],
-    mappings: mappings[index],
+    mappings: if std.objectHas(mappings, index) then mappings[index] else {},
     settings: settings.setting(index, env),
   },
 }

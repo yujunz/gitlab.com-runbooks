@@ -5,6 +5,7 @@ stages:
   - alertmanager
   - deploy-rules
   - deploy-rules-production
+  - scheduled
 
 default:
   image: "${CI_REGISTRY_IMAGE}:latest"
@@ -36,6 +37,8 @@ workflow:
       - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
   tags:
     - release
+  except:
+    - schedules
 
 .rules-artifacts:
   artifacts:
@@ -54,11 +57,15 @@ workflow:
       - master
       - merge_requests
       - tags
+  except:
+    - schedules
 
 verify:
   stage: test
   script:
     - make verify
+  except:
+    - schedules
 
 test-rules:
   extends: .rules-artifacts
@@ -67,6 +74,8 @@ test-rules:
     - gem install bundler --no-document
     - bundle install --with=test
     - bundle exec ./bin/create_kubernetes_rules.rb --create --validate
+  except:
+    - schedules
 
 danger:
   stage: test
@@ -86,6 +95,8 @@ rubocop:
     - gem install bundler --no-document
     - bundle install --with=test
     - bundle exec rubocop
+  except:
+    - schedules
 
 rspec:
   stage: test
@@ -93,26 +104,89 @@ rspec:
     - gem install bundler --no-document
     - bundle install --with=test
     - bundle exec rspec
+  except:
+    - schedules
 
 deploy-rules-gstg:
   environment: gstg
   extends: .deploy-rules
   stage: deploy-rules
+  variables:
+    CLUSTER: gstg-gitlab-gke
+    REGION: us-east1
+
+deploy-rules-gstg-us-east1-b:
+  environment: gstg-us-east1-b
+  extends: .deploy-rules
+  stage: deploy-rules
+  variables:
+    CLUSTER: gstg-us-east1-b
+    REGION: us-east1-b
+
+deploy-rules-gstg-us-east1-c:
+  environment: gstg-us-east1-c
+  extends: .deploy-rules
+  stage: deploy-rules
+  variables:
+    CLUSTER: gstg-us-east1-c
+    REGION: us-east1-c
+
+deploy-rules-gstg-us-east1-d:
+  environment: gstg-us-east1-d
+  extends: .deploy-rules
+  stage: deploy-rules
+  variables:
+    CLUSTER: gstg-us-east1-d
+    REGION: us-east1-d
+
 
 deploy-rules-pre:
   environment: pre
   extends: .deploy-rules
   stage: deploy-rules
+  variables:
+    CLUSTER: pre-gitlab-gke
+    REGION: us-east1
 
 deploy-rules-ops:
   environment: ops
   extends: .deploy-rules
   stage: deploy-rules
+  variables:
+    CLUSTER: ops-gitlab-gke
+    REGION: us-east1
 
-deploy-rules-production:
+deploy-rules-gprd:
   environment: gprd
   extends: .deploy-rules
   stage: deploy-rules-production
+  variables:
+    CLUSTER: gprd-gitlab-gke
+    REGION: us-east1
+
+deploy-rules-gprd-us-east1-b:
+  environment: gprd-us-east1-b
+  extends: .deploy-rules
+  stage: deploy-rules-production
+  variables:
+    CLUSTER: gprd-us-east1-b
+    REGION: us-east1-b
+
+deploy-rules-gprd-us-east1-c:
+  environment: gprd-us-east1-c
+  extends: .deploy-rules
+  stage: deploy-rules-production
+  variables:
+    CLUSTER: gprd-us-east1-c
+    REGION: us-east1-c
+
+deploy-rules-gprd-us-east1-d:
+  environment: gprd-us-east1-d
+  extends: .deploy-rules
+  stage: deploy-rules-production
+  variables:
+    CLUSTER: gprd-us-east1-d
+    REGION: us-east1-d
 
 update-alertmanager:
   stage: alertmanager
@@ -130,68 +204,26 @@ update-alertmanager:
       - alertmanager/*
     variables:
       - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
+  except:
+    - schedules
+  variables:
+    CLUSTER: ops-gitlab-gke
+    REGION: us-east1
 
 test:
   stage: test
   script:
     - make test
+  except:
+    - schedules
 
 ensure_generated_content_up_to_date:
   stage: test
   script:
     - make generate
     - git diff --exit-code || (echo "Please run 'make generate'" && exit 1)
-
-
-# log.gitlab.net
-################################################################################
-update_elastic_log_dashboards:
-  stage: deploy
-  script:
-  - ./elastic/managed-objects/log/dashboards/update-dashboards.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log/dashboards/*
-    variables:
-      - $ES_LOG_URL
-
-update_elastic_log_searches:
-  stage: deploy
-  script:
-  - ./elastic/managed-objects/log/searches/update-searches.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log/searches/*
-    variables:
-      - $ES_LOG_URL
-
-update_elastic_log_watches:
-  stage: deploy
-  script:
-  - ./elastic/managed-objects/log/watches/update-watches.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log/watches/*
-    variables:
-      - $ES_LOG_URL
-
-update_elastic_log_visualizations:
-  stage: deploy
-  script:
-  - ./elastic/managed-objects/log/visualizations/update-visualizations.sh
-  only:
-    refs:
-      - master
-    changes:
-      - elastic/managed-objects/log/visualizations/*
-    variables:
-      - $ES_LOG_URL
+  except:
+    - schedules
 
 # log.gprd.gitlab.net
 ################################################################################
@@ -206,6 +238,8 @@ update_elastic_log_gprd_ilm:
       - elastic/managed-objects/log_gprd/ILM/*
     variables:
       - $ES_LOG_GPRD_URL
+  except:
+    - schedules
 
 update_elastic_log_gprd_watches:
   stage: deploy
@@ -218,6 +252,8 @@ update_elastic_log_gprd_watches:
       - elastic/managed-objects/log_gprd/watches/*
     variables:
       - $ES_LOG_GPRD_URL
+  except:
+    - schedules
 
 update_elastic_log_gprd_index_templates:
   stage: deploy
@@ -230,8 +266,12 @@ update_elastic_log_gprd_index_templates:
       - elastic/managed-objects/log_gprd/index-templates/*
       - elastic/managed-objects/lib/log_gprd_index_template.libsonnet
       - elastic/managed-objects/lib/index_mappings/*.jsonnet
+      - elastic/managed-objects/lib/settings_gprd.libsonnet
+      - elastic/managed-objects/indices/indices-array.sh
     variables:
       - $ES_LOG_GPRD_URL
+  except:
+    - schedules
 
 update_elastic_log_gprd_cluster_settings:
   stage: deploy
@@ -244,6 +284,20 @@ update_elastic_log_gprd_cluster_settings:
       - elastic/managed-objects/log_gprd/cluster-settings/*
     variables:
       - $ES_LOG_GPRD_URL
+  except:
+    - schedules
+
+update_elastic_log_gprd_hot_index_shards_per_node:
+  stage: scheduled
+  script:
+  - ./elastic/scheduled/hot_index_shards_per_node.sh
+  only:
+    refs:
+      - schedules
+    variables:
+      - $JOB_SCHEDULE_ELASTIC_PROD
+  variables:
+    ELASTICSEARCH_URL: $ES_LOG_GPRD_URL
 
 # nonprod-log.gitlab.net
 ################################################################################
@@ -258,6 +312,8 @@ update_elastic_nonprod-log_watches:
       - elastic/managed-objects/nonprod-log/watches/*
     variables:
       - $ES_NONPROD_URL
+  except:
+    - schedules
 
 update_elastic_nonprod-log_ilm:
   stage: deploy
@@ -270,6 +326,8 @@ update_elastic_nonprod-log_ilm:
       - elastic/managed-objects/nonprod-log/ILM/*
     variables:
       - $ES_NONPROD_URL
+  except:
+    - schedules
 
 update_elastic_nonprod-log_index_templates:
   stage: deploy
@@ -281,9 +339,13 @@ update_elastic_nonprod-log_index_templates:
     changes:
       - elastic/managed-objects/nonprod-log/index-templates/*
       - elastic/managed-objects/lib/nonprod-log_index_template.libsonnet
-      - elastic/managed-objects/lib/index_mappings/*.libsonnet
+      - elastic/managed-objects/lib/index_mappings/*.jsonnet
+      - elastic/managed-objects/lib/settings_nonprod.libsonnet
+      - elastic/managed-objects/indices/indices-array.sh
     variables:
       - $ES_NONPROD_URL
+  except:
+    - schedules
 
 update_elastic_nonprod-log_cluster_settings:
   stage: deploy
@@ -296,6 +358,20 @@ update_elastic_nonprod-log_cluster_settings:
       - elastic/managed-objects/nonprod-log/cluster-settings/*
     variables:
       - $ES_NONPROD_URL
+  except:
+    - schedules
+
+update_elastic_nonprod-log_hot_index_shards_per_node:
+  stage: scheduled
+  script:
+  - ./elastic/scheduled/hot_index_shards_per_node.sh
+  only:
+    refs:
+      - schedules
+    variables:
+      - $JOB_SCHEDULE_ELASTIC_NONPROD
+  variables:
+    ELASTICSEARCH_URL: $ES_NONPROD_URL
 
 # security-dev-20200423
 ################################################################################
@@ -310,6 +386,8 @@ update_elastic_security_dev_ilm:
       - elastic/managed-objects/security_dev/ILM/*
     variables:
       - $ES_SECURITY_DEV_URL
+  except:
+    - schedules
 
 update_elastic_security_dev_watches:
   stage: deploy
@@ -322,6 +400,8 @@ update_elastic_security_dev_watches:
       - elastic/managed-objects/security_dev/watches/*
     variables:
       - $ES_SECURITY_DEV_URL
+  except:
+    - schedules
 
 update_elastic_security_dev_index_templates:
   stage: deploy
@@ -334,6 +414,8 @@ update_elastic_security_dev_index_templates:
       - elastic/managed-objects/security_dev/index-templates/*
     variables:
       - $ES_SECURITY_DEV_URL
+  except:
+    - schedules
 
 update_elastic_security_dev_cluster_settings:
   stage: deploy
@@ -346,6 +428,8 @@ update_elastic_security_dev_cluster_settings:
       - elastic/managed-objects/security_dev/cluster-settings/*
     variables:
       - $ES_SECURITY_DEV_URL
+  except:
+    - schedules
 
 # monitoring-es7
 ################################################################################
@@ -361,6 +445,8 @@ update_elastic_monitoring-es7_cluster_settings:
       - elastic/managed-objects/monitoring-es7/cluster-settings/*
     variables:
       - $ES_MONITORING_ES7_URL
+  except:
+    - schedules
 
 update_elastic_monitoring-es7_ilm:
   stage: deploy
@@ -373,6 +459,8 @@ update_elastic_monitoring-es7_ilm:
       - elastic/managed-objects/monitoring-es7/ILM/*
     variables:
       - $ES_MONITORING_ES7_URL
+  except:
+    - schedules
 
 ################################################################################
 
@@ -403,6 +491,8 @@ deploy_pingdom_checks:
       - master
     variables:
       - $CI_PROJECT_URL =~ /^https:\/\/gitlab\.com\/.*/
+  except:
+    - schedules
 
 check_alerts:
   image: golang:1.14
@@ -419,12 +509,20 @@ check_alerts:
       - $PERFORM_ALERTS_CHECK
   tags:
     - release
+  except:
+    - schedules
 
 test_dashboards:
   extends: .dashboards
   stage: test
   script:
     - dashboards/upload.sh -D
+  only:
+    changes:
+      - ./dashboards/**
+      - ./metrics-catalog/**
+      - ./libsonnet/**
+      - ./service-catalog/**
 
 deploy_dashboards:
   extends: .dashboards
@@ -456,6 +554,8 @@ docker_image_test:
     refs:
       - merge_requests
       - tags
+  except:
+    - schedules
 
 docker_image_build:
   extends: .docker_image_template
@@ -468,6 +568,8 @@ docker_image_build:
     - docker push ${IMAGE}:$ci_image_tag
   only:
     - tags
+  except:
+    - schedules
 
 publish:
   image: node:10
@@ -487,6 +589,7 @@ publish:
       - $CI_API_V4_URL == "https://ops.gitlab.net/api/v4"
     refs:
       - tags
+      - schedules
 
 alertmanager_test:
   stage: test
@@ -499,3 +602,5 @@ alertmanager_test:
       - master
       - merge_requests
       - tags
+  except:
+    - schedules

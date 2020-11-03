@@ -26,6 +26,7 @@ metricsCatalog.serviceDefinition({
       local thanosQuerySelector = productionEnvironmentsSelector {
         job: 'thanos',
         type: 'monitoring',
+        shard: 'default',
       },
       staticLabels: {
         environment: 'ops',
@@ -34,8 +35,7 @@ metricsCatalog.serviceDefinition({
       apdex: histogramApdex(
         histogram='http_request_duration_seconds_bucket',
         selector=thanosQuerySelector,
-        satisfiedThreshold=3,
-        toleratedThreshold=30
+        satisfiedThreshold=30,
       ),
 
       requestRate: rateMetric(
@@ -52,6 +52,41 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Query', index='monitoring_ops', tag='monitoring.systemd.thanos-query'),
+      ],
+    },
+
+    public_dashboards_thanos_query: {
+      local thanosQuerySelector = productionEnvironmentsSelector {
+        job: 'thanos',
+        type: 'monitoring',
+        shard: 'public-dashboards',
+      },
+      staticLabels: {
+        environment: 'ops',
+      },
+
+      apdex: histogramApdex(
+        histogram='http_request_duration_seconds_bucket',
+        selector=thanosQuerySelector,
+        satisfiedThreshold=30
+      ),
+
+      requestRate: rateMetric(
+        counter='http_requests_total',
+        selector=thanosQuerySelector
+      ),
+
+      errorRate: rateMetric(
+        counter='http_requests_total',
+        selector=thanosQuerySelector { code: { re: '^5.*' } }
+      ),
+
+      significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Query', index='monitoring_ops', tag='monitoring.systemd.thanos-query'),
       ],
     },
 
@@ -88,6 +123,8 @@ metricsCatalog.serviceDefinition({
 
       toolingLinks: [
         toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Store (gprd)', index='monitoring_gprd', tag='monitoring.systemd.thanos-store'),
+        toolingLinks.kibana(title='Thanos Store (ops)', index='monitoring_ops', tag='monitoring.systemd.thanos-store'),
       ],
     },
 
@@ -112,6 +149,12 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Compact (gprd)', index='monitoring_gprd', tag='monitoring.systemd.thanos-compact'),
+        toolingLinks.kibana(title='Thanos Compact (ops)', index='monitoring_ops', tag='monitoring.systemd.thanos-compact'),
+      ],
     },
 
     // Prometheus Alert Manager Sender operations
@@ -159,6 +202,11 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.elasticAPM(service='thanos'),
+        toolingLinks.kibana(title='Thanos Rule', index='monitoring_ops', tag='monitoring.systemd.thanos-rule'),
+      ],
     },
 
     grafana: {
@@ -181,6 +229,13 @@ metricsCatalog.serviceDefinition({
       ),
 
       significantLabels: ['fqdn'],
+
+      toolingLinks: [
+        toolingLinks.googleLoadBalancer(
+          instanceId='ops-dashboards',
+          project='gitlab-ops',
+        ),
+      ],
     },
 
     // This component represents the Google Load Balancer in front
@@ -220,7 +275,8 @@ metricsCatalog.serviceDefinition({
       significantLabels: ['fqdn', 'handler'],
 
       toolingLinks: [
-        toolingLinks.kibana(title='Prometheus', index='monitoring'),
+        toolingLinks.kibana(title='Prometheus (gprd)', index='monitoring_gprd', tag='monitoring.prometheus'),
+        toolingLinks.kibana(title='Prometheus (ops)', index='monitoring_ops', tag='monitoring.prometheus'),
       ],
     },
 

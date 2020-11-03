@@ -141,6 +141,8 @@ local pgbouncerSyncPool(serviceType, role) =
       node may have multiple connection pools, this is by node and by
       database host.
 
+      Read more about this resource in our [documentation](https://docs.gitlab.com/ee/development/database/client_side_connection_pool.html#client-side-connection-pool).
+
       If this resource is saturated, it may indicate that our connection
       pools are not correctly sized, perhaps because an unexpected
       application thread is using a database connection.

@@ -36,7 +36,7 @@ groups:
           kube_replicaset_spec_replicas{job="kube-state-metrics"}
           !=
           kube_replicaset_status_ready_replicas{job="kube-state-metrics"}
-        for: 5m
+        for: 1h 
         labels:
           severity: s3
           alert_type: cause

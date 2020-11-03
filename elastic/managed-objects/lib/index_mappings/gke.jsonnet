@@ -1,5 +1,4 @@
 {
-  dynamic: false,
   properties: {
     '@timestamp': {
       type: 'date',
@@ -47,9 +46,18 @@
     },
     json: {
       properties: {
-        protoPayload: {
+        insertId: {
+          type: 'text',
+          fields: {
+            keyword: {
+              type: 'keyword',
+              ignore_above: 256,
+            },
+          },
+        },
+        jsonPayload: {
           properties: {
-            '@type': {
+            apiVersion: {
               type: 'text',
               fields: {
                 keyword: {
@@ -58,9 +66,63 @@
                 },
               },
             },
-            authenticationInfo: {
+            involvedObject: {
               properties: {
-                principalEmail: {
+                apiVersion: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                fieldPath: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                kind: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                name: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                namespace: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                resourceVersion: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                uid: {
                   type: 'text',
                   fields: {
                     keyword: {
@@ -71,32 +133,7 @@
                 },
               },
             },
-            authorizationInfo: {
-              properties: {
-                granted: {
-                  type: 'boolean',
-                },
-                permission: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
-                resource: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
-              },
-            },
-            methodName: {
+            kind: {
               type: 'text',
               fields: {
                 keyword: {
@@ -105,42 +142,133 @@
                 },
               },
             },
-            requestMetadata: {
-              properties: {
-                callerIp: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
-                callerNetwork: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
-                callerSuppliedUserAgent: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
-                destinationAttributes: {
-                  type: 'object',
-                },
-                requestAttributes: {
-                  type: 'object',
+            message: {
+              type: 'text',
+              fields: {
+                keyword: {
+                  type: 'keyword',
+                  ignore_above: 256,
                 },
               },
+            },
+            metadata: {
+              properties: {
+                creationTimestamp: {
+                  type: 'date',
+                },
+                name: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                namespace: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                resourceVersion: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                selfLink: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                uid: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+              },
+            },
+            reason: {
+              type: 'text',
+              fields: {
+                keyword: {
+                  type: 'keyword',
+                  ignore_above: 256,
+                },
+              },
+            },
+            reportingComponent: {
+              type: 'text',
+              fields: {
+                keyword: {
+                  type: 'keyword',
+                  ignore_above: 256,
+                },
+              },
+            },
+            reportingInstance: {
+              type: 'text',
+              fields: {
+                keyword: {
+                  type: 'keyword',
+                  ignore_above: 256,
+                },
+              },
+            },
+            source: {
+              properties: {
+                component: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                host: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+              },
+            },
+            type: {
+              type: 'text',
+              fields: {
+                keyword: {
+                  type: 'keyword',
+                  ignore_above: 256,
+                },
+              },
+            },
+          },
+        },
+        logName: {
+          type: 'text',
+          fields: {
+            keyword: {
+              type: 'keyword',
+              ignore_above: 256,
             },
           },
         },
@@ -160,24 +288,6 @@
                     },
                   },
                 },
-                disk_id: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
-                instance_id: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
                 location: {
                   type: 'text',
                   fields: {
@@ -187,25 +297,25 @@
                     },
                   },
                 },
+                namespace_name: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
+                pod_name: {
+                  type: 'text',
+                  fields: {
+                    keyword: {
+                      type: 'keyword',
+                      ignore_above: 256,
+                    },
+                  },
+                },
                 project_id: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
-                snapshot_id: {
-                  type: 'text',
-                  fields: {
-                    keyword: {
-                      type: 'keyword',
-                      ignore_above: 256,
-                    },
-                  },
-                },
-                zone: {
                   type: 'text',
                   fields: {
                     keyword: {

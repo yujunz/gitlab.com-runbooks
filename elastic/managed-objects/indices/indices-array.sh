@@ -4,9 +4,13 @@ declare -a indices
 
 export indices=(
   camoproxy
+  chef
   consul
   gitaly
   gke
+  gke-audit
+  gke-systemd
+  jaeger
   mailroom
   monitoring
   pages
@@ -21,5 +25,6 @@ export indices=(
   shell
   sidekiq
   system
+  vault
   workhorse
 )

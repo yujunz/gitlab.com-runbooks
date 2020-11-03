@@ -17,8 +17,9 @@ RUN apk add --no-cache bash git && \
 
 FROM google/cloud-sdk:alpine
 
+# Make sure these version numbers are not ahead of whats running in Production
 ENV ALERTMANAGER_VERSION 0.21.0
-ENV PROMETHEUS_VERSION 2.19.1
+ENV PROMETHEUS_VERSION 2.20.1
 
 RUN apk add --no-cache curl bash git jq alpine-sdk ruby build-base ruby-dev tar gcc libc-dev make
 RUN gcloud components install kubectl -q

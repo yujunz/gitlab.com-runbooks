@@ -29,8 +29,8 @@ local rules = {
           sloMetricSelectorHash={ monitor: 'global' },
           sloMetricAggregationLabels=['type', 'tier'],
           operationRateMetric='gitlab_component_ops:rate_1h',
-          operationRateAggregationLabels=['environment', 'env', 'tier', 'type', 'component', 'stage'],
-          operationRateSelectorHash={ monitor: { ne: 'global' } },
+          operationRateAggregationLabels=['env', 'environment', 'tier', 'type', 'stage', 'component'],
+          operationRateSelectorHash={ monitor: { eq: 'global' } },
           minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
         ),
         'for': '2m',
@@ -46,7 +46,7 @@ local rules = {
           description: |||
             Currently the apdex value is {{ $value | humanizePercentage }}.
           |||,
-          runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+          runbook: 'docs/{{ $labels.type }}/README.md',
           grafana_dashboard_id: 'alerts-component_multiburn_apdex/alerts-component-multi-window-multi-burn-rate-apdex-out-of-slo',
           grafana_panel_id: stableIds.hashStableId('multiwindow-multiburnrate'),
           grafana_variables: 'environment,type,stage,component',
@@ -66,8 +66,8 @@ local rules = {
         sloMetricSelectorHash={ monitor: 'global' },
         sloMetricAggregationLabels=['type', 'tier'],
         operationRateMetric='gitlab_component_ops:rate_1h',
-        operationRateAggregationLabels=['environment', 'env', 'tier', 'type', 'component', 'stage'],
-        operationRateSelectorHash={ monitor: { ne: 'global' } },
+        operationRateAggregationLabels=['env', 'environment', 'tier', 'type', 'stage', 'component'],
+        operationRateSelectorHash={ monitor: { eq: 'global' } },
         minimumOperationRateForMonitoring=minimumOperationRateForMonitoring
       ),
       'for': '2m',
@@ -84,7 +84,7 @@ local rules = {
           The `{{ $labels.type }}` service, `{{ $labels.component }}` component, `{{ $labels.stage }}` stage has an error burn-rate outside of SLO
           The error-burn rate for this service is outside of SLO over multiple windows. Currently the error-rate is {{ $value | humanizePercentage }}.
         |||,
-        runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+        runbook: 'docs/{{ $labels.type }}/README.md',
         grafana_dashboard_id: 'alerts-component_multiburn_error/alerts-component-multi-window-multi-burn-rate-out-of-slo',
         grafana_panel_id: stableIds.hashStableId('multiwindow-multiburnrate'),
         grafana_variables: 'environment,type,stage,component',

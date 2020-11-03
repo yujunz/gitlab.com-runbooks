@@ -1,14 +1,15 @@
 local grafana = import 'github.com/grafana/grafonnet-lib/grafonnet/grafana.libsonnet';
+local grafanaCalHeatmap = import 'grafana-cal-heatmap-panel/panel.libsonnet';
 local basic = import 'grafana/basic.libsonnet';
 local layout = import 'grafana/layout.libsonnet';
-local seriesOverrides = import 'grafana/series_overrides.libsonnet';
-local platformLinks = import 'platform_links.libsonnet';
-local serviceCatalog = import 'service_catalog.libsonnet';
-local row = grafana.row;
-local thresholds = import 'thresholds.libsonnet';
-local grafanaCalHeatmap = import 'grafana-cal-heatmap-panel/panel.libsonnet';
-local selectors = import 'promql/selectors.libsonnet';
 local metricsConfig = import 'metrics-config.libsonnet';
+local platformLinks = import 'platform_links.libsonnet';
+local row = grafana.row;
+local selectors = import 'promql/selectors.libsonnet';
+local seriesOverrides = import 'grafana/series_overrides.libsonnet';
+local serviceCatalog = import 'service_catalog.libsonnet';
+local strings = import 'utils/strings.libsonnet';
+local thresholds = import 'thresholds.libsonnet';
 
 // These charts have a very high interval factor, to create a wide trend line
 local INTERVAL_FACTOR = 50;
@@ -23,6 +24,11 @@ local serviceOrdering = [
   'registry',
   'web-pages',
 ];
+
+// Note, by having a overall_sla_weighting value, even if it is zero, the service will
+// be included on the SLA dashboard. To remove it, delete the key
+local keyServices = serviceCatalog.findServices(function(service)
+  std.objectHas(service.business.SLA, 'overall_sla_weighting') && service.business.SLA.overall_sla_weighting >= 0);
 
 local overviewDashboardLinks(type) =
   local formatConfig = { type: type };
@@ -39,19 +45,63 @@ local thresholdsValues = {
   ],
 };
 
-// Note, by having a overall_sla_weighting value, even if it is zero, the service will
-// be included on the SLA dashboard. To remove it, delete the key
-local keyServices = serviceCatalog.findServices(function(service)
-  std.objectHas(service.business.SLA, 'overall_sla_weighting') && service.business.SLA.overall_sla_weighting >= 0);
-
-local keyServiceRegExp = std.join('|', std.map(function(service) service.name, keyServices));
-
 local keyServiceSorter(service) =
   local l = std.find(service.name, serviceOrdering);
   if l == [] then
     100
   else
     l[0];
+
+
+local systemWeightQueryTerm(service, selectorHash, rangeInterval) =
+  local defaultSelector = {
+    env: { re: 'ops|$environment' },
+    environment: '$environment',
+    stage: 'main',
+    monitor: { re: 'global|' },
+    type: service.name,
+  };
+
+  |||
+    avg without(type, slo) (avg_over_time(slo_observation_status{%(selector)s}[%(rangeInterval)s]) * %(serviceWeight)d)
+  ||| % {
+    serviceWeight: service.business.SLA.overall_sla_weighting,
+    selector: selectors.serializeHash(defaultSelector + selectorHash),
+    rangeInterval: rangeInterval,
+  };
+
+local systemAvailabilityQuery(selectorHash, rangeInterval) =
+
+  /**
+   TODO: after 2021-01-01 consider using the recording rule that we have for this:
+
+   ```
+    avg_over_time(sla:gitlab:ratio{%(selector)s}[%(rangeInterval)s)
+   ```
+
+   Unfortunately we cannot use this at present and need to rely on subqueries instead due to
+   the bug found in https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/11457.
+   This was fixed on 2020-09-28, so any SLA data forward of that date can use the recording rule.
+
+   In the mean time, we'll use this workaround:
+   */
+
+  local keyServicesWithWeights = std.filter(function(service) service.business.SLA.overall_sla_weighting > 0, keyServices);
+  local weightsQueryTerms = std.map(function(service) systemWeightQueryTerm(service, selectorHash, rangeInterval), keyServicesWithWeights);
+  local weightsQuery = std.join('\n+\n', weightsQueryTerms);
+  local totalWeight = std.foldl(function(memo, service) memo + service.business.SLA.overall_sla_weighting, keyServicesWithWeights, 0);
+
+  |||
+    (
+      %(weightsQuery)s
+    )
+    /
+    %(totalWeight)d
+  ||| % {
+    rangeInterval: rangeInterval,
+    weightsQuery: strings.indent(weightsQuery, 2),
+    totalWeight: totalWeight,
+  };
 
 // NB: this query takes into account values recorded in Prometheus prior to
 // https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
@@ -78,6 +128,33 @@ local serviceAvailabilityQuery(selectorHash, metricName, rangeInterval) =
     rangeInterval: rangeInterval,
   };
 
+// NB: this query takes into account values recorded in Prometheus prior to
+// https://gitlab.com/gitlab-com/gl-infra/infrastructure/-/issues/9689
+// Better fix proposed in https://gitlab.com/gitlab-com/gl-infra/scalability/-/issues/326
+// This is encoded in the `defaultSelector`
+local serviceAvailabilityMillisecondsQuery(selectorHash, metricName) =
+  local defaultSelector = {
+    env: { re: 'ops|$environment' },
+    environment: '$environment',
+    stage: 'main',
+    monitor: { re: 'global|' },
+  };
+
+  |||
+    (
+      1 -
+      avg(
+        clamp_max(
+          avg_over_time(%(metricName)s{%(selector)s}[$__range]),
+          1
+        )
+      )
+    ) * $__range_ms
+  ||| % {
+    selector: selectors.serializeHash(defaultSelector + selectorHash),
+    metricName: metricName,
+  };
+
 local serviceRow(service) =
   local links = overviewDashboardLinks(service.name);
   [
@@ -93,6 +170,15 @@ local serviceRow(service) =
       query=serviceAvailabilityQuery({ type: service.name }, 'slo_observation_status', '1d'),
       legendFormat='',
       datasource='$PROMETHEUS_DS',
+    ),
+    basic.slaStats(
+      title='',
+      query=serviceAvailabilityMillisecondsQuery({ type: service.name }, 'slo_observation_status'),
+      legendFormat='{{ type }}',
+      displayName='Budget Spent',
+      links=links,
+      decimals=1,
+      unit='ms',
     ),
     basic.slaTimeseries(
       title='%s: SLA Trends ' % [service.friendly_name],
@@ -132,19 +218,27 @@ basic.dashboard(
   layout.columnGrid([[
     basic.slaStats(
       title='GitLab.com Availability',
-      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '$__range'),
+      query=systemAvailabilityQuery({}, '$__range'),
     ),
     grafanaCalHeatmap.heatmapCalendarPanel(
       'Calendar',
-      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '1d'),
+      query=systemAvailabilityQuery({}, '1d'),
       legendFormat='',
       datasource='$PROMETHEUS_DS',
+    ),
+    basic.slaStats(
+      title='',
+      query=serviceAvailabilityMillisecondsQuery({}, 'sla:gitlab:ratio'),
+      legendFormat='',
+      displayName='Budget Spent',
+      decimals=1,
+      unit='ms',
     ),
     basic.slaTimeseries(
       title='Overall SLA over time period - gitlab.com',
       description='Rolling average SLO adherence across all primary services. Higher is better.',
       yAxisLabel='SLA',
-      query=serviceAvailabilityQuery({}, 'sla:gitlab:ratio', '1d'),
+      query=systemAvailabilityQuery({}, '1d'),
       legendFormat='gitlab.com SLA',
       interval=INTERVAL,
       points=true,
@@ -152,7 +246,7 @@ basic.dashboard(
     )
     .addSeriesOverride(seriesOverrides.goldenMetric('gitlab.com SLA'))
     + thresholdsValues,
-  ]], [4, 4, 16], rowHeight=5, startRow=1)
+  ]], [4, 4, 4, 12], rowHeight=5, startRow=1)
 )
 .addPanel(
   row.new(title='Primary Services'),
@@ -164,7 +258,7 @@ basic.dashboard(
   }
 )
 .addPanels(
-  layout.columnGrid(primaryServiceRows, [4, 4, 16], rowHeight=5, startRow=2101)
+  layout.columnGrid(primaryServiceRows, [4, 4, 4, 12], rowHeight=5, startRow=2101)
 )
 .addPanels(
   layout.grid([

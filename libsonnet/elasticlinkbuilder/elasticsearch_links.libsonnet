@@ -1,6 +1,5 @@
 local rison = import 'rison.libsonnet';
 
-local kibanaEndpoint = 'https://log.gprd.gitlab.net/app/kibana';
 
 // Builds an ElasticSearch match filter clause
 local matchFilter(field, value) =
@@ -47,6 +46,7 @@ local statusCode(field) =
   [rangeFilter(field, gteValue=500, lteValue=null)];
 
 local indexDefaults = {
+  kibanaEndpoint: 'https://log.gprd.gitlab.net/app/kibana',
   prometheusLabelMappings: {},
 };
 
@@ -84,7 +84,16 @@ local indexCatalog = {
     latencyFieldUnitMultiplier: 1000,
   },
 
-  monitoring: indexDefaults {
+  monitoring_ops: indexDefaults {
+    timestamp: '@timestamp',
+    indexId: 'pubsub-monitoring-inf-ops',
+    defaultColumns: ['json.hostname', 'json.msg', 'json.level'],
+    defaultSeriesSplitField: 'json.hostname.keyword',
+    failureFilter: [matchFilter('json.level', 'error')],
+    kibanaEndpoint: 'https://nonprod-log.gitlab.net/app/kibana',
+  },
+
+  monitoring_gprd: indexDefaults {
     timestamp: '@timestamp',
     indexId: 'AW5ZoH2ddtvLTaJbch2P',
     defaultColumns: ['json.hostname', 'json.msg', 'json.level'],
@@ -218,7 +227,7 @@ local buildElasticDiscoverSearchQueryURL(index, filters, luceneQueries=[]) =
     },
   };
 
-  kibanaEndpoint + '#/discover?_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
+  indexCatalog[index].kibanaEndpoint + '#/discover?_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
 
 local buildElasticLineCountVizURL(index, filters, luceneQueries=[], splitSeries=false) =
   local ic = indexCatalog[index];
@@ -286,7 +295,7 @@ local buildElasticLineCountVizURL(index, filters, luceneQueries=[], splitSeries=
     },
   };
 
-  kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
+  indexCatalog[index].kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
 
 local buildElasticLineTotalDurationVizURL(index, filters, luceneQueries=[], latencyField, splitSeries=false) =
   local ic = indexCatalog[index];
@@ -375,7 +384,7 @@ local buildElasticLineTotalDurationVizURL(index, filters, luceneQueries=[], late
     },
   };
 
-  kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
+  indexCatalog[index].kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
 
 local buildElasticLinePercentileVizURL(index, filters, luceneQueries=[], latencyField, splitSeries=false) =
   local ic = indexCatalog[index];
@@ -477,7 +486,7 @@ local buildElasticLinePercentileVizURL(index, filters, luceneQueries=[], latency
     },
   };
 
-  kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
+  indexCatalog[index].kibanaEndpoint + '#/visualize/create?type=line&indexPattern=' + indexCatalog[index].indexId + '&_a=' + rison.encode(applicationState) + '&_g=(time:(from:now-1h,to:now))';
 
 {
   matchFilter:: matchFilter,

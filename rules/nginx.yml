@@ -1,0 +1,14 @@
+groups:
+- name: Nginx alerts
+  rules:
+  - alert: NginxIsDown
+    expr: up{job="gitlab-nginx"} == 0
+    for: 5m
+    labels:
+      pager: pagerduty
+      severity: s1
+      alert_type: cause
+    annotations:
+      title: Nginx is down for 5 minutes
+      description: Nginx is down on {{ $labels.fqdn }}, which means no requests are going through to Rails.
+      runbook: docs/web/nginx-is-down.md

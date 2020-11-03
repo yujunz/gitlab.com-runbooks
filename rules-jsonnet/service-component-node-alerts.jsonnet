@@ -58,7 +58,7 @@ local rules = {
           ||| % {
             alertWaitPeriod: alertWaitPeriod,
           },
-          runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+          runbook: 'docs/{{ $labels.type }}/README.md',
           grafana_dashboard_id: 'alerts-component_node_multiburn_apdex/alerts-component-node-multi-window-multi-burn-rate-apdex-out-of-slo',
           grafana_panel_id: stableIds.hashStableId('multiwindow-multiburnrate'),
           grafana_variables: 'environment,type,stage,component,fqdn',
@@ -102,7 +102,7 @@ local rules = {
         ||| % {
           alertWaitPeriod: alertWaitPeriod,
         },
-        runbook: 'docs/{{ $labels.type }}/service-{{ $labels.type }}.md',
+        runbook: 'docs/{{ $labels.type }}/README.md',
         grafana_dashboard_id: 'alerts-component_node_multiburn_error/alerts-component-node-multi-window-multi-burn-rate-error-rate-out-of-slo',
         grafana_panel_id: stableIds.hashStableId('multiwindow-multiburnrate'),
         grafana_variables: 'environment,type,stage,component,fqdn',
