@@ -11,7 +11,7 @@ local basic = import 'grafana/basic.libsonnet';
 
 basic.dashboard(
   'Pod Info',
-  tags=['git'],
+  tags=['git', 'shell'],
 )
 .addTemplate(templates.gkeCluster)
 .addTemplate(templates.stage)
@@ -20,14 +20,14 @@ basic.dashboard(
 .addTemplate(
   template.custom(
     name='Deployment',
-    query='gitlab-(cny-)?webservice,',
-    current='gitlab-(cny-)?webservice',
+    query='gitlab-(cny-)?gitlab-shell,',
+    current='gitlab-(cny-)?gitlab-shell',
     hide='variable',
   )
 )
 .addPanel(
 
-  row.new(title='Webservice (Git) Version'),
+  row.new(title='GitLab-Shell Version'),
   gridPos={
     x: 0,
     y: 0,
@@ -69,7 +69,7 @@ basic.dashboard(
     h: 1,
   }
 )
-.addPanels(k8sPodsCommon.memory(startRow=2001, container='webservice'))
+.addPanels(k8sPodsCommon.memory(startRow=2001, container='gitlab-shell'))
 .addPanel(
 
   row.new(title='Network'),
