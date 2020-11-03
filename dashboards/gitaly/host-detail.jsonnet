@@ -221,6 +221,27 @@ basic.dashboard(
     startRow=8001
   )
 )
+.addPanel(
+  row.new(title='gitaly-ruby process activity'),
+  gridPos={
+    x: 0,
+    y: 9000,
+    w: 24,
+    h: 1,
+  }
+)
+.addPanels(
+  processExporter.namedGroup(
+    'gitaly-ruby processes',
+    selectorHash
+    {
+      groupname: 'gitaly-ruby',
+    },
+    aggregationLabels=[],
+    startRow=9001
+  )
+)
+
 .trailer()
 + {
   links+: platformLinks.triage + serviceCatalog.getServiceLinks('gitaly') + platformLinks.services +
